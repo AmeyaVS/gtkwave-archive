@@ -1,0 +1,120 @@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+mandir = @mandir@
+
+all:	config.log bin/gtkwave bin/mvl2vcd bin/tex2vcd bin/mvl2lxt bin/vcd2lxt bin/vcd2lxt2 bin/lxt2vcd bin/vcd2vzt bin/vzt2vcd bin/vztminer bin/lxt2miner bin/tla2vcd contrib/rtlbrowse/rtlbrowse contrib/vertex/vertex bin/shmidcat
+
+
+config.log:
+	./configure;
+
+clean:	
+	(cd src;make clean;cd helpers;make clean)
+	(cd contrib/pccts;make clean)
+	(cd contrib/rtlbrowse;make clean)
+	(cd contrib/vertex;make clean)
+
+install:
+	cd bin;\
+	install -d $(bindir);\
+	install -m 0755 -c gtkwave  $(bindir)/gtkwave;\
+	install -m 0755 -c twinwave  $(bindir)/twinwave;\
+	install -m 0755 -c mvl2vcd  $(bindir)/mvl2vcd;\
+	install -m 0755 -c mvl2lxt  $(bindir)/mvl2lxt;\
+	install -m 0755 -c tex2vcd  $(bindir)/tex2vcd;\
+	install -m 0755 -c vcd2lxt  $(bindir)/vcd2lxt;\
+	install -m 0755 -c vcd2lxt2 $(bindir)/vcd2lxt2;\
+	install -m 0755 -c lxt2vcd  $(bindir)/lxt2vcd;\
+	install -m 0755 -c vcd2vzt  $(bindir)/vcd2vzt;\
+	install -m 0755 -c vzt2vcd  $(bindir)/vzt2vcd;\
+	install -m 0755 -c vztminer $(bindir)/vztminer;\
+	install -m 0755 -c lxt2miner $(bindir)/lxt2miner;\
+	install -m 0755 -c tla2vcd  $(bindir)/tla2vcd;\
+	install -m 0755 -c ghwdump  $(bindir)/ghwdump;\
+	install -m 0755 -c rtlbrowse  $(bindir)/rtlbrowse;\
+	install -m 0755 -c vertex  $(bindir)/vertex;\
+	install -m 0755 -c shmidcat  $(bindir)/shmidcat;\
+	cd ../man;\
+	install -d $(mandir)/man1;\
+	install -m 0644 -c gtkwave.1 $(mandir)/man1/gtkwave.1;\
+	install -m 0644 -c twinwave.1 $(mandir)/man1/twinwave.1;\
+	install -m 0644 -c lxt2vcd.1 $(mandir)/man1/lxt2vcd.1;\
+	install -m 0644 -c mvl2lxt.1 $(mandir)/man1/mvl2lxt.1;\
+	install -m 0644 -c mvl2vcd.1 $(mandir)/man1/mvl2vcd.1;\
+	install -m 0644 -c tex2vcd.1 $(mandir)/man1/tex2vcd.1;\
+	install -m 0644 -c vcd2lxt.1 $(mandir)/man1/vcd2lxt.1;\
+	install -m 0644 -c vcd2lxt2.1 $(mandir)/man1/vcd2lxt2.1;\
+	install -m 0644 -c vcd2vzt.1 $(mandir)/man1/vcd2vzt.1;\
+	install -m 0644 -c vzt2vcd.1 $(mandir)/man1/vzt2vcd.1;\
+	install -m 0644 -c vztminer.1 $(mandir)/man1/vztminer.1;\
+	install -m 0644 -c lxt2miner.1 $(mandir)/man1/lxt2miner.1;\
+	install -m 0644 -c tla2vcd.1 $(mandir)/man1/tla2vcd.1;\
+	install -m 0644 -c ghwdump.1 $(mandir)/man1/ghwdump.1;\
+	install -m 0644 -c vertex.1 $(mandir)/man1/vertex.1;\
+	install -m 0644 -c shmidcat.1 $(mandir)/man1/shmidcat.1;\
+	install -m 0644 -c rtlbrowse.1 $(mandir)/man1/rtlbrowse.1;\
+	install -d $(mandir)/man5;\
+	install -m 0644 -c gtkwaverc.5 $(mandir)/man5/gtkwaverc.5
+
+
+dist:
+	make clean
+	rm -f config.h config.log config.status
+	rm -f Makefile src/Makefile src/helpers/Makefile src/libz/Makefile src/libbz2/Makefile
+	rm -f src/Makefile.in contrib/rtlbrowse/Makefile.in contrib/rtlbrowse/Makefile
+	rm -f contrib/pccts/Makefile contrib/pccts/antlr/Makefile contrib/pccts/dlg/Makefile
+	rm -f contrib/pccts/sorcerer/Makefile contrib/pccts/support/genmk/Makefile
+	./execlean.sh
+
+bin/gtkwave:
+	# Compiling GTKWave...
+	cd src;make all
+
+bin/mvl2vcd:
+	cd src/helpers;make all
+
+bin/mvl2lxt:
+	cd src/helpers;make all
+
+bin/tex2vcd:
+	cd src/helpers;make all
+
+bin/vcd2lxt:
+	cd src/helpers;make all
+
+bin/vcd2lxt2:
+	cd src/helpers;make all
+
+bin/lxt2vcd:
+	cd src/helpers;make all
+
+bin/vcd2vzt:
+	cd src/helpers;make all
+
+bin/vzt2vcd:
+	cd src/helpers;make all
+
+bin/vztminer:
+	cd src/helpers;make all
+
+bin/lxt2miner:
+	cd src/helpers;make all
+
+bin/tla2vcd:
+	cd src/helpers;make all
+
+bin/shmidcat:
+	cd src/helpers;make all
+
+contrib/rtlbrowse/rtlbrowse:
+	cd contrib/rtlbrowse; make all
+
+contrib/vertex/vertex: contrib/pccts/bin/antlr
+	cd contrib/vertex; make all
+
+contrib/pccts/bin/antlr:
+	cd contrib/pccts; make all
+
+..PHONY: install
+

@@ -1,0 +1,45 @@
+SHELL=/bin/sh
+
+# To assist in cross-compiling
+CC=@CC@
+AR=ar
+RANLIB=@RANLIB@
+LDFLAGS=
+
+# Suitably paranoid flags to avoid bugs in gcc-2.7
+BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CFLAGS = -O2
+
+OBJS= blocksort.o  \
+      huffman.o    \
+      crctable.o   \
+      randtable.o  \
+      bzcompress.o   \
+      bzdecompress.o \
+      bzlib.o
+
+all: libbz2.a
+
+libbz2.a: $(OBJS)
+	rm -f libbz2.a
+	$(AR) cq libbz2.a $(OBJS)
+	$(RANLIB) libbz2.a
+
+clean: 
+	rm -f *.o libbz2.a 
+
+blocksort.o: blocksort.c
+	$(CC) $(CFLAGS) -c blocksort.c
+huffman.o: huffman.c
+	$(CC) $(CFLAGS) -c huffman.c
+crctable.o: crctable.c
+	$(CC) $(CFLAGS) -c crctable.c
+randtable.o: randtable.c
+	$(CC) $(CFLAGS) -c randtable.c
+bzcompress.o: bzcompress.c
+	$(CC) $(CFLAGS) -c bzcompress.c
+bzdecompress.o: bzdecompress.c
+	$(CC) $(CFLAGS) -c bzdecompress.c
+bzlib.o: bzlib.c
+	$(CC) $(CFLAGS) -c bzlib.c
+

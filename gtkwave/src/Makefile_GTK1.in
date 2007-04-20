@@ -1,0 +1,63 @@
+CC = @CC@
+
+AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
+BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CFLAGS = -O2 -I./libz -I./libbz2 -I./helpers -I../
+DEBUGS = -DDEBUG_FACILITIES -DDEBUG_PRINTF -DDEBUG_MALLOC -DSTRICT_VCD_ONLY -DDEBUG_MALLOC_LINES
+AET2LIB =
+PTHLIB = 
+NSLLIB = 
+
+SRCS = menu.c main.c status.c zoombuttons.c pagebuttons.c \
+		fetchbuttons.c shiftbuttons.c pixmaps.c \
+		timeentry.c currenttime.c wavewindow.c signalwindow.c \
+		symbol.c bitvec.c analyzer.c bsearch.c entry.c \
+		tree.c file.c search.c discardbuttons.c \
+		fgetdynamic.c showchange.c treesearch.c \
+		markerbox.c print.c strace.c \
+		simplereq.c help.c vcd.c debug.c rc.c \
+		color.c hiersearch.c renderopt.c \
+		rgb.c regex.c fonts.c lxt.c lx2.c helpers/lxt2_read.c \
+		ae2.c helpers/vzt_read.c vzt.c baseconvert.c splash.c logfile.c \
+		vcd_saver.c helpers/lxt_write.c ghw.c ghwlib.c translate.c \
+		pipeio.c ptranslate.c clipping.c busy.c vcd_partial.c vlist.c \
+		vcd_recoder.c getopt.c getopt1.c mouseover.c vcd_keywords.c
+
+OBJS = menu.o main.o status.o zoombuttons.o pagebuttons.o \
+		fetchbuttons.o shiftbuttons.o pixmaps.o \
+		timeentry.o currenttime.o wavewindow.o signalwindow.o \
+		symbol.o bitvec.o analyzer.o bsearch.o entry.o \
+		tree.o file.o search.o discardbuttons.o \
+		fgetdynamic.o showchange.o treesearch.o \
+		markerbox.o print.o strace.o \
+		simplereq.o help.o vcd.o debug.o rc.o \
+		color.o hiersearch.o renderopt.o \
+		rgb.o regex.o fonts.o lxt.o lx2.o helpers/lxt2_read.o \
+		ae2.o helpers/vzt_read.o vzt.o baseconvert.o splash.o logfile.o \
+		vcd_saver.o helpers/lxt_write.o ghw.o ghwlib.o translate.o \
+		pipeio.o ptranslate.o clipping.o busy.o vcd_partial.o vlist.o \
+		vcd_recoder.o getopt.o getopt1.o mouseover.o vcd_keywords.o
+
+all: 	gtkwave twinwave
+	cp gtkwave ../bin
+	cp twinwave ../bin
+
+gtkwave:$(OBJS) libz/libz.a libbz2/libbz2.a
+	$(CC) $(CFLAGS) $(OBJS) `gtk-config --libs` $(AET2LIB) libz/libz.a libbz2/libbz2.a -o gtkwave $(PTHLIB) $(NSLLIB)
+
+twinwave: twinwave.c
+	$(CC) $(CFLAGS) `gtk-config --cflags` `gtk-config --libs` -o twinwave twinwave.c
+
+libz/libz.a:
+	cd libz ; make
+
+libbz2/libbz2.a:
+	cd libbz2 ; make
+
+.c.o:	$(H_FILES)
+	$(CC) $(CFLAGS) `gtk-config --cflags` -c -o $@ $<
+
+clean: 
+	rm -f core *.core *.o gtkwave ../bin/gtkwave twinwave ../bin/twinwave
+	cd libz ; make clean
+	cd libbz2 ; make clean

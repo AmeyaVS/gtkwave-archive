@@ -1,0 +1,73 @@
+SHELL=/bin/sh
+
+# To assist in cross-compiling
+CC=@CC@
+AR=ar
+RANLIB=@RANLIB@
+LDFLAGS=
+
+# Suitably paranoid flags to avoid bugs in gcc-2.7
+BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CFLAGS = -O2 -I../../
+
+OBJS= 	adler32.o \
+	compress.o \
+	crc32.o \
+	deflate.o \
+	gzio.o \
+	infback.o \
+	inffast.o \
+	inflate.o \
+	inftrees.o \
+	trees.o \
+	uncompr.o \
+	zutil.o
+	
+
+all: libz.a
+
+libz.a: $(OBJS)
+	rm -f libz.a
+	$(AR) cq libz.a $(OBJS)
+	$(RANLIB) libz.a
+
+clean: 
+	rm -f *.o libz.a 
+
+
+adler32.o: adler32.c
+	$(CC) $(CFLAGS) -c adler32.c
+
+compress.o: compress.c
+	$(CC) $(CFLAGS) -c compress.c
+
+crc32.o: crc32.c
+	$(CC) $(CFLAGS) -c crc32.c 
+
+deflate.o: deflate.c
+	$(CC) $(CFLAGS) -c deflate.c
+
+gzio.o: gzio.c
+	$(CC) $(CFLAGS) -c gzio.c
+
+infback.o: infback.c
+	$(CC) $(CFLAGS) -c infback.c
+
+inffast.o: inffast.c
+	$(CC) $(CFLAGS) -c inffast.c
+
+inflate.o: inflate.c
+	$(CC) $(CFLAGS) -c inflate.c
+
+inftrees.o: inftrees.c
+	$(CC) $(CFLAGS) -c inftrees.c
+
+trees.o: trees.c
+	$(CC) $(CFLAGS) -c trees.c
+
+uncompr.o: uncompr.c
+	$(CC) $(CFLAGS) -c uncompr.c
+
+zutil.o: zutil.c
+	$(CC) $(CFLAGS) -c zutil.c
+

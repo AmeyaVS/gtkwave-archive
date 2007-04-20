@@ -1,0 +1,42 @@
+CC = @CC@
+LEX = @LEX@
+
+AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
+BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CFLAGS = -O2 `gtk-config --cflags` -I../../src/libz -I../../src/libbz2 -I../../src/helpers -I../../ -I../../src/
+LDFLAGS= `gtk-config --libs`
+DEBUGS =
+AET2LIB =
+PTHLIB = 
+NSLLIB = 
+
+SRCS = fgetdynamic.c logfile.c splay.c tree_widget.c stem_recurse.c definehash.c jrb.c ../../src/helpers/vzt_read.c ../../src/helpers/lxt2_read.c
+OBJS = fgetdynamic.o logfile.o splay.o tree_widget.o stem_recurse.o definehash.o jrb.o ../../src/helpers/vzt_read.o ../../src/helpers/lxt2_read.o
+H_FILES = fgetdynamic.h splay.h
+
+all: 	rtlbrowse
+	cp rtlbrowse ../../bin/rtlbrowse
+
+../../src/libz/libz.a:
+	cd ../../src/libz ; make
+        
+../../src/libbz2/libbz2.a:
+	cd ../../src/libbz2 ; make
+
+rtlbrowse: $(OBJS) lex.yy.o ../../src/libz/libz.a ../../src/libbz2/libbz2.a
+	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) lex.yy.o $(AET2LIB) ../../src/libz/libz.a ../../src/libbz2/libbz2.a -o rtlbrowse $(PTHLIB) $(NSLLIB)
+
+.c.o:	$(H_FILES)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+lex.yy.o: lex.yy.c
+	$(CC) $(CFLAGS) -c lex.yy.c
+
+lex.yy.c: vlex.l vlex.h 
+	$(LEX) vlex.l   
+
+definehash.c: vpp_keyword.gperf
+	gperf -C -I -N is_builtin_define vpp_keyword.gperf >definehash.c
+
+clean: 
+	rm -f *.o lex.yy.c rtlbrowse ../../bin/rtlbrowse

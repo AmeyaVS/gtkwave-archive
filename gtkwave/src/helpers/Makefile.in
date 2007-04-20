@@ -1,0 +1,86 @@
+CC = @CC@
+BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+AIXFLAGS = -bmaxdata:0xd0000000/dsa
+CFLAGS = -O2 -I../libz -I../libbz2 -I../ -I../../
+DEBUGS =
+PTHLIB = 
+NSLLIB = 
+
+all:	mvlbin
+
+clean:
+	rm -rf mvl2vcd mvl2lxt tex2vcd vcd2lxt *.o *.core core ../../bin/mvl2vcd ../../bin/mvl2lxt ../../bin/tex2vcd ../../bin/vcd2lxt
+	rm -rf lxt2vcd vcd2lxt2 vzt2vcd vcd2vzt ../../bin/lxt2vcd ../../bin/vcd2lxt2 ../../bin/vzt2vcd ../../bin/vcd2vzt
+	rm -rf vztminer lxt2miner ../../bin/vztminer ../../bin/lxt2miner
+	rm -rf tla2vcd ../../bin/tla2vcd ghwdump ../../bin/ghwdump shmidcat ../../bin/shmidcat
+	cd ../libz ; make clean
+	cd ../libbz2 ; make clean
+
+mvlbin: mvl2vcd mvl2lxt tex2vcd vcd2lxt lxt2vcd vcd2lxt2 vzt2vcd vcd2vzt vztminer lxt2miner tla2vcd ghwdump shmidcat
+	cp mvl2vcd  ../../bin; cp tex2vcd ../../bin; cp mvl2lxt  ../../bin; cp vcd2lxt  ../../bin; 
+	cp lxt2vcd ../../bin; cp vcd2lxt2 ../../bin; cp vzt2vcd ../../bin; cp vcd2vzt ../../bin;
+	cp vztminer ../../bin; cp lxt2miner ../../bin; cp tla2vcd ../../bin; cp ghwdump ../../bin; cp shmidcat ../../bin
+
+mvl2vcd: mvl2vcd.c
+	$(CC) $(CFLAGS) -o mvl2vcd mvl2vcd.c
+
+shmidcat: shmidcat.c
+	$(CC) $(CFLAGS) -o shmidcat shmidcat.c
+
+lxt_write.o: lxt_write.c lxt_write.h
+	$(CC) $(CFLAGS) -c lxt_write.c
+lxt2_write.o: lxt2_write.c lxt2_write.h
+	$(CC) $(CFLAGS) -c lxt2_write.c
+lxt2_read.o: lxt2_read.c lxt2_read.h
+	$(CC) $(CFLAGS) -c lxt2_read.c
+vzt_write.o: vzt_write.c vzt_write.h
+	$(CC) $(CFLAGS) -c vzt_write.c
+vzt_read.o: vzt_read.c vzt_read.h
+	$(CC) $(CFLAGS) -c vzt_read.c
+scopenav.o: scopenav.c
+	$(CC) $(CFLAGS) -c scopenav.c
+v2l_debug_lxt2.o: v2l_debug_lxt2.c v2l_debug_lxt2.h
+	$(CC) $(CFLAGS) -c v2l_debug_lxt2.c
+v2l_debug.o: v2l_debug.c v2l_debug.h v2l_analyzer.h
+	$(CC) $(CFLAGS) -c v2l_debug.c
+
+mvl2lxt.o: mvl2lxt.c 
+	$(CC) $(CFLAGS) -c mvl2lxt.c
+mvl2lxt: mvl2lxt.o lxt_write.o ../libz/libz.a ../libbz2/libbz2.a
+	$(CC) $(CFLAGS) -o mvl2lxt mvl2lxt.o lxt_write.o ../libz/libz.a ../libbz2/libbz2.a
+
+tex2vcd: tex2vcd.c
+	$(CC) $(CFLAGS) -o tex2vcd tex2vcd.c
+
+vcd2lxt: vcd2lxt.c lxt_write.o v2l_debug.o ../libz/libz.a ../libbz2/libbz2.a
+	$(CC) $(CFLAGS) -o vcd2lxt vcd2lxt.c lxt_write.o v2l_debug.o ../libz/libz.a ../libbz2/libbz2.a
+
+lxt2vcd: lxt2_read.o lxt2vcd.c scopenav.o ../libz/libz.a
+	$(CC) $(CFLAGS) -o lxt2vcd lxt2vcd.c lxt2_read.o scopenav.o ../libz/libz.a
+
+vcd2lxt2: vcd2lxt2.c lxt2_write.o v2l_debug_lxt2.o ../libz/libz.a
+	$(CC) $(CFLAGS) -o vcd2lxt2 vcd2lxt2.c lxt2_write.o v2l_debug_lxt2.o ../libz/libz.a
+
+vzt2vcd: vzt_read.o vzt2vcd.c scopenav.o ../libz/libz.a ../libbz2/libbz2.a
+	$(CC) $(CFLAGS) -o vzt2vcd vzt2vcd.c vzt_read.o scopenav.o ../libz/libz.a ../libbz2/libbz2.a $(PTHLIB) $(NSLLIB)
+
+vcd2vzt: vcd2vzt.c vzt_write.o v2l_debug_lxt2.o ../libz/libz.a
+	$(CC) $(CFLAGS) -o vcd2vzt vcd2vzt.c vzt_write.o v2l_debug_lxt2.o ../libz/libz.a ../libbz2/libbz2.a $(NSLLIB)
+
+vztminer: vztminer.c vzt_read.o ../libz/libz.a ../libbz2/libbz2.a
+	$(CC) $(CFLAGS) -o vztminer vztminer.c vzt_read.o ../libz/libz.a ../libbz2/libbz2.a $(PTHLIB) $(NSLLIB)
+
+lxt2miner: lxt2miner.c lxt2_read.o ../libz/libz.a
+	$(CC) $(CFLAGS) -o lxt2miner lxt2miner.c lxt2_read.o ../libz/libz.a
+
+tla2vcd: tla2vcd.c ../gnu_regex.c ../gnu_regex.h ../libz/libz.a
+	$(CC) $(CFLAGS) -o tla2vcd tla2vcd.c ../gnu_regex.c ../libz/libz.a
+
+ghwdump: ghwdump.c ../ghwlib.c
+	$(CC) $(CFLAGS) -I../ -o ghwdump ghwdump.c ../ghwlib.c 
+
+../libz/libz.a:
+	cd ../libz ; make
+
+../libbz2/libbz2.a:
+	cd ../libbz2 ; make

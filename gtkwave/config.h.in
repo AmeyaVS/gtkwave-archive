@@ -1,0 +1,63 @@
+#ifndef WAVE_CONFIG_H
+#define WAVE_CONFIG_H
+
+#undef HAVE_STDINT_H
+#undef HAVE_INTTYPES_H
+#undef HAVE_ALLOCA_H
+#undef HAVE_FSEEKO
+#undef HAVE_FCNTL_H
+#undef HAVE_STRING_H
+#undef STDC_HEADERS
+#undef HAVE_WCTYPE_H
+#undef HAVE_STRERROR
+#undef HAVE_BZERO
+#undef HAVE_REALPATH
+#undef HAVE_WORKING_FORK
+#undef HAVE_RPC_XDR_H
+#undef HAVE_GETOPT_H
+#undef HAVE_GETOPT_LONG
+#undef HAVE_SETENV
+#undef HAVE_UNSETENV
+
+#undef HAVE_LIBNSL
+#undef HAVE_LIBRPC
+#undef HAVE_LIBPTHREAD
+
+#ifndef _LARGEFILE_SOURCE
+#undef _LARGEFILE_SOURCE
+#endif
+
+#if HAVE_SETENV && HAVE_UNSETENV
+#define WAVE_LOCALE_FIX \
+{ \
+char *e = getenv("LANG"); \
+if(e) \
+        { \
+        if(strcmp(e, "C")) \
+                { \
+                setenv("LC_NUMERIC", "C", 1); \
+                setenv("LC_COLLATE", "C", 1); \
+                setenv("LC_CTYPE", "C", 1); \
+                } \
+        } \
+e = getenv("LC_ALL"); \
+if(e) \
+        { \
+        if(strcmp(e, "C")) \
+                { \
+                unsetenv("LC_ALL"); \
+                } \
+        } \
+}
+#else
+#define WAVE_LOCALE_FIX \
+{ \
+putenv(strdup("LANG=C")); \
+putenv(strdup("LC_NUMERIC=C")); \
+putenv(strdup("LC_COLLATE=C")); \
+putenv(strdup("LC_CTYPE=C")); \
+putenv(strdup("LC_ALL=C")); \
+}
+#endif
+
+#endif
