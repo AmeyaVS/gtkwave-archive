@@ -77,3 +77,8 @@ void 		ae2_read_close(AE2_HANDLE handle);
 #endif
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */

@@ -912,3 +912,8 @@ for(txidx=0;txidx<numfacs;txidx++)
 
 #endif
 /* ...of AET2_IS_PRESENT */
+
+/*
+ * $Id$
+ * $Log$
+ */
