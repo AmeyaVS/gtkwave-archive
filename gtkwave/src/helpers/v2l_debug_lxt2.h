@@ -87,3 +87,9 @@ void free_2(void *ptr);
 
 TimeType atoi_64(char *str);
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

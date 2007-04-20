@@ -25,3 +25,9 @@ extern int yyleng;
 const char *is_builtin_define (register const char *str, register unsigned int len);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

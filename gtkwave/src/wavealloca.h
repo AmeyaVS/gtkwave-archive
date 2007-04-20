@@ -23,3 +23,8 @@
 #define wave_alloca alloca
 #endif 
 
+/*
+ * $Id$
+ * $Log$
+ */
+

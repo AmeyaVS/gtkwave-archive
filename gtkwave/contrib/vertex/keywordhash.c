@@ -262,3 +262,9 @@ int verilog_keyword_code(const char *s, unsigned int len)
 const struct verilog_keyword *rc = check_identifier(s, len);
 return(rc ? rc->token : V_IDENTIFIER);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

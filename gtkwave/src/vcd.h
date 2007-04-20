@@ -127,3 +127,9 @@ void import_vcd_trace(nptr np);
 int vcd_keyword_code(const char *s, unsigned int len);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

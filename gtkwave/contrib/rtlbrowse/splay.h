@@ -37,3 +37,9 @@ ds_Tree * ds_insert(char *i, ds_Tree * t);
 ds_Tree * ds_delete(char *i, ds_Tree * t);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

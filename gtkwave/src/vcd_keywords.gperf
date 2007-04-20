@@ -45,3 +45,8 @@ const struct vcd_keyword *rc = check_identifier(s, len);
 return(rc ? rc->token : V_STRING);
 }
 
+/*
+ * $Id$
+ * $Log$
+ */
+

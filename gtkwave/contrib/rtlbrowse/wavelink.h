@@ -14,3 +14,9 @@ extern AE2_HANDLE ae2;
 #endif
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

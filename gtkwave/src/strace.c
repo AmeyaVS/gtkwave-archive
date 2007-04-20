@@ -1684,3 +1684,9 @@ if(timearray)
 	mprintf("!!\n");	/* mark end of strace region */
 	}
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

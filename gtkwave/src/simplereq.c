@@ -116,3 +116,9 @@ void simplereqbox(char *title, int width, char *default_text,
 
     gtk_widget_show(window);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

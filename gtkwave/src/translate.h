@@ -42,3 +42,9 @@ void install_file_filter(int which);
 void set_current_translate_file(char *name);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

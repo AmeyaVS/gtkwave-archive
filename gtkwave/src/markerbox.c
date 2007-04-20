@@ -208,3 +208,9 @@ void markerbox(char *title, GtkSignalFunc func)
     gtk_container_add (GTK_CONTAINER (window), table); /* need this table to keep ok/cancel buttons from stretching! */
     gtk_widget_show(window);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

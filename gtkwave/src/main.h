@@ -61,3 +61,9 @@ extern int possibly_use_rc_defaults;
 extern int stems_type;
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -119,3 +119,9 @@ is_builtin_define (str, len)
     }
   return 0;
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

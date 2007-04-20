@@ -165,3 +165,8 @@ void print_concat(struct i_primary *c, struct i_explist *e);
 
 #endif
 
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -72,3 +72,9 @@ if(busy)
 	while (gtk_events_pending()) gtk_main_iteration();
 	}
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -301,3 +301,9 @@ int 			lxt2_wr_emit_value_string(struct lxt2_wr_trace *lt, struct lxt2_wr_symbol
 int 			lxt2_wr_emit_value_bit_string(struct lxt2_wr_trace *lt, struct lxt2_wr_symbol *s, unsigned int row, char *value);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

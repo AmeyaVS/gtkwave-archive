@@ -25,3 +25,8 @@ extern struct ifdef_stack_t *ifdef_stack_top;
 
 #endif
 
+/*
+ * $Id$
+ * $Log$
+ */
+

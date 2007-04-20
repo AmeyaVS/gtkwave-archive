@@ -18,3 +18,9 @@ char *fgetmalloc_stripspaces(FILE *handle);
 extern int fgetmalloc_len;
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -288,3 +288,9 @@ return(tmpspace);
 
 #endif
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

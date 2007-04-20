@@ -181,3 +181,9 @@ extern int dual_id;
 extern int dual_race_lock;
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

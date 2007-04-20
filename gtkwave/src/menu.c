@@ -4416,3 +4416,8 @@ for(i=0;i<WV_MENU_NUMITEMS;i++)
 
 return(0);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */

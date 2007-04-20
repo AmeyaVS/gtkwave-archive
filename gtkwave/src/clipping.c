@@ -83,3 +83,9 @@ msk2|= (y2>ry2)<<3;
 
 return(!msk1 && !msk2); /* see if points are really inside */
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -3263,3 +3263,9 @@ wave_gdk_draw_line_flush(wavepixmap);
 tims.start+=shift_timebase;
 tims.end+=shift_timebase;
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

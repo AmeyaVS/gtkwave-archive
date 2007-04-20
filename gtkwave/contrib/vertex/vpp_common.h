@@ -124,3 +124,9 @@ int verilog_keyword_code(const char *s, unsigned int len);
 void parsecomment(void);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

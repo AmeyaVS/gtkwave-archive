@@ -2191,3 +2191,9 @@ print_mif_image(FILE * wave, gdouble px, gdouble py)
 	prc.fullpage = ps_fullpage;
 	print_image(&prc);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

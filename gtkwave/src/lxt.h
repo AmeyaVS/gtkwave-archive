@@ -55,3 +55,9 @@ void import_lxt_trace(nptr np);
 #define LXT_MMAP_MALLOC_BOUNDARY		(128*1024*1024)
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

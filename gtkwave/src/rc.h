@@ -22,3 +22,9 @@ int get_rgb_from_name(char *str);
 extern int rc_line_no;
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

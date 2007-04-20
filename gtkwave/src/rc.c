@@ -803,3 +803,9 @@ fclose(handle);
 errno=0;
 return;
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

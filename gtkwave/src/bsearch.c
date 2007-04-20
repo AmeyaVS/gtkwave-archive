@@ -216,3 +216,9 @@ if ((!ascii)||(!strlen(ascii))) return(NULL);
 rc=(struct symbol **)bsearch(ascii, facs, numfacs, sizeof(struct symbol *), compar_facs);
 if(rc) return(*rc); else return(NULL);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

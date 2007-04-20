@@ -281,3 +281,9 @@ int 			vzt_wr_emit_value_string(struct vzt_wr_trace *lt, struct vzt_wr_symbol *s
 int 			vzt_wr_emit_value_bit_string(struct vzt_wr_trace *lt, struct vzt_wr_symbol *s, unsigned int row, char *value);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

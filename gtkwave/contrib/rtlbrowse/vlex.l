@@ -14,6 +14,11 @@
  * 06apr06ajb
  */
 
+/*
+ * $Id$
+ * $Log$
+ */
+
 #define YY_INPUT(buf, result, max_size) \
    result = v_preproc(buf, max_size);
 

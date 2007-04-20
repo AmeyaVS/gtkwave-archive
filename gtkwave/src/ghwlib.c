@@ -1802,3 +1802,9 @@ ghw_disp_types (struct ghw_handler *h)
   for (i = 0; i < h->nbr_types; i++)
     ghw_disp_type (h, h->types[i]);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

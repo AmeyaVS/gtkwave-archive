@@ -141,3 +141,9 @@ TimeType vcd_main(char *fname, char *lxname, int dostats, int doclock, int docha
 void append_vcd_slisthier(char *str);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

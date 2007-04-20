@@ -2179,3 +2179,9 @@ if(lt)
 	sprintf(lt->zmode, "wb%d", depth);
 	}
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -1,4 +1,10 @@
 #header << 
+
+/*
+ * $Id$
+ * $Log$
+ */
+
 #include "attrib.h"
 #include "vpp_common.h"
 

@@ -6,7 +6,7 @@
  * With AHPCRC, University of Minnesota
  * ANTLR Version 1.33MR33
  *
- *   ..\bin\antlr -gh -k 2 -gt sor.g
+ *   ../bin/antlr -gh -k 2 -gt sor.g
  *
  */
 

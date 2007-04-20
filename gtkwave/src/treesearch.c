@@ -25,3 +25,8 @@ void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data)
 /* nothing */
 }
 
+/*
+ * $Id$
+ * $Log$
+ */
+

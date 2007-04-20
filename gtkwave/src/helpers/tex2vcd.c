@@ -469,3 +469,9 @@ fini:
 fclose(handle);
 exit(0);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

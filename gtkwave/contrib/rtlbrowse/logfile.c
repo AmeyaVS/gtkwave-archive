@@ -1312,3 +1312,9 @@ free_vars:
 	text_root = text_curr;
 	}
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

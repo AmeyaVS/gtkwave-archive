@@ -1527,3 +1527,9 @@ if(stems_type != WAVE_ANNO_NONE)
 	}
 #endif
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

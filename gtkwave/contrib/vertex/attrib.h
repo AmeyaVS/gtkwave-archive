@@ -35,3 +35,8 @@ extern int do_not_translate, do_not_translate_mask;
 
 #endif
 
+/*
+ * $Id$
+ * $Log$
+ */
+

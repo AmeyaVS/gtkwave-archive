@@ -617,3 +617,8 @@ gtk_container_add(GTK_CONTAINER(frame),table);
 return(frame);
 }
    
+/*
+ * $Id$
+ * $Log$
+ */
+

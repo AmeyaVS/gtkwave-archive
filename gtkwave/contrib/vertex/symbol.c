@@ -67,4 +67,8 @@ if(!sym)
 return(sym); 
 }
 
+/*
+ * $Id$
+ * $Log$
+ */
 

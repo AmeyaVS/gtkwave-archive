@@ -315,3 +315,8 @@ extern int hier_max_level;
 char *attempt_vecmatch(char *s1, char *s2);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */

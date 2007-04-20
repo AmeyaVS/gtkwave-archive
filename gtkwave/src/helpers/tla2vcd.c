@@ -556,3 +556,9 @@ main( int argc, char *argv[] )
   printf( "[*] Done (%d channels %d samples)\n", chtot, edgetot );
   exit( 0 );
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

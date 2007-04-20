@@ -5890,3 +5890,9 @@ static void dummy_compilation_unit(void)
 {
 /* nothing */
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -205,3 +205,8 @@ while((ch=*(str++)))
 return(nflag?(-val):val);
 }
 
+/*
+ * $Id$
+ * $Log$
+ */
+

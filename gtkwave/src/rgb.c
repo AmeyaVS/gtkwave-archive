@@ -841,3 +841,9 @@ if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(cha
 	return(rc&0x00ffffff);
 	}
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

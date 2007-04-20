@@ -171,5 +171,8 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_widget_show(window);
 }
 
-
+/*
+ * $Id$
+ * $Log$
+ */
 

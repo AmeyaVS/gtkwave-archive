@@ -24,4 +24,8 @@ extern vptr *vmax_compare_index;
 
 #endif
 
+/*
+ * $Id$
+ * $Log$
+ */
 

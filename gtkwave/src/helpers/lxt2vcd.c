@@ -377,3 +377,9 @@ free(lxname);
 
 return(rc);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

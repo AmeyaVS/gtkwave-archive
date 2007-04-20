@@ -18,3 +18,9 @@
 int wave_lineclip(int *coords, int *rect);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

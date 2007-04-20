@@ -2810,3 +2810,9 @@ wave_info_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &wave_info_mask,
 wave_alert_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &wave_alert_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)wave_alert);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

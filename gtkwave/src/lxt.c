@@ -2346,3 +2346,9 @@ np->head.next = histent_head;
 np->curr = histent_tail;
 np->numhist++;
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

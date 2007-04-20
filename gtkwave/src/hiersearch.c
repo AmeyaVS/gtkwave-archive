@@ -1016,3 +1016,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     refresh_tree(current_tree);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

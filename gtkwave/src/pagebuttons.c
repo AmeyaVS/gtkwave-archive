@@ -146,3 +146,8 @@ gtk_widget_show(table2);
 return(table);
 }
    
+/*
+ * $Id$
+ * $Log$
+ */
+

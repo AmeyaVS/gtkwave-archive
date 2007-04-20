@@ -1060,3 +1060,9 @@ void searchbox(char *title, GtkSignalFunc func)
 
     if(strlen(searchbox_text)) enter_callback(entry,NULL);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -120,3 +120,9 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
 
     gtk_widget_show(window);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

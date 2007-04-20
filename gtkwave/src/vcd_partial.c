@@ -2383,4 +2383,8 @@ if(partial_vcd)
 while (gtk_events_pending()) gtk_main_iteration();
 }
 
+/*
+ * $Id$
+ * $Log$
+ */
 

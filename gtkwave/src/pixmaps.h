@@ -55,3 +55,9 @@ extern GdkBitmap *wave_splash_mask;
 #endif
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

@@ -1975,3 +1975,9 @@ free(vname); free(lxname);
 
 return(0);
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

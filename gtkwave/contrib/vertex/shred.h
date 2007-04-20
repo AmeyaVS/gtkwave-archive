@@ -32,3 +32,9 @@ void push_exp_now(void);
 void pop_exp_now(void);
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ */
+

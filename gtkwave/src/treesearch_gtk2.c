@@ -1527,3 +1527,9 @@ void dnd_setup(GtkWidget *w)
                 );
 	}
 }
+
+/*
+ * $Id$
+ * $Log$
+ */
+

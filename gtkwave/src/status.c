@@ -161,3 +161,8 @@ gtk_tooltips_set_tip_2(tooltips, text, "Status Window", NULL);
 return(table);
 }
    
+/*
+ * $Id$
+ * $Log$
+ */
+

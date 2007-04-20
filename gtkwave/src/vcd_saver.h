@@ -24,3 +24,8 @@ extern char *output_hier(char *name);
 
 #endif
 
+/*
+ * $Id$
+ * $Log$
+ */
+
