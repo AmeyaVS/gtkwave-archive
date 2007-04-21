@@ -17,6 +17,9 @@
 /*
 * $Id$
 * $Log$
+* Revision 1.1  2007/04/21 21:08:51  gtkwave
+* changed from vertex to vermin
+*
 * Revision 1.2  2007/04/20 02:08:11  gtkwave
 * initial release
 *
