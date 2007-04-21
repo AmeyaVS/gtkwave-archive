@@ -1,10 +1,10 @@
-.TH "VERTEX" "1" "0.1.1" "Anthony Bybell" "Verilog Compilation"
+.TH "VERMIN" "1" "0.1.1" "Anthony Bybell" "Verilog Compilation"
 .SH "NAME"
 .LP 
-vertex \- Parses and processes Verilog HDL files
+vermin \- Parses and processes Verilog HDL files
 .SH "SYNTAX"
 .LP 
-vertex [\fIVERILOGFILE\fP]... [\fIoption\fP]... 
+vermin [\fIVERILOGFILE\fP]... [\fIoption\fP]... 
 .SH "DESCRIPTION"
 .LP 
 Parses Verilog HDL files for use by other tools.  The Verilog grammar used is 1364-1995.
@@ -36,7 +36,8 @@ Add \fIdirname\fP to include search path.
 Add \fIext\fP to filename when searching for files.
 .TP 
 \fB\-pragma \fIname\fP\fR
-Add \fIname\fP (synopsys, verilint, vertex) to accepted pragmas.
+Add \fIname\fP (synopsys, verilint, vertex) to accepted pragmas.  Note that "vertex" is for legacy reasons; the
+executable name has since changed to avoid name clashes with an existing 3D modeling program.
 .TP 
 \fB\-y \fIdirname\fP\fR
 Add directory \fIdirname\fP to source input path.
@@ -53,7 +54,7 @@ directory and that the library directory is also the current working directory. 
 enabled to generate a stems file for use with other tools.  Various compile-time defines are also defined
 on the command line.
 .TP 
-vertex XYZ450AC6V1.v \-emitstems \-y . \+incdir+. \+libext+.v \-DUTLB_OutputData=0 \-D__PORTALS_VERILOG__ 
+vermin XYZ450AC6V1.v \-emitstems \-y . \+incdir+. \+libext+.v \-DUTLB_OutputData=0 \-D__PORTALS_VERILOG__ 
 .SH "AUTHORS"
 .LP 
 Anthony Bybell <bybell@nc.rr.com>
