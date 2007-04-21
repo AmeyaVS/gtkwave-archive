@@ -58,9 +58,9 @@ pccts:
 	@echo "       PCCTS 1.33MR33 installation complete"  # MRXXX
 
 clean:
-	(cd ./antlr; $(MAKE) -s clean)
+	(cd ./antlr; $(MAKE) -s scrub)
 	(cd ./dlg; $(MAKE) -s clean)
-	(cd ./sorcerer; $(MAKE) -s clean)
+	(cd ./sorcerer; $(MAKE) -s scrub)
 	(cd ./sorcerer/lib; $(MAKE) -s clean)
 	(cd ./support/genmk; $(MAKE) -s clean)
 	(cd ./bin ; rm -f antlr dlg genmk sor)
