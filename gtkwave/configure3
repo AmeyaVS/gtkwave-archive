@@ -127,12 +127,12 @@ cd ../../
 
 if [ `uname` = "AIX" ]
 	then
-	echo "AIX detected, patching cc to gcc in Makefile for pccts and vertex compiles..."
+	echo "AIX detected, patching cc to gcc in Makefile for pccts and vermin compiles..."
 	cd contrib/pccts
 	cat Makefile | sed 's/^CC=cc/CC=gcc/' >Makefile.tmp
 	mv Makefile.tmp Makefile
 	cd ../../
-	cd contrib/vertex
+	cd contrib/vermin
 	cat Makefile | sed 's/^CC=cc/CC=gcc/' >Makefile.tmp
 	mv Makefile.tmp Makefile
 	cd ../../

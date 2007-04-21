@@ -3,7 +3,7 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 mandir = @mandir@
 
-all:	config.log bin/gtkwave bin/mvl2vcd bin/tex2vcd bin/mvl2lxt bin/vcd2lxt bin/vcd2lxt2 bin/lxt2vcd bin/vcd2vzt bin/vzt2vcd bin/vztminer bin/lxt2miner bin/tla2vcd contrib/rtlbrowse/rtlbrowse contrib/vertex/vertex bin/shmidcat
+all:	config.log bin/gtkwave bin/mvl2vcd bin/tex2vcd bin/mvl2lxt bin/vcd2lxt bin/vcd2lxt2 bin/lxt2vcd bin/vcd2vzt bin/vzt2vcd bin/vztminer bin/lxt2miner bin/tla2vcd contrib/rtlbrowse/rtlbrowse contrib/vermin/vermin bin/shmidcat
 
 
 config.log:
@@ -13,7 +13,7 @@ clean:
 	(cd src;make clean;cd helpers;make clean)
 	(cd contrib/pccts;make clean)
 	(cd contrib/rtlbrowse;make clean)
-	(cd contrib/vertex;make clean)
+	(cd contrib/vermin;make clean)
 
 install:
 	cd bin;\
@@ -33,7 +33,7 @@ install:
 	install -m 0755 -c tla2vcd  $(bindir)/tla2vcd;\
 	install -m 0755 -c ghwdump  $(bindir)/ghwdump;\
 	install -m 0755 -c rtlbrowse  $(bindir)/rtlbrowse;\
-	install -m 0755 -c vertex  $(bindir)/vertex;\
+	install -m 0755 -c vermin  $(bindir)/vermin;\
 	install -m 0755 -c shmidcat  $(bindir)/shmidcat;\
 	cd ../man;\
 	install -d $(mandir)/man1;\
@@ -51,7 +51,7 @@ install:
 	install -m 0644 -c lxt2miner.1 $(mandir)/man1/lxt2miner.1;\
 	install -m 0644 -c tla2vcd.1 $(mandir)/man1/tla2vcd.1;\
 	install -m 0644 -c ghwdump.1 $(mandir)/man1/ghwdump.1;\
-	install -m 0644 -c vertex.1 $(mandir)/man1/vertex.1;\
+	install -m 0644 -c vermin.1 $(mandir)/man1/vermin.1;\
 	install -m 0644 -c shmidcat.1 $(mandir)/man1/shmidcat.1;\
 	install -m 0644 -c rtlbrowse.1 $(mandir)/man1/rtlbrowse.1;\
 	install -d $(mandir)/man5;\
@@ -64,7 +64,7 @@ dist:
 	rm -f Makefile src/Makefile src/helpers/Makefile src/libz/Makefile src/libbz2/Makefile
 	rm -f src/Makefile.in contrib/rtlbrowse/Makefile.in contrib/rtlbrowse/Makefile
 	rm -f contrib/pccts/Makefile contrib/pccts/antlr/Makefile contrib/pccts/dlg/Makefile
-	rm -f contrib/pccts/sorcerer/Makefile contrib/pccts/support/genmk/Makefile
+	rm -f contrib/pccts/sorcerer/Makefile contrib/pccts/support/genmk/Makefile contrib/vermin/Makefile
 	./execlean.sh
 
 bin/gtkwave:
@@ -110,8 +110,8 @@ bin/shmidcat:
 contrib/rtlbrowse/rtlbrowse:
 	cd contrib/rtlbrowse; make all
 
-contrib/vertex/vertex: contrib/pccts/bin/antlr
-	cd contrib/vertex; make all
+contrib/vermin/vermin: contrib/pccts/bin/antlr
+	cd contrib/vermin; make all
 
 contrib/pccts/bin/antlr:
 	cd contrib/pccts; make all

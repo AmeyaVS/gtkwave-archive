@@ -8177,7 +8177,7 @@ _ACEOF
 fi
 
 
-                                                                                                                        ac_config_files="$ac_config_files Makefile contrib/pccts/Makefile contrib/pccts/antlr/Makefile contrib/pccts/dlg/Makefile contrib/pccts/sorcerer/Makefile contrib/pccts/support/genmk/Makefile contrib/rtlbrowse/Makefile contrib/vertex/Makefile src/Makefile src/helpers/Makefile src/libbz2/Makefile src/libz/Makefile"
+                                                                                                                        ac_config_files="$ac_config_files Makefile contrib/pccts/Makefile contrib/pccts/antlr/Makefile contrib/pccts/dlg/Makefile contrib/pccts/sorcerer/Makefile contrib/pccts/support/genmk/Makefile contrib/rtlbrowse/Makefile contrib/vermin/Makefile src/Makefile src/helpers/Makefile src/libbz2/Makefile src/libz/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -8711,7 +8711,7 @@ do
   "contrib/pccts/sorcerer/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/pccts/sorcerer/Makefile" ;;
   "contrib/pccts/support/genmk/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/pccts/support/genmk/Makefile" ;;
   "contrib/rtlbrowse/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/rtlbrowse/Makefile" ;;
-  "contrib/vertex/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/vertex/Makefile" ;;
+  "contrib/vermin/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/vermin/Makefile" ;;
   "src/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
   "src/helpers/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/helpers/Makefile" ;;
   "src/libbz2/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/libbz2/Makefile" ;;
