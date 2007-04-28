@@ -67,6 +67,10 @@ dist:
 	rm -f contrib/pccts/sorcerer/Makefile contrib/pccts/support/genmk/Makefile contrib/vermin/Makefile
 	./execlean.sh
 
+tarball:
+	make dist
+	./distro_from_cvs.sh
+
 bin/gtkwave:
 	# Compiling GTKWave...
 	cd src;make all
