@@ -566,7 +566,7 @@ for(yytext[len++]=ch;;yytext[len++]=ch)
 		yytext=(char *)realloc_2(yytext, (T_MAX_STR=T_MAX_STR*2)+1);
 		}
 	ch=getch_patched();
-	if(ch<0) break;
+	if(ch<0) { free_2(varsplit); varsplit=NULL; break; }
 	if((ch==':')||(ch==']'))
 		{
 		var_prevch=ch;
@@ -1065,7 +1065,11 @@ for(;;)
 			struct vcdsymbol *v=NULL;
 
 			var_prevch=0;
-			varsplit=NULL;
+                        if(varsplit)
+                                {
+                                free_2(varsplit);
+                                varsplit=NULL;
+                                }
 			vtok=get_vartoken(1);
 			if(vtok>V_PORT) goto bail;
 
@@ -2106,6 +2110,11 @@ build_slisthier();
 time_vlist = vlist_create(sizeof(TimeType), 0);
 
 vcd_parse();
+if(varsplit)
+	{
+        free_2(varsplit);
+        varsplit=NULL;
+        }
 
 vlist_freeze(&time_vlist);
 vlist_emit_finalize();
@@ -2526,6 +2535,10 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/04/29 04:13:49  gtkwave
+ * changed anon union defined in struct Node to a named one as anon unions
+ * are a gcc extension
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

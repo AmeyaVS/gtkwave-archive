@@ -273,3 +273,4 @@
 		Open Office 2 as it was causing .odt docs corruption.
 3.0.28	28apr07	Changed anonymous union in struct Node as it is a
 		gcc extension.
+		Fixed some vcd parser memory leaks found by Valgrind.

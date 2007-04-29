@@ -476,7 +476,7 @@ for(yytext[len++]=ch;;yytext[len++]=ch)
                 yytext=(char *)realloc_2(yytext, (T_MAX_STR=T_MAX_STR*2)+1);
                 }
         ch=getch_patched();
-        if(ch<0) break;
+        if(ch<0) { free_2(varsplit); varsplit=NULL; break; }
         if((ch==':')||(ch==']'))
                 {
                 var_prevch=ch;
@@ -1103,7 +1103,11 @@ for(;;)
 			struct vcdsymbol *v=NULL;
 
 			var_prevch=0;
-			varsplit=NULL;
+			if(varsplit)
+				{
+				free_2(varsplit);
+				varsplit=NULL;
+				}
 			vtok=get_vartoken(1);
 			if(vtok>V_PORT) goto bail;
 
@@ -1654,6 +1658,11 @@ sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 printf("\nConverting VCD File '%s' to LXT file '%s'...\n\n",(vcd_handle!=stdin)?fname:"from stdin", lxname);
 build_slisthier();
 vcd_parse(linear);
+if(varsplit) 
+	{ 
+	free_2(varsplit); 
+	varsplit=NULL; 
+	}
 
 add_tail_histents();
 
@@ -1918,5 +1927,8 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:19  gtkwave
+ * initial release
+ *
  */
 

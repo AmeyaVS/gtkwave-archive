@@ -489,7 +489,7 @@ for(yytext[len++]=ch;;yytext[len++]=ch)
 		yytext=(char *)realloc_2(yytext, (T_MAX_STR=T_MAX_STR*2)+1);
 		}
 	ch=getch_patched();
-	if(ch<0) break;
+	if(ch<0) { free_2(varsplit); varsplit=NULL; break; }
 	if((ch==':')||(ch==']'))
 		{
 		var_prevch=ch;
@@ -1158,7 +1158,11 @@ for(;;)
 			struct vcdsymbol *v=NULL;
 
 			var_prevch=0;
-			varsplit=NULL;
+			if(varsplit)
+				{
+				free_2(varsplit);
+				varsplit=NULL;
+				}
 			vtok=get_vartoken(1);
 			if(vtok>V_PORT) goto bail;
 
@@ -2183,6 +2187,12 @@ build_slisthier();
 vcd_preserve_glitches = 1; /* splicing dictates that we override */
 while(!header_over) { vcd_parse(); }
 
+if(varsplit)
+	{
+	free_2(varsplit);
+	varsplit=NULL;
+	}
+
 if((!sorted)&&(!indexed))
 	{
 	fprintf(stderr, "No symbols in VCD file..is it malformed?  Exiting!\n");
@@ -2386,5 +2396,8 @@ while (gtk_events_pending()) gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:17  gtkwave
+ * initial release
+ *
  */
 
