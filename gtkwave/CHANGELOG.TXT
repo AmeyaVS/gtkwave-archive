@@ -267,5 +267,9 @@
 		Commented out GTK_CAN_FOCUS for scollbars in wavewindow
 		as it was causing rendering problems with newer versions
 		of GTK.
-3.0.27	21apr07	Renamed vertex to vermin to avoid name clashes with
+3.0.27	27apr07	Renamed vertex to vermin to avoid name clashes with
 		existing 3D "vertex" package on debian systems.
+		Reverted back to using Open Office 2 Beta rather than
+		Open Office 2 as it was causing .odt docs corruption.
+3.0.28	28apr07	Changed anonymous union in struct Node as it is a
+		gcc extension.

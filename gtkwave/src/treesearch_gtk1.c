@@ -325,7 +325,7 @@ if(is_lx2)
                                 {
                                 while(t)
                                         {
-                                        if(t->n->mvlfac)
+                                        if(t->n->mv.mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -336,7 +336,7 @@ if(is_lx2)
                         }
                         else
                         {
-                        if(s->n->mvlfac)
+                        if(s->n->mv.mvlfac)
                                 {
                                 lx2_set_fac_process_mask(s->n);
                                 pre_import++;
@@ -437,7 +437,7 @@ if(is_lx2)
                                 {
                                 while(t)
                                         {
-                                        if(t->n->mvlfac)
+                                        if(t->n->mv.mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -448,7 +448,7 @@ if(is_lx2)
                         }
                         else
                         {
-                        if(s->n->mvlfac)
+                        if(s->n->mv.mvlfac)
                                 {
                                 lx2_set_fac_process_mask(s->n);
                                 pre_import++;
@@ -554,7 +554,7 @@ if(is_lx2)
                                 {
                                 while(t)
                                         {
-                                        if(t->n->mvlfac)
+                                        if(t->n->mv.mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -565,7 +565,7 @@ if(is_lx2)
                         }
                         else
                         {
-                        if(s->n->mvlfac)
+                        if(s->n->mv.mvlfac)
                                 {
                                 lx2_set_fac_process_mask(s->n);
                                 pre_import++;
@@ -789,5 +789,8 @@ void treebox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:17  gtkwave
+ * initial release
+ *
  */
 

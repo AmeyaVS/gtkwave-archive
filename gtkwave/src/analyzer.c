@@ -251,7 +251,7 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
     int i;
 
     if(!nd) return(0); /* passed it a null node ptr by mistake */
-    if(nd->mvlfac) import_trace(nd);
+    if(nd->mv.mvlfac) import_trace(nd);
 
     signalwindow_width_dirty=1;
     
@@ -1066,5 +1066,8 @@ UpdateTracesVisible();
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:11  gtkwave
+ * initial release
+ *
  */
 

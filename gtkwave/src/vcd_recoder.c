@@ -354,48 +354,48 @@ while(v)
 	{
 	nptr n = v->narray[0];
 
-	if(n->mvlfac_vlist) 
+	if(n->mv.mvlfac_vlist) 
 		{
-		vlist_freeze(&n->mvlfac_vlist);
+		vlist_freeze(&n->mv.mvlfac_vlist);
 		}
 		else
 		{
-		n->mvlfac_vlist = vlist_create(sizeof(char), 0);
+		n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
 
 		if((vprime=bsearch_vcd(v->id, strlen(v->id)))==v) /* hash mish means dup net */
 			{
 			switch(v->vartype)
 				{
 				case V_REAL:
-		                          	vlist_emit_uv32(&n->mvlfac_vlist, 'R');
-		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
-		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
-						vlist_emit_uv32(&n->mvlfac_vlist, 0);
-						vlist_emit_string(&n->mvlfac_vlist, "NaN");
+		                          	vlist_emit_uv32(&n->mv.mvlfac_vlist, 'R');
+		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
+		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
+						vlist_emit_uv32(&n->mv.mvlfac_vlist, 0);
+						vlist_emit_string(&n->mv.mvlfac_vlist, "NaN");
 						break;
 
 				case V_STRING:
-						vlist_emit_uv32(&n->mvlfac_vlist, 'S');
-		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
-		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
-						vlist_emit_uv32(&n->mvlfac_vlist, 0);
-						vlist_emit_string(&n->mvlfac_vlist, "UNDEF");
+						vlist_emit_uv32(&n->mv.mvlfac_vlist, 'S');
+		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
+		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
+						vlist_emit_uv32(&n->mv.mvlfac_vlist, 0);
+						vlist_emit_string(&n->mv.mvlfac_vlist, "UNDEF");
 						break;
 	
 				default:
 					if(v->size==1)
 						{
-	                                        vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)'0');
-	                                        vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
-						vlist_emit_uv32(&n->mvlfac_vlist, RCV_X);
+	                                        vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)'0');
+	                                        vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
+						vlist_emit_uv32(&n->mv.mvlfac_vlist, RCV_X);
 						}
 						else
 						{
-		                                vlist_emit_uv32(&n->mvlfac_vlist, 'B');
-		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
-		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
-						vlist_emit_uv32(&n->mvlfac_vlist, 0);
-						vlist_emit_mvl9_string(&n->mvlfac_vlist, "x");
+		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, 'B');
+		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
+		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
+						vlist_emit_uv32(&n->mv.mvlfac_vlist, 0);
+						vlist_emit_mvl9_string(&n->mv.mvlfac_vlist, "x");
 						}
 					break;
 				}
@@ -759,11 +759,11 @@ switch((typ = yytext[0]))
 				unsigned int time_delta;
 				unsigned int rcv;
 
-				if(!n->mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
+				if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 					{
-					n->mvlfac_vlist = vlist_create(sizeof(char), 0);
-					vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)'0'); /* represents single bit routine for decompression */
-					vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
+					n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
+					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)'0'); /* represents single bit routine for decompression */
+					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
 					}
 
 				time_delta = time_vlist_count - (unsigned int)n->numhist;
@@ -784,7 +784,7 @@ switch((typ = yytext[0]))
 					default:		rcv = RCV_D | (time_delta<<4); break;
 					}
 
-				vlist_emit_uv32(&n->mvlfac_vlist, rcv);
+				vlist_emit_uv32(&n->mv.mvlfac_vlist, rcv);
                                 }
                         }
                         else
@@ -818,10 +818,10 @@ process_binary:
 			nptr n = v->narray[0];
 			unsigned int time_delta;
 
-			if(!n->mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
+			if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 				{
 				unsigned char typ2 = toupper(typ);
-				n->mvlfac_vlist = vlist_create(sizeof(char), 0);
+				n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
 
 				if(v->vartype!=V_REAL) 
 					{
@@ -835,32 +835,32 @@ process_binary:
 						}
 					}
 
-				vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)toupper(typ2)); /* B/R/P/S for decompress */
-				vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
-				vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
+				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)toupper(typ2)); /* B/R/P/S for decompress */
+				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
+				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
 				}
 
 			time_delta = time_vlist_count - (unsigned int)n->numhist;
 			n->numhist = time_vlist_count;				
 
-			vlist_emit_uv32(&n->mvlfac_vlist, time_delta);
+			vlist_emit_uv32(&n->mv.mvlfac_vlist, time_delta);
 
 			if((typ=='b')||(typ=='B'))
 				{
 				if(v->vartype!=V_REAL)
 					{
-					vlist_emit_mvl9_string(&n->mvlfac_vlist, vector);
+					vlist_emit_mvl9_string(&n->mv.mvlfac_vlist, vector);
 					}
 					else
 					{
-					vlist_emit_string(&n->mvlfac_vlist, vector);
+					vlist_emit_string(&n->mv.mvlfac_vlist, vector);
 					}
 				}
 				else
 				{
 				if(v->vartype == V_REAL)
 					{
-					vlist_emit_string(&n->mvlfac_vlist, vector);
+					vlist_emit_string(&n->mv.mvlfac_vlist, vector);
 					}
 					else
 					{
@@ -879,7 +879,7 @@ process_binary:
 						}					
 
 					bit_term:
-					vlist_emit_mvl9_string(&n->mvlfac_vlist, bits);
+					vlist_emit_mvl9_string(&n->mv.mvlfac_vlist, bits);
 					}
 				}
                         }
@@ -2162,7 +2162,7 @@ void vcd_import_masked(void)
 
 void vcd_set_fac_process_mask(nptr np)
 {
-if(np && np->mvlfac_vlist)
+if(np && np->mv.mvlfac_vlist)
 	{
 	import_vcd_trace(np);
 	}
@@ -2170,7 +2170,7 @@ if(np && np->mvlfac_vlist)
 
 void import_vcd_trace(nptr np)
 {
-struct vlist_t *v = np->mvlfac_vlist;
+struct vlist_t *v = np->mv.mvlfac_vlist;
 int len = 1;
 int list_size;
 unsigned char vlist_type;
@@ -2508,7 +2508,7 @@ else if(vlist_type == '!') /* error in loading */
 		import_vcd_trace(n2);
 
 		vlist_destroy(v);
-		np->mvlfac_vlist = NULL;
+		np->mv.mvlfac_vlist = NULL;
 
 		np->head = n2->head;
 		np->curr = n2->curr;
@@ -2520,11 +2520,14 @@ else if(vlist_type == '!') /* error in loading */
 	}
 
 vlist_destroy(v);
-np->mvlfac_vlist = NULL;
+np->mv.mvlfac_vlist = NULL;
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:17  gtkwave
+ * initial release
+ *
  */
 

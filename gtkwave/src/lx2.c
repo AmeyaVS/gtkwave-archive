@@ -225,7 +225,7 @@ for(i=0;i<numfacs;i++)
 
 	n=&node_block[i];
         n->nname=s->name;
-        n->mvlfac = mvlfacs+i;
+        n->mv.mvlfac = mvlfacs+i;
 	mvlfacs[i].working_node = n;
 
 	if((f->len>1)||(f->flags&&(LXT2_RD_SYM_F_DOUBLE|LXT2_RD_SYM_F_STRING)))
@@ -492,7 +492,7 @@ memcpy(&np->head, &resolve->head, sizeof(struct HistEnt));
 np->curr = resolve->curr;
 np->harray = resolve->harray;
 np->numhist = resolve->numhist;
-np->mvlfac=NULL;
+np->mv.mvlfac=NULL;
 }
 
 
@@ -518,15 +518,15 @@ switch(is_lx2)
 	default: break; /* fallthrough */
 	}
 
-if(!(f=np->mvlfac)) return;	/* already imported */
+if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
 txidx = f - mvlfacs;
-if(np->mvlfac->flags&LXT2_RD_SYM_F_ALIAS) 
+if(np->mv.mvlfac->flags&LXT2_RD_SYM_F_ALIAS) 
 	{
 	txidx = lxt2_rd_get_alias_root(lx2, txidx);
 	np = mvlfacs[txidx].working_node;
 
-	if(!(f=np->mvlfac)) 
+	if(!(f=np->mv.mvlfac)) 
 		{
 		lx2_resolver(nold, np);
 		return;	/* already imported */
@@ -536,7 +536,7 @@ if(np->mvlfac->flags&LXT2_RD_SYM_F_ALIAS)
 fprintf(stderr, "Import: %s\n", np->nname);
 
 /* new stuff */
-len = np->mvlfac->len;
+len = np->mv.mvlfac->len;
 
 if(f->array_height <= 1) /* sorry, arrays not supported, but lx2 doesn't support them yet either */
 	{
@@ -601,7 +601,7 @@ np->numhist=lx2_table[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
 memset(lx2_table+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 np->curr = histent_tail;
-np->mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
+np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
 
 if(nold!=np)
 	{
@@ -628,19 +628,19 @@ switch(is_lx2)
         default: break; /* fallthrough */
         }
 
-if(!(f=np->mvlfac)) return;	/* already imported */
+if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
 txidx = f-mvlfacs;
 
-if(np->mvlfac->flags&LXT2_RD_SYM_F_ALIAS) 
+if(np->mv.mvlfac->flags&LXT2_RD_SYM_F_ALIAS) 
 	{
 	txidx = lxt2_rd_get_alias_root(lx2, txidx);
 	np = mvlfacs[txidx].working_node;
 
-	if(!(np->mvlfac)) return;	/* already imported */
+	if(!(np->mv.mvlfac)) return;	/* already imported */
 	}
 
-if(np->mvlfac->array_height <= 1) /* sorry, arrays not supported, but lx2 doesn't support them yet either */
+if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but lx2 doesn't support them yet either */
 	{
 	lxt2_rd_set_fac_process_mask(lx2, txidx);
 	lx2_table[txidx].np = np;
@@ -748,7 +748,7 @@ for(txidx=0;txidx<numfacs;txidx++)
 		memset(lx2_table+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 		np->curr = histent_tail;
-		np->mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
+		np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
 		lxt2_rd_clr_fac_process_mask(lx2, txidx);
 		}
 	}
@@ -757,5 +757,8 @@ for(txidx=0;txidx<numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:13  gtkwave
+ * initial release
+ *
  */
 

@@ -566,7 +566,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mvlfac) import_trace(n[i]);
+		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -682,7 +682,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mvlfac) import_trace(n[i]);
+		if(n[i]->mv.mvlfac) import_trace(n[i]);
 
 		b->attribs[i].shift = ba[i].shift;
 		b->attribs[i].flags = ba[i].flags;
@@ -733,7 +733,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mvlfac) import_trace(n[i]);
+		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -829,7 +829,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mvlfac) import_trace(n[i]);
+		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -1027,7 +1027,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mvlfac) import_trace(n[i]);
+		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -1585,7 +1585,7 @@ int offset, len;
 eptr rc=NULL;
 exptr exp;
 
-if(n->mvlfac) import_trace(n);
+if(n->mv.mvlfac) import_trace(n);
 
 DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
 if(!n->ext)
@@ -1769,7 +1769,7 @@ char *nam;
 int offset, len;
 exptr exp;
 
-if(n->mvlfac) import_trace(n);
+if(n->mv.mvlfac) import_trace(n);
 
 DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
 if(!n->ext)
@@ -2795,5 +2795,8 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:11  gtkwave
+ * initial release
+ *
  */
 

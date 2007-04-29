@@ -250,7 +250,7 @@ if(is_lx2)
 			{
 			if((!s->vec_root)||(!autocoalesce))
 				{
-	                        if(s->n->mvlfac)
+	                        if(s->n->mv.mvlfac)
 	                                {
 	                                lx2_set_fac_process_mask(s->n);
 	                                pre_import++;
@@ -261,7 +261,7 @@ if(is_lx2)
 				t=s->vec_root;
 				while(t)
 					{
-                                        if(t->n->mvlfac)
+                                        if(t->n->mv.mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -391,7 +391,7 @@ if(is_lx2)
 			{
 			if((!s->vec_root)||(!autocoalesce))
 				{
-	                        if(s->n->mvlfac)
+	                        if(s->n->mv.mvlfac)
 	                                {
 	                                lx2_set_fac_process_mask(s->n);
 	                                pre_import++;
@@ -402,7 +402,7 @@ if(is_lx2)
 				t=s->vec_root;
 				while(t)
 					{
-                                        if(t->n->mvlfac)
+                                        if(t->n->mv.mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -536,7 +536,7 @@ if(is_lx2)
 			{
 			if((!s->vec_root)||(!autocoalesce))
 				{
-	                        if(s->n->mvlfac)
+	                        if(s->n->mv.mvlfac)
 	                                {
 	                                lx2_set_fac_process_mask(s->n);
 	                                pre_import++;
@@ -547,7 +547,7 @@ if(is_lx2)
 				t=s->vec_root;
 				while(t)
 					{
-                                        if(t->n->mvlfac)
+                                        if(t->n->mv.mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -1064,5 +1064,8 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:17  gtkwave
+ * initial release
+ *
  */
 

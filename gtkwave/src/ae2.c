@@ -414,7 +414,7 @@ for(i=0;i<numfacs;i++)
 
         n=(struct Node *)calloc_2(1,sizeof(struct Node));
         n->nname=s->name;
-        n->mvlfac = (struct fac *)(fr+match_idx); /* to keep from having to allocate duplicate mvlfac struct */
+        n->mv.mvlfac = (struct fac *)(fr+match_idx); /* to keep from having to allocate duplicate mvlfac struct */
 					          /* use the info in the FACREF array instead                */
 	if(fr[match_idx].length>1)
 		{
@@ -732,7 +732,7 @@ int len, i;
 FACREF *f;
 int txidx;
 
-if(!(f=(FACREF *)(np->mvlfac))) return;	/* already imported */
+if(!(f=(FACREF *)(np->mv.mvlfac))) return;	/* already imported */
 
 txidx = f - fr;
 
@@ -800,7 +800,7 @@ np->numhist=lx2_table[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
 memset(lx2_table+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 np->curr = histent_tail;
-np->mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
+np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
 }
 
 
@@ -812,7 +812,7 @@ void ae2_set_fac_process_mask(nptr np)
 FACREF *f;
 int txidx;
 
-if(!(f=(FACREF *)(np->mvlfac))) return;	/* already imported */
+if(!(f=(FACREF *)(np->mv.mvlfac))) return;	/* already imported */
 
 txidx = f - fr;
 
@@ -904,7 +904,7 @@ for(txidx=0;txidx<numfacs;txidx++)
 		memset(lx2_table+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 		np->curr = histent_tail;
-		np->mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
+		np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
 		aet2_rd_clr_fac_process_mask(txidx);
 		}
 	}
@@ -916,4 +916,7 @@ for(txidx=0;txidx<numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 01:39:00  gtkwave
+ * initial release
+ *
  */

@@ -13,6 +13,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include "wavealloca.h"
+#include "vlist.h"
 #include "debug.h"
 
 typedef struct _SearchProgressData {
@@ -136,12 +137,12 @@ struct Node
 
     hptr     *harray;   /* fill this in when we make a trace.. contains  */
 			/*  a ptr to an array of histents for bsearching */
-    int      numhist;	/* number of elements in the harray */
-
     union {
       struct fac *mvlfac; /* for use with mvlsim aets */
       struct vlist_t *mvlfac_vlist;
-    };
+    } mv; 		/* anon union is a gcc extension so use mv instead.  using this union avoids crazy casting warnings */
+
+    int      numhist;	/* number of elements in the harray */
   };
 
 typedef struct BitAttributes
@@ -319,4 +320,7 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:11  gtkwave
+ * initial release
+ *
  */
