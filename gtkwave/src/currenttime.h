@@ -17,7 +17,7 @@
 #include "analyzer.h"
 #include "regex_wave.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.28_cvs (w)1999-2007 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.28 (w)1999-2007 BSI"
 
 struct blackout_region_t
 {
@@ -217,6 +217,10 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/04/29 04:13:49  gtkwave
+ * changed anon union defined in struct Node to a named one as anon unions
+ * are a gcc extension
+ *
  * Revision 1.4  2007/04/28 02:36:19  gtkwave
  * committing this release to 3.0.27
  *

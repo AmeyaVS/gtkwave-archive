@@ -271,6 +271,10 @@
 		existing 3D "vertex" package on debian systems.
 		Reverted back to using Open Office 2 Beta rather than
 		Open Office 2 as it was causing .odt docs corruption.
-3.0.28	28apr07	Changed anonymous union in struct Node as it is a
+3.0.28	30apr07	Changed anonymous union in struct Node as it is a
 		gcc extension.
 		Fixed some vcd parser memory leaks found by Valgrind.
+		Moved errno check in vcd parser as it seems that
+		the GTK event loop called in splash_sync() calls it
+		on gnome 2.18 for some reason (reported by Gentoo
+		gtkwave package maintainer).

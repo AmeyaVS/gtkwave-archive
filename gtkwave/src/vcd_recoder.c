@@ -435,12 +435,12 @@ vcdbyteno+=(vend-vcdbuf);
 rd=fread(vcdbuf, sizeof(char), VCD_BSIZ, vcd_handle);
 vend=(vst=vcdbuf)+rd;
 
+if((!rd)||(errno)) return(-1);
+
 if(vcd_fsiz)
 	{
-	splash_sync(vcdbyteno, vcd_fsiz);
+	splash_sync(vcdbyteno, vcd_fsiz); /* gnome 2.18 seems to set errno so splash moved here... */
 	}
-
-if((!rd)||(errno)) return(-1);
 
 return((int)(*(vst++)));
 }
@@ -2535,6 +2535,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/04/29 06:07:28  gtkwave
+ * fixed memory leaks in vcd parser
+ *
  * Revision 1.3  2007/04/29 04:13:49  gtkwave
  * changed anon union defined in struct Node to a named one as anon unions
  * are a gcc extension
