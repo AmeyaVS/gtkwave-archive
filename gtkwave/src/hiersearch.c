@@ -410,7 +410,7 @@ for(i=fetchlow(h_selectedtree)->which;i<=fetchhigh(h_selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNode(s->n, NULL);  
+	        AddNodeUnroll(s->n, NULL);  
 		}
         }
 
@@ -509,7 +509,7 @@ for(i=fetchlow(h_selectedtree)->which;i<=fetchhigh(h_selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNode(s->n, NULL);  
+	        AddNodeUnroll(s->n, NULL);  
 		}
         }
 
@@ -622,7 +622,7 @@ for(i=fetchlow(h_selectedtree)->which;i<=fetchhigh(h_selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNode(s->n, NULL);  
+	        AddNodeUnroll(s->n, NULL);  
 		}
         }
  
@@ -1020,6 +1020,10 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/04/29 04:13:49  gtkwave
+ * changed anon union defined in struct Node to a named one as anon unions
+ * are a gcc extension
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

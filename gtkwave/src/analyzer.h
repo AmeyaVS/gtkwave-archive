@@ -140,9 +140,11 @@ struct Node
     union {
       struct fac *mvlfac; /* for use with mvlsim aets */
       struct vlist_t *mvlfac_vlist;
+      char *value;	/* for use when unrolling ae2 values */
     } mv; 		/* anon union is a gcc extension so use mv instead.  using this union avoids crazy casting warnings */
 
     int      numhist;	/* number of elements in the harray */
+    unsigned int array_height, this_row;
   };
 
 typedef struct BitAttributes
@@ -283,6 +285,7 @@ void ExpandAllGroups(void);
 void DisplayTraces(int val);
 int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret);
 int AddNode(nptr nd, char *aliasname);
+int AddNodeUnroll(nptr nd, char *aliasname);
 int AddVector(bvptr vec);
 int AddBlankTrace(char *commentname);
 int InsertBlankTrace(char *comment, int different_flags);
@@ -320,6 +323,10 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/04/29 04:13:49  gtkwave
+ * changed anon union defined in struct Node to a named one as anon unions
+ * are a gcc extension
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

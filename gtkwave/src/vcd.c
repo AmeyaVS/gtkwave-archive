@@ -2037,14 +2037,14 @@ while(v)
 					}
 
 				hashdirty=0;
-				if(symfind(str))
+				if(symfind(str, NULL))
 					{
 					char *dupfix=(char *)malloc_2(max_slen+32);
 					hashdirty=1;
 					DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 					do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-						while(symfind(dupfix));
+						while(symfind(dupfix, NULL));
 
 					strcpy(str, dupfix);
 					free_2(dupfix);
@@ -2118,14 +2118,14 @@ while(v)
 
 
 			hashdirty=0;
-			if(symfind(str))
+			if(symfind(str, NULL))
 				{
 				char *dupfix=(char *)malloc_2(max_slen+32);
 				hashdirty=1;
 				DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 				do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-					while(symfind(dupfix));
+					while(symfind(dupfix, NULL));
 
 				strcpy(str, dupfix);
 				free_2(dupfix);
@@ -2466,6 +2466,11 @@ return(max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/04/30 01:10:21  gtkwave
+ * splash_sync() causes errno to be set when GTK main event loop is called
+ * by the vcd parsers for newer versions of gnome (2.18) and/or other
+ * various X11 Gentoo dependencies.
+ *
  * Revision 1.3  2007/04/29 06:07:28  gtkwave
  * fixed memory leaks in vcd parser
  *

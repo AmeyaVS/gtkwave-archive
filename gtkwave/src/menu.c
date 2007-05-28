@@ -2507,7 +2507,23 @@ if(helpbox_is_active)
 
 entrybox("Regexp Highlight",300,regexp_string,128,GTK_SIGNAL_FUNC(regexp_highlight_cleanup));
 }
+
 /**/
+
+static char *append_array_row(nptr n)
+{
+static char buf[65537];
+if(!n->array_height)
+	{
+	return(n->nname);
+	}
+	else
+	{
+	sprintf(buf, "%s{%d}", n->nname, n->this_row);
+	return(buf);
+	}
+}
+
 static void
 menu_write_save_cleanup(GtkWidget *widget, gpointer data)
 {
@@ -2540,6 +2556,7 @@ if(!(wave=fopen(*fileselbox_text,"wb")))
 	fprintf(wave,"[size] %d %d\n", sz_x, sz_y);
 
 	get_window_xypos(&root_x, &root_y);
+
 	fprintf(wave,"[pos] %d %d\n", root_x + xpos_delta, root_y + ypos_delta);
 
 	fprintf(wave,"*%f "TTFormat, (float)(tims.zoom),tims.marker);
@@ -2607,11 +2624,11 @@ if(!(wave=fopen(*fileselbox_text,"wb")))
 					{
 					if(nodes[i]->expansion)
 						{
-						fprintf(wave," (%d)%s",nodes[i]->expansion->parentbit, nodes[i]->expansion->parent->nname);
+						fprintf(wave," (%d)%s",nodes[i]->expansion->parentbit, append_array_row(nodes[i]->expansion->parent));
 						}
 						else
 						{
-						fprintf(wave," %s",nodes[i]->nname);
+						fprintf(wave," %s",append_array_row(nodes[i]));
 						}
 					if(ba)
 						{
@@ -2626,22 +2643,22 @@ if(!(wave=fopen(*fileselbox_text,"wb")))
 					{
 					if(t->n.nd->expansion)
 						{
-						fprintf(wave,"+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
+						fprintf(wave,"+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
 						}
 						else
 						{
-						fprintf(wave,"+%s %s\n",t->name+2,t->n.nd->nname);
+						fprintf(wave,"+%s %s\n",t->name+2,append_array_row(t->n.nd));
 						}
 					}
 					else
 					{
 					if(t->n.nd->expansion)
 						{
-						fprintf(wave,"(%d)%s\n",t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
+						fprintf(wave,"(%d)%s\n",t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
 						}
 						else
 						{
-						fprintf(wave,"%s\n",t->n.nd->nname);
+						fprintf(wave,"%s\n",append_array_row(t->n.nd));
 						}
 					}
 				}
@@ -2732,11 +2749,11 @@ if(!(wave=fopen(*fileselbox_text,"wb")))
 							{
 							if(nodes[i]->expansion)
 								{
-								fprintf(wave," (%d)%s",nodes[i]->expansion->parentbit, nodes[i]->expansion->parent->nname);
+								fprintf(wave," (%d)%s",nodes[i]->expansion->parentbit, append_array_row(nodes[i]->expansion->parent));
 								}
 								else
 								{
-								fprintf(wave," %s",nodes[i]->nname);
+								fprintf(wave," %s",append_array_row(nodes[i]));
 								}
 							if(ba)
 								{
@@ -2751,22 +2768,22 @@ if(!(wave=fopen(*fileselbox_text,"wb")))
 							{
 							if(t->n.nd->expansion)
 								{
-								fprintf(wave,"+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
+								fprintf(wave,"+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
 								}
 								else
 								{
-								fprintf(wave,"+%s %s\n",t->name+2,t->n.nd->nname);
+								fprintf(wave,"+%s %s\n",t->name+2,append_array_row(t->n.nd));
 								}
 							}
 							else
 							{
 							if(t->n.nd->expansion)
 								{
-								fprintf(wave,"(%d)%s\n",t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
+								fprintf(wave,"(%d)%s\n",t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
 								}
 								else
 								{
-								fprintf(wave,"%s\n",t->n.nd->nname);
+								fprintf(wave,"%s\n",append_array_row(t->n.nd));
 								}
 							}
 						}
@@ -4420,6 +4437,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/04/21 21:02:02  gtkwave
+ * changed vertex to vermin to avoid name clash
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

@@ -1956,14 +1956,14 @@ while(v)
 					}
 
 				hashdirty=0;
-				if(symfind(str))
+				if(symfind(str, NULL))
 					{
 					char *dupfix=(char *)malloc_2(max_slen+32);
 					hashdirty=1;
 					DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 					do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-						while(symfind(dupfix));
+						while(symfind(dupfix, NULL));
 
 					strcpy(str, dupfix);
 					free_2(dupfix);
@@ -2037,14 +2037,14 @@ while(v)
 
 
 			hashdirty=0;
-			if(symfind(str))
+			if(symfind(str, NULL))
 				{
 				char *dupfix=(char *)malloc_2(max_slen+32);
 				hashdirty=1;
 				DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 				do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-					while(symfind(dupfix));
+					while(symfind(dupfix, NULL));
 
 				strcpy(str, dupfix);
 				free_2(dupfix);
@@ -2396,6 +2396,9 @@ while (gtk_events_pending()) gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/04/29 06:07:28  gtkwave
+ * fixed memory leaks in vcd parser
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

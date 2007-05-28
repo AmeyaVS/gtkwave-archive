@@ -14,7 +14,7 @@ int bsearch_timechain(TimeType key);
 hptr bsearch_node(nptr n, TimeType key);
 vptr bsearch_vector(bvptr b, TimeType key);
 char *bsearch_trunc(char *ascii, int maxlen);
-struct symbol *bsearch_facs(char *ascii);
+struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return);
 
 extern int maxlen_trunc;
 extern TimeType shift_timebase, shift_timebase_default_for_add;
@@ -27,5 +27,8 @@ extern vptr *vmax_compare_index;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:11  gtkwave
+ * initial release
+ *
  */
 

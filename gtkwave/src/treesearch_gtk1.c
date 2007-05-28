@@ -373,7 +373,7 @@ for(i=fetchlow(selectedtree)->which;i<=fetchhigh(selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNode(s->n, NULL);  
+	        AddNodeUnroll(s->n, NULL);  
 		}
         }
 
@@ -485,7 +485,7 @@ for(i=fetchlow(selectedtree)->which;i<=fetchhigh(selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNode(s->n, NULL);  
+	        AddNodeUnroll(s->n, NULL);  
 		}
         }
 
@@ -602,7 +602,7 @@ for(i=fetchlow(selectedtree)->which;i<=fetchhigh(selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNode(s->n, NULL);  
+	        AddNodeUnroll(s->n, NULL);  
 		}
         }
 
@@ -789,6 +789,10 @@ void treebox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/04/29 04:13:49  gtkwave
+ * changed anon union defined in struct Node to a named one as anon unions
+ * are a gcc extension
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

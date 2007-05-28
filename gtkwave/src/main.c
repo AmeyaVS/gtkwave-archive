@@ -1366,7 +1366,7 @@ if(!mainwindow) return;
 #ifdef WAVE_USE_GTK2
 gtk_window_get_position(GTK_WINDOW(mainwindow), root_x, root_y);
 
-if((!initial_window_get_valid)&&(*root_x >=0)&&(*root_y >=0))
+if(!initial_window_get_valid)
 	{
 	if((mainwindow->window))
 		{
@@ -1531,5 +1531,8 @@ if(stems_type != WAVE_ANNO_NONE)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:13  gtkwave
+ * initial release
+ *
  */
 

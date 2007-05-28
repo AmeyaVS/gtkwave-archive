@@ -604,7 +604,7 @@ ps_MaxSignalLength(void)
 	int             vlen = 0;
 	int             i, trwhich, trtarget, num_traces_displayable;
 	GtkAdjustment  *sadj;
-	char            sbuf[65];
+	char            sbuf[128];
 	int             bufxlen;
 	int             bufclen;
 
@@ -629,15 +629,21 @@ ps_MaxSignalLength(void)
 
 	for (i = 0; (i < num_traces_displayable) && (t); i++) {
 
+		sbuf[0] = 0;
+		bufxlen = bufclen = 0;
 		if ((shift_timebase = t->shift)) {
 			sbuf[0] = '(';
 			reformat_time(sbuf + 1, t->shift, time_dimension);
 			strcpy(sbuf + (bufclen = strlen(sbuf + 1) + 1), ")");
 			bufclen++;
 			bufxlen = gdk_string_measure(signalfont, sbuf);
-		} else {
-			bufxlen = bufclen = 0;
 		}
+
+		if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
+			{
+			bufclen+=sprintf(sbuf + strlen(sbuf), "{%d}", t->n.nd->this_row);
+			bufxlen=gdk_string_measure(signalfont, sbuf);
+			}
 
 		if (t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)) {
 			if (t->name) {
@@ -2016,19 +2022,26 @@ pr_RenderSig(pr_context * prc, Trptr t, int i)
 {
 	int             texty, liney;
 	int             retval;
-	char            sbuf[65];
+	char            sbuf[128];
 	int             bufclen;
 
 	UpdateSigValue(t);	/* in case it's stale on nonprop */
+
+	bufclen = 0;
+	sbuf[0] = 0;
 
 	if ((t->name) && (t->shift)) {
 		sbuf[0] = '(';
 		reformat_time(sbuf + 1, t->shift, time_dimension);
 		strcpy(sbuf + (bufclen = strlen(sbuf + 1) + 1), ")");
 		bufclen++;
-	} else {
-		bufclen = 0;
-	}
+	} 
+
+        if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
+                {
+                bufclen+=sprintf(sbuf + strlen(sbuf), "{%d}", t->n.nd->this_row);
+                }
+
 
 	liney = ((i + 2) * fontheight) - 2;
 
@@ -2195,5 +2208,8 @@ print_mif_image(FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:13  gtkwave
+ * initial release
+ *
  */
 
