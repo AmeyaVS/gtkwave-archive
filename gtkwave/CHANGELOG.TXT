@@ -279,3 +279,5 @@
 		on gnome 2.18 for some reason (reported by Gentoo
 		gtkwave package maintainer).
 3.0.29	27may07	Added viewer support for arrays (currently AE2 only).
+		Integrated standardized configuration mechanism from
+		Dan McMahill.
