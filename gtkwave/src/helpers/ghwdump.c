@@ -28,6 +28,8 @@
 
 #include "ghwlib.h"
 
+#include "wave_locale.h"
+
 static const char *progname;
 void
 usage (void)
@@ -202,5 +204,8 @@ main (int argc, char **argv)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:18  gtkwave
+ * initial release
+ *
  */
 

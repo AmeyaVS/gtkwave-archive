@@ -1,7 +1,7 @@
 <<
 /* parser.dlg -- DLG Description of scanner
  *
- * Generated from: dlg_p.g
+ * Generated from: ./dlg_p.g
  *
  * Terence Parr, Will Cohen, and Hank Dietz: 1989-2001
  * Purdue University Electrical Engineering

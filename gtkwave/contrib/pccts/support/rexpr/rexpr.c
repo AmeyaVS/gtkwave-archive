@@ -117,9 +117,9 @@ static NodePtr freelist = NULL;
  *       -1 if expr is an invalid regular expression
  */
 #ifdef __USE_PROTOS
-static int rexpr(char *expr,char *s)
+int rexpr(char *expr,char *s)
 #else
-static int rexpr(expr, s)
+int rexpr(expr, s)
 char *expr, *s;
 #endif
 {
@@ -146,9 +146,9 @@ char *expr, *s;
  */
 
 #ifdef __USE_PROTOS
-static int match(NodePtr automaton,char *s)
+int match(NodePtr automaton,char *s)
 #else
-static int match(automaton, s)
+int match(automaton, s)
 NodePtr automaton;
 char *s;
 #endif

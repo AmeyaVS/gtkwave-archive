@@ -10,6 +10,7 @@
 #define TLA2VCD_VERSION "1.0"
 
 #include <config.h>
+#include "wave_locale.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -560,5 +561,8 @@ main( int argc, char *argv[] )
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:18  gtkwave
+ * initial release
+ *
  */
 

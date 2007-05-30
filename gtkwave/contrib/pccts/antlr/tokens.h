@@ -2,7 +2,7 @@
 #define tokens_h
 /* tokens.h -- List of labelled tokens and stuff
  *
- * Generated from: antlr.g
+ * Generated from: ./antlr.g
  *
  * Terence Parr, Will Cohen, and Hank Dietz: 1989-2001
  * Purdue University Electrical Engineering

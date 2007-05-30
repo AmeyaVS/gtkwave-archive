@@ -9,6 +9,8 @@
 #include "splay.h"
 #include "wavelink.h"
 
+#include "wave_locale.h"
+
 extern GtkCTree *ctree_main;
 void treebox(char *title, GtkSignalFunc func);
 
@@ -484,5 +486,8 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:10  gtkwave
+ * initial release
+ *
  */
 

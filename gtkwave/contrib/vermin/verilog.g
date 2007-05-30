@@ -3,6 +3,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2007/04/21 21:08:51  gtkwave
+ * changed from vertex to vermin
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *
@@ -24,6 +27,8 @@ void vpp_update_yylineno(const char *str);
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/param.h>
+
+#include "wave_locale.h"
 
 #include "inter.h"
 #include "tokens.h"

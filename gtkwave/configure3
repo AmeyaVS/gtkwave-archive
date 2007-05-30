@@ -71,7 +71,7 @@ do
 if [ -e $AETLIB ]
 	then
 	echo "AET2 library found at "$AETLIB", configuring for use..."
-	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" >Makefile.tmp
+	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" | sed 's#\(^LIBS =.*$\)#\1 \$\(AET2LIB\)#' >Makefile.tmp
 	mv Makefile.tmp Makefile
 	fi
 done
@@ -118,7 +118,7 @@ do
 if [ -e $AETLIB ]
 	then
 	echo "AET2 library found at "$AETLIB", configuring for use..."
-	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" >Makefile.tmp
+	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" | sed 's#\(^LIBS =.*$\)#\1 \$\(AET2LIB\)#' >Makefile.tmp
 	mv Makefile.tmp Makefile
 	fi
 done

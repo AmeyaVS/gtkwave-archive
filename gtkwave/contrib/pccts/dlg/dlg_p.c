@@ -6,7 +6,7 @@
  * With AHPCRC, University of Minnesota
  * ANTLR Version 1.33MR33
  *
- *   ..\bin\antlr dlg_p.g -gh
+ *   ../antlr/antlr ./dlg_p.g
  *
  */
 

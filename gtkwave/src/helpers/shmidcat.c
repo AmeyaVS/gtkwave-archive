@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "wave_locale.h"
 
 /* size *must* match in gtkwave */
 #define WAVE_PARTIAL_VCD_RING_BUFFER_SIZE (1024*1024)
@@ -260,5 +261,8 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:18  gtkwave
+ * initial release
+ *
  */
 

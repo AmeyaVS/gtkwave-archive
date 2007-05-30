@@ -29,6 +29,8 @@
 
 #include <time.h>
 
+#include "wave_locale.h"
+
 static int flat_earth = 0;
 static int vectorize = 0;
 
@@ -396,5 +398,8 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/04/20 02:08:19  gtkwave
+ * initial release
+ *
  */
 

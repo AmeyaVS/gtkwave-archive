@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "wave_locale.h"
+
 #if !defined _MSC_VER && !defined __MINGW32__
 #include <signal.h>
 #include <sys/types.h>
@@ -1531,6 +1533,9 @@ if(stems_type != WAVE_ANNO_NONE)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/05/28 00:55:06  gtkwave
+ * added support for arrays as a first class dumpfile datatype
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *
