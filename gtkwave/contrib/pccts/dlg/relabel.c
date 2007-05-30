@@ -1,4 +1,3 @@
-
 /* This group of functions does the character class compression.
    It goes over the dfa and relabels the arcs with the partitions
    of characters in the NFA.  The partitions are stored in the

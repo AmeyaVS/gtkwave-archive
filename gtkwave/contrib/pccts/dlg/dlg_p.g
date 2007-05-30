@@ -1,4 +1,3 @@
-
 /*  This is the parser for the dlg
  *  This is a part of the Purdue Compiler Construction Tool Set
  *
@@ -26,7 +25,6 @@
  * Will Cohen
  * With mods by Terence Parr; AHPCRC, University of Minnesota
  * 1989-1995
- * (dummy add to comments for cvs)
  */
 
 #header	<<

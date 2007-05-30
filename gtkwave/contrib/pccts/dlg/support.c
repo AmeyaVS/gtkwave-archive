@@ -1,4 +1,3 @@
-
 /*
  * SOFTWARE RIGHTS
  *
