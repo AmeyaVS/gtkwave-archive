@@ -100,7 +100,7 @@ return(s);
 /*
  * find a slot already in the table...
  */
-struct symbol *symfind(char *s, unsigned int *rows_return)
+struct symbol *symfind(char *s)
 {
 int hv;
 struct symbol *temp;
@@ -125,15 +125,6 @@ if(!facs_are_sorted)
 	else	/* no sense hashing if the facs table is built */
 	{	
 	DEBUG(printf("BSEARCH: %s\n",s));
-	return(bsearch_facs(s, rows_return));
+	return(bsearch_facs(s));
 	}
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:17  gtkwave
- * initial release
- *
- */
-

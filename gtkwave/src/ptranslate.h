@@ -30,9 +30,3 @@ void set_current_translate_proc(char *name);
 void remove_all_proc_filters(void);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

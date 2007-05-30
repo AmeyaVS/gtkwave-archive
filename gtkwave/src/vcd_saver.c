@@ -849,9 +849,3 @@ if(*nh_curr->name == '\\')
 
 return(nh_curr->name);
 }
-
-/*
- * $Id$
- * $Log$
- */
-

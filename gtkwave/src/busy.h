@@ -25,7 +25,3 @@ void busy_window_refresh(void);
 
 #endif
 
-/*
- * $Id$
- * $Log$
- */

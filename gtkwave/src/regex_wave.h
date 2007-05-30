@@ -20,9 +20,3 @@ int wave_regex_alloc_match(void *mreg, char *str);
 void wave_regex_alloc_free(void *pnt);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

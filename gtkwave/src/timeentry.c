@@ -169,8 +169,3 @@ gtk_widget_show(box2);
 return(mainbox);
 }
    
-/*
- * $Id$
- * $Log$
- */
-

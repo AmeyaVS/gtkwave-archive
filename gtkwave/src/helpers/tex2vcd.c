@@ -38,8 +38,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "wave_locale.h"
-
 struct txfac
 {
 int array_height;
@@ -471,12 +469,3 @@ fini:
 fclose(handle);
 exit(0);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:18  gtkwave
- * initial release
- *
- */
-

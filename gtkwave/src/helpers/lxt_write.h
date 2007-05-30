@@ -247,9 +247,3 @@ int 			lt_emit_value_string(struct lt_trace *lt, struct lt_symbol *s, unsigned i
 int 			lt_emit_value_bit_string(struct lt_trace *lt, struct lt_symbol *s, unsigned int row, char *value);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

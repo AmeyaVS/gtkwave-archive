@@ -66,9 +66,3 @@ void print_mif_image(FILE *wave, gdouble px, gdouble py);
 void print_ps_image(FILE *wave, gdouble px, gdouble py);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

@@ -35,9 +35,3 @@ void vlist_freeze(struct vlist_t **v);
 void vlist_uncompress(struct vlist_t **v);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

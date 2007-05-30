@@ -2812,9 +2812,3 @@ if((lt)&&(lt->dumpoff_active))
 	lt->dumpoff_active = 0;
 	}
 }
-
-/*
- * $Id$
- * $Log$
- */
-

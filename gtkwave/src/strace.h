@@ -92,8 +92,3 @@ void delete_mprintf(void);
 
 #endif
 
-/*
- * $Id$
- * $Log$
- */
-

@@ -9,6 +9,29 @@ if [ `uname` = "AIX" ]
 if [ `uname|grep MINGW|wc -l` = "1" ]
 	then
 	echo "Building GTKWave for MinGW with gtk..."
+	rm -f src/Makefile.in
+	rm -f contrib/rtlbrowse/Makefile.in
+
+	X=""
+	echo "Build GTKWave for GTK+-1.x or 2.x? Please enter '1' or '2'"
+	read X
+
+	if [ "$X" = "" ]
+		then X="2"
+		fi
+
+	if [ "$X" = "1" ]
+		then 
+		echo "Building for GTK+-1.x..." 
+		cp src/Makefile_GTK1.in src/Makefile.in 
+		cp contrib/rtlbrowse/Makefile_GTK1.in contrib/rtlbrowse/Makefile.in
+		fi
+
+	if [ "$X" = "2" ]
+		then echo "Building for GTK+-2.x..."
+		cp src/Makefile_GTK2.in src/Makefile.in ; 
+		cp contrib/rtlbrowse/Makefile_GTK2.in contrib/rtlbrowse/Makefile.in
+		fi
 
 	cat Makefile.in | sed 's#log bin/gtkwave.*#log bin/gtkwave#' >Makefile.tmp
 	cat src/Makefile.in | sed 's#CFLAGS \= #CFLAGS \= \-mms\-bitfields #' | sed 's#\-lpthread##' >src/Makefile.tmp	
@@ -19,6 +42,36 @@ if [ `uname|grep MINGW|wc -l` = "1" ]
 	exit
 	fi
 
-./configure2 "$@"
-./configure3
-exit
+while [ 1 ]
+do
+
+# in case of automatic build, default to gtk+-1.x...
+
+X=""
+echo "Build GTKWave for GTK+-1.x or 2.x? Please enter '1' or '2'"
+read X
+
+if [ "$X" = "" ]
+	then X="1"
+	fi
+
+if [ "$X" = "1" ]
+	then echo "Building for GTK+-1.x..."
+	ln -fs Makefile_GTK1.in contrib/rtlbrowse/Makefile.in
+	ln -fs Makefile_GTK1.in src/Makefile.in
+	./configure2 "$@"
+	./configure3
+	exit
+	fi
+
+if [ "$X" = "2" ]
+	then echo "Building for GTK+-2.x..."
+	ln -fs Makefile_GTK2.in contrib/rtlbrowse/Makefile.in
+	ln -fs Makefile_GTK2.in src/Makefile.in
+	./configure2 "$@"
+	./configure3
+	exit
+	fi
+
+done
+

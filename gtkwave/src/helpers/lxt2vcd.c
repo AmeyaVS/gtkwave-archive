@@ -29,8 +29,6 @@
 
 #include <time.h>
 
-#include "wave_locale.h"
-
 int flat_earth = 0;
 extern void free_hier(void);
 extern char *output_hier(char *name);
@@ -379,12 +377,3 @@ free(lxname);
 
 return(rc);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:18  gtkwave
- * initial release
- *
- */
-

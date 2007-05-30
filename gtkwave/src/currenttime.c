@@ -434,9 +434,3 @@ switch(scale)
         default:                                        time_dimension = 'n'; break;
         }
 }
-
-/*
- * $Id$
- * $Log$
- */
-

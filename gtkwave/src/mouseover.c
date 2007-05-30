@@ -329,9 +329,3 @@ if(asciivalue) { free_2(asciivalue); }
 if(alternate_name) { free_2(alternate_name); }
 #endif
 }
-
-/*
- * $Id$
- * $Log$
- */
-

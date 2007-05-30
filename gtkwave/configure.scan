@@ -62,7 +62,7 @@ AC_CONFIG_FILES([Makefile
                  contrib/pccts/sorcerer/Makefile
                  contrib/pccts/support/genmk/Makefile
                  contrib/rtlbrowse/Makefile
-                 contrib/vermin/Makefile
+                 contrib/vertex/Makefile
                  src/Makefile
                  src/helpers/Makefile
                  src/libbz2/Makefile

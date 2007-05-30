@@ -37,9 +37,3 @@ FILE *script_handle;
 extern char *filesel_writesave;
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

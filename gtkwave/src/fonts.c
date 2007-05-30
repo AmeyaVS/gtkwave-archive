@@ -123,9 +123,3 @@ if(signalfont->ascent>100)
 
 wavecrosspiece=wavefont->ascent+1;
 }
-
-/*
- * $Id$
- * $Log$
- */
-

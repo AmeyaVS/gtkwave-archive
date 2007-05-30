@@ -504,9 +504,3 @@ if(num_file_filters < FILE_FILTER_MAX)
 		}
 	}
 }
-
-/*
- * $Id$
- * $Log$
- */
-

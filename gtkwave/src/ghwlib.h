@@ -404,8 +404,5 @@ void ghw_disp_type (struct ghw_handler *h, union ghw_type *t);
 void ghw_disp_types (struct ghw_handler *h);
 #endif /* _GHWLIB_H_ */
 
-/*
- * $Id$
- * $Log$
- */
+
 

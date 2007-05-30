@@ -606,8 +606,4 @@ JRB jrb_insert_gen(JRB tree, Jval key, Jval val,
   return jrb_insert_b(jrb_find_gte_gen(tree, key, func, &fnd), key, val);
 }
 
-/*
- * $Id$
- * $Log$
- */
 

@@ -1706,7 +1706,7 @@ for(i=0;i<numfacs;i++)
 
 	n=&node_block[i];
         n->nname=s->name;
-        n->mv.mvlfac = mvlfacs+i;
+        n->mvlfac = mvlfacs+i;
 
 	if((f->len>1)||(f->flags&&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 		{
@@ -1801,7 +1801,7 @@ memcpy(&np->head, &resolve->head, sizeof(struct HistEnt));
 np->curr = resolve->curr;
 np->harray = resolve->harray;
 np->numhist = resolve->numhist;
-np->mv.mvlfac=NULL;
+np->mvlfac=NULL;
 }
 
 
@@ -1823,16 +1823,16 @@ char *parsed;
 int len, i, j;
 struct fac *f;
 
-if(!(f=np->mv.mvlfac)) return;	/* already imported */
+if(!(f=np->mvlfac)) return;	/* already imported */
 
-if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
+if(np->mvlfac->flags&LT_SYM_F_ALIAS)
 	{
-	int alias = np->mv.mvlfac->array_height;
+	int alias = np->mvlfac->array_height;
 	f=mvlfacs+alias;
 
 	if(f->resolve_lxt_alias_to)
 		{
-		if(!np->mv.mvlfac->resolve_lxt_alias_to) np->mv.mvlfac->resolve_lxt_alias_to = f->resolve_lxt_alias_to;
+		if(!np->mvlfac->resolve_lxt_alias_to) np->mvlfac->resolve_lxt_alias_to = f->resolve_lxt_alias_to;
 		}
 		else
 		{
@@ -1845,7 +1845,7 @@ if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
 
 		if(f->resolve_lxt_alias_to)
 			{
-			if(!np->mv.mvlfac->resolve_lxt_alias_to) np->mv.mvlfac->resolve_lxt_alias_to = f->resolve_lxt_alias_to;
+			if(!np->mvlfac->resolve_lxt_alias_to) np->mvlfac->resolve_lxt_alias_to = f->resolve_lxt_alias_to;
 			}
 			else
 			{
@@ -1854,19 +1854,19 @@ if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
 		}
 	}
 
-/* f is the head minus any aliases, np->mv.mvlfac is us... */
-if(np->mv.mvlfac->resolve_lxt_alias_to)	/* in case we're an alias head for later.. */
+/* f is the head minus any aliases, np->mvlfac is us... */
+if(np->mvlfac->resolve_lxt_alias_to)	/* in case we're an alias head for later.. */
 	{
-	lxt_resolver(np, np->mv.mvlfac->resolve_lxt_alias_to);
+	lxt_resolver(np, np->mvlfac->resolve_lxt_alias_to);
 	return;
 	}
 
-np->mv.mvlfac->resolve_lxt_alias_to = np;	/* in case we're an alias head for later.. */
+np->mvlfac->resolve_lxt_alias_to = np;	/* in case we're an alias head for later.. */
 offs=f->lastchange;
 
 tmval=LLDescriptor(-1);
 prevtmval = LLDescriptor(-1);
-len = np->mv.mvlfac->len;
+len = np->mvlfac->len;
 
 histent_tail = htemp = histent_calloc();
 if(len>1)
@@ -2274,7 +2274,7 @@ while(offs)
 	offs = offs-offsdelta-2;
 	}
 
-np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
+np->mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
 
 for(j=0;j>-2;j--)
 	{
@@ -2346,12 +2346,3 @@ np->head.next = histent_head;
 np->curr = histent_tail;
 np->numhist++;
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:13  gtkwave
- * initial release
- *
- */
-

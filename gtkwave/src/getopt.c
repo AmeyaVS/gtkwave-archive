@@ -1281,9 +1281,3 @@ main (argc, argv)
 }
 
 #endif /* TEST */
-
-/*
- * $Id$
- * $Log$
- */
-

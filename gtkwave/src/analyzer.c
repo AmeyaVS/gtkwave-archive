@@ -251,7 +251,7 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
     int i;
 
     if(!nd) return(0); /* passed it a null node ptr by mistake */
-    if(nd->mv.mvlfac) import_trace(nd);
+    if(nd->mvlfac) import_trace(nd);
 
     signalwindow_width_dirty=1;
     
@@ -339,31 +339,9 @@ if(aliasname)
   }
 
 
-/* single node */
 int AddNode(nptr nd, char *aliasname)
 {
 return(AddNodeTraceReturn(nd, aliasname, NULL));
-}
-
-
-/* add multiple nodes (if array) */
-int AddNodeUnroll(nptr nd, char *aliasname)
-{
-if(nd->array_height <= 1)
-	{
-	return(AddNodeTraceReturn(nd, aliasname, NULL));
-	}
-	else
-	{
-	int i;
-	int rc = 1;
-
-	for(i=0;i<nd->array_height;i++)
-		{
-		rc |= AddNodeTraceReturn(nd+i, aliasname, NULL);
-		}
-	return(rc);
-	}
 }
 
 
@@ -1084,16 +1062,3 @@ while(t)
 
 UpdateTracesVisible();
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.3  2007/04/29 04:13:49  gtkwave
- * changed anon union defined in struct Node to a named one as anon unions
- * are a gcc extension
- *
- * Revision 1.2  2007/04/20 02:08:11  gtkwave
- * initial release
- *
- */
-

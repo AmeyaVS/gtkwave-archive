@@ -1317,10 +1317,8 @@ int RenderSig(Trptr t, int i, int dobackground)
 {
 int texty, liney;
 int retval;
-char buf[128];
-int bufxlen = 0;
-
-buf[0] = 0;
+char buf[65];
+int bufxlen;
 
 UpdateSigValue(t); /* in case it's stale on nonprop */
 if((t->name)&&(t->shift))
@@ -1330,11 +1328,9 @@ if((t->name)&&(t->shift))
 	strcpy(buf+strlen(buf+1)+1,"\'");
 	bufxlen=gdk_string_measure(signalfont, buf);
 	}
-
-if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
+	else
 	{
-	sprintf(buf + strlen(buf), "{%d}", t->n.nd->this_row);
-	bufxlen=gdk_string_measure(signalfont, buf);
+	bufxlen=0;
 	}
 
 liney=((i+2)*fontheight)-2;
@@ -1525,7 +1521,7 @@ void MaxSignalLength(void)
 Trptr t;
 int len=0,maxlen=0;
 int vlen=0, vmaxlen=0;
-char buf[128];
+char buf[65];
 int bufxlen;
 
 DEBUG(printf("signalwindow_width_dirty: %d\n",signalwindow_width_dirty));
@@ -1549,9 +1545,6 @@ if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))	/* for "comment" style blank tra
 else
 if(t->name)
 	{
-	bufxlen = 0;
-	buf[0] = 0;
-
 	if((shift_timebase=t->shift))
         	{
         	buf[0]='`';
@@ -1559,12 +1552,10 @@ if(t->name)
         	strcpy(buf+strlen(buf+1)+1,"\'");
         	bufxlen=gdk_string_measure(signalfont, buf);
         	}
-
-	if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
-		{
-		sprintf(buf + strlen(buf), "{%d}", t->n.nd->this_row);
-		bufxlen=gdk_string_measure(signalfont, buf);
-		}
+        	else
+        	{
+        	bufxlen=0;
+        	}
 
 	len=gdk_string_measure(signalfont, t->name)+bufxlen;
 	if(len>maxlen) maxlen=len;
@@ -3272,12 +3263,3 @@ wave_gdk_draw_line_flush(wavepixmap);
 tims.start+=shift_timebase;
 tims.end+=shift_timebase;
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:18  gtkwave
- * initial release
- *
- */
-

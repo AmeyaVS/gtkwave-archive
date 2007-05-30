@@ -17,7 +17,7 @@
 #include "analyzer.h"
 #include "regex_wave.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.29_pre1 (w)1999-2007 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.26 (w)1999-2007 BSI"
 
 struct blackout_region_t
 {
@@ -214,27 +214,5 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 
 #endif
 
-/*
- * $Id$
- * $Log$
- * Revision 1.6  2007/04/30 01:10:21  gtkwave
- * splash_sync() causes errno to be set when GTK main event loop is called
- * by the vcd parsers for newer versions of gnome (2.18) and/or other
- * various X11 Gentoo dependencies.
- *
- * Revision 1.5  2007/04/29 04:13:49  gtkwave
- * changed anon union defined in struct Node to a named one as anon unions
- * are a gcc extension
- *
- * Revision 1.4  2007/04/28 02:36:19  gtkwave
- * committing this release to 3.0.27
- *
- * Revision 1.3  2007/04/21 21:15:45  gtkwave
- * updated version string to indicate 3.0.27 cvs version status (not
- * 3.0.26 stable anymore)
- *
- * Revision 1.2  2007/04/20 02:08:11  gtkwave
- * initial release
- *
- */
+
 

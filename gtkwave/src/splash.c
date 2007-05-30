@@ -827,9 +827,3 @@ void splash_sync(off_t current, off_t total)
 }
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

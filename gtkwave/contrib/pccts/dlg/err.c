@@ -1,7 +1,7 @@
 /*
  * A n t l r  S e t s / E r r o r  F i l e  H e a d e r
  *
- * Generated from: ./dlg_p.g
+ * Generated from: dlg_p.g
  *
  * Terence Parr, Russell Quong, Will Cohen, and Hank Dietz: 1989-2001
  * Parr Research Corporation

@@ -409,9 +409,3 @@ if(num_proc_filters < PROC_FILTER_MAX)
 }
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

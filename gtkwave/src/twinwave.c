@@ -12,8 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "wave_locale.h"
-
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -258,12 +256,3 @@ return(255);
 }
 
 #endif
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:17  gtkwave
- * initial release
- *
- */
-

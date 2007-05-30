@@ -272,9 +272,3 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   gtk_container_add (GTK_CONTAINER (window), main_vbox);
   gtk_widget_show (window);
 }
-
-/*
- * $Id$
- * $Log$
- */
-

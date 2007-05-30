@@ -110,9 +110,3 @@ int jrb_plength(JRB n);       /* returns the # of nodes in path from
   for(ptr = jrb_last(lst); ptr != jrb_nil(lst); ptr = jrb_prev(ptr))
  
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

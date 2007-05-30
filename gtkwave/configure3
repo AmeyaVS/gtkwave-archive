@@ -71,7 +71,7 @@ do
 if [ -e $AETLIB ]
 	then
 	echo "AET2 library found at "$AETLIB", configuring for use..."
-	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" | sed 's#\(^LIBS =.*$\)#\1 \$\(AET2LIB\)#' >Makefile.tmp
+	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" >Makefile.tmp
 	mv Makefile.tmp Makefile
 	fi
 done
@@ -118,7 +118,7 @@ do
 if [ -e $AETLIB ]
 	then
 	echo "AET2 library found at "$AETLIB", configuring for use..."
-	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" | sed 's#\(^LIBS =.*$\)#\1 \$\(AET2LIB\)#' >Makefile.tmp
+	cat Makefile | sed 's/\(^CFLAGS =.*$\)/\1 -DAET2_IS_PRESENT/' | sed "s#AET2LIB =#AET2LIB = $AETLIB#" >Makefile.tmp
 	mv Makefile.tmp Makefile
 	fi
 done
@@ -127,12 +127,12 @@ cd ../../
 
 if [ `uname` = "AIX" ]
 	then
-	echo "AIX detected, patching cc to gcc in Makefile for pccts and vermin compiles..."
+	echo "AIX detected, patching cc to gcc in Makefile for pccts and vertex compiles..."
 	cd contrib/pccts
 	cat Makefile | sed 's/^CC=cc/CC=gcc/' >Makefile.tmp
 	mv Makefile.tmp Makefile
 	cd ../../
-	cd contrib/vermin
+	cd contrib/vertex
 	cat Makefile | sed 's/^CC=cc/CC=gcc/' >Makefile.tmp
 	mv Makefile.tmp Makefile
 	cd ../../

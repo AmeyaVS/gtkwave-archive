@@ -267,9 +267,3 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
 				void vzt_rd_vectorize(struct vzt_rd_trace *lt);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

@@ -160,9 +160,3 @@ nhold=nh_head;
 
 return(nh_curr->name);
 }
-
-/*
- * $Id$
- * $Log$
- */
-

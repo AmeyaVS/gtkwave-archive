@@ -275,9 +275,3 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 	}
 #endif
 }
-
-/*
- * $Id$
- * $Log$
- */
-

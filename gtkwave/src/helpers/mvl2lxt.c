@@ -31,8 +31,6 @@
 #include <sys/mman.h>
 #include "lxt_write.h"
 
-#include "wave_locale.h"
-
 void output_stripes(void);
 
 #define MVLHDR "MVL2LXT | "
@@ -893,12 +891,4 @@ munmap(mm, f_len); mm=NULL;
 fprintf(stderr, MVLHDR"Finished, exiting.\n");
 exit(0);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:18  gtkwave
- * initial release
- *
- */
 

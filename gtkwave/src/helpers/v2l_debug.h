@@ -104,9 +104,3 @@ TimeType atoi_64(char *str);
 #endif
 #define wave_alloca alloca
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

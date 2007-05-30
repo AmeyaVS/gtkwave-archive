@@ -31,9 +31,3 @@ struct pipe_ctx *pipeio_create(char *execappname);
 void pipeio_destroy(struct pipe_ctx *p);
         
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

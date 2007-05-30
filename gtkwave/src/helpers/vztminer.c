@@ -21,14 +21,11 @@
  */
 
 #include <config.h>
-
 #include "vzt_read.h"
 
 #if HAVE_GETOPT_H
 #include <getopt.h>
 #endif
-
-#include "wave_locale.h"
 
 static char *match = NULL;
 static int matchlen = 0;
@@ -306,12 +303,3 @@ free(lxname);
 
 return(rc);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:19  gtkwave
- * initial release
- *
- */
-

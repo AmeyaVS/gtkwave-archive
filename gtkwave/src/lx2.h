@@ -34,9 +34,3 @@ void lx2_set_fac_process_mask(nptr np);
 void lx2_import_masked(void);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

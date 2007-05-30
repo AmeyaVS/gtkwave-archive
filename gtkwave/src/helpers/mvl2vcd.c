@@ -30,8 +30,6 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
-#include "wave_locale.h"
-
 void output_stripes(void);
 
 #define MVLHDR "MVL2VCD | "
@@ -1413,12 +1411,3 @@ while(offs)
 }
 }
 #endif
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:18  gtkwave
- * initial release
- *
- */
-

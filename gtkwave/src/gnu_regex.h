@@ -540,9 +540,3 @@ version-control: t
 trim-versions-without-asking: nil
 End:
 */
-
-/*
- * $Id$
- * $Log$
- */
-

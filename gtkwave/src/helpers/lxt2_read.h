@@ -281,9 +281,3 @@ unsigned int			lxt2_rd_limit_time_range(struct lxt2_rd_trace *lt, lxtint64_t str
 unsigned int			lxt2_rd_unlimit_time_range(struct lxt2_rd_trace *lt);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

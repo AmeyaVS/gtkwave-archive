@@ -76,8 +76,3 @@ if((gc=gdk_gc_new(widget->window)))
 return(fallback);
 }
 
-/*
- * $Id$
- * $Log$
- */
-

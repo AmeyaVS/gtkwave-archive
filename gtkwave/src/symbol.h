@@ -66,7 +66,7 @@ struct symbol *symbol;
 };
 
 
-struct symbol *symfind(char *, unsigned int *);
+struct symbol *symfind(char *);
 struct symbol *symadd(char *, int);
 struct symbol *symadd_name_exists(char *name, int hv);
 int hash(char *s);
@@ -114,12 +114,3 @@ void splash_create(void);
 void splash_sync(off_t current, off_t total);  
 
 #endif
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:17  gtkwave
- * initial release
- *
- */
-

@@ -36,7 +36,6 @@
 #endif
 
 #include <config.h>
-#include "wave_locale.h"
 #include "v2l_analyzer.h"
 
 #undef VCD_BSEARCH_IS_PERFECT           /* bsearch is imperfect under linux, but OK under AIX */
@@ -1915,12 +1914,3 @@ if(argc>=3)
         }
 exit(0);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:19  gtkwave
- * initial release
- *
- */
-

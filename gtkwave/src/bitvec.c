@@ -367,7 +367,6 @@ char ch, wild_active=0;
 int len;
 int i;
 int made=0;
-unsigned int rows = 0;
 
 pnt=str;
 while((ch=*pnt))
@@ -395,10 +394,10 @@ if(!wild_active)	/* short circuit wildcard evaluation with bsearch */
 		return(0);
 
 maketracespt2:
-		s=symfind(str+i, &rows);
+		s=symfind(str+i);
 		if(s)
 			{
-			nexp = ExtractNodeSingleBit(&s->n[rows], atoi(str+1));
+			nexp = ExtractNodeSingleBit(s->n, atoi(str+1));
 			if(nexp)
 				{
 				AddNode(nexp, NULL);
@@ -410,9 +409,9 @@ maketracespt2:
 		}
 		else
 		{
-		if((s=symfind(str, &rows)))
+		if((s=symfind(str)))
 			{
-			AddNode(&s->n[rows],NULL);
+			AddNode(s->n,NULL);
 			return(~0);
 			}
 			else
@@ -471,7 +470,6 @@ int len, nodepnt=0;
 int i;
 struct Node *n[512];
 struct Bits *b=NULL;
-unsigned int rows = 0;
 
 while(1)
 {
@@ -517,10 +515,10 @@ if(len)
 				if((wild[i]==')')&&(wild[i+1])) 
 					{
 					i++; 
-					s=symfind(wild+i, &rows);
+					s=symfind(wild+i);
 					if(s)
 						{
-						nexp = ExtractNodeSingleBit(&s->n[rows], atoi(wild+1));
+						nexp = ExtractNodeSingleBit(s->n, atoi(wild+1));
 						if(nexp)
 							{
 							n[nodepnt++]=nexp;
@@ -533,9 +531,9 @@ if(len)
 			}
 			else
 			{
-			if((s=symfind(wild, &rows)))	
+			if((s=symfind(wild)))	
 				{
-				n[nodepnt++]=&s->n[rows];
+				n[nodepnt++]=s->n;
 				if(nodepnt==512) { free_2(wild); goto ifnode; }
 				}
 			}
@@ -568,7 +566,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mv.mvlfac) import_trace(n[i]);
+		if(n[i]->mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -591,7 +589,6 @@ struct Node *n[512];
 struct BitAttributes ba[512];
 struct Bits *b=NULL;
 int state = 0;
-unsigned int rows = 0;
 
 while(1)
 {
@@ -644,10 +641,10 @@ if(len)
 				if((wild[i]==')')&&(wild[i+1])) 
 					{
 					i++; 
-					s=symfind(wild+i, &rows);
+					s=symfind(wild+i);
 					if(s)
 						{
-						nexp = ExtractNodeSingleBit(&s->n[rows], atoi(wild+1));
+						nexp = ExtractNodeSingleBit(s->n, atoi(wild+1));
 						if(nexp)
 							{
 							n[nodepnt++]=nexp;
@@ -660,9 +657,9 @@ if(len)
 			}
 			else
 			{
-			if((s=symfind(wild, &rows)))	
+			if((s=symfind(wild)))	
 				{
-				n[nodepnt++]=&s->n[rows];
+				n[nodepnt++]=s->n;
 				}
 			}
 		}
@@ -685,7 +682,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mv.mvlfac) import_trace(n[i]);
+		if(n[i]->mvlfac) import_trace(n[i]);
 
 		b->attribs[i].shift = ba[i].shift;
 		b->attribs[i].flags = ba[i].flags;
@@ -736,7 +733,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mv.mvlfac) import_trace(n[i]);
+		if(n[i]->mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -832,7 +829,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mv.mvlfac) import_trace(n[i]);
+		if(n[i]->mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -1030,7 +1027,7 @@ if(nodepnt)
 	for(i=0;i<nodepnt;i++)
 		{
 		b->nodes[i]=n[i];
-		if(n[i]->mv.mvlfac) import_trace(n[i]);
+		if(n[i]->mvlfac) import_trace(n[i]);
 		}
 
 	b->nbits=nodepnt;
@@ -1588,7 +1585,7 @@ int offset, len;
 eptr rc=NULL;
 exptr exp;
 
-if(n->mv.mvlfac) import_trace(n);
+if(n->mvlfac) import_trace(n);
 
 DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
 if(!n->ext)
@@ -1625,7 +1622,7 @@ if(!n->ext)
 		}
 	if(i>-1) offset=i;
 
-	nam=(char *)wave_alloca(offset+20+30);
+	nam=(char *)wave_alloca(offset+20);
 	memcpy(nam, n->nname, offset);
 
 	if(!n->harray)         /* make quick array lookup for aet display--normally this is done in addnode */
@@ -1674,12 +1671,6 @@ if(!n->ext)
 		{
 		narray[i] = (nptr)calloc_2(1, sizeof(struct Node));
 		sprintf(nam+offset, "[%d]", actual);	
-		if(n->array_height)
-			{
-			len = offset + strlen(nam+offset);
-			sprintf(nam+len, "{%d}", n->this_row);
-			}
-
 		len = offset + strlen(nam+offset);
 		narray[i]->nname = (char *)malloc_2(len+1);
 		strcpy(narray[i]->nname, nam);
@@ -1778,7 +1769,7 @@ char *nam;
 int offset, len;
 exptr exp;
 
-if(n->mv.mvlfac) import_trace(n);
+if(n->mvlfac) import_trace(n);
 
 DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
 if(!n->ext)
@@ -1859,14 +1850,7 @@ if(!n->ext)
 
 	np = (nptr)calloc_2(1, sizeof(struct Node));
 	sprintf(nam+offset, "[%d]", actual);
-        if(n->array_height)
-        	{
-                len = offset + strlen(nam+offset);
-                sprintf(nam+len, "{%d}", n->this_row);
-                }
 	len = offset + strlen(nam+offset);
-
-
 	np->nname = (char *)malloc_2(len+1);
 	strcpy(np->nname, nam);
 
@@ -2065,7 +2049,6 @@ int len;
 char *prefix, *suffix;
 char *w2;
 nptr nexp;
-unsigned int rows = 0;
 
 if(!(len=strlen(w))) return(0);
 if(*(w+len-1)=='\n')
@@ -2163,8 +2146,8 @@ if(*w2=='+')
 		return(0);
 
 aliaspt2:
-		s=symfind(suffix+i, &rows);
-		nexp = ExtractNodeSingleBit(&s->n[rows], atoi(suffix+1));
+		s=symfind(suffix+i);
+		nexp = ExtractNodeSingleBit(s->n, atoi(suffix+1));
 		if(nexp)
 			{
 			AddNode(nexp, prefix+1);
@@ -2177,9 +2160,9 @@ aliaspt2:
 		}
 		else
 		{
-		if((s=symfind(suffix, &rows)))
+		if((s=symfind(suffix)))
 			{
-			AddNode(&s->n[rows],prefix+1);
+			AddNode(s->n,prefix+1);
 			return(~0);
 			}
 			else
@@ -2483,7 +2466,7 @@ if(!wild_active)	/* short circuit wildcard evaluation with bsearch */
 		return(made);
 
 maketracespt2:
-		if((s=symfind(str+i, NULL)))
+		if((s=symfind(str+i)))
 			{
 			lx2_set_fac_process_mask(s->n);
 			made = ~0;
@@ -2492,7 +2475,7 @@ maketracespt2:
 		}
 		else
 		{
-		if((s=symfind(str, NULL)))
+		if((s=symfind(str)))
 			{
 			lx2_set_fac_process_mask(s->n);
 			made = ~0;
@@ -2592,7 +2575,7 @@ if(len)
 				if((wild[i]==')')&&(wild[i+1])) 
 					{
 					i++; 
-					s=symfind(wild+i, NULL);
+					s=symfind(wild+i);
 					if(s)
 						{
 						lx2_set_fac_process_mask(s->n);
@@ -2604,7 +2587,7 @@ if(len)
 			}
 			else
 			{
-			if((s=symfind(wild, NULL)))	
+			if((s=symfind(wild)))	
 				{
 				lx2_set_fac_process_mask(s->n);
 				rc = 1;
@@ -2698,7 +2681,7 @@ if(*w2=='+')
 		return(0);
 
 aliaspt2:
-		s=symfind(suffix+i, NULL);
+		s=symfind(suffix+i);
 		if(s)
 			{
 			lx2_set_fac_process_mask(s->n);
@@ -2708,7 +2691,7 @@ aliaspt2:
 		}
 		else
 		{
-		if((s=symfind(suffix, NULL)))
+		if((s=symfind(suffix)))
 			{
 			lx2_set_fac_process_mask(s->n);
 			made = ~0;
@@ -2808,16 +2791,4 @@ return(made);
 /****************/
 /* LX2 variants */
 /****************/
-
-/*
- * $Id$
- * $Log$
- * Revision 1.3  2007/04/29 04:13:49  gtkwave
- * changed anon union defined in struct Node to a named one as anon unions
- * are a gcc extension
- *
- * Revision 1.2  2007/04/20 02:08:11  gtkwave
- * initial release
- *
- */
 

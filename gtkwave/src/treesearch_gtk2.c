@@ -563,7 +563,7 @@ sig_selection_foreach (GtkTreeModel *model,
 		}
 		else
 		{
-	        AddNodeUnroll(s->n, NULL);  
+	        AddNode(s->n, NULL);  
 		}
         }
 }
@@ -661,7 +661,7 @@ sig_selection_foreach_preload_lx2
                                 {
                                 while(t)
                                         {
-                                        if(t->n->mv.mvlfac)
+                                        if(t->n->mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -672,7 +672,7 @@ sig_selection_foreach_preload_lx2
                         }
                         else
                         {
-                        if(s->n->mv.mvlfac)
+                        if(s->n->mvlfac)
                                 {
                                 lx2_set_fac_process_mask(s->n);
                                 pre_import++;
@@ -1527,16 +1527,3 @@ void dnd_setup(GtkWidget *w)
                 );
 	}
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.3  2007/04/29 04:13:49  gtkwave
- * changed anon union defined in struct Node to a named one as anon unions
- * are a gcc extension
- *
- * Revision 1.2  2007/04/20 02:08:17  gtkwave
- * initial release
- *
- */
-

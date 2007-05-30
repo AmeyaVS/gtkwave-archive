@@ -354,48 +354,48 @@ while(v)
 	{
 	nptr n = v->narray[0];
 
-	if(n->mv.mvlfac_vlist) 
+	if(n->mvlfac_vlist) 
 		{
-		vlist_freeze(&n->mv.mvlfac_vlist);
+		vlist_freeze(&n->mvlfac_vlist);
 		}
 		else
 		{
-		n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
+		n->mvlfac_vlist = vlist_create(sizeof(char), 0);
 
 		if((vprime=bsearch_vcd(v->id, strlen(v->id)))==v) /* hash mish means dup net */
 			{
 			switch(v->vartype)
 				{
 				case V_REAL:
-		                          	vlist_emit_uv32(&n->mv.mvlfac_vlist, 'R');
-		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
-		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
-						vlist_emit_uv32(&n->mv.mvlfac_vlist, 0);
-						vlist_emit_string(&n->mv.mvlfac_vlist, "NaN");
+		                          	vlist_emit_uv32(&n->mvlfac_vlist, 'R');
+		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
+		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
+						vlist_emit_uv32(&n->mvlfac_vlist, 0);
+						vlist_emit_string(&n->mvlfac_vlist, "NaN");
 						break;
 
 				case V_STRING:
-						vlist_emit_uv32(&n->mv.mvlfac_vlist, 'S');
-		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
-		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
-						vlist_emit_uv32(&n->mv.mvlfac_vlist, 0);
-						vlist_emit_string(&n->mv.mvlfac_vlist, "UNDEF");
+						vlist_emit_uv32(&n->mvlfac_vlist, 'S');
+		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
+		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
+						vlist_emit_uv32(&n->mvlfac_vlist, 0);
+						vlist_emit_string(&n->mvlfac_vlist, "UNDEF");
 						break;
 	
 				default:
 					if(v->size==1)
 						{
-	                                        vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)'0');
-	                                        vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
-						vlist_emit_uv32(&n->mv.mvlfac_vlist, RCV_X);
+	                                        vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)'0');
+	                                        vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
+						vlist_emit_uv32(&n->mvlfac_vlist, RCV_X);
 						}
 						else
 						{
-		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, 'B');
-		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
-		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
-						vlist_emit_uv32(&n->mv.mvlfac_vlist, 0);
-						vlist_emit_mvl9_string(&n->mv.mvlfac_vlist, "x");
+		                                vlist_emit_uv32(&n->mvlfac_vlist, 'B');
+		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
+		                                vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
+						vlist_emit_uv32(&n->mvlfac_vlist, 0);
+						vlist_emit_mvl9_string(&n->mvlfac_vlist, "x");
 						}
 					break;
 				}
@@ -435,12 +435,12 @@ vcdbyteno+=(vend-vcdbuf);
 rd=fread(vcdbuf, sizeof(char), VCD_BSIZ, vcd_handle);
 vend=(vst=vcdbuf)+rd;
 
-if((!rd)||(errno)) return(-1);
-
 if(vcd_fsiz)
 	{
-	splash_sync(vcdbyteno, vcd_fsiz); /* gnome 2.18 seems to set errno so splash moved here... */
+	splash_sync(vcdbyteno, vcd_fsiz);
 	}
+
+if((!rd)||(errno)) return(-1);
 
 return((int)(*(vst++)));
 }
@@ -566,7 +566,7 @@ for(yytext[len++]=ch;;yytext[len++]=ch)
 		yytext=(char *)realloc_2(yytext, (T_MAX_STR=T_MAX_STR*2)+1);
 		}
 	ch=getch_patched();
-	if(ch<0) { free_2(varsplit); varsplit=NULL; break; }
+	if(ch<0) break;
 	if((ch==':')||(ch==']'))
 		{
 		var_prevch=ch;
@@ -759,11 +759,11 @@ switch((typ = yytext[0]))
 				unsigned int time_delta;
 				unsigned int rcv;
 
-				if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
+				if(!n->mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 					{
-					n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
-					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)'0'); /* represents single bit routine for decompression */
-					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
+					n->mvlfac_vlist = vlist_create(sizeof(char), 0);
+					vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)'0'); /* represents single bit routine for decompression */
+					vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
 					}
 
 				time_delta = time_vlist_count - (unsigned int)n->numhist;
@@ -784,7 +784,7 @@ switch((typ = yytext[0]))
 					default:		rcv = RCV_D | (time_delta<<4); break;
 					}
 
-				vlist_emit_uv32(&n->mv.mvlfac_vlist, rcv);
+				vlist_emit_uv32(&n->mvlfac_vlist, rcv);
                                 }
                         }
                         else
@@ -818,10 +818,10 @@ process_binary:
 			nptr n = v->narray[0];
 			unsigned int time_delta;
 
-			if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
+			if(!n->mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 				{
 				unsigned char typ2 = toupper(typ);
-				n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
+				n->mvlfac_vlist = vlist_create(sizeof(char), 0);
 
 				if(v->vartype!=V_REAL) 
 					{
@@ -835,32 +835,32 @@ process_binary:
 						}
 					}
 
-				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)toupper(typ2)); /* B/R/P/S for decompress */
-				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
-				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
+				vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)toupper(typ2)); /* B/R/P/S for decompress */
+				vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->vartype);
+				vlist_emit_uv32(&n->mvlfac_vlist, (unsigned int)v->size);
 				}
 
 			time_delta = time_vlist_count - (unsigned int)n->numhist;
 			n->numhist = time_vlist_count;				
 
-			vlist_emit_uv32(&n->mv.mvlfac_vlist, time_delta);
+			vlist_emit_uv32(&n->mvlfac_vlist, time_delta);
 
 			if((typ=='b')||(typ=='B'))
 				{
 				if(v->vartype!=V_REAL)
 					{
-					vlist_emit_mvl9_string(&n->mv.mvlfac_vlist, vector);
+					vlist_emit_mvl9_string(&n->mvlfac_vlist, vector);
 					}
 					else
 					{
-					vlist_emit_string(&n->mv.mvlfac_vlist, vector);
+					vlist_emit_string(&n->mvlfac_vlist, vector);
 					}
 				}
 				else
 				{
 				if(v->vartype == V_REAL)
 					{
-					vlist_emit_string(&n->mv.mvlfac_vlist, vector);
+					vlist_emit_string(&n->mvlfac_vlist, vector);
 					}
 					else
 					{
@@ -879,7 +879,7 @@ process_binary:
 						}					
 
 					bit_term:
-					vlist_emit_mvl9_string(&n->mv.mvlfac_vlist, bits);
+					vlist_emit_mvl9_string(&n->mvlfac_vlist, bits);
 					}
 				}
                         }
@@ -1065,11 +1065,7 @@ for(;;)
 			struct vcdsymbol *v=NULL;
 
 			var_prevch=0;
-                        if(varsplit)
-                                {
-                                free_2(varsplit);
-                                varsplit=NULL;
-                                }
+			varsplit=NULL;
 			vtok=get_vartoken(1);
 			if(vtok>V_PORT) goto bail;
 
@@ -1805,14 +1801,14 @@ while(v)
 					}
 
 				hashdirty=0;
-				if(symfind(str, NULL))
+				if(symfind(str))
 					{
 					char *dupfix=(char *)malloc_2(max_slen+32);
 					hashdirty=1;
 					DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 					do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-						while(symfind(dupfix, NULL));
+						while(symfind(dupfix));
 
 					strcpy(str, dupfix);
 					free_2(dupfix);
@@ -1887,14 +1883,14 @@ while(v)
 
 
 			hashdirty=0;
-			if(symfind(str, NULL))
+			if(symfind(str))
 				{
 				char *dupfix=(char *)malloc_2(max_slen+32);
 				hashdirty=1;
 				DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 				do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-					while(symfind(dupfix, NULL));
+					while(symfind(dupfix));
 
 				strcpy(str, dupfix);
 				free_2(dupfix);
@@ -2110,11 +2106,6 @@ build_slisthier();
 time_vlist = vlist_create(sizeof(TimeType), 0);
 
 vcd_parse();
-if(varsplit)
-	{
-        free_2(varsplit);
-        varsplit=NULL;
-        }
 
 vlist_freeze(&time_vlist);
 vlist_emit_finalize();
@@ -2171,7 +2162,7 @@ void vcd_import_masked(void)
 
 void vcd_set_fac_process_mask(nptr np)
 {
-if(np && np->mv.mvlfac_vlist)
+if(np && np->mvlfac_vlist)
 	{
 	import_vcd_trace(np);
 	}
@@ -2179,7 +2170,7 @@ if(np && np->mv.mvlfac_vlist)
 
 void import_vcd_trace(nptr np)
 {
-struct vlist_t *v = np->mv.mvlfac_vlist;
+struct vlist_t *v = np->mvlfac_vlist;
 int len = 1;
 int list_size;
 unsigned char vlist_type;
@@ -2517,7 +2508,7 @@ else if(vlist_type == '!') /* error in loading */
 		import_vcd_trace(n2);
 
 		vlist_destroy(v);
-		np->mv.mvlfac_vlist = NULL;
+		np->mvlfac_vlist = NULL;
 
 		np->head = n2->head;
 		np->curr = n2->curr;
@@ -2529,26 +2520,6 @@ else if(vlist_type == '!') /* error in loading */
 	}
 
 vlist_destroy(v);
-np->mv.mvlfac_vlist = NULL;
+np->mvlfac_vlist = NULL;
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.5  2007/04/30 01:10:21  gtkwave
- * splash_sync() causes errno to be set when GTK main event loop is called
- * by the vcd parsers for newer versions of gnome (2.18) and/or other
- * various X11 Gentoo dependencies.
- *
- * Revision 1.4  2007/04/29 06:07:28  gtkwave
- * fixed memory leaks in vcd parser
- *
- * Revision 1.3  2007/04/29 04:13:49  gtkwave
- * changed anon union defined in struct Node to a named one as anon unions
- * are a gcc extension
- *
- * Revision 1.2  2007/04/20 02:08:17  gtkwave
- * initial release
- *
- */
 

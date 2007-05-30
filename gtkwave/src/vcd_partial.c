@@ -489,7 +489,7 @@ for(yytext[len++]=ch;;yytext[len++]=ch)
 		yytext=(char *)realloc_2(yytext, (T_MAX_STR=T_MAX_STR*2)+1);
 		}
 	ch=getch_patched();
-	if(ch<0) { free_2(varsplit); varsplit=NULL; break; }
+	if(ch<0) break;
 	if((ch==':')||(ch==']'))
 		{
 		var_prevch=ch;
@@ -1158,11 +1158,7 @@ for(;;)
 			struct vcdsymbol *v=NULL;
 
 			var_prevch=0;
-			if(varsplit)
-				{
-				free_2(varsplit);
-				varsplit=NULL;
-				}
+			varsplit=NULL;
 			vtok=get_vartoken(1);
 			if(vtok>V_PORT) goto bail;
 
@@ -1956,14 +1952,14 @@ while(v)
 					}
 
 				hashdirty=0;
-				if(symfind(str, NULL))
+				if(symfind(str))
 					{
 					char *dupfix=(char *)malloc_2(max_slen+32);
 					hashdirty=1;
 					DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 					do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-						while(symfind(dupfix, NULL));
+						while(symfind(dupfix));
 
 					strcpy(str, dupfix);
 					free_2(dupfix);
@@ -2037,14 +2033,14 @@ while(v)
 
 
 			hashdirty=0;
-			if(symfind(str, NULL))
+			if(symfind(str))
 				{
 				char *dupfix=(char *)malloc_2(max_slen+32);
 				hashdirty=1;
 				DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 				do sprintf(dupfix, "$DUP%d%s%s", duphier++, vcd_hier_delimeter, str);
-					while(symfind(dupfix, NULL));
+					while(symfind(dupfix));
 
 				strcpy(str, dupfix);
 				free_2(dupfix);
@@ -2186,12 +2182,6 @@ build_slisthier();
 
 vcd_preserve_glitches = 1; /* splicing dictates that we override */
 while(!header_over) { vcd_parse(); }
-
-if(varsplit)
-	{
-	free_2(varsplit);
-	varsplit=NULL;
-	}
 
 if((!sorted)&&(!indexed))
 	{
@@ -2393,14 +2383,4 @@ if(partial_vcd)
 while (gtk_events_pending()) gtk_main_iteration();
 }
 
-/*
- * $Id$
- * $Log$
- * Revision 1.3  2007/04/29 06:07:28  gtkwave
- * fixed memory leaks in vcd parser
- *
- * Revision 1.2  2007/04/20 02:08:17  gtkwave
- * initial release
- *
- */
 

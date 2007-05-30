@@ -362,7 +362,7 @@ if(is_lx2)
 				{
 				while(t)
 					{
-					if(t->n->mv.mvlfac)
+					if(t->n->mvlfac)
 						{
 						lx2_set_fac_process_mask(t->n);
 						pre_import++;
@@ -373,7 +373,7 @@ if(is_lx2)
 			}
 			else
 			{
-			if(s->n->mv.mvlfac)
+			if(s->n->mvlfac)
 				{
 				lx2_set_fac_process_mask(s->n);
 				pre_import++;
@@ -410,7 +410,7 @@ for(i=fetchlow(h_selectedtree)->which;i<=fetchhigh(h_selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNodeUnroll(s->n, NULL);  
+	        AddNode(s->n, NULL);  
 		}
         }
 
@@ -461,7 +461,7 @@ if(is_lx2)
 				{
 				while(t)
 					{
-					if(t->n->mv.mvlfac)
+					if(t->n->mvlfac)
 						{
 						lx2_set_fac_process_mask(t->n);
 						pre_import++;
@@ -472,7 +472,7 @@ if(is_lx2)
 			}
 			else
 			{
-			if(s->n->mv.mvlfac)
+			if(s->n->mvlfac)
 				{
 				lx2_set_fac_process_mask(s->n);
 				pre_import++;
@@ -509,7 +509,7 @@ for(i=fetchlow(h_selectedtree)->which;i<=fetchhigh(h_selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNodeUnroll(s->n, NULL);  
+	        AddNode(s->n, NULL);  
 		}
         }
 
@@ -574,7 +574,7 @@ if(is_lx2)
 				{
 				while(t)
 					{
-					if(t->n->mv.mvlfac)
+					if(t->n->mvlfac)
 						{
 						lx2_set_fac_process_mask(t->n);
 						pre_import++;
@@ -585,7 +585,7 @@ if(is_lx2)
 			}
 			else
 			{
-			if(s->n->mv.mvlfac)
+			if(s->n->mvlfac)
 				{
 				lx2_set_fac_process_mask(s->n);
 				pre_import++;
@@ -622,7 +622,7 @@ for(i=fetchlow(h_selectedtree)->which;i<=fetchhigh(h_selectedtree)->which;i++)
 		}
 		else
 		{
-	        AddNodeUnroll(s->n, NULL);  
+	        AddNode(s->n, NULL);  
 		}
         }
  
@@ -1016,16 +1016,3 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     refresh_tree(current_tree);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.3  2007/04/29 04:13:49  gtkwave
- * changed anon union defined in struct Node to a named one as anon unions
- * are a gcc extension
- *
- * Revision 1.2  2007/04/20 02:08:13  gtkwave
- * initial release
- *
- */
-

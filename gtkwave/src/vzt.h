@@ -24,9 +24,3 @@ void 		vzt_set_fac_process_mask(nptr np);
 void 		vzt_import_masked(void);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

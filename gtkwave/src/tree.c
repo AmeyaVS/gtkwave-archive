@@ -610,9 +610,3 @@ if(!hier_grouping)
 }
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

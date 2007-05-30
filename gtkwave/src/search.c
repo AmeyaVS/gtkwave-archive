@@ -250,7 +250,7 @@ if(is_lx2)
 			{
 			if((!s->vec_root)||(!autocoalesce))
 				{
-	                        if(s->n->mv.mvlfac)
+	                        if(s->n->mvlfac)
 	                                {
 	                                lx2_set_fac_process_mask(s->n);
 	                                pre_import++;
@@ -261,7 +261,7 @@ if(is_lx2)
 				t=s->vec_root;
 				while(t)
 					{
-                                        if(t->n->mv.mvlfac)
+                                        if(t->n->mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -296,7 +296,7 @@ for(i=0;i<num_rows;i++)
 
 		if((!s->vec_root)||(!autocoalesce))
 			{
-			AddNodeUnroll(s->n, NULL);
+			AddNode(s->n, NULL);
 			}
 			else
 			{
@@ -391,7 +391,7 @@ if(is_lx2)
 			{
 			if((!s->vec_root)||(!autocoalesce))
 				{
-	                        if(s->n->mv.mvlfac)
+	                        if(s->n->mvlfac)
 	                                {
 	                                lx2_set_fac_process_mask(s->n);
 	                                pre_import++;
@@ -402,7 +402,7 @@ if(is_lx2)
 				t=s->vec_root;
 				while(t)
 					{
-                                        if(t->n->mv.mvlfac)
+                                        if(t->n->mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -437,7 +437,7 @@ for(i=0;i<num_rows;i++)
 
 		if((!s->vec_root)||(!autocoalesce))
 			{
-			AddNodeUnroll(s->n, NULL);
+			AddNode(s->n, NULL);
 			}
 			else
 			{
@@ -536,7 +536,7 @@ if(is_lx2)
 			{
 			if((!s->vec_root)||(!autocoalesce))
 				{
-	                        if(s->n->mv.mvlfac)
+	                        if(s->n->mvlfac)
 	                                {
 	                                lx2_set_fac_process_mask(s->n);
 	                                pre_import++;
@@ -547,7 +547,7 @@ if(is_lx2)
 				t=s->vec_root;
 				while(t)
 					{
-                                        if(t->n->mv.mvlfac)
+                                        if(t->n->mvlfac)
                                                 {
                                                 lx2_set_fac_process_mask(t->n);
                                                 pre_import++;
@@ -582,7 +582,7 @@ for(i=0;i<num_rows;i++)
 
 		if((!s->vec_root)||(!autocoalesce))
 			{
-			AddNodeUnroll(s->n, NULL);
+			AddNode(s->n, NULL);
 			}
 			else
 			{
@@ -1060,16 +1060,3 @@ void searchbox(char *title, GtkSignalFunc func)
 
     if(strlen(searchbox_text)) enter_callback(entry,NULL);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.3  2007/04/29 04:13:49  gtkwave
- * changed anon union defined in struct Node to a named one as anon unions
- * are a gcc extension
- *
- * Revision 1.2  2007/04/20 02:08:17  gtkwave
- * initial release
- *
- */
-

@@ -143,8 +143,3 @@ ds_Tree * ds_delete(char *i, ds_Tree * t) {
     return t;                         /* It wasn't there */
 }
 
-/*
- * $Id$
- * $Log$
- */
-

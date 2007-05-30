@@ -1325,8 +1325,3 @@ free_2(newbuff);
 return(retval);
 }
 
-/*
- * $Id$
- * $Log$
- */
-

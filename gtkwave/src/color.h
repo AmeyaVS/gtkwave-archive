@@ -51,8 +51,3 @@ GdkGC *alloc_color(GtkWidget *widget, int tuple, GdkGC *fallback);	/* tuple is e
 
 #endif
 
-/*
- * $Id$
- * $Log$
- */
-

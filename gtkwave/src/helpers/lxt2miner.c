@@ -27,8 +27,6 @@
 #include <getopt.h>
 #endif
 
-#include "wave_locale.h"
-
 static char *match = NULL;
 static int matchlen = 0;
 static int names_only = 0;
@@ -304,12 +302,3 @@ free(lxname);
 
 return(rc);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:18  gtkwave
- * initial release
- *
- */
-

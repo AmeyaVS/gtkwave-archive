@@ -96,9 +96,3 @@ void order_facs_from_treesort(struct tree *t, void *v);
 void treenamefix(struct tree *t);
 
 #endif
-
-/*
- * $Id$
- * $Log$
- */
-

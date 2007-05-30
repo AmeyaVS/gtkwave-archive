@@ -74,18 +74,6 @@ unsigned long	ae2_read_symbol_length(AE2_HANDLE handle, unsigned long symbol_idx
 unsigned long 	ae2_read_value(AE2_HANDLE handle, FACREF* fr, uint64_t cycle, char* value);
 uint64_t 	ae2_read_next_value(AE2_HANDLE handle, FACREF* fr, uint64_t cycle, char* value);
 void 		ae2_read_close(AE2_HANDLE handle);
-
-unsigned long	ae2_read_num_sparse_rows(AE2_HANDLE handle, unsigned long symbol_idx, uint64_t cycle);
-uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, uint64_t cycle, unsigned long idx);
-
 #endif
 
 #endif
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 01:39:00  gtkwave
- * initial release
- *
- */

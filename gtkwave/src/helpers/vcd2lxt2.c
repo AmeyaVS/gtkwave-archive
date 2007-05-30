@@ -33,7 +33,6 @@
 #endif
 
 #include <config.h>
-#include "wave_locale.h"
 #include <wavealloca.h>
 
 #include "v2l_analyzer_lxt2.h"
@@ -1970,12 +1969,3 @@ free(vname); free(lxname);
 
 return(0);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:19  gtkwave
- * initial release
- *
- */
-

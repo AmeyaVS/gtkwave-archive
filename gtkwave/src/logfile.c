@@ -403,9 +403,3 @@ void logbox(char *title, int width, char *default_text)
 
     fclose(handle);
 }
-
-/*
- * $Id$
- * $Log$
- */
-

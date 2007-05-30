@@ -73,9 +73,3 @@ if(!fgetmalloc_len)
 
 
 }
-
-/*
- * $Id$
- * $Log$
- */
-

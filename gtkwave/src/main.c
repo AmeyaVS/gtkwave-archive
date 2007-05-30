@@ -18,8 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "wave_locale.h"
-
 #if !defined _MSC_VER && !defined __MINGW32__
 #include <signal.h>
 #include <sys/types.h>
@@ -1368,7 +1366,7 @@ if(!mainwindow) return;
 #ifdef WAVE_USE_GTK2
 gtk_window_get_position(GTK_WINDOW(mainwindow), root_x, root_y);
 
-if(!initial_window_get_valid)
+if((!initial_window_get_valid)&&(*root_x >=0)&&(*root_y >=0))
 	{
 	if((mainwindow->window))
 		{
@@ -1529,15 +1527,3 @@ if(stems_type != WAVE_ANNO_NONE)
 	}
 #endif
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.3  2007/05/28 00:55:06  gtkwave
- * added support for arrays as a first class dumpfile datatype
- *
- * Revision 1.2  2007/04/20 02:08:13  gtkwave
- * initial release
- *
- */
-

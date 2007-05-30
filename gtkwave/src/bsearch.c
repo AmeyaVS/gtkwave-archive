@@ -13,7 +13,6 @@
 #include "symbol.h"
 #include "bsearch.h"
 #include "strace.h"
-#include <ctype.h>
 
 TimeType shift_timebase=LLDescriptor(0);
 TimeType shift_timebase_default_for_add=LLDescriptor(0);
@@ -209,55 +208,11 @@ rc=sigcmp((char *)key,s2->name);
 return(rc);
 }
 
-struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return)
+struct symbol *bsearch_facs(char *ascii)
 {
 struct symbol **rc;
-int len;
 
-if ((!ascii)||(!(len=strlen(ascii)))) return(NULL);
-if(rows_return)
-	{
-	*rows_return = 0;
-	}
-
-if(ascii[len-1]=='}')
-	{
-	int i;
-
-	for(i=len-2;i>=2;i--)
-		{	
-		if(isdigit(ascii[i])) continue;
-		if(ascii[i]=='{')
-			{
-			char *tsc = wave_alloca(i+1);
-			memcpy(tsc, ascii, i+1);
-			tsc[i] = 0;
-			rc=(struct symbol **)bsearch(tsc, facs, numfacs, sizeof(struct symbol *), compar_facs);
-			if(rc) 
-				{
-				unsigned int whichrow = atoi(&ascii[i+1]);
-				if(rows_return) *rows_return = whichrow;
-
-				if(whichrow <= (*rc)->n->array_height) 
-					{	
-					return(*rc);
-					}
-				}
-			}
-		break;	/* fallthrough to normal handler */
-		}
-	
-	}
-
+if ((!ascii)||(!strlen(ascii))) return(NULL);
 rc=(struct symbol **)bsearch(ascii, facs, numfacs, sizeof(struct symbol *), compar_facs);
 if(rc) return(*rc); else return(NULL);
 }
-
-/*
- * $Id$
- * $Log$
- * Revision 1.2  2007/04/20 02:08:11  gtkwave
- * initial release
- *
- */
-

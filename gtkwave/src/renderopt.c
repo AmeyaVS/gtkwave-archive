@@ -333,9 +333,3 @@ void renderbox(char *title)
 
     gtk_widget_show(window);
 }
-
-/*
- * $Id$
- * $Log$
- */
-
