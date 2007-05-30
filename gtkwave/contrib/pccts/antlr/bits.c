@@ -1,4 +1,3 @@
-
 /* bits.c -- manage creation and output of bit sets used by the parser.
  *
  * SOFTWARE RIGHTS

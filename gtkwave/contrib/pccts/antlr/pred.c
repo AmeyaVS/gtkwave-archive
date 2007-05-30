@@ -1,4 +1,3 @@
-
 /*
  * pred.c -- source for predicate detection, manipulation
  *

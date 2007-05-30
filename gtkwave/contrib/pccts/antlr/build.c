@@ -1,4 +1,3 @@
-
 /*
  * build.c -- functions associated with building syntax diagrams.
  *

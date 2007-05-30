@@ -1,4 +1,3 @@
-
 /*
  * lex.c	--	Generate all of the lexical type files: parser.dlg tokens.h
  *

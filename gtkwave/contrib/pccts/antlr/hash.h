@@ -1,4 +1,3 @@
-
 /*
  * hash.h -- define hash table entries, sizes, hash function...
  *
