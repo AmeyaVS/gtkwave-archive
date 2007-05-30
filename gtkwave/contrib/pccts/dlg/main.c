@@ -1,3 +1,4 @@
+
 /* Main function for dlg version
  *
  * SOFTWARE RIGHTS

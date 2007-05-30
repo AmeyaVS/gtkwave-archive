@@ -1,4 +1,5 @@
 
+
 /* parser.dlg -- DLG Description of scanner
  *
  * Generated from: ./dlg_p.g

@@ -1,3 +1,4 @@
+
 /* Automata conversion functions for DLG
  *
  * SOFTWARE RIGHTS

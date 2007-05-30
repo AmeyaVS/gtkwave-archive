@@ -1,3 +1,4 @@
+
 /* output.c, output generator for dlg
  *
  * Output Notes:

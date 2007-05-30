@@ -1,3 +1,4 @@
+
 /* dlg header file
  *
  * SOFTWARE RIGHTS
