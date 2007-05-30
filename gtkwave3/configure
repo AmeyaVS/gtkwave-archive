@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [ `uname` = "AIX" ]
+	then
+	CC="cc"
+	export CC
+	fi
+
+if [ `uname|grep MINGW|wc -l` = "1" ]
+	then
+	echo "Building GTKWave for MinGW with gtk..."
+
+	cat Makefile.in | sed 's#log bin/gtkwave.*#log bin/gtkwave#' >Makefile.tmp
+	cat src/Makefile.in | sed 's#CFLAGS \= #CFLAGS \= \-mms\-bitfields #' | sed 's#\-lpthread##' >src/Makefile.tmp	
+	mv Makefile.tmp Makefile.in
+	mv src/Makefile.tmp src/Makefile.in
+	./configure2 "$@"
+	./configure3
+	exit
+	fi
+
+./configure2 "$@"
+./configure3
+exit
