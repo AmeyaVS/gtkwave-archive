@@ -1,3 +1,4 @@
+
 /*
  * proto.h -- function prototypes
  *

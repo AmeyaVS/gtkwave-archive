@@ -1,3 +1,4 @@
+
 /*
  * globals.c	--	File containing all variables/tables visible to all files.
  *
