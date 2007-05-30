@@ -6,6 +6,7 @@ AC_INIT(gtkwave, 3.x, bybell@nc.rr.com)
 AC_CONFIG_SRCDIR([src/vcd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
+AM_MAINTAINER_MODE
 
 # Checks for build options
 
