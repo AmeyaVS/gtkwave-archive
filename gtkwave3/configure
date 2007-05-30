@@ -20,5 +20,8 @@ if [ `uname|grep MINGW|wc -l` = "1" ]
 	fi
 
 ./configure2 "$@"
-./configure3
-exit
+
+if [ -e Makefile ]
+        then
+	./configure3
+        fi
