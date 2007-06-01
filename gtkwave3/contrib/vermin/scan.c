@@ -17,6 +17,9 @@
 /*
 * $Id$
 * $Log$
+* Revision 1.2  2007/05/30 04:41:22  gtkwave
+* regenerated configure
+*
 * Revision 1.1.1.1  2007/05/30 04:25:47  gtkwave
 * Imported sources
 *

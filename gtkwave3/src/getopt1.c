@@ -18,7 +18,9 @@
    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
    MA 02110-1301, USA  */
 
+#if 0
 #define HAVE_CONFIG_H  /* needed for Wine */
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -204,6 +206,9 @@ main (argc, argv)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:29  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:12  gtkwave
  * initial release
  *

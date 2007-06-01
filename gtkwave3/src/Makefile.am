@@ -4,7 +4,6 @@
 SUBDIRS=	$(LIBZ_DIR) $(LIBBZ2_DIR) helpers
 DIST_SUBDIRS=	libz libbz2 helpers
 
-AET2LIB = 
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 #CFLAGS = -O2 -DWAVE_USE_GTK2 -I./libz -I./libbz2 -I./helpers -I../
@@ -13,7 +12,7 @@ BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 bin_PROGRAMS=	gtkwave twinwave
 
-AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS)
+AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS)
 
 gtkwave_SOURCES= \
 	ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
@@ -33,7 +32,7 @@ gtkwave_SOURCES= \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c
 
-gtkwave_LDFLAGS= $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD)
+gtkwave_LDFLAGS= $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD)
 
 twinwave_SOURCES= twinwave.c
 twinwave_LDFLAGS= $(GTK_LIBS)

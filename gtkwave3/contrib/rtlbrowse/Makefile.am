@@ -17,9 +17,9 @@ rtlbrowse_SOURCES = definehash.c fgetdynamic.c fgetdynamic.h \
 	$(srcdir)/../../src/helpers/lxt2_read.c splay.h \
 	vlex.l vlex.h wavelink.h
 
-LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(GTK_LIBS)
+LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(GTK_LIBS) $(AET2_LDADD)
 AM_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src  -I$(top_srcdir)/src/helpers \
-	$(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ_CFLAGS)
+	$(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ_CFLAGS) $(AET2_CFLAGS)
 
 definehash.c: vpp_keyword.gperf
 	$(GPERF) -C -I -N is_builtin_define $(srcdir)/vpp_keyword.gperf >definehash.c

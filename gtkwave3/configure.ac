@@ -35,6 +35,36 @@ else
 fi
 
 
+AC_MSG_CHECKING([if ae2 support should be used])
+
+AE2_CFLAGS=
+AET2_LDADD=
+AE2=no
+AC_ARG_ENABLE([ae2],
+[  --enable-ae2            Compiles in support for AE2 files via simarama.],
+[
+if test "X$enable_ae2" = "Xno" ; then
+	AE2=no
+else
+	AE2=yes
+fi
+],
+[
+AE2=no
+])
+
+if test "X$AE2" = "Xyes" ; then
+	AET2_CFLAGS="-DAET2_IS_PRESENT"
+	AET2_LDADD="/afs/awd/projects/simarama/releases/latest/libae2rw.so"
+	AC_MSG_RESULT([yes])
+else
+	AC_MSG_RESULT([no])
+fi
+
+AC_SUBST(AET2_CFLAGS)
+AC_SUBST(AET2_LDADD)
+
+
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_AWK
@@ -42,13 +72,18 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_LEX
 AC_PROG_RANLIB
-AC_PATH_PROG(GPERF, [gperf], [notfound])
-if test "$GPERF" = "notfound" ; then
-	AC_MSG_ERROR([Couldn't find a usable gperf program.
-Please install gperf which is available from
-ftp://ftp.gnu.org/pub/gnu/gperf/
-])
-fi
+
+#
+# gperf only needed if the user updates the gperf data
+# files which only developers will be doing...
+#
+# AC_PATH_PROG(GPERF, [gperf], [notfound])
+# if test "$GPERF" = "notfound" ; then
+#	AC_MSG_ERROR([Couldn't find a usable gperf program.
+# Please install gperf which is available from
+# ftp://ftp.gnu.org/pub/gnu/gperf/
+# ])
+# fi
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [sqrt])
@@ -187,7 +222,6 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([atexit btowc bzero dup2 memmove memset munmap pow putenv re_comp realpath regcomp select setenv strcasecmp strchr strdup strerror strncasecmp strrchr strstr getopt_long setenv unsetenv])
 AC_CHECK_LIB(nsl,xdrmem_create)
 AC_CHECK_LIB(rpc,xdrmem_create)
-AC_CHECK_LIB(pthread,pthread_create)
 
 AC_CONFIG_FILES([Makefile
 		doc/Makefile
@@ -235,6 +269,9 @@ AC_MSG_NOTICE([
 
   LIBBZ2_CFLAGS : $LIBBZ2_CFLAGS
   LIBBZ2_LDADD  : $LIBBZ2_LDADD
+
+  AET2_CFLAGS   : $AET2_CFLAGS
+  AET2_LDADD    : $AET2_LDADD
 
   CPPFLAGS      : $CPPFLAGS
   CFLAGS        : $CFLAGS
