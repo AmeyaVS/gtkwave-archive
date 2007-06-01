@@ -332,7 +332,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
     {
       struct tree *t;
       sprintf (asbuf, "%s]", pfx);
-      name = strdup(asbuf);
+      name = strdup_2(asbuf);
 
       t = build_hierarchy_type (h, base->el, name, sig);
       
@@ -358,7 +358,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	while (1)
 	  {
 	    sprintf(asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup(asbuf);
+            name = strdup_2(asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
 	    free_2(name);
 	    if (v == r->right)
@@ -384,7 +384,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	while (1)
 	  {
 	    sprintf(asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup(asbuf);
+            name = strdup_2(asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
 	    free_2(name);
 	    if (v == r->right)
@@ -691,7 +691,7 @@ set_fac_name_1 (struct tree *t)
 	{
         struct symbol *s = sym_head;
 
-	s->name = strdup (fac_name);
+	s->name = strdup_2(fac_name);
 	s->n = nxp[t->which];
 	if(!s->n->nname) s->n->nname = s->name;
 
@@ -832,13 +832,13 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
     case ghdl_rtik_type_i32:
     case ghdl_rtik_type_p32:
       sprintf (asbuf, "%d", sig->val->i32);
-      he->v.h_vector = strdup(asbuf);    
+      he->v.h_vector = strdup_2(asbuf);    
       is_vector = 1;
       break;
     case ghdl_rtik_type_i64:
     case ghdl_rtik_type_p64:
       sprintf (asbuf, TTFormat, sig->val->i64);
-      he->v.h_vector = strdup(asbuf);    
+      he->v.h_vector = strdup_2(asbuf);    
       is_vector = 1;
       break;
     default:
@@ -1073,6 +1073,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:51  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:12  gtkwave
  * initial release
  *

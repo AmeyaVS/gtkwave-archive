@@ -70,10 +70,12 @@ am_gtkwave_OBJECTS = ae2.$(OBJEXT) analyzer.$(OBJEXT) \
 	vcd_saver.$(OBJEXT) vlist.$(OBJEXT) vzt.$(OBJEXT) \
 	wavewindow.$(OBJEXT) zoombuttons.$(OBJEXT)
 gtkwave_OBJECTS = $(am_gtkwave_OBJECTS)
-gtkwave_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+gtkwave_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_twinwave_OBJECTS = twinwave.$(OBJEXT)
 twinwave_OBJECTS = $(am_twinwave_OBJECTS)
-twinwave_LDADD = $(LDADD)
+twinwave_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -215,14 +217,14 @@ gtkwave_SOURCES = \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c
 
-gtkwave_LDFLAGS = $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD)
+gtkwave_LDADD = $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD)
 twinwave_SOURCES = twinwave.c
-twinwave_LDFLAGS = $(GTK_LIBS)
+twinwave_LDADD = $(GTK_LIBS)
 BUILT_SOURCES = vcd_keywords.c
 
 # I'm listing treesearch_gtk2.c here instead of in SOURCES because we don't directly
 # compile it.  Rather it is #include'd by treesearch.c.
-EXTRA_DIST = treesearch_gtk2.c vcd_keywords.gperf
+EXTRA_DIST = treesearch_gtk1.c treesearch_gtk2.c vcd_keywords.gperf
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

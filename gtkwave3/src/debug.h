@@ -99,6 +99,7 @@ void free_2(void *ptr);
 void *malloc_2(size_t size);
 void *realloc_2(void *ptr, size_t size);
 void *calloc_2(size_t nmemb, size_t size);
+char *strdup_2(const char *s);
 
 char *tmpnam_2(char *s, int *fd);  /* mimic functionality of tmpnam() */
 
@@ -185,6 +186,9 @@ extern int dual_race_lock;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

@@ -32,10 +32,10 @@ gtkwave_SOURCES= \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c
 
-gtkwave_LDFLAGS= $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD)
+gtkwave_LDADD= $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD)
 
 twinwave_SOURCES= twinwave.c
-twinwave_LDFLAGS= $(GTK_LIBS)
+twinwave_LDADD= $(GTK_LIBS)
 
 vcd_keywords.c: vcd_keywords.gperf
 	printf "$(GPERF) -o -i 1 -C -k 1,\044 -L C -H keyword_hash -N check_identifier -tT $(srcdir)/vcd_keywords.gperf >vcd_keywords.c" | sh
@@ -44,5 +44,5 @@ BUILT_SOURCES= vcd_keywords.c
 
 # I'm listing treesearch_gtk2.c here instead of in SOURCES because we don't directly
 # compile it.  Rather it is #include'd by treesearch.c.
-EXTRA_DIST= treesearch_gtk2.c vcd_keywords.gperf
+EXTRA_DIST= treesearch_gtk1.c treesearch_gtk2.c vcd_keywords.gperf
 
