@@ -112,6 +112,13 @@ need_libz=no
 LIBZ_LDADD=
 LIBZ_CFLAGS=
 if test "X$force_bundled_libz" != "Xyes" ; then
+        AC_TRY_COMPILE([#include <zlib.h>], [gzdopen(0,"rb");],, [need_libz=yes])
+	if test "$need_libz" = "yes" -a "X$force_system_libz" = "Xyes" ; then
+		AC_MSG_ERROR([
+You have disabled building the bundled libz but no system libz headers 
+could be found.  Either allow building the bundled libz (by not using
+--disable-local-libz) or make sure your system has a libz installed])
+	fi
 	AC_CHECK_LIB([z], [gzread], [LIBZ_LDADD=-lz] , [need_libz=yes])
 	if test "$need_libz" = "yes" -a "X$force_system_libz" = "Xyes" ; then
 		AC_MSG_ERROR([
@@ -123,10 +130,30 @@ else
 	need_libz=yes
 fi
 
+AC_ARG_ENABLE([local-libbz2],
+[  --enable-local-libbz2   Use the bundled libbz2 instead of any libbz2 which may
+                          already be installed on your system.  Default is to
+                          first look for an installed libbz2 and fall back to
+                          using the bundled one.],
+[
+if test "X$enable_local_libbz2" = "Xno" ; then
+	force_system_libbz2=yes
+else
+	force_bundled_libbz2=yes
+fi
+], , )
+
 need_libbz2=no
 LIBBZ2_LDADD=
 LIBBZ2_CFLAGS=
 if test "X$force_bundled_libbz2" != "Xyes" ; then
+        AC_TRY_COMPILE([#include <bzlib.h>], [BZ2_bzdopen(0,"rb");],, [need_libbz2=yes])
+	if test "$need_libbz2" = "yes" -a "X$force_system_libbz2" = "Xyes" ; then
+		AC_MSG_ERROR([
+You have disabled building the bundled libbz2 but no system libbz2 headers
+could be found.  Either allow building the bundled libbz2 (by not using
+--disable-local-libbz2) or make sure your system has a libbz2 installed])
+	fi
 	AC_CHECK_LIB([bz2], [BZ2_bzread], [LIBBZ2_LDADD=-lbz2], [need_libbz2=yes])
 	if test "$need_libbz2" = "yes" -a "X$force_system_libbz2" = "Xyes" ; then
 		AC_MSG_ERROR([
