@@ -30,10 +30,9 @@
 void get_main_menu (GtkWidget *, GtkWidget **menubar);
 int file_quit_cmd_callback (GtkWidget *widget, gpointer data);
 int set_wave_menu_accelerator(char *str);
-
 int execute_script(char *name);
-FILE *script_handle;
 
+extern FILE *script_handle;
 extern char *filesel_writesave;
 
 #endif
@@ -41,6 +40,9 @@ extern char *filesel_writesave;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:58  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *
