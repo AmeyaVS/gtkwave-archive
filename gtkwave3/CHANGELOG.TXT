@@ -283,3 +283,8 @@
 		Dan McMahill
 		Added strdup_2 to debug.c for memory tracking (found
 		stray strdup() instances in ghw.c).
+3.0.30 21jun07	Removed variable declaration in menu.h that tcc
+		complained about (should have been an extern).
+		Updated configure.ac to use AC_SYS_LARGEFILE for
+		> 2GB file compatibility with older linux systems.
+		(This was accidentally left out in 3.0.29.)

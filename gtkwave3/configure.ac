@@ -232,6 +232,7 @@ AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
 AC_CHECK_TYPES([ptrdiff_t])
+AC_SYS_LARGEFILE
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
