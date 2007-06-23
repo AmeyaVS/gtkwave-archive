@@ -652,6 +652,8 @@ for(j=0;j<num_sections;j++)
 	if(ecyc<start_cycle) continue;
 	if(cyc>end_cycle) break;
 
+	if((ecyc<cyc)||(ecyc==~ULLDescriptor(0))) continue;
+
 	autosort = calloc(ecyc - cyc + 1, sizeof(struct ae2_ncycle_autosort *));
 	
 	for(i=0;i<numfacs;i++)
@@ -1082,6 +1084,9 @@ for(txidx=0;txidx<numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/06/23 02:37:27  gtkwave
+ * static section size is now dynamic
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:40  gtkwave
  * Imported sources
  *
