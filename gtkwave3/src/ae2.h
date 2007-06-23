@@ -40,7 +40,6 @@ void 		ae2_import_masked(void);
  * texsim prototypes/libae2rw interfacing...
  */
 #define	MAXFACLEN 	 65536
-#define AE2_SECTION_SIZE 256
 typedef unsigned long	 FACIDX;
 
 struct facref
@@ -85,6 +84,9 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 01:39:00  gtkwave
  * initial release
  *
