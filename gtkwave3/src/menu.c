@@ -4060,8 +4060,10 @@ if(helpbox_is_active)
 	DEBUG(printf("Show Mouseover\n"));
 	}
 
+#if !defined _MSC_VER && !defined __MINGW32__
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
+#endif
 }
 
 /**/
@@ -4244,8 +4246,10 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory,
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSG].path))->active=(display_grid)?TRUE:FALSE;
 
+#if !defined _MSC_VER && !defined __MINGW32__
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
+#endif
 
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSBS].path))->active=(show_base)?TRUE:FALSE;
@@ -4437,6 +4441,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:40  gtkwave
+ * Imported sources
+ *
  * Revision 1.4  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *
