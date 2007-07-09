@@ -132,8 +132,7 @@ void helpbox(char *title, int width, char *default_text)
     window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize( GTK_WIDGET (window), width, 400);
     gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) ok_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) ok_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (window), vbox);
@@ -167,10 +166,7 @@ void helpbox(char *title, int width, char *default_text)
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtk_signal_connect_object (GTK_OBJECT (button1),"realize",(GtkSignalFunc) gtk_widget_grab_default,GTK_OBJECT (button1));
 
     gtk_widget_show(window);
 }
@@ -178,6 +174,9 @@ void helpbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

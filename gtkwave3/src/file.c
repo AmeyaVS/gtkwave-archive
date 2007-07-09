@@ -76,10 +76,8 @@ bad_cleanup=notok_func;
 
 fs=gtk_file_selection_new(title);
 gtk_signal_connect(GTK_OBJECT(fs), "destroy", (GtkSignalFunc) destroy_callback, NULL);
-gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fs)->ok_button), 
-	"clicked", (GtkSignalFunc) enter_callback, GTK_OBJECT(fs));
-gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(fs)->cancel_button),
-	"clicked", (GtkSignalFunc) cancel_callback, GTK_OBJECT(fs));
+gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fs)->ok_button), "clicked", (GtkSignalFunc) enter_callback, GTK_OBJECT(fs));
+gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(fs)->cancel_button),"clicked", (GtkSignalFunc) cancel_callback, GTK_OBJECT(fs));
 gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(fs));
 if(*fileselbox_text) gtk_file_selection_set_filename(GTK_FILE_SELECTION(fs), *fileselbox_text);
 
@@ -279,6 +277,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

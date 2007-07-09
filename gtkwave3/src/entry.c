@@ -73,8 +73,7 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
     gtk_grab_add(window);
     gtk_widget_set_usize( GTK_WIDGET (window), width, 60);
     gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) destroy_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 0);
@@ -82,12 +81,9 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
     gtk_widget_show (vbox);
 
     entry = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(entry), "activate",
-		       GTK_SIGNAL_FUNC(enter_callback),
-		       entry);
+    gtk_signal_connect(GTK_OBJECT(entry), "activate",GTK_SIGNAL_FUNC(enter_callback),entry);
     gtk_entry_set_text (GTK_ENTRY (entry), default_text);
-    gtk_entry_select_region (GTK_ENTRY (entry),
-			     0, GTK_ENTRY(entry)->text_length);
+    gtk_entry_select_region (GTK_ENTRY (entry),0, GTK_ENTRY(entry)->text_length);
     gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
     gtk_widget_show (entry);
 
@@ -97,33 +93,30 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
 
     button1 = gtk_button_new_with_label ("OK");
     gtk_widget_set_usize(button1, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(enter_callback),
-			       NULL);
+    gtk_signal_connect(GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(enter_callback),NULL);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtk_signal_connect_object (GTK_OBJECT (button1),"realize",(GtkSignalFunc) gtk_widget_grab_default,GTK_OBJECT (button1));
 
 
     button2 = gtk_button_new_with_label ("Cancel");
     gtk_widget_set_usize(button2, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback),
-			       NULL);
+    gtk_signal_connect(GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(destroy_callback),NULL);
     GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
     gtk_widget_show(window);
+
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:29  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *
