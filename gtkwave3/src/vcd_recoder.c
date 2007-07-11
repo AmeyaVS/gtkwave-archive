@@ -445,8 +445,9 @@ if(vcd_fsiz)
 return((int)(*(vst++)));
 }
 
-#define getch() ((vst!=vend)?((int)(*(vst++))):(getch_fetch()))
-
+static inline char getch() {
+  return ((vst!=vend)?((int)(*(vst++))):(getch_fetch()));
+}
 
 static char *varsplit=NULL, *vsplitcurr=NULL;
 static int getch_patched(void)
@@ -2535,6 +2536,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:29  gtkwave
+ * Imported sources
+ *
  * Revision 1.6  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

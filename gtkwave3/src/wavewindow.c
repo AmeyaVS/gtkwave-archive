@@ -398,9 +398,7 @@ if((t=named_markers[i])!=-1)
 
 			for(y=fontheight-1;y<=waveheight-1;y+=8)
 				{
-				gdk_draw_line(wavepixmap,
-					gc_mark,
-        	        		xl, y, xl, y+5);
+				gdk_draw_line(wavepixmap,gc_mark,xl, y, xl, y+5);
 				}
 
 			gdk_draw_string(wavepixmap, wavefont_smaller,
@@ -1206,29 +1204,21 @@ gtk_widget_set_events(wavearea,
 
 gtk_signal_connect(GTK_OBJECT(wavearea), "configure_event",
                         GTK_SIGNAL_FUNC(wavearea_configure_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "expose_event",
-                        GTK_SIGNAL_FUNC(expose_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "motion_notify_event",
-                        GTK_SIGNAL_FUNC(motion_notify_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "button_press_event",
-                        GTK_SIGNAL_FUNC(button_press_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "button_release_event",
-                        GTK_SIGNAL_FUNC(button_release_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
 
 #ifdef WAVE_USE_GTK2
-gtk_signal_connect(GTK_OBJECT(wavearea), "scroll_event",
-                        GTK_SIGNAL_FUNC(scroll_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "scroll_event",GTK_SIGNAL_FUNC(scroll_event), NULL);
 GTK_WIDGET_SET_FLAGS( wavearea, GTK_CAN_FOCUS );
 #endif
 
-gtk_table_attach (GTK_TABLE (table), wavearea, 0, 9, 0, 9,
-                        GTK_FILL | GTK_EXPAND,
-                        GTK_FILL | GTK_EXPAND, 3, 2);
+gtk_table_attach (GTK_TABLE (table), wavearea, 0, 9, 0, 9,GTK_FILL | GTK_EXPAND,GTK_FILL | GTK_EXPAND, 3, 2);
 
 wave_vslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 vadj=GTK_ADJUSTMENT(wave_vslider);
-gtk_signal_connect(GTK_OBJECT(wave_vslider), "value_changed",
-                        GTK_SIGNAL_FUNC(service_vslider), NULL);
+gtk_signal_connect(GTK_OBJECT(wave_vslider), "value_changed",GTK_SIGNAL_FUNC(service_vslider), NULL);
 vscroll=gtk_vscrollbar_new(vadj);
 /* GTK_WIDGET_SET_FLAGS(vscroll, GTK_CAN_FOCUS); */
 gtk_widget_show(vscroll);
@@ -1238,8 +1228,7 @@ gtk_table_attach (GTK_TABLE (table), vscroll, 9, 10, 0, 9,
 
 wave_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 hadj=GTK_ADJUSTMENT(wave_hslider);
-gtk_signal_connect(GTK_OBJECT(wave_hslider), "value_changed",
-                        GTK_SIGNAL_FUNC(service_hslider), NULL);
+gtk_signal_connect(GTK_OBJECT(wave_hslider), "value_changed",GTK_SIGNAL_FUNC(service_hslider), NULL);
 hscroll=gtk_hscrollbar_new(hadj);
 /* GTK_WIDGET_SET_FLAGS(hscroll, GTK_CAN_FOCUS); */
 gtk_widget_show(hscroll);
@@ -1304,8 +1293,7 @@ if(t)
 
 if((wavepixmap)&&(update_waves))
 	{
-	gdk_draw_rectangle(wavepixmap, gc_back, TRUE, 0, fontheight-1,
-	                        wavewidth, waveheight-fontheight+1);
+	gdk_draw_rectangle(wavepixmap, gc_back, TRUE, 0, fontheight-1,wavewidth, waveheight-fontheight+1);
 
 	if(display_grid) rendertimes();
 	rendertraces();
@@ -2228,10 +2216,7 @@ if(x0!=x1)
 		{
 		case AN_0:	/* 0 */
 		case AN_L:	/* L */
-		wave_gdk_draw_line(wavepixmap, 
-			(hval==AN_0) ? gc_0 : gc_low,
-			x0, y0,
-			x1, y0);
+		wave_gdk_draw_line(wavepixmap, (hval==AN_0) ? gc_0 : gc_low,x0, y0,x1, y0);
 
 		if(h2tim<=tims.end)
 		switch(h2val)
@@ -2260,15 +2245,11 @@ if(x0!=x1)
 
 		if(invert)
 			{
-			gdk_draw_rectangle(wavepixmap, 
-				gcx, TRUE,
-				x0+1, y0, x1-x0, y1-y0+1); 
+			gdk_draw_rectangle(wavepixmap, gcx, TRUE,x0+1, y0, x1-x0, y1-y0+1); 
 			}
 			else
 			{
-			gdk_draw_rectangle(wavepixmap, 
-				gcxf, TRUE,
-				x0+1, y1, x1-x0, y0-y1+1); 
+			gdk_draw_rectangle(wavepixmap, gcxf, TRUE,x0+1, y1, x1-x0, y0-y1+1); 
 			}
 
 		if(identifier_str[0])
@@ -2280,31 +2261,18 @@ if(x0!=x1)
 				{
 				if((x1>=wavewidth)||(gdk_string_measure(wavefont, identifier_str)+vector_padding<=width))
 					{
-		                        gdk_draw_string(wavepixmap,
-		                                wavefont,  
-		                                gc_value,  
-		                                x0+2,ytext,
-		                                identifier_str);
+		                        gdk_draw_string(wavepixmap,wavefont,  gc_value,  x0+2,ytext,identifier_str);
 					}
 				}
 			}
 
-		wave_gdk_draw_line(wavepixmap, 
-			gcx,
-			x0, y0,
-			x1, y0);
-		wave_gdk_draw_line(wavepixmap, 
-			gcx,
-			x0, y1,
-			x1, y1);
+		wave_gdk_draw_line(wavepixmap, gcx,x0, y0,x1, y0);
+		wave_gdk_draw_line(wavepixmap, gcx,x0, y1,x1, y1);
 		if(h2tim<=tims.end) wave_gdk_draw_line(wavepixmap, c, x1, y0, x1, y1);
 		break;
 		
 		case AN_Z: /* Z */
-		wave_gdk_draw_line(wavepixmap, 
-			gc_mid,
-			x0, yu,
-			x1, yu);
+		wave_gdk_draw_line(wavepixmap, gc_mid,x0, yu,x1, yu);
 		if(h2tim<=tims.end)
 		switch(h2val)
 			{
@@ -2320,10 +2288,7 @@ if(x0!=x1)
 		
 		case AN_1: /* 1 */
 		case AN_H: /* 1 */
-		wave_gdk_draw_line(wavepixmap, 
-			(hval==AN_1) ? gc_1 : gc_high,
-			x0, y1,
-			x1, y1);
+		wave_gdk_draw_line(wavepixmap, (hval==AN_1) ? gc_1 : gc_high,x0, y1,x1, y1);
 		if(h2tim<=tims.end)
 		switch(h2val)
 			{
@@ -2518,21 +2483,12 @@ if(x0!=x1)
 		}
 	if(t->flags & TR_ANALOG_STEP)
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, yt0,
-			x1, yt0);
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x1, yt0,
-			x1, yt1);
+		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt0);
+		wave_gdk_draw_line(wavepixmap, c,x1, yt0,x1, yt1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, yt0,
-			x1, yt1);
+		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt1);
 		}
 	}
 	else
@@ -2584,10 +2540,7 @@ if((display_grid)&&(enable_horiz_grid))
 	{
 	if(!(t->flags & TR_ANALOGMASK))
 		{
-		gdk_draw_line(wavepixmap, 
-			gc_grid,
-			(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,
-			(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
+		gdk_draw_line(wavepixmap, gc_grid,(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
 		}
 	}
 
@@ -2653,61 +2606,28 @@ if(use_roundcaps)
 	{
 	if (type == AN_Z) {
 		if (lasttype != -1) {
-		wave_gdk_draw_line(wavepixmap, 
-			(lasttype==AN_X? gc_x:gc_vtrans),
-			x0-1, y0,
-			x0,   yu);
-		wave_gdk_draw_line(wavepixmap, 
-			(lasttype==AN_X? gc_x:gc_vtrans),
-			x0, yu,
-			x0-1, y1);
+		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
+		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
 		}
 	} else
 	if (lasttype==AN_Z) {
-		wave_gdk_draw_line(wavepixmap, 
-			(type==AN_X? gc_x:gc_vtrans),
-			x0+1, y0,
-			x0,   yu);
-		wave_gdk_draw_line(wavepixmap, 
-			(type==AN_X? gc_x:gc_vtrans),
-			x0, yu,
-			x0+1, y1);
+		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
+		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
 	} else {
 		if (lasttype != type) {
-		wave_gdk_draw_line(wavepixmap, 
-			(lasttype==AN_X? gc_x:gc_vtrans),
-			x0-1, y0,
-			x0,   yu);
-		wave_gdk_draw_line(wavepixmap, 
-			(lasttype==AN_X? gc_x:gc_vtrans),
-			x0, yu,
-			x0-1, y1);
-		wave_gdk_draw_line(wavepixmap, 
-			(type==AN_X? gc_x:gc_vtrans),
-			x0+1, y0,
-			x0,   yu);
-		wave_gdk_draw_line(wavepixmap, 
-			(type==AN_X? gc_x:gc_vtrans),
-			x0, yu,
-			x0+1, y1);
+		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
+		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
+		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
+		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
 		} else {
-	wave_gdk_draw_line(wavepixmap, 
-		(type==AN_X? gc_x:gc_vtrans),
-		x0-2, y0,
-		x0+2, y1);
-	wave_gdk_draw_line(wavepixmap, 
-		(type==AN_X? gc_x:gc_vtrans),
-		x0+2, y0,
-		x0-2, y1);
+	wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0-2, y0,x0+2, y1);
+	wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+2, y0,x0-2, y1);
 		}
 	}
 	}
 	else
 	{
-	wave_gdk_draw_line(wavepixmap, 
-		(type==AN_X? gc_x:gc_vtrans),
-		x0, y0,
-		x0, y1);
+	wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, y0,x0, y1);
 	}
 }
 		
@@ -2717,17 +2637,11 @@ if(x0!=x1)
 		{
 		if(use_roundcaps)
 			{
-			wave_gdk_draw_line(wavepixmap, 
-				gc_mid,
-				x0+1, yu,
-				x1-1, yu);
+			wave_gdk_draw_line(wavepixmap, gc_mid,x0+1, yu,x1-1, yu);
 			} 
 			else 
 			{
-			wave_gdk_draw_line(wavepixmap, 
-				gc_mid,
-				x0, yu,
-				x1, yu);
+			wave_gdk_draw_line(wavepixmap, gc_mid,x0, yu,x1, yu);
 			}
 		} 
 		else 
@@ -2743,25 +2657,13 @@ if(x0!=x1)
 	
 	if(use_roundcaps)
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0+2, y0,
-			x1-2, y0);
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0+2, y1,
-			x1-2, y1);
+		wave_gdk_draw_line(wavepixmap, c,x0+2, y0,x1-2, y0);
+		wave_gdk_draw_line(wavepixmap, c,x0+2, y1,x1-2, y1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, y0,
-			x1, y0);
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, y1,
-			x1, y1);
+		wave_gdk_draw_line(wavepixmap, c,x0, y0,x1, y0);
+		wave_gdk_draw_line(wavepixmap, c,x0, y1,x1, y1);
 		}
 
 if(x0<0) x0=0;	/* fixup left margin */
@@ -2786,11 +2688,7 @@ if(x0<0) x0=0;	/* fixup left margin */
 
 		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii)+vector_padding<=width))
 			{
-			gdk_draw_string(wavepixmap,
-				wavefont,
-			       	gc_value,
-				x0+2,ytext,
-			        ascii);
+			gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
 			}
 		else
 			{
@@ -2802,11 +2700,7 @@ if(x0<0) x0=0;	/* fixup left margin */
 				*mod='+';
 				*(mod+1)=0;
 
-				gdk_draw_string(wavepixmap,
-					wavefont,
-				       	gc_value,
-					x0+2,ytext,
-				        ascii);
+				gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
 				}
 			}
 
@@ -2961,21 +2855,12 @@ if(x0!=x1)
 		}
 	if(t->flags & TR_ANALOG_STEP)
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, yt0,
-			x1, yt0);
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x1, yt0,
-			x1, yt1);
+		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt0);
+		wave_gdk_draw_line(wavepixmap, c,x1, yt0,x1, yt1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, yt0,
-			x1, yt1);
+		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt1);
 		}
 	}
 	else
@@ -3026,10 +2911,7 @@ ytext=yu-(wavefont->ascent/2)+wavefont->ascent;
 
 if((display_grid)&&(enable_horiz_grid))
 	{
-	gdk_draw_line(wavepixmap, 
-		gc_grid,
-		(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,
-		(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
+	gdk_draw_line(wavepixmap, gc_grid,(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
 	}
 
 if(t->flags & TR_ANALOGMASK)
@@ -3097,68 +2979,35 @@ if(use_roundcaps)
 		{
 		if (lasttype != -1) 
 			{
-			wave_gdk_draw_line(wavepixmap, 
-				(lasttype==AN_X? gc_x:gc_vtrans),
-				x0-1, y0,
-				x0,   yu);
-			wave_gdk_draw_line(wavepixmap, 
-				(lasttype==AN_X? gc_x:gc_vtrans),
-				x0, yu,
-				x0-1, y1);
+			wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
+			wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
 			}
 		} 
 		else
 		if (lasttype==AN_Z) 
 			{
-			wave_gdk_draw_line(wavepixmap, 
-				(type==AN_X? gc_x:gc_vtrans),
-				x0+1, y0,
-				x0,   yu);
-			wave_gdk_draw_line(wavepixmap, 
-				(type==AN_X? gc_x:gc_vtrans),
-				x0, yu,
-				x0+1, y1);
+			wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
+			wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
 			} 
 			else 
 			{
 			if (lasttype != type) 
 				{
-				wave_gdk_draw_line(wavepixmap, 
-					(lasttype==AN_X? gc_x:gc_vtrans),
-					x0-1, y0,
-					x0,   yu);
-				wave_gdk_draw_line(wavepixmap, 
-					(lasttype==AN_X? gc_x:gc_vtrans),
-					x0, yu,
-					x0-1, y1);
-				wave_gdk_draw_line(wavepixmap, 
-					(type==AN_X? gc_x:gc_vtrans),
-					x0+1, y0,
-					x0,   yu);
-				wave_gdk_draw_line(wavepixmap, 
-					(type==AN_X? gc_x:gc_vtrans),
-					x0, yu,
-					x0+1, y1);
+				wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
+				wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
+				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
+				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
 				} 
 				else 
 				{
-				wave_gdk_draw_line(wavepixmap, 
-					(type==AN_X? gc_x:gc_vtrans),
-					x0-2, y0,
-					x0+2, y1);
-				wave_gdk_draw_line(wavepixmap, 
-					(type==AN_X? gc_x:gc_vtrans),
-					x0+2, y0,
-					x0-2, y1);
+				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0-2, y0,x0+2, y1);
+				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+2, y0,x0-2, y1);
 				}
 			}
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			(type==AN_X? gc_x:gc_vtrans),
-			x0, y0,
-			x0, y1);
+		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, y0,x0, y1);
 		}
 }
 
@@ -3168,17 +3017,11 @@ if(x0!=x1)
 		{
 		if(use_roundcaps)
 			{
-			wave_gdk_draw_line(wavepixmap, 
-				gc_mid,
-				x0+1, yu,
-				x1-1, yu);
+			wave_gdk_draw_line(wavepixmap, gc_mid,x0+1, yu,x1-1, yu);
 			} 
 			else 
 			{
-			wave_gdk_draw_line(wavepixmap, 
-				gc_mid,
-				x0, yu,
-				x1, yu);
+			wave_gdk_draw_line(wavepixmap, gc_mid,x0, yu,x1, yu);
 			}
 		} 
 		else 
@@ -3194,25 +3037,13 @@ if(x0!=x1)
 	
 	if(use_roundcaps)
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0+2, y0,
-			x1-2, y0);
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0+2, y1,
-			x1-2, y1);
+		wave_gdk_draw_line(wavepixmap, c,x0+2, y0,x1-2, y0);
+		wave_gdk_draw_line(wavepixmap, c,x0+2, y1,x1-2, y1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, y0,
-			x1, y0);
-		wave_gdk_draw_line(wavepixmap, 
-			c,
-			x0, y1,
-			x1, y1);
+		wave_gdk_draw_line(wavepixmap, c,x0, y0,x1, y0);
+		wave_gdk_draw_line(wavepixmap, c,x0, y1,x1, y1);
 		}
 
 
@@ -3223,11 +3054,7 @@ if(x0<0) x0=0;	/* fixup left margin */
 		ascii=convert_ascii(t,h);
 		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii)+vector_padding<=width))
 			{
-			gdk_draw_string(wavepixmap,
-				wavefont,
-			       	gc_value,
-				x0+2,ytext,
-			        ascii);
+			gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
 			}
 		else
 			{
@@ -3239,11 +3066,7 @@ if(x0<0) x0=0;	/* fixup left margin */
 				*mod='+';
 				*(mod+1)=0;
 
-				gdk_draw_string(wavepixmap,
-					wavefont,
-				       	gc_value,
-					x0+2,ytext,
-				        ascii);
+				gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
 				}
 			}
 
@@ -3276,6 +3099,9 @@ tims.end+=shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

@@ -58,8 +58,7 @@ void simplereqbox(char *title, int width, char *default_text,
     gtk_grab_add(window);
     gtk_widget_set_usize( GTK_WIDGET (window), width, 55 + 52);
     gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) destroy_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 0);
@@ -120,6 +119,9 @@ void simplereqbox(char *title, int width, char *default_text,
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

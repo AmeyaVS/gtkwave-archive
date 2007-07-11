@@ -123,9 +123,7 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   window = gtk_window_new (disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
   gtk_grab_add(window);  
 
-  gtk_signal_connect (GTK_OBJECT (window), "delete_event",
-		      GTK_SIGNAL_FUNC(destroy_callback),
-		      NULL);
+  gtk_signal_connect (GTK_OBJECT (window), "delete_event",GTK_SIGNAL_FUNC(destroy_callback),NULL);
 
   gtk_window_set_title (GTK_WINDOW (window), title);
   gtk_container_border_width (GTK_CONTAINER (window), 0);
@@ -244,9 +242,7 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   gtk_widget_show (ok_hbox);
 
   button = gtk_button_new_with_label ("Cancel");
-  gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
-                             GTK_SIGNAL_FUNC(destroy_callback),
-                             GTK_OBJECT (window));
+  gtk_signal_connect_object (GTK_OBJECT (button), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (window));
   gtk_box_pack_end (GTK_BOX (ok_hbox), button, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
   gtk_widget_show (button);
@@ -254,9 +250,7 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   gtk_container_add (GTK_CONTAINER (main_vbox), ok_hbox);
 
   button = gtk_button_new_with_label ("  OK  ");
-  gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
-                             GTK_SIGNAL_FUNC(enter_callback),
-                             GTK_OBJECT (window));
+  gtk_signal_connect_object (GTK_OBJECT (button), "clicked",GTK_SIGNAL_FUNC(enter_callback),GTK_OBJECT (window));
 
   gtk_signal_connect_object (GTK_OBJECT (button), 
                                 "realize",
@@ -276,6 +270,9 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

@@ -368,8 +368,9 @@ if(!rd) return(-1);
 return((int)(*(vst++)));
 }
 
-#define getch() ((vst!=vend)?((int)(*(vst++))):(getch_fetch()))
-
+inline static char getch() {
+  return ((vst!=vend)?((int)(*(vst++))):(getch_fetch()));
+}
 
 static char *varsplit=NULL, *vsplitcurr=NULL;
 static int getch_patched(void)
@@ -2396,6 +2397,9 @@ while (gtk_events_pending()) gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
+ * Imported sources
+ *
  * Revision 1.4  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *
