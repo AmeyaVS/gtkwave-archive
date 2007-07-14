@@ -17,7 +17,6 @@ sub is_function
   }
 }
 
-
 open(INFH, $ARGV[0]) || die("\nCan't open $ARGV[0] for reading: $!\n");
 open(OUT, ">out.txt");
 
@@ -141,7 +140,7 @@ for($j = 1; $j < scalar(@hfiles); $j = $j + 1)
   chomp(@hfiles[$j]);
   print OUT "#include\"@hfiles[$j]\"\n";
 }
-print OUT "struct Globals{ \n";
+print OUT "struct Global{ \n";
 %includes = ();
 
 
@@ -215,9 +214,11 @@ foreach $object (@object)
   
   while(<INSTACK>)
   { 
-    
+  
     chomp($_); 
+    $base_str = $_;
     @stacksplit = split(/\:/,$_);
+ 
 
     #handle pops
     if(@stacksplit[0] eq "POP")
@@ -226,7 +227,7 @@ foreach $object (@object)
       # can get strange wraparound condition
       if(@stacksplit[1] ==  @symbolstacknum[$symbolbase - 1] && ($symbolbase > 0)) 
       {
-	print "Popped @stacksplit[1]  @symbolstacknum[$symbolbase - 1]  (@symbolstackname[$symbolbase - 1])\n";
+	#print "Popped @stacksplit[1]  @symbolstacknum[$symbolbase - 1]  (@symbolstackname[$symbolbase - 1])\n";
         $symbolbase = $symbolbase - 1;
       }
     }    
@@ -260,13 +261,15 @@ foreach $object (@object)
           for($k = $symbolbase - 1; $k > -1; $k = $k-1)
           {
             if($symbolstacknum[$k] == @stacksplit[1])
-            {              
+            {               
               if((@symbolstackglobalflag[$k] == 1) ||
                  (@symbolstackexternflag[$k] == 1) ||  
                  (@symbolstackstaticflag[$k] == 1))
               {
                 print "Processing $_\n"; 
                 # got a global match here.  need to advance appropriately.  XXX fix the cut and paste
+                # the problem here is that we will replace named variables incorrectly.  The replacement needs to 
+                # make sure that only non A-Za-z0-9_ are on the sides of the replacement target. 
                 if((@hfilehandleindex[$i] <  @stacksplit[3]) && (@hfileprocessed[$i] == 0))
                 {
                   # advance throught the H file
@@ -287,13 +290,13 @@ foreach $object (@object)
                   @hfilemoddedline[$i] = @hfilehandle[$i]->getline();
                   if(index(@hfilemoddedline[$i],$stacksplit[4]) < 0)
                   {
-			die("A $stacksplit[4] not found in @hfilemoddedline[$i]at line @hfilehandleindex[$i]\n");
+			die("A $stacksplit[4] not found in @hfilemoddedline[$i]at line @hfilehandleindex[$i] in @hfiles[$i]\n");
 		  }
-                  @hfilemoddedlineindex[$i] = index(@hfilemoddedline[$i],$stacksplit[4]) + length("GLOBALS->$symbolstackname[$k]");
+                  @hfilemoddedlineindex[$i] = index(@hfilemoddedline[$i],$stacksplit[4]) + length("GLOBALS.$symbolstackname[$k]");
                   #split the base string at the original symbol
                   $base = substr(@hfilemoddedline[$i], 0, index(@hfilemoddedline[$i],$stacksplit[4]));
                   $subs = substr(@hfilemoddedline[$i], index(@hfilemoddedline[$i],$stacksplit[4]));
-                  $subs =~  s/$stacksplit[4]/GLOBALS->$symbolstackname[$k]/;
+                  $subs =~  s/\b$stacksplit[4]\b/GLOBALS.$symbolstackname[$k]/;
                   @hfilemoddedline[$i] = $base . $subs;                  
 	        }
                 elsif(@hfilehandleindex[$i] == @stacksplit[3]) # shouldn't assume that things are correctly setup
@@ -306,11 +309,11 @@ foreach $object (@object)
                     $subs = substr(@hfilemoddedline[$i], @hfilemoddedlineindex[$i]);
                     if(index($subs,$stacksplit[4]) < 0)
                     { 
-			die("B $stacksplit[4] not found in @hfilemoddedline[$i] at line @hfilehandleindex[$i]\n");
+			die("B $stacksplit[4] not found in @hfilemoddedline[$i] at line @hfilehandleindex[$i] in @hfiles[$i]\n");
 		    }
-                    @hfilemoddedlineindex[$i] = @hfilemoddedlineindex[$i] + index($subs,$stacksplit[4]) + length("GLOBALS->$symbolstackname[$k]");
+                    @hfilemoddedlineindex[$i] = @hfilemoddedlineindex[$i] + index($subs,$stacksplit[4]) + length("GLOBALS.$symbolstackname[$k]");
                     #split the base string at the original symbol
-                    $subs =~  s/$stacksplit[4]/GLOBALS->$symbolstackname[$k]/;
+                    $subs =~  s/\b$stacksplit[4]\b/GLOBALS.$symbolstackname[$k]/;
                     @hfilemoddedline[$i] = $base . $subs;
 		  }
                   else # in this case we haven't actually gotten the line yet...
@@ -318,13 +321,13 @@ foreach $object (@object)
                     @hfilemoddedline[$i] = @hfilehandle[$i]->getline();
                     if(index(@hfilemoddedline[$i],$stacksplit[4]) < 0)
                     {
-			die("C $stacksplit[4] not found in @hfilemoddedline[$i] at line @hfilehandleindex[$i]\n");
+			die("C $stacksplit[4] not found in @hfilemoddedline[$i] at line @hfilehandleindex[$i] in @hfiles[$i]\n");
 		    }
-                    @hfilemoddedlineindex[$i] = index(@hfilemoddedline[$i],$stacksplit[4]) + length("GLOBALS->$symbolstackname[$k]");
+                    @hfilemoddedlineindex[$i] = index(@hfilemoddedline[$i],$stacksplit[4]) + length("GLOBALS.$symbolstackname[$k]");
                     #split the base string at the original symbol
                     $base = substr(@hfilemoddedline[$i], 0, index(@hfilemoddedline[$i],$stacksplit[4]));
                     $subs = substr(@hfilemoddedline[$i], index(@hfilemoddedline[$i],$stacksplit[4]));
-                    $subs =~  s/$stacksplit[4]/GLOBALS->$symbolstackname[$k]/;
+                    $subs =~  s/\b$stacksplit[4]\b/GLOBALS.$symbolstackname[$k]/;
                     @hfilemoddedline[$i] = $base . $subs;       
 		  }
                 }
@@ -333,7 +336,9 @@ foreach $object (@object)
                   print "Warning advanced too far while looking for a variable name A"
 		}
 	      }
-            }
+              # Got a match, go no farther
+              last;
+	    }
           }   
 	}
       }
@@ -452,6 +457,7 @@ foreach $object (@object)
                     if(@hfileprocessed[$i] == 0)
                     {                                        
                       chomp(@stacksplit[6]);
+                      print "New global: $base_str";
                       print OUT "@stacksplit[6];//from @hfiles[$i] \n";
 		    }
 
@@ -518,7 +524,7 @@ foreach $object (@object)
 	    @symbolstackstaticflag[$symbolbase] = 1;
             @symbolstackglobalflag[$symbolbase] = 1;   
             $redefined = 0;
-            #Globally defined static should not have multiple entries.
+            #Globally defined static should not have multiple entries. -> is this bogus?
             for($k = $symbolbase - 1; $k > -1; $k = $k-1)
             {
               # globals don't count against the declaration count.
@@ -534,22 +540,37 @@ foreach $object (@object)
             # we should deal with renaming here. 
             # check out the renaming array to see if we need to rename this value.
             # global variable resolution is done by inserting the globals initially
-                
+            # Uncommenting the following line is likely wrong XXX
             if(($redefined == 0)  || ($stackframe > 0))
-            {     
-              $rename{@symbolstacknum[$symbolbase]}++;
-              if($rename{@symbolstacknum[$symbolbase]} > 1)
+            { 
+              # should probably keep the original symbol name around, since we are going to hammer it
+              # XXX for completeness should insert the rename into the hash
+              if(exists $rename{@symbolstackname[$symbolbase]})
+              {
+                $rename{@symbolstackname[$symbolbase]}++;
+		print "Incrementing to @symbolstackname[$symbolbase] $rename{@symbolstackname[$symbolbase]}\n";
+              } 
+              else
+              {   
+		print "Setting @symbolstackname[$symbolbase]\n";
+		$rename{@symbolstackname[$symbolbase]} = 1;
+	      }
+              if($rename{@symbolstackname[$symbolbase]} > 1)
               {              
                 # need to cook the . out of @stacksplit[2]
                 $filename = @stacksplit[2];
                 $filename =~ s/\./_/;
 	        print "Changed  @stacksplit[2] to $filename\n";
-	        @symbolstackname[$symbolbase] = "@symbolstackname[$symbolbase]\_$filename\_$rename{@symbolstacknum[$symbolbase]}";
+	        @symbolstackname[$symbolbase] = "@symbolstackname[$symbolbase]\_$filename\_$rename{@symbolstackname[$symbolbase]}";
                 print "Overloaded: @symbolstackname[$symbolbase]\n"; 
                 @stacksplit[6] =~ s/@stacksplit[5]/@symbolstackname[$symbolbase]/;
 
-                print "Renaming  @symbolstackname[$symbolbase] as @stacksplit[6]";               
+                print "Renaming  @symbolstackname[$symbolbase] as @stacksplit[6]\n";               
               } 
+              else 
+              {
+                print "Not renaming  @symbolstackname[$symbolbase]: $rename{@symbolstackname[$symbolbase]} \n";
+              }
               @symbolstackglobalflag[$symbolbase] = 1;
               $symbolbase = $symbolbase + 1; # statics always get inserted 
 	    
@@ -558,6 +579,7 @@ foreach $object (@object)
               if(@hfileprocessed[$i] == 0)
               {                   
                 chomp(@stacksplit[6]);
+                print "New global: $base_str";
                 print OUT "@stacksplit[6];// from @hfiles[$i]\n";
 	      }
 	    }
@@ -643,7 +665,7 @@ foreach $object (@object)
     if(@hfilehandleindex[$j] != 0) # we touched this file. Don't touch it again. 
     {
       @hfileprocessed[$j] = 1;
-      print "Processed @hfiles[$j]\n";
+      #print "Processed @hfiles[$j]\n";
       if(@hfilemoddedlineindex[$j] > 0)
       {
         @hfilehandlenew[$j]->print(@hfilemoddedline[$j]);
