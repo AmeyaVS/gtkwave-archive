@@ -19,6 +19,7 @@
  */
 
 /* number of available registers */
+#include<assert.h>
 #define NB_REGS             4
 
 /* a register can belong to several classes. The classes must be
@@ -33,6 +34,8 @@
 #define RC_IRET    RC_EAX /* function return: integer register */
 #define RC_LRET    RC_EDX /* function return: second integer register */
 #define RC_FRET    RC_ST0 /* function return: float register */
+
+
 
 /* pretty names for the registers */
 enum {
@@ -88,6 +91,8 @@ int reg_classes[NB_REGS] = {
 static unsigned long func_sub_sp_offset;
 static unsigned long func_bound_offset;
 static int func_ret_sub;
+
+extern
 
 /* XXX: make it faster ? */
 void g(int c)
@@ -405,12 +410,13 @@ void gfunc_call(int nb_args)
 #endif
 
 /* generate function prolog of type 't' */
-void gfunc_prolog(CType *func_type)
+void gfunc_prolog(CType *func_type,  char* filename)
 {
     int addr, align, size, func_call, fastcall_nb_regs;
     int param_index, param_addr;
     Sym *sym;
     CType *type;
+    char buffer[500]; 
 
     sym = func_type->ref;
     func_call = sym->r;
@@ -455,6 +461,21 @@ void gfunc_prolog(CType *func_type)
             param_addr = addr;
             addr += size;
         }
+        //printf("Calling sym_push from code gen\n");
+
+         
+            //KERMIN
+            // Here we build the variables we should only build a variable if it isn't a function, it's global, or 
+            // it's static.
+            
+            {
+              assert(file);
+              // this is broken somehow
+              printf("DECL:%d:%s:noline:", sym->v & ~SYM_FIELD,filename);
+	      printf("FUNDEF:");
+              printf("%s\n",get_tok_str(sym->v & ~SYM_FIELD,NULL)); 
+            
+	    }   
         sym_push(sym->v & ~SYM_FIELD, type,
                  VT_LOCAL | VT_LVAL, param_addr);
         param_index++;

@@ -1,6 +1,11 @@
 
 extern int jojo;
 
+typedef int Iter_t;
+typedef (*AE)();
+
+int (* funptr)(float f, int* q);
+
 int c;
 
 int j ;
@@ -35,14 +40,15 @@ struct {
 
 
 
-static int *jeepers() {
+static int *jeepers(int test, int test2) {
   int k;
-  int k = 2;
+  int k = test;
   return &k;
 }
 
 void main()
 {
+  Iter_t french;
   static int p;
   static int p = 5;
   {

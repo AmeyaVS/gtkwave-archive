@@ -6115,9 +6115,25 @@ void type_to_str(char *buf, int buf_size,
         goto no_var;
     case VT_PTR:
         s = type->ref;
-        pstrcpy(buf1, sizeof(buf1), "*");
+
+	t = (s->type.t) & VT_TYPE;
+        bt = t & VT_BTYPE;
+        if(t == VT_FUNC)
+	{
+          pstrcpy(buf1, sizeof(buf1), "(*");
+        }
+        else
+	{
+          pstrcpy(buf1, sizeof(buf1), "*");
+	}
         if (varstr)
             pstrcat(buf1, sizeof(buf1), varstr);
+	if(t == VT_FUNC)
+	{
+          pstrcat(buf1, sizeof(buf1), ")");
+        }
+        // Check for function pointer...KERMIN
+
         type_to_str(buf, buf_size, &s->type, buf1);
         goto no_var;
     }
@@ -8879,6 +8895,7 @@ static void func_decl_list(Sym *func_sym)
                 /* we can add the type (NOTE: it could be local to the function) */
                 s->type = type;
                 /* accept other parameters */
+                printf("Handling parameters\n");
                 if (tok == ',')
                     next();
                 else
@@ -8897,13 +8914,14 @@ static void gen_function(Sym *sym)
     /* NOTE: we patch the symbol size later */
     put_extern_sym(sym, cur_text_section, ind, 0);
     funcname = get_tok_str(sym->v, NULL);
+    printf("function name is: %s\n", funcname);
     func_ind = ind;
     /* put debug symbol */
     if (do_debug)
         put_func_debug(sym);
     /* push a dummy symbol to enable local sym storage */
     sym_push2(&local_stack, SYM_FIELD, 0, 0);
-    gfunc_prolog(&sym->type);
+    gfunc_prolog(&sym->type,file->filename);
     rsym = 0;
     block(NULL, NULL, NULL, NULL, 0, 0);
     gsym(rsym);
@@ -9011,16 +9029,29 @@ static void decl(int l)
         while (1) { /* iterate thru each declaration */
             char buffer[500]; 
             type = btype;
+            int funptr_typedef = 0;
             type_decl(&type, &ad, &v, TYPE_DIRECT);
             //KERMIN
             // Here we build the variables we should only build a variable if it isn't a function, it's global, or 
             // it's static.
+
             type_to_str(buffer, 500, &type, get_tok_str(v, NULL));
+            if((type.t & VT_BTYPE) == VT_PTR)
+	    {
+              if(type.ref->type.t & VT_TYPEDEF)
+	      {
+                funptr_typedef = 1;
+	      }
+	    }
+
             {
               printf("DECL:%d:%s:%d:", v, file->filename, file->line_num);
               if((type.t & VT_BTYPE) == VT_FUNC) {
 	        printf("FUNC:");
 	      }
+              else if((type.t & VT_TYPEDEF) || funptr_typedef) {
+                printf("TYPEDEF:");
+              }
               else if(type.t & VT_EXTERN) {
 		printf("EXTERN:");
 	      } 
