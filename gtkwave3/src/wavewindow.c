@@ -111,8 +111,8 @@ GdkGC	*gc_mdgray=NULL;
 GdkGC	*gc_dkgray=NULL;
 GdkGC	*gc_dkblue=NULL;
 
-static const GdkModifierType   bmask[4]= {0, GDK_BUTTON1_MASK, 0, GDK_BUTTON3_MASK };		        /* button 1, 3 press/rel encodings */
-static const GdkModifierType m_bmask[4]= {0, GDK_BUTTON1_MOTION_MASK, 0, GDK_BUTTON3_MOTION_MASK };	/* button 1, 3 motion encodings */
+static  GdkModifierType const  bmask[4]= {0, GDK_BUTTON1_MASK, 0, GDK_BUTTON3_MASK };		        /* button 1, 3 press/rel encodings */
+static  GdkModifierType const m_bmask[4]= {0, GDK_BUTTON1_MOTION_MASK, 0, GDK_BUTTON3_MOTION_MASK };	/* button 1, 3 motion encodings */
 
 /******************************************************************/
 
@@ -3099,6 +3099,9 @@ tims.end+=shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/07/11 03:01:33  kermin
+ * Edited files to circumvent line count bug in tcc.
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
  * Imported sources
  *
