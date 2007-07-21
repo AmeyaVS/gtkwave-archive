@@ -1,9 +1,16 @@
+typedef static int Fp;
 
 extern int jojo;
 
 typedef int Iter_t;
 typedef (*AE)();
 
+const char * foo_ptr;
+char * const foo_ptr2;
+
+const int three = 3;
+
+Iter_t *iters;
 int (* funptr)(float f, int* q);
 
 int c;
@@ -30,7 +37,10 @@ struct bar {
 
 static struct bar q = {3},r,s;
  
+typedef struct bar StructBar;
+typedef StructBar *StructBarPtr;
 
+StructBarPtr buzzsaw;
 
 
 struct {
