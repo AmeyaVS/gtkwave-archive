@@ -294,3 +294,5 @@
 		filter processes by prefixing the return string with
 		?color? as in "?CadetBlue?xor r0,r0,r0".  The colors
 		used must already be specified in the rgb.c file.
+		Removed check for c++ compiler presence in the
+		autoconf.

@@ -66,7 +66,7 @@ AC_SUBST(AET2_LDADD)
 
 
 # Checks for programs.
-AC_PROG_CXX
+# AC_PROG_CXX  # not needed as gtkwave and related programs don't use c++
 AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_MAKE_SET
