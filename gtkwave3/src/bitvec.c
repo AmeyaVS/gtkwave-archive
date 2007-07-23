@@ -25,6 +25,7 @@
 #include "translate.h"
 #include "ptranslate.h"
 #include "main.h"
+#include "menu.h"
 #include "busy.h"
 #include <stdlib.h>
 
@@ -2400,17 +2401,23 @@ else if (*w2 == '[')
     *w++ = 0;
     if (strcmp (w2, "size") == 0)
       {
+      if(!ignore_savefile_size)
+	{
 	/* Main window size.  */
 	int x, y;
 	sscanf (w, "%d %d", &x, &y);
 	set_window_size (x, y);
+	}
       }
     else if (strcmp (w2, "pos") == 0)
       {
+      if(!ignore_savefile_pos)
+	{
 	/* Main window position.  */
 	int x, y;
 	sscanf (w, "%d %d", &x, &y);
 	set_window_xypos (x, y);
+	}
       }
     else
       {
@@ -2812,6 +2819,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:02  gtkwave
+ * Imported sources
+ *
  * Revision 1.4  2007/05/28 00:55:05  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

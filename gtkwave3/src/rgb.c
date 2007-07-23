@@ -11,7 +11,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <gtk/gtk.h>
+
 #include "rc.h"
+#include "color.h"
+#include "currenttime.h"
 
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
@@ -795,12 +799,31 @@ static unsigned char c_blu[]={Enum_WaveColors};
 
 #define C_ARRAY_SIZE (sizeof(c_red)/sizeof(unsigned char))
 
+static GdkGC *rgb_contexts[C_ARRAY_SIZE];
 
 static int compar(const void *v1, const void *v2)
 {
 return((int)strcasecmp((char *)v1, *(char **)v2));
 }
 
+
+GdkGC *get_gc_from_name(char *str)
+{
+char **match;   
+int offset, rgb;
+
+if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(char *), compar)))
+	{
+	offset=match-cnames;
+	rgb=((int)c_red[offset]<<16)|((int)c_grn[offset]<<8)|((int)c_blu[offset]);
+
+	if(!rgb_contexts[offset]) rgb_contexts[offset] = alloc_color(wavearea, rgb, wavearea->style->white_gc);
+
+	return(rgb_contexts[offset]);
+	}
+
+return(NULL);
+}
 
 int get_rgb_from_name(char *str)
 {
@@ -845,6 +868,9 @@ if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(cha
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:58  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

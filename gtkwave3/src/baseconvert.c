@@ -9,6 +9,7 @@
 
 #include <config.h>
 #include <math.h>
+#include <string.h>
 #include "gtk12compat.h"
 #include "currenttime.h"
 #include "pixmaps.h"
@@ -24,6 +25,8 @@
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
 #endif
+
+char color_active_in_filter = 0;
 
 
 /*
@@ -948,6 +951,20 @@ if(!strcasecmp(s, xl_file_filter[t->f_filter]->item))
 	strcpy(s, xl_file_filter[t->f_filter]->trans);
 	}
 
+if((*s == '?') && (!color_active_in_filter))
+	{
+	char *s2a;
+	char *s2 = strchr(s+1, '?');
+	if(s2)
+		{
+		s2++;
+		s2a = malloc_2(strlen(s2)+1);
+		strcpy(s2a, s2);
+		free_2(s);
+		s = s2a;
+		}
+	}
+
 return(s);
 }
 
@@ -982,6 +999,19 @@ if(p)
 		}
 	}	
 
+if((*s == '?') && (!color_active_in_filter))
+	{
+	char *s2a;
+	char *s2 = strchr(s+1, '?');
+	if(s2)
+		{
+		s2++;
+		s2a = malloc_2(strlen(s2)+1);
+		strcpy(s2a, s2);
+		free_2(s);
+		s = s2a;
+		}
+	}
 return(s);
 }
 #endif
@@ -1328,6 +1358,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:50  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

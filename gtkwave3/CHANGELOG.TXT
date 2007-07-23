@@ -283,10 +283,14 @@
 		Dan McMahill
 		Added strdup_2 to debug.c for memory tracking (found
 		stray strdup() instances in ghw.c).
-3.0.30 21jun07	Removed variable declaration in menu.h that tcc
+3.0.30	21jul07	Removed variable declaration in menu.h that tcc
 		complained about (should have been an extern).
 		Updated configure.ac to use AC_SYS_LARGEFILE for
 		> 2GB file compatibility with older linux systems.
 		(This was accidentally left out in 3.0.29.)
-		#ifdef'd mouseover stuff in menu.c that was causing
-		problems for MinGW builds.
+		Added ignore_savefile_pos and ignore_savefile_size
+		rc variables.  (Requested by Edward Ash.)
+		Added ability to specify trace background color in
+		filter processes by prefixing the return string with
+		?color? as in "?CadetBlue?xor r0,r0,r0".  The colors
+		used must already be specified in the rgb.c file.

@@ -114,6 +114,8 @@ GdkGC	*gc_dkblue=NULL;
 static const GdkModifierType   bmask[4]= {0, GDK_BUTTON1_MASK, 0, GDK_BUTTON3_MASK };		        /* button 1, 3 press/rel encodings */
 static const GdkModifierType m_bmask[4]= {0, GDK_BUTTON1_MOTION_MASK, 0, GDK_BUTTON3_MOTION_MASK };	/* button 1, 3 motion encodings */
 
+static char fill_in_smaller_rgb_areas = 0; /* only set when '?' encountered and triggers a GC creation */
+
 /******************************************************************/
 
 static void update_dual()
@@ -2613,6 +2615,8 @@ if((t->flags & TR_ANALOGMASK) && (!(h->flags&HIST_STRING) || !(h->flags&HIST_REA
 	return;
 	}
 
+color_active_in_filter = 1;
+
 for(;;)
 {
 if(!h) break;
@@ -2768,6 +2772,8 @@ if(x0<0) x0=0;	/* fixup left margin */
 
 	if((width=x1-x0)>vector_padding)
 		{
+		char *ascii2;
+
 		if(h->flags&HIST_REAL)
 			{
 			if(!(h->flags&HIST_STRING))
@@ -2784,19 +2790,41 @@ if(x0<0) x0=0;	/* fixup left margin */
 			ascii=convert_ascii_vec(t,h->v.h_vector);
 			}
 
-		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii)+vector_padding<=width))
+		ascii2 = ascii;
+		if(*ascii == '?')
+			{
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0+1, y1+1, width-1, (y0-1) - (y1+1) + 1);
+					fill_in_smaller_rgb_areas = 1;
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
+				}
+			}
+
+		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii2)+vector_padding<=width))
 			{
 			gdk_draw_string(wavepixmap,
 				wavefont,
 			       	gc_value,
 				x0+2,ytext,
-			        ascii);
+			        ascii2);
 			}
 		else
 			{
 			char *mod;
 
-			mod=bsearch_trunc(ascii,width-vector_padding);
+			mod=bsearch_trunc(ascii2,width-vector_padding);
 			if(mod)
 				{
 				*mod='+';
@@ -2806,7 +2834,48 @@ if(x0<0) x0=0;	/* fixup left margin */
 					wavefont,
 				       	gc_value,
 					x0+2,ytext,
-				        ascii);
+				        ascii2);
+				}
+			}
+		}
+		else if(fill_in_smaller_rgb_areas)
+		{
+		char *ascii2;
+
+		if(h->flags&HIST_REAL)
+			{
+			if(!(h->flags&HIST_STRING))
+				{
+				ascii=convert_ascii_real((double *)h->v.h_vector);
+				}
+				else
+				{
+				ascii=convert_ascii_string((char *)h->v.h_vector);
+				}
+			}
+			else
+			{
+			ascii=convert_ascii_vec(t,h->v.h_vector);
+			}
+
+		ascii2 = ascii;
+		if(*ascii == '?')
+			{
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
 				}
 			}
 
@@ -2829,6 +2898,8 @@ if(ascii) { free_2(ascii); ascii=NULL; }
 h=h->next;
 lasttype=type;
 }
+
+color_active_in_filter = 0;
 
 wave_gdk_draw_line_flush(wavepixmap);
 
@@ -3054,6 +3125,8 @@ if(t->flags & TR_ANALOGMASK)
 	return;
 	}
 
+color_active_in_filter = 1;
+
 for(;;)
 {
 if(!h) break;
@@ -3220,20 +3293,45 @@ if(x0<0) x0=0;	/* fixup left margin */
 
 	if((width=x1-x0)>vector_padding)
 		{
+		char *ascii2;
+
 		ascii=convert_ascii(t,h);
-		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii)+vector_padding<=width))
+
+		ascii2 = ascii;
+		if(*ascii == '?')
+			{
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0+1, y1+1, width-1, (y0-1) - (y1+1) + 1);
+					fill_in_smaller_rgb_areas = 1;
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
+				}
+			}
+
+		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii2)+vector_padding<=width))
 			{
 			gdk_draw_string(wavepixmap,
 				wavefont,
 			       	gc_value,
 				x0+2,ytext,
-			        ascii);
+			        ascii2);
 			}
 		else
 			{
 			char *mod;
 
-			mod=bsearch_trunc(ascii,width-vector_padding);
+			mod=bsearch_trunc(ascii2,width-vector_padding);
 			if(mod)
 				{
 				*mod='+';
@@ -3243,10 +3341,37 @@ if(x0<0) x0=0;	/* fixup left margin */
 					wavefont,
 				       	gc_value,
 					x0+2,ytext,
-				        ascii);
+				        ascii2);
 				}
 			}
 
+		}
+		else if(fill_in_smaller_rgb_areas)
+		{
+		char *ascii2;
+
+		ascii=convert_ascii(t,h);
+
+		ascii2 = ascii;
+		if(*ascii == '?')
+			{
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
+				}
+			}
 		}
 	}
 	}
@@ -3267,6 +3392,8 @@ lasttype=type;
 h=h->next;
 }
 
+color_active_in_filter = 0;
+
 wave_gdk_draw_line_flush(wavepixmap);
 
 tims.start+=shift_timebase;
@@ -3276,6 +3403,9 @@ tims.end+=shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

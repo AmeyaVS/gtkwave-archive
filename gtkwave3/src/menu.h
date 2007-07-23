@@ -35,11 +35,17 @@ int execute_script(char *name);
 extern FILE *script_handle;
 extern char *filesel_writesave;
 
+extern char ignore_savefile_pos;
+extern char ignore_savefile_size;
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/06/18 05:05:08  gtkwave
+ * noticed non-extern declaraction (detected only by tcc it seems...)
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:58  gtkwave
  * Imported sources
  *

@@ -29,7 +29,8 @@
 
 char enable_fast_exit = 0;
 FILE *script_handle = NULL;
-
+char ignore_savefile_pos = 0;
+char ignore_savefile_size = 0;
 
 /*
  * this enum MUST remain in sync with the menu_items struct
@@ -2552,12 +2553,13 @@ if(!(wave=fopen(*fileselbox_text,"wb")))
 
 	DEBUG(printf("Write Save Fini: %s\n", *fileselbox_text));
 
+
 	get_window_size (&sz_x, &sz_y);
-	fprintf(wave,"[size] %d %d\n", sz_x, sz_y);
+	if(!ignore_savefile_size) fprintf(wave,"[size] %d %d\n", sz_x, sz_y);
 
 	get_window_xypos(&root_x, &root_y);
 
-	fprintf(wave,"[pos] %d %d\n", root_x + xpos_delta, root_y + ypos_delta);
+	if(!ignore_savefile_pos) fprintf(wave,"[pos] %d %d\n", root_x + xpos_delta, root_y + ypos_delta);
 
 	fprintf(wave,"*%f "TTFormat, (float)(tims.zoom),tims.marker);
 
@@ -4060,10 +4062,8 @@ if(helpbox_is_active)
 	DEBUG(printf("Show Mouseover\n"));
 	}
 
-#if !defined _MSC_VER && !defined __MINGW32__
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
-#endif
 }
 
 /**/
@@ -4246,10 +4246,8 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory,
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSG].path))->active=(display_grid)?TRUE:FALSE;
 
-#if !defined _MSC_VER && !defined __MINGW32__
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
-#endif
 
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
 	menu_items[WV_MENU_VSBS].path))->active=(show_base)?TRUE:FALSE;

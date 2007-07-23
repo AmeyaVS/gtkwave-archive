@@ -269,6 +269,20 @@ paned_pack_semantics=atoi_64(str)?1:0;
 return(0);
 }
 
+static f_ignore_savefile_pos(char *str)
+{
+DEBUG(printf("f_ignore_savefile_pos(\"%s\")\n",str));
+ignore_savefile_pos=atoi_64(str)?1:0;
+return(0);
+}
+
+static f_ignore_savefile_size(char *str)
+{
+DEBUG(printf("f_ignore_savefile_size(\"%s\")\n",str));
+ignore_savefile_size=atoi_64(str)?1:0;
+return(0);
+}
+
 static int f_initial_window_x(char *str)
 {
 int val;
@@ -611,6 +625,8 @@ static struct rc_entry rcitems[]=
 { "hier_grouping", f_hier_grouping },
 { "hier_max_level", f_hier_max_level },
 { "hpane_pack", f_hpane_pack },
+{ "ignore_savefile_pos", f_ignore_savefile_pos },
+{ "ignore_savefile_size", f_ignore_savefile_size },
 { "initial_window_x", f_initial_window_x },
 { "initial_window_xpos", f_initial_window_xpos },
 { "initial_window_y", f_initial_window_y },
@@ -807,6 +823,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:37  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *
