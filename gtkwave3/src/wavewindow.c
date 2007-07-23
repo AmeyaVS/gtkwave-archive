@@ -14,6 +14,7 @@
 #include "symbol.h"
 #include "bsearch.h"
 #include "color.h"
+#include "rc.h"
 #include "strace.h"
 #include "debug.h"
 #include "main.h"
@@ -3403,6 +3404,9 @@ tims.end+=shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/07/23 23:13:09  gtkwave
+ * adds for color tags in filtered trace data
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
  * Imported sources
  *
