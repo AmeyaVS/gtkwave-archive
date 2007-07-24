@@ -96,8 +96,7 @@ gtk_table_attach (GTK_TABLE (table), vscrollbar, 15, 16, 0, 1,
 gtk_widget_show (vscrollbar);
    
 /* Add a handler to put a message in the text widget when it is realized */
-gtk_signal_connect (GTK_OBJECT (text), "realize",
-			GTK_SIGNAL_FUNC (help_realize_text), NULL);
+gtk_signal_connect (GTK_OBJECT (text), "realize",GTK_SIGNAL_FUNC (help_realize_text), NULL);
    
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_WORD);
@@ -174,6 +173,10 @@ void helpbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/07/09 11:47:59  kermin
+ * Commit against July 9th deadline.  Devtool to move globals/statics to
+ * unified struct mostly complete
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
  * Imported sources
  *
