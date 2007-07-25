@@ -211,7 +211,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 AIXFLAGS = -bmaxdata:0xd0000000/dsa
-AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ_CFLAGS)
+AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS)
 mvl2lxt_SOURCES = mvl2lxt.c lxt_write.c lxt_write.h
 mvl2lxt_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD)
 vcd2lxt_SOURCES = vcd2lxt.c lxt_write.c lxt_write.h v2l_analyzer.h v2l_debug.c v2l_debug.h

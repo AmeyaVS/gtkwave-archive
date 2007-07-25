@@ -4,7 +4,7 @@
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 AIXFLAGS = -bmaxdata:0xd0000000/dsa
 
-AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ_CFLAGS)
+AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS)
 
 bin_PROGRAMS= ghwdump lxt2miner lxt2vcd mvl2lxt mvl2vcd \
 	shmidcat tex2vcd tla2vcd vcd2lxt vcd2lxt2 vcd2vzt \
