@@ -306,16 +306,20 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_grab_add(window1);
     gtk_widget_set_usize( GTK_WIDGET (window1), width, 60);
     gtk_window_set_title(GTK_WINDOW (window1), title);
-    gtk_signal_connect(GTK_OBJECT (window1), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
+    gtk_signal_connect(GTK_OBJECT (window1), "delete_event",
+                       (GtkSignalFunc) destroy_callback_e, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (window1), vbox);
     gtk_widget_show (vbox);
 
     entry_a = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(entry_a), "activate",GTK_SIGNAL_FUNC(enter_callback_e),entry_a);
+    gtk_signal_connect(GTK_OBJECT(entry_a), "activate",
+		       GTK_SIGNAL_FUNC(enter_callback_e),
+		       entry_a);
     gtk_entry_set_text (GTK_ENTRY (entry_a), default_text);
-    gtk_entry_select_region (GTK_ENTRY (entry_a), 0, GTK_ENTRY(entry_a)->text_length);
+    gtk_entry_select_region (GTK_ENTRY (entry_a),
+			     0, GTK_ENTRY(entry_a)->text_length);
     gtk_box_pack_start (GTK_BOX (vbox), entry_a, TRUE, TRUE, 0);
     gtk_widget_show (entry_a);
 
@@ -783,7 +787,8 @@ void treebox(char *title, GtkSignalFunc func)
     /* create a new modal window */
     window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
+                       (GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
 
@@ -913,7 +918,9 @@ void treebox(char *title, GtkSignalFunc func)
 
     button1 = gtk_button_new_with_label ("Append");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",
+			       GTK_SIGNAL_FUNC(ok_callback),
+			       GTK_OBJECT (window));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signal hierarchy to end of the display on the main window.",NULL);
@@ -922,7 +929,9 @@ void treebox(char *title, GtkSignalFunc func)
 
     button2 = gtk_button_new_with_label (" Insert ");
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",
+			       GTK_SIGNAL_FUNC(insert_callback),
+			       GTK_OBJECT (window));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add selected signal hierarchy after last highlighted signal on the main window.",NULL);
@@ -932,7 +941,9 @@ void treebox(char *title, GtkSignalFunc func)
 	{
     	button3 = gtk_button_new_with_label (" Bundle Up ");
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (window));
+    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",
+			       GTK_SIGNAL_FUNC(bundle_callback_up),
+			       GTK_OBJECT (window));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -946,7 +957,9 @@ void treebox(char *title, GtkSignalFunc func)
 
     	button3a = gtk_button_new_with_label (" Bundle Down ");
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (window));
+    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",
+			       GTK_SIGNAL_FUNC(bundle_callback_down),
+			       GTK_OBJECT (window));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -961,7 +974,9 @@ void treebox(char *title, GtkSignalFunc func)
 
     button4 = gtk_button_new_with_label (" Replace ");
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",
+			       GTK_SIGNAL_FUNC(replace_callback),
+			       GTK_OBJECT (window));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with signals selected above.",NULL);
@@ -969,7 +984,9 @@ void treebox(char *title, GtkSignalFunc func)
 
     button5 = gtk_button_new_with_label (" Exit ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked", GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",
+			       GTK_SIGNAL_FUNC(destroy_callback),
+			       GTK_OBJECT (window));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);

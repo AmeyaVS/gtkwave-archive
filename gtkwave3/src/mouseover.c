@@ -176,7 +176,8 @@ gdk_draw_rectangle(mo_pixmap, mo_black,
 		1,1, 
 		mo_width-2, mo_height-2);
 
-gtk_signal_connect(GTK_OBJECT(mo_area), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+gtk_signal_connect(GTK_OBJECT(mo_area), "expose_event",
+                        GTK_SIGNAL_FUNC(expose_event), NULL);
 }
 
 #define MOUSEOVER_BREAKSIZE (32)

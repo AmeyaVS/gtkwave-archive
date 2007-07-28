@@ -971,7 +971,9 @@ if(!socket_xid)
 		gtk_window_set_default_size(GTK_WINDOW (mainwindow), initial_window_width, initial_window_height);
 		}
 
-	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event",/* formerly was "destroy" */ GTK_SIGNAL_FUNC(file_quit_cmd_callback), "WM destroy");
+	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event", 	/* formerly was "destroy" */
+				GTK_SIGNAL_FUNC(file_quit_cmd_callback), 
+			       	"WM destroy");
 
 	gtk_widget_show(mainwindow);
 	}
@@ -981,7 +983,9 @@ if(!socket_xid)
         mainwindow = gtk_plug_new(socket_xid);
         gtk_widget_show(mainwindow);
                                 
-        gtk_signal_connect(GTK_OBJECT(mainwindow), "destroy",   /* formerly was "destroy" */GTK_SIGNAL_FUNC(plug_destroy),"Plug destroy");
+        gtk_signal_connect(GTK_OBJECT(mainwindow), "destroy",   /* formerly was "destroy" */
+                                GTK_SIGNAL_FUNC(plug_destroy),
+                                "Plug destroy");
 	}
 #endif
 

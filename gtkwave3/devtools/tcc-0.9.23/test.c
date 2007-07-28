@@ -7,9 +7,7 @@ int jojo;
 typedef int Iter_t;
 typedef (*AE)();
 
-int arr[4] = {3,3,3,3};
 
-Iter_t *iters;
 int (* funptr)(float f, int* q);
 
 int c;

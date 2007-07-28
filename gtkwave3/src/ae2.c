@@ -616,7 +616,6 @@ int ae2_iterator(uint64_t start_cycle, uint64_t end_cycle)
 {
 unsigned int i, j, r;
 uint64_t cyc, ecyc, step_cyc;
-struct ae2_ncycle_autosort *autosort[AE2_SECTION_SIZE];
 struct ae2_ncycle_autosort *deadlist=NULL;
 struct ae2_ncycle_autosort *autofacs=NULL;
 char buf[65537];
@@ -644,12 +643,18 @@ for(i=0;i<numfacs;i++)
 
 for(j=0;j<num_sections;j++)
 	{
+	struct ae2_ncycle_autosort **autosort = NULL;
 	uint64_t *ith_range = ae2_read_ith_section_range(ae2, j);
+
 	cyc = *ith_range;
 	ecyc = *(ith_range+1);
 
 	if(ecyc<start_cycle) continue;
 	if(cyc>end_cycle) break;
+
+	if((ecyc<cyc)||(ecyc==~ULLDescriptor(0))) continue;
+
+	autosort = calloc(ecyc - cyc + 1, sizeof(struct ae2_ncycle_autosort *));
 	
 	for(i=0;i<numfacs;i++)
 		{
@@ -694,7 +699,6 @@ for(j=0;j<num_sections;j++)
 			}
 		}
 
-	for(i=0;i<AE2_SECTION_SIZE;i++) autosort[i]=NULL;
 	deadlist=NULL;
 
 	for(i=0;i<numfacs;i++)
@@ -833,6 +837,8 @@ for(j=0;j<num_sections;j++)
 				}
 			}
 		}
+
+	if(autosort) free(autosort);
 	}
 
 
@@ -1078,6 +1084,15 @@ for(txidx=0;txidx<numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/06/23 02:58:26  gtkwave
+ * added bounds checking on start vs end cycle so they don't invert
+ *
+ * Revision 1.2  2007/06/23 02:37:27  gtkwave
+ * static section size is now dynamic
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:40  gtkwave
+ * Imported sources
+ *
  * Revision 1.4  2007/05/28 00:55:05  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

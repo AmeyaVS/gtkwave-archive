@@ -445,9 +445,8 @@ if(vcd_fsiz)
 return((int)(*(vst++)));
 }
 
-static inline char getch() {
-  return ((vst!=vend)?((int)(*(vst++))):(getch_fetch()));
-}
+#define getch() ((vst!=vend)?((int)(*(vst++))):(getch_fetch()))
+
 
 static char *varsplit=NULL, *vsplitcurr=NULL;
 static int getch_patched(void)

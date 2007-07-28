@@ -15,7 +15,7 @@ int splash_disable=1;	/* easter egg */
 
 #ifdef WAVE_USE_GTK2
 /* XPM */
-static char * wave_splash_xpm[] = {
+static const char const * wave_splash_xpm[] = {
 "512 384 257 2",
 "  	c None",
 ". 	c #020202",
@@ -772,12 +772,17 @@ if(!splash_disable)
 
         gtk_widget_show(splash_table);
         gtk_container_add(GTK_CONTAINER(splash), splash_table);
-	gtk_signal_connect(GTK_OBJECT(darea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
-	gtk_signal_connect(GTK_OBJECT(darea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
+	gtk_signal_connect(GTK_OBJECT(darea), "expose_event",
+                        GTK_SIGNAL_FUNC(expose_event), NULL);
+	gtk_signal_connect(GTK_OBJECT(darea), "button_press_event",
+                        GTK_SIGNAL_FUNC(button_press_event), NULL);
                  
         while (gtk_events_pending()) gtk_main_iteration();
                          
-        gdk_draw_drawable(darea->window,darea->style->fg_gc[GTK_WIDGET_STATE (darea)], wave_splash_pixmap,0,0,0,0,WAVE_SPLASH_X,WAVE_SPLASH_Y);
+        gdk_draw_drawable(darea->window,
+                    darea->style->fg_gc[GTK_WIDGET_STATE (darea)],
+                    wave_splash_pixmap,
+                    0,0,0,0,WAVE_SPLASH_X,WAVE_SPLASH_Y);
         while (gtk_events_pending()) gtk_main_iteration();
                          
         timeout_tag = gtk_timeout_add(100, splash_kill, splash);
@@ -799,7 +804,9 @@ if(splash)
 			if((current==total)||(cur_bar_x>=WAVE_SPLASH_X-4)) load_complete=1;
 			if(current>total) current = total; /* just in case... */
 	
-			gdk_draw_rectangle(darea->window, splash->style->black_gc, TRUE,0,WAVE_SPLASH_Y-4, (prev_bar_x = cur_bar_x), 4);
+			gdk_draw_rectangle(darea->window, 
+				splash->style->black_gc, TRUE,
+				0,WAVE_SPLASH_Y-4, (prev_bar_x = cur_bar_x), 4);
 			}
 		}
 

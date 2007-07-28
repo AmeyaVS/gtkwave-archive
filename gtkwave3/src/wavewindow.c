@@ -14,6 +14,7 @@
 #include "symbol.h"
 #include "bsearch.h"
 #include "color.h"
+#include "rc.h"
 #include "strace.h"
 #include "debug.h"
 #include "main.h"
@@ -111,8 +112,10 @@ GdkGC	*gc_mdgray=NULL;
 GdkGC	*gc_dkgray=NULL;
 GdkGC	*gc_dkblue=NULL;
 
-static  GdkModifierType const  bmask[4]= {0, GDK_BUTTON1_MASK, 0, GDK_BUTTON3_MASK };		        /* button 1, 3 press/rel encodings */
-static  GdkModifierType const m_bmask[4]= {0, GDK_BUTTON1_MOTION_MASK, 0, GDK_BUTTON3_MOTION_MASK };	/* button 1, 3 motion encodings */
+static const GdkModifierType   bmask[4]= {0, GDK_BUTTON1_MASK, 0, GDK_BUTTON3_MASK };		        /* button 1, 3 press/rel encodings */
+static const GdkModifierType m_bmask[4]= {0, GDK_BUTTON1_MOTION_MASK, 0, GDK_BUTTON3_MOTION_MASK };	/* button 1, 3 motion encodings */
+
+static char fill_in_smaller_rgb_areas = 0; /* only set when '?' encountered and triggers a GC creation */
 
 /******************************************************************/
 
@@ -398,7 +401,9 @@ if((t=named_markers[i])!=-1)
 
 			for(y=fontheight-1;y<=waveheight-1;y+=8)
 				{
-				gdk_draw_line(wavepixmap,gc_mark,xl, y, xl, y+5);
+				gdk_draw_line(wavepixmap,
+					gc_mark,
+        	        		xl, y, xl, y+5);
 				}
 
 			gdk_draw_string(wavepixmap, wavefont_smaller,
@@ -1204,21 +1209,29 @@ gtk_widget_set_events(wavearea,
 
 gtk_signal_connect(GTK_OBJECT(wavearea), "configure_event",
                         GTK_SIGNAL_FUNC(wavearea_configure_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
-gtk_signal_connect(GTK_OBJECT(wavearea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "expose_event",
+                        GTK_SIGNAL_FUNC(expose_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "motion_notify_event",
+                        GTK_SIGNAL_FUNC(motion_notify_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "button_press_event",
+                        GTK_SIGNAL_FUNC(button_press_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "button_release_event",
+                        GTK_SIGNAL_FUNC(button_release_event), NULL);
 
 #ifdef WAVE_USE_GTK2
-gtk_signal_connect(GTK_OBJECT(wavearea), "scroll_event",GTK_SIGNAL_FUNC(scroll_event), NULL);
+gtk_signal_connect(GTK_OBJECT(wavearea), "scroll_event",
+                        GTK_SIGNAL_FUNC(scroll_event), NULL);
 GTK_WIDGET_SET_FLAGS( wavearea, GTK_CAN_FOCUS );
 #endif
 
-gtk_table_attach (GTK_TABLE (table), wavearea, 0, 9, 0, 9,GTK_FILL | GTK_EXPAND,GTK_FILL | GTK_EXPAND, 3, 2);
+gtk_table_attach (GTK_TABLE (table), wavearea, 0, 9, 0, 9,
+                        GTK_FILL | GTK_EXPAND,
+                        GTK_FILL | GTK_EXPAND, 3, 2);
 
 wave_vslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 vadj=GTK_ADJUSTMENT(wave_vslider);
-gtk_signal_connect(GTK_OBJECT(wave_vslider), "value_changed",GTK_SIGNAL_FUNC(service_vslider), NULL);
+gtk_signal_connect(GTK_OBJECT(wave_vslider), "value_changed",
+                        GTK_SIGNAL_FUNC(service_vslider), NULL);
 vscroll=gtk_vscrollbar_new(vadj);
 /* GTK_WIDGET_SET_FLAGS(vscroll, GTK_CAN_FOCUS); */
 gtk_widget_show(vscroll);
@@ -1228,7 +1241,8 @@ gtk_table_attach (GTK_TABLE (table), vscroll, 9, 10, 0, 9,
 
 wave_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 hadj=GTK_ADJUSTMENT(wave_hslider);
-gtk_signal_connect(GTK_OBJECT(wave_hslider), "value_changed",GTK_SIGNAL_FUNC(service_hslider), NULL);
+gtk_signal_connect(GTK_OBJECT(wave_hslider), "value_changed",
+                        GTK_SIGNAL_FUNC(service_hslider), NULL);
 hscroll=gtk_hscrollbar_new(hadj);
 /* GTK_WIDGET_SET_FLAGS(hscroll, GTK_CAN_FOCUS); */
 gtk_widget_show(hscroll);
@@ -1293,7 +1307,8 @@ if(t)
 
 if((wavepixmap)&&(update_waves))
 	{
-	gdk_draw_rectangle(wavepixmap, gc_back, TRUE, 0, fontheight-1,wavewidth, waveheight-fontheight+1);
+	gdk_draw_rectangle(wavepixmap, gc_back, TRUE, 0, fontheight-1,
+	                        wavewidth, waveheight-fontheight+1);
 
 	if(display_grid) rendertimes();
 	rendertraces();
@@ -2216,7 +2231,10 @@ if(x0!=x1)
 		{
 		case AN_0:	/* 0 */
 		case AN_L:	/* L */
-		wave_gdk_draw_line(wavepixmap, (hval==AN_0) ? gc_0 : gc_low,x0, y0,x1, y0);
+		wave_gdk_draw_line(wavepixmap, 
+			(hval==AN_0) ? gc_0 : gc_low,
+			x0, y0,
+			x1, y0);
 
 		if(h2tim<=tims.end)
 		switch(h2val)
@@ -2245,11 +2263,15 @@ if(x0!=x1)
 
 		if(invert)
 			{
-			gdk_draw_rectangle(wavepixmap, gcx, TRUE,x0+1, y0, x1-x0, y1-y0+1); 
+			gdk_draw_rectangle(wavepixmap, 
+				gcx, TRUE,
+				x0+1, y0, x1-x0, y1-y0+1); 
 			}
 			else
 			{
-			gdk_draw_rectangle(wavepixmap, gcxf, TRUE,x0+1, y1, x1-x0, y0-y1+1); 
+			gdk_draw_rectangle(wavepixmap, 
+				gcxf, TRUE,
+				x0+1, y1, x1-x0, y0-y1+1); 
 			}
 
 		if(identifier_str[0])
@@ -2261,18 +2283,31 @@ if(x0!=x1)
 				{
 				if((x1>=wavewidth)||(gdk_string_measure(wavefont, identifier_str)+vector_padding<=width))
 					{
-		                        gdk_draw_string(wavepixmap,wavefont,  gc_value,  x0+2,ytext,identifier_str);
+		                        gdk_draw_string(wavepixmap,
+		                                wavefont,  
+		                                gc_value,  
+		                                x0+2,ytext,
+		                                identifier_str);
 					}
 				}
 			}
 
-		wave_gdk_draw_line(wavepixmap, gcx,x0, y0,x1, y0);
-		wave_gdk_draw_line(wavepixmap, gcx,x0, y1,x1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			gcx,
+			x0, y0,
+			x1, y0);
+		wave_gdk_draw_line(wavepixmap, 
+			gcx,
+			x0, y1,
+			x1, y1);
 		if(h2tim<=tims.end) wave_gdk_draw_line(wavepixmap, c, x1, y0, x1, y1);
 		break;
 		
 		case AN_Z: /* Z */
-		wave_gdk_draw_line(wavepixmap, gc_mid,x0, yu,x1, yu);
+		wave_gdk_draw_line(wavepixmap, 
+			gc_mid,
+			x0, yu,
+			x1, yu);
 		if(h2tim<=tims.end)
 		switch(h2val)
 			{
@@ -2288,7 +2323,10 @@ if(x0!=x1)
 		
 		case AN_1: /* 1 */
 		case AN_H: /* 1 */
-		wave_gdk_draw_line(wavepixmap, (hval==AN_1) ? gc_1 : gc_high,x0, y1,x1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			(hval==AN_1) ? gc_1 : gc_high,
+			x0, y1,
+			x1, y1);
 		if(h2tim<=tims.end)
 		switch(h2val)
 			{
@@ -2483,12 +2521,21 @@ if(x0!=x1)
 		}
 	if(t->flags & TR_ANALOG_STEP)
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt0);
-		wave_gdk_draw_line(wavepixmap, c,x1, yt0,x1, yt1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, yt0,
+			x1, yt0);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x1, yt0,
+			x1, yt1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, yt0,
+			x1, yt1);
 		}
 	}
 	else
@@ -2540,7 +2587,10 @@ if((display_grid)&&(enable_horiz_grid))
 	{
 	if(!(t->flags & TR_ANALOGMASK))
 		{
-		gdk_draw_line(wavepixmap, gc_grid,(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
+		gdk_draw_line(wavepixmap, 
+			gc_grid,
+			(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,
+			(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
 		}
 	}
 
@@ -2565,6 +2615,8 @@ if((t->flags & TR_ANALOGMASK) && (!(h->flags&HIST_STRING) || !(h->flags&HIST_REA
 	draw_hptr_trace_vector_analog(t, h, which, ext);
 	return;
 	}
+
+color_active_in_filter = 1;
 
 for(;;)
 {
@@ -2606,28 +2658,61 @@ if(use_roundcaps)
 	{
 	if (type == AN_Z) {
 		if (lasttype != -1) {
-		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
-		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			(lasttype==AN_X? gc_x:gc_vtrans),
+			x0-1, y0,
+			x0,   yu);
+		wave_gdk_draw_line(wavepixmap, 
+			(lasttype==AN_X? gc_x:gc_vtrans),
+			x0, yu,
+			x0-1, y1);
 		}
 	} else
 	if (lasttype==AN_Z) {
-		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
-		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			(type==AN_X? gc_x:gc_vtrans),
+			x0+1, y0,
+			x0,   yu);
+		wave_gdk_draw_line(wavepixmap, 
+			(type==AN_X? gc_x:gc_vtrans),
+			x0, yu,
+			x0+1, y1);
 	} else {
 		if (lasttype != type) {
-		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
-		wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
-		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
-		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			(lasttype==AN_X? gc_x:gc_vtrans),
+			x0-1, y0,
+			x0,   yu);
+		wave_gdk_draw_line(wavepixmap, 
+			(lasttype==AN_X? gc_x:gc_vtrans),
+			x0, yu,
+			x0-1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			(type==AN_X? gc_x:gc_vtrans),
+			x0+1, y0,
+			x0,   yu);
+		wave_gdk_draw_line(wavepixmap, 
+			(type==AN_X? gc_x:gc_vtrans),
+			x0, yu,
+			x0+1, y1);
 		} else {
-	wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0-2, y0,x0+2, y1);
-	wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+2, y0,x0-2, y1);
+	wave_gdk_draw_line(wavepixmap, 
+		(type==AN_X? gc_x:gc_vtrans),
+		x0-2, y0,
+		x0+2, y1);
+	wave_gdk_draw_line(wavepixmap, 
+		(type==AN_X? gc_x:gc_vtrans),
+		x0+2, y0,
+		x0-2, y1);
 		}
 	}
 	}
 	else
 	{
-	wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, y0,x0, y1);
+	wave_gdk_draw_line(wavepixmap, 
+		(type==AN_X? gc_x:gc_vtrans),
+		x0, y0,
+		x0, y1);
 	}
 }
 		
@@ -2637,11 +2722,17 @@ if(x0!=x1)
 		{
 		if(use_roundcaps)
 			{
-			wave_gdk_draw_line(wavepixmap, gc_mid,x0+1, yu,x1-1, yu);
+			wave_gdk_draw_line(wavepixmap, 
+				gc_mid,
+				x0+1, yu,
+				x1-1, yu);
 			} 
 			else 
 			{
-			wave_gdk_draw_line(wavepixmap, gc_mid,x0, yu,x1, yu);
+			wave_gdk_draw_line(wavepixmap, 
+				gc_mid,
+				x0, yu,
+				x1, yu);
 			}
 		} 
 		else 
@@ -2657,19 +2748,33 @@ if(x0!=x1)
 	
 	if(use_roundcaps)
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0+2, y0,x1-2, y0);
-		wave_gdk_draw_line(wavepixmap, c,x0+2, y1,x1-2, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0+2, y0,
+			x1-2, y0);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0+2, y1,
+			x1-2, y1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0, y0,x1, y0);
-		wave_gdk_draw_line(wavepixmap, c,x0, y1,x1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, y0,
+			x1, y0);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, y1,
+			x1, y1);
 		}
 
 if(x0<0) x0=0;	/* fixup left margin */
 
 	if((width=x1-x0)>vector_padding)
 		{
+		char *ascii2;
+
 		if(h->flags&HIST_REAL)
 			{
 			if(!(h->flags&HIST_STRING))
@@ -2686,21 +2791,92 @@ if(x0<0) x0=0;	/* fixup left margin */
 			ascii=convert_ascii_vec(t,h->v.h_vector);
 			}
 
-		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii)+vector_padding<=width))
+		ascii2 = ascii;
+		if(*ascii == '?')
 			{
-			gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0+1, y1+1, width-1, (y0-1) - (y1+1) + 1);
+					fill_in_smaller_rgb_areas = 1;
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
+				}
+			}
+
+		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii2)+vector_padding<=width))
+			{
+			gdk_draw_string(wavepixmap,
+				wavefont,
+			       	gc_value,
+				x0+2,ytext,
+			        ascii2);
 			}
 		else
 			{
 			char *mod;
 
-			mod=bsearch_trunc(ascii,width-vector_padding);
+			mod=bsearch_trunc(ascii2,width-vector_padding);
 			if(mod)
 				{
 				*mod='+';
 				*(mod+1)=0;
 
-				gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
+				gdk_draw_string(wavepixmap,
+					wavefont,
+				       	gc_value,
+					x0+2,ytext,
+				        ascii2);
+				}
+			}
+		}
+		else if(fill_in_smaller_rgb_areas)
+		{
+		char *ascii2;
+
+		if(h->flags&HIST_REAL)
+			{
+			if(!(h->flags&HIST_STRING))
+				{
+				ascii=convert_ascii_real((double *)h->v.h_vector);
+				}
+				else
+				{
+				ascii=convert_ascii_string((char *)h->v.h_vector);
+				}
+			}
+			else
+			{
+			ascii=convert_ascii_vec(t,h->v.h_vector);
+			}
+
+		ascii2 = ascii;
+		if(*ascii == '?')
+			{
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
 				}
 			}
 
@@ -2723,6 +2899,8 @@ if(ascii) { free_2(ascii); ascii=NULL; }
 h=h->next;
 lasttype=type;
 }
+
+color_active_in_filter = 0;
 
 wave_gdk_draw_line_flush(wavepixmap);
 
@@ -2855,12 +3033,21 @@ if(x0!=x1)
 		}
 	if(t->flags & TR_ANALOG_STEP)
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt0);
-		wave_gdk_draw_line(wavepixmap, c,x1, yt0,x1, yt1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, yt0,
+			x1, yt0);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x1, yt0,
+			x1, yt1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0, yt0,x1, yt1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, yt0,
+			x1, yt1);
 		}
 	}
 	else
@@ -2911,7 +3098,10 @@ ytext=yu-(wavefont->ascent/2)+wavefont->ascent;
 
 if((display_grid)&&(enable_horiz_grid))
 	{
-	gdk_draw_line(wavepixmap, gc_grid,(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
+	gdk_draw_line(wavepixmap, 
+		gc_grid,
+		(tims.start<tims.first)?(tims.first-tims.start)*pxns:0, liney,
+		(tims.last<=tims.end)?(tims.last-tims.start)*pxns:wavewidth-1, liney);
 	}
 
 if(t->flags & TR_ANALOGMASK)
@@ -2935,6 +3125,8 @@ if(t->flags & TR_ANALOGMASK)
 	draw_vptr_trace_analog(t, v, which, ext);
 	return;
 	}
+
+color_active_in_filter = 1;
 
 for(;;)
 {
@@ -2979,35 +3171,68 @@ if(use_roundcaps)
 		{
 		if (lasttype != -1) 
 			{
-			wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
-			wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
+			wave_gdk_draw_line(wavepixmap, 
+				(lasttype==AN_X? gc_x:gc_vtrans),
+				x0-1, y0,
+				x0,   yu);
+			wave_gdk_draw_line(wavepixmap, 
+				(lasttype==AN_X? gc_x:gc_vtrans),
+				x0, yu,
+				x0-1, y1);
 			}
 		} 
 		else
 		if (lasttype==AN_Z) 
 			{
-			wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
-			wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
+			wave_gdk_draw_line(wavepixmap, 
+				(type==AN_X? gc_x:gc_vtrans),
+				x0+1, y0,
+				x0,   yu);
+			wave_gdk_draw_line(wavepixmap, 
+				(type==AN_X? gc_x:gc_vtrans),
+				x0, yu,
+				x0+1, y1);
 			} 
 			else 
 			{
 			if (lasttype != type) 
 				{
-				wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0-1, y0,x0,   yu);
-				wave_gdk_draw_line(wavepixmap, (lasttype==AN_X? gc_x:gc_vtrans),x0, yu,x0-1, y1);
-				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+1, y0,x0,   yu);
-				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, yu,x0+1, y1);
+				wave_gdk_draw_line(wavepixmap, 
+					(lasttype==AN_X? gc_x:gc_vtrans),
+					x0-1, y0,
+					x0,   yu);
+				wave_gdk_draw_line(wavepixmap, 
+					(lasttype==AN_X? gc_x:gc_vtrans),
+					x0, yu,
+					x0-1, y1);
+				wave_gdk_draw_line(wavepixmap, 
+					(type==AN_X? gc_x:gc_vtrans),
+					x0+1, y0,
+					x0,   yu);
+				wave_gdk_draw_line(wavepixmap, 
+					(type==AN_X? gc_x:gc_vtrans),
+					x0, yu,
+					x0+1, y1);
 				} 
 				else 
 				{
-				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0-2, y0,x0+2, y1);
-				wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0+2, y0,x0-2, y1);
+				wave_gdk_draw_line(wavepixmap, 
+					(type==AN_X? gc_x:gc_vtrans),
+					x0-2, y0,
+					x0+2, y1);
+				wave_gdk_draw_line(wavepixmap, 
+					(type==AN_X? gc_x:gc_vtrans),
+					x0+2, y0,
+					x0-2, y1);
 				}
 			}
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, (type==AN_X? gc_x:gc_vtrans),x0, y0,x0, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			(type==AN_X? gc_x:gc_vtrans),
+			x0, y0,
+			x0, y1);
 		}
 }
 
@@ -3017,11 +3242,17 @@ if(x0!=x1)
 		{
 		if(use_roundcaps)
 			{
-			wave_gdk_draw_line(wavepixmap, gc_mid,x0+1, yu,x1-1, yu);
+			wave_gdk_draw_line(wavepixmap, 
+				gc_mid,
+				x0+1, yu,
+				x1-1, yu);
 			} 
 			else 
 			{
-			wave_gdk_draw_line(wavepixmap, gc_mid,x0, yu,x1, yu);
+			wave_gdk_draw_line(wavepixmap, 
+				gc_mid,
+				x0, yu,
+				x1, yu);
 			}
 		} 
 		else 
@@ -3037,13 +3268,25 @@ if(x0!=x1)
 	
 	if(use_roundcaps)
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0+2, y0,x1-2, y0);
-		wave_gdk_draw_line(wavepixmap, c,x0+2, y1,x1-2, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0+2, y0,
+			x1-2, y0);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0+2, y1,
+			x1-2, y1);
 		}
 		else
 		{
-		wave_gdk_draw_line(wavepixmap, c,x0, y0,x1, y0);
-		wave_gdk_draw_line(wavepixmap, c,x0, y1,x1, y1);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, y0,
+			x1, y0);
+		wave_gdk_draw_line(wavepixmap, 
+			c,
+			x0, y1,
+			x1, y1);
 		}
 
 
@@ -3051,25 +3294,85 @@ if(x0<0) x0=0;	/* fixup left margin */
 
 	if((width=x1-x0)>vector_padding)
 		{
+		char *ascii2;
+
 		ascii=convert_ascii(t,h);
-		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii)+vector_padding<=width))
+
+		ascii2 = ascii;
+		if(*ascii == '?')
 			{
-			gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0+1, y1+1, width-1, (y0-1) - (y1+1) + 1);
+					fill_in_smaller_rgb_areas = 1;
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
+				}
+			}
+
+		if((x1>=wavewidth)||(gdk_string_measure(wavefont, ascii2)+vector_padding<=width))
+			{
+			gdk_draw_string(wavepixmap,
+				wavefont,
+			       	gc_value,
+				x0+2,ytext,
+			        ascii2);
 			}
 		else
 			{
 			char *mod;
 
-			mod=bsearch_trunc(ascii,width-vector_padding);
+			mod=bsearch_trunc(ascii2,width-vector_padding);
 			if(mod)
 				{
 				*mod='+';
 				*(mod+1)=0;
 
-				gdk_draw_string(wavepixmap,wavefont,gc_value,x0+2,ytext,ascii);
+				gdk_draw_string(wavepixmap,
+					wavefont,
+				       	gc_value,
+					x0+2,ytext,
+				        ascii2);
 				}
 			}
 
+		}
+		else if(fill_in_smaller_rgb_areas)
+		{
+		char *ascii2;
+
+		ascii=convert_ascii(t,h);
+
+		ascii2 = ascii;
+		if(*ascii == '?')
+			{
+			GdkGC *cb;
+			char *srch_for_color = strchr(ascii+1, '?');
+			if(srch_for_color)
+				{
+				*srch_for_color = 0;
+				cb = get_gc_from_name(ascii+1);
+				if(cb)
+					{	
+					ascii2 =  srch_for_color + 1;
+					gdk_draw_rectangle(wavepixmap, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+					}
+					else
+					{
+					*srch_for_color = '?'; /* replace name as color is a miss */
+					}
+				}
+			}
 		}
 	}
 	}
@@ -3090,6 +3393,8 @@ lasttype=type;
 h=h->next;
 }
 
+color_active_in_filter = 0;
+
 wave_gdk_draw_line_flush(wavepixmap);
 
 tims.start+=shift_timebase;
@@ -3099,8 +3404,11 @@ tims.end+=shift_timebase;
 /*
  * $Id$
  * $Log$
- * Revision 1.1.1.1.2.1  2007/07/11 03:01:33  kermin
- * Edited files to circumvent line count bug in tcc.
+ * Revision 1.3  2007/07/23 23:21:23  gtkwave
+ * was missing rc.h include
+ *
+ * Revision 1.2  2007/07/23 23:13:09  gtkwave
+ * adds for color tags in filtered trace data
  *
  * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
  * Imported sources

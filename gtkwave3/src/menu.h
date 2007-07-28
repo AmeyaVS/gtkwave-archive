@@ -30,17 +30,25 @@
 void get_main_menu (GtkWidget *, GtkWidget **menubar);
 int file_quit_cmd_callback (GtkWidget *widget, gpointer data);
 int set_wave_menu_accelerator(char *str);
-
 int execute_script(char *name);
-extern FILE *script_handle;
 
+extern FILE *script_handle;
 extern char *filesel_writesave;
+
+extern char ignore_savefile_pos;
+extern char ignore_savefile_size;
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/07/23 23:13:08  gtkwave
+ * adds for color tags in filtered trace data
+ *
+ * Revision 1.2  2007/06/18 05:05:08  gtkwave
+ * noticed non-extern declaraction (detected only by tcc it seems...)
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:58  gtkwave
  * Imported sources
  *

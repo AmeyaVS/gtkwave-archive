@@ -269,6 +269,20 @@ paned_pack_semantics=atoi_64(str)?1:0;
 return(0);
 }
 
+static f_ignore_savefile_pos(char *str)
+{
+DEBUG(printf("f_ignore_savefile_pos(\"%s\")\n",str));
+ignore_savefile_pos=atoi_64(str)?1:0;
+return(0);
+}
+
+static f_ignore_savefile_size(char *str)
+{
+DEBUG(printf("f_ignore_savefile_size(\"%s\")\n",str));
+ignore_savefile_size=atoi_64(str)?1:0;
+return(0);
+}
+
 static int f_initial_window_x(char *str)
 {
 int val;
@@ -504,50 +518,17 @@ return(strcasecmp((char *)v1, ((struct rc_entry *)v2)->name));
 
 
 /* make the color functions */
-/* Momentarily get rid of this clever and inspiring function */
-//#define color_make(Z) static int f_color_##Z (char *str) \
-//{ \
-//int rgb; \
-//if((rgb=get_rgb_from_name(str))!=~0) \
-//	{ \
-//	color_##Z=rgb; \
-//	} \
-//return(0); \
-//}
+#define color_make(Z) static int f_color_##Z (char *str) \
+{ \
+int rgb; \
+if((rgb=get_rgb_from_name(str))!=~0) \
+	{ \
+	color_##Z=rgb; \
+	} \
+return(0); \
+}
 
-static int f_color_back (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_back=rgb; } return(0); }
-static int f_color_baseline (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_baseline=rgb; } return(0); }
-static int f_color_grid (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_grid=rgb; } return(0); }
-static int f_color_high (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_high=rgb; } return(0); }
-static int f_color_low (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_low=rgb; } return(0); }
-static int f_color_1 (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_1=rgb; } return(0); }
-static int f_color_0 (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_0=rgb; } return(0); }
-static int f_color_mark (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_mark=rgb; } return(0); }
-static int f_color_mid (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_mid=rgb; } return(0); }
-static int f_color_time (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_time=rgb; } return(0); }
-static int f_color_timeb (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_timeb=rgb; } return(0); }
-static int f_color_trans (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_trans=rgb; } return(0); }
-static int f_color_umark (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_umark=rgb; } return(0); }
-static int f_color_value (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_value=rgb; } return(0); }
-static int f_color_vbox (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_vbox=rgb; } return(0); }
-static int f_color_vtrans (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_vtrans=rgb; } return(0); }
-static int f_color_x (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_x=rgb; } return(0); }
-static int f_color_xfill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_xfill=rgb; } return(0); }
-static int f_color_u (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_u=rgb; } return(0); }
-static int f_color_ufill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_ufill=rgb; } return(0); }
-static int f_color_w (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_w=rgb; } return(0); }
-static int f_color_wfill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_wfill=rgb; } return(0); }
-static int f_color_dash (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_dash=rgb; } return(0); }
-static int f_color_dashfill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_dashfill=rgb; } return(0); }
-static int f_color_white (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_white=rgb; } return(0); }
-static int f_color_black (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_black=rgb; } return(0); }
-static int f_color_ltgray (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_ltgray=rgb; } return(0); }
-static int f_color_normal (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_normal=rgb; } return(0); }
-static int f_color_mdgray (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_mdgray=rgb; } return(0); }
-static int f_color_dkgray (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_dkgray=rgb; } return(0); }
-static int f_color_dkblue (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { color_dkblue=rgb; } return(0); }
-
-/*color_make(back)
+color_make(back)
 color_make(baseline)
 color_make(grid)
 color_make(high)
@@ -578,7 +559,7 @@ color_make(normal)
 color_make(mdgray)
 color_make(dkgray)
 color_make(dkblue)
-*/
+
 
 /*
  * rc variables...these MUST be in alphabetical order for the bsearch!
@@ -644,6 +625,8 @@ static struct rc_entry rcitems[]=
 { "hier_grouping", f_hier_grouping },
 { "hier_max_level", f_hier_max_level },
 { "hpane_pack", f_hpane_pack },
+{ "ignore_savefile_pos", f_ignore_savefile_pos },
+{ "ignore_savefile_size", f_ignore_savefile_size },
 { "initial_window_x", f_initial_window_x },
 { "initial_window_xpos", f_initial_window_xpos },
 { "initial_window_y", f_initial_window_y },
@@ -840,6 +823,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/07/23 23:13:08  gtkwave
+ * adds for color tags in filtered trace data
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:37  gtkwave
  * Imported sources
  *

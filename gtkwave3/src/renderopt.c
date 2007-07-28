@@ -223,7 +223,8 @@ void renderbox(char *title)
     window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW (window), title);
     gtk_widget_set_usize( GTK_WIDGET (window), 420, -1); 
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
+                       (GtkSignalFunc) destroy_callback, NULL);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 0);

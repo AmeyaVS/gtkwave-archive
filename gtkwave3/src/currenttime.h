@@ -17,7 +17,7 @@
 #include "analyzer.h"
 #include "regex_wave.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.29 (w)1999-2007 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.30_pre3 (w)1999-2007 BSI"
 
 struct blackout_region_t
 {
@@ -111,6 +111,8 @@ char *convert_ascii_real(double *d);
 char *convert_ascii_string(char *s);
 double convert_real_vec(Trptr t, char *vec);
 double convert_real(Trptr t, vptr v);
+
+extern char color_active_in_filter;	/* only ever turned on in wavewindow.h */
 
 int vtype(Trptr t, char *vec);
 int vtype2(Trptr t, vptr v);
@@ -217,6 +219,19 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/07/23 23:13:08  gtkwave
+ * adds for color tags in filtered trace data
+ *
+ * Revision 1.4  2007/06/22 03:07:18  gtkwave
+ * added AC_SYS_LARGEFILE to configure.ac for largefile support on systems
+ * that don't natively compile it in
+ *
+ * Revision 1.3  2007/06/12 02:50:37  gtkwave
+ * added libbz2 to configure.ac plus header checking for zlib.h/bzlib.h
+ *
+ * Revision 1.2  2007/06/08 14:04:19  gtkwave
+ * added missing files/changed old ones that were out of data with old info
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
  * Imported sources
  *

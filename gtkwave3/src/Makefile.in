@@ -53,7 +53,7 @@ am_gtkwave_OBJECTS = ae2.$(OBJEXT) analyzer.$(OBJEXT) \
 	currenttime.$(OBJEXT) debug.$(OBJEXT) discardbuttons.$(OBJEXT) \
 	entry.$(OBJEXT) fetchbuttons.$(OBJEXT) fgetdynamic.$(OBJEXT) \
 	file.$(OBJEXT) fonts.$(OBJEXT) getopt.$(OBJEXT) \
-	getopt1.$(OBJEXT) ghw.$(OBJEXT) ghwlib.$(OBJEXT) \
+	getopt1.$(OBJEXT) ghw.$(OBJEXT) ghwlib.$(OBJEXT) globals.$(OBJEXT)\
 	help.$(OBJEXT) lxt2_read.$(OBJEXT) lxt_write.$(OBJEXT) \
 	vzt_read.$(OBJEXT) hiersearch.$(OBJEXT) logfile.$(OBJEXT) \
 	lx2.$(OBJEXT) lxt.$(OBJEXT) main.$(OBJEXT) markerbox.$(OBJEXT) \
@@ -110,9 +110,6 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -161,14 +158,11 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -205,7 +199,7 @@ gtkwave_SOURCES = \
 	clipping.c clipping.h color.c color.h currenttime.c currenttime.h \
 	debug.c debug.h discardbuttons.c \
 	entry.c fetchbuttons.c fgetdynamic.c fgetdynamic.h file.c fonts.c getopt.c \
-	getopt1.c ghw.c ghw.h ghwlib.c ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
+	getopt1.c ghw.c ghw.h ghwlib.c globals.h globals.c ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
 	help.c helpers/lxt2_read.c \
 	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c \
 	logfile.c lx2.c lx2.h lxt.c lxt.h main.c main.h markerbox.c menu.c menu.h mouseover.c \
@@ -313,6 +307,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fonts.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/globals.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help.Po@am__quote@

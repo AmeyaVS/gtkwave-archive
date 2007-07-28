@@ -11,7 +11,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <gtk/gtk.h>
+
 #include "rc.h"
+#include "color.h"
+#include "currenttime.h"
 
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
@@ -793,8 +797,9 @@ static unsigned char c_grn[]={Enum_WaveColors};
 #define D4(a,b,c,d) d
 static unsigned char c_blu[]={Enum_WaveColors};
 
-static inline int C_ARRAY_SIZE() {return (sizeof(c_red)/sizeof(unsigned char));}
+#define C_ARRAY_SIZE (sizeof(c_red)/sizeof(unsigned char))
 
+static GdkGC *rgb_contexts[C_ARRAY_SIZE];
 
 static int compar(const void *v1, const void *v2)
 {
@@ -802,12 +807,30 @@ return((int)strcasecmp((char *)v1, *(char **)v2));
 }
 
 
+GdkGC *get_gc_from_name(char *str)
+{
+char **match;   
+int offset, rgb;
+
+if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(char *), compar)))
+	{
+	offset=match-cnames;
+	rgb=((int)c_red[offset]<<16)|((int)c_grn[offset]<<8)|((int)c_blu[offset]);
+
+	if(!rgb_contexts[offset]) rgb_contexts[offset] = alloc_color(wavearea, rgb, wavearea->style->white_gc);
+
+	return(rgb_contexts[offset]);
+	}
+
+return(NULL);
+}
+
 int get_rgb_from_name(char *str)
 {
 char **match;
 int offset, rgb;
 
-if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE(), sizeof(char *), compar)))
+if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(char *), compar)))
 	{
 	offset=match-cnames;
 	rgb=((int)c_red[offset]<<16)|((int)c_grn[offset]<<8)|((int)c_blu[offset]);
@@ -845,6 +868,9 @@ if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE(), sizeof(c
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/07/23 23:13:08  gtkwave
+ * adds for color tags in filtered trace data
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:58  gtkwave
  * Imported sources
  *

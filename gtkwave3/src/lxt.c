@@ -195,33 +195,12 @@ return(0);
  * since we'll never read a 24-bit int at the very start of a file which
  * means that we'll have a 32-bit word that we can read.
  */
-
-/* 
- * To avoid difficulties resulting from lxt.c doing strange preprocessor things
- * the following functions were switched to static inlines.  The performance
- * should be equivalent.
- */ 
-
    
-inline static unsigned int get_byte(offset) {
-  return ((unsigned int)(*((unsigned char *)mm+(offset))));
-}
-
-inline static unsigned int define get_16(offset) {
-  return ((unsigned int)(*((unsigned short *)(((unsigned char *)mm)+(offset))))
-}
-
-inline static usigned int get_32(offset) {
-  return (*(unsigned int *)(((unsigned char *)mm)+(offset)));
-}
-
-inline static unsigned int get_24(offset) {
-  return ((get_32((offset)-1)<<8)>>8);
-}
-
-inline static usigned int get_64(offset) {
-  return ((((UTimeType)get_32(offset))<<32)|((UTimeType)get_32((offset)+4)))
-}
+#define get_byte(offset)        ((unsigned int)(*((unsigned char *)mm+(offset))))
+#define get_16(offset)          ((unsigned int)(*((unsigned short *)(((unsigned char *)mm)+(offset)))))
+#define get_32(offset)          (*(unsigned int *)(((unsigned char *)mm)+(offset)))
+#define get_24(offset)		((get_32((offset)-1)<<8)>>8)
+#define get_64(offset)          ((((UTimeType)get_32(offset))<<32)|((UTimeType)get_32((offset)+4)))
  
 #else
 
@@ -232,9 +211,7 @@ inline static usigned int get_64(offset) {
 
 #if defined(__i386__) || defined(__x86_64__)
 
-inline static unsigned int get_byte(offset) {
-  return ((unsigned int)(*((unsigned char *)mm+offset)));
-}
+#define get_byte(offset)        ((unsigned int)(*((unsigned char *)mm+offset)))
 
 inline static unsigned int get_16(off_t offset)
 {
