@@ -1,15 +1,9 @@
-typedef static int Fp;
 
 extern int jojo;
-
-int jojo;
 
 typedef int Iter_t;
 typedef (*AE)();
 
-int arr[4] = {3,3,3,3};
-
-Iter_t *iters;
 int (* funptr)(float f, int* q);
 
 int c;
@@ -28,7 +22,6 @@ enum baz {
 };
 
 
-
 enum baz barone;
 
 struct bar {
@@ -37,10 +30,7 @@ struct bar {
 
 static struct bar q = {3},r,s;
  
-typedef struct bar StructBar;
-typedef StructBar *StructBarPtr;
 
-StructBarPtr buzzsaw;
 
 
 struct {
@@ -66,7 +56,7 @@ void main()
     static int f = 2;
     f+c;
   }
-  jeepers(2,3);
+  jeepers();
   jojo = 3;
   return c + 2;
 }

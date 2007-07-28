@@ -9034,31 +9034,22 @@ static void decl(int l)
             //KERMIN
             // Here we build the variables we should only build a variable if it isn't a function, it's global, or 
             // it's static.
-            // Fix this shit...
+
             type_to_str(buffer, 500, &type, get_tok_str(v, NULL));
-	    /*   if(((type.t & VT_BTYPE) == VT_PTR) && !(type.t & VT_TYPEDEF))
+            if((type.t & VT_BTYPE) == VT_PTR)
 	    {
-              printf("dealing with ptr: %x %x %x\n",type.ref->type.t & VT_BTYPE, VT_FUNC, (type.ref->type.t & VT_BTYPE) == VT_FUNC );
-              if(type.ref->type.t & VT_BTYPE == VT_FUNC)
-                printf("dealing with function ptr\n");
               if(type.ref->type.t & VT_TYPEDEF)
-                printf("dealing with typedef: %x\n",type.ref->type.t);
-              if((type.ref->type.t & VT_TYPEDEF) && ((type.ref->type.t & VT_BTYPE) == VT_FUNC))
 	      {
-                printf("Setting funptr\n");
                 funptr_typedef = 1;
 	      }
-	      }*/
+	    }
 
             {
               printf("DECL:%d:%s:%d:", v, file->filename, file->line_num);
-              if(type.t & VT_CONSTANT) {
-                printf("CONST:");
-	      }
-              else if((type.t & VT_BTYPE) == VT_FUNC) {
+              if((type.t & VT_BTYPE) == VT_FUNC) {
 	        printf("FUNC:");
 	      }
-              else if((type.t & VT_TYPEDEF) || (funptr_typedef)) {
+              else if((type.t & VT_TYPEDEF) || funptr_typedef) {
                 printf("TYPEDEF:");
               }
               else if(type.t & VT_EXTERN) {
