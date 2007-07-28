@@ -9,7 +9,6 @@
 `make gtkwave 2> gtkwave.map`;
 print "Done building, run rip_globals\n";
 `perl rip_globals.pl gtkwave.map`;
-
 # here we need to insert the -Wl,M line into the linker flags
 
 

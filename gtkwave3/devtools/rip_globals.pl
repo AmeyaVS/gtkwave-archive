@@ -144,14 +144,30 @@ print OUT "struct Global{ \n";
 %includes = ();
 
 
-#need to set a processed flag.  If we've processed a h file, we will not process it again.
-#this will prevent conflicts in the global header.
-for($j = 0; $j < scalar(@hfiles); $j = $j + 1)
+#
+open(PRJ_FILES,"files.dat") || die("Failed to open files");
+%file_moddable = ();
+while(<PRJ_FILES>)
 {
-  @hfileprocessed[$j] = 0;
+  if($_ =~ /~#/)
+  {
+    # skip comments
+    next;
+  }
+  else 
+  {
+    chomp($_);
+    $file_moddable{$_} = $_; 
+  }
 }
 
+open (GLOBALSC, ">globals.c"); 
+print GLOBALSC "#include\"globals.h\"\n";
+print GLOBALSC "struct Global GLOBALS = {\n";
 
+%processed_files = ();
+%global_decl_index = (); #pointer into the following arrays.  Indexed by rename. Need to handle this
+@global_declarations = (); #The actual declaration.
 
 foreach $object (@object)
 {
@@ -161,23 +177,13 @@ foreach $object (@object)
   #@objsplits[1] contains the object stem.  use this to open the .stack file
   #create a list of filehandles for the local .h and .c files.
   @hfiles[0] =  "@objsplits[0]\.c"; # the base is the .c file
-  @hfileprocessed[0] = 0;
-  for($j = 0; $j < scalar(@hfiles); $j = $j + 1)
-  {
-    chomp(@hfiles[$j]);
-    if(@hfileprocessed[$j] == 0) 
-    {
-      
-      @hfilehandle[$j] = IO::File->new(@hfiles[$j]);
-      if(@hfilehandle[$j] == 0)
-      {
-         @hfilehandle[$j] = IO::File->new("helpers/@hfiles[$j]")||die("Failed to open @hfiles[$j]");
-      }
-      @hfilehandlenew[$j] = IO::File->new(">@hfiles[$j].new");   
-    }
-    @hfilehandleindex[$j] = 1; # file numbering starts at 1, conveniently.    
-    @hfilemoddedlineindex[$j] = -1 #used to track substitutions in the ident substitution string
-  }
+  # clear out the previously opened files
+  %opened_files = ();
+  @hfiles = ();
+  @hfilehandle = ();
+  @hfilehandlenew = ();
+  @hfilehandleindex = ();
+  @hfilemoddedlineindex = ();
 
   #setup the stack frame  
   $stackframe = 0;
@@ -196,9 +202,9 @@ foreach $object (@object)
       die("@objsplits[0].c.stack began incorrectly...");
   }  
   $symbolbase = 0;
-  $cfileline = 0;
+ 
   
-  
+  # Not really sure if this code is needed.  Indeed it looks like it should be deleted
   @objsplits2 = split(/\./,@filesplit[1]); 
   # we should split the file split to pick up the helpers designation...
   if(open(CFILE, "@objsplits2[0].c"))
@@ -219,6 +225,40 @@ foreach $object (@object)
     $base_str = $_;
     @stacksplit = split(/\:/,$_);
  
+    # Set up opened files if necessary.  Files can only be opened on DECL or IDENT
+    if((@stacksplit[0] eq "DECL") || (@stacksplit[0] eq "IDENT"))
+    {
+      #check for both non-existance and that the file is in fact moddable.
+      if(!(exists $opened_files{@stacksplit[2]}) && (exists $file_moddable{@stacksplit[2]}))
+      {
+        # we should now open a file.
+	$opened_files{@stacksplit[2]} = 0;
+        if(!exists $processed_files{@stacksplit[2]}) {
+          # still, we'll only process a file once.
+          $processed_files{@stacksplit[2]} = 0;
+	}
+         
+        $next_index = scalar(@hfiles);
+        print "Adding source @stacksplit[2] at $next_index\n";
+        @hfiles[$next_index] = @stacksplit[2];
+        if($processed_files{@stacksplit[2]} == 0) 
+        {
+          # bad news here due to the existance of lib includes... eep.,
+          @hfilehandle[$next_index] = IO::File->new(@stacksplit[2]);
+          @hfilehandlenew[$next_index] = IO::File->new(">@stacksplit[2].new"); 
+          @hfilehandlenew[$next_index]->print("#include\"globals.h\"");         
+          @hfilehandleindex[$next_index] = 0; # file numbering starts at 1. This variable is the last line read out.  
+          @hfilecurrentline[$next_index] = ""; # clean copy of current line
+          @hfilemoddedlineindex[$next_index] = -1; #used to track substitutions in the ident substitution string
+	  @hfilelineindex[$nextindex] = -1;  #used when consuming decls.
+          @hfileline[$nextindex] = "";
+	}
+        else
+        {
+          @hfilehandleindex[$next_index] = -1;
+	}
+      }
+    }
 
     #handle pops
     if(@stacksplit[0] eq "POP")
@@ -227,7 +267,7 @@ foreach $object (@object)
       # can get strange wraparound condition
       if(@stacksplit[1] ==  @symbolstacknum[$symbolbase - 1] && ($symbolbase > 0)) 
       {
-	#print "Popped @stacksplit[1]  @symbolstacknum[$symbolbase - 1]  (@symbolstackname[$symbolbase - 1])\n";
+	print "Popped @stacksplit[1]  @symbolstacknum[$symbolbase - 1]  (@symbolstackname[$symbolbase - 1])\n";
         $symbolbase = $symbolbase - 1;
       }
     }    
@@ -270,24 +310,11 @@ foreach $object (@object)
                 # got a global match here.  need to advance appropriately.  XXX fix the cut and paste
                 # the problem here is that we will replace named variables incorrectly.  The replacement needs to 
                 # make sure that only non A-Za-z0-9_ are on the sides of the replacement target. 
-                if((@hfilehandleindex[$i] <  @stacksplit[3]) && (@hfileprocessed[$i] == 0))
+                if((@hfilehandleindex[$i] <  @stacksplit[3]) && ($processed_files{@hfiles[$i]} == 0))
                 {
-                  # advance throught the H file
-                  if(@hfilemoddedlineindex[$i] > -1)
-                  {
-                     @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
-                     print "Dumping @hfilemoddedline[$i]";
-                     @hfilemoddedlineindex[$i] = -1;
-                     @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-		  }
-
-	          while(@hfilehandleindex[$i] < @stacksplit[3])
-	          {
-	            $str = @hfilehandle[$i]->getline();
-                    @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	            @hfilehandlenew[$i]->print($str);
-                  } 
-                  @hfilemoddedline[$i] = @hfilehandle[$i]->getline();
+                  &advance_line($i, @stacksplit[3]);
+ 
+                  @hfilemoddedline[$i] = &advance_one_line($i);#@hfilehandle[$i]->getline;
                   if(index(@hfilemoddedline[$i],$stacksplit[4]) < 0)
                   {
 			die("A $stacksplit[4] not found in @hfilemoddedline[$i]at line @hfilehandleindex[$i] in @hfiles[$i]\n");
@@ -316,9 +343,9 @@ foreach $object (@object)
                     $subs =~  s/\b$stacksplit[4]\b/GLOBALS.$symbolstackname[$k]/;
                     @hfilemoddedline[$i] = $base . $subs;
 		  }
-                  else # in this case we haven't actually gotten the line yet...
+                  else # in this case we haven't begun to mod the line...
                   {
-                    @hfilemoddedline[$i] = @hfilehandle[$i]->getline();
+                    @hfilemoddedline[$i] = @hfilecurrentline[$i];
                     if(index(@hfilemoddedline[$i],$stacksplit[4]) < 0)
                     {
 			die("C $stacksplit[4] not found in @hfilemoddedline[$i] at line @hfilehandleindex[$i] in @hfiles[$i]\n");
@@ -348,18 +375,19 @@ foreach $object (@object)
     #handle declarations
     if(@stacksplit[0] eq "DECL")
     {
-     
+      
       #handle decl in .h - no function insertions
       # loop over the hfiles
-      #print " May place @stacksplit[1] @stacksplit[5] at $symbolbase\n";
+      # print " May place @stacksplit[1] @stacksplit[5] at $symbolbase\n";
       for($i = 0; $i < scalar(@hfiles); $i = $i + 1)
       {
 	#  print "@hfiles[0]\n
         # Do not check if file has been processed.  We must always insert symbol defs.  
         # processed only affects dumping symbols.
-        if((@stacksplit[2] =~ /^@hfiles[$i]/) && !(@stacksplit[4] eq "FUNC")) 
+        if((@stacksplit[2] =~ /^@hfiles[$i]/) && !(@stacksplit[4] eq "FUNC") && !(@stacksplit[4] eq "TYPEDEF")) 
         { 
 	  # always place in symbol stack
+	  chomp(@stacksplit[5]);
           @symbolstacknum[$symbolbase] = @stacksplit[1];
           @symbolstackname[$symbolbase] = @stacksplit[5];
           @symbolstackglobalflag[$symbolbase] = 0; # Don't assume things are global
@@ -383,33 +411,22 @@ foreach $object (@object)
 	     }
              # no match... define the extern.
              if($k == -1)
-             {  
+             { 
+		 print "Adding extern def @stacksplit[5] from @hfiles[$i] at $symbolbase \n";
+	       $updatedbase = 1;
                $symbolbase = $symbolbase + 1;               
              }
 
              #externs must be dropped.
-             if((@hfilehandleindex[$i] <=  @stacksplit[3]) && (@hfileprocessed[$i] == 0))
+             if((@hfilehandleindex[$i] <  @stacksplit[3]) && ($processed_files{@hfiles[$i]} == 0))
              {
+             
                # advance throught the H file
-               # advance throught the H file
-               if(@hfilemoddedlineindex[$i] > -1)
-               {
-                 @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
-                 print "Dumping @hfilemoddedline[$i]";
-                 @hfilemoddedlineindex[$i] = -1;
-                 @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	       }
-
-	       while(@hfilehandleindex[$i] < @stacksplit[3])
-	       {
-	         $str = @hfilehandle[$i]->getline();
-                 @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	         @hfilehandlenew[$i]->print($str);
-               } 
-               #drop the declaration on the floor
-               $str = @hfilehandle[$i]->getline();
+	       print "in file @hfiles[$i] at line @hfilehandleindex[$i]\n";
+               &advance_line($i,@stacksplit[3]);
+	       
+               $str = &advance_one_line($i);
                
-               @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1;
                if(!($str =~ @stacksplit[5]))
                {
 	 	 die("in file @hfiles[$i] at line @hfilehandleindex[$i] dropping $str, which did not contain @stacksplit[5]");
@@ -425,17 +442,17 @@ foreach $object (@object)
           { 	     
 	    $updatedbase = 0;
                      
-            for($j = 0; $j < $var_count; $j = $j + 1)
-            { 
+            #for($j = 0; $j < $var_count; $j = $j + 1)
+            #{ 
               #check to see if the variable is defined in this object file
-           
-              if(@var_file[$j] eq @objsplits[0]) 
+              #should check for global scope
+              if($stackframe == 0) 
               {                     
                 #print "@var_file[$j] @vars[$j]  Processing local $_\n";      
                 # this global can exist in this file check for shadowing...
                 # see if the names match
-                if(@vars[$j] eq @stacksplit[5])
-	        {
+                #if(@vars[$j] eq @stacksplit[5])
+	        #{
                   print "Processing local @stacksplit[5]\n"; 
                   # this global can exist in this file check for shadowing...
 		  for($k = $symbolbase - 1; $k > -1; $k = $k-1)
@@ -449,16 +466,19 @@ foreach $object (@object)
 	   	  }
                   # a match... dump a decl to the struct
                   # we can also dump if we're defining a previously declared extern
+                  
                   if(($k == -1) || (@symbolstackexternflag[$k] == 1))
                   {    
                     # we should deal with renaming here. 
                     # there should be no renaming of locals only statics will be renamed                    
                     #dump if file has not been previously processed.
-                    if(@hfileprocessed[$i] == 0)
+		    $emit_decl = 0;
+                    if($processed_files{@hfiles[$i]} == 0)
                     {                                        
                       chomp(@stacksplit[6]);
-                      print "New global: $base_str";
+                      print "New global: $base_str\n";
                       print OUT "@stacksplit[6];//from @hfiles[$i] \n";
+                      $emit_decl = 1;
 		    }
 
                     # only advance the symbol stack if we are not dealing with an extern
@@ -475,41 +495,56 @@ foreach $object (@object)
                  
                     # Should advance the global immediately.  This way the identifier can be dropped.
                     # advance the .h file to the present marker, dumping out the previous h file
-                    if((@hfilehandleindex[$i] <=  @stacksplit[3]) && (@hfileprocessed[$i] == 0))  
+                    if((@hfilehandleindex[$i] <  @stacksplit[3]) && ($processed_files{@hfiles[$i]} == 0))  
                     {
                       # advance throught the H file
                   
-                      if(@hfilemoddedlineindex[$i] > -1)
-                      {
-                        @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
-                        print "Dumping @hfilemoddedline[$i]";
-                        @hfilemoddedlineindex[$i] = -1;
-                        @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
+                      #if(@hfilemoddedlineindex[$i] > -1)
+                      #{
+                      #  @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
+                      #  print "Dumping @hfilemoddedline[$i]";
+                      #  @hfilemoddedlineindex[$i] = -1;
+                      #  @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
+		      #}
+
+                      &advance_line($i, @stacksplit[3]);
+		                           
+                      #it's possible that we could be stuck one line before for some reason...
+                      if(@hfilelineindex[$i] == -1 || (@hfilehandleindex[$i] < @stacksplit[3])) {
+                        $str = &advance_one_line($i);
+                        @hfilelineindex[$i] = 0; 
+                        @hfileline[$i] = $str;
+                        print "In the grep clause: Got $str : @hfilehandleindex[$i], @hfileline[$i], @hfilelineindex[$i], @hfiles[$i]\n";
+		      }
+                      else {
+			  print "Why have we not advanced: hindexfileindex: @hfilehandleindex[$i] hfileline: @hfileline[$i] hfilelineindex: @hfilelineindex[$i] hfiles: @hfiles[$i]\n";
 		      }
 
-		      while(@hfilehandleindex[$i] < @stacksplit[3])
-		      {
-			 $str = @hfilehandle[$i]->getline();
-                         @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	                 @hfilehandlenew[$i]->print($str);
-                      } 
-                      #drop the declaration on the floor
-                      $str = @hfilehandle[$i]->getline();
+                     
+                      # sanity check
+                      $substring = substr(@hfileline[$i], 0); 
                       
-                      @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1;
-                      if(!($str =~ @stacksplit[5]))
+                      if(!($substring =~ @stacksplit[5]))
                       {
-		        die("in file @hfiles[$i] at line  @hfilehandleindex[$i] dropping $str, which did not contain @stacksplit[5]");
- 	              } 
-	            }
+		        die("in file @hfiles[$i] at line @hfilehandleindex[$i] dropping $substring, which did not contain @stacksplit[5]");
+ 	              }                       
+
+                      if($emit_decl == 1) {
+                        &rip_decl($i,@stacksplit[5],@stacksplit[5]);
+		      }
+                   
+                    }
                     elsif(@hfilehandleindex[$i]+ 1 >  @stacksplit[3])
                     { 
 	              print "Warning, the hfile has advanced too far C\n";
                     }
                   }                   
-	        }
+	        #}
 	      }
-            } 
+            #} 
+
+
+
             # if we didn't find a global, insert the local variable.
             # nasty symbol base incrment bug was here
             if(($updatedbase == 0) && @symbolstackglobalflag[$symbolbase] == 0) 
@@ -518,6 +553,12 @@ foreach $object (@object)
             }
           }        
 
+        if(@stacksplit[4] eq "FUNDEF")
+          {
+            print "got a FUNDEF\n"; 	     
+	    $updatedbase = 1;
+            $symbolbase = $symbolbase + 1;
+          }
 
         if(@stacksplit[4] eq "STATIC")
           { 	            
@@ -531,11 +572,13 @@ foreach $object (@object)
               if((@symbolstacknum[$symbolbase] == @symbolstacknum[$k]))
               {
 		$redefined = 1;
+                $static_rename = @symbolstackname[$k];
 	        print "rejecting @stacksplit[5] $symbolbase at  due to  @symbolstackname[$k] at $k\n";
 	        last;
               }  
 	    }
                         
+            # Should always emit static decl
             # Statics are always global.
             # we should deal with renaming here. 
             # check out the renaming array to see if we need to rename this value.
@@ -555,62 +598,61 @@ foreach $object (@object)
 		print "Setting @symbolstackname[$symbolbase]\n";
 		$rename{@symbolstackname[$symbolbase]} = 1;
 	      }
-              if($rename{@symbolstackname[$symbolbase]} > 1)
-              {              
-                # need to cook the . out of @stacksplit[2]
-                $filename = @stacksplit[2];
-                $filename =~ s/\./_/;
-	        print "Changed  @stacksplit[2] to $filename\n";
-	        @symbolstackname[$symbolbase] = "@symbolstackname[$symbolbase]\_$filename\_$rename{@symbolstackname[$symbolbase]}";
-                print "Overloaded: @symbolstackname[$symbolbase]\n"; 
-                @stacksplit[6] =~ s/@stacksplit[5]/@symbolstackname[$symbolbase]/;
 
-                print "Renaming  @symbolstackname[$symbolbase] as @stacksplit[6]\n";               
-              } 
-              else 
-              {
-                print "Not renaming  @symbolstackname[$symbolbase]: $rename{@symbolstackname[$symbolbase]} \n";
-              }
+              #We must always rename due to conflicts with other globals 
+              # need to cook the . out of @stacksplit[2]
+              $filename = @stacksplit[2];
+              $filename =~ s/\./_/;
+	      print "Changed  @stacksplit[2] to $filename\n";
+	      @symbolstackname[$symbolbase] = "@symbolstackname[$symbolbase]\_$filename\_$rename{@symbolstackname[$symbolbase]}";
+              $static_rename = @symbolstackname[$symbolbase];
+              print "Overloaded: @symbolstackname[$symbolbase]\n"; 
+              @stacksplit[6] =~ s/@stacksplit[5]/@symbolstackname[$symbolbase]/;
+
+              print "Renaming  @symbolstackname[$symbolbase] as @stacksplit[6]\n";               
+              
               @symbolstackglobalflag[$symbolbase] = 1;
               $symbolbase = $symbolbase + 1; # statics always get inserted 
 	    
-
+                
               #dump if file has not been previously processed.
-              if(@hfileprocessed[$i] == 0)
+              if($processed_files{@hfiles[$i]} == 0)
               {                   
                 chomp(@stacksplit[6]);
-                print "New global: $base_str";
+                print "New global: $base_str\n";
                 print OUT "@stacksplit[6];// from @hfiles[$i]\n";
 	      }
+
+             
+              
 	    }
 
             #dump if file has not been previously processed.
             #it's worth noting that we will consume input even on a redefinition
             # Should advance the global immediately.  This way the identifier can be dropped.
             # advance the .h file to the present marker, dumping out the previous h file
-            if((@hfilehandleindex[$i] <=  @stacksplit[3]) && (@hfileprocessed[$i] == 0))
+            if((@hfilehandleindex[$i] <  @stacksplit[3]) && ($processed_files{@hfiles[$i]} == 0))
             {
-              # advance throught the H file
-              if(@hfilemoddedlineindex[$i] > -1)
-              {
-                @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
-                print "Dumping @hfilemoddedline[$i]";
-                @hfilemoddedlineindex[$i] = -1;
-                @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	      }
-	      while(@hfilehandleindex[$i] < @stacksplit[3])
-	      {
-	        $str = @hfilehandle[$i]->getline();
-                @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	        @hfilehandlenew[$i]->print($str);
-              } 
+          	      
+              &advance_line($i, @stacksplit[3]); 
               #drop the declaration on the floor
-              $str = @hfilehandle[$i]->getline();
-              @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1;
+              if(@hfilelineindex[$i] == -1 || (@hfilehandleindex[$i] < @stacksplit[3])) {
+                $str = &advance_one_line($i);
+                @hfilelineindex[$i] = 0; 
+                @hfileline[$i] = $str;
+                print "In the grep clause: Got $str : @hfilehandleindex[$i], @hfileline[$i], @hfilelineindex[$i], @hfiles[$i]\n";
+	      }
+              else {
+	        print "Why have we not advanced: hindexfileindex: @hfilehandleindex[$i] hfileline: @hfileline[$i] hfilelineindex: @hfilelineindex[$i] hfiles: @hfiles[$i]\n";
+	      }
+              #Check before ripping globals, since globals may advance the line.
               if(!($str =~ @stacksplit[5]))
               {
 		die("in file @hfiles[$i] at line @hfilehandleindex[$i] dropping $str, which did not contain @stacksplit[5]");
 	      } 
+              print "Rename is @symbolstackname[$symbolbase] rename of @stacksplit[5]\n";  
+              &rip_decl($i,@stacksplit[5],$static_rename);
+
 	    }
             elsif(@hfilehandleindex[$i]+ 1 >  @stacksplit[3])
             { 
@@ -621,23 +663,11 @@ foreach $object (@object)
 	  
 
           # advance the .h file to the present marker, dumping out the previous h file
-          if((@hfilehandleindex[$i] <  @stacksplit[3]) && (@hfileprocessed[$i] == 0))
+          if((@hfilehandleindex[$i] <  @stacksplit[3]) && ($processed_files{@hfiles[$i]} == 0))
           {
             # advance throught the H file
-            if(@hfilemoddedlineindex[$i] > -1)
-            {
-              @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
-              print "Dumping @hfilemoddedline[$i]";
-              @hfilemoddedlineindex[$i] = -1;
-              @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	    }
-
-            while(@hfilehandleindex[$i] < @stacksplit[3])
-            {
-	      $str = @hfilehandle[$i]->getline();
-              @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
-	      @hfilehandlenew[$i]->print($str);
-            }             
+            &advance_line($i, @stacksplit[3]);
+             
 	  }
           elsif(@hfilehandleindex[$i] >  @stacksplit[3])
           { 
@@ -646,6 +676,10 @@ foreach $object (@object)
 
 
         }
+        else 
+        {
+          
+	}
       }
     }
   }
@@ -662,10 +696,11 @@ foreach $object (@object)
   # we must now clean up all the hfiles, etc.
   for($j = 0; $j < scalar(@hfiles); $j = $j + 1)
   {
-    if(@hfilehandleindex[$j] != 0) # we touched this file. Don't touch it again. 
+    print "Cleaning up @hfiles[$j]\n";
+    if(@hfilehandleindex[$j] >= 0) # we touched this file. Don't touch it again. 
     {
-      @hfileprocessed[$j] = 1;
-      #print "Processed @hfiles[$j]\n";
+      $processed_files{@hfiles[$j]} = 1;
+      print "Processed @hfiles[$j]\n";
       if(@hfilemoddedlineindex[$j] > 0)
       {
         @hfilehandlenew[$j]->print(@hfilemoddedline[$j]);
@@ -677,13 +712,27 @@ foreach $object (@object)
       {
         @hfilehandlenew[$j]->print($str);
       } 
+      @hfilehandlenew[$j]->close();
+      @hfilehandle[$j]->close();
     }  
-    @hfilehandlenew[$j]->close();
-    @hfilehandle[$j]->close();
   }
 }
 
 
+
+# print out the global decls
+for($i = 0; $i < scalar(@global_declarations); $i = $i + 1) {
+  while( my ($name, $index) = each %global_decl_index ) {
+    if($index == $i) {
+      print "{@global_declarations[$index]},//$name\n";
+      print GLOBALSC "{@global_declarations[$index]},//$name\n";
+    }
+  }
+}
+
+
+
+print GLOBALSC "};\n";
 
 print OUT "};\nextern struct Global GLOBALS;\n";
 print OUT "#endif";
@@ -691,13 +740,164 @@ close(DATA);
 close(OUT);
 close(INCL);
 
-open (OUT, ">globals.c"); 
-print OUT "#include\"globals.h\"\n";
-print OUT "struct Global GLOBALS;\n";
-close (OUT);
 
 
+close (GLOBALSC);  
 
 
+sub rip_decl {
+    my ($hindex,$name,$rename) = @_;
+    my $decl_index = -1;
+    my $i = 0;
+    my $stackcount = 0;
 
+    print("Calling rip_decl\n"); 
+
+    #setup the decl index;
+    if(!(exists $global_decl_index{$rename})) {
+       print "rip_decl New decl index\n";
+       $decl_index = scalar(@global_declarations);
+       $global_decl_index{$rename} = $decl_index;
+       @global_declarations[$decl_index] = "";
+    }
+    else {
+      print "rip_decl Old decl index\n";
+      #We've seen this decl before...  Make sure that it isn't already defined.
+      $decl_index = $global_decl_index{$rename};
+      if(!(@global_declarations[$decl_index] eq "")) {
+        die("When parsing decl for $name in @hfiles[$hindex] at @hfilehandleindex[$hindex] previously initialized to @global_declarations[$decl_index]\n"); 
+      }
+    }
+    # this simplistic matching is horribly broken.  We could have comments, etc.
+    my $substr = substr(@hfileline[$hindex],@hfilelineindex[$hindex]);
+    print "rip_decl decl_index: $decl_index\n";
+    # this search must be carried out with the original name, as substitution has not yet occured.
+    if(($baseindex = index($substr,$name)) < 0) {
+      die("Couldn't find $name in $substr, was:  @hfilelineindex[$hindex]: @hfiles[$hindex] - @hfilehandleindex[$hindex]\n"); 
+    }
+    
+    my $topchar = "";
+    my $instring = 0;
+    my $incomment = 0;
+    my $terminateatlineend = 0;
+    my $processing_decl = 0;
+    for($i = $baseindex; $i < length($substr); $i = $i+1) {
+      $topchar = substr($substr,$i,1);
+      print "rip_decl is looping: $topchar:$instring\n";
+      #check for entering a string
+      if(!$instring && !$incomment && $topchar eq "\""){
+	print "rip_decl entering string\n";
+        $instring = 1;
+	
+      }
+      
+      # are we exiting a string?
+      elsif($instring && $topchar eq "\""){
+        if(($i == 0) || !(substr($substr,$i - 1,1) eq "\\")) {   
+          print "rip_decl exiting string\n";
+          $instring = 0;
+        }
+       
+      }
+
+      # are we entering a comment?#/**/
+      if(!$instring && !$incomment && (($topchar eq "*") || ($topchar eq "/")) && ($i>0) && ( "/" eq substr($substr,$i-1,1))){
+	  $incomment = 1;
+          if($topchar eq "/") {
+            $terminateatlineend = 1;
+	  } 
+       
+      }     
+
+      # are we exiting a comment?
+      elsif($incomment && !$terminateatlineend && ($i>0) && ($topchar eq "/") && ( "*" eq substr($substr,$i-1,1))) {
+	$incomment = 0;
+        next;
+      }
+
+      if($topchar eq "=" && !$instring && !$incomment) {
+	  print "rip_decl Processing decl set\n";
+        $processing_decl = 1;
+        next;	 
+      }
+
+      if($processing_decl && !$incomment && !$instring && ($topchar  eq "{")) {
+        $stackcount++;
+      }
+      
+      if($processing_decl && !$incomment && !$instring &&($topchar eq "}")) {
+        $stackcount--;
+        if($stackcount < 0) {
+          die("When parsing decl for $name in @hfiles[$hindex] at @hfilehandleindex[$hindex] {} were misbalance\n"); 
+	}
+      }
+    
+      # Check for end conditions
+      if(!$incomment && !$instring && (($topchar eq ";") || ($topchar eq ",")) && ($stackcount == 0)) { 
+        print "rip_decl calling last, setting offset to @hfilelineindex[$hindex] + $i\n";
+        if(@hfilelineindex[$hindex] < 0) {
+	  @hfilelineindex[$hindex] = 0;
+	}
+        @hfilelineindex[$hindex] = @hfilelineindex[$hindex] + $i;        
+        last;
+      } 
+      elsif($processing_decl) {
+        # should emit character.
+        @global_declarations[$decl_index] = @global_declarations[$decl_index] . $topchar; 
+        #print "rip_decl is emitting @global_declarations[$decl_index]\n";
+      }
+      # we should handle the advancing line here, if we have not exhausted the decl.  Since we need to stay within
+      # this loop
+      if($i + 1 == length($substr)) {
+        #we need to advance a line here... 
+	$substr = &advance_one_line($hindex);
+        $i = -1; # going to have an $i = $i +1;
+        if($terminateatlineend == 1) {
+          $terminateatlineend = 0;
+          $incomment = 0;
+	}
+      } 
+    }
+   
+    print "rip_decl is emitting @global_declarations[$decl_index]\n";
+}
+
+#this one will print out all the lines that it encounters
+sub advance_line {
+  my ($i, $upto) = @_; 
+
+  if(@hfilemoddedlineindex[$i] > -1)
+  {
+    @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
+    print "Dumping @hfilemoddedline[$i]";
+    @hfilemoddedlineindex[$i] = -1;
+  }
+
+  while(@hfilehandleindex[$i] + 1 < $upto)
+  {
+    @hfilelineindex[$i] = -1; # no line
+    $str = @hfilehandle[$i]->getline();
+    @hfilecurrentline[$i] = $str;
+    @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1; 
+    @hfilehandlenew[$i]->print($str);
+  } 
+  print "in file @hfiles[$i] at line @hfilehandleindex[$i]\n"; 
+}
+
+
+# this will advance one line, and return it.
+sub advance_one_line {
+  my ($i) = @_;
+  if(@hfilemoddedlineindex[$i] > -1)
+  {
+    @hfilehandlenew[$i]->print(@hfilemoddedline[$i]);
+    print "Dumping @hfilemoddedline[$i]";
+    @hfilemoddedlineindex[$i] = -1; 
+  }
+  @hfilehandleindex[$i] = @hfilehandleindex[$i] + 1;
+  @hfilelineindex[$i] = -1; # no line  
+  $str = @hfilehandle[$i]->getline();
+  @hfilecurrentline[$i] = $str;
+  $ret_str = $str;
+}
 
