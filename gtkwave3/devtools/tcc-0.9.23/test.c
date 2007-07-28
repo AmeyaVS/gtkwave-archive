@@ -2,13 +2,12 @@ typedef static int Fp;
 
 extern int jojo;
 
+int jojo;
+
 typedef int Iter_t;
 typedef (*AE)();
 
-const char * foo_ptr;
-char * const foo_ptr2;
-
-const int three = 3;
+int arr[4] = {3,3,3,3};
 
 Iter_t *iters;
 int (* funptr)(float f, int* q);
@@ -27,6 +26,7 @@ static char foobar = 'g';
 enum baz {
   a,b,c
 };
+
 
 
 enum baz barone;
@@ -66,7 +66,7 @@ void main()
     static int f = 2;
     f+c;
   }
-  jeepers();
+  jeepers(2,3);
   jojo = 3;
   return c + 2;
 }
