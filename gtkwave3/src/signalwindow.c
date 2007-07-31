@@ -63,11 +63,7 @@ if(signalpixmap)
 	gdk_draw_string(signalpixmap, signalfont,
 	        gc_black, 3+xsrc, fontheight-4, "Time");
 
-	gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],
-                signalpixmap,
-		xsrc, 0,
-		0, 0,
-                signalarea->allocation.width, signalarea->allocation.height);
+	gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],signalpixmap,xsrc, 0,0, 0,signalarea->allocation.width, signalarea->allocation.height);
 	}
 }
 
@@ -195,11 +191,7 @@ if((traces.visible)&&(state&(GDK_BUTTON1_MASK|GDK_BUTTON3_MASK))&&(signalpixmap)
 		xsrc=(gint)hadj->value;
 
 		yval=RenderSig(t, which, 2);
-        	gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],
-                	signalpixmap,
-                	xsrc, yval,
-                	0, yval,
-                	signalarea->allocation.width, fontheight-1);
+        	gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],signalpixmap,xsrc, yval,0, yval,signalarea->allocation.width, fontheight-1);
 
 		}
 	else
@@ -228,11 +220,7 @@ if((traces.visible)&&(state&(GDK_BUTTON1_MASK|GDK_BUTTON3_MASK))&&(signalpixmap)
 				(int)x, (int)y, which));
 
 			yval=RenderSig(t, which, 1);
-        		gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],
-                		signalpixmap,
-                		xsrc, yval,
-                		0, yval,
-                		signalarea->allocation.width, fontheight-1);
+        		gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],signalpixmap,xsrc, yval,0, yval,signalarea->allocation.width, fontheight-1);
 			}
 
 		if(which>cachedwhich)
@@ -440,11 +428,7 @@ if((traces.visible)&&(signalpixmap))
 				(int)event->x, (int)event->y, which));
 
 			yval=RenderSig(t, which, 1);
-	        	gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],
-	                	signalpixmap,
-	                	xsrc, yval,
-	                	0, yval,
-	                	signalarea->allocation.width, fontheight-1);
+	        	gdk_draw_pixmap(signalarea->window, signalarea->style->fg_gc[GTK_WIDGET_STATE(signalarea)],signalpixmap,xsrc, yval,0, yval,signalarea->allocation.width, fontheight-1);
 			}
 		}
 
@@ -582,16 +566,11 @@ gtk_widget_set_events(signalarea,
 		GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
 		);
 
-gtk_signal_connect(GTK_OBJECT(signalarea), "configure_event",
-                        GTK_SIGNAL_FUNC(signalarea_configure_event), NULL);
-gtk_signal_connect(GTK_OBJECT(signalarea), "expose_event",
-                        GTK_SIGNAL_FUNC(expose_event), NULL);
-gtk_signal_connect(GTK_OBJECT(signalarea), "button_press_event",
-                        GTK_SIGNAL_FUNC(button_press_event), NULL);
-gtk_signal_connect(GTK_OBJECT(signalarea), "button_release_event",
-                        GTK_SIGNAL_FUNC(button_release_event), NULL);
-gtk_signal_connect(GTK_OBJECT(signalarea), "motion_notify_event",
-                        GTK_SIGNAL_FUNC(motion_notify_event), NULL);
+gtk_signal_connect(GTK_OBJECT(signalarea), "configure_event", GTK_SIGNAL_FUNC(signalarea_configure_event), NULL);
+gtk_signal_connect(GTK_OBJECT(signalarea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+gtk_signal_connect(GTK_OBJECT(signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
+gtk_signal_connect(GTK_OBJECT(signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
+gtk_signal_connect(GTK_OBJECT(signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
 
 dnd_setup(signalarea);
 
@@ -600,8 +579,7 @@ gtk_table_attach (GTK_TABLE (table), signalarea, 0, 10, 0, 9,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 3, 2);
 
 signal_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-gtk_signal_connect(GTK_OBJECT(signal_hslider), "value_changed",
-                        GTK_SIGNAL_FUNC(service_hslider), NULL);
+gtk_signal_connect(GTK_OBJECT(signal_hslider), "value_changed",GTK_SIGNAL_FUNC(service_hslider), NULL);
 hscroll=gtk_hscrollbar_new(GTK_ADJUSTMENT(signal_hslider));
 gtk_widget_show(hscroll);
 gtk_table_attach (GTK_TABLE (table), hscroll, 0, 10, 9, 10,
@@ -620,6 +598,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:50  gtkwave
  * Imported sources
  *

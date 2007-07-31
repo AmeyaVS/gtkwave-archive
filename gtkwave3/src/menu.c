@@ -596,8 +596,7 @@ if(helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_MWSON].path))->active=(wave_scrolling)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_MWSON].path))->active=(wave_scrolling)?TRUE:FALSE;
 }
 /**/
 
@@ -627,8 +626,7 @@ if(helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_ACOL].path))->active=(autocoalesce)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_ACOL].path))->active=(autocoalesce)?TRUE:FALSE;
 }
 
 static void menu_autocoalesce_reversal(GtkWidget *widget, gpointer data)
@@ -656,8 +654,7 @@ if(helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_ACOLR].path))->active=(autocoalesce_reversal)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_ACOLR].path))->active=(autocoalesce_reversal)?TRUE:FALSE;
 }
 
 static void menu_autoname_bundles_on(GtkWidget *widget, gpointer data)
@@ -694,8 +691,7 @@ if(helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_ABON].path))->active=(autoname_bundles)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_ABON].path))->active=(autoname_bundles)?TRUE:FALSE;
 }
 
 
@@ -728,8 +724,7 @@ if(helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_HTGP].path))->active=(hier_grouping)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_HTGP].path))->active=(hier_grouping)?TRUE:FALSE;
 }
 
 
@@ -844,8 +839,7 @@ if(helpbox_is_active)
 	wavearea_configure_event(wavearea, NULL);
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VDRV].path))->active=(use_roundcaps)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VDRV].path))->active=(use_roundcaps)?TRUE:FALSE;
 }
 
 /**/
@@ -874,8 +868,7 @@ if(helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_LXTCC2Z].path))->active=(lxt_clock_compress_to_z)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_LXTCC2Z].path))->active=(lxt_clock_compress_to_z)?TRUE:FALSE;
 }
 /**/
 static void menu_use_full_precision(GtkWidget *widget, gpointer data)
@@ -909,8 +902,7 @@ if(helpbox_is_active)
 	update_maxmarker_labels();
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VFTP].path))->active=(use_full_precision)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VFTP].path))->active=(use_full_precision)?TRUE:FALSE;
 }
 /**/
 static void menu_remove_marked(GtkWidget *widget, gpointer data)
@@ -970,8 +962,7 @@ if(helpbox_is_active)
 	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VZPS].path))->active=(zoom_pow10_snap)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VZPS].path))->active=(zoom_pow10_snap)?TRUE:FALSE;
 }
 
 /**/
@@ -1043,8 +1034,7 @@ if(helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VCMU].path))->active=(constant_marker_update)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VCMU].path))->active=(constant_marker_update)?TRUE:FALSE;
 }
 /**/
 static void menu_enable_dynamic_resize(GtkWidget *widget, gpointer data)
@@ -1077,8 +1067,7 @@ if(helpbox_is_active)
 	wavearea_configure_event(wavearea, NULL);
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VDR].path))->active=(do_resize_signals)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VDR].path))->active=(do_resize_signals)?TRUE:FALSE;
 }
 /**/
 static void menu_toggle_delta_or_frequency(GtkWidget *widget, gpointer data)
@@ -3990,8 +3979,7 @@ if(helpbox_is_active)
 	DEBUG(printf("Center Zooms\n"));
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VCZ].path))->active=(do_zoom_center)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VCZ].path))->active=(do_zoom_center)?TRUE:FALSE;
 }
 
 
@@ -4018,8 +4006,7 @@ if(helpbox_is_active)
 	DEBUG(printf("Show Base Symbols\n"));
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VSBS].path))->active=(show_base)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VSBS].path))->active=(show_base)?TRUE:FALSE;
 }
 
 /**/
@@ -4040,8 +4027,7 @@ if(helpbox_is_active)
 	DEBUG(printf("Show Grid\n"));
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VSG].path))->active=(display_grid)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VSG].path))->active=(display_grid)?TRUE:FALSE;
 }
 
 /**/
@@ -4062,8 +4048,7 @@ if(helpbox_is_active)
 	DEBUG(printf("Show Mouseover\n"));
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
 }
 
 /**/
@@ -4240,50 +4225,35 @@ static GtkItemFactoryEntry menu_items[] =
  */
 static void set_menu_toggles(void)
 {
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VZPS].path))->active=(zoom_pow10_snap)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VZPS].path))->active=(zoom_pow10_snap)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VSG].path))->active=(display_grid)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VSG].path))->active=(display_grid)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory,menu_items[WV_MENU_VSMO].path))->active=(disable_mouseover)?FALSE:TRUE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VSBS].path))->active=(show_base)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VSBS].path))->active=(show_base)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VDR].path))->active=(do_resize_signals)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VDR].path))->active=(do_resize_signals)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VCMU].path))->active=(constant_marker_update)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VCMU].path))->active=(constant_marker_update)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VCZ].path))->active=(do_zoom_center)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VCZ].path))->active=(do_zoom_center)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VDRV].path))->active=(use_roundcaps)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VDRV].path))->active=(use_roundcaps)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_MWSON].path))->active=(wave_scrolling)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_MWSON].path))->active=(wave_scrolling)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_ABON].path))->active=(autoname_bundles)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_ABON].path))->active=(autoname_bundles)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_HTGP].path))->active=(hier_grouping)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_HTGP].path))->active=(hier_grouping)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_VFTP].path))->active=(use_full_precision)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_VFTP].path))->active=(use_full_precision)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_ACOL].path))->active=(autocoalesce)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_ACOL].path))->active=(autocoalesce)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_ACOLR].path))->active=(autocoalesce_reversal)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_ACOLR].path))->active=(autocoalesce_reversal)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, 
-	menu_items[WV_MENU_LXTCC2Z].path))->active=(lxt_clock_compress_to_z)?TRUE:FALSE;
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(item_factory, menu_items[WV_MENU_LXTCC2Z].path))->active=(lxt_clock_compress_to_z)?TRUE:FALSE;
 }
 
 
@@ -4439,6 +4409,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
  * Revision 1.3  2007/07/23 23:13:08  gtkwave
  * adds for color tags in filtered trace data
  *

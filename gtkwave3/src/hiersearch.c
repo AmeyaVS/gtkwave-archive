@@ -280,20 +280,16 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_grab_add(window1);
     gtk_widget_set_usize( GTK_WIDGET (window1), width, 60);
     gtk_window_set_title(GTK_WINDOW (window1), title);
-    gtk_signal_connect(GTK_OBJECT (window1), "delete_event",
-                       (GtkSignalFunc) destroy_callback_e, NULL);
+    gtk_signal_connect(GTK_OBJECT (window1), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (window1), vbox);
     gtk_widget_show (vbox);
 
     entry = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(entry), "activate",
-		       GTK_SIGNAL_FUNC(enter_callback_e),
-		       entry);
+    gtk_signal_connect(GTK_OBJECT(entry), "activate",GTK_SIGNAL_FUNC(enter_callback_e),entry);
     gtk_entry_set_text (GTK_ENTRY (entry), default_text);
-    gtk_entry_select_region (GTK_ENTRY (entry),
-			     0, GTK_ENTRY(entry)->text_length);
+    gtk_entry_select_region (GTK_ENTRY (entry),0, GTK_ENTRY(entry)->text_length);
     gtk_box_pack_start (GTK_BOX (vbox), entry, TRUE, TRUE, 0);
     gtk_widget_show (entry);
 
@@ -861,8 +857,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
     /* create a new modal window */
     window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) destroy_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
 
@@ -908,12 +903,8 @@ void hier_searchbox(char *title, GtkSignalFunc func)
     gtk_clist_column_titles_passive(GTK_CLIST(clist)); 
 
     gtk_clist_set_selection_mode(GTK_CLIST(clist), GTK_SELECTION_SINGLE);
-    gtk_signal_connect_object (GTK_OBJECT (clist), "select_row",
-			       GTK_SIGNAL_FUNC(select_row_callback),
-			       NULL);
-    gtk_signal_connect_object (GTK_OBJECT (clist), "unselect_row",
-			       GTK_SIGNAL_FUNC(unselect_row_callback),
-			       NULL);
+    gtk_signal_connect_object (GTK_OBJECT (clist), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
+    gtk_signal_connect_object (GTK_OBJECT (clist), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
     gtk_widget_show (clist);
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
@@ -941,9 +932,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button1 = gtk_button_new_with_label ("Append");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(ok_callback),
-			       GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (window));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signals to end of the display on the main window.",NULL);
@@ -952,9 +941,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button2 = gtk_button_new_with_label (" Insert ");
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(insert_callback),
-			       GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (window));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add children after last highlighted signal on the main window.",NULL);
@@ -964,9 +951,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 	{
     	button3 = gtk_button_new_with_label (" Bundle Up ");
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",
-			       GTK_SIGNAL_FUNC(bundle_callback_up),
-			       GTK_OBJECT (window));
+    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (window));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle children into a single bit vector with the topmost signal as the LSB and the lowest as the MSB.",NULL);
@@ -974,9 +959,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     	button3a = gtk_button_new_with_label (" Bundle Down ");
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",
-			       GTK_SIGNAL_FUNC(bundle_callback_down),
-			       GTK_OBJECT (window));
+    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (window));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle children into a single bit vector with the topmost signal as the MSB and the lowest as the LSB.",NULL);
@@ -985,9 +968,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button4 = gtk_button_new_with_label (" Replace ");
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",
-			       GTK_SIGNAL_FUNC(replace_callback),
-			       GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (window));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with children shown above.",NULL);
@@ -995,9 +976,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button5 = gtk_button_new_with_label (" Exit ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback),
-			       GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (window));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
@@ -1020,6 +999,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
  * Imported sources
  *

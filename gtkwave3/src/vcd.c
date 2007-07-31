@@ -380,8 +380,9 @@ if(vcd_fsiz)
 return((int)(*(vst++)));
 }
 
-#define getch() ((vst!=vend)?((int)(*(vst++))):(getch_fetch()))
-
+static char getch() {
+  return ((vst!=vend)?((int)(*(vst++))):(getch_fetch()));
+}
 
 static char *varsplit=NULL, *vsplitcurr=NULL;
 static int getch_patched(void)
@@ -2466,6 +2467,9 @@ return(max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:36  gtkwave
  * Imported sources
  *

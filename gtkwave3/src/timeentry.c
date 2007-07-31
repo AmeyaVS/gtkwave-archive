@@ -133,8 +133,7 @@ from_entry=gtk_entry_new_with_max_length(40);
 reformat_time(fromstr, min_time, time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(from_entry),fromstr);
-gtk_signal_connect (GTK_OBJECT (from_entry), "activate",
-			GTK_SIGNAL_FUNC (callback), from_entry);
+gtk_signal_connect (GTK_OBJECT (from_entry), "activate",GTK_SIGNAL_FUNC (callback), from_entry);
 box=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0); 
 gtk_widget_show(label);
@@ -150,8 +149,7 @@ to_entry=gtk_entry_new_with_max_length(40);
 reformat_time(tostr, max_time, time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(to_entry),tostr);
-gtk_signal_connect (GTK_OBJECT (to_entry), "activate",
-			GTK_SIGNAL_FUNC (callback2), to_entry);
+gtk_signal_connect (GTK_OBJECT (to_entry), "activate",GTK_SIGNAL_FUNC (callback2), to_entry);
 box2=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box2), label2, TRUE, TRUE, 0); 
 gtk_widget_show(label2);
@@ -172,6 +170,9 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:29  gtkwave
  * Imported sources
  *

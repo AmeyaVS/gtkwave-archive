@@ -797,9 +797,9 @@ static unsigned char c_grn[]={Enum_WaveColors};
 #define D4(a,b,c,d) d
 static unsigned char c_blu[]={Enum_WaveColors};
 
-#define C_ARRAY_SIZE (sizeof(c_red)/sizeof(unsigned char))
+//C_ARRAY_SIZE is (sizeof(c_red)/sizeof(unsigned char))
 
-static GdkGC *rgb_contexts[C_ARRAY_SIZE];
+static GdkGC *rgb_contexts[sizeof(c_red)/sizeof(unsigned char)];
 
 static int compar(const void *v1, const void *v2)
 {
@@ -812,7 +812,7 @@ GdkGC *get_gc_from_name(char *str)
 char **match;   
 int offset, rgb;
 
-if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(char *), compar)))
+if((match=(char **)bsearch((void *)str, (void *)cnames, sizeof(c_red)/sizeof(unsigned char), sizeof(char *), compar)))
 	{
 	offset=match-cnames;
 	rgb=((int)c_red[offset]<<16)|((int)c_grn[offset]<<8)|((int)c_blu[offset]);
@@ -830,7 +830,7 @@ int get_rgb_from_name(char *str)
 char **match;
 int offset, rgb;
 
-if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(char *), compar)))
+if((match=(char **)bsearch((void *)str, (void *)cnames, sizeof(c_red)/sizeof(unsigned char), sizeof(char *), compar)))
 	{
 	offset=match-cnames;
 	rgb=((int)c_red[offset]<<16)|((int)c_grn[offset]<<8)|((int)c_blu[offset]);
@@ -868,6 +868,9 @@ if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(cha
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
  * Revision 1.2  2007/07/23 23:13:08  gtkwave
  * adds for color tags in filtered trace data
  *

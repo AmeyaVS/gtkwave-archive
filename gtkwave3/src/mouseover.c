@@ -176,8 +176,7 @@ gdk_draw_rectangle(mo_pixmap, mo_black,
 		1,1, 
 		mo_width-2, mo_height-2);
 
-gtk_signal_connect(GTK_OBJECT(mo_area), "expose_event",
-                        GTK_SIGNAL_FUNC(expose_event), NULL);
+gtk_signal_connect(GTK_OBJECT(mo_area), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
 }
 
 #define MOUSEOVER_BREAKSIZE (32)
@@ -318,11 +317,7 @@ if(num_info_rows == 2)
 	}
 
 gdk_window_raise(mouseover->window);
-gdk_draw_pixmap(mo_area->window, mo_area->style->fg_gc[GTK_WIDGET_STATE(mouseover)],
-                mo_pixmap,
-		0,0,
-		0,0,
-		mo_width, mo_height);
+gdk_draw_pixmap(mo_area->window, mo_area->style->fg_gc[GTK_WIDGET_STATE(mouseover)],mo_pixmap,0,0,0,0,mo_width, mo_height);
 
 bot:
 if(asciivalue) { free_2(asciivalue); }
@@ -333,6 +328,9 @@ if(alternate_name) { free_2(alternate_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
  * Imported sources
  *

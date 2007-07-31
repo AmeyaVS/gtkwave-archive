@@ -196,11 +196,25 @@ return(0);
  * means that we'll have a 32-bit word that we can read.
  */
    
-#define get_byte(offset)        ((unsigned int)(*((unsigned char *)mm+(offset))))
-#define get_16(offset)          ((unsigned int)(*((unsigned short *)(((unsigned char *)mm)+(offset)))))
-#define get_32(offset)          (*(unsigned int *)(((unsigned char *)mm)+(offset)))
-#define get_24(offset)		((get_32((offset)-1)<<8)>>8)
-#define get_64(offset)          ((((UTimeType)get_32(offset))<<32)|((UTimeType)get_32((offset)+4)))
+inline static unsigned int get_byte(offset) {
+  return ((unsigned int)(*((unsigned char *)mm+(offset))));
+}
+
+inline static unsigned int define get_16(offset) {
+  return ((unsigned int)(*((unsigned short *)(((unsigned char *)mm)+(offset))))
+}
+
+inline static usigned int get_32(offset) {
+  return (*(unsigned int *)(((unsigned char *)mm)+(offset)));
+}
+
+inline static unsigned int get_24(offset) {
+  return ((get_32((offset)-1)<<8)>>8);
+}
+
+inline static usigned int get_64(offset) {
+  return ((((UTimeType)get_32(offset))<<32)|((UTimeType)get_32((offset)+4)))
+}
  
 #else
 
@@ -211,7 +225,11 @@ return(0);
 
 #if defined(__i386__) || defined(__x86_64__)
 
-#define get_byte(offset)        ((unsigned int)(*((unsigned char *)mm+offset)))
+//#define get_byte(offset)        ((unsigned int)(*((unsigned char *)mm+offset)))
+
+inline static unsigned int get_byte(offset) {
+  return ((unsigned int)(*((unsigned char *)mm+offset)));
+}
 
 inline static unsigned int get_16(off_t offset)
 {
@@ -2350,6 +2368,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:03  gtkwave
  * Imported sources
  *

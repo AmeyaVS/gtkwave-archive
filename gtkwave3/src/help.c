@@ -91,8 +91,7 @@ vscrollbar = gtk_vscrollbar_new (GTK_TEXT_VIEW (text)->vadjustment);
 #else 
 vscrollbar = gtk_vscrollbar_new (GTK_TEXT (text)->vadj);
 #endif
-gtk_table_attach (GTK_TABLE (table), vscrollbar, 15, 16, 0, 1,
-			GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
+gtk_table_attach (GTK_TABLE (table), vscrollbar, 15, 16, 0, 1,GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
 gtk_widget_show (vscrollbar);
    
 /* Add a handler to put a message in the text widget when it is realized */
@@ -132,8 +131,7 @@ void helpbox(char *title, int width, char *default_text)
     window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize( GTK_WIDGET (window), width, 400);
     gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) ok_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) ok_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (window), vbox);
@@ -178,6 +176,9 @@ void helpbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
  * Imported sources
  *
