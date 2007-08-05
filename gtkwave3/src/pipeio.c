@@ -1,4 +1,4 @@
-/*
+#include"globals.h"/*
  * Copyright (c) Tony Bybell 2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -113,6 +113,9 @@ free_2(p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:29  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

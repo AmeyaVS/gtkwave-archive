@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -94,22 +94,8 @@ struct vcdsymbol *sym;
 TimeType last_event_time;    /* make +1 == 0 if there's not an event there too */
 };
 
-extern int splash_disable;
 
-extern int vcd_warning_filesize;
-extern char autocoalesce;
-extern char autocoalesce_reversal;
-extern int vcd_explicit_zero_subscripts;  /* 0=yes, -1=no */
-extern char vcd_preserve_glitches;
-extern char convert_to_reals;
-extern char atomic_vectors;
-extern char make_vcd_save_file;
-extern FILE *vcd_save_handle;
 
-extern struct slist *slistroot, *slistcurr;     
-extern char *slisthier;     
-extern int slisthier_len;  
-extern char vcd_hier_delimeter[2];
 
 char *build_slisthier(void);
 void append_vcd_slisthier(char *str);
@@ -131,6 +117,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

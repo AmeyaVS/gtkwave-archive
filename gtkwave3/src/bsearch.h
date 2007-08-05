@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -16,17 +16,16 @@ vptr bsearch_vector(bvptr b, TimeType key);
 char *bsearch_trunc(char *ascii, int maxlen);
 struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return);
 
-extern int maxlen_trunc;
-extern TimeType shift_timebase, shift_timebase_default_for_add;
 
-extern hptr *max_compare_index;
-extern vptr *vmax_compare_index;
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

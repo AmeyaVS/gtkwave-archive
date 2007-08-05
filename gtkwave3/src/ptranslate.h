@@ -1,4 +1,4 @@
-/*
+#include"globals.h"/*
  * Copyright (c) Tony Bybell 2005.     
  *
  * This program is free software; you can redistribute it and/or
@@ -18,10 +18,6 @@
 
 #define PROC_FILTER_MAX 20
 
-extern int current_translate_proc;
-extern int num_proc_filters;
-extern char *procsel_filter[PROC_FILTER_MAX+1];
-extern struct pipe_ctx *proc_filter[PROC_FILTER_MAX+1];
 
 void ptrans_searchbox(char *title);
 void init_proctrans_data(void);
@@ -34,6 +30,9 @@ void remove_all_proc_filters(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:20  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

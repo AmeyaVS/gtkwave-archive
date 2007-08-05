@@ -1,4 +1,4 @@
-/*
+#include"globals.h"/*
  * Copyright (c) Tony Bybell 2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -27,6 +27,9 @@ extern char *output_hier(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:50  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -24,23 +24,13 @@
 #include "debug.h"
 #include "busy.h"
 
-static GtkWidget *window1;
-static GtkWidget *entry_a;
-static char *entrybox_text_local=NULL;
-static GtkSignalFunc cleanup_e;
-SearchProgressData *pdata;
 
-static int is_active=0;
 
-static char is_insert_running = 0;
-static char is_replace_running = 0;
-static char is_append_running = 0;
-static char is_searching_running = 0;
 
 
 int searchbox_is_active(void)
 {
-return(is_active);
+return(GLOBALS.is_active_search_c_4);
 }
 
 static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
@@ -48,24 +38,24 @@ static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
   G_CONST_RETURN gchar *entry_text;
   int len;
   char *vname="<Vector>";
-  entry_text = gtk_entry_get_text(GTK_ENTRY(entry_a));
+  entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS.entry_a_search_c_1));
   DEBUG(printf("Entry contents: %s\n", entry_text));
   if(!(len=strlen(entry_text)))
-	strcpy((entrybox_text_local=(char *)malloc_2(strlen(vname)+1)),vname);	/* make consistent with other widgets rather than producing NULL */
-	else strcpy((entrybox_text_local=(char *)malloc_2(len+1)),entry_text);
+	strcpy((GLOBALS.entrybox_text_local_search_c_2=(char *)malloc_2(strlen(vname)+1)),vname);	/* make consistent with other widgets rather than producing NULL */
+	else strcpy((GLOBALS.entrybox_text_local_search_c_2=(char *)malloc_2(len+1)),entry_text);
 
-  gtk_grab_remove(window1);
-  gtk_widget_destroy(window1);
+  gtk_grab_remove(GLOBALS.window1_search_c_2);
+  gtk_widget_destroy(GLOBALS.window1_search_c_2);
 
-  cleanup_e();
+  GLOBALS.cleanup_e_search_c_2();
 }
 
 static void destroy_callback_e(GtkWidget *widget, GtkWidget *nothing)
 {
 DEBUG(printf("Entry Cancel\n"));
-entrybox_text_local=NULL;
-gtk_grab_remove(window1);
-gtk_widget_destroy(window1);
+GLOBALS.entrybox_text_local_search_c_2=NULL;
+gtk_grab_remove(GLOBALS.window1_search_c_2);
+gtk_widget_destroy(GLOBALS.window1_search_c_2);
 }
 
 static void entrybox_local(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -73,25 +63,25 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     GtkWidget *vbox, *hbox;
     GtkWidget *button1, *button2;
 
-    cleanup_e=func;
+    GLOBALS.cleanup_e_search_c_2=func;
 
     /* create a new modal window */
-    window1 = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_grab_add(window1);
-    gtk_widget_set_usize( GTK_WIDGET (window1), width, 60);
-    gtk_window_set_title(GTK_WINDOW (window1), title);
-    gtk_signal_connect(GTK_OBJECT (window1), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
+    GLOBALS.window1_search_c_2 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_grab_add(GLOBALS.window1_search_c_2);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS.window1_search_c_2), width, 60);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS.window1_search_c_2), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS.window1_search_c_2), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (window1), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS.window1_search_c_2), vbox);
     gtk_widget_show (vbox);
 
-    entry_a = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(entry_a), "activate",GTK_SIGNAL_FUNC(enter_callback_e),entry_a);
-    gtk_entry_set_text (GTK_ENTRY (entry_a), default_text);
-    gtk_entry_select_region (GTK_ENTRY (entry_a),0, GTK_ENTRY(entry_a)->text_length);
-    gtk_box_pack_start (GTK_BOX (vbox), entry_a, TRUE, TRUE, 0);
-    gtk_widget_show (entry_a);
+    GLOBALS.entry_a_search_c_1 = gtk_entry_new_with_max_length (maxch);
+    gtk_signal_connect(GTK_OBJECT(GLOBALS.entry_a_search_c_1), "activate",GTK_SIGNAL_FUNC(enter_callback_e),GLOBALS.entry_a_search_c_1);
+    gtk_entry_set_text (GTK_ENTRY (GLOBALS.entry_a_search_c_1), default_text);
+    gtk_entry_select_region (GTK_ENTRY (GLOBALS.entry_a_search_c_1),0, GTK_ENTRY(GLOBALS.entry_a_search_c_1)->text_length);
+    gtk_box_pack_start (GTK_BOX (vbox), GLOBALS.entry_a_search_c_1, TRUE, TRUE, 0);
+    gtk_widget_show (GLOBALS.entry_a_search_c_1);
 
     hbox = gtk_hbox_new (FALSE, 1);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
@@ -119,27 +109,22 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_widget_show(window1);
+    gtk_widget_show(GLOBALS.window1_search_c_2);
 }
 
 /***************************************************************************/
 
-static char *regex_type[]={"\\(\\[.*\\]\\)*$", "\\>.\\([0-9]\\)*$", 
-			   "\\(\\[.*\\]\\)*$", "\\>.\\([0-9]\\)*$", ""};
-static char *regex_name[]={"WRange", "WStrand", "Range", "Strand", "None"};
-static char regex_mutex[5]={0,0,0,0,0};
-static int  regex_which=0;
 
 static void regex_clicked(GtkWidget *widget, gpointer which)
 {
 int i;
 char *which_char;
  
-for(i=0;i<5;i++) regex_mutex[i]=0;
+for(i=0;i<5;i++) GLOBALS.regex_mutex_search_c_1[i]=0;
 which_char=(char *)which;
 *which_char=1;                  /* mark our choice */
 
-regex_which=which_char-regex_mutex;
+GLOBALS.regex_which_search_c_1=which_char-GLOBALS.regex_mutex_search_c_1;
   
 DEBUG(printf("picked: %s\n", regex_name[regex_which]));
 }  
@@ -147,27 +132,19 @@ DEBUG(printf("picked: %s\n", regex_name[regex_which]));
 /***************************************************************************/
 
 
-static GtkWidget *window;
-static GtkWidget *entry;
-static GtkWidget *clist;
-static char default_null_searchbox_text = 0;
-static char *searchbox_text=&default_null_searchbox_text;
+static char *searchbox_text=&GLOBALS.default_null_searchbox_text_search_c_1;
 /*static char *searchbox_text="";*/
-static char bundle_direction=0;
-static GtkSignalFunc cleanup;
-static int num_rows=0;
-static int selected_rows=0;
 
 /* call cleanup() on ok/insert functions */
 
 static void
 bundle_cleanup(GtkWidget *widget, gpointer data)
 {   
-if(entrybox_text_local)
+if(GLOBALS.entrybox_text_local_search_c_2)
 	{
 	char *efix;
 
-        efix=entrybox_text_local;
+        efix=GLOBALS.entrybox_text_local_search_c_2;
         while(*efix)
                 {
                 if(*efix==' ')
@@ -178,20 +155,20 @@ if(entrybox_text_local)
                 }
 
 	DEBUG(printf("Bundle name is: %s\n",entrybox_text_local));
-	add_vector_selected(entrybox_text_local, selected_rows, bundle_direction);
-	free_2(entrybox_text_local);
+	add_vector_selected(GLOBALS.entrybox_text_local_search_c_2, GLOBALS.selected_rows_search_c_2, GLOBALS.bundle_direction_search_c_2);
+	free_2(GLOBALS.entrybox_text_local_search_c_2);
 	}
 
 MaxSignalLength();
-signalarea_configure_event(signalarea, NULL);
-wavearea_configure_event(wavearea, NULL);
+signalarea_configure_event(GLOBALS.signalarea, NULL);
+wavearea_configure_event(GLOBALS.wavearea, NULL);
 }
  
 static void
 bundle_callback_generic(void)
 {
 DEBUG(printf("Selected_rows: %d\n",selected_rows));
-if(selected_rows>0)
+if(GLOBALS.selected_rows_search_c_2>0)
 	{
 	entrybox_local("Enter Bundle Name",300,"",128,GTK_SIGNAL_FUNC(bundle_cleanup));
 	}
@@ -200,14 +177,14 @@ if(selected_rows>0)
 static void
 bundle_callback_up(GtkWidget *widget, gpointer data)
 {
-bundle_direction=0;
+GLOBALS.bundle_direction_search_c_2=0;
 bundle_callback_generic();
 }
 
 static void
 bundle_callback_down(GtkWidget *widget, gpointer data)
 {
-bundle_direction=1;
+GLOBALS.bundle_direction_search_c_2=1;
 bundle_callback_generic();
 }
 
@@ -219,32 +196,32 @@ int i;
 
 gfloat interval;
 
-if(is_insert_running) return;
-is_insert_running = ~0;
+if(GLOBALS.is_insert_running_search_c_1) return;
+GLOBALS.is_insert_running_search_c_1 = ~0;
 gtk_grab_add(widget);
 set_window_busy(widget);
 
 symc=NULL;
 
-memcpy(&tcache,&traces,sizeof(Traces));
-traces.total=0;
-traces.first=traces.last=NULL;
+memcpy(&tcache,&GLOBALS.traces,sizeof(Traces));
+GLOBALS.traces.total=0;
+GLOBALS.traces.first=GLOBALS.traces.last=NULL;
 
-GTK_ADJUSTMENT(pdata->adj)->upper = (gfloat)((num_rows>1)?num_rows-1:1);
-interval = (gfloat)(num_rows/100.0);
+GTK_ADJUSTMENT(GLOBALS.pdata->adj)->upper = (gfloat)((GLOBALS.num_rows_search_c_2>1)?GLOBALS.num_rows_search_c_2-1:1);
+interval = (gfloat)(GLOBALS.num_rows_search_c_2/100.0);
 
 /* LX2 */
-if(is_lx2)
+if(GLOBALS.is_lx2)
 	{
 	int pre_import=0;
 	
-	for(i=0;i<num_rows;i++)
+	for(i=0;i<GLOBALS.num_rows_search_c_2;i++)
 		{
 		struct symbol *s, *t;
-		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), i);
+		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), i);
 		if(s->selected)
 			{
-			if((!s->vec_root)||(!autocoalesce))
+			if((!s->vec_root)||(!GLOBALS.autocoalesce))
 				{
 	                        if(s->n->mv.mvlfac)
 	                                {
@@ -275,22 +252,22 @@ if(is_lx2)
 	}
 /* LX2 */
 
-for(i=0;i<num_rows;i++)
+for(i=0;i<GLOBALS.num_rows_search_c_2;i++)
 	{
 	int len;
 	struct symbol *s, *t;
-	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), i);
+	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), i);
 	if(s->selected)
 		{
-		pdata->value = i;
-		if(((int)(pdata->value/interval))!=((int)(pdata->oldvalue/interval)))		
+		GLOBALS.pdata->value = i;
+		if(((int)(GLOBALS.pdata->value/interval))!=((int)(GLOBALS.pdata->oldvalue/interval)))		
 			{
-			gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), i);
+			gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), i);
 			while (gtk_events_pending()) gtk_main_iteration();
 			}
-		pdata->oldvalue = i;
+		GLOBALS.pdata->oldvalue = i;
 
-		if((!s->vec_root)||(!autocoalesce))
+		if((!s->vec_root)||(!GLOBALS.autocoalesce))
 			{
 			AddNodeUnroll(s->n, NULL);
 			}
@@ -324,30 +301,30 @@ while(symc)
 	free_2(symc_current);
 	}
 
-traces.buffercount=traces.total;
-traces.buffer=traces.first;
-traces.bufferlast=traces.last;
-traces.first=tcache.first;
-traces.last=tcache.last;
-traces.total=tcache.total;
+GLOBALS.traces.buffercount=GLOBALS.traces.total;
+GLOBALS.traces.buffer=GLOBALS.traces.first;
+GLOBALS.traces.bufferlast=GLOBALS.traces.last;
+GLOBALS.traces.first=tcache.first;
+GLOBALS.traces.last=tcache.last;
+GLOBALS.traces.total=tcache.total;
 
 PasteBuffer();
 
-traces.buffercount=tcache.buffercount;
-traces.buffer=tcache.buffer;
-traces.bufferlast=tcache.bufferlast;
+GLOBALS.traces.buffercount=tcache.buffercount;
+GLOBALS.traces.buffer=tcache.buffer;
+GLOBALS.traces.bufferlast=tcache.bufferlast;
 
 MaxSignalLength();
 
-signalarea_configure_event(signalarea, NULL);
-wavearea_configure_event(wavearea, NULL);
+signalarea_configure_event(GLOBALS.signalarea, NULL);
+wavearea_configure_event(GLOBALS.wavearea, NULL);
 
-gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), 0.0);
-pdata->oldvalue = -1.0;
+gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), 0.0);
+GLOBALS.pdata->oldvalue = -1.0;
 
 set_window_idle(widget);
 gtk_grab_remove(widget);
-is_insert_running=0;
+GLOBALS.is_insert_running_search_c_1=0;
 }
 
 static void replace_callback(GtkWidget *widget, GtkWidget *nothing)
@@ -359,33 +336,33 @@ struct symchain *symc, *symc_current;
 
 gfloat interval;
 
-if(is_replace_running) return;
-is_replace_running = ~0;
+if(GLOBALS.is_replace_running_search_c_1) return;
+GLOBALS.is_replace_running_search_c_1 = ~0;
 gtk_grab_add(widget);
 set_window_busy(widget);
 
 tfirst=NULL; tlast=NULL;
 symc=NULL;
-memcpy(&tcache,&traces,sizeof(Traces));
-traces.total=0;
-traces.first=traces.last=NULL;
+memcpy(&tcache,&GLOBALS.traces,sizeof(Traces));
+GLOBALS.traces.total=0;
+GLOBALS.traces.first=GLOBALS.traces.last=NULL;
 
-GTK_ADJUSTMENT(pdata->adj)->upper = (gfloat)((num_rows>1)?num_rows-1:1);
-interval = (gfloat)(num_rows/100.0);
-pdata->oldvalue = -1.0;
+GTK_ADJUSTMENT(GLOBALS.pdata->adj)->upper = (gfloat)((GLOBALS.num_rows_search_c_2>1)?GLOBALS.num_rows_search_c_2-1:1);
+interval = (gfloat)(GLOBALS.num_rows_search_c_2/100.0);
+GLOBALS.pdata->oldvalue = -1.0;
 
 /* LX2 */
-if(is_lx2)
+if(GLOBALS.is_lx2)
 	{
 	int pre_import=0;
 	
-	for(i=0;i<num_rows;i++)
+	for(i=0;i<GLOBALS.num_rows_search_c_2;i++)
 		{
 		struct symbol *s, *t;
-		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), i);
+		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), i);
 		if(s->selected)
 			{
-			if((!s->vec_root)||(!autocoalesce))
+			if((!s->vec_root)||(!GLOBALS.autocoalesce))
 				{
 	                        if(s->n->mv.mvlfac)
 	                                {
@@ -416,22 +393,22 @@ if(is_lx2)
 	}
 /* LX2 */
 
-for(i=0;i<num_rows;i++)
+for(i=0;i<GLOBALS.num_rows_search_c_2;i++)
 	{
 	int len;
 	struct symbol *s, *t;
-	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), i);
+	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), i);
 	if(s->selected)
 		{
-                pdata->value = i;
-                if(((int)(pdata->value/interval))!=((int)(pdata->oldvalue/interval)))
+                GLOBALS.pdata->value = i;
+                if(((int)(GLOBALS.pdata->value/interval))!=((int)(GLOBALS.pdata->oldvalue/interval)))
                         {
-                        gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), i);
+                        gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), i);
                         while (gtk_events_pending()) gtk_main_iteration();
                         }
-                pdata->oldvalue = i;
+                GLOBALS.pdata->oldvalue = i;
 
-		if((!s->vec_root)||(!autocoalesce))
+		if((!s->vec_root)||(!GLOBALS.autocoalesce))
 			{
 			AddNodeUnroll(s->n, NULL);
 			}
@@ -465,20 +442,20 @@ while(symc)
 	free_2(symc_current);
 	}
 
-tfirst=traces.first; tlast=traces.last;	/* cache for highlighting */
+tfirst=GLOBALS.traces.first; tlast=GLOBALS.traces.last;	/* cache for highlighting */
 
-traces.buffercount=traces.total;
-traces.buffer=traces.first;
-traces.bufferlast=traces.last;
-traces.first=tcache.first;
-traces.last=tcache.last;
-traces.total=tcache.total;
+GLOBALS.traces.buffercount=GLOBALS.traces.total;
+GLOBALS.traces.buffer=GLOBALS.traces.first;
+GLOBALS.traces.bufferlast=GLOBALS.traces.last;
+GLOBALS.traces.first=tcache.first;
+GLOBALS.traces.last=tcache.last;
+GLOBALS.traces.total=tcache.total;
 
 PasteBuffer();
 
-traces.buffercount=tcache.buffercount;
-traces.buffer=tcache.buffer;
-traces.bufferlast=tcache.bufferlast;
+GLOBALS.traces.buffercount=tcache.buffercount;
+GLOBALS.traces.buffer=tcache.buffer;
+GLOBALS.traces.bufferlast=tcache.bufferlast;
 
 CutBuffer();
 
@@ -490,15 +467,15 @@ while(tfirst)
 	}
 
 MaxSignalLength();
-signalarea_configure_event(signalarea, NULL);
-wavearea_configure_event(wavearea, NULL);
+signalarea_configure_event(GLOBALS.signalarea, NULL);
+wavearea_configure_event(GLOBALS.wavearea, NULL);
 
-gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), 0.0);
-pdata->oldvalue = -1.0;  
+gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), 0.0);
+GLOBALS.pdata->oldvalue = -1.0;  
 
 set_window_idle(widget);
 gtk_grab_remove(widget);
-is_replace_running=0;
+GLOBALS.is_replace_running_search_c_1=0;
 }
 
 static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
@@ -508,29 +485,29 @@ struct symchain *symc, *symc_current;
 
 gfloat interval;
 
-if(is_append_running) return;
-is_append_running = ~0;
+if(GLOBALS.is_append_running_search_c_1) return;
+GLOBALS.is_append_running_search_c_1 = ~0;
 gtk_grab_add(widget);
 set_window_busy(widget);
 
 symc=NULL;
 
-GTK_ADJUSTMENT(pdata->adj)->upper = (gfloat)((num_rows>1)?num_rows-1:1);
-interval = (gfloat)(num_rows/100.0);
-pdata->oldvalue = -1.0;
+GTK_ADJUSTMENT(GLOBALS.pdata->adj)->upper = (gfloat)((GLOBALS.num_rows_search_c_2>1)?GLOBALS.num_rows_search_c_2-1:1);
+interval = (gfloat)(GLOBALS.num_rows_search_c_2/100.0);
+GLOBALS.pdata->oldvalue = -1.0;
 
 /* LX2 */
-if(is_lx2)
+if(GLOBALS.is_lx2)
 	{
 	int pre_import=0;
 	
-	for(i=0;i<num_rows;i++)
+	for(i=0;i<GLOBALS.num_rows_search_c_2;i++)
 		{
 		struct symbol *s, *t;
-		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), i);
+		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), i);
 		if(s->selected)
 			{
-			if((!s->vec_root)||(!autocoalesce))
+			if((!s->vec_root)||(!GLOBALS.autocoalesce))
 				{
 	                        if(s->n->mv.mvlfac)
 	                                {
@@ -561,22 +538,22 @@ if(is_lx2)
 	}
 /* LX2 */
 
-for(i=0;i<num_rows;i++)
+for(i=0;i<GLOBALS.num_rows_search_c_2;i++)
 	{
 	int len;
 	struct symbol *s, *t;
-	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), i);
+	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), i);
 	if(s->selected)
 		{
-                pdata->value = i;
-                if(((int)(pdata->value/interval))!=((int)(pdata->oldvalue/interval)))
+                GLOBALS.pdata->value = i;
+                if(((int)(GLOBALS.pdata->value/interval))!=((int)(GLOBALS.pdata->oldvalue/interval)))
                         {
-                        gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), i);
+                        gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), i);
                         while (gtk_events_pending()) gtk_main_iteration();
                         }
-                pdata->oldvalue = i;
+                GLOBALS.pdata->oldvalue = i;
 
-		if((!s->vec_root)||(!autocoalesce))
+		if((!s->vec_root)||(!GLOBALS.autocoalesce))
 			{
 			AddNodeUnroll(s->n, NULL);
 			}
@@ -612,15 +589,15 @@ while(symc)
 	}
 
 MaxSignalLength();
-signalarea_configure_event(signalarea, NULL);
-wavearea_configure_event(wavearea, NULL);
+signalarea_configure_event(GLOBALS.signalarea, NULL);
+wavearea_configure_event(GLOBALS.wavearea, NULL);
 
-gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), 0.0);
-pdata->oldvalue = -1.0; 
+gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), 0.0);
+GLOBALS.pdata->oldvalue = -1.0; 
 
 set_window_idle(widget);
 gtk_grab_remove(widget);   
-is_append_running=0;
+GLOBALS.is_append_running_search_c_1=0;
 }
 
 static void select_row_callback(GtkWidget *widget, gint row, gint column,
@@ -628,10 +605,10 @@ static void select_row_callback(GtkWidget *widget, gint row, gint column,
 {
 struct symbol *s;
 
-s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), row);
+s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), row);
 DEBUG(printf("Select: %p %s\n",s, s->name));
 s->selected=1;
-selected_rows++;
+GLOBALS.selected_rows_search_c_2++;
 }
 
 static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
@@ -639,10 +616,10 @@ static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
 {
 struct symbol *s;
 
-s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(clist), row);
+s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_search_c_3), row);
 DEBUG(printf("Unselect: %p %s\n",s, s->name));
 s->selected=0;
-selected_rows--;
+GLOBALS.selected_rows_search_c_2--;
 }
 
 
@@ -656,59 +633,59 @@ int i, row;
 char *s, *tmp2;
 gfloat interval;
 
-if(is_searching_running) return;
-is_searching_running = ~0;
+if(GLOBALS.is_searching_running_search_c_1) return;
+GLOBALS.is_searching_running_search_c_1 = ~0;
 gtk_grab_add(widget);
 
-entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS.entry_search_c_3));
 DEBUG(printf("Entry contents: %s\n", entry_text));
 /* if(!(len=strlen(entry_text))) searchbox_text=NULL; */
-if(!(len=strlen(entry_text))) searchbox_text=&default_null_searchbox_text;
-      else strcpy((searchbox_text=(char *)malloc_2(len+1)),entry_text);
+if(!(len=strlen(entry_text))) GLOBALS.searchbox_text_search_c_1=&GLOBALS.default_null_searchbox_text_search_c_1;
+      else strcpy((GLOBALS.searchbox_text_search_c_1=(char *)malloc_2(len+1)),entry_text);
 
-num_rows=0;
-gtk_clist_freeze(cl=GTK_CLIST(clist));
+GLOBALS.num_rows_search_c_2=0;
+gtk_clist_freeze(cl=GTK_CLIST(GLOBALS.clist_search_c_3));
 gtk_clist_clear(cl);
 
-entry_suffixed=wave_alloca(strlen(entry_text)+strlen(regex_type[regex_which])+1+((regex_which<2)?2:0));
+entry_suffixed=wave_alloca(strlen(entry_text)+strlen(GLOBALS.regex_type_search_c_1[GLOBALS.regex_which_search_c_1])+1+((GLOBALS.regex_which_search_c_1<2)?2:0));
 *entry_suffixed=0x00;
-if(regex_which<2) strcpy(entry_suffixed, "\\<");	/* match on word boundary */
+if(GLOBALS.regex_which_search_c_1<2) strcpy(entry_suffixed, "\\<");	/* match on word boundary */
 strcat(entry_suffixed,entry_text);
-strcat(entry_suffixed,regex_type[regex_which]);
+strcat(entry_suffixed,GLOBALS.regex_type_search_c_1[GLOBALS.regex_which_search_c_1]);
 wave_regex_compile(entry_suffixed, WAVE_REGEX_SEARCH);
-for(i=0;i<numfacs;i++)
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
-	facs[i]->selected=0;
+	GLOBALS.facs[i]->selected=0;
 	}
 
-GTK_ADJUSTMENT(pdata->adj)->upper = (gfloat)((numfacs>1)?numfacs-1:1);
-pdata->oldvalue = -1.0;
-interval = (gfloat)(numfacs/100.0);
+GTK_ADJUSTMENT(GLOBALS.pdata->adj)->upper = (gfloat)((GLOBALS.numfacs>1)?GLOBALS.numfacs-1:1);
+GLOBALS.pdata->oldvalue = -1.0;
+interval = (gfloat)(GLOBALS.numfacs/100.0);
 
-for(i=0;i<numfacs;i++)
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
-	pdata->value = i;
-	if(((int)(pdata->value/interval))!=((int)(pdata->oldvalue/interval)))		
+	GLOBALS.pdata->value = i;
+	if(((int)(GLOBALS.pdata->value/interval))!=((int)(GLOBALS.pdata->oldvalue/interval)))		
 		{
-		gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), i);
+		gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), i);
 		while (gtk_events_pending()) gtk_main_iteration();
 		}
-	pdata->oldvalue = i;
+	GLOBALS.pdata->oldvalue = i;
 
-	if(wave_regex_match(facs[i]->name, WAVE_REGEX_SEARCH))
-	if((!is_ghw)||(strcmp(WAVE_GHW_DUMMYFACNAME, facs[i]->name)))
+	if(wave_regex_match(GLOBALS.facs[i]->name, WAVE_REGEX_SEARCH))
+	if((!GLOBALS.is_ghw)||(strcmp(WAVE_GHW_DUMMYFACNAME, GLOBALS.facs[i]->name)))
 		{
-		if(!facs[i]->vec_root)
+		if(!GLOBALS.facs[i]->vec_root)
 			{
-			row=gtk_clist_append(cl,(gchar **)&(facs[i]->name));
+			row=gtk_clist_append(cl,(gchar **)&(GLOBALS.facs[i]->name));
 			}
 			else
 			{
-			if(autocoalesce)
+			if(GLOBALS.autocoalesce)
 				{
-				if(facs[i]->vec_root!=facs[i]) continue;
+				if(GLOBALS.facs[i]->vec_root!=GLOBALS.facs[i]) continue;
 				
-				tmp2=makename_chain(facs[i]);
+				tmp2=makename_chain(GLOBALS.facs[i]);
 				s=(char *)malloc_2(strlen(tmp2)+4);
 				strcpy(s,"[] ");
 				strcpy(s+3, tmp2);
@@ -716,56 +693,56 @@ for(i=0;i<numfacs;i++)
 				}
 				else
 				{
-				s=(char *)malloc_2(strlen(facs[i]->name)+4);
+				s=(char *)malloc_2(strlen(GLOBALS.facs[i]->name)+4);
 				strcpy(s,"[] ");
-				strcpy(s+3, facs[i]->name);
+				strcpy(s+3, GLOBALS.facs[i]->name);
 				}
 
 			row=gtk_clist_append(cl,(gchar **)&s);
 			free_2(s);
 			}
 
-		gtk_clist_set_row_data(cl, row,facs[i]); 
-		num_rows++;
-		if(num_rows==WAVE_MAX_CLIST_LENGTH) break;
+		gtk_clist_set_row_data(cl, row,GLOBALS.facs[i]); 
+		GLOBALS.num_rows_search_c_2++;
+		if(GLOBALS.num_rows_search_c_2==WAVE_MAX_CLIST_LENGTH) break;
 		}
 	}
 
-gtk_clist_set_column_width(GTK_CLIST(clist),0,gtk_clist_optimal_column_width(GTK_CLIST(clist),0));
+gtk_clist_set_column_width(GTK_CLIST(GLOBALS.clist_search_c_3),0,gtk_clist_optimal_column_width(GTK_CLIST(GLOBALS.clist_search_c_3),0));
 gtk_clist_thaw(cl);
 
-gtk_progress_set_value (GTK_PROGRESS (pdata->pbar), 0.0);
-pdata->oldvalue = -1.0;
+gtk_progress_set_value (GTK_PROGRESS (GLOBALS.pdata->pbar), 0.0);
+GLOBALS.pdata->oldvalue = -1.0;
 gtk_grab_remove(widget);
-is_searching_running=0;
+GLOBALS.is_searching_running_search_c_1=0;
 
 if(do_warning)
-if(num_rows>=WAVE_MAX_CLIST_LENGTH) 
+if(GLOBALS.num_rows_search_c_2>=WAVE_MAX_CLIST_LENGTH) 
 	{
 	char buf[256];
-	sprintf(buf, "Limiting results to first %d entries.", num_rows);
+	sprintf(buf, "Limiting results to first %d entries.", GLOBALS.num_rows_search_c_2);
 	simplereqbox("Regex Search Warning",300,buf,"OK", NULL, NULL, 1);
 	}
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-if((!is_insert_running)&&(!is_replace_running)&&(!is_append_running)&&(!is_searching_running))
+if((!GLOBALS.is_insert_running_search_c_1)&&(!GLOBALS.is_replace_running_search_c_1)&&(!GLOBALS.is_append_running_search_c_1)&&(!GLOBALS.is_searching_running_search_c_1))
 	{
-  	is_active=0;
-  	gtk_widget_destroy(window);
+  	GLOBALS.is_active_search_c_4=0;
+  	gtk_widget_destroy(GLOBALS.window_search_c_7);
 	}
 }
 
 
 static void select_all_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-gtk_clist_select_all(GTK_CLIST(clist));
+gtk_clist_select_all(GTK_CLIST(GLOBALS.clist_search_c_3));
 }
 
 static void unselect_all_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-gtk_clist_unselect_all(GTK_CLIST(clist));
+gtk_clist_unselect_all(GTK_CLIST(GLOBALS.clist_search_c_3));
 }
 
 
@@ -790,20 +767,20 @@ void searchbox(char *title, GtkSignalFunc func)
     GtkAdjustment *adj;
     GtkWidget *align;
 
-    if(is_active) 
+    if(GLOBALS.is_active_search_c_4) 
 	{
-	gdk_window_raise(window->window);
+	gdk_window_raise(GLOBALS.window_search_c_7->window);
 	return;
 	}
 
-    is_active=1;
-    cleanup=func;
-    num_rows=selected_rows=0;
+    GLOBALS.is_active_search_c_4=1;
+    GLOBALS.cleanup_search_c_5=func;
+    GLOBALS.num_rows_search_c_2=GLOBALS.selected_rows_search_c_2=0;
 
     /* create a new modal window */
-    window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    GLOBALS.window_search_c_7 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS.window_search_c_7), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS.window_search_c_7), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
 
@@ -825,37 +802,37 @@ void searchbox(char *title, GtkSignalFunc func)
 
     gtk_box_pack_start (GTK_BOX (vbox1), label, TRUE, TRUE, 0);
 
-    entry = gtk_entry_new_with_max_length (256);
-    gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(enter_callback),entry);
-    gtk_entry_set_text (GTK_ENTRY (entry), searchbox_text);
-    gtk_entry_select_region (GTK_ENTRY (entry),0, GTK_ENTRY(entry)->text_length);
-    gtk_widget_show (entry);
-    gtk_tooltips_set_tip_2(tooltips, entry, "Enter search expression here.  POSIX Wildcards are allowed.  Note that you may also ""modify the search criteria by selecting ``[W]Range'', ``[W]Strand'', or ``None'' for suffix ""matching.",NULL);
+    GLOBALS.entry_search_c_3 = gtk_entry_new_with_max_length (256);
+    gtk_signal_connect(GTK_OBJECT(GLOBALS.entry_search_c_3), "activate", GTK_SIGNAL_FUNC(enter_callback),GLOBALS.entry_search_c_3);
+    gtk_entry_set_text (GTK_ENTRY (GLOBALS.entry_search_c_3), GLOBALS.searchbox_text_search_c_1);
+    gtk_entry_select_region (GTK_ENTRY (GLOBALS.entry_search_c_3),0, GTK_ENTRY(GLOBALS.entry_search_c_3)->text_length);
+    gtk_widget_show (GLOBALS.entry_search_c_3);
+    gtk_tooltips_set_tip_2(tooltips, GLOBALS.entry_search_c_3, "Enter search expression here.  POSIX Wildcards are allowed.  Note that you may also ""modify the search criteria by selecting ``[W]Range'', ``[W]Strand'', or ``None'' for suffix ""matching.",NULL);
 
-    gtk_box_pack_start (GTK_BOX (vbox1), entry, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox1), GLOBALS.entry_search_c_3, TRUE, TRUE, 0);
 
     /* Allocate memory for the data that is used later */
-    pdata = calloc_2(1, sizeof(SearchProgressData) );
-    pdata->value = pdata->oldvalue = 0.0;
+    GLOBALS.pdata = calloc_2(1, sizeof(SearchProgressData) );
+    GLOBALS.pdata->value = GLOBALS.pdata->oldvalue = 0.0;
     /* Create a centering alignment object */  
     align = gtk_alignment_new (0.5, 0.5, 0, 0);
     gtk_widget_show(align);
     /* Create a Adjustment object to hold the range of the
      * progress bar */
-    adj = (GtkAdjustment *) gtk_adjustment_new (0.0, 0.0, (gfloat)((numfacs>1)?numfacs-1:1), 0, 0, 0);
-    pdata->adj = adj;
+    adj = (GtkAdjustment *) gtk_adjustment_new (0.0, 0.0, (gfloat)((GLOBALS.numfacs>1)?GLOBALS.numfacs-1:1), 0, 0, 0);
+    GLOBALS.pdata->adj = adj;
     /* Create the GtkProgressBar using the adjustment */
-    pdata->pbar = gtk_progress_bar_new_with_adjustment (adj);
+    GLOBALS.pdata->pbar = gtk_progress_bar_new_with_adjustment (adj);
     /* Set the format of the string that can be displayed in the
      * trough of the progress bar:
      * %p - percentage
      * %v - value
      * %l - lower range value
      * %u - upper range value */
-    gtk_progress_set_format_string (GTK_PROGRESS (pdata->pbar), "(%p%%)");
-    gtk_progress_set_show_text (GTK_PROGRESS (pdata->pbar), TRUE);
-    gtk_widget_show(pdata->pbar);
-    gtk_box_pack_start (GTK_BOX (vbox1), pdata->pbar, TRUE, TRUE, 0);
+    gtk_progress_set_format_string (GTK_PROGRESS (GLOBALS.pdata->pbar), "(%p%%)");
+    gtk_progress_set_show_text (GTK_PROGRESS (GLOBALS.pdata->pbar), TRUE);
+    gtk_widget_show(GLOBALS.pdata->pbar);
+    gtk_box_pack_start (GTK_BOX (vbox1), GLOBALS.pdata->pbar, TRUE, TRUE, 0);
 
     gtk_container_add (GTK_CONTAINER (frame1), vbox1);
 
@@ -868,13 +845,13 @@ void searchbox(char *title, GtkSignalFunc func)
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
-    clist=gtk_clist_new_with_titles(1,titles);
-    gtk_clist_column_titles_passive(GTK_CLIST(clist)); 
+    GLOBALS.clist_search_c_3=gtk_clist_new_with_titles(1,titles);
+    gtk_clist_column_titles_passive(GTK_CLIST(GLOBALS.clist_search_c_3)); 
 
-    gtk_clist_set_selection_mode(GTK_CLIST(clist), GTK_SELECTION_EXTENDED);
-    gtk_signal_connect_object (GTK_OBJECT (clist), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
-    gtk_signal_connect_object (GTK_OBJECT (clist), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
-    gtk_widget_show (clist);
+    gtk_clist_set_selection_mode(GTK_CLIST(GLOBALS.clist_search_c_3), GTK_SELECTION_EXTENDED);
+    gtk_signal_connect_object (GTK_OBJECT (GLOBALS.clist_search_c_3), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
+    gtk_signal_connect_object (GTK_OBJECT (GLOBALS.clist_search_c_3), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
+    gtk_widget_show (GLOBALS.clist_search_c_3);
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
@@ -884,7 +861,7 @@ void searchbox(char *title, GtkSignalFunc func)
     gtk_widget_show(scrolled_win);
 
     /* gtk_scrolled_window_add_with_viewport doesn't seen to work right here.. */
-    gtk_container_add (GTK_CONTAINER (scrolled_win), clist);
+    gtk_container_add (GTK_CONTAINER (scrolled_win), GLOBALS.clist_search_c_3);
 
     gtk_container_add (GTK_CONTAINER (frame2), scrolled_win);
 
@@ -902,7 +879,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button6 = gtk_button_new_with_label (" Select All ");
     gtk_container_border_width (GTK_CONTAINER (button6), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(select_all_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(select_all_callback),GTK_OBJECT (GLOBALS.window_search_c_7));
     gtk_widget_show (button6);
     gtk_tooltips_set_tip_2(tooltips, button6, 
 		"Highlight all signals listed in the match window.",NULL);
@@ -919,17 +896,17 @@ void searchbox(char *title, GtkSignalFunc func)
     
     for(i=0;i<5;i++)
         {
-        menuitem = gtk_radio_menu_item_new_with_label (group, regex_name[i]);
+        menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.regex_name_search_c_1[i]);
         group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
         gtk_menu_append (GTK_MENU (menu), menuitem);
         gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(regex_clicked),
-                                 &regex_mutex[i]);
-        regex_mutex[i]=0;
+                                 &GLOBALS.regex_mutex_search_c_1[i]);
+        GLOBALS.regex_mutex_search_c_1[i]=0;
         }
     
-        regex_mutex[0]=1;     /* "range" */
+        GLOBALS.regex_mutex_search_c_1[0]=1;     /* "range" */
     
         optionmenu = gtk_option_menu_new ();
         gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), menu);
@@ -950,7 +927,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button7 = gtk_button_new_with_label (" Unselect All ");
     gtk_container_border_width (GTK_CONTAINER (button7), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button7), "clicked",GTK_SIGNAL_FUNC(unselect_all_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button7), "clicked",GTK_SIGNAL_FUNC(unselect_all_callback),GTK_OBJECT (GLOBALS.window_search_c_7));
     gtk_widget_show (button7);
     gtk_tooltips_set_tip_2(tooltips, button7, 
 		"Unhighlight all signals listed in the match window.",NULL);
@@ -972,7 +949,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button1 = gtk_button_new_with_label ("Append");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS.window_search_c_7));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signals to end of the display on the main window.",NULL);
@@ -981,17 +958,17 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button2 = gtk_button_new_with_label (" Insert ");
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (GLOBALS.window_search_c_7));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add selected signals after last highlighted signal on the main window.",NULL);
     gtk_box_pack_start (GTK_BOX (hbox), button2, TRUE, FALSE, 0);
 
-    if(vcd_explicit_zero_subscripts>=0)
+    if(GLOBALS.vcd_explicit_zero_subscripts>=0)
 	{
 	button3 = gtk_button_new_with_label (" Bundle Up ");
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (window));
+    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (GLOBALS.window_search_c_7));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle selected signals into a single bit vector with the topmost selected signal as the LSB and the lowest as the MSB.",NULL);
@@ -999,7 +976,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     	button3a = gtk_button_new_with_label (" Bundle Down ");
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (window));
+    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (GLOBALS.window_search_c_7));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle selected signals into a single bit vector with the topmost selected signal as the MSB and the lowest as the LSB.",NULL);
@@ -1008,7 +985,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button4 = gtk_button_new_with_label (" Replace ");
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (GLOBALS.window_search_c_7));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with signals selected above.",NULL);
@@ -1016,23 +993,26 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button5 = gtk_button_new_with_label (" Exit ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (window));
+    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS.window_search_c_7));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
     gtk_box_pack_start (GTK_BOX (hbox), button5, TRUE, FALSE, 0);
 
     gtk_container_add (GTK_CONTAINER (frameh), hbox);
-    gtk_container_add (GTK_CONTAINER (window), table);
+    gtk_container_add (GTK_CONTAINER (GLOBALS.window_search_c_7), table);
 
-    gtk_widget_show(window);
+    gtk_widget_show(GLOBALS.window_search_c_7);
 
-    if(strlen(searchbox_text)) enter_callback(entry,NULL);
+    if(strlen(GLOBALS.searchbox_text_search_c_1)) enter_callback(GLOBALS.entry_search_c_3,NULL);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
  * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
  * Merged in the main line
  *

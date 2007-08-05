@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -305,15 +305,10 @@ eptr ExpandNode(nptr n);
 void DeleteNode(nptr n);
 nptr ExtractNodeSingleBit(nptr n, int bit);
 
-extern Times       tims;
-extern Traces      traces;
-extern unsigned int default_flags;
-extern Trptr	   shift_click_trace;
 
 
 /* hierarchy depths */
 char *hier_extract(char *pnt, int levels);
-extern int hier_max_level;
 
 /* vector matching */
 char *attempt_vecmatch(char *s1, char *s2);
@@ -323,6 +318,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:50  gtkwave
+ * Imported sources
+ *
  * Revision 1.4  2007/05/28 00:55:05  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

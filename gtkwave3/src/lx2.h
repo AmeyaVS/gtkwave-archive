@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 2003-2004.
  *
  * This program is free software; you can redistribute it and/or
@@ -26,7 +26,6 @@ int numtrans;
 nptr np;
 };
 
-extern unsigned char is_lx2;
 TimeType lx2_main(char *fname, char *skip_start, char *skip_end);
 void import_lx2_trace(nptr np);
 
@@ -38,6 +37,9 @@ void lx2_import_masked(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:21  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 2003-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -30,11 +30,7 @@
 /*
  * globals
  */
-static struct vzt_rd_trace *vzt=NULL;
-static TimeType first_cycle, last_cycle, total_cycles;
 
-static struct lx2_entry *vzt_table = NULL;
-static struct fac *mvlfacs=NULL;
 
 
 /*
@@ -50,108 +46,108 @@ unsigned int numalias = 0;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
 
-vzt = vzt_rd_init_smp(fname, num_cpus);
-if(!vzt)
+GLOBALS.vzt_vzt_c_1 = vzt_rd_init_smp(fname, GLOBALS.num_cpus);
+if(!GLOBALS.vzt_vzt_c_1)
         {
         fprintf(stderr, "Could not initialize '%s', exiting.\n", fname);
         exit(0);
         }
 /* SPLASH */                            splash_create();
 
-vzt_rd_process_blocks_linearly(vzt, 1);
+vzt_rd_process_blocks_linearly(GLOBALS.vzt_vzt_c_1, 1);
 /* vzt_rd_set_max_block_mem_usage(vzt, 0); */
 
-scale=(signed char)vzt_rd_get_timescale(vzt);
+scale=(signed char)vzt_rd_get_timescale(GLOBALS.vzt_vzt_c_1);
 exponent_to_time_scale(scale);
 
-numfacs=vzt_rd_get_num_facs(vzt);
-mvlfacs=(struct fac *)calloc_2(numfacs,sizeof(struct fac));
-vzt_table=(struct lx2_entry *)calloc_2(numfacs, sizeof(struct lx2_entry));
-sym_block = (struct symbol *)calloc_2(numfacs, sizeof(struct symbol));
-node_block=(struct Node *)calloc_2(numfacs,sizeof(struct Node));
+GLOBALS.numfacs=vzt_rd_get_num_facs(GLOBALS.vzt_vzt_c_1);
+GLOBALS.mvlfacs_vzt_c_3=(struct fac *)calloc_2(GLOBALS.numfacs,sizeof(struct fac));
+GLOBALS.vzt_table_vzt_c_1=(struct lx2_entry *)calloc_2(GLOBALS.numfacs, sizeof(struct lx2_entry));
+sym_block = (struct symbol *)calloc_2(GLOBALS.numfacs, sizeof(struct symbol));
+node_block=(struct Node *)calloc_2(GLOBALS.numfacs,sizeof(struct Node));
 
-for(i=0;i<numfacs;i++)
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
-	mvlfacs[i].array_height=vzt_rd_get_fac_rows(vzt, i);
-	mvlfacs[i].msb=vzt_rd_get_fac_msb(vzt, i);
-	mvlfacs[i].lsb=vzt_rd_get_fac_lsb(vzt, i);
-	mvlfacs[i].flags=vzt_rd_get_fac_flags(vzt, i);
-	mvlfacs[i].len=vzt_rd_get_fac_len(vzt, i);
+	GLOBALS.mvlfacs_vzt_c_3[i].array_height=vzt_rd_get_fac_rows(GLOBALS.vzt_vzt_c_1, i);
+	GLOBALS.mvlfacs_vzt_c_3[i].msb=vzt_rd_get_fac_msb(GLOBALS.vzt_vzt_c_1, i);
+	GLOBALS.mvlfacs_vzt_c_3[i].lsb=vzt_rd_get_fac_lsb(GLOBALS.vzt_vzt_c_1, i);
+	GLOBALS.mvlfacs_vzt_c_3[i].flags=vzt_rd_get_fac_flags(GLOBALS.vzt_vzt_c_1, i);
+	GLOBALS.mvlfacs_vzt_c_3[i].len=vzt_rd_get_fac_len(GLOBALS.vzt_vzt_c_1, i);
 	}
 
-fprintf(stderr, VZT_RDLOAD"Finished building %d facs.\n", numfacs);
+fprintf(stderr, VZT_RDLOAD"Finished building %d facs.\n", GLOBALS.numfacs);
 /* SPLASH */                            splash_sync(1, 5);
 
-first_cycle = (TimeType) vzt_rd_get_start_time(vzt) * time_scale;
-last_cycle = (TimeType) vzt_rd_get_end_time(vzt) * time_scale;
-total_cycles = last_cycle - first_cycle + 1;
+GLOBALS.first_cycle_vzt_c_3 = (TimeType) vzt_rd_get_start_time(GLOBALS.vzt_vzt_c_1) * GLOBALS.time_scale;
+GLOBALS.last_cycle_vzt_c_3 = (TimeType) vzt_rd_get_end_time(GLOBALS.vzt_vzt_c_1) * GLOBALS.time_scale;
+GLOBALS.total_cycles_vzt_c_3 = GLOBALS.last_cycle_vzt_c_3 - GLOBALS.first_cycle_vzt_c_3 + 1;
 
 /* do your stuff here..all useful info has been initialized by now */
 
-if(!hier_was_explicitly_set)    /* set default hierarchy split char */
+if(!GLOBALS.hier_was_explicitly_set)    /* set default hierarchy split char */
         {
-        hier_delimeter='.';
+        GLOBALS.hier_delimeter='.';
         }
 
-if(numfacs)
+if(GLOBALS.numfacs)
 	{
-	char *fnam = vzt_rd_get_facname(vzt, 0);
+	char *fnam = vzt_rd_get_facname(GLOBALS.vzt_vzt_c_1, 0);
 	int flen = strlen(fnam);
 
-	mvlfacs[0].name=malloc_2(flen+1);
-	strcpy(mvlfacs[0].name, fnam);
+	GLOBALS.mvlfacs_vzt_c_3[0].name=malloc_2(flen+1);
+	strcpy(GLOBALS.mvlfacs_vzt_c_3[0].name, fnam);
 	}
 
-for(i=0;i<numfacs;i++)
+for(i=0;i<GLOBALS.numfacs;i++)
         {
 	char buf[65537];
 	char *str;	
 	struct fac *f;
 
-	if(i!=(numfacs-1))
+	if(i!=(GLOBALS.numfacs-1))
 		{
-		char *fnam = vzt_rd_get_facname(vzt, i+1);
+		char *fnam = vzt_rd_get_facname(GLOBALS.vzt_vzt_c_1, i+1);
 		int flen = strlen(fnam);
 
-		mvlfacs[i+1].name=malloc_2(flen+1);
-		strcpy(mvlfacs[i+1].name, fnam);
+		GLOBALS.mvlfacs_vzt_c_3[i+1].name=malloc_2(flen+1);
+		strcpy(GLOBALS.mvlfacs_vzt_c_3[i+1].name, fnam);
 		}
 
 	if(i>1)
 		{
-		free_2(mvlfacs[i-2].name);
-		mvlfacs[i-2].name = NULL;
+		free_2(GLOBALS.mvlfacs_vzt_c_3[i-2].name);
+		GLOBALS.mvlfacs_vzt_c_3[i-2].name = NULL;
 		}
 
-	if(mvlfacs[i].flags&VZT_RD_SYM_F_ALIAS)
+	if(GLOBALS.mvlfacs_vzt_c_3[i].flags&VZT_RD_SYM_F_ALIAS)
 		{
-		int alias = mvlfacs[i].array_height;
-		f=mvlfacs+alias;
+		int alias = GLOBALS.mvlfacs_vzt_c_3[i].array_height;
+		f=GLOBALS.mvlfacs_vzt_c_3+alias;
 
 		while(f->flags&VZT_RD_SYM_F_ALIAS)
 			{
-			f=mvlfacs+f->array_height;
+			f=GLOBALS.mvlfacs_vzt_c_3+f->array_height;
 			}
 
 		numalias++;
 		}
 		else
 		{
-		f=mvlfacs+i;
+		f=GLOBALS.mvlfacs_vzt_c_3+i;
 		}
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
-		int len=sprintf(buf, "%s[%d:%d]", mvlfacs[i].name,mvlfacs[i].msb, mvlfacs[i].lsb);
+		int len=sprintf(buf, "%s[%d:%d]", GLOBALS.mvlfacs_vzt_c_3[i].name,GLOBALS.mvlfacs_vzt_c_3[i].msb, GLOBALS.mvlfacs_vzt_c_3[i].lsb);
 		str=malloc_2(len+1);
 
-		if(!alt_hier_delimeter)
+		if(!GLOBALS.alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
@@ -159,25 +155,25 @@ for(i=0;i<numfacs;i++)
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
-			((i!=numfacs-1)&&(!strcmp(mvlfacs[i].name, mvlfacs[i+1].name))))
+			((i!=GLOBALS.numfacs-1)&&(!strcmp(GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.mvlfacs_vzt_c_3[i+1].name))))
 			||
-			(((i!=0)&&(!strcmp(mvlfacs[i].name, mvlfacs[i-1].name))) &&
-			(mvlfacs[i].msb!=-1)&&(mvlfacs[i].lsb!=-1))
+			(((i!=0)&&(!strcmp(GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.mvlfacs_vzt_c_3[i-1].name))) &&
+			(GLOBALS.mvlfacs_vzt_c_3[i].msb!=-1)&&(GLOBALS.mvlfacs_vzt_c_3[i].lsb!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", mvlfacs[i].name,mvlfacs[i].msb);
+		int len = sprintf(buf, "%s[%d]", GLOBALS.mvlfacs_vzt_c_3[i].name,GLOBALS.mvlfacs_vzt_c_3[i].msb);
 		str=malloc_2(len+1);
-		if(!alt_hier_delimeter)
+		if(!GLOBALS.alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(mvlfacs[i].name, mvlfacs[i-1].name)))	/* allow chaining for search functions.. */
+		if((prevsym)&&(i>0)&&(!strcmp(GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.mvlfacs_vzt_c_3[i-1].name)))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -191,14 +187,14 @@ for(i=0;i<numfacs;i++)
 		}
 		else
 		{
-		str=malloc_2(strlen(mvlfacs[i].name)+1);
-		if(!alt_hier_delimeter)
+		str=malloc_2(strlen(GLOBALS.mvlfacs_vzt_c_3[i].name)+1);
+		if(!GLOBALS.alt_hier_delimeter)
 			{
-			strcpy(str, mvlfacs[i].name);
+			strcpy(str, GLOBALS.mvlfacs_vzt_c_3[i].name);
 			}
 			else
 			{
-			strcpy_vcdalt(str, mvlfacs[i].name, alt_hier_delimeter);
+			strcpy_vcdalt(str, GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
@@ -206,32 +202,32 @@ for(i=0;i<numfacs;i++)
 
 		if(f->flags&VZT_RD_SYM_F_INTEGER)
 			{
-			mvlfacs[i].msb=31;
-			mvlfacs[i].lsb=0;
-			mvlfacs[i].len=32;
+			GLOBALS.mvlfacs_vzt_c_3[i].msb=31;
+			GLOBALS.mvlfacs_vzt_c_3[i].lsb=0;
+			GLOBALS.mvlfacs_vzt_c_3[i].len=32;
 			}
 		}
 		
-        if(!firstnode)
+        if(!GLOBALS.firstnode)
                 {
-                firstnode=curnode=s;   
+                GLOBALS.firstnode=GLOBALS.curnode=s;   
                 }
                 else
                 {
-                curnode->nextinaet=s;
-                curnode=s;   
+                GLOBALS.curnode->nextinaet=s;
+                GLOBALS.curnode=s;   
                 }
 
         n=&node_block[i];
         n->nname=s->name;
-        n->mv.mvlfac = mvlfacs+i;
-	mvlfacs[i].working_node = n;
+        n->mv.mvlfac = GLOBALS.mvlfacs_vzt_c_3+i;
+	GLOBALS.mvlfacs_vzt_c_3[i].working_node = n;
 
 	if((f->len>1)||(f->flags&&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 		{
 		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
-		ext->msi = mvlfacs[i].msb;
-		ext->lsi = mvlfacs[i].lsb;
+		ext->msi = GLOBALS.mvlfacs_vzt_c_3[i].msb;
+		ext->lsi = GLOBALS.mvlfacs_vzt_c_3[i].lsb;
 		n->ext = ext;
 		}
                  
@@ -240,152 +236,152 @@ for(i=0;i<numfacs;i++)
         s->n=n;
         }
 
-for(i=0;((i<2)&&(i<numfacs));i++)
+for(i=0;((i<2)&&(i<GLOBALS.numfacs));i++)
 	{
-	if(mvlfacs[i].name)
+	if(GLOBALS.mvlfacs_vzt_c_3[i].name)
 		{
-		free_2(mvlfacs[i].name);
-		mvlfacs[i].name = NULL;
+		free_2(GLOBALS.mvlfacs_vzt_c_3[i].name);
+		GLOBALS.mvlfacs_vzt_c_3[i].name = NULL;
 		}
 	}
 
 
 /* SPLASH */                            splash_sync(2, 5);  
-facs=(struct symbol **)malloc_2(numfacs*sizeof(struct symbol *));
+GLOBALS.facs=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
 
-if(fast_tree_sort)
+if(GLOBALS.fast_tree_sort)
         {
-        curnode=firstnode;
-        for(i=0;i<numfacs;i++)
+        GLOBALS.curnode=GLOBALS.firstnode;
+        for(i=0;i<GLOBALS.numfacs;i++)
                 {
                 int len;
-                facs[i]=curnode; 
-                if((len=strlen(curnode->name))>longestname) longestname=len;
-                curnode=curnode->nextinaet;
+                GLOBALS.facs[i]=GLOBALS.curnode; 
+                if((len=strlen(GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
+                GLOBALS.curnode=GLOBALS.curnode->nextinaet;
                 }
                                 
         if(numalias)
                 {
                 unsigned int idx_lft = 0;
-                unsigned int idx_lftmax = numfacs - numalias;
-                unsigned int idx_rgh = numfacs - numalias;
-                struct symbol **facs_merge=(struct symbol **)malloc_2(numfacs*sizeof(struct symbol *));
+                unsigned int idx_lftmax = GLOBALS.numfacs - numalias;
+                unsigned int idx_rgh = GLOBALS.numfacs - numalias;
+                struct symbol **facs_merge=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
 
 		fprintf(stderr, VZT_RDLOAD"Merging in %d aliases.\n", numalias);
 
-                for(i=0;i<numfacs;i++)  /* fix possible tail appended aliases by remerging in partial one pass merge sort */
+                for(i=0;i<GLOBALS.numfacs;i++)  /* fix possible tail appended aliases by remerging in partial one pass merge sort */
                         { 
-                        if(strcmp(facs[idx_lft]->name, facs[idx_rgh]->name) <= 0)
+                        if(strcmp(GLOBALS.facs[idx_lft]->name, GLOBALS.facs[idx_rgh]->name) <= 0)
                                 {
-                                facs_merge[i] = facs[idx_lft++];
+                                facs_merge[i] = GLOBALS.facs[idx_lft++];
                 
                                 if(idx_lft == idx_lftmax)
                                         {
-                                        for(i++;i<numfacs;i++)
+                                        for(i++;i<GLOBALS.numfacs;i++)
                                                 {
-                                                facs_merge[i] = facs[idx_rgh++];
+                                                facs_merge[i] = GLOBALS.facs[idx_rgh++];
                                                 }
                                         }
                                 }
                                 else
                                 {
-                                facs_merge[i] = facs[idx_rgh++];
+                                facs_merge[i] = GLOBALS.facs[idx_rgh++];
         
-                                if(idx_rgh == numfacs)
+                                if(idx_rgh == GLOBALS.numfacs)
                                         {
-                                        for(i++;i<numfacs;i++)
+                                        for(i++;i<GLOBALS.numfacs;i++)
                                                 {
-                                                facs_merge[i] = facs[idx_lft++];
+                                                facs_merge[i] = GLOBALS.facs[idx_lft++];
                                                 }
                                         }
                                 }
                         } 
                         
-                free_2(facs); facs = facs_merge;
+                free_2(GLOBALS.facs); GLOBALS.facs = facs_merge;
                 }
                 
 /* SPLASH */                            splash_sync(3, 5);  
         fprintf(stderr, VZT_RDLOAD"Building facility hierarchy tree.\n");
                                          
         init_tree();
-        for(i=0;i<numfacs;i++)
+        for(i=0;i<GLOBALS.numfacs;i++)
                 {
-                build_tree_from_name(facs[i]->name, i);
+                build_tree_from_name(GLOBALS.facs[i]->name, i);
                 }
 /* SPLASH */                            splash_sync(4, 5);  
-        treegraft(treeroot);
+        treegraft(GLOBALS.treeroot);
                                 
         fprintf(stderr, VZT_RDLOAD"Sorting facility hierarchy tree.\n");
-        treesort(treeroot, NULL);
+        treesort(GLOBALS.treeroot, NULL);
 /* SPLASH */                            splash_sync(5, 5);  
-        order_facs_from_treesort(treeroot, &facs);
+        order_facs_from_treesort(GLOBALS.treeroot, &GLOBALS.facs);
                                 
-        facs_are_sorted=1;
+        GLOBALS.facs_are_sorted=1;
         }
         else
 	{
-	curnode=firstnode;
-	for(i=0;i<numfacs;i++)
+	GLOBALS.curnode=GLOBALS.firstnode;
+	for(i=0;i<GLOBALS.numfacs;i++)
 		{
 		char *subst, ch;
 		int len;
 
-		facs[i]=curnode;
-	        if((len=strlen(subst=curnode->name))>longestname) longestname=len;
-		curnode=curnode->nextinaet;
+		GLOBALS.facs[i]=GLOBALS.curnode;
+	        if((len=strlen(subst=GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
+		GLOBALS.curnode=GLOBALS.curnode->nextinaet;
 		while((ch=(*subst)))
 			{	
-			if(ch==hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
+			if(ch==GLOBALS.hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
 			subst++;
 			}
 		}
 
 /* SPLASH */                            splash_sync(3, 5);  
 	fprintf(stderr, VZT_RDLOAD"Sorting facilities at hierarchy boundaries.\n");
-	wave_heapsort(facs,numfacs);
+	wave_heapsort(GLOBALS.facs,GLOBALS.numfacs);
 	
-	for(i=0;i<numfacs;i++)
+	for(i=0;i<GLOBALS.numfacs;i++)
 		{
 		char *subst, ch;
 	
-		subst=facs[i]->name;
+		subst=GLOBALS.facs[i]->name;
 		while((ch=(*subst)))
 			{	
-			if(ch==VCDNAM_HIERSORT) { *subst=hier_delimeter; }	/* restore back to normal */
+			if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS.hier_delimeter; }	/* restore back to normal */
 			subst++;
 			}
 		}
 	
-	facs_are_sorted=1;
+	GLOBALS.facs_are_sorted=1;
 
 /* SPLASH */                            splash_sync(4, 5);  
 	fprintf(stderr, VZT_RDLOAD"Building facility hierarchy tree.\n");
 
 	init_tree();		
-	for(i=0;i<numfacs;i++)	
+	for(i=0;i<GLOBALS.numfacs;i++)	
 		{
-		build_tree_from_name(facs[i]->name, i);
+		build_tree_from_name(GLOBALS.facs[i]->name, i);
 		}
 /* SPLASH */                            splash_sync(5, 5);  
-	treegraft(treeroot);
-	treesort(treeroot, NULL);
+	treegraft(GLOBALS.treeroot);
+	treesort(GLOBALS.treeroot, NULL);
 	}
 
-min_time = first_cycle; max_time=last_cycle;
-is_lx2 = LXT2_IS_VZT;
+GLOBALS.min_time = GLOBALS.first_cycle_vzt_c_3; GLOBALS.max_time=GLOBALS.last_cycle_vzt_c_3;
+GLOBALS.is_lx2 = LXT2_IS_VZT;
 
 if(skip_start || skip_end)
 	{
 	TimeType b_start, b_end;
 
-	if(!skip_start) b_start = min_time; else b_start = unformat_time(skip_start, time_dimension);
-	if(!skip_end) b_end = max_time; else b_end = unformat_time(skip_end, time_dimension);
+	if(!skip_start) b_start = GLOBALS.min_time; else b_start = unformat_time(skip_start, GLOBALS.time_dimension);
+	if(!skip_end) b_end = GLOBALS.max_time; else b_end = unformat_time(skip_end, GLOBALS.time_dimension);
 
-	if(b_start<min_time) b_start = min_time;
-	else if(b_start>max_time) b_start = max_time;
+	if(b_start<GLOBALS.min_time) b_start = GLOBALS.min_time;
+	else if(b_start>GLOBALS.max_time) b_start = GLOBALS.max_time;
 
-	if(b_end<min_time) b_end = min_time;
-	else if(b_end>max_time) b_end = max_time;
+	if(b_end<GLOBALS.min_time) b_end = GLOBALS.min_time;
+	else if(b_end>GLOBALS.max_time) b_end = GLOBALS.max_time;
 
         if(b_start > b_end)
                 {
@@ -394,19 +390,19 @@ if(skip_start || skip_end)
                 b_end = tmp_time;
                 }
 
-	if(!vzt_rd_limit_time_range(vzt, b_start, b_end))
+	if(!vzt_rd_limit_time_range(GLOBALS.vzt_vzt_c_1, b_start, b_end))
 		{
 		fprintf(stderr, VZT_RDLOAD"--begin/--end options yield zero blocks, ignoring.\n");
-		vzt_rd_unlimit_time_range(vzt);
+		vzt_rd_unlimit_time_range(GLOBALS.vzt_vzt_c_1);
 		}
 		else
 		{
-		min_time = b_start;
-		max_time = b_end;
+		GLOBALS.min_time = b_start;
+		GLOBALS.max_time = b_end;
 		}
 	}
 
-return(max_time);
+return(GLOBALS.max_time);
 }
 
 
@@ -416,16 +412,15 @@ return(max_time);
 static void vzt_callback(struct vzt_rd_trace **lt, lxtint64_t *time, lxtint32_t *facidx, char **value)
 {
 struct HistEnt *htemp = histent_calloc();
-struct lx2_entry *l2e = vzt_table+(*facidx);
-struct fac *f = mvlfacs+(*facidx);
+struct lx2_entry *l2e = GLOBALS.vzt_table_vzt_c_1+(*facidx);
+struct fac *f = GLOBALS.mvlfacs_vzt_c_3+(*facidx);
 
-static int busycnt = 0;
 
-busycnt++; 
-if(busycnt==WAVE_BUSY_ITER)
+GLOBALS.busycnt_vzt_c_2++; 
+if(GLOBALS.busycnt_vzt_c_2==WAVE_BUSY_ITER)
 	{
 	busy_window_refresh();
-	busycnt = 0;
+	GLOBALS.busycnt_vzt_c_2 = 0;
 	}
 
 /* fprintf(stderr, "%lld %d %s\n", *time, *facidx, *value); */
@@ -465,7 +460,7 @@ else	/* string */
 	}
 
 
-htemp->time = (*time) * (time_scale);
+htemp->time = (*time) * (GLOBALS.time_scale);
 
 if(l2e->histent_head)
 	{
@@ -509,11 +504,11 @@ nptr nold = np;
 
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
-txidx = f - mvlfacs;
+txidx = f - GLOBALS.mvlfacs_vzt_c_3;
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = vzt_rd_get_alias_root(vzt, txidx);
-	np = mvlfacs[txidx].working_node;
+	txidx = vzt_rd_get_alias_root(GLOBALS.vzt_vzt_c_1, txidx);
+	np = GLOBALS.mvlfacs_vzt_c_3[txidx].working_node;
 
 	if(!(f=np->mv.mvlfac)) 
 		{
@@ -529,9 +524,9 @@ len = np->mv.mvlfac->len;
 
 if(f->array_height <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
 	{
-	vzt_rd_set_fac_process_mask(vzt, txidx);
-	vzt_rd_iter_blocks(vzt, vzt_callback, NULL);
-	vzt_rd_clr_fac_process_mask(vzt, txidx);
+	vzt_rd_set_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
+	vzt_rd_iter_blocks(GLOBALS.vzt_vzt_c_1, vzt_callback, NULL);
+	vzt_rd_clr_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
 	}
 
 histent_tail = htemp = histent_calloc();
@@ -559,10 +554,10 @@ if(len>1)
 htemp->time = MAX_HISTENT_TIME-1;
 htemp->next = histent_tail;			
 
-if(vzt_table[txidx].histent_curr)
+if(GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr)
 	{
-	vzt_table[txidx].histent_curr->next = htemp;
-	htemp = vzt_table[txidx].histent_head;
+	GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr->next = htemp;
+	htemp = GLOBALS.vzt_table_vzt_c_1[txidx].histent_head;
 	}
 
 if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
@@ -585,9 +580,9 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 
 np->head.time  = -2;
 np->head.next = htemp;
-np->numhist=vzt_table[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
+np->numhist=GLOBALS.vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
 
-memset(vzt_table+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
+memset(GLOBALS.vzt_table_vzt_c_1+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 np->curr = histent_tail;
 np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
@@ -609,20 +604,20 @@ int txidx;
 
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
-txidx = f-mvlfacs;
+txidx = f-GLOBALS.mvlfacs_vzt_c_3;
 
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = vzt_rd_get_alias_root(vzt, txidx);
-	np = mvlfacs[txidx].working_node;
+	txidx = vzt_rd_get_alias_root(GLOBALS.vzt_vzt_c_1, txidx);
+	np = GLOBALS.mvlfacs_vzt_c_3[txidx].working_node;
 
 	if(!(np->mv.mvlfac)) return;	/* already imported */
 	}
 
 if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
 	{
-	vzt_rd_set_fac_process_mask(vzt, txidx);
-	vzt_table[txidx].np = np;
+	vzt_rd_set_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
+	GLOBALS.vzt_table_vzt_c_1[txidx].np = np;
 	}
 }
 
@@ -632,9 +627,9 @@ void vzt_import_masked(void)
 int txidx, i, cnt;
 
 cnt = 0;
-for(txidx=0;txidx<numfacs;txidx++)
+for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
 	{
-	if(vzt_rd_get_fac_process_mask(vzt, txidx))
+	if(vzt_rd_get_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx))
 		{
 		cnt++;
 		}
@@ -648,17 +643,17 @@ if(cnt>100)
 	}
 
 set_window_busy(NULL);
-vzt_rd_iter_blocks(vzt, vzt_callback, NULL);
+vzt_rd_iter_blocks(GLOBALS.vzt_vzt_c_1, vzt_callback, NULL);
 set_window_idle(NULL);
 
-for(txidx=0;txidx<numfacs;txidx++)
+for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
 	{
-	if(vzt_rd_get_fac_process_mask(vzt, txidx))
+	if(vzt_rd_get_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx))
 		{
 		struct HistEnt *htemp, *histent_tail;
-		struct fac *f = mvlfacs+txidx;
+		struct fac *f = GLOBALS.mvlfacs_vzt_c_3+txidx;
 		int len = f->len;
-		nptr np = vzt_table[txidx].np;
+		nptr np = GLOBALS.vzt_table_vzt_c_1[txidx].np;
 
 		histent_tail = htemp = histent_calloc();
 		if(len>1)
@@ -685,10 +680,10 @@ for(txidx=0;txidx<numfacs;txidx++)
 		htemp->time = MAX_HISTENT_TIME-1;
 		htemp->next = histent_tail;			
 
-		if(vzt_table[txidx].histent_curr)
+		if(GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr)
 			{
-			vzt_table[txidx].histent_curr->next = htemp;
-			htemp = vzt_table[txidx].histent_head;
+			GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr->next = htemp;
+			htemp = GLOBALS.vzt_table_vzt_c_1[txidx].histent_head;
 			}
 
 		if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
@@ -711,13 +706,13 @@ for(txidx=0;txidx<numfacs;txidx++)
 
 		np->head.time  = -2;
 		np->head.next = htemp;
-		np->numhist=vzt_table[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
+		np->numhist=GLOBALS.vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
 
-		memset(vzt_table+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
+		memset(GLOBALS.vzt_table_vzt_c_1+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 		np->curr = histent_tail;
 		np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
-		vzt_rd_clr_fac_process_mask(vzt, txidx);
+		vzt_rd_clr_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
 		}
 	}
 }
@@ -725,6 +720,9 @@ for(txidx=0;txidx<numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:59  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/04/29 04:13:49  gtkwave
  * changed anon union defined in struct Node to a named one as anon unions
  * are a gcc extension

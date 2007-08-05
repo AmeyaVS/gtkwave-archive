@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -15,13 +15,15 @@
 char *fgetmalloc(FILE *handle);
 char *fgetmalloc_stripspaces(FILE *handle);
 
-extern int fgetmalloc_len;
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

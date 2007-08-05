@@ -1,4 +1,4 @@
-/*  GHDL Wavefile reader library.
+#include"globals.h"/*  GHDL Wavefile reader library.
     Copyright (C) 2005 Tristan Gingold
 
     GHDL is free software; you can redistribute it and/or modify it under
@@ -388,7 +388,6 @@ struct ghw_section {
   int (*handler)(struct ghw_handler *h);
 };
 
-extern struct ghw_section ghw_sections[];
 
 int ghw_read_section (struct ghw_handler *h);
 
@@ -402,11 +401,26 @@ void ghw_disp_range (union ghw_type *type, union ghw_range *rng);
 void ghw_disp_type (struct ghw_handler *h, union ghw_type *t);
 
 void ghw_disp_types (struct ghw_handler *h);
+
+int ghw_read_str (struct ghw_handler *h);
+int ghw_read_hie (struct ghw_handler *h);
+int ghw_read_type (struct ghw_handler *h);
+int ghw_read_wk_types (struct ghw_handler *h);
+int ghw_read_eoh (struct ghw_handler *h);
+int ghw_read_snapshot(struct ghw_handler *h);
+int ghw_read_cycle(struct ghw_handler *h);
+int ghw_read_directory(struct ghw_handler *h);
+int ghw_read_tailer(struct ghw_handler *h);
+
+
 #endif /* _GHWLIB_H_ */
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:02  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:12  gtkwave
  * initial release
  *

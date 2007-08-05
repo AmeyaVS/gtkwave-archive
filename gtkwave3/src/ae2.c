@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 2004-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -32,11 +32,10 @@
  */
 #ifndef AET2_IS_PRESENT 
 
-static char *ae2_loader_fail_msg = "Sorry, AET2 support was not compiled into this executable, exiting.\n\n";
 
 TimeType ae2_main(char *fname, char *skip_start, char *skip_end, char *indirect_fname)
 {
-fprintf(stderr, ae2_loader_fail_msg);
+fprintf(stderr, GLOBALS.ae2_loader_fail_msg_ae2_c_1);
 exit(255);
 
 return(0); /* for vc++ */
@@ -44,7 +43,7 @@ return(0); /* for vc++ */
 
 void ae2_import_masked(void)
 {
-fprintf(stderr, ae2_loader_fail_msg);
+fprintf(stderr, GLOBALS.ae2_loader_fail_msg_ae2_c_1);
 exit(255);
 }
 
@@ -1084,6 +1083,9 @@ for(txidx=0;txidx<numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
  * Revision 1.3  2007/06/23 02:58:26  gtkwave
  * added bounds checking on start vs end cycle so they don't invert
  *

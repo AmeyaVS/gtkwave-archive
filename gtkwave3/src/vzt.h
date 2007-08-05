@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 2003-2004.
  *
  * This program is free software; you can redistribute it and/or
@@ -16,7 +16,6 @@
 
 #include "vcd.h"
 
-extern unsigned char is_lx2;
 
 TimeType 	vzt_main(char *fname, char *skip_start, char *skip_end);
 void 		import_vzt_trace(nptr np);
@@ -28,6 +27,9 @@ void 		vzt_import_masked(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:50  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

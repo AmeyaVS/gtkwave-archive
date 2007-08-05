@@ -1,4 +1,4 @@
-/* Declarations for getopt.
+#include"globals.h"/* Declarations for getopt.
    Copyright (C) 1989-1994, 1996-1999, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -44,7 +44,6 @@ extern "C" {
    Also, when `ordering' is RETURN_IN_ORDER,
    each non-option ARGV-element is returned here.  */
 
-extern char *optarg;
 
 /* Index in ARGV of the next element to be scanned.
    This is used for communication to and from the caller
@@ -58,16 +57,13 @@ extern char *optarg;
    Otherwise, `optind' communicates from one call to the next
    how much of ARGV has been scanned so far.  */
 
-extern int optind;
 
 /* Callers store zero here to inhibit the error message `getopt' prints
    for unrecognized options.  */
 
-extern int opterr;
 
 /* Set to an option character which was unrecognized.  */
 
-extern int optopt;
 
 #ifndef __need_getopt
 /* Describe the long-named options requested by the application.
@@ -183,6 +179,9 @@ extern int _getopt_internal ();
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:57  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:12  gtkwave
  * initial release
  *

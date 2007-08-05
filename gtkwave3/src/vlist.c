@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -19,7 +19,6 @@
 #include "vlist.h"
 #include <zlib.h>
 
-int vlist_compression_depth = 4; /* corresponds to zlib 0-9, -1 = disabled */
 
 /* create / destroy
  */
@@ -71,7 +70,7 @@ if(v->siz > 32)
 	unsigned long destlen = v->siz;
 	int rc;
 	
-	rc = compress2((unsigned char *)dmem, &destlen, (unsigned char *)(v+1), v->siz, vlist_compression_depth);
+	rc = compress2((unsigned char *)dmem, &destlen, (unsigned char *)(v+1), v->siz, GLOBALS.vlist_compression_depth);
 	if((rc == Z_OK)&&(destlen < (v->siz - sizeof(long))))
 		{
 		/* printf("siz: %d, dest: %d rc: %d\n", v->siz, (int)destlen, rc); */
@@ -180,7 +179,7 @@ if(vl->offs == vl->siz)
 
 	if((compressable)&&(vl->elem_siz == 1))
 		{
-		if(vlist_compression_depth>=0)
+		if(GLOBALS.vlist_compression_depth>=0)
 			{
 			vl = vlist_compress_block(vl);
 			}
@@ -253,6 +252,9 @@ if(siz != vl->siz)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:52  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

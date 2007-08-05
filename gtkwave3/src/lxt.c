@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 2001-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -37,7 +37,6 @@
  * functions which emit various big endian
  * data to a file
  */
-static int fpos;
 
 static int lt_emit_u8(FILE *handle, int value)
 {
@@ -46,7 +45,7 @@ int nmemb;
              
 buf[0] = value & 0xff;
 nmemb=fwrite(buf, sizeof(char), 1, handle);
-fpos+=nmemb;
+GLOBALS.fpos_lxt_c_1+=nmemb;
 return(nmemb);
 }   
 
@@ -59,7 +58,7 @@ int nmemb;
 buf[0] = (value>>8) & 0xff;   
 buf[1] = value & 0xff;   
 nmemb = fwrite(buf, sizeof(char), 2, handle);
-fpos+=nmemb;
+GLOBALS.fpos_lxt_c_1+=nmemb;
 return(nmemb);
 }
     
@@ -73,7 +72,7 @@ buf[0] = (value>>16) & 0xff;
 buf[1] = (value>>8) & 0xff;
 buf[2] = value & 0xff;
 nmemb=fwrite(buf, sizeof(char), 3, handle);
-fpos+=nmemb;
+GLOBALS.fpos_lxt_c_1+=nmemb;
 return(nmemb);
 }            
 
@@ -88,7 +87,7 @@ buf[1] = (value>>16) & 0xff;
 buf[2] = (value>>8) & 0xff;
 buf[3] = value & 0xff;
 nmemb=fwrite(buf, sizeof(char), 4, handle);
-fpos+=nmemb; 
+GLOBALS.fpos_lxt_c_1+=nmemb; 
 return(nmemb);
 }
 
@@ -100,56 +99,16 @@ return(nmemb);
 /*
  * globals
  */
-char is_lxt = 0;
-char lxt_clock_compress_to_z = 0;
 
-static void *mm, *mmcache;
-static int version;
 
-static struct fac *mvlfacs=NULL;
-static TimeType first_cycle, last_cycle, total_cycles;
-static int maxchange=0, maxindex=0;
-static off_t f_len;
 
-static int *positional_information=NULL;
-TimeType *time_information=NULL;
 
-static off_t change_field_offset=0;
-static off_t facname_offset=0;
-static off_t facgeometry_offset=0;
-static off_t time_table_offset=0;
-static off_t time_table_offset64=0;
-static off_t sync_table_offset=0;
-static off_t initial_value_offset=0;
-static off_t timescale_offset=0;
-static off_t double_test_offset=0;
-static off_t zdictionary_offset=0;
 
-static unsigned int zfacname_predec_size=0;
-static unsigned int zfacname_size=0;
-static unsigned int zfacgeometry_size=0;
-static unsigned int zsync_table_size=0;
-static unsigned int ztime_table_size=0;
-static unsigned int zchg_predec_size=0;
-static unsigned int zchg_size=0;
-static unsigned int zdictionary_predec_size=0;
 
-static unsigned char initial_value = AN_X;
 
-static unsigned int dict_num_entries;
-static unsigned int dict_string_mem_required;
-static off_t dict_16_offset;
-static off_t dict_24_offset;
-static off_t dict_32_offset;
-static unsigned int dict_width;
-static char **dict_string_mem_array=NULL;
 
-static off_t exclude_offset=0;
 
-static char *lt_buf=NULL;	/* max memory ever needed for parse_offset() */
-static int lt_len = 0;
 
-static int fd;			/* XXX : win32 requires decompression tempfiles since */
 				/* its mmap() variant doesn't use file descriptors    */
 #if defined __MINGW32__ || defined _MSC_VER
 #define PROT_READ (0)
@@ -228,12 +187,12 @@ inline static usigned int get_64(offset) {
 //#define get_byte(offset)        ((unsigned int)(*((unsigned char *)mm+offset)))
 
 inline static unsigned int get_byte(offset) {
-  return ((unsigned int)(*((unsigned char *)mm+offset)));
+  return ((unsigned int)(*((unsigned char *) GLOBALS.mm_lxt_c_1+offset)));
 }
 
 inline static unsigned int get_16(off_t offset)
 {
-unsigned short x = *((unsigned short *)((unsigned char *)mm+offset));
+unsigned short x = *((unsigned short *)((unsigned char *)GLOBALS.mm_lxt_c_1+offset));
 
   __asm("xchgb %b0,%h0" :
         "=q" (x)        :
@@ -244,7 +203,7 @@ unsigned short x = *((unsigned short *)((unsigned char *)mm+offset));
 
 inline static unsigned int get_32(off_t offset)	/* note that bswap is really 486+ */
 {
-unsigned int x = *((unsigned int *)((unsigned char *)mm+offset));
+unsigned int x = *((unsigned int *)((unsigned char *)GLOBALS.mm_lxt_c_1+offset));
 
  __asm("bswap   %0":
       "=r" (x) :
@@ -262,11 +221,11 @@ unsigned int x = *((unsigned int *)((unsigned char *)mm+offset));
  * reconstruct 8/16/24/32 bits out of the lxt's representation
  * of a big-endian integer.  this should work on all architectures.
  */
-#define get_byte(offset) 	((unsigned int)(*((unsigned char *)mm+offset)))
+#define get_byte(offset) 	((unsigned int)(*((unsigned char *)GLOBALS.mm_lxt_c_1+offset)))
 
 static unsigned int get_16(off_t offset)
 {
-unsigned char *nn=(unsigned char *)mm+offset;
+  unsigned char *nn=(unsigned char *)GLOBALS.mm_lxt_c_1+offset;
 unsigned int m1=*((unsigned char *)(nn++));
 unsigned int m2=*((unsigned char *)nn);
 return((m1<<8)|m2);
@@ -274,7 +233,7 @@ return((m1<<8)|m2);
 
 static unsigned int get_24(off_t offset)
 {
-unsigned char *nn=(unsigned char *)mm+offset;
+unsigned char *nn=(unsigned char *)GLOBALS.mm_lxt_c_1+offset;
 unsigned int m1=*((unsigned char *)(nn++));
 unsigned int m2=*((unsigned char *)(nn++));
 unsigned int m3=*((unsigned char *)nn);
@@ -283,7 +242,7 @@ return((m1<<16)|(m2<<8)|m3);
 
 static unsigned int get_32(off_t offset)
 {
-unsigned char *nn=(unsigned char *)mm+offset;
+unsigned char *nn=(unsigned char *)GLOBALS.mm_lxt_c_1+offset;
 unsigned int m1=*((unsigned char *)(nn++));
 unsigned int m2=*((unsigned char *)(nn++));
 unsigned int m3=*((unsigned char *)(nn++));
@@ -304,33 +263,30 @@ return(
 
 /****************************************************************************/
 
-static unsigned char double_mask[8]={0,0,0,0,0,0,0,0};
-static char double_is_native=0;
 
 static void create_double_endian_mask(int offset)
 {
-static double p = 3.14159;
 double d;
 int i, j;
 
-d= *((double *)((unsigned char *)mm+offset));
-if(p==d) 
+d= *((double *)((unsigned char *)GLOBALS.mm_lxt_c_1+offset));
+if(GLOBALS.p_lxt_c_1==d) 
 	{
-	double_is_native=1;
+	GLOBALS.double_is_native_lxt_c_1=1;
 	}
 	else
 	{
 	char *remote, *here;
 
 	remote = (char *)&d;
-	here = (char *)&p;
+	here = (char *)&GLOBALS.p_lxt_c_1;
 	for(i=0;i<8;i++)
 		{
 		for(j=0;j<8;j++)
 			{
 			if(here[i]==remote[j])
 				{
-				double_mask[i]=j;
+				GLOBALS.double_mask_lxt_c_1[i]=j;
 				break;
 				}
 			}
@@ -344,10 +300,10 @@ char swapbuf[8];
 char *pnt = malloc_2(8*sizeof(char));
 int i;
 
-memcpy(swapbuf, ((unsigned char *)mm+offset), 8);
+memcpy(swapbuf, ((unsigned char *)GLOBALS.mm_lxt_c_1+offset), 8);
 for(i=0;i<8;i++)
 	{
-	pnt[i]=swapbuf[double_mask[i]];
+	pnt[i]=swapbuf[GLOBALS.double_mask_lxt_c_1[i]];
 	}
 
 return(pnt);
@@ -370,7 +326,6 @@ return("01zx1xx0xxxxxxxx"[value&15]);
  * find the most recent valuechange that corresponds with
  * an arbitrary timevalue.
  */
-static int max_compare_time_tc, max_compare_pos_tc;
 static int compar_mvl_timechain(const void *s1, const void *s2)
 {
 int key, obj, delta;
@@ -379,10 +334,10 @@ int rv;
 key=*((int *)s1);
 obj=*((int *)s2);
 
-if((obj<=key)&&(obj>max_compare_time_tc))
+if((obj<=key)&&(obj>GLOBALS.max_compare_time_tc_lxt_c_2))
         {
-        max_compare_time_tc=obj;
-        max_compare_pos_tc=(int *)s2 - positional_information;
+        GLOBALS.max_compare_time_tc_lxt_c_2=obj;
+        GLOBALS.max_compare_pos_tc_lxt_c_2=(int *)s2 - GLOBALS.positional_information_lxt_c_1;
         }
 
 delta=key-obj;
@@ -397,15 +352,15 @@ static TimeType bsearch_mvl_timechain(int key)
 {
 void *bsearch_dummy_rv;
 
-max_compare_time_tc=-1; max_compare_pos_tc=-1; 
+GLOBALS.max_compare_time_tc_lxt_c_2=-1; GLOBALS.max_compare_pos_tc_lxt_c_2=-1; 
 
-bsearch_dummy_rv = bsearch((void *)&key, (void *)positional_information, total_cycles, sizeof(int), compar_mvl_timechain);
-if((max_compare_pos_tc<=0)||(max_compare_time_tc<0)) 
+bsearch_dummy_rv = bsearch((void *)&key, (void *)GLOBALS.positional_information_lxt_c_1, GLOBALS.total_cycles_lxt_c_2, sizeof(int), compar_mvl_timechain);
+if((GLOBALS.max_compare_pos_tc_lxt_c_2<=0)||(GLOBALS.max_compare_time_tc_lxt_c_2<0)) 
         {
-        max_compare_pos_tc=0; /* aix bsearch fix */
+        GLOBALS.max_compare_pos_tc_lxt_c_2=0; /* aix bsearch fix */
         }
 
-return(time_information[max_compare_pos_tc]);
+return(GLOBALS.time_information[GLOBALS.max_compare_pos_tc_lxt_c_2]);
 }
 
 
@@ -415,7 +370,7 @@ return(time_information[max_compare_pos_tc]);
 static void build_dict(void)
 {
 gzFile zhandle;
-off_t offs = zdictionary_offset+24;
+off_t offs = GLOBALS.zdictionary_offset_lxt_c_1+24;
 int total_mem, rc, i;
 char *decmem=NULL;
 char *pnt;
@@ -423,12 +378,12 @@ char *pnt;
 FILE *tmp;
 #endif
 
-dict_num_entries = get_32(zdictionary_offset+0);
-dict_string_mem_required = get_32(zdictionary_offset+4);
-dict_16_offset = get_32(zdictionary_offset+8);
-dict_24_offset = get_32(zdictionary_offset+12);
-dict_32_offset = get_32(zdictionary_offset+16);
-dict_width = get_32(zdictionary_offset+20);
+GLOBALS.dict_num_entries_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+0);
+GLOBALS.dict_string_mem_required_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+4);
+GLOBALS.dict_16_offset_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+8);
+GLOBALS.dict_24_offset_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+12);
+GLOBALS.dict_32_offset_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+16);
+GLOBALS.dict_width_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+20);
 
 DEBUG(fprintf(stderr, LXTHDR"zdictionary_offset = %08x\n", zdictionary_offset));
 DEBUG(fprintf(stderr, LXTHDR"zdictionary_predec_size = %08x\n\n", zdictionary_predec_size));
@@ -448,21 +403,21 @@ fwrite(t, zdictionary_predec_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
 zhandle = gzdopen(dup(fileno(tmp)), "rb");
 }
 #else
-if(offs!=lseek(fd, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"dict lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
-zhandle = gzdopen(dup(fd), "rb");
+if(offs!=lseek(GLOBALS.fd_lxt_c_1, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"dict lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
+zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
-decmem = malloc_2(total_mem = dict_string_mem_required);
+decmem = malloc_2(total_mem = GLOBALS.dict_string_mem_required_lxt_c_1);
 
 rc=gzread(zhandle, decmem, total_mem);
 DEBUG(printf(LXTHDR"section offs for name decompression = %08x of len %d\n", offs, dict_string_mem_required));
 DEBUG(printf(LXTHDR"Decompressed size is %d bytes (vs %d)\n", rc, total_mem));	
 if(rc!=total_mem) { fprintf(stderr, LXTHDR"decompression size disparity  %d bytes (vs %d)\n", rc, total_mem); exit(255); }
 
-dict_string_mem_array = (char **)calloc_2(dict_num_entries, sizeof(char *));
+GLOBALS.dict_string_mem_array_lxt_c_1 = (char **)calloc_2(GLOBALS.dict_num_entries_lxt_c_1, sizeof(char *));
 pnt = decmem;
-for(i=0;i<dict_num_entries;i++)
+for(i=0;i<GLOBALS.dict_num_entries_lxt_c_1;i++)
 	{
-	dict_string_mem_array[i]=pnt;
+	GLOBALS.dict_string_mem_array_lxt_c_1[i]=pnt;
 	pnt+=(strlen(pnt)+1);
 	DEBUG(printf(LXTHDR"Dict %d: '1%s'\n", i, dict_string_mem_array[i]));
 	}
@@ -472,7 +427,7 @@ gzclose(zhandle);
 fclose(tmp);
 #endif
 
-fprintf(stderr, LXTHDR"...expanded %d entries from %08x into %08x bytes.\n", dict_num_entries, zdictionary_predec_size, dict_string_mem_required);
+fprintf(stderr, LXTHDR"...expanded %d entries from %08x into %08x bytes.\n", GLOBALS.dict_num_entries_lxt_c_1, GLOBALS.zdictionary_predec_size_lxt_c_1, GLOBALS.dict_string_mem_required_lxt_c_1);
 }
 
 
@@ -482,10 +437,10 @@ fprintf(stderr, LXTHDR"...expanded %d entries from %08x into %08x bytes.\n", dic
 static void build_facs(char *fname)
 {
 char *buf, *bufprev, *bufcurr;
-off_t offs=facname_offset+8;
+off_t offs=GLOBALS.facname_offset_lxt_c_1+8;
 int i, j, clone;
 char *pnt;
-int total_mem = get_32(facname_offset+4);
+int total_mem = get_32(GLOBALS.facname_offset_lxt_c_1+4);
 gzFile zhandle = NULL;
 char *decmem=NULL;
 
@@ -496,7 +451,7 @@ FILE *tmp;
 buf=malloc_2(total_mem);
 pnt=bufprev=buf;
 
-if(zfacname_size)
+if(GLOBALS.zfacname_size_lxt_c_1)
 	{
 	int rc;
 #if defined __MINGW32__ || defined _MSC_VER
@@ -505,12 +460,12 @@ if(zfacname_size)
 	fwrite(t, zfacname_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
 	zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
-	if(offs!=lseek(fd, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zfacname lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
-	zhandle = gzdopen(dup(fd), "rb");
+	if(offs!=lseek(GLOBALS.fd_lxt_c_1, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zfacname lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
+	zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
 
-	mmcache = mm;
-	decmem = malloc_2(total_mem = zfacname_predec_size); mm = decmem;
+	GLOBALS.mmcache_lxt_c_1 = GLOBALS.mm_lxt_c_1;
+	decmem = malloc_2(total_mem = GLOBALS.zfacname_predec_size_lxt_c_1); GLOBALS.mm_lxt_c_1 = decmem;
 
 	rc=gzread(zhandle, decmem, total_mem);
 	DEBUG(printf(LXTHDR"section offs for name decompression = %08x of len %d\n", offs, zfacname_size));
@@ -520,8 +475,8 @@ if(zfacname_size)
 	offs=0;	/* we're in our new memory region now.. */
 	}
 
-fprintf(stderr, LXTHDR"Building %d facilities.\n", numfacs);
-for(i=0;i<numfacs;i++)
+fprintf(stderr, LXTHDR"Building %d facilities.\n", GLOBALS.numfacs);
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
         clone=get_16(offs);  offs+=2;
 	bufcurr=pnt;
@@ -530,14 +485,14 @@ for(i=0;i<numfacs;i++)
 		*(pnt++) = *(bufprev++);
 		}
         while((*(pnt++)=get_byte(offs++)));
-        mvlfacs[i].name=bufcurr;
+        GLOBALS.mvlfacs_lxt_c_2[i].name=bufcurr;
 	DEBUG(printf(LXTHDR"Encountered facility %d: '%s'\n", i, bufcurr));
 	bufprev=bufcurr;
         }
 
-if(zfacname_size)
+if(GLOBALS.zfacname_size_lxt_c_1)
 	{
-	mm = mmcache;
+	GLOBALS.mm_lxt_c_1 = GLOBALS.mmcache_lxt_c_1;
 	free_2(decmem); decmem = NULL;
 	gzclose(zhandle);
 #if defined __MINGW32__ ||  defined _MSC_VER
@@ -545,15 +500,15 @@ if(zfacname_size)
 #endif
 	}
 
-if(!facgeometry_offset)
+if(!GLOBALS.facgeometry_offset_lxt_c_1)
 	{
 	fprintf(stderr, "LXT '%s' is missing a facility geometry section, exiting.\n", fname);
 	exit(255);
 	}
 
-offs=facgeometry_offset;
+offs=GLOBALS.facgeometry_offset_lxt_c_1;
 
-if(zfacgeometry_size)
+if(GLOBALS.zfacgeometry_size_lxt_c_1)
 	{
 	int rc;
 
@@ -563,12 +518,12 @@ if(zfacgeometry_size)
 	fwrite(t, zfacgeometry_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
 	zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
-	if(offs!=lseek(fd, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zfacgeometry lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
-	zhandle = gzdopen(dup(fd), "rb");
+	if(offs!=lseek(GLOBALS.fd_lxt_c_1, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zfacgeometry lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
+	zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
-	mmcache = mm;
-	total_mem = numfacs * 16;
-	decmem = malloc_2(total_mem); mm = decmem;
+	GLOBALS.mmcache_lxt_c_1 = GLOBALS.mm_lxt_c_1;
+	total_mem = GLOBALS.numfacs * 16;
+	decmem = malloc_2(total_mem); GLOBALS.mm_lxt_c_1 = decmem;
 
 	rc=gzread(zhandle, decmem, total_mem);
 	DEBUG(printf(LXTHDR"section offs for facgeometry decompression = %08x of len %d\n", offs, zfacgeometry_size));
@@ -578,25 +533,25 @@ if(zfacgeometry_size)
 	offs=0;	/* we're in our new memory region now.. */
 	}
 
-for(i=0;i<numfacs;i++)
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
-	mvlfacs[i].array_height=get_32(offs);
-	mvlfacs[i].msb=get_32(offs+4);
-	mvlfacs[i].lsb=get_32(offs+8);
-	mvlfacs[i].flags=get_32(offs+12);
-	mvlfacs[i].len=(mvlfacs[i].lsb>mvlfacs[i].msb)?(mvlfacs[i].lsb-mvlfacs[i].msb+1):(mvlfacs[i].msb-mvlfacs[i].lsb+1);
+	GLOBALS.mvlfacs_lxt_c_2[i].array_height=get_32(offs);
+	GLOBALS.mvlfacs_lxt_c_2[i].msb=get_32(offs+4);
+	GLOBALS.mvlfacs_lxt_c_2[i].lsb=get_32(offs+8);
+	GLOBALS.mvlfacs_lxt_c_2[i].flags=get_32(offs+12);
+	GLOBALS.mvlfacs_lxt_c_2[i].len=(GLOBALS.mvlfacs_lxt_c_2[i].lsb>GLOBALS.mvlfacs_lxt_c_2[i].msb)?(GLOBALS.mvlfacs_lxt_c_2[i].lsb-GLOBALS.mvlfacs_lxt_c_2[i].msb+1):(GLOBALS.mvlfacs_lxt_c_2[i].msb-GLOBALS.mvlfacs_lxt_c_2[i].lsb+1);
 
-	if(mvlfacs[i].len>lt_len) lt_len = mvlfacs[i].len;
+	if(GLOBALS.mvlfacs_lxt_c_2[i].len>GLOBALS.lt_len_lxt_c_1) GLOBALS.lt_len_lxt_c_1 = GLOBALS.mvlfacs_lxt_c_2[i].len;
 	DEBUG(printf(LXTHDR"%s[%d:%d]\n", mvlfacs[i].name, mvlfacs[i].msb, mvlfacs[i].lsb));
 
 	offs+=0x10;
 	}
 
-lt_buf = malloc_2(lt_len>255 ? lt_len : 256);	/* in order to keep trivial LXT files from overflowing their buffer */
+GLOBALS.lt_buf_lxt_c_1 = malloc_2(GLOBALS.lt_len_lxt_c_1>255 ? GLOBALS.lt_len_lxt_c_1 : 256);	/* in order to keep trivial LXT files from overflowing their buffer */
 
-if(zfacgeometry_size)
+if(GLOBALS.zfacgeometry_size_lxt_c_1)
 	{
-	mm = mmcache;
+	GLOBALS.mm_lxt_c_1 = GLOBALS.mmcache_lxt_c_1;
 	free_2(decmem); decmem = NULL;
 	gzclose(zhandle);
 #if defined __MINGW32__ || defined _MSC_VER
@@ -626,27 +581,27 @@ gzFile zhandle = NULL;
 FILE *tmp;
 #endif
 
-if((!time_table_offset)&&(!time_table_offset64))
+if((!GLOBALS.time_table_offset_lxt_c_1)&&(!GLOBALS.time_table_offset64_lxt_c_1))
 	{
 	fprintf(stderr, "LXT '%s' is missing a time table section, exiting.\n", fname);
 	exit(255);
 	}
 
-if((time_table_offset)&&(time_table_offset64))
+if((GLOBALS.time_table_offset_lxt_c_1)&&(GLOBALS.time_table_offset64_lxt_c_1))
 	{
 	fprintf(stderr, "LXT '%s' has both 32 and 64-bit time table sections, exiting.\n", fname);
 	exit(255);
 	}
 
-if(time_table_offset)
+if(GLOBALS.time_table_offset_lxt_c_1)
 	{
-	offs = time_table_offset;
+	offs = GLOBALS.time_table_offset_lxt_c_1;
 
 	DEBUG(printf(LXTHDR"Time table position: %08x\n", time_table_offset + 12));
-	total_cycles=get_32(offs+0);
+	GLOBALS.total_cycles_lxt_c_2=get_32(offs+0);
 	DEBUG(printf(LXTHDR"Total cycles: %d\n", total_cycles));
 
-	if(ztime_table_size)
+	if(GLOBALS.ztime_table_size_lxt_c_1)
 		{
 		int rc;
 
@@ -656,12 +611,12 @@ if(time_table_offset)
 		fwrite(t, ztime_table_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
 		zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
-		if((offs+4)!=lseek(fd, offs+4, SEEK_SET)) { fprintf(stderr, LXTHDR"ztime_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
-		zhandle = gzdopen(dup(fd), "rb");
+		if((offs+4)!=lseek(GLOBALS.fd_lxt_c_1, offs+4, SEEK_SET)) { fprintf(stderr, LXTHDR"ztime_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
+		zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
-		mmcache = mm;
-		total_mem = 4 + 4 + (total_cycles * 4) + (total_cycles * 4);
-		decmem = malloc_2(total_mem); mm = decmem;
+		GLOBALS.mmcache_lxt_c_1 = GLOBALS.mm_lxt_c_1;
+		total_mem = 4 + 4 + (GLOBALS.total_cycles_lxt_c_2 * 4) + (GLOBALS.total_cycles_lxt_c_2 * 4);
+		decmem = malloc_2(total_mem); GLOBALS.mm_lxt_c_1 = decmem;
 
 		rc=gzread(zhandle, decmem, total_mem);
 		DEBUG(printf(LXTHDR"section offs for timetable decompression = %08x of len %d\n", offs, ztime_table_size));
@@ -675,34 +630,34 @@ if(time_table_offset)
 		offs+=4; /* skip past count to make consistent view between compressed/uncompressed */
 		}
 
-	first_cycle=get_32(offs);
+	GLOBALS.first_cycle_lxt_c_2=get_32(offs);
 	DEBUG(printf(LXTHDR"First cycle: %d\n", first_cycle));
-	last_cycle=get_32(offs+4);
+	GLOBALS.last_cycle_lxt_c_2=get_32(offs+4);
 	DEBUG(printf(LXTHDR"Last cycle: %d\n", last_cycle));
 	DEBUG(printf(LXTHDR"Total cycles (actual): %d\n", last_cycle-first_cycle+1));
 	
 	/* rebuild time table from its deltas... */
 
-	positional_information = (int *)malloc_2(total_cycles * sizeof(int));
+	GLOBALS.positional_information_lxt_c_1 = (int *)malloc_2(GLOBALS.total_cycles_lxt_c_2 * sizeof(int));
 	last_position=0;
 	offs+=8;
-	for(i=0;i<total_cycles;i++)
+	for(i=0;i<GLOBALS.total_cycles_lxt_c_2;i++)
 		{
-		last_position = positional_information[i] = get_32(offs) + last_position;
+		last_position = GLOBALS.positional_information_lxt_c_1[i] = get_32(offs) + last_position;
 		offs+=4;
 		}
-	time_information =       (TimeType *)malloc_2(total_cycles * sizeof(TimeType));
+	GLOBALS.time_information =       (TimeType *)malloc_2(GLOBALS.total_cycles_lxt_c_2 * sizeof(TimeType));
 	last_time=LLDescriptor(0);
-	for(i=0;i<total_cycles;i++)
+	for(i=0;i<GLOBALS.total_cycles_lxt_c_2;i++)
 		{
-		last_time = time_information[i] = ((TimeType)get_32(offs)) + last_time;
-		time_information[i] *= (time_scale);
+		last_time = GLOBALS.time_information[i] = ((TimeType)get_32(offs)) + last_time;
+		GLOBALS.time_information[i] *= (GLOBALS.time_scale);
 		offs+=4;
 		}
 
-	if(ztime_table_size)
+	if(GLOBALS.ztime_table_size_lxt_c_1)
 		{
-		mm = mmcache;
+		GLOBALS.mm_lxt_c_1 = GLOBALS.mmcache_lxt_c_1;
 		free_2(decmem); decmem = NULL;
 		gzclose(zhandle);
 #if defined __MINGW32__ || defined _MSC_VER
@@ -712,14 +667,14 @@ if(time_table_offset)
 	}
 	else	/* 64-bit read */
 	{
-	offs = time_table_offset64;
+	offs = GLOBALS.time_table_offset64_lxt_c_1;
 
 	DEBUG(printf(LXTHDR"Time table position: %08x\n", time_table_offset64 + 20));
 
-	total_cycles=(TimeType)((unsigned int)get_32(offs+0));
+	GLOBALS.total_cycles_lxt_c_2=(TimeType)((unsigned int)get_32(offs+0));
 	DEBUG(printf(LXTHDR"Total cycles: %d\n", total_cycles));
 
-	if(ztime_table_size)
+	if(GLOBALS.ztime_table_size_lxt_c_1)
 		{
 		int rc;
 
@@ -729,12 +684,12 @@ if(time_table_offset)
 		fwrite(t, ztime_table_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
 		zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
-		if((offs+4)!=lseek(fd, offs+4, SEEK_SET)) { fprintf(stderr, LXTHDR"ztime_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
-		zhandle = gzdopen(dup(fd), "rb");
+		if((offs+4)!=lseek(GLOBALS.fd_lxt_c_1, offs+4, SEEK_SET)) { fprintf(stderr, LXTHDR"ztime_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
+		zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
-		mmcache = mm;
-		total_mem = 8 + 8 + (total_cycles * 4) + (total_cycles * 8);
-		decmem = malloc_2(total_mem); mm = decmem;
+		GLOBALS.mmcache_lxt_c_1 = GLOBALS.mm_lxt_c_1;
+		total_mem = 8 + 8 + (GLOBALS.total_cycles_lxt_c_2 * 4) + (GLOBALS.total_cycles_lxt_c_2 * 8);
+		decmem = malloc_2(total_mem); GLOBALS.mm_lxt_c_1 = decmem;
 
 		rc=gzread(zhandle, decmem, total_mem);
 		DEBUG(printf(LXTHDR"section offs for timetable decompression = %08x of len %d\n", offs, ztime_table_size));
@@ -748,34 +703,34 @@ if(time_table_offset)
 		offs+=4; /* skip past count to make consistent view between compressed/uncompressed */
 		}
 
-	first_cycle=get_64(offs);
+	GLOBALS.first_cycle_lxt_c_2=get_64(offs);
 	DEBUG(printf(LXTHDR"First cycle: %d\n", first_cycle));
-	last_cycle=get_64(offs+8);
+	GLOBALS.last_cycle_lxt_c_2=get_64(offs+8);
 	DEBUG(printf(LXTHDR"Last cycle: %d\n", last_cycle));
 	DEBUG(printf(LXTHDR"Total cycles (actual): %lld\n", last_cycle-first_cycle+1));
 	
 	/* rebuild time table from its deltas... */
 
-	positional_information = (int *)malloc_2(total_cycles * sizeof(int));
+	GLOBALS.positional_information_lxt_c_1 = (int *)malloc_2(GLOBALS.total_cycles_lxt_c_2 * sizeof(int));
 	last_position=0;
 	offs+=16;
-	for(i=0;i<total_cycles;i++)
+	for(i=0;i<GLOBALS.total_cycles_lxt_c_2;i++)
 		{
-		last_position = positional_information[i] = get_32(offs) + last_position;
+		last_position = GLOBALS.positional_information_lxt_c_1[i] = get_32(offs) + last_position;
 		offs+=4;
 		}
-	time_information =       (TimeType *)malloc_2(total_cycles * sizeof(TimeType));
+	GLOBALS.time_information =       (TimeType *)malloc_2(GLOBALS.total_cycles_lxt_c_2 * sizeof(TimeType));
 	last_time=LLDescriptor(0);
-	for(i=0;i<total_cycles;i++)
+	for(i=0;i<GLOBALS.total_cycles_lxt_c_2;i++)
 		{
-		last_time = time_information[i] = ((TimeType)get_64(offs)) + last_time;
-		time_information[i] *= (time_scale);
+		last_time = GLOBALS.time_information[i] = ((TimeType)get_64(offs)) + last_time;
+		GLOBALS.time_information[i] *= (GLOBALS.time_scale);
 		offs+=8;
 		}
 
-	if(ztime_table_size)
+	if(GLOBALS.ztime_table_size_lxt_c_1)
 		{
-		mm = mmcache;
+		GLOBALS.mm_lxt_c_1 = GLOBALS.mmcache_lxt_c_1;
 		free_2(decmem); decmem = NULL;
 		gzclose(zhandle);
 #if defined __MINGW32__ || defined _MSC_VER
@@ -784,11 +739,11 @@ if(time_table_offset)
 		}
 	}
 
-if(sync_table_offset)
+if(GLOBALS.sync_table_offset_lxt_c_1)
 	{
-	offs = sync_table_offset;
+	offs = GLOBALS.sync_table_offset_lxt_c_1;
 
-	if(zsync_table_size)
+	if(GLOBALS.zsync_table_size_lxt_c_1)
 		{
 		int rc;
 #if defined __MINGW32__ || defined _MSC_VER
@@ -797,11 +752,11 @@ if(sync_table_offset)
 		fwrite(t, zsync_table_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
 		zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
-		if(offs!=lseek(fd, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zsync_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
-		zhandle = gzdopen(dup(fd), "rb");
+		if(offs!=lseek(GLOBALS.fd_lxt_c_1, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zsync_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
+		zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
-		mmcache = mm;
-		decmem = malloc_2(total_mem = numfacs * 4); mm = decmem;
+		GLOBALS.mmcache_lxt_c_1 = GLOBALS.mm_lxt_c_1;
+		decmem = malloc_2(total_mem = GLOBALS.numfacs * 4); GLOBALS.mm_lxt_c_1 = decmem;
 
 		rc=gzread(zhandle, decmem, total_mem);
 		DEBUG(printf(LXTHDR"section offs for synctable decompression = %08x of len %d\n", offs, zsync_table_size));
@@ -811,17 +766,17 @@ if(sync_table_offset)
 		offs=0;	/* we're in our new memory region now.. */
 		}
 
-	for(i=0;i<numfacs;i++)
+	for(i=0;i<GLOBALS.numfacs;i++)
 		{
 		chg=get_32(offs);  offs+=4;
 		if(chg>maxchg) {maxchg=chg; maxindx=i; }
-		mvlfacs[i].lastchange=chg;
+		GLOBALS.mvlfacs_lxt_c_2[i].lastchange=chg;
 		DEBUG(printf(LXTHDR"Changes: %d '%s' %08x\n", i, mvlfacs[i].name, chg));
 		}
 
-	if(zsync_table_size)
+	if(GLOBALS.zsync_table_size_lxt_c_1)
 		{
-		mm = mmcache;
+		GLOBALS.mm_lxt_c_1 = GLOBALS.mmcache_lxt_c_1;
 		free_2(decmem); decmem = NULL;
 		gzclose(zhandle);
 #if defined __MINGW32__ || defined _MSC_VER
@@ -831,20 +786,20 @@ if(sync_table_offset)
 
 	DEBUG(printf(LXTHDR"Maxchange at: %08x for symbol '%s' of len %d\n", maxchg, mvlfacs[maxindx].name,  mvlfacs[maxindx].len));
 
-	maxchange=maxchg;
-	maxindex=maxindx;
+	GLOBALS.maxchange_lxt_c_1=maxchg;
+	GLOBALS.maxindex_lxt_c_1=maxindx;
 	}
 
-if(zchg_size)
+if(GLOBALS.zchg_size_lxt_c_1)
 	{
 	/* we don't implement the tempfile version for windows... */
 #if !defined __MINGW32__ && !defined _MSC_VER
-	if(zchg_predec_size > LXT_MMAP_MALLOC_BOUNDARY)
+	if(GLOBALS.zchg_predec_size_lxt_c_1 > LXT_MMAP_MALLOC_BOUNDARY)
 		{
 		int fd_dummy;
 		char *nam = tmpnam_2(NULL, &fd_dummy);
 		FILE *tmp = fopen(nam, "wb");
-		unsigned int len=zchg_predec_size;
+		unsigned int len=GLOBALS.zchg_predec_size_lxt_c_1;
 		int rc;
 		char buf[32768];
 		int fd2 = open(nam, O_RDONLY);
@@ -855,15 +810,15 @@ if(zchg_size)
 		if(fd_dummy >=0) close(fd_dummy);
 
 		fprintf(stderr, LXTHDR"Compressed change records detected, making tempfile...\n");
-		if(change_field_offset != lseek(fd, change_field_offset, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)change_field_offset); exit(255); }
+		if(GLOBALS.change_field_offset_lxt_c_1 != lseek(GLOBALS.fd_lxt_c_1, GLOBALS.change_field_offset_lxt_c_1, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)GLOBALS.change_field_offset_lxt_c_1); exit(255); }
 
-		is_bz2 = (read(fd, &testbyte, 2))&&(testbyte[0]=='B')&&(testbyte[1]=='Z');
+		is_bz2 = (read(GLOBALS.fd_lxt_c_1, &testbyte, 2))&&(testbyte[0]=='B')&&(testbyte[1]=='Z');
 
-		if(change_field_offset != lseek(fd, change_field_offset, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)change_field_offset); exit(255); }
+		if(GLOBALS.change_field_offset_lxt_c_1 != lseek(GLOBALS.fd_lxt_c_1, GLOBALS.change_field_offset_lxt_c_1, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)GLOBALS.change_field_offset_lxt_c_1); exit(255); }
 
 		if(is_bz2)
 			{
-			zhandle = BZ2_bzdopen(dup(fd), "rb");
+			zhandle = BZ2_bzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 	
 			while(len)
 				{
@@ -874,12 +829,12 @@ if(zchg_size)
 				len -= siz;		
 				}
 	
-			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", zchg_size, zchg_predec_size);
+			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", GLOBALS.zchg_size_lxt_c_1, GLOBALS.zchg_predec_size_lxt_c_1);
 			BZ2_bzclose(zhandle);
 			}
 			else
 			{
-			zhandle = gzdopen(dup(fd), "rb");
+			zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 	
 			while(len)
 				{
@@ -890,25 +845,25 @@ if(zchg_size)
 				len -= siz;		
 				}
 	
-			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", zchg_size, zchg_predec_size);
+			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", GLOBALS.zchg_size_lxt_c_1, GLOBALS.zchg_predec_size_lxt_c_1);
 			gzclose(zhandle);
 			}
-		munmap(mm, f_len); close(fd);
+		munmap(GLOBALS.mm_lxt_c_1, GLOBALS.f_len_lxt_c_1); close(GLOBALS.fd_lxt_c_1);
 		fflush(tmp);
 		fseeko(tmp, 0, SEEK_SET);
 		fclose(tmp);
 	
-		fd = fd2;
-		mm=mmap(NULL, zchg_predec_size, PROT_READ, MAP_SHARED, fd, 0);	
+		GLOBALS.fd_lxt_c_1 = fd2;
+		GLOBALS.mm_lxt_c_1=mmap(NULL, GLOBALS.zchg_predec_size_lxt_c_1, PROT_READ, MAP_SHARED, GLOBALS.fd_lxt_c_1, 0);	
 
-		mm=(void *)((char *)mm-4); /* because header and version don't exist in packed change records */
+		GLOBALS.mm_lxt_c_1=(void *)((char *)GLOBALS.mm_lxt_c_1-4); /* because header and version don't exist in packed change records */
 		}
 		else
 #endif
 		{
-		unsigned int len=zchg_predec_size;
+		unsigned int len=GLOBALS.zchg_predec_size_lxt_c_1;
 		int rc;
-		char *buf = malloc_2(zchg_predec_size);
+		char *buf = malloc_2(GLOBALS.zchg_predec_size_lxt_c_1);
 		char *pnt = buf;
 		char testbyte[2]={0,0};
 		char is_bz2;
@@ -922,11 +877,11 @@ if(zchg_size)
 		is_bz2 = (get_byte(change_field_offset)=='B') && (get_byte(change_field_offset+1)=='Z');
 		}
 #else		
-		if(change_field_offset != lseek(fd, change_field_offset, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)change_field_offset); exit(255); }
+		if(GLOBALS.change_field_offset_lxt_c_1 != lseek(GLOBALS.fd_lxt_c_1, GLOBALS.change_field_offset_lxt_c_1, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)GLOBALS.change_field_offset_lxt_c_1); exit(255); }
 
-		is_bz2 = (read(fd, &testbyte, 2))&&(testbyte[0]=='B')&&(testbyte[1]=='Z');
+		is_bz2 = (read(GLOBALS.fd_lxt_c_1, &testbyte, 2))&&(testbyte[0]=='B')&&(testbyte[1]=='Z');
 
-		if(change_field_offset != lseek(fd, change_field_offset, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)change_field_offset); exit(255); }
+		if(GLOBALS.change_field_offset_lxt_c_1 != lseek(GLOBALS.fd_lxt_c_1, GLOBALS.change_field_offset_lxt_c_1, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)GLOBALS.change_field_offset_lxt_c_1); exit(255); }
 #endif
 
 		if(is_bz2)
@@ -934,7 +889,7 @@ if(zchg_size)
 #if defined __MINGW32__ || defined _MSC_VER
 			zhandle = BZ2_bzdopen(dup(fileno(tmp)), "rb");			
 #else
-			zhandle = BZ2_bzdopen(dup(fd), "rb");
+			zhandle = BZ2_bzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
 			
 			while(len)
@@ -946,7 +901,7 @@ if(zchg_size)
 				len -= siz;		
 				}
 	
-			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", zchg_size, zchg_predec_size);
+			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", GLOBALS.zchg_size_lxt_c_1, GLOBALS.zchg_predec_size_lxt_c_1);
 			BZ2_bzclose(zhandle);
 			}
 			else
@@ -954,7 +909,7 @@ if(zchg_size)
 #if defined __MINGW32__ || defined _MSC_VER
 			zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
-			zhandle = gzdopen(dup(fd), "rb");
+			zhandle = gzdopen(dup(GLOBALS.fd_lxt_c_1), "rb");
 #endif
 			while(len)
 				{
@@ -965,33 +920,33 @@ if(zchg_size)
 				len -= siz;		
 				}
 	
-			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", zchg_size, zchg_predec_size);
+			fprintf(stderr, LXTHDR"...expanded %08x into %08x bytes.\n", GLOBALS.zchg_size_lxt_c_1, GLOBALS.zchg_predec_size_lxt_c_1);
 			gzclose(zhandle);
 #if defined __MINGW32__ || defined _MSC_VER
 			fclose(tmp);
 #endif
 			}
 
-		munmap(mm, f_len); 
+		munmap(GLOBALS.mm_lxt_c_1, GLOBALS.f_len_lxt_c_1); 
 #if !defined __MINGW32__ && !defined _MSC_VER
-		close(fd);
+		close(GLOBALS.fd_lxt_c_1);
 #endif
 		
-		fd=-1;
-		mm=buf-4; /* because header and version don't exist in packed change records */
+		GLOBALS.fd_lxt_c_1=-1;
+		GLOBALS.mm_lxt_c_1=buf-4; /* because header and version don't exist in packed change records */
 		}
 	}
 
 
-if(!sync_table_offset)
+if(!GLOBALS.sync_table_offset_lxt_c_1)
 	{
-	off_t vlen = zchg_predec_size ? zchg_predec_size+4 : 0;
-	off_t offs = zchg_predec_size ? 4 : 0;
+	off_t vlen = GLOBALS.zchg_predec_size_lxt_c_1 ? GLOBALS.zchg_predec_size_lxt_c_1+4 : 0;
+	off_t offs = GLOBALS.zchg_predec_size_lxt_c_1 ? 4 : 0;
 	unsigned int numfacs_bytes;
 	unsigned int num_records = 0;
 	unsigned int last_change_delta, numbytes;
-	int *positional_compar = positional_information;
-        int *positional_kill_pnt = positional_information + total_cycles;
+	int *positional_compar = GLOBALS.positional_information_lxt_c_1;
+        int *positional_kill_pnt = GLOBALS.positional_information_lxt_c_1 + GLOBALS.total_cycles_lxt_c_2;
         char positional_kill = 0;
 
 	unsigned int dict_16_offset_new = 0;
@@ -1005,23 +960,23 @@ if(!sync_table_offset)
 	
 	fprintf(stderr, LXTHDR"Linear LXT encountered...\n");
 
-	if(!zchg_predec_size)
+	if(!GLOBALS.zchg_predec_size_lxt_c_1)
 		{
 		fprintf(stderr, LXTHDR"Uncompressed linear LXT not supported, exiting.\n");
 		exit(255);
 		}
 
-	if(numfacs >= 256*65536)
+	if(GLOBALS.numfacs >= 256*65536)
         	{
                 numfacs_bytes = 3;
                 }
         else
-        if(numfacs >= 65536)
+        if(GLOBALS.numfacs >= 65536)
                 {
                 numfacs_bytes = 2;
                	}
         else
-        if(numfacs >= 256)
+        if(GLOBALS.numfacs >= 256)
                	{
                	numfacs_bytes = 1;
 		}
@@ -1032,7 +987,7 @@ if(!sync_table_offset)
 
 	nam = tmpnam_2(NULL, &fd_dummy);
 	tmp = fopen(nam, "wb");
-	fpos = 4;	/* fake 4 bytes padding */
+	GLOBALS.fpos_lxt_c_1 = 4;	/* fake 4 bytes padding */
 	recfd = open(nam, O_RDONLY);
 
 	unlink(nam);
@@ -1054,7 +1009,7 @@ if(!sync_table_offset)
                         {
                         if(offs == *positional_compar)  
                                 {
-                                *positional_compar = fpos;
+                                *positional_compar = GLOBALS.fpos_lxt_c_1;
                                 positional_compar++;
                                 if(positional_compar == positional_kill_pnt) positional_kill = 1;
                                 }
@@ -1068,15 +1023,15 @@ if(!sync_table_offset)
 			case 3: facidx = get_32(offs); break;
 			}
 
-		if(facidx>numfacs)
+		if(facidx>GLOBALS.numfacs)
 			{
-			fprintf(stderr, LXTHDR"Facidx %d out of range (vs %d) at offset %08x, exiting.\n", facidx, numfacs, (unsigned int)offs);
+			fprintf(stderr, LXTHDR"Facidx %d out of range (vs %d) at offset %08x, exiting.\n", facidx, GLOBALS.numfacs, (unsigned int)offs);
 			exit(255);
 			}
 
 		offs += (numfacs_bytes+1);
 
-		cmdkill = mvlfacs[facidx].flags & (LT_SYM_F_DOUBLE|LT_SYM_F_STRING);
+		cmdkill = GLOBALS.mvlfacs_lxt_c_2[facidx].flags & (LT_SYM_F_DOUBLE|LT_SYM_F_STRING);
 		if(!cmdkill)
 			{
 			cmd = get_byte(offs);
@@ -1096,7 +1051,7 @@ if(!sync_table_offset)
 
 		offscache2 = offs;
 
-		height = mvlfacs[facidx].array_height;
+		height = GLOBALS.mvlfacs_lxt_c_2[facidx].array_height;
 		if(height)
 			{
 			if(height >= 256*65536)       
@@ -1123,17 +1078,17 @@ if(!sync_table_offset)
 		offscache3 = offs;
 		if(!dict_16_offset_new)
 			{
-			if (offs == dict_16_offset) { dict_16_offset_new = fpos; }
+			if (offs == GLOBALS.dict_16_offset_lxt_c_1) { dict_16_offset_new = GLOBALS.fpos_lxt_c_1; }
 			}
 		else
 		if(!dict_24_offset_new)
 			{
-			if (offs == dict_24_offset) { dict_24_offset_new = fpos; }
+			if (offs == GLOBALS.dict_24_offset_lxt_c_1) { dict_24_offset_new = GLOBALS.fpos_lxt_c_1; }
 			}
 		else
 		if(!dict_32_offset_new)
 			{
-			if (offs == dict_32_offset) { dict_32_offset_new = fpos; }
+			if (offs == GLOBALS.dict_32_offset_lxt_c_1) { dict_32_offset_new = GLOBALS.fpos_lxt_c_1; }
 			}
 
 
@@ -1144,20 +1099,20 @@ if(!sync_table_offset)
 			{
 			int modlen;
 			case 0x0:	
-			modlen = (!(mvlfacs[facidx].flags&LT_SYM_F_INTEGER)) ? mvlfacs[facidx].len : 32;
-			if((dict_string_mem_array) && (modlen>dict_width))
+			modlen = (!(GLOBALS.mvlfacs_lxt_c_2[facidx].flags&LT_SYM_F_INTEGER)) ? GLOBALS.mvlfacs_lxt_c_2[facidx].len : 32;
+			if((GLOBALS.dict_string_mem_array_lxt_c_1) && (modlen>GLOBALS.dict_width_lxt_c_1))
 				{
-				if((!dict_16_offset)||(offscache3<dict_16_offset))
+				if((!GLOBALS.dict_16_offset_lxt_c_1)||(offscache3<GLOBALS.dict_16_offset_lxt_c_1))
 					{
 					offs += 1;
 					}
 				else
-				if((!dict_24_offset)||(offscache3<dict_24_offset))
+				if((!GLOBALS.dict_24_offset_lxt_c_1)||(offscache3<GLOBALS.dict_24_offset_lxt_c_1))
 					{
 					offs += 2;
 					}
 				else
-				if((!dict_32_offset)||(offscache3<dict_32_offset))
+				if((!GLOBALS.dict_32_offset_lxt_c_1)||(offscache3<GLOBALS.dict_32_offset_lxt_c_1))
 					{
 					offs += 3;
 					}
@@ -1168,18 +1123,18 @@ if(!sync_table_offset)
 				}
 				else
 				{
-				offs += (mvlfacs[facidx].len + 7)/8;
+				offs += (GLOBALS.mvlfacs_lxt_c_2[facidx].len + 7)/8;
 				}
 
 			break;
 
 
 			case 0x1:
-					offs += (mvlfacs[facidx].len + 3)/4;
+					offs += (GLOBALS.mvlfacs_lxt_c_2[facidx].len + 3)/4;
 					break;
 
 			case 0x2:
-					offs += (mvlfacs[facidx].len + 1)/2;
+					offs += (GLOBALS.mvlfacs_lxt_c_2[facidx].len + 1)/2;
 					break;
 
 			case 0x3:
@@ -1202,7 +1157,7 @@ if(!sync_table_offset)
 		else
 			{
 			/* cmdkill = 1 for strings + reals skip bytes */
-			if(mvlfacs[facidx].flags & LT_SYM_F_DOUBLE)
+			if(GLOBALS.mvlfacs_lxt_c_2[facidx].flags & LT_SYM_F_DOUBLE)
 				{
 				offs += 8;
 				}
@@ -1213,11 +1168,11 @@ if(!sync_table_offset)
 				}
 			}
 
-		last_change_delta = fpos - mvlfacs[facidx].lastchange - 2;
-		mvlfacs[facidx].lastchange = fpos;
+		last_change_delta = GLOBALS.fpos_lxt_c_1 - GLOBALS.mvlfacs_lxt_c_2[facidx].lastchange - 2;
+		GLOBALS.mvlfacs_lxt_c_2[facidx].lastchange = GLOBALS.fpos_lxt_c_1;
 
-		maxchange=fpos;
-		maxindex=facidx;
+		GLOBALS.maxchange_lxt_c_1=GLOBALS.fpos_lxt_c_1;
+		GLOBALS.maxindex_lxt_c_1=facidx;
 
         	if(last_change_delta >= 256*65536)
                 	{
@@ -1249,36 +1204,36 @@ if(!sync_table_offset)
 
 		if(offs-offscache2)
 			{
-			fpos += fwrite((char *)mm+offscache2, 1, offs-offscache2, tmp);	/* copy rest of relevant info */
+			GLOBALS.fpos_lxt_c_1 += fwrite((char *)GLOBALS.mm_lxt_c_1+offscache2, 1, offs-offscache2, tmp);	/* copy rest of relevant info */
 			}
 		}
 
-	dict_16_offset = dict_16_offset_new;
-	dict_24_offset = dict_24_offset_new;
-	dict_32_offset = dict_32_offset_new;
+	GLOBALS.dict_16_offset_lxt_c_1 = dict_16_offset_new;
+	GLOBALS.dict_24_offset_lxt_c_1 = dict_24_offset_new;
+	GLOBALS.dict_32_offset_lxt_c_1 = dict_32_offset_new;
 
         fflush(tmp);
         fseeko(tmp, 0, SEEK_SET);
         fclose(tmp);
-	fprintf(stderr, LXTHDR"%d linear records converted into %08x bytes.\n", num_records, fpos-4);
+	fprintf(stderr, LXTHDR"%d linear records converted into %08x bytes.\n", num_records, GLOBALS.fpos_lxt_c_1-4);
 
 #if !defined __MINGW32__ && !defined _MSC_VER
-	if(zchg_predec_size > LXT_MMAP_MALLOC_BOUNDARY)
+	if(GLOBALS.zchg_predec_size_lxt_c_1 > LXT_MMAP_MALLOC_BOUNDARY)
 		{
-		munmap((char *)mm+4, zchg_predec_size); close(fd);
+		munmap((char *)GLOBALS.mm_lxt_c_1+4, GLOBALS.zchg_predec_size_lxt_c_1); close(GLOBALS.fd_lxt_c_1);
 		}
 		else
 #endif
 		{
-		free_2((char *)mm+4);
+		free_2((char *)GLOBALS.mm_lxt_c_1+4);
 		}
 
-	fd = recfd;            
+	GLOBALS.fd_lxt_c_1 = recfd;            
 #if defined __MINGW32__ || defined _MSC_VER	
 	win_fname = nam;
 #endif
-        mm=mmap(NULL, fpos-4, PROT_READ, MAP_SHARED, recfd, 0);
-        mm=(void *)((char *)mm-4); /* because header and version don't exist in packed change records */
+        GLOBALS.mm_lxt_c_1=mmap(NULL, GLOBALS.fpos_lxt_c_1-4, PROT_READ, MAP_SHARED, recfd, 0);
+        GLOBALS.mm_lxt_c_1=(void *)((char *)GLOBALS.mm_lxt_c_1-4); /* because header and version don't exist in packed change records */
 	}
 }
 
@@ -1294,7 +1249,7 @@ char *pnt;
 char repeat;
 
 l=which->len;
-pnt = lt_buf;
+pnt = GLOBALS.lt_buf_lxt_c_1;
 v=get_byte(offs);
 v2=v&0x0f;
 
@@ -1306,24 +1261,24 @@ switch(v2)
 			int bitcnt=0;
 			int ch;
 			
-			if((dict_string_mem_array) && (l>dict_width))
+			if((GLOBALS.dict_string_mem_array_lxt_c_1) && (l>GLOBALS.dict_width_lxt_c_1))
 				{
 				unsigned int dictpos;
 				unsigned int ld;
 
 				offs += ((v>>4)&3)+2;	/* skip value */
 
-				if((!dict_16_offset)||(offs<dict_16_offset))
+				if((!GLOBALS.dict_16_offset_lxt_c_1)||(offs<GLOBALS.dict_16_offset_lxt_c_1))
 					{
 					dictpos = get_byte(offs);
 					}
 				else
-				if((!dict_24_offset)||(offs<dict_24_offset))
+				if((!GLOBALS.dict_24_offset_lxt_c_1)||(offs<GLOBALS.dict_24_offset_lxt_c_1))
 					{
 					dictpos = get_16(offs);
 					}
 				else
-				if((!dict_32_offset)||(offs<dict_32_offset))
+				if((!GLOBALS.dict_32_offset_lxt_c_1)||(offs<GLOBALS.dict_32_offset_lxt_c_1))
 					{
 					dictpos = get_24(offs);
 					}
@@ -1332,15 +1287,15 @@ switch(v2)
 					dictpos = get_32(offs);
 					}
 
-				if(dictpos <= dict_num_entries)
+				if(dictpos <= GLOBALS.dict_num_entries_lxt_c_1)
 					{
-					ld = strlen(dict_string_mem_array[dictpos]);
+					ld = strlen(GLOBALS.dict_string_mem_array_lxt_c_1[dictpos]);
 					for(j=0;j<(l-(ld+1));j++)
 						{
 						*(pnt++) = '0';
 						}
 					*(pnt++) = '1';
-					memcpy(pnt, dict_string_mem_array[dictpos], ld);
+					memcpy(pnt, GLOBALS.dict_string_mem_array_lxt_c_1[dictpos], ld);
 					}
 					else
 					{
@@ -1436,7 +1391,7 @@ switch(v2)
 	}
 
 bail:
-return(lt_buf);
+return(GLOBALS.lt_buf_lxt_c_1);
 }
 
 
@@ -1453,18 +1408,18 @@ int tag;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
 
-fd=open(fname, O_RDONLY);
-if(fd<0)
+GLOBALS.fd_lxt_c_1=open(fname, O_RDONLY);
+if(GLOBALS.fd_lxt_c_1<0)
         {
         fprintf(stderr, "Could not open '%s', exiting.\n", fname);
         exit(0);
         }
 
-f_len=lseek(fd, (off_t)0, SEEK_END);
+GLOBALS.f_len_lxt_c_1=lseek(GLOBALS.fd_lxt_c_1, (off_t)0, SEEK_END);
 #if defined __MINGW32__ || defined _MSC_VER
 win_fname = fname;
 #endif
-mm=mmap(NULL, f_len, PROT_READ, MAP_SHARED, fd, 0);
+GLOBALS.mm_lxt_c_1=mmap(NULL, GLOBALS.f_len_lxt_c_1, PROT_READ, MAP_SHARED, GLOBALS.fd_lxt_c_1, 0);
 
 if((i=get_16((off_t)0))!=LT_HDRID)
 	{
@@ -1472,13 +1427,13 @@ if((i=get_16((off_t)0))!=LT_HDRID)
 	exit(255);
 	}
 
-if((version=get_16((off_t)2))>LT_VERSION)
+if((GLOBALS.version_lxt_c_1=get_16((off_t)2))>LT_VERSION)
 	{
-	fprintf(stderr, "Version %d of LXT format AETs not supported, exiting.\n", version);
+	fprintf(stderr, "Version %d of LXT format AETs not supported, exiting.\n", GLOBALS.version_lxt_c_1);
 	exit(255);
 	}	
 
-if(get_byte(f_len-1)!=LT_TRLID)
+if(get_byte(GLOBALS.f_len_lxt_c_1-1)!=LT_TRLID)
 	{
 	fprintf(stderr, "LXT '%s' is truncated, exiting.\n", fname);
 	exit(255);
@@ -1489,7 +1444,7 @@ DEBUG(printf(LXTHDR"Len: %d\n", (unsigned int)f_len));
 
 /* SPLASH */                            splash_create();
 
-tagpnt = f_len-2;
+tagpnt = GLOBALS.f_len_lxt_c_1-2;
 while((tag=get_byte(tagpnt))!=LT_SECTION_END)
 	{
 	off_t offset = get_32(tagpnt-4);
@@ -1497,36 +1452,36 @@ while((tag=get_byte(tagpnt))!=LT_SECTION_END)
 
 	switch(tag)
 		{
-		case LT_SECTION_CHG:			change_field_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_CHG at %08x\n", offset)); break;
-		case LT_SECTION_SYNC_TABLE:		sync_table_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_SYNC_TABLE at %08x\n", offset)); break;
-		case LT_SECTION_FACNAME:		facname_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_FACNAME at %08x\n", offset)); break;
-		case LT_SECTION_FACNAME_GEOMETRY:	facgeometry_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_FACNAME_GEOMETRY at %08x\n", offset)); break;
-		case LT_SECTION_TIMESCALE:		timescale_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_TIMESCALE at %08x\n", offset)); break;
-		case LT_SECTION_TIME_TABLE:		time_table_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_TIME_TABLE at %08x\n", offset)); break;
-		case LT_SECTION_TIME_TABLE64:		time_table_offset64=offset; DEBUG(printf(LXTHDR"LT_SECTION_TIME_TABLE64 at %08x\n", offset)); break;
-		case LT_SECTION_INITIAL_VALUE:		initial_value_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_INITIAL_VALUE at %08x\n", offset)); break;
-		case LT_SECTION_DOUBLE_TEST:		double_test_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_DOUBLE_TEST at %08x\n", offset)); break;
+		case LT_SECTION_CHG:			GLOBALS.change_field_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_CHG at %08x\n", offset)); break;
+		case LT_SECTION_SYNC_TABLE:		GLOBALS.sync_table_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_SYNC_TABLE at %08x\n", offset)); break;
+		case LT_SECTION_FACNAME:		GLOBALS.facname_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_FACNAME at %08x\n", offset)); break;
+		case LT_SECTION_FACNAME_GEOMETRY:	GLOBALS.facgeometry_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_FACNAME_GEOMETRY at %08x\n", offset)); break;
+		case LT_SECTION_TIMESCALE:		GLOBALS.timescale_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_TIMESCALE at %08x\n", offset)); break;
+		case LT_SECTION_TIME_TABLE:		GLOBALS.time_table_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_TIME_TABLE at %08x\n", offset)); break;
+		case LT_SECTION_TIME_TABLE64:		GLOBALS.time_table_offset64_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_TIME_TABLE64 at %08x\n", offset)); break;
+		case LT_SECTION_INITIAL_VALUE:		GLOBALS.initial_value_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_INITIAL_VALUE at %08x\n", offset)); break;
+		case LT_SECTION_DOUBLE_TEST:		GLOBALS.double_test_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_DOUBLE_TEST at %08x\n", offset)); break;
 
-		case LT_SECTION_ZFACNAME_PREDEC_SIZE:	zfacname_predec_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZFACNAME_PREDEC_SIZE = %08x\n", offset)); break;
-		case LT_SECTION_ZFACNAME_SIZE:		zfacname_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZFACNAME_SIZE = %08x\n", offset)); break;
-		case LT_SECTION_ZFACNAME_GEOMETRY_SIZE:	zfacgeometry_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZFACNAME_GEOMETRY_SIZE = %08x\n", offset)); break;
-		case LT_SECTION_ZSYNC_SIZE:		zsync_table_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZSYNC_SIZE = %08x\n", offset)); break;
-		case LT_SECTION_ZTIME_TABLE_SIZE:	ztime_table_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZTIME_TABLE_SIZE = %08x\n", offset)); break;
-		case LT_SECTION_ZCHG_PREDEC_SIZE:	zchg_predec_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZCHG_PREDEC_SIZE = %08x\n", offset)); break;
-		case LT_SECTION_ZCHG_SIZE:		zchg_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZCHG_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZFACNAME_PREDEC_SIZE:	GLOBALS.zfacname_predec_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZFACNAME_PREDEC_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZFACNAME_SIZE:		GLOBALS.zfacname_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZFACNAME_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZFACNAME_GEOMETRY_SIZE:	GLOBALS.zfacgeometry_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZFACNAME_GEOMETRY_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZSYNC_SIZE:		GLOBALS.zsync_table_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZSYNC_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZTIME_TABLE_SIZE:	GLOBALS.ztime_table_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZTIME_TABLE_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZCHG_PREDEC_SIZE:	GLOBALS.zchg_predec_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZCHG_PREDEC_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZCHG_SIZE:		GLOBALS.zchg_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZCHG_SIZE = %08x\n", offset)); break;
 
-		case LT_SECTION_ZDICTIONARY:		zdictionary_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZDICTIONARY = %08x\n", offset)); break;
-		case LT_SECTION_ZDICTIONARY_SIZE:	zdictionary_predec_size=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZDICTIONARY_SIZE = %08x\n", offset)); break;
+		case LT_SECTION_ZDICTIONARY:		GLOBALS.zdictionary_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZDICTIONARY = %08x\n", offset)); break;
+		case LT_SECTION_ZDICTIONARY_SIZE:	GLOBALS.zdictionary_predec_size_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_ZDICTIONARY_SIZE = %08x\n", offset)); break;
 
-		case LT_SECTION_EXCLUDE_TABLE:		exclude_offset=offset; DEBUG(printf(LXTHDR"LT_SECTION_EXCLUDE_TABLE = %08x\n", offset)); break;
+		case LT_SECTION_EXCLUDE_TABLE:		GLOBALS.exclude_offset_lxt_c_1=offset; DEBUG(printf(LXTHDR"LT_SECTION_EXCLUDE_TABLE = %08x\n", offset)); break;
 
 		default: fprintf(stderr, "Skipping unknown section tag %02x.\n", tag); break;
 		}	
 	}
 
-if(exclude_offset)
+if(GLOBALS.exclude_offset_lxt_c_1)
 	{
-	off_t offset = exclude_offset;
+	off_t offset = GLOBALS.exclude_offset_lxt_c_1;
 	int i, num_blackouts = get_32(offset);
 	TimeType bs, be;
 	struct blackout_region_t *bt;
@@ -1541,60 +1496,60 @@ if(exclude_offset)
 		bt = calloc_2(1, sizeof(struct blackout_region_t));
 		bt->bstart = bs;
 		bt->bend = be;
-		bt->next = blackout_regions;
+		bt->next = GLOBALS.blackout_regions;
 
-		blackout_regions = bt;
+		GLOBALS.blackout_regions = bt;
 		}
 	}
 
-if(double_test_offset)
+if(GLOBALS.double_test_offset_lxt_c_1)
 	{
-	create_double_endian_mask(double_test_offset);
+	create_double_endian_mask(GLOBALS.double_test_offset_lxt_c_1);
 	}
 
-if(timescale_offset)
+if(GLOBALS.timescale_offset_lxt_c_1)
 	{
 	signed char scale;
 
-	scale=(signed char)get_byte(timescale_offset);
+	scale=(signed char)get_byte(GLOBALS.timescale_offset_lxt_c_1);
 	exponent_to_time_scale(scale);
 	}
 	else
 	{
-	time_dimension = 'n';
+	GLOBALS.time_dimension = 'n';
 	}
 
-if(!facname_offset)
+if(!GLOBALS.facname_offset_lxt_c_1)
 	{
 	fprintf(stderr, "LXT '%s' is missing a facility name section, exiting.\n", fname);
 	exit(255);
 	}
 
-numfacs=get_32(facname_offset);
+GLOBALS.numfacs=get_32(GLOBALS.facname_offset_lxt_c_1);
 DEBUG(printf(LXTHDR"Number of facs: %d\n", numfacs));
-mvlfacs=(struct fac *)calloc_2(numfacs,sizeof(struct fac));
+GLOBALS.mvlfacs_lxt_c_2=(struct fac *)calloc_2(GLOBALS.numfacs,sizeof(struct fac));
 
-if(initial_value_offset)
+if(GLOBALS.initial_value_offset_lxt_c_1)
 	{
-	switch(get_byte(initial_value_offset))
+	switch(get_byte(GLOBALS.initial_value_offset_lxt_c_1))
 		{
 		case 0:
-		case 7:		initial_value = AN_0; break;
+		case 7:		GLOBALS.initial_value_lxt_c_1 = AN_0; break;
 		case 1:
-		case 4:		initial_value = AN_1; break;
-		case 2:		initial_value = AN_Z; break;
-		default:	initial_value = AN_X; break;
+		case 4:		GLOBALS.initial_value_lxt_c_1 = AN_1; break;
+		case 2:		GLOBALS.initial_value_lxt_c_1 = AN_Z; break;
+		default:	GLOBALS.initial_value_lxt_c_1 = AN_X; break;
 		}
 	}
 	else
 	{
-	initial_value = AN_X;
+	GLOBALS.initial_value_lxt_c_1 = AN_X;
 	}
 
 	
-if(zdictionary_offset)
+if(GLOBALS.zdictionary_offset_lxt_c_1)
 	{
-	if(zdictionary_predec_size)
+	if(GLOBALS.zdictionary_predec_size_lxt_c_1)
 		{
 		build_dict();
 		}
@@ -1612,46 +1567,46 @@ build_facs2(fname);
 
 /* do your stuff here..all useful info has been initialized by now */
 
-if(!hier_was_explicitly_set)    /* set default hierarchy split char */
+if(!GLOBALS.hier_was_explicitly_set)    /* set default hierarchy split char */
         {
-        hier_delimeter='.';
+        GLOBALS.hier_delimeter='.';
         }
 
-sym_block = (struct symbol *)calloc_2(numfacs, sizeof(struct symbol));
-node_block = (struct Node *)calloc_2(numfacs,sizeof(struct Node));
+sym_block = (struct symbol *)calloc_2(GLOBALS.numfacs, sizeof(struct symbol));
+node_block = (struct Node *)calloc_2(GLOBALS.numfacs,sizeof(struct Node));
 
-for(i=0;i<numfacs;i++)
+for(i=0;i<GLOBALS.numfacs;i++)
         {
 	char buf[4096];
 	char *str;	
 	struct fac *f;
 
-	if(mvlfacs[i].flags&LT_SYM_F_ALIAS)
+	if(GLOBALS.mvlfacs_lxt_c_2[i].flags&LT_SYM_F_ALIAS)
 		{
-		int alias = mvlfacs[i].array_height;
-		f=mvlfacs+alias;
+		int alias = GLOBALS.mvlfacs_lxt_c_2[i].array_height;
+		f=GLOBALS.mvlfacs_lxt_c_2+alias;
 
 		while(f->flags&LT_SYM_F_ALIAS)
 			{
-			f=mvlfacs+f->array_height;
+			f=GLOBALS.mvlfacs_lxt_c_2+f->array_height;
 			}
 		}
 		else
 		{
-		f=mvlfacs+i;
+		f=GLOBALS.mvlfacs_lxt_c_2+i;
 		}
 
 	if((f->len>1)&& (!(f->flags&(LT_SYM_F_INTEGER|LT_SYM_F_DOUBLE|LT_SYM_F_STRING))) )
 		{
-		int len = sprintf(buf, "%s[%d:%d]", mvlfacs[i].name,mvlfacs[i].msb, mvlfacs[i].lsb);
+		int len = sprintf(buf, "%s[%d:%d]", GLOBALS.mvlfacs_lxt_c_2[i].name,GLOBALS.mvlfacs_lxt_c_2[i].msb, GLOBALS.mvlfacs_lxt_c_2[i].lsb);
 		str=malloc_2(len+1);
-		if(!alt_hier_delimeter)
+		if(!GLOBALS.alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
 			}
                 s=&sym_block[i];
                 symadd_name_exists_sym_exists(s,str,0);
@@ -1659,25 +1614,25 @@ for(i=0;i<numfacs;i++)
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(LT_SYM_F_INTEGER|LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))&&
-			((i!=numfacs-1)&&(!strcmp(mvlfacs[i].name, mvlfacs[i+1].name))))
+			((i!=GLOBALS.numfacs-1)&&(!strcmp(GLOBALS.mvlfacs_lxt_c_2[i].name, GLOBALS.mvlfacs_lxt_c_2[i+1].name))))
 			||
-			(((i!=0)&&(!strcmp(mvlfacs[i].name, mvlfacs[i-1].name))) &&
-			(mvlfacs[i].msb!=-1)&&(mvlfacs[i].lsb!=-1))
+			(((i!=0)&&(!strcmp(GLOBALS.mvlfacs_lxt_c_2[i].name, GLOBALS.mvlfacs_lxt_c_2[i-1].name))) &&
+			(GLOBALS.mvlfacs_lxt_c_2[i].msb!=-1)&&(GLOBALS.mvlfacs_lxt_c_2[i].lsb!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", mvlfacs[i].name,mvlfacs[i].msb);
+		int len = sprintf(buf, "%s[%d]", GLOBALS.mvlfacs_lxt_c_2[i].name,GLOBALS.mvlfacs_lxt_c_2[i].msb);
 		str=malloc_2(len+1);
-		if(!alt_hier_delimeter)
+		if(!GLOBALS.alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
 			}
                 s=&sym_block[i];
                 symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(mvlfacs[i].name, mvlfacs[i-1].name)))	/* allow chaining for search functions.. */
+		if((prevsym)&&(i>0)&&(!strcmp(GLOBALS.mvlfacs_lxt_c_2[i].name, GLOBALS.mvlfacs_lxt_c_2[i-1].name)))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -1691,14 +1646,14 @@ for(i=0;i<numfacs;i++)
 		}
 		else
 		{
-		str=malloc_2(strlen(mvlfacs[i].name)+1);
-		if(!alt_hier_delimeter)
+		str=malloc_2(strlen(GLOBALS.mvlfacs_lxt_c_2[i].name)+1);
+		if(!GLOBALS.alt_hier_delimeter)
 			{
-			strcpy(str, mvlfacs[i].name);
+			strcpy(str, GLOBALS.mvlfacs_lxt_c_2[i].name);
 			}
 			else
 			{
-			strcpy_vcdalt(str, mvlfacs[i].name, alt_hier_delimeter);
+			strcpy_vcdalt(str, GLOBALS.mvlfacs_lxt_c_2[i].name, GLOBALS.alt_hier_delimeter);
 			}
                 s=&sym_block[i];
                 symadd_name_exists_sym_exists(s,str,0);
@@ -1706,31 +1661,31 @@ for(i=0;i<numfacs;i++)
 
 		if(f->flags&LT_SYM_F_INTEGER)
 			{
-			mvlfacs[i].msb=31;
-			mvlfacs[i].lsb=0;
-			mvlfacs[i].len=32;
+			GLOBALS.mvlfacs_lxt_c_2[i].msb=31;
+			GLOBALS.mvlfacs_lxt_c_2[i].lsb=0;
+			GLOBALS.mvlfacs_lxt_c_2[i].len=32;
 			}
 		}
 		
-        if(!firstnode)
+        if(!GLOBALS.firstnode)
                 {
-                firstnode=curnode=s;   
+                GLOBALS.firstnode=GLOBALS.curnode=s;   
                 }
                 else
                 {
-                curnode->nextinaet=s;
-                curnode=s;   
+                GLOBALS.curnode->nextinaet=s;
+                GLOBALS.curnode=s;   
                 }
 
 	n=&node_block[i];
         n->nname=s->name;
-        n->mv.mvlfac = mvlfacs+i;
+        n->mv.mvlfac = GLOBALS.mvlfacs_lxt_c_2+i;
 
 	if((f->len>1)||(f->flags&&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 		{
 		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
-		ext->msi = mvlfacs[i].msb;
-		ext->lsi = mvlfacs[i].lsb;
+		ext->msi = GLOBALS.mvlfacs_lxt_c_2[i].msb;
+		ext->lsi = GLOBALS.mvlfacs_lxt_c_2[i].lsb;
 		n->ext = ext;
 		}
 
@@ -1739,42 +1694,42 @@ for(i=0;i<numfacs;i++)
         s->n=n;
         }
 
-free_2(mvlfacs[0].name);	/* the start of the big decompression buffer */
-for(i=0;i<numfacs;i++)
+free_2(GLOBALS.mvlfacs_lxt_c_2[0].name);	/* the start of the big decompression buffer */
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
-	mvlfacs[i].name = NULL;
+	GLOBALS.mvlfacs_lxt_c_2[i].name = NULL;
 	}
 
 /* SPLASH */                            splash_sync(3, 5);
-facs=(struct symbol **)malloc_2(numfacs*sizeof(struct symbol *));
-curnode=firstnode;
-for(i=0;i<numfacs;i++)
+GLOBALS.facs=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
+GLOBALS.curnode=GLOBALS.firstnode;
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
 	char *subst, ch;
 	int len;
 
-	facs[i]=curnode;
-        if((len=strlen(subst=curnode->name))>longestname) longestname=len;
-	curnode=curnode->nextinaet;
+	GLOBALS.facs[i]=GLOBALS.curnode;
+        if((len=strlen(subst=GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
+	GLOBALS.curnode=GLOBALS.curnode->nextinaet;
 	while((ch=(*subst)))
 		{	
-		if(ch==hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
+		if(ch==GLOBALS.hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
 		subst++;
 		}
 	}
 
 fprintf(stderr, LXTHDR"Sorting facilities at hierarchy boundaries...");
-wave_heapsort(facs,numfacs);
+wave_heapsort(GLOBALS.facs,GLOBALS.numfacs);
 fprintf(stderr, "sorted.\n");
 	
-for(i=0;i<numfacs;i++)
+for(i=0;i<GLOBALS.numfacs;i++)
 	{
 	char *subst, ch;
 
-	subst=facs[i]->name;
+	subst=GLOBALS.facs[i]->name;
 	while((ch=(*subst)))
 		{	
-		if(ch==VCDNAM_HIERSORT) { *subst=hier_delimeter; }	/* restore back to normal */
+		if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS.hier_delimeter; }	/* restore back to normal */
 		subst++;
 		}
 
@@ -1783,29 +1738,29 @@ for(i=0;i<numfacs;i++)
 #endif
 	}
 
-facs_are_sorted=1;
+GLOBALS.facs_are_sorted=1;
 
 fprintf(stderr, LXTHDR"Building facility hierarchy tree...");
 /* SPLASH */                            splash_sync(4, 5);
 init_tree();		
-for(i=0;i<numfacs;i++)	
+for(i=0;i<GLOBALS.numfacs;i++)	
 {
-build_tree_from_name(facs[i]->name, i);
+build_tree_from_name(GLOBALS.facs[i]->name, i);
 }
 /* SPLASH */                            splash_sync(5, 5);
-treegraft(treeroot);
-treesort(treeroot, NULL);
+treegraft(GLOBALS.treeroot);
+treesort(GLOBALS.treeroot, NULL);
 fprintf(stderr, "built.\n\n");
 
 #ifdef DEBUG_FACILITIES
 treedebug(treeroot,"");
 #endif
 
-min_time = first_cycle*time_scale; max_time=last_cycle*time_scale;
-fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", min_time, max_time);
-is_lxt = ~0;
+GLOBALS.min_time = GLOBALS.first_cycle_lxt_c_2*GLOBALS.time_scale; GLOBALS.max_time=GLOBALS.last_cycle_lxt_c_2*GLOBALS.time_scale;
+fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS.min_time, GLOBALS.max_time);
+GLOBALS.is_lxt = ~0;
 
-return(max_time);
+return(GLOBALS.max_time);
 }
 
 
@@ -1846,7 +1801,7 @@ if(!(f=np->mv.mvlfac)) return;	/* already imported */
 if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
 	{
 	int alias = np->mv.mvlfac->array_height;
-	f=mvlfacs+alias;
+	f=GLOBALS.mvlfacs_lxt_c_2+alias;
 
 	if(f->resolve_lxt_alias_to)
 		{
@@ -1859,7 +1814,7 @@ if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
 
 	while(f->flags&LT_SYM_F_ALIAS)
 		{
-		f=mvlfacs+f->array_height;
+		f=GLOBALS.mvlfacs_lxt_c_2+f->array_height;
 
 		if(f->resolve_lxt_alias_to)
 			{
@@ -1975,7 +1930,7 @@ while(offs)
 			DEBUG(fprintf(stderr, "!!! DELTA = %lld\n", delta));
 			DEBUG(fprintf(stderr, "!!! offsminus1 = %08x\n", offsminus1));
 
-			if(!lxt_clock_compress_to_z)
+			if(!GLOBALS.lxt_clock_compress_to_z)
 				{
 				int val = get_byte(offsminus1)&0xF;
 				int reps = 0;
@@ -2105,7 +2060,7 @@ while(offs)
 			}
 			else
 			{
-			if(!lxt_clock_compress_to_z)
+			if(!GLOBALS.lxt_clock_compress_to_z)
 				{
 				int val = get_byte(offsminus1)&0xF;
 				int reps = 0;
@@ -2232,9 +2187,9 @@ while(offs)
 			htemp = histent_calloc();
 			htemp->flags = HIST_REAL;
 
-			if(double_is_native)
+			if(GLOBALS.double_is_native_lxt_c_1)
 				{
-				htemp->v.h_vector = ((char *)mm+offs_dbl);
+				htemp->v.h_vector = ((char *)GLOBALS.mm_lxt_c_1+offs_dbl);
 				DEBUG(printf(LXTHDR"Added double '%.16g'\n", *((double *)(mm+offs_dbl))));
 				}
 				else
@@ -2254,7 +2209,7 @@ while(offs)
 			htemp = histent_calloc();
 			htemp->flags = HIST_REAL|HIST_STRING;
 
-			htemp->v.h_vector = ((char *)mm+offs_str);
+			htemp->v.h_vector = ((char *)GLOBALS.mm_lxt_c_1+offs_str);
 			DEBUG(printf(LXTHDR"Added string '%s'\n", (unsigned char *)mm+offs_str));
 			htemp->time = tmval;
 			htemp->next = histent_head;
@@ -2296,7 +2251,7 @@ np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfa
 
 for(j=0;j>-2;j--)
 	{
-	if(tmval!=first_cycle)
+	if(tmval!=GLOBALS.first_cycle_lxt_c_2)
 		{
 		char init;
 
@@ -2304,9 +2259,9 @@ for(j=0;j>-2;j--)
 
 		if(!(f->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 			{
-			if(initial_value_offset)
+			if(GLOBALS.initial_value_offset_lxt_c_1)
 				{
-				init = initial_value;
+				init = GLOBALS.initial_value_lxt_c_1;
 				}
 				else
 				{
@@ -2333,13 +2288,13 @@ for(j=0;j>-2;j--)
 			if(f->flags&LT_SYM_F_STRING) htemp->flags |= HIST_STRING;
 			}
 	
-		htemp->time = first_cycle+j;
+		htemp->time = GLOBALS.first_cycle_lxt_c_2+j;
 		htemp->next = histent_head;
 		histent_head = htemp;
 		np->numhist++;
 		}
 
-	tmval=first_cycle+1;
+	tmval=GLOBALS.first_cycle_lxt_c_2+1;
 	}
 
 if(!(f->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
@@ -2368,6 +2323,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
  * Revision 1.1.1.1.2.2  2007/07/28 19:50:39  kermin
  * Merged in the main line
  *

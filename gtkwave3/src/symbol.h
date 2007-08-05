@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2007
  *
  * This program is free software; you can redistribute it and/or
@@ -74,8 +74,8 @@ int hash(char *s);
 /* typically use zero for hashval as it doesn't matter if facs are sorted as symfind will bsearch... */
 #define symadd_name_exists_sym_exists(s, nam, hv) \
 (s)->name = (nam); \
-(s)->next=sym[(hv)]; \
-sym[(hv)]=(s);
+(s)->next=GLOBALS.sym[(hv)]; \
+GLOBALS.sym[(hv)]=(s);
 
 void facsplit(char *, int *, int *);
 int sigcmp(char *, char *);
@@ -90,14 +90,6 @@ int maketraces(char *, int);
 int parsewavline(char *, int);
 int parsewavline_lx2(char *, int);
 
-extern struct symbol **sym, **facs;
-extern char facs_are_sorted;
-extern int numfacs;
-extern int regions;
-extern struct symbol *firstnode;
-extern struct symbol *curnode;
-extern int longestname;
-extern int hashcache;
 
 /* additions to bitvec.c because of search.c/menu.c ==> formerly in analyzer.h */
 bvptr bits2vector(struct Bits *b);
@@ -118,6 +110,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:55  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

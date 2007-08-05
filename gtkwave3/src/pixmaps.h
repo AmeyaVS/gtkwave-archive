@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -14,34 +14,10 @@
 
 void make_pixmaps(GtkWidget *window);
 
-extern GdkPixmap *larrow_pixmap;
-extern GdkBitmap *larrow_mask;
-extern GdkPixmap *rarrow_pixmap;
-extern GdkBitmap *rarrow_mask;
 
-extern GdkPixmap *zoomout_pixmap;
-extern GdkBitmap *zoomout_mask;
-extern GdkPixmap *zoomin_pixmap;
-extern GdkBitmap *zoomin_mask;
-extern GdkPixmap *zoomfit_pixmap;
-extern GdkBitmap *zoomfit_mask;
-extern GdkPixmap *zoomundo_pixmap;
-extern GdkBitmap *zoomundo_mask;
 
-extern GdkPixmap *zoom_larrow_pixmap;
-extern GdkBitmap *zoom_larrow_mask;
-extern GdkPixmap *zoom_rarrow_pixmap;
-extern GdkBitmap *zoom_rarrow_mask;
 
-extern GdkPixmap *prev_page_pixmap;
-extern GdkBitmap *prev_page_mask;
-extern GdkPixmap *next_page_pixmap;
-extern GdkBitmap *next_page_mask;
 
-extern GdkPixmap *wave_info_pixmap;
-extern GdkBitmap *wave_info_mask;
-extern GdkPixmap *wave_alert_pixmap;
-extern GdkBitmap *wave_alert_mask;
 
 #ifdef WAVE_USE_GTK2
 
@@ -50,8 +26,6 @@ extern GdkBitmap *wave_alert_mask;
 
 void make_splash_pixmaps(GtkWidget *window);
 
-extern GdkPixmap *wave_splash_pixmap;
-extern GdkBitmap *wave_splash_mask;
 #endif
 
 #endif
@@ -59,6 +33,9 @@ extern GdkBitmap *wave_splash_mask;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

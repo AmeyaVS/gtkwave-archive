@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -174,14 +174,13 @@ return(s2);
  * y/on     default to '1'
  * n/nonnum default to '0'
  */
-const char *atoi_cont_ptr=NULL;
 
 TimeType atoi_64(const char *str)
 {
 TimeType val=0;
 unsigned char ch, nflag=0;
 
-atoi_cont_ptr=NULL;
+GLOBALS.atoi_cont_ptr=NULL;
 
 switch(*str)
 	{
@@ -220,7 +219,7 @@ while((ch=*(str++)))
 	else
 	if(val)
 		{
-		atoi_cont_ptr=str-1;
+		GLOBALS.atoi_cont_ptr=str-1;
 		break;
 		}
 	}
@@ -231,12 +230,11 @@ return(nflag?(-val):val);
 /*
  * wrapped tooltips
  */
-char disable_tooltips=0;
 
 void gtk_tooltips_set_tip_2(GtkTooltips *tooltips, GtkWidget *widget, 
 	const gchar *tip_text, const gchar *tip_private)
 {
-if(!disable_tooltips)
+if(!GLOBALS.disable_tooltips)
 	{
 	gtk_tooltips_set_tip(tooltips, widget, tip_text, tip_private);
 	}
@@ -245,7 +243,7 @@ if(!disable_tooltips)
 
 void gtk_tooltips_set_delay_2(GtkTooltips *tooltips, guint delay)
 {
-if(!disable_tooltips)
+if(!GLOBALS.disable_tooltips)
 	{
 	gtk_tooltips_set_delay(tooltips, delay);
 	}
@@ -254,7 +252,7 @@ if(!disable_tooltips)
 
 GtkTooltips* gtk_tooltips_new_2(void)
 {
-if(!disable_tooltips)
+if(!GLOBALS.disable_tooltips)
 	{
 	return(gtk_tooltips_new());
 	}
@@ -307,6 +305,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/06/01 21:13:41  gtkwave
+ * regenerate configure for cygwin with proper flags, add missing files
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:23  gtkwave
  * Imported sources
  *

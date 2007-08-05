@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -12,103 +12,13 @@
 #include "strace.h"
 #include "currenttime.h"
 
-TimeType *timearray=NULL;
-int timearray_size=0;
 
-static GtkWidget *ptr_mark_count_label=NULL;	/* pointer to mark count label on pattern search dialog	*/
 
-struct strace *straces=NULL;   /* when active, disables certain ops! */
-struct strace *shadow_straces=NULL;
 
-struct strace_defer_free *strace_defer_free_head=NULL;
 
-static GtkWidget *window;
-static GtkSignalFunc cleanup;
 
-static char *logical[]=
-	{"AND", "OR", "XOR", "NAND", "NOR", "XNOR"};
 
-static char *stype[WAVE_STYPE_COUNT]=
-	{"Don't Care", "High", "Z (Mid)", "X", "Low", "String",
-	 "Rising Edge", "Falling Edge", "Any Edge"};
 
-char logical_mutex[6]={0,0,0,0,0,0};
-char shadow_logical_mutex[6]={0,0,0,0,0,0};
-char shadow_active = 0;
-char shadow_type = 0;
-char *shadow_string = NULL;
-
-signed char mark_idx_start = 0;		/* which start mark conditons were selected	*/
-signed char mark_idx_end   = 0;		/* which end   mark conditons were selected	*/
-signed char shadow_mark_idx_start = 0;
-signed char shadow_mark_idx_end   = 0;
-
-struct item_mark_string {
-   char *str;
-   unsigned char idx;
-};
-
-static struct item_mark_string item_mark_start_strings[]=
-	{
-	   { "Start of Time"  },
-	   { "Named Marker A" },
-	   { "Named Marker B" },
-	   { "Named Marker C" },
-	   { "Named Marker D" },
-	   { "Named Marker E" },
-	   { "Named Marker F" },
-	   { "Named Marker G" },
-	   { "Named Marker H" },
-	   { "Named Marker I" },
-	   { "Named Marker J" },
-	   { "Named Marker K" },
-	   { "Named Marker L" },
-	   { "Named Marker M" },
-	   { "Named Marker N" },
-	   { "Named Marker O" },
-	   { "Named Marker P" },
-	   { "Named Marker Q" },
-	   { "Named Marker R" },
-	   { "Named Marker S" },
-	   { "Named Marker T" },
-	   { "Named Marker U" },
-	   { "Named Marker V" },
-	   { "Named Marker W" },
-	   { "Named Marker X" },
-	   { "Named Marker Y" },
-	   { "Named Marker Z" }
-	};
-
-static struct item_mark_string item_mark_end_strings[]=
-	{
-	   { "End of Time"    },
-	   { "Named Marker A" },
-	   { "Named Marker B" },
-	   { "Named Marker C" },
-	   { "Named Marker D" },
-	   { "Named Marker E" },
-	   { "Named Marker F" },
-	   { "Named Marker G" },
-	   { "Named Marker H" },
-	   { "Named Marker I" },
-	   { "Named Marker J" },
-	   { "Named Marker K" },
-	   { "Named Marker L" },
-	   { "Named Marker M" },
-	   { "Named Marker N" },
-	   { "Named Marker O" },
-	   { "Named Marker P" },
-	   { "Named Marker Q" },
-	   { "Named Marker R" },
-	   { "Named Marker S" },
-	   { "Named Marker T" },
-	   { "Named Marker U" },
-	   { "Named Marker V" },
-	   { "Named Marker W" },
-	   { "Named Marker X" },
-	   { "Named Marker Y" },
-	   { "Named Marker Z" }
-	};
 
 /*
  * naive nonoptimized case insensitive strstr
@@ -160,7 +70,7 @@ struct strace *s, *skill;
 int i;
 struct strace_defer_free *sd, *sd2;
 
-s=straces;
+s=GLOBALS.straces;
 
 while(s)
 	{
@@ -174,9 +84,9 @@ while(s)
 	free_2(skill);
 	}
 
-straces=NULL;
+GLOBALS.straces=NULL;
 
-sd = strace_defer_free_head;
+sd = GLOBALS.strace_defer_free_head;
 
 while(sd)
 	{
@@ -185,7 +95,7 @@ while(sd)
 	free_2(sd);
 	sd = sd2;
 	}
-strace_defer_free_head = NULL;
+GLOBALS.strace_defer_free_head = NULL;
 }
 
 /*
@@ -196,7 +106,7 @@ static void logical_clicked(GtkWidget *widget, gpointer which)
 int i;
 char *which_char;
 
-for(i=0;i<6;i++) logical_mutex[i]=0;
+for(i=0;i<6;i++) GLOBALS.logical_mutex[i]=0;
 which_char=(char *)which;
 *which_char=1;			/* mark our choice */
 
@@ -218,10 +128,10 @@ DEBUG(printf("Trace %s Search Type: %s\n", s->trace->name, stype[(int)s->value])
 
 static void start_clicked(GtkWidget *widget, gpointer which)
 {
-mark_idx_start=((struct item_mark_string*)which)->idx;
-if (mark_idx_start<0 || mark_idx_start>=(sizeof(item_mark_start_strings)/sizeof(struct item_mark_string)))
+GLOBALS.mark_idx_start=((struct item_mark_string*)which)->idx;
+if (GLOBALS.mark_idx_start<0 || GLOBALS.mark_idx_start>=(sizeof(GLOBALS.item_mark_start_strings_strace_c_1)/sizeof(struct item_mark_string)))
 	{
-	fprintf(stderr, "Internal error: mark_idx_start out of range %d\n",mark_idx_start);
+	fprintf(stderr, "Internal error: GLOBALS.mark_idx_start out of range %d\n", GLOBALS.mark_idx_start);
 	exit(255);
 	}
 DEBUG(printf("start: %s\n", ((struct item_mark_string*)which)->str));
@@ -229,10 +139,10 @@ DEBUG(printf("start: %s\n", ((struct item_mark_string*)which)->str));
 
 static void end_clicked(GtkWidget *widget, gpointer which)
 {
-mark_idx_end=((struct item_mark_string*)which)->idx;
-if (mark_idx_end<0 || mark_idx_end>=(sizeof(item_mark_end_strings)/sizeof(struct item_mark_string)))
+GLOBALS.mark_idx_end=((struct item_mark_string*)which)->idx;
+if (GLOBALS.mark_idx_end<0 || GLOBALS.mark_idx_end>=(sizeof(GLOBALS.item_mark_end_strings_strace_c_1)/sizeof(struct item_mark_string)))
 	{
-	fprintf(stderr, "Internal error: mark_idx_end out of range %d\n",mark_idx_end);
+	fprintf(stderr, "Internal error: GLOBALS.mark_idx_end out of range %d\n",GLOBALS.mark_idx_end);
 	exit(255);
 	}
 DEBUG(printf("end: %s\n", ((struct item_mark_string*)which)->str));
@@ -281,7 +191,7 @@ strace_search(STRACE_BACKWARD);
 static void mark_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 DEBUG(printf("Marking..\n"));
-if(shadow_straces)
+if(GLOBALS.shadow_straces)
 	{
 	delete_strace_context();
 	}
@@ -290,40 +200,40 @@ strace_maketimetrace(1);
 cache_actual_pattern_mark_traces();
 
 MaxSignalLength();
-signalarea_configure_event(signalarea, NULL);
-wavearea_configure_event(wavearea, NULL);
+signalarea_configure_event(GLOBALS.signalarea, NULL);
+wavearea_configure_event(GLOBALS.wavearea, NULL);
 }
 
 static void clear_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 DEBUG(printf("Clearing..\n"));
-if(shadow_straces)
+if(GLOBALS.shadow_straces)
 	{
 	delete_strace_context();
 	}
 strace_maketimetrace(0);
 
 MaxSignalLength();
-signalarea_configure_event(signalarea, NULL);
-wavearea_configure_event(wavearea, NULL);
+signalarea_configure_event(GLOBALS.signalarea, NULL);
+wavearea_configure_event(GLOBALS.wavearea, NULL);
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   free_straces();
-  ptr_mark_count_label=NULL;
-  gtk_widget_destroy(window);
+  GLOBALS.ptr_mark_count_label_strace_c_1=NULL;
+  gtk_widget_destroy(GLOBALS.window_strace_c_10);
 }
 
 /* update mark count label on pattern search dialog */
 
 static void update_mark_count_label()
 {
-if(ptr_mark_count_label)
+if(GLOBALS.ptr_mark_count_label_strace_c_1)
     {
     char mark_count_buf[64];
-    sprintf (mark_count_buf, "Mark Count: %d", timearray_size);
-    gtk_label_set_text (GTK_LABEL(ptr_mark_count_label), mark_count_buf);
+    sprintf (mark_count_buf, "Mark Count: %d", GLOBALS.timearray_size);
+    gtk_label_set_text (GTK_LABEL(GLOBALS.ptr_mark_count_label_strace_c_1), mark_count_buf);
     }
 }
 
@@ -338,23 +248,23 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     int i;
     int numtraces;
 
-    if(straces) 
+    if(GLOBALS.straces) 
 	{
-	gdk_window_raise(window->window);
+	gdk_window_raise(GLOBALS.window_strace_c_10->window);
 	return; /* is already active */
 	}
 
-    cleanup=func;
+    GLOBALS.cleanup_strace_c_7=func;
     numtraces=0;
 
     /* create a new window */
-    window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_widget_set_usize( GTK_WIDGET (window), 420, -1); 
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    GLOBALS.window_strace_c_10 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS.window_strace_c_10), title);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS.window_strace_c_10), 420, -1); 
+    gtk_signal_connect(GTK_OBJECT (GLOBALS.window_strace_c_10), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (window), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS.window_strace_c_10), vbox);
     gtk_widget_show (vbox);
 
     vbox_g = gtk_vbox_new (FALSE, 0);
@@ -377,17 +287,17 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 
     for(i=0;i<6;i++)
 	{
-    	menuitem = gtk_radio_menu_item_new_with_label (group, logical[i]);
+    	menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.logical_strace_c_1[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(logical_clicked),
-                                 &logical_mutex[i]);
-	logical_mutex[i]=0;
+                                 &GLOBALS.logical_mutex[i]);
+	GLOBALS.logical_mutex[i]=0;
 	}
 
-	logical_mutex[0]=1;	/* "and" */
+	GLOBALS.logical_mutex[0]=1;	/* "and" */
 
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), menu);
@@ -405,7 +315,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     gtk_container_add (GTK_CONTAINER (frame), scrolled_win);
     gtk_container_add (GTK_CONTAINER (vbox), frame);
 
-    for(t=traces.first;t;t=t->t_next)
+    for(t=GLOBALS.traces.first;t;t=t->t_next)
     {
     struct strace *s;
 
@@ -419,11 +329,11 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	}
 
     s=(struct strace *)calloc_2(1,sizeof(struct strace));
-    s->next=straces;
-    straces=s;
+    s->next=GLOBALS.straces;
+    GLOBALS.straces=s;
     s->trace=t;
 
-    if(t!=traces.first)
+    if(t!=GLOBALS.traces.first)
 	{
     	separator = gtk_hseparator_new ();
     	gtk_widget_show (separator);
@@ -448,7 +358,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	b->parent=s;
 	b->which=i;
 	s->back[i]=b;
-    	menuitem = gtk_radio_menu_item_new_with_label (group, stype[i]);
+    	menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.stype_strace_c_1[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
@@ -506,22 +416,22 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_start),ptr_mark_start_label,TRUE,FALSE,0);
 	ptr_mark_count_start = gtk_menu_new ();
 	group=NULL;
-	for(idx=0; idx<sizeof(item_mark_start_strings)/sizeof(struct item_mark_string); ++idx)
+	for(idx=0; idx<sizeof(GLOBALS.item_mark_start_strings_strace_c_1)/sizeof(struct item_mark_string); ++idx)
 		{
-		item_mark_start_strings[idx].idx=idx;
-    		menuitem = gtk_radio_menu_item_new_with_label (group, item_mark_start_strings[idx].str);
+		GLOBALS.item_mark_start_strings_strace_c_1[idx].idx=idx;
+    		menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.item_mark_start_strings_strace_c_1[idx].str);
     		group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     		gtk_menu_append (GTK_MENU (ptr_mark_count_start), menuitem);
     		gtk_widget_show (menuitem);
         	gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(start_clicked),
-                                 &item_mark_start_strings[idx]);
+                                 &GLOBALS.item_mark_start_strings_strace_c_1[idx]);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_start);
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_start), optionmenu, TRUE, FALSE, 0);
 	gtk_widget_show (optionmenu);
-	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), mark_idx_start);
+	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), GLOBALS.mark_idx_start);
 
 		/* add mark end GUI element */
 	mark_count_hbox_end=gtk_hbox_new (TRUE, 0);
@@ -532,27 +442,27 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_end),ptr_mark_end_label,TRUE,FALSE,0);
 	ptr_mark_count_end = gtk_menu_new ();
 	group=NULL;
-	for(idx=0; idx<sizeof(item_mark_end_strings)/sizeof(struct item_mark_string); ++idx)
+	for(idx=0; idx<sizeof(GLOBALS.item_mark_end_strings_strace_c_1)/sizeof(struct item_mark_string); ++idx)
 		{
-		item_mark_end_strings[idx].idx=idx;
-    		menuitem = gtk_radio_menu_item_new_with_label (group, item_mark_end_strings[idx].str);
+		GLOBALS.item_mark_end_strings_strace_c_1[idx].idx=idx;
+    		menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.item_mark_end_strings_strace_c_1[idx].str);
     		group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     		gtk_menu_append (GTK_MENU (ptr_mark_count_end), menuitem);
     		gtk_widget_show (menuitem);
         	gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(end_clicked),
-                                 &item_mark_end_strings[idx]);
+                                 &GLOBALS.item_mark_end_strings_strace_c_1[idx]);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_end);
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_end), optionmenu, TRUE, FALSE, 0);
 	gtk_widget_show (optionmenu);
-	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), mark_idx_end);
+	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), GLOBALS.mark_idx_end);
 
 		/* add mark count GUI element */
-	ptr_mark_count_label=gtk_label_new ("");
-	gtk_widget_show (ptr_mark_count_label);
-	gtk_box_pack_start (GTK_BOX (count_vbox),ptr_mark_count_label,TRUE,FALSE,0);
+	GLOBALS.ptr_mark_count_label_strace_c_1=gtk_label_new ("");
+	gtk_widget_show (GLOBALS.ptr_mark_count_label_strace_c_1);
+	gtk_box_pack_start (GTK_BOX (count_vbox),GLOBALS.ptr_mark_count_label_strace_c_1,TRUE,FALSE,0);
 	update_mark_count_label ();
 	} while (0);
 
@@ -610,7 +520,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_widget_show(window);
+    gtk_widget_show(GLOBALS.window_strace_c_10);
 }
 
 
@@ -629,29 +539,29 @@ TimeType middle=0, width;
 
 if(direction==STRACE_BACKWARD) /* backwards */
 {
-if(tims.marker<0)
+if(GLOBALS.tims.marker<0)
 	{
 	basetime=MAX_HISTENT_TIME;
 	}
 	else
 	{	
-	basetime=tims.marker;
+	basetime=GLOBALS.tims.marker;
 	}
 }
 else /* go forwards */
 {
-if(tims.marker<0)
+if(GLOBALS.tims.marker<0)
 	{
-	basetime=tims.first;
+	basetime=GLOBALS.tims.first;
 	}
 	else
 	{	
-	basetime=tims.marker;
+	basetime=GLOBALS.tims.marker;
 	}
 } 
 
-sttim=tims.first;
-fintim=tims.last;
+sttim=GLOBALS.tims.first;
+fintim=GLOBALS.tims.last;
 
 for(whichpass=0;;whichpass++)
 {
@@ -659,11 +569,11 @@ for(whichpass=0;;whichpass++)
 if(direction==STRACE_BACKWARD) /* backwards */
 {
 maxbase=-1;
-s=straces;
+s=GLOBALS.straces;
 while(s)
 	{
 	t=s->trace;
-	shift_timebase=t->shift;
+	GLOBALS.shift_timebase=t->shift;
 	if(!(t->vector))
 		{
 		hptr h;
@@ -672,12 +582,12 @@ while(s)
 		TimeType  tt;
 
 		h=bsearch_node(t->n.nd, basetime);
-		hp=max_compare_index;
+		hp=GLOBALS.max_compare_index;
 		if((hp==&(t->n.nd->harray[1]))||(hp==&(t->n.nd->harray[0]))) return;
 		hp--;
 		h=*hp;
 		s->his.h=h;
-		utt=adjust(h->time,shift_timebase); tt=utt;
+		utt=adjust(h->time,GLOBALS.shift_timebase); tt=utt;
 		if(tt > maxbase) maxbase=tt;
 		}
 		else
@@ -688,12 +598,12 @@ while(s)
 		TimeType  tt;
 
 		v=bsearch_vector(t->n.vec, basetime);
-		vp=vmax_compare_index;
+		vp=GLOBALS.vmax_compare_index;
 		if((vp==&(t->n.vec->vectors[1]))||(vp==&(t->n.vec->vectors[0]))) return;
 		vp--;
 		v=*vp;
 		s->his.v=v;
-		utt=adjust(v->time,shift_timebase); tt=utt;
+		utt=adjust(v->time,GLOBALS.shift_timebase); tt=utt;
 		if(tt > maxbase) maxbase=tt;
 		}
 
@@ -703,11 +613,11 @@ while(s)
 else /* go forward */
 {
 maxbase=MAX_HISTENT_TIME;
-s=straces;
+s=GLOBALS.straces;
 while(s)
 	{
 	t=s->trace;
-	shift_timebase=t->shift;
+	GLOBALS.shift_timebase=t->shift;
 	if(!(t->vector))
 		{
 		hptr h;
@@ -716,10 +626,10 @@ while(s)
 
 		h=bsearch_node(t->n.nd, basetime);
 		while(h->next && h->time==h->next->time) h=h->next;
-		if((whichpass)||(tims.marker>=0)) h=h->next;
+		if((whichpass)||(GLOBALS.tims.marker>=0)) h=h->next;
 		if(!h) return;
 		s->his.h=h;
-		utt=adjust(h->time,shift_timebase); tt=utt;		
+		utt=adjust(h->time,GLOBALS.shift_timebase); tt=utt;		
 		if(tt < maxbase) maxbase=tt;
 		}
 		else
@@ -730,10 +640,10 @@ while(s)
 
 		v=bsearch_vector(t->n.vec, basetime);
 		while(v->next && v->time==v->next->time) v=v->next;
-		if((whichpass)||(tims.marker>=0)) v=v->next;
+		if((whichpass)||(GLOBALS.tims.marker>=0)) v=v->next;
 		if(!v) return;
 		s->his.v=v;
-		utt=adjust(v->time,shift_timebase); tt=utt;
+		utt=adjust(v->time,GLOBALS.shift_timebase); tt=utt;
 		if(tt < maxbase) maxbase=tt;
 		}
 
@@ -741,18 +651,18 @@ while(s)
 	}
 }
 
-s=straces;
+s=GLOBALS.straces;
 totaltraces=0;	/* increment when not don't care */
 while(s)
 	{
 	char str[2];
 	t=s->trace;
 	s->search_result=0;	/* explicitly must set this */
-	shift_timebase=t->shift;
+	GLOBALS.shift_timebase=t->shift;
 	
 	if((!t->vector)&&(!(t->n.nd->ext)))
 		{
-		if(adjust(s->his.h->time,shift_timebase)!=maxbase) 
+		if(adjust(s->his.h->time,GLOBALS.shift_timebase)!=maxbase) 
 			{
 			s->his.h=bsearch_node(t->n.nd, maxbase);
 			while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -828,7 +738,7 @@ while(s)
 
 		if(t->vector)
 			{
-			if(adjust(s->his.v->time,shift_timebase)!=maxbase) 
+			if(adjust(s->his.v->time,GLOBALS.shift_timebase)!=maxbase) 
 				{
 				s->his.v=bsearch_vector(t->n.vec, maxbase);
 				while(s->his.v->next && s->his.v->time==s->his.v->next->time) s->his.v=s->his.v->next;
@@ -837,7 +747,7 @@ while(s)
 			}
 			else
 			{
-			if(adjust(s->his.h->time,shift_timebase)!=maxbase) 
+			if(adjust(s->his.h->time,GLOBALS.shift_timebase)!=maxbase) 
 				{
 				s->his.h=bsearch_node(t->n.nd, maxbase);
 				while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -960,7 +870,7 @@ while(s)
 if((maxbase<sttim)||(maxbase>fintim)) return;
 
 DEBUG(printf("Maxbase: "TTFormat", total traces: %d\n",maxbase, totaltraces));
-s=straces;
+s=GLOBALS.straces;
 passcount=0;
 while(s)
 	{
@@ -971,32 +881,32 @@ while(s)
 
 if(totaltraces)
 	{
-	if(logical_mutex[0])	/* and */
+	if(GLOBALS.logical_mutex[0])	/* and */
 		{
 		if(totaltraces==passcount) break;		
 		}
 	else
-	if(logical_mutex[1])	/* or */
+	if(GLOBALS.logical_mutex[1])	/* or */
 		{
 		if(passcount) break;
 		}
 	else
-	if(logical_mutex[2])	/* xor */
+	if(GLOBALS.logical_mutex[2])	/* xor */
 		{
 		if(passcount&1) break;
 		}
 	else
-	if(logical_mutex[3])	/* nand */
+	if(GLOBALS.logical_mutex[3])	/* nand */
 		{
 		if(totaltraces!=passcount) break;
 		}
 	else
-	if(logical_mutex[4])	/* nor */
+	if(GLOBALS.logical_mutex[4])	/* nor */
 		{
 		if(!passcount) break;
 		}
 	else
-	if(logical_mutex[5])	/* xnor */
+	if(GLOBALS.logical_mutex[5])	/* xnor */
 		{
 		if(!(passcount&1)) break;
 		}
@@ -1005,31 +915,31 @@ if(totaltraces)
 basetime=maxbase;
 }
 
-update_markertime(tims.marker=maxbase);
+update_markertime(GLOBALS.tims.marker=maxbase);
 
-width=(TimeType)(((gdouble)wavewidth)*nspx);
-if((tims.marker<tims.start)||(tims.marker>=tims.start+width))
+width=(TimeType)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);
+if((GLOBALS.tims.marker<GLOBALS.tims.start)||(GLOBALS.tims.marker>=GLOBALS.tims.start+width))
 	{
-	if((tims.marker<0)||(tims.marker<tims.first)||(tims.marker>tims.last))
+	if((GLOBALS.tims.marker<0)||(GLOBALS.tims.marker<GLOBALS.tims.first)||(GLOBALS.tims.marker>GLOBALS.tims.last))
 	                {
-	                if(tims.end>tims.last) tims.end=tims.last;
-	                middle=(tims.start/2)+(tims.end/2);
-	                if((tims.start&1)&&(tims.end&1)) middle++;
+	                if(GLOBALS.tims.end>GLOBALS.tims.last) GLOBALS.tims.end=GLOBALS.tims.last;
+	                middle=(GLOBALS.tims.start/2)+(GLOBALS.tims.end/2);
+	                if((GLOBALS.tims.start&1)&&(GLOBALS.tims.end&1)) middle++;
 	                }
 	                else
 	                { 
-	                middle=tims.marker;
+	                middle=GLOBALS.tims.marker;
 	                }
 	
-	tims.start=time_trunc(middle-(width/2));
-	if(tims.start+width>tims.last) tims.start=tims.last-width;
-	if(tims.start<tims.first) tims.start=tims.first;  
-	GTK_ADJUSTMENT(wave_hslider)->value=tims.timecache=tims.start;
+	GLOBALS.tims.start=time_trunc(middle-(width/2));
+	if(GLOBALS.tims.start+width>GLOBALS.tims.last) GLOBALS.tims.start=GLOBALS.tims.last-width;
+	if(GLOBALS.tims.start<GLOBALS.tims.first) GLOBALS.tims.start=GLOBALS.tims.first;  
+	GTK_ADJUSTMENT(GLOBALS.wave_hslider)->value=GLOBALS.tims.timecache=GLOBALS.tims.start;
 	}
 
 MaxSignalLength();
-signalarea_configure_event(signalarea, NULL);
-wavearea_configure_event(wavearea, NULL);
+signalarea_configure_event(GLOBALS.signalarea, NULL);
+wavearea_configure_event(GLOBALS.wavearea, NULL);
 }
 
 
@@ -1046,16 +956,16 @@ Trptr t;
 int totaltraces, passcount;
 int whichpass;
 
-fintim=tims.last;
+fintim=GLOBALS.tims.last;
 
 for(whichpass=0;;whichpass++)
 {
 maxbase=MAX_HISTENT_TIME;
-s=straces;
+s=GLOBALS.straces;
 while(s)
 	{
 	t=s->trace;
-	shift_timebase=t->shift;
+	GLOBALS.shift_timebase=t->shift;
 	if(!(t->vector))
 		{
 		hptr h;
@@ -1067,7 +977,7 @@ while(s)
 		while(h->time==h->next->time) h=h->next;
 		if((whichpass)||(notfirst)) h=h->next;
 		if(!h) return(MAX_HISTENT_TIME);
-		utt=adjust(h->time,shift_timebase); tt=utt;		
+		utt=adjust(h->time,GLOBALS.shift_timebase); tt=utt;		
 		if(tt < maxbase) maxbase=tt;
 		}
 		else
@@ -1080,25 +990,25 @@ while(s)
 		if((whichpass)||(notfirst)) v=v->next;
 		if(!v) return(MAX_HISTENT_TIME);
 		s->his.v=v;
-		utt=adjust(v->time,shift_timebase); tt=utt;
+		utt=adjust(v->time,GLOBALS.shift_timebase); tt=utt;
 		if(tt < maxbase) maxbase=tt;
 		}
 
 	s=s->next;
 	}
 
-s=straces;
+s=GLOBALS.straces;
 totaltraces=0;	/* increment when not don't care */
 while(s)
 	{
 	char str[2];
 	t=s->trace;
 	s->search_result=0;	/* explicitly must set this */
-	shift_timebase=t->shift;
+	GLOBALS.shift_timebase=t->shift;
 	
 	if((!t->vector)&&(!(t->n.nd->ext)))
 		{
-		if(adjust(s->his.h->time,shift_timebase)!=maxbase) 
+		if(adjust(s->his.h->time,GLOBALS.shift_timebase)!=maxbase) 
 			{
 			s->his.h=bsearch_node(t->n.nd, maxbase);
 			while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -1125,7 +1035,7 @@ while(s)
 
 			case ST_RISE:
 				totaltraces++;
-				if(((str[0]=='1')||(str[0]=='H'))&&(adjust(s->his.h->time,shift_timebase)==maxbase)) 
+				if(((str[0]=='1')||(str[0]=='H'))&&(adjust(s->his.h->time,GLOBALS.shift_timebase)==maxbase)) 
 					s->search_result=1;	
 				break;
 
@@ -1136,7 +1046,7 @@ while(s)
 
 			case ST_FALL:
 				totaltraces++;
-				if(((str[0]=='0')||(str[0]=='L'))&&(adjust(s->his.h->time,shift_timebase)==maxbase))
+				if(((str[0]=='0')||(str[0]=='L'))&&(adjust(s->his.h->time,GLOBALS.shift_timebase)==maxbase))
  					s->search_result=1;
 				break;
 
@@ -1153,7 +1063,7 @@ while(s)
 
 			case ST_ANY:
 				totaltraces++;
-				if(adjust(s->his.h->time,shift_timebase)==maxbase)s->search_result=1;
+				if(adjust(s->his.h->time,GLOBALS.shift_timebase)==maxbase)s->search_result=1;
 				break;
 		
 			case ST_STRING:
@@ -1176,7 +1086,7 @@ while(s)
 
 		if(t->vector)
 			{
-			if(adjust(s->his.v->time,shift_timebase)!=maxbase) 
+			if(adjust(s->his.v->time,GLOBALS.shift_timebase)!=maxbase) 
 				{
 				s->his.v=bsearch_vector(t->n.vec, maxbase);
 				while(s->his.v->next && s->his.v->time==s->his.v->next->time) s->his.v=s->his.v->next;
@@ -1185,7 +1095,7 @@ while(s)
 			}
 			else
 			{
-			if(adjust(s->his.h->time,shift_timebase)!=maxbase) 
+			if(adjust(s->his.h->time,GLOBALS.shift_timebase)!=maxbase) 
 				{
 				s->his.h=bsearch_node(t->n.nd, maxbase);
 				while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -1286,7 +1196,7 @@ while(s)
 
 			case ST_ANY:
 				totaltraces++;
-				if(adjust(s->his.v->time,shift_timebase)==maxbase)
+				if(adjust(s->his.v->time,GLOBALS.shift_timebase)==maxbase)
 					s->search_result=1;
 				break;
 		
@@ -1309,7 +1219,7 @@ while(s)
 if(maxbase>fintim) return(MAX_HISTENT_TIME);
 
 DEBUG(printf("Maxbase: "TTFormat", total traces: %d\n",maxbase, totaltraces));
-s=straces;
+s=GLOBALS.straces;
 passcount=0;
 while(s)
 	{
@@ -1320,32 +1230,32 @@ while(s)
 
 if(totaltraces)
 	{
-	if(logical_mutex[0])	/* and */
+	if(GLOBALS.logical_mutex[0])	/* and */
 		{
 		if(totaltraces==passcount) break;		
 		}
 	else
-	if(logical_mutex[1])	/* or */
+	if(GLOBALS.logical_mutex[1])	/* or */
 		{
 		if(passcount) break;
 		}
 	else
-	if(logical_mutex[2])	/* xor */
+	if(GLOBALS.logical_mutex[2])	/* xor */
 		{
 		if(passcount&1) break;
 		}
 	else
-	if(logical_mutex[3])	/* nand */
+	if(GLOBALS.logical_mutex[3])	/* nand */
 		{
 		if(totaltraces!=passcount) break;
 		}
 	else
-	if(logical_mutex[4])	/* nor */
+	if(GLOBALS.logical_mutex[4])	/* nor */
 		{
 		if(!passcount) break;
 		}
 	else
-	if(logical_mutex[5])	/* xnor */
+	if(GLOBALS.logical_mutex[5])	/* xnor */
 		{
 		if(!(passcount&1)) break;
 		}
@@ -1361,45 +1271,45 @@ return(maxbase);
 
 void strace_maketimetrace(int mode)
 {
-TimeType basetime=tims.first;
+TimeType basetime=GLOBALS.tims.first;
 TimeType endtime =MAX_HISTENT_TIME;
 int i, notfirst=0;
 struct timechain *tchead=NULL, *tc=NULL, *tcnext;
 TimeType *t;
 
-if(timearray)
+if(GLOBALS.timearray)
 	{
-	free_2(timearray);
-	timearray=NULL;
+	free_2(GLOBALS.timearray);
+	GLOBALS.timearray=NULL;
 	}
 
-timearray_size=0;
+GLOBALS.timearray_size=0;
 
-if((!mode)&&(!shadow_active))
+if((!mode)&&(!GLOBALS.shadow_active))
 	{
 	update_mark_count_label();
 	delete_mprintf();
 	return;	/* merely free stuff up */
 	}
 
-if(mark_idx_start>0)
+if(GLOBALS.mark_idx_start>0)
 	{
-	if(named_markers[mark_idx_start-1]>=0)
-		basetime=named_markers[mark_idx_start-1];
+	if(GLOBALS.named_markers[GLOBALS.mark_idx_start-1]>=0)
+		basetime=GLOBALS.named_markers[GLOBALS.mark_idx_start-1];
 	else
 		{
-		status_text(item_mark_start_strings[mark_idx_start].str);
+		status_text(GLOBALS.item_mark_start_strings_strace_c_1[GLOBALS.mark_idx_start].str);
 		status_text(" not in use.\n");
 		}
 	}
 
-if(mark_idx_end>0)
+if(GLOBALS.mark_idx_end>0)
 	{
-	if(named_markers[mark_idx_end-1]>=0)
-		endtime=named_markers[mark_idx_end-1];
+	if(GLOBALS.named_markers[GLOBALS.mark_idx_end-1]>=0)
+		endtime=GLOBALS.named_markers[GLOBALS.mark_idx_end-1];
 	else
 		{
-		status_text(item_mark_end_strings[mark_idx_end].str);
+		status_text(GLOBALS.item_mark_end_strings_strace_c_1[GLOBALS.mark_idx_end].str);
 		status_text(" not in use.\n");
 		}
 	}
@@ -1425,7 +1335,7 @@ while(1)
 		if(basetime>=endtime) break;
 		}
 
-	timearray_size++;
+	GLOBALS.timearray_size++;
 
 	if(!tc)
 		{
@@ -1441,10 +1351,10 @@ while(1)
 	tc->next=NULL;
 	}
 
-if(timearray_size)
+if(GLOBALS.timearray_size)
 	{
-	timearray=t=malloc_2(sizeof(TimeType)*timearray_size);
-	for(i=0;i<timearray_size;i++)
+	GLOBALS.timearray=t=malloc_2(sizeof(TimeType)*GLOBALS.timearray_size);
+	for(i=0;i<GLOBALS.timearray_size;i++)
 		{
 		*(t++)=tchead->t;
 		tcnext=tchead->next;
@@ -1454,10 +1364,10 @@ if(timearray_size)
 	}
 	else
 	{
-	timearray = NULL;
+	GLOBALS.timearray = NULL;
 	}
 
-if(!shadow_active) update_mark_count_label();
+if(!GLOBALS.shadow_active) update_mark_count_label();
 }
 
 
@@ -1470,21 +1380,21 @@ struct strace *stemp;
 char logical_mutex_temp[6];
 char  mark_idx_start_temp, mark_idx_end_temp;
 
-stemp = straces;
-straces = shadow_straces;
-shadow_straces = stemp;
+stemp = GLOBALS.straces;
+GLOBALS.straces = GLOBALS.shadow_straces;
+GLOBALS.shadow_straces = stemp;
 
-memcpy(logical_mutex_temp, logical_mutex, 6);
-memcpy(logical_mutex, shadow_logical_mutex, 6);
-memcpy(shadow_logical_mutex, logical_mutex_temp, 6);
+memcpy(logical_mutex_temp, GLOBALS.logical_mutex, 6);
+memcpy(GLOBALS.logical_mutex, GLOBALS.shadow_logical_mutex, 6);
+memcpy(GLOBALS.shadow_logical_mutex, logical_mutex_temp, 6);
 
-mark_idx_start_temp   = mark_idx_start;
-mark_idx_start        = shadow_mark_idx_start;
-shadow_mark_idx_start = mark_idx_start_temp;
+mark_idx_start_temp   = GLOBALS.mark_idx_start;
+GLOBALS.mark_idx_start        = GLOBALS.shadow_mark_idx_start;
+GLOBALS.shadow_mark_idx_start = mark_idx_start_temp;
 
-mark_idx_end_temp   = mark_idx_end;
-mark_idx_end        = shadow_mark_idx_end;
-shadow_mark_idx_end = mark_idx_end_temp;
+mark_idx_end_temp   = GLOBALS.mark_idx_end;
+GLOBALS.mark_idx_end        = GLOBALS.shadow_mark_idx_end;
+GLOBALS.shadow_mark_idx_end = mark_idx_end_temp;
 }
 
 
@@ -1499,33 +1409,33 @@ struct strace *strace_cache;
 
 for(i=0;i<6;i++)
 	{
-	shadow_logical_mutex[i] = 0;
+	GLOBALS.shadow_logical_mutex[i] = 0;
 	}
 
-shadow_mark_idx_start = 0;
-shadow_mark_idx_end   = 0;
+GLOBALS.shadow_mark_idx_start = 0;
+GLOBALS.shadow_mark_idx_end   = 0;
 
-strace_cache = straces;	/* so the trace actually deletes */
-straces=NULL;
+strace_cache = GLOBALS.straces;	/* so the trace actually deletes */
+GLOBALS.straces=NULL;
 
-stemp = shadow_straces;
+stemp = GLOBALS.shadow_straces;
 while(stemp)
 	{
-	shadow_straces = stemp->next;
+	GLOBALS.shadow_straces = stemp->next;
 	if(stemp->string) free_2(stemp->string);
 
 	FreeTrace(stemp->trace);
 	free_2(stemp);
-	stemp = shadow_straces;
+	stemp = GLOBALS.shadow_straces;
 	}
 
-if(shadow_string)
+if(GLOBALS.shadow_string)
 	{
-	free_2(shadow_string);
-	shadow_string = NULL;
+	free_2(GLOBALS.shadow_string);
+	GLOBALS.shadow_string = NULL;
 	}
 
-straces = strace_cache;
+GLOBALS.straces = strace_cache;
 }
 
 /*************************************************************************/
@@ -1533,7 +1443,6 @@ straces = strace_cache;
 /*
  * printf to memory..
  */
-struct mprintf_buff_t *mprintf_buff_head=NULL, *mprintf_buff_current=NULL;
   
 int mprintf(const char *fmt, ... )
 {
@@ -1549,14 +1458,14 @@ len = strlen(buff);
 bt->str = malloc_2(len+1);
 strcpy(bt->str, buff);
                  
-if(!mprintf_buff_current)
+if(!GLOBALS.mprintf_buff_current)
         {
-        mprintf_buff_head = mprintf_buff_current = bt;
+        GLOBALS.mprintf_buff_head = GLOBALS.mprintf_buff_current = bt;
         }
         else
         {
-        mprintf_buff_current->next = bt;
-        mprintf_buff_current = bt;
+        GLOBALS.mprintf_buff_current->next = bt;
+        GLOBALS.mprintf_buff_current = bt;
         }
 
 va_end(args);                        
@@ -1568,9 +1477,9 @@ return(rc);
  */
 void delete_mprintf(void)
 {
-if(mprintf_buff_head)
+if(GLOBALS.mprintf_buff_head)
 	{
-	struct mprintf_buff_t *mb = mprintf_buff_head;
+	struct mprintf_buff_t *mb = GLOBALS.mprintf_buff_head;
 	struct mprintf_buff_t *mbt;		
 		
 	while(mb)
@@ -1581,7 +1490,7 @@ if(mprintf_buff_head)
 		mb = mbt;
 		}
 
-	mprintf_buff_head = mprintf_buff_current = NULL;
+	GLOBALS.mprintf_buff_head = GLOBALS.mprintf_buff_current = NULL;
 	}
 }
 
@@ -1598,10 +1507,10 @@ struct strace *st;
 
 delete_mprintf();
 
-if(timearray)
+if(GLOBALS.timearray)
 	{
-	mprintf("!%d%d%d%d%d%d%c%c\n", logical_mutex[0], logical_mutex[1], logical_mutex[2], logical_mutex[3], logical_mutex[4], logical_mutex[5], '@'+mark_idx_start, '@'+mark_idx_end);
-	st=straces;
+	mprintf("!%d%d%d%d%d%d%c%c\n", GLOBALS.logical_mutex[0], GLOBALS.logical_mutex[1], GLOBALS.logical_mutex[2], GLOBALS.logical_mutex[3], GLOBALS.logical_mutex[4], GLOBALS.logical_mutex[5], '@'+GLOBALS.mark_idx_start, '@'+GLOBALS.mark_idx_end);
+	st=GLOBALS.straces;
 
 	while(st)
 		{
@@ -1616,7 +1525,7 @@ if(timearray)
 
 		t=st->trace;
 
-		if((t->flags!=def)||(st==straces))
+		if((t->flags!=def)||(st==GLOBALS.straces))
 			{
 			mprintf("@%x\n",def=t->flags);
 			}
@@ -1687,6 +1596,9 @@ if(timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
  * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
  * Merged in the main line
  *

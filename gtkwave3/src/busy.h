@@ -1,4 +1,4 @@
-/*
+#include"globals.h"/*
  * Copyright (c) Tony Bybell 2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -28,6 +28,9 @@ void busy_window_refresh(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

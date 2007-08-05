@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -12,7 +12,6 @@
 #include "pixmaps.h"
 #include "debug.h"
 
-TimeType fetchwindow=100;
 
 void
 fetch_left(GtkWidget *text, gpointer data)
@@ -20,7 +19,7 @@ fetch_left(GtkWidget *text, gpointer data)
 TimeType newlo;
 char fromstr[32];
 
-if(helpbox_is_active)
+if(GLOBALS.helpbox_is_active)
         {
         help_text_bold("\n\nFetch Left");
         help_text(
@@ -34,18 +33,18 @@ if(helpbox_is_active)
 
 DEBUG(printf("Fetch Left\n"));
 
-newlo=(tims.first)-fetchwindow;
+newlo=(GLOBALS.tims.first)-GLOBALS.fetchwindow;
 
-if(newlo<=min_time) newlo=min_time;
+if(newlo<=GLOBALS.min_time) newlo=GLOBALS.min_time;
 
-reformat_time(fromstr, newlo, time_dimension);
+reformat_time(fromstr, newlo, GLOBALS.time_dimension);
 
-gtk_entry_set_text(GTK_ENTRY(from_entry),fromstr);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS.from_entry),fromstr);
          
-if(newlo<(tims.last))
+if(newlo<(GLOBALS.tims.last))
         {
-        tims.first=newlo;
-        if(tims.start<tims.first) tims.start=tims.first;
+        GLOBALS.tims.first=newlo;
+        if(GLOBALS.tims.start<GLOBALS.tims.first) GLOBALS.tims.start=GLOBALS.tims.first;
         
         time_update();
         }
@@ -58,7 +57,7 @@ fetch_right(GtkWidget *text, gpointer data)
 TimeType newhi;
 char tostr[32];
 
-if(helpbox_is_active)
+if(GLOBALS.helpbox_is_active)
         {
         help_text_bold("\n\nFetch Right");
         help_text(
@@ -72,17 +71,17 @@ if(helpbox_is_active)
 
 DEBUG(printf("Fetch Right\n"));
 
-newhi=(tims.last)+fetchwindow;
+newhi=(GLOBALS.tims.last)+GLOBALS.fetchwindow;
 
-if(newhi>=max_time) newhi=max_time;
+if(newhi>=GLOBALS.max_time) newhi=GLOBALS.max_time;
 
-reformat_time(tostr, newhi, time_dimension);
+reformat_time(tostr, newhi, GLOBALS.time_dimension);
 
-gtk_entry_set_text(GTK_ENTRY(to_entry),tostr);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS.to_entry),tostr);
          
-if(newhi>(tims.first))
+if(newhi>(GLOBALS.tims.first))
         {
-        tims.last=newhi;
+        GLOBALS.tims.last=newhi;
         time_update();
         }
 }
@@ -94,7 +93,7 @@ discard_left(GtkWidget *text, gpointer data)
 TimeType newlo;
 char tostr[32];
 
-if(helpbox_is_active)
+if(GLOBALS.helpbox_is_active)
         {
         help_text_bold("\n\nDiscard Left");
         help_text(
@@ -107,14 +106,14 @@ if(helpbox_is_active)
 
 DEBUG(printf("Discard Left\n"));
 
-newlo=(tims.first)+fetchwindow;
+newlo=(GLOBALS.tims.first)+GLOBALS.fetchwindow;
 
-if(newlo<(tims.last))
+if(newlo<(GLOBALS.tims.last))
 	{
-	reformat_time(tostr, newlo, time_dimension);
-	gtk_entry_set_text(GTK_ENTRY(from_entry),tostr);
+	reformat_time(tostr, newlo, GLOBALS.time_dimension);
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS.from_entry),tostr);
          
-	tims.first=newlo;
+	GLOBALS.tims.first=newlo;
 	time_update();
 	}
 }
@@ -125,7 +124,7 @@ discard_right(GtkWidget *text, gpointer data)
 TimeType newhi;
 char tostr[32];
 
-if(helpbox_is_active)
+if(GLOBALS.helpbox_is_active)
         {
         help_text_bold("\n\nDiscard Right");
         help_text(
@@ -138,14 +137,14 @@ if(helpbox_is_active)
 
 DEBUG(printf("Discard Right\n"));
 
-newhi=(tims.last)-fetchwindow;
+newhi=(GLOBALS.tims.last)-GLOBALS.fetchwindow;
 
-if(newhi>(tims.first))
+if(newhi>(GLOBALS.tims.first))
 	{
-	reformat_time(tostr, newhi, time_dimension);
-	gtk_entry_set_text(GTK_ENTRY(to_entry),tostr);
+	reformat_time(tostr, newhi, GLOBALS.time_dimension);
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS.to_entry),tostr);
          
-	tims.last=newhi;
+	GLOBALS.tims.last=newhi;
 	time_update();
 	}
 }
@@ -167,9 +166,9 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-pixmapwid1=gtk_pixmap_new(larrow_pixmap, larrow_mask);
+pixmapwid1=gtk_pixmap_new(GLOBALS.larrow_pixmap, GLOBALS.larrow_mask);
 gtk_widget_show(pixmapwid1);
-pixmapwid2=gtk_pixmap_new(rarrow_pixmap, rarrow_mask);
+pixmapwid2=gtk_pixmap_new(GLOBALS.rarrow_pixmap, GLOBALS.rarrow_mask);
 gtk_widget_show(pixmapwid2);
    
 /* Create a table to hold the text widget and scrollbars */
@@ -215,6 +214,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:25  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

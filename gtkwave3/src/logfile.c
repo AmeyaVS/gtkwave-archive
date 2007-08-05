@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -22,28 +22,22 @@ char *text;
 };
 
 
-char *fontname_logfile = NULL;
 
 /* Add some text to our text widget - this is a callback that is invoked
 when our window is realized. We could also force our window to be
 realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
 
-static GdkFont *font = NULL;
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-static GtkTextIter iter;
-static GtkTextTag *bold_tag = NULL;
-static GtkTextTag *mono_tag = NULL;
-static GtkTextTag *size_tag = NULL; 
 #endif
 
 
 void log_text(GtkWidget *text, GdkFont *font, char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iter,
-                                 str, -1, mono_tag, size_tag, NULL);
+gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &GLOBALS.iter_logfile_c_2,
+                                 str, -1, GLOBALS.mono_tag_logfile_c_1, GLOBALS.size_tag_logfile_c_1, NULL);
 #else
 gtk_text_insert (GTK_TEXT (text), font, &text->style->black, NULL, str, -1);
 #endif
@@ -52,8 +46,8 @@ gtk_text_insert (GTK_TEXT (text), font, &text->style->black, NULL, str, -1);
 void log_text_bold(GtkWidget *text, GdkFont *font, char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iter,
-                                 str, -1, bold_tag, mono_tag, size_tag, NULL);
+gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &GLOBALS.iter_logfile_c_2,
+                                 str, -1, GLOBALS.bold_tag_logfile_c_2, GLOBALS.mono_tag_logfile_c_1, GLOBALS.size_tag_logfile_c_1, NULL);
 #else
 gtk_text_insert (GTK_TEXT (text), font, &text->style->fg[GTK_STATE_SELECTED], &text->style->bg[GTK_STATE_SELECTED], str, -1);
 #endif
@@ -70,27 +64,27 @@ static void center_op(void)
 {
 TimeType middle=0, width;
 
-if((tims.marker<0)||(tims.marker<tims.first)||(tims.marker>tims.last))
+if((GLOBALS.tims.marker<0)||(GLOBALS.tims.marker<GLOBALS.tims.first)||(GLOBALS.tims.marker>GLOBALS.tims.last))
 	{
-        if(tims.end>tims.last) tims.end=tims.last;
-        middle=(tims.start/2)+(tims.end/2);
-        if((tims.start&1)&&(tims.end&1)) middle++;
+        if(GLOBALS.tims.end>GLOBALS.tims.last) GLOBALS.tims.end=GLOBALS.tims.last;
+        middle=(GLOBALS.tims.start/2)+(GLOBALS.tims.end/2);
+        if((GLOBALS.tims.start&1)&&(GLOBALS.tims.end&1)) middle++;
         }   
         else
         {
-        middle=tims.marker;
+        middle=GLOBALS.tims.marker;
         }
 
-width=(TimeType)(((gdouble)wavewidth)*nspx);
-tims.start=time_trunc(middle-(width/2));
-if(tims.start+width>tims.last) tims.start=time_trunc(tims.last-width);
-if(tims.start<tims.first) tims.start=tims.first;
-GTK_ADJUSTMENT(wave_hslider)->value=tims.timecache=tims.start;
+width=(TimeType)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);
+GLOBALS.tims.start=time_trunc(middle-(width/2));
+if(GLOBALS.tims.start+width>GLOBALS.tims.last) GLOBALS.tims.start=time_trunc(GLOBALS.tims.last-width);
+if(GLOBALS.tims.start<GLOBALS.tims.first) GLOBALS.tims.start=GLOBALS.tims.first;
+GTK_ADJUSTMENT(GLOBALS.wave_hslider)->value=GLOBALS.tims.timecache=GLOBALS.tims.start;
 
 fix_wavehadj();
 
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed"); /* force zoom update */
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS.wave_hslider)), "changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS.wave_hslider)), "value_changed"); /* force zoom update */
 }
 
 
@@ -116,15 +110,15 @@ if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
                        {
                        if(strlen(sel)&&(sel[0]>='0')&&(sel[0]<='9'))
                                {
-                               TimeType tm = unformat_time(sel, time_dimension);
-                               if((tm >= tims.first) && (tm <= tims.last))
+                               TimeType tm = unformat_time(sel, GLOBALS.time_dimension);
+                               if((tm >= GLOBALS.tims.first) && (tm <= GLOBALS.tims.last))
                                        {
-                                       tims.lmbcache = -1;
-                                       update_markertime(tims.marker = tm);
+                                       GLOBALS.tims.lmbcache = -1;
+                                       update_markertime(GLOBALS.tims.marker = tm);
                                        center_op();
-                                       signalarea_configure_event(signalarea, NULL);
-                                       wavearea_configure_event(wavearea, NULL);
-                                       update_markertime(tims.marker = tm); /* centering problem in GTK2 */
+                                       signalarea_configure_event(GLOBALS.signalarea, NULL);
+                                       wavearea_configure_event(GLOBALS.wavearea, NULL);
+                                       update_markertime(GLOBALS.tims.marker = tm); /* centering problem in GTK2 */
                                        }
                                }
                        g_free(sel);
@@ -187,13 +181,13 @@ table = gtk_table_new (1, 16, FALSE);
 * GTK_SHRINK in the y direction */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 text = gtk_text_view_new ();
-gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (text)), &iter);
-bold_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "bold",
+gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (text)), &GLOBALS.iter_logfile_c_2);
+GLOBALS.bold_tag_logfile_c_2 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
-mono_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "monospace", "family", "monospace", NULL);
+GLOBALS.mono_tag_logfile_c_1 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "monospace", "family", "monospace", NULL);
 
-size_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "fsiz",
-			      "size", (use_big_fonts ? 18 : 10) * PANGO_SCALE, NULL);
+GLOBALS.size_tag_logfile_c_1 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "fsiz",
+			      "size", (GLOBALS.use_big_fonts ? 18 : 10) * PANGO_SCALE, NULL);
 
 
 #else
@@ -305,8 +299,8 @@ void logbox(char *title, int width, char *default_text)
 #endif
 
     /* create a new nonmodal window */
-    window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    if(use_big_fonts || fontname_logfile)
+    window = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    if(GLOBALS.use_big_fonts || GLOBALS.fontname_logfile)
 	{
     	gtk_widget_set_usize( GTK_WIDGET (window), width*1.8, 600);
 	}
@@ -369,7 +363,7 @@ void logbox(char *title, int width, char *default_text)
 		{
 		struct wave_logfile_lines_t *w = calloc_2(1, sizeof(struct wave_logfile_lines_t));
 
-		wlog_size += (fgetmalloc_len+1);
+		wlog_size += (GLOBALS.fgetmalloc_len+1);
 		w->text = pnt;
 		if(!wlog_curr) { wlog_head = wlog_curr = w; } else { wlog_curr->next = w; wlog_curr = w; }
 		}
@@ -397,7 +391,7 @@ void logbox(char *title, int width, char *default_text)
 		}
 	wlog_head = wlog_curr = NULL;
 	*pnt2 = 0;
-	log_text(text, font, pnt);
+	log_text(text, GLOBALS.font_logfile_c_1, pnt);
 	free_2(pnt);
 	}
 
@@ -407,6 +401,9 @@ void logbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:03  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

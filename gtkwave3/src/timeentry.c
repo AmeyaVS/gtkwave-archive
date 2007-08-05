@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,22 +13,21 @@
 #include "symbol.h"
 #include "debug.h"
 
-GtkWidget *from_entry=NULL, *to_entry=NULL;
 
 void update_endcap_times_for_partial_vcd(void)
 {
 char str[40];
 
-if(from_entry)
+if(GLOBALS.from_entry)
 	{
-	reformat_time(str, tims.first, time_dimension);
-	gtk_entry_set_text(GTK_ENTRY(from_entry),str);
+	reformat_time(str, GLOBALS.tims.first, GLOBALS.time_dimension);
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS.from_entry),str);
 	}
 
-if(to_entry)
+if(GLOBALS.to_entry)
 	{
-	reformat_time(str, tims.last, time_dimension);
-	gtk_entry_set_text(GTK_ENTRY(to_entry),str);
+	reformat_time(str, GLOBALS.tims.last, GLOBALS.time_dimension);
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS.to_entry),str);
 	}
 }
 
@@ -36,10 +35,10 @@ void time_update(void)
 {
 DEBUG(printf("Timeentry Configure Event\n"));
 
-calczoom(tims.zoom);
+calczoom(GLOBALS.tims.zoom);
 fix_wavehadj();
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed");
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed");
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS.wave_hslider)), "changed");
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS.wave_hslider)), "value_changed");
 }
 
    
@@ -53,19 +52,19 @@ char fromstr[40];
 entry_text=gtk_entry_get_text(GTK_ENTRY(entry));
 DEBUG(printf("From Entry contents: %s\n",entry_text));
 
-newlo=unformat_time(entry_text, time_dimension);
+newlo=unformat_time(entry_text, GLOBALS.time_dimension);
 
-if(newlo<min_time) 
+if(newlo<GLOBALS.min_time) 
 	{
-	newlo=min_time; 
+	newlo=GLOBALS.min_time; 
 	}
 
-if(newlo<(tims.last)) 
+if(newlo<(GLOBALS.tims.last)) 
 	{ 
-	tims.first=newlo;
-	if(tims.start<tims.first) tims.timecache=tims.start=tims.first;
+	GLOBALS.tims.first=newlo;
+	if(GLOBALS.tims.start<GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.start=GLOBALS.tims.first;
 
-	reformat_time(fromstr, tims.first, time_dimension);
+	reformat_time(fromstr, GLOBALS.tims.first, GLOBALS.time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),fromstr);
 
 	time_update(); 
@@ -73,7 +72,7 @@ if(newlo<(tims.last))
 	}
 	else
 	{
-	reformat_time(fromstr, tims.first, time_dimension);
+	reformat_time(fromstr, GLOBALS.tims.first, GLOBALS.time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),fromstr);
 	return;
 	}
@@ -89,24 +88,24 @@ char tostr[40];
 entry_text=gtk_entry_get_text(GTK_ENTRY(entry));
 DEBUG(printf("To Entry contents: %s\n",entry_text));
 
-newhi=unformat_time(entry_text, time_dimension);
+newhi=unformat_time(entry_text, GLOBALS.time_dimension);
 
-if(newhi>max_time) 
+if(newhi>GLOBALS.max_time) 
 	{
-	newhi=max_time; 
+	newhi=GLOBALS.max_time; 
 	}
 
-if(newhi>(tims.first)) 
+if(newhi>(GLOBALS.tims.first)) 
 	{ 
-	tims.last=newhi;
-	reformat_time(tostr, tims.last, time_dimension);
+	GLOBALS.tims.last=newhi;
+	reformat_time(tostr, GLOBALS.tims.last, GLOBALS.time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),tostr);
 	time_update(); 
 	return;
 	}
 	else
 	{
-	reformat_time(tostr, tims.last, time_dimension);
+	reformat_time(tostr, GLOBALS.tims.last, GLOBALS.time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),tostr);
 	return;
 	}
@@ -128,35 +127,35 @@ tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
 label=gtk_label_new("From:");
-from_entry=gtk_entry_new_with_max_length(40);
+GLOBALS.from_entry=gtk_entry_new_with_max_length(40);
 
-reformat_time(fromstr, min_time, time_dimension);
+reformat_time(fromstr, GLOBALS.min_time, GLOBALS.time_dimension);
 
-gtk_entry_set_text(GTK_ENTRY(from_entry),fromstr);
-gtk_signal_connect (GTK_OBJECT (from_entry), "activate",GTK_SIGNAL_FUNC (callback), from_entry);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS.from_entry),fromstr);
+gtk_signal_connect (GTK_OBJECT (GLOBALS.from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS.from_entry);
 box=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0); 
 gtk_widget_show(label);
-gtk_box_pack_start(GTK_BOX(box), from_entry, TRUE, TRUE, 0); 
-gtk_widget_set_usize(GTK_WIDGET(from_entry), 90, 22); 
-gtk_tooltips_set_tip_2(tooltips, from_entry, "Scroll Lower Bound", NULL);
-gtk_widget_show(from_entry);
+gtk_box_pack_start(GTK_BOX(box), GLOBALS.from_entry, TRUE, TRUE, 0); 
+gtk_widget_set_usize(GTK_WIDGET(GLOBALS.from_entry), 90, 22); 
+gtk_tooltips_set_tip_2(tooltips, GLOBALS.from_entry, "Scroll Lower Bound", NULL);
+gtk_widget_show(GLOBALS.from_entry);
 
 
 label2=gtk_label_new("To:");
-to_entry=gtk_entry_new_with_max_length(40);
+GLOBALS.to_entry=gtk_entry_new_with_max_length(40);
 
-reformat_time(tostr, max_time, time_dimension);
+reformat_time(tostr, GLOBALS.max_time, GLOBALS.time_dimension);
 
-gtk_entry_set_text(GTK_ENTRY(to_entry),tostr);
-gtk_signal_connect (GTK_OBJECT (to_entry), "activate",GTK_SIGNAL_FUNC (callback2), to_entry);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS.to_entry),tostr);
+gtk_signal_connect (GTK_OBJECT (GLOBALS.to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS.to_entry);
 box2=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box2), label2, TRUE, TRUE, 0); 
 gtk_widget_show(label2);
-gtk_box_pack_start(GTK_BOX(box2), to_entry, TRUE, TRUE, 0); 
-gtk_widget_set_usize(GTK_WIDGET(to_entry), 90, 22); 
-gtk_tooltips_set_tip_2(tooltips, to_entry, "Scroll Upper Bound", NULL);
-gtk_widget_show(to_entry);
+gtk_box_pack_start(GTK_BOX(box2), GLOBALS.to_entry, TRUE, TRUE, 0); 
+gtk_widget_set_usize(GTK_WIDGET(GLOBALS.to_entry), 90, 22); 
+gtk_tooltips_set_tip_2(tooltips, GLOBALS.to_entry, "Scroll Upper Bound", NULL);
+gtk_widget_show(GLOBALS.to_entry);
 
 mainbox=gtk_vbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(mainbox), box, TRUE, FALSE, 1);
@@ -170,6 +169,9 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
  * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
  * Merged in the main line
  *

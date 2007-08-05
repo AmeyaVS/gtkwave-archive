@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -29,9 +29,9 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-pixmapwid1=gtk_pixmap_new(larrow_pixmap, larrow_mask);
+pixmapwid1=gtk_pixmap_new(GLOBALS.larrow_pixmap, GLOBALS.larrow_mask);
 gtk_widget_show(pixmapwid1);
-pixmapwid2=gtk_pixmap_new(rarrow_pixmap, rarrow_mask);
+pixmapwid2=gtk_pixmap_new(GLOBALS.rarrow_pixmap, GLOBALS.rarrow_mask);
 gtk_widget_show(pixmapwid2);
    
 /* Create a table to hold the text widget and scrollbars */
@@ -77,6 +77,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

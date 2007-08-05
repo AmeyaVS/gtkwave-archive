@@ -1,4 +1,4 @@
-/*
+#include"globals.h"/*
  * Copyright (c) Tony Bybell 1999-2005. 
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -35,7 +35,6 @@
 /*
  * Constants 
  */
-static int      inch = 72;	/* 72 points/inch */
 
 /**********************************************
  * this is essentially wavewindow.c's rendering
@@ -45,80 +44,8 @@ static int      inch = 72;	/* 72 points/inch */
 #define WAVE_COURIER_SCALE_FAC 1.6	/* more or less is the correct
 					 * pixel->ps scale mapping  */
 
-static gdouble  ps_chwidth = 1.0;
-static gdouble  ybound;
-static int      pr_signal_fill_width;
-static int      ps_nummaxchars;
 
-char            ps_fullpage = 1;/* set by menu.c in the callback function */
-int             ps_maxveclen = 66;	/* maximum vector length that is
-					 * printable in signal window
-					 * (includes = and base symbol) */
-int             liney_max = 0;	/* will be the bottom of the marker */
 
-/*
- * PostScript device specific operations 
- */
-static void 
-ps_header(pr_context * prc);
-static void 
-ps_trailer(pr_context * prc);
-static void 
-ps_signal_init(pr_context * prc);
-static void 
-ps_setgray(pr_context * prc, gdouble gray);
-static void 
-ps_draw_line(pr_context * prc, gdouble x1, gdouble y1,
-	     gdouble x2, gdouble y2);
-static void 
-ps_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
-	    gdouble y2);
-static void 
-ps_draw_string(pr_context * prc, int x, int y, char *str,
-	       int xsize, int ysize);
-
-gtk_print_device ps_print_device = {
-				    ps_header,
-				    ps_trailer,
-				    ps_signal_init,
-				    ps_setgray,
-				    ps_draw_line,
-				    ps_draw_box,
-				    ps_draw_string
-};
-
-/*
- * MIF device specific operations 
- */
-static void 
-mif_header(pr_context * prc);
-static void 
-mif_trailer(pr_context * prc);
-static void 
-mif_signal_init(pr_context * prc);
-static void 
-mif_setgray(pr_context * prc, gdouble gray);
-static void 
-mif_translate(pr_context * prc, gdouble x, gdouble y);
-static void 
-mif_draw_line(pr_context * prc, gdouble x1, gdouble y1,
-	      gdouble x2, gdouble y2);
-static void 
-mif_draw_box(pr_context * prc, gdouble x1, gdouble y1,
-	     gdouble x2, gdouble y2);
-static void 
-mif_draw_string(pr_context * prc, int x, int y, char *str,
-		int xsize, int ysize);
-
-gtk_print_device mif_print_device = {
-				     mif_header,
-				     mif_trailer,
-				     mif_signal_init,
-				     mif_setgray,
-				     mif_draw_line,
-				     mif_draw_box,
-				     mif_draw_string
-};
 
 /**************************************************************************
  * Shorthand routins                                                      *
@@ -177,7 +104,7 @@ pr_draw_string(pr_context * prc, int x, int y, char *str, int xsize,
 /*
  * Set current gray level, with 0.0 being white, and 1.0 being black. 
  */
-static void
+void
 ps_setgray(pr_context * prc, gdouble gray)
 {
 	fprintf(prc->handle, "%f setgray\n", gray);
@@ -186,7 +113,7 @@ ps_setgray(pr_context * prc, gdouble gray)
 /*
  * Create a rectangular path 
  */
-static void
+void
 ps_box(pr_context * prc, gdouble tx1, gdouble ty1, gdouble tx2, gdouble ty2)
 {
 	fprintf(prc->handle, "%f %f %f %f box\n", ty1, tx1, ty2, tx2);
@@ -195,7 +122,7 @@ ps_box(pr_context * prc, gdouble tx1, gdouble ty1, gdouble tx2, gdouble ty2)
 /*
  * Draw a box 
  */
-static void
+void
 ps_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
 {
 	gdouble         tx1, ty1, tx2, ty2;
@@ -209,7 +136,7 @@ ps_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
 	fprintf(prc->handle, "fill\n");
 }
 
-static void
+void
 ps_signal_init(pr_context * prc)
 {
 
@@ -230,14 +157,14 @@ ps_signal_init(pr_context * prc)
 		"0.5 setlinewidth\n" "stroke\n", prc->MinY, prc->MinX);
 }
 
-static void
+void
 ps_header(pr_context * prc)
 {
 	gdouble         ps_skip;
 
 	ps_skip = prc->MinX +
 		(prc->MaxX -
-	      prc->MinX) * (((gdouble) pr_signal_fill_width) / prc->xtotal);
+	      prc->MinX) * (((gdouble) GLOBALS.pr_signal_fill_width_print_c_1) / prc->xtotal);
 
 	fprintf(prc->handle,
 		"%%!PS-Adobe-2.0 EPSF-1.2\n"
@@ -254,11 +181,11 @@ ps_header(pr_context * prc)
 		"/l { %% stack: x1 y1 x2 y2\n"
 		"\tnewpath moveto lineto closepath stroke\n"
 		"} def\n",
-	   prc->MinY, prc->MinX, (int) (prc->fullpage ? prc->MaxY : ybound),
+	   prc->MinY, prc->MinX, (int) (prc->fullpage ? prc->MaxY : GLOBALS.ybound_print_c_1),
 		prc->MaxX);
 
 	if (!prc->fullpage) {
-		ps_box(prc, prc->MinX - 1, prc->MinY - 1, prc->MaxX, ybound);
+		ps_box(prc, prc->MinX - 1, prc->MinY - 1, prc->MaxX, GLOBALS.ybound_print_c_1);
 		fprintf(prc->handle, "clip\n");
 	}
 	fprintf(prc->handle,
@@ -274,7 +201,7 @@ ps_header(pr_context * prc)
 }
 
 
-static void
+void
 ps_draw_line(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 	     gdouble y2)
 {
@@ -298,7 +225,7 @@ ps_draw_line(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 }
 
 
-static void
+void
 ps_draw_string(pr_context * prc, int x, int y, char *str, int xsize,
 	       int ysize)
 {
@@ -330,7 +257,7 @@ ps_draw_string(pr_context * prc, int x, int y, char *str, int xsize,
 }
 
 
-static void
+void
 ps_trailer(pr_context * prc)
 {
 	fprintf(prc->handle, "grestore showpage\n");
@@ -361,7 +288,7 @@ min(gdouble a, gdouble b)
 /*
  * Set current gray level, with 0.0 being white, and 1.0 being black. 
  */
-static void
+void
 mif_setgray(pr_context * prc, gdouble gray)
 {
 	prc->gray = gray;
@@ -370,7 +297,7 @@ mif_setgray(pr_context * prc, gdouble gray)
 /*
  * Set current gray level, with 0.0 being white, and 1.0 being black. 
  */
-static void
+void
 mif_translate(pr_context * prc, gdouble x, gdouble y)
 {
 	prc->tr_x = x;
@@ -380,7 +307,7 @@ mif_translate(pr_context * prc, gdouble x, gdouble y)
 /*
  * Draw an empty box 
  */
-static void
+void
 mif_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
 {
 	fprintf(prc->handle,
@@ -405,7 +332,7 @@ mif_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
  * Draw a filled box 
  */
 
-static void
+void
 mif_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 	     gdouble y2)
 {
@@ -419,7 +346,7 @@ mif_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 
 	/* The exprssion below is derived from: */
 	/* rx = min((prc->PageX * inch - tx1), (prc->PageX * inch - tx2)) */
-	rx = (int) (prc->PageX * inch - max(tx2, tx1));
+	rx = (int) (prc->PageX * GLOBALS.inch_print_c_1 - max(tx2, tx1));
 	ry = (int) min(ty1, ty2);
 	rw = abs((int) (tx2 - tx1));
 	rh = abs((int) (ty2 - ty1));
@@ -439,7 +366,7 @@ mif_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 	   (int) (10000 * (1 - prc->gray)), ry, rx, rh, rw, rx, ry, rh, rw);
 }
 
-static void
+void
 mif_signal_init(pr_context * prc)
 {
 	if (prc->fullpage) {
@@ -452,7 +379,7 @@ mif_signal_init(pr_context * prc)
 	mif_translate(prc, prc->MinX, prc->MinY);
 }
 
-static void
+void
 mif_header(pr_context * prc)
 {
 	gdouble         modified_skip;
@@ -460,7 +387,7 @@ mif_header(pr_context * prc)
 
 	mif_skip =
 		(prc->MaxX -
-	      prc->MinX) * (((gdouble) pr_signal_fill_width) / prc->xtotal);
+	      prc->MinX) * (((gdouble) GLOBALS.pr_signal_fill_width_print_c_1) / prc->xtotal);
 	modified_skip = prc->MinX + mif_skip;
 
 	fprintf(prc->handle,
@@ -471,7 +398,7 @@ mif_header(pr_context * prc)
 }
 
 
-static void
+void
 mif_draw_line(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 	      gdouble y2)
 {
@@ -503,12 +430,12 @@ mif_draw_line(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 		"   <Point  %d pt %d pt>\n"
 		" > # end of PolyLine\n",
 		(int) (10000 * (1 - prc->gray)),
-		(int) (ty1), (int) (prc->PageX * inch - tx1),
-		(int) (ty2), (int) (prc->PageX * inch - tx2));
+		(int) (ty1), (int) (prc->PageX * GLOBALS.inch_print_c_1 - tx1),
+		(int) (ty2), (int) (prc->PageX * GLOBALS.inch_print_c_1 - tx2));
 }
 
 
-static void
+void
 mif_draw_string(pr_context * prc, int x, int y, char *str, int xsize,
 		int ysize)
 {
@@ -549,12 +476,12 @@ mif_draw_string(pr_context * prc, int x, int y, char *str, int xsize,
 		"  > # end of Font\n"
 		"  <String `%s'>\n"
 		" > # end of TextLine\n",
-	     (int) (ty), (int) (prc->PageX * inch - tx), stretchy, stretchx,
+	     (int) (ty), (int) (prc->PageX * GLOBALS.inch_print_c_1 - tx), stretchy, stretchx,
 		str);
 }
 
 
-static void
+void
 mif_trailer(pr_context * prc)
 {
 	fprintf(prc->handle,
@@ -571,26 +498,26 @@ mif_trailer(pr_context * prc)
 static void
 pr_wave_init(pr_context * prc)
 {
-	int             wh = waveheight;
-	int             yheight = 33 * fontheight;
+	int             wh = GLOBALS.waveheight;
+	int             yheight = 33 * GLOBALS.fontheight;
 
-	prc->MinX = prc->LM * inch;
-	prc->MaxX = (prc->PageX - prc->RM) * inch;
-	prc->MinY = prc->BM * inch;
-	prc->MaxY = (prc->PageY - prc->TM) * inch;
+	prc->MinX = prc->LM * GLOBALS.inch_print_c_1;
+	prc->MaxX = (prc->PageX - prc->RM) * GLOBALS.inch_print_c_1;
+	prc->MinY = prc->BM * GLOBALS.inch_print_c_1;
+	prc->MaxY = (prc->PageY - prc->TM) * GLOBALS.inch_print_c_1;
 
 	if (!prc->fullpage) {
-		if (wh < 2 * fontheight)
-			wh = 2 * fontheight;
+		if (wh < 2 * GLOBALS.fontheight)
+			wh = 2 * GLOBALS.fontheight;
 	}
 	yheight = (wh < yheight) ? yheight : wh;
-	yheight = yheight - (yheight % fontheight);
+	yheight = yheight - (yheight % GLOBALS.fontheight);
 
 	if (!prc->fullpage) {
-		ybound = ((prc->MaxY - prc->MinY) / ((gdouble) yheight)) *
-			((gdouble) (wh - (wh % fontheight))) + prc->MinY;
+		GLOBALS.ybound_print_c_1 = ((prc->MaxY - prc->MinY) / ((gdouble) yheight)) *
+			((gdouble) (wh - (wh % GLOBALS.fontheight))) + prc->MinY;
 	}
-	prc->xtotal = (gdouble) (wavewidth + pr_signal_fill_width);
+	prc->xtotal = (gdouble) (GLOBALS.wavewidth + GLOBALS.pr_signal_fill_width_print_c_1);
 	prc->xscale = ((prc->MaxX - prc->MinX) / prc->xtotal);
 	prc->yscale = (prc->MaxY - prc->MinY) / ((gdouble) yheight);
 
@@ -608,13 +535,13 @@ ps_MaxSignalLength(void)
 	int             bufxlen;
 	int             bufclen;
 
-	ps_nummaxchars = 7;	/* allows a good spacing if 60 pixel default
+	GLOBALS.ps_nummaxchars_print_c_1 = 7;	/* allows a good spacing if 60 pixel default
 				 * is used */
 
-	sadj = GTK_ADJUSTMENT(wave_vslider);
+	sadj = GTK_ADJUSTMENT(GLOBALS.wave_vslider);
 	trtarget = (int) (sadj->value);
 
-	t = traces.first;
+	t = GLOBALS.traces.first;
 	trwhich = 0;
 	while (t) {
 		if ((trwhich < trtarget) && (GiveNextTrace(t))) {
@@ -625,41 +552,41 @@ ps_MaxSignalLength(void)
 		}
 	}
 
-	num_traces_displayable = signalarea->allocation.height / fontheight;
+	num_traces_displayable = GLOBALS.signalarea->allocation.height / GLOBALS.fontheight;
 
 	for (i = 0; (i < num_traces_displayable) && (t); i++) {
 
 		sbuf[0] = 0;
 		bufxlen = bufclen = 0;
-		if ((shift_timebase = t->shift)) {
+		if ((GLOBALS.shift_timebase = t->shift)) {
 			sbuf[0] = '(';
-			reformat_time(sbuf + 1, t->shift, time_dimension);
+			reformat_time(sbuf + 1, t->shift, GLOBALS.time_dimension);
 			strcpy(sbuf + (bufclen = strlen(sbuf + 1) + 1), ")");
 			bufclen++;
-			bufxlen = gdk_string_measure(signalfont, sbuf);
+			bufxlen = gdk_string_measure(GLOBALS.signalfont, sbuf);
 		}
 
 		if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
 			{
 			bufclen+=sprintf(sbuf + strlen(sbuf), "{%d}", t->n.nd->this_row);
-			bufxlen=gdk_string_measure(signalfont, sbuf);
+			bufxlen=gdk_string_measure(GLOBALS.signalfont, sbuf);
 			}
 
 		if (t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)) {
 			if (t->name) {
-				len = gdk_string_measure(signalfont, t->name) + bufxlen;
+				len = gdk_string_measure(GLOBALS.signalfont, t->name) + bufxlen;
 				numchars = strlen(t->name) + bufclen;
 
 				if (len > maxlen)
 					maxlen = len;
-				if (numchars > ps_nummaxchars)
-					ps_nummaxchars = numchars;
+				if (numchars > GLOBALS.ps_nummaxchars_print_c_1)
+					GLOBALS.ps_nummaxchars_print_c_1 = numchars;
 			}
 		} else if (t->name) {
-			len = gdk_string_measure(signalfont, t->name) + bufxlen;
+			len = gdk_string_measure(GLOBALS.signalfont, t->name) + bufxlen;
 			numchars = strlen(t->name) + bufclen;
-			if ((tims.marker != -1) && (!(t->flags & TR_EXCLUDE))) {
-				t->asciitime = tims.marker;
+			if ((GLOBALS.tims.marker != -1) && (!(t->flags & TR_EXCLUDE))) {
+				t->asciitime = GLOBALS.tims.marker;
 				if (t->asciivalue)
 					free_2(t->asciivalue);
 
@@ -667,7 +594,7 @@ ps_MaxSignalLength(void)
 					char           *str, *str2;
 					vptr            v;
 
-					v = bsearch_vector(t->n.vec, tims.marker);
+					v = bsearch_vector(t->n.vec, GLOBALS.tims.marker);
 					str = convert_ascii(t, v);
 					if (str) {
 						int             slen;
@@ -678,13 +605,13 @@ ps_MaxSignalLength(void)
 						free_2(str);
 
 						t->asciivalue = str2;
-						if ((slen = strlen(str2)) > ps_maxveclen) {
-							str2[ps_maxveclen] = 0;
-							str2[ps_maxveclen - 1] = '+';
-							vlen = gdk_string_measure(signalfont, str2);
-							numchars += ps_maxveclen;
+						if ((slen = strlen(str2)) > GLOBALS.ps_maxveclen) {
+							str2[GLOBALS.ps_maxveclen] = 0;
+							str2[GLOBALS.ps_maxveclen - 1] = '+';
+							vlen = gdk_string_measure(GLOBALS.signalfont, str2);
+							numchars += GLOBALS.ps_maxveclen;
 						} else {
-							vlen = gdk_string_measure(signalfont, str2);
+							vlen = gdk_string_measure(GLOBALS.signalfont, str2);
 							numchars += slen;
 						}
 					} else {
@@ -695,7 +622,7 @@ ps_MaxSignalLength(void)
 					char           *str;
 					hptr            h_ptr;
 
-					if ((h_ptr = bsearch_node(t->n.nd, tims.marker))) {
+					if ((h_ptr = bsearch_node(t->n.nd, GLOBALS.tims.marker))) {
 						if (!t->n.nd->ext) {
 							str = (char *) calloc_2(1, 3 * sizeof(char));
 							str[0] = '=';
@@ -705,7 +632,7 @@ ps_MaxSignalLength(void)
 								str[1] = AN_STR[h_ptr->v.h_val];
 							}
 							t->asciivalue = str;
-							vlen = gdk_string_measure(signalfont, str);
+							vlen = gdk_string_measure(GLOBALS.signalfont, str);
 							numchars += 2;
 						} else {
 							char           *str2;
@@ -732,15 +659,15 @@ ps_MaxSignalLength(void)
 								free_2(str);
 
 								t->asciivalue = str2;
-								if ((slen = strlen(str2)) > ps_maxveclen) {
-									str2[ps_maxveclen] = 0;
-									str2[ps_maxveclen - 1] = '+';
+								if ((slen = strlen(str2)) > GLOBALS.ps_maxveclen) {
+									str2[GLOBALS.ps_maxveclen] = 0;
+									str2[GLOBALS.ps_maxveclen - 1] = '+';
 									vlen =
-										gdk_string_measure(signalfont, str2);
-									numchars += ps_maxveclen;
+										gdk_string_measure(GLOBALS.signalfont, str2);
+									numchars += GLOBALS.ps_maxveclen;
 								} else {
 									vlen =
-										gdk_string_measure(signalfont, str2);
+										gdk_string_measure(GLOBALS.signalfont, str2);
 									numchars += slen;
 								}
 							} else {
@@ -758,8 +685,8 @@ ps_MaxSignalLength(void)
 			}
 			if (len > maxlen)
 				maxlen = len;
-			if (numchars > ps_nummaxchars)
-				ps_nummaxchars = numchars;
+			if (numchars > GLOBALS.ps_nummaxchars_print_c_1)
+				GLOBALS.ps_nummaxchars_print_c_1 = numchars;
 		}
 		t = GiveNextTrace(t);
 	}
@@ -783,36 +710,36 @@ pr_renderhash(pr_context * prc, int x, TimeType tim)
 	int             rhs;
 	int		iter = 0;
 
-	fhminus2 = fontheight - 2;
+	fhminus2 = GLOBALS.fontheight - 2;
 
 	pr_setgray(prc, 0.75);
 
 	pr_draw_line(prc, x, 0,
-		     x, ((!timearray) && (display_grid)
-			 && (enable_vert_grid)) ? liney_max : fhminus2);
+		     x, ((!GLOBALS.timearray) && (GLOBALS.display_grid)
+			 && (GLOBALS.enable_vert_grid)) ? GLOBALS.liney_max : fhminus2);
 
-	if (tim == tims.last)
+	if (tim == GLOBALS.tims.last)
 		return;
 
-	rborder = (tims.last - tims.start) * pxns;
+	rborder = (GLOBALS.tims.last - GLOBALS.tims.start) * GLOBALS.pxns;
 	DEBUG(printf("Rborder: %lld, Wavewidth: %d\n", rborder, wavewidth));
 
-	if (rborder > wavewidth)
-		rborder = wavewidth;
-	if ((rhs = x + pixelsperframe) > rborder)
+	if (rborder > GLOBALS.wavewidth)
+		rborder = GLOBALS.wavewidth;
+	if ((rhs = x + GLOBALS.pixelsperframe) > rborder)
 		rhs = rborder;
-	pr_draw_line(prc, x, wavecrosspiece, rhs, wavecrosspiece);
+	pr_draw_line(prc, x, GLOBALS.wavecrosspiece, rhs, GLOBALS.wavecrosspiece);
 
 
-	dx = x + (hashoffset=hashstep);
+	dx = x + (hashoffset=GLOBALS.hashstep);
         x  = dx;
 
-	while ((hashoffset < pixelsperframe) && (x <= rhs) && (iter < 10)) {
-		pr_draw_line(prc, x, wavecrosspiece, x, fhminus2);
+	while ((hashoffset < GLOBALS.pixelsperframe) && (x <= rhs) && (iter < 10)) {
+		pr_draw_line(prc, x, GLOBALS.wavecrosspiece, x, fhminus2);
 
-		hashoffset += hashstep;
-	        dx = dx + hashstep;
-	        if((pixelsperframe!=200)||(hashstep!=10.0)) iter++; /* fix any roundoff errors */
+		hashoffset += GLOBALS.hashstep;
+	        dx = dx + GLOBALS.hashstep;
+	        if((GLOBALS.pixelsperframe!=200)||(GLOBALS.hashstep!=10.0)) iter++; /* fix any roundoff errors */
 		x = dx;
 	}
 
@@ -824,12 +751,12 @@ pr_renderblackout(pr_context * prc)
 {
 gfloat pageinc;
 TimeType lhs, rhs, lclip, rclip;
-struct blackout_region_t *bt = blackout_regions;
+struct blackout_region_t *bt = GLOBALS.blackout_regions;
                          
 if(bt)
         {
-        pageinc=(gfloat)(((gdouble)wavewidth)*nspx);
-        lhs = tims.start;
+        pageinc=(gfloat)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);
+        lhs = GLOBALS.tims.start;
         rhs = pageinc + lhs;
         
         while(bt)
@@ -845,12 +772,12 @@ if(bt)
                  
                         lclip -= lhs;
                         rclip -= lhs;
-                        if(rclip>(wavewidth+1)) rclip = wavewidth+1;
+                        if(rclip>(GLOBALS.wavewidth+1)) rclip = GLOBALS.wavewidth+1;
 
 			pr_setgray(prc, 0.80);
                         pr_draw_box(prc,
-                                (((gdouble)lclip)*pxns), fontheight,
-                                (((gdouble)(rclip))*pxns), waveheight-fontheight);
+                                (((gdouble)lclip)*GLOBALS.pxns), GLOBALS.fontheight,
+                                (((gdouble)(rclip))*GLOBALS.pxns), GLOBALS.waveheight-GLOBALS.fontheight);
                         }
                  
                 bt=bt->next;
@@ -869,30 +796,30 @@ pr_rendertimes(pr_context * prc)
 
 	pr_renderblackout(prc);
 
-	tim = tims.start;
-	tims.end = tims.start + (((gdouble) wavewidth) * nspx);
+	tim = GLOBALS.tims.start;
+	GLOBALS.tims.end = GLOBALS.tims.start + (((gdouble) GLOBALS.wavewidth) * GLOBALS.nspx);
 
 	/**********/
-	if (timearray) {
+	if (GLOBALS.timearray) {
 		int             pos, pos2;
 		TimeType       *t, tm;
-		int             y = fontheight + 2;
+		int             y = GLOBALS.fontheight + 2;
 		int             oldx = -1;
 
-		pos = bsearch_timechain(tims.start);
+		pos = bsearch_timechain(GLOBALS.tims.start);
 top:
-		if ((pos >= 0) && (pos < timearray_size)) {
+		if ((pos >= 0) && (pos < GLOBALS.timearray_size)) {
 			pr_setgray(prc, 0.90);
-			t = timearray + pos;
-			for (; pos < timearray_size; t++, pos++) {
+			t = GLOBALS.timearray + pos;
+			for (; pos < GLOBALS.timearray_size; t++, pos++) {
 				tm = *t;
-				if (tm >= tims.start) {
-					if (tm <= tims.end) {
-						x = (tm - tims.start) * pxns;
+				if (tm >= GLOBALS.tims.start) {
+					if (tm <= GLOBALS.tims.end) {
+						x = (tm - GLOBALS.tims.start) * GLOBALS.pxns;
 						if (oldx == x) {
 							pos2 =
-								bsearch_timechain(tims.start +
-										  (((gdouble) (x + 1)) * nspx));
+								bsearch_timechain(GLOBALS.tims.start +
+										  (((gdouble) (x + 1)) * GLOBALS.nspx));
 							if (pos2 > pos) {
 								pos = pos2;
 								goto top;
@@ -900,7 +827,7 @@ top:
 								continue;
 						}
 						oldx = x;
-						pr_draw_line(prc, x, y, x, liney_max);
+						pr_draw_line(prc, x, y, x, GLOBALS.liney_max);
 					} else {
 						break;
 					}
@@ -916,38 +843,38 @@ top:
 
 	x = 0;
 	if (tim) {
-		rem = tim % nsperframe;
+		rem = tim % GLOBALS.nsperframe;
 		if (rem) {
-			tim = tim - nsperframe - rem;
-			x = -pixelsperframe - ((rem * pixelsperframe) / nsperframe);
+			tim = tim - GLOBALS.nsperframe - rem;
+			x = -GLOBALS.pixelsperframe - ((rem * GLOBALS.pixelsperframe) / GLOBALS.nsperframe);
 		}
 	}
 	for (;;) {
 		pr_renderhash(prc, x, tim);
 		if (tim) {
-			reformat_time(timebuff, time_trunc(tim), time_dimension);
+			reformat_time(timebuff, time_trunc(tim), GLOBALS.time_dimension);
 		} else {
 			strcpy(timebuff, "0");
 		}
 
-		len     = gdk_string_measure(wavefont, timebuff) >> 1;
+		len     = gdk_string_measure(GLOBALS.wavefont, timebuff) >> 1;
 		lenhalf = len >> 1;
 
-		if ((prc->gpd == &ps_print_device)
-		|| ((x - lenhalf >= 0) && (x + lenhalf < wavewidth))) {
+		if ((prc->gpd == &GLOBALS.ps_print_device)
+		|| ((x - lenhalf >= 0) && (x + lenhalf < GLOBALS.wavewidth))) {
 			pr_setgray(prc, 0.0);
-			if((x-lenhalf >= lastx) || (pixelsperframe >= 200))
+			if((x-lenhalf >= lastx) || (GLOBALS.pixelsperframe >= 200))
 				{
 				pr_draw_string(prc,
-					       x - lenhalf, wavefont->ascent + 1,
-					       timebuff, len, wavefont->ascent);
+					       x - lenhalf, GLOBALS.wavefont->ascent + 1,
+					       timebuff, len, GLOBALS.wavefont->ascent);
 			}
 		}
 		lastx = x + lenhalf;
 
-		tim += nsperframe;
-		x += pixelsperframe;
-		if ((x >= wavewidth) || (tim > tims.last))
+		tim += GLOBALS.nsperframe;
+		x += GLOBALS.pixelsperframe;
+		if ((x >= GLOBALS.wavewidth) || (tim > GLOBALS.tims.last))
 			break;
 	}
 }
@@ -963,34 +890,34 @@ pr_draw_named_markers(pr_context * prc)
 	TimeType        t;
 
 	for (i = 0; i < 26; i++) {
-		if ((t = named_markers[i]) != -1) {
-			if ((t >= tims.start) && (t <= tims.last) && (t <= tims.end)) {
+		if ((t = GLOBALS.named_markers[i]) != -1) {
+			if ((t >= GLOBALS.tims.start) && (t <= GLOBALS.tims.last) && (t <= GLOBALS.tims.end)) {
 
 		                /* this needs to be here rather than outside the loop as gcc does some
                 		   optimizations that cause it to calculate slightly different from the marker if it's not here */
-				pixstep = ((gdouble) nsperframe) / ((gdouble) pixelsperframe);
+				pixstep = ((gdouble) GLOBALS.nsperframe) / ((gdouble) GLOBALS.pixelsperframe);
 
-				xl = ((gdouble) (t - tims.start)) / pixstep;	/* snap to integer */
-				if ((xl >= 0) && (xl < wavewidth)) {
+				xl = ((gdouble) (t - GLOBALS.tims.start)) / pixstep;	/* snap to integer */
+				if ((xl >= 0) && (xl < GLOBALS.wavewidth)) {
 					char            nbuff[2];
 					int             xsize;
 					nbuff[0] = 'A' + i;
 					nbuff[1] = 0x00;
 
 					pr_setgray(prc, 0.40);
-					for (y = fontheight - 1; y <= liney_max - 5; y += 8) {
+					for (y = GLOBALS.fontheight - 1; y <= GLOBALS.liney_max - 5; y += 8) {
 						pr_draw_line(prc, xl, y, xl, y + 5);
 					}
 
-					xsize = gdk_string_measure(wavefont, nbuff);
+					xsize = gdk_string_measure(GLOBALS.wavefont, nbuff);
 					pr_setgray(prc, 0.00);
 					pr_draw_string(prc,
 						       xl - (xsize >> 1) + 1,
-						       fontheight - 1, nbuff,
+						       GLOBALS.fontheight - 1, nbuff,
 						       xsize,
 						       (prc->gpd ==
-							&ps_print_device) ? wavefont->ascent /
-						       2 : wavefont->ascent);
+							&GLOBALS.ps_print_device) ? GLOBALS.wavefont->ascent /
+						       2 : GLOBALS.wavefont->ascent);
 				}
 			}
 		}
@@ -1004,26 +931,26 @@ pr_draw_marker(pr_context * prc)
 	gdouble         pixstep;
 	gint            xl;
 
-	if (tims.baseline != -1) {
-		if ((tims.baseline >= tims.start) && (tims.baseline <= tims.last)
-		    && (tims.baseline <= tims.end)) {
-			pixstep = ((gdouble) nsperframe) / ((gdouble) pixelsperframe);
-			xl = ((gdouble) (tims.baseline - tims.start)) / pixstep; /* snap to integer */
-			if ((xl >= 0) && (xl < wavewidth)) {
+	if (GLOBALS.tims.baseline != -1) {
+		if ((GLOBALS.tims.baseline >= GLOBALS.tims.start) && (GLOBALS.tims.baseline <= GLOBALS.tims.last)
+		    && (GLOBALS.tims.baseline <= GLOBALS.tims.end)) {
+			pixstep = ((gdouble) GLOBALS.nsperframe) / ((gdouble) GLOBALS.pixelsperframe);
+			xl = ((gdouble) (GLOBALS.tims.baseline - GLOBALS.tims.start)) / pixstep; /* snap to integer */
+			if ((xl >= 0) && (xl < GLOBALS.wavewidth)) {
 				pr_setgray(prc, 0.65);
-				pr_draw_line(prc, xl, fontheight - 1, xl, liney_max);
+				pr_draw_line(prc, xl, GLOBALS.fontheight - 1, xl, GLOBALS.liney_max);
 			}
 		}
 	}
 
-	if (tims.marker != -1) {
-		if ((tims.marker >= tims.start) && (tims.marker <= tims.last)
-		    && (tims.marker <= tims.end)) {
-			pixstep = ((gdouble) nsperframe) / ((gdouble) pixelsperframe);
-			xl = ((gdouble) (tims.marker - tims.start)) / pixstep;	/* snap to integer */
-			if ((xl >= 0) && (xl < wavewidth)) {
+	if (GLOBALS.tims.marker != -1) {
+		if ((GLOBALS.tims.marker >= GLOBALS.tims.start) && (GLOBALS.tims.marker <= GLOBALS.tims.last)
+		    && (GLOBALS.tims.marker <= GLOBALS.tims.end)) {
+			pixstep = ((gdouble) GLOBALS.nsperframe) / ((gdouble) GLOBALS.pixelsperframe);
+			xl = ((gdouble) (GLOBALS.tims.marker - GLOBALS.tims.start)) / pixstep;	/* snap to integer */
+			if ((xl >= 0) && (xl < GLOBALS.wavewidth)) {
 				pr_setgray(prc, 0.40);
-				pr_draw_line(prc, xl, fontheight - 1, xl, liney_max);
+				pr_draw_line(prc, xl, GLOBALS.fontheight - 1, xl, GLOBALS.liney_max);
 			}
 		}
 	}
@@ -1045,30 +972,30 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 	char            hval, h2val;
 	char 		identifier_str[2];
 
-	tims.start -= shift_timebase;
-	tims.end -= shift_timebase;
+	GLOBALS.tims.start -= GLOBALS.shift_timebase;
+	GLOBALS.tims.end -= GLOBALS.shift_timebase;
 
-	liney = ((which + 2) * fontheight) - 2;
+	liney = ((which + 2) * GLOBALS.fontheight) - 2;
 	if (t && (t->flags & TR_INVERT)) {
-		y0 = ((which + 1) * fontheight) + 2;
+		y0 = ((which + 1) * GLOBALS.fontheight) + 2;
 		y1 = liney - 2;
 	} else {
-		y1 = ((which + 1) * fontheight) + 2;
+		y1 = ((which + 1) * GLOBALS.fontheight) + 2;
 		y0 = liney - 2;
 	}
 
 	yu = (y0 + y1) / 2;
-	ytext=yu-(wavefont->ascent/2)+wavefont->ascent;
-	ysiz = wavefont->ascent - 1;
+	ytext=yu-(GLOBALS.wavefont->ascent/2)+GLOBALS.wavefont->ascent;
+	ysiz = GLOBALS.wavefont->ascent - 1;
 
-	if ((display_grid) && (enable_horiz_grid) && (!kill_grid)) {
+	if ((GLOBALS.display_grid) && (GLOBALS.enable_horiz_grid) && (!kill_grid)) {
 		pr_setgray(prc, 0.75);
 		pr_draw_line(prc,
-			     (tims.start < tims.first) ? (tims.first - tims.start) * pxns : 0, liney,
-			     (tims.last <= tims.end) ? (tims.last - tims.start) * pxns : wavewidth - 1, liney);
+			     (GLOBALS.tims.start < GLOBALS.tims.first) ? (GLOBALS.tims.first - GLOBALS.tims.start) * GLOBALS.pxns : 0, liney,
+			     (GLOBALS.tims.last <= GLOBALS.tims.end) ? (GLOBALS.tims.last - GLOBALS.tims.start) * GLOBALS.pxns : GLOBALS.wavewidth - 1, liney);
 	}
 	pr_setgray(prc, 0.0);
-	if ((h) && (tims.start == h->time)) {
+	if ((h) && (GLOBALS.tims.start == h->time)) {
 		pr_draw_line(prc, 0, y0, 0, y1);
 	}
 	if (dodraw)
@@ -1076,28 +1003,28 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 			if (!h)
 				break;
 			tim = (h->time);
-			if ((tim > tims.end) || (tim > tims.last))
+			if ((tim > GLOBALS.tims.end) || (tim > GLOBALS.tims.last))
 				break;
 
-			x0 = (tim - tims.start) * pxns;
+			x0 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 			if (x0 < -1) {
 				x0 = -1;
-			} else if (x0 > wavewidth) {
+			} else if (x0 > GLOBALS.wavewidth) {
 				break;
 			}
 			h2 = h->next;
 			if (!h2)
 				break;
 			h2tim = tim = (h2->time);
-			if (tim > tims.last)
-				tim = tims.last;
-			else if (tim > tims.end + 1)
-				tim = tims.end + 1;
-			x1 = (tim - tims.start) * pxns;
+			if (tim > GLOBALS.tims.last)
+				tim = GLOBALS.tims.last;
+			else if (tim > GLOBALS.tims.end + 1)
+				tim = GLOBALS.tims.end + 1;
+			x1 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 			if (x1 < -1) {
 				x1 = -1;
-			} else if (x1 > wavewidth) {
-				x1 = wavewidth;
+			} else if (x1 > GLOBALS.wavewidth) {
+				x1 = GLOBALS.wavewidth;
 			}
 			if (x0 != x1) {
 				hval = h->v.h_val;
@@ -1108,7 +1035,7 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 				case AN_L: /* 0 */
 					pr_draw_line(prc, x0, y0, x1, y0);
 
-					if (h2tim <= tims.end)
+					if (h2tim <= GLOBALS.tims.end)
 						switch (h2val) {
 						case AN_0:
 						case AN_L: break;
@@ -1145,9 +1072,9 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 			                        int width;
 						int pixlen =0;			
 
-			                        if((width=x1-x0_new)>vector_padding)
+			                        if((width=x1-x0_new)>GLOBALS.vector_padding)
 			                                {
-			                                if((x1>=wavewidth)||((pixlen=gdk_string_measure(wavefont, identifier_str))+vector_padding<=width))
+			                                if((x1>=GLOBALS.wavewidth)||((pixlen=gdk_string_measure(GLOBALS.wavefont, identifier_str))+GLOBALS.vector_padding<=width))
 			                                        {
 			                                        pr_draw_string(prc,
 			                                                x0+2,ytext,
@@ -1161,13 +1088,13 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 
 					pr_draw_line(prc, x0, y0, x1, y0);
 					pr_draw_line(prc, x0, y1, x1, y1);
-					if (h2tim <= tims.end)
+					if (h2tim <= GLOBALS.tims.end)
 						pr_draw_line(prc, x1, y0, x1, y1);
 					break;
 
 				case AN_Z: /* Z */
 					pr_draw_line(prc, x0, yu, x1, yu);
-					if (h2tim <= tims.end)
+					if (h2tim <= GLOBALS.tims.end)
 						switch (h2val) {
 						case AN_0:
 						case AN_L:
@@ -1186,7 +1113,7 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 				case AN_1: /* 1 */
 				case AN_H: /* 1 */
 					pr_draw_line(prc, x0, y1, x1, y1);
-					if (h2tim <= tims.end)
+					if (h2tim <= GLOBALS.tims.end)
 						switch (h2val) {
 						case AN_1:
 						case AN_H: break;
@@ -1209,7 +1136,7 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 				}
 			} else {
 				pr_draw_line(prc, x1, y0, x1, y1);
-				newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * nspx) + tims.start + shift_timebase;	/* skip to next pixel */
+				newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS.nspx) + GLOBALS.tims.start + GLOBALS.shift_timebase;	/* skip to next pixel */
 				h3 = bsearch_node(t->n.nd, newtime);
 				if (h3->time > h->time) {
 					h = h3;
@@ -1220,8 +1147,8 @@ pr_draw_hptr_trace(pr_context * prc, Trptr t, hptr h, int which, int dodraw, int
 			h = h->next;
 		}
 
-	tims.start += shift_timebase;
-	tims.end += shift_timebase;
+	GLOBALS.tims.start += GLOBALS.shift_timebase;
+	GLOBALS.tims.end += GLOBALS.shift_timebase;
 }
 
 
@@ -1242,13 +1169,13 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 	double          mynan = strtod("NaN", NULL);
 	double          tmin = mynan, tmax = mynan, tv, tv2;
 
-	liney = ((which + 2 + num_extension) * fontheight) - 2;
-	y1 = ((which + 1) * fontheight) + 2;
+	liney = ((which + 2 + num_extension) * GLOBALS.fontheight) - 2;
+	y1 = ((which + 1) * GLOBALS.fontheight) + 2;
 	y0 = liney - 2;
 	yu = (y0 + y1) / 2;
-	ytext = yu - (wavefont->ascent / 2) + wavefont->ascent;
+	ytext = yu - (GLOBALS.wavefont->ascent / 2) + GLOBALS.wavefont->ascent;
 
-	ysiz = wavefont->ascent - 1;
+	ysiz = GLOBALS.wavefont->ascent - 1;
 	if (ysiz < 1)
 		ysiz = 1;
 
@@ -1257,16 +1184,16 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 		if (!h2)
 			break;
 		tim = h2->time;
-		if(tim>tims.end) { endcnt++; if(endcnt==2) break; }
-		if(tim>tims.last) break; 
-		x0 = (tim - tims.start) * pxns;
-		if((x0>wavewidth)&&(endcnt==2)) break;
+		if(tim>GLOBALS.tims.end) { endcnt++; if(endcnt==2) break; }
+		if(tim>GLOBALS.tims.last) break; 
+		x0 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
+		if((x0>GLOBALS.wavewidth)&&(endcnt==2)) break;
 		h3=h2;
 		h2 = h2->next;
 		if (!h2)
 			break;
 		tim = h2->time;
-		x1 = (tim - tims.start) * pxns;
+		x1 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 		if (x1 < 0)
 			continue;
 		tv = mynan;
@@ -1274,7 +1201,7 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 				if(!(h3->flags&HIST_STRING) && h3->v.h_vector)
 					tv = *(double *)h3->v.h_vector;
 		} else {
-			if(h3->time <= tims.last) tv=convert_real_vec(t,h3->v.h_vector);
+			if(h3->time <= GLOBALS.tims.last) tv=convert_real_vec(t,h3->v.h_vector);
 		}
 		if (!isnan(tv))	{
 			if (isnan(tmin) || tv < tmin)
@@ -1297,29 +1224,29 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 		if (!h)
 			break;
 		tim = (h->time);
-		if ((tim > tims.end) || (tim > tims.last))
+		if ((tim > GLOBALS.tims.end) || (tim > GLOBALS.tims.last))
 			break;
 
-		x0 = (tim - tims.start) * pxns;
+		x0 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 		if (x0 < -1)
 			x0 = -1;
-		else if (x0 > wavewidth)
+		else if (x0 > GLOBALS.wavewidth)
 			break;
 
 		h2 = h->next;
 		if (!h2)
 			break;
 		h2tim = tim = (h2->time);
-		if (tim > tims.last)
-			tim = tims.last;
-		else if (tim > tims.end + 1)
-			tim = tims.end + 1;
-		x1 = (tim - tims.start) * pxns;
+		if (tim > GLOBALS.tims.last)
+			tim = GLOBALS.tims.last;
+		else if (tim > GLOBALS.tims.end + 1)
+			tim = GLOBALS.tims.end + 1;
+		x1 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 
 		if (x1 < -1)
 			x1 = -1;
-		else if (x1 > wavewidth)
-			x1 = wavewidth;
+		else if (x1 > GLOBALS.wavewidth)
+			x1 = GLOBALS.wavewidth;
 
 
 		/* draw trans */
@@ -1329,13 +1256,13 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 			if(!(h->flags&HIST_STRING) && h->v.h_vector)
 				tv = *(double *)h->v.h_vector;
 		} else {
-			if(h->time <= tims.last) tv=convert_real_vec(t,h->v.h_vector);
+			if(h->time <= GLOBALS.tims.last) tv=convert_real_vec(t,h->v.h_vector);
 		}
 		if(h2->flags&HIST_REAL) {
 			if(!(h2->flags&HIST_STRING) && h2->v.h_vector)
 				tv2 = *(double *)h2->v.h_vector;
 		} else {
-			if(h2->time <= tims.last) tv2=convert_real_vec(t,h2->v.h_vector);
+			if(h2->time <= GLOBALS.tims.last) tv2=convert_real_vec(t,h2->v.h_vector);
 		}
 		if(isnan(tv))
 			yt0 = yu;
@@ -1359,7 +1286,7 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 					     x1, yt1);
 			}
 		} else {
-			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * nspx) + tims.start + shift_timebase;	/* skip to next pixel */
+			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS.nspx) + GLOBALS.tims.start + GLOBALS.shift_timebase;	/* skip to next pixel */
 			h3 = bsearch_node(t->n.nd, newtime);
 			if (h3->time > h->time) {
 				h = h3;
@@ -1372,8 +1299,8 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 		lasttype = type;
 	}
 
-	tims.start += shift_timebase;
-	tims.end += shift_timebase;
+	GLOBALS.tims.start += GLOBALS.shift_timebase;
+	GLOBALS.tims.end += GLOBALS.shift_timebase;
 }
 
 static void 
@@ -1388,34 +1315,34 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 	int             type;
 	int             lasttype = -1;
 
-	tims.start -= shift_timebase;
-	tims.end -= shift_timebase;
+	GLOBALS.tims.start -= GLOBALS.shift_timebase;
+	GLOBALS.tims.end -= GLOBALS.shift_timebase;
 
-	liney = ((which + 2) * fontheight) - 2;
-	y1 = ((which + 1) * fontheight) + 2;
+	liney = ((which + 2) * GLOBALS.fontheight) - 2;
+	y1 = ((which + 1) * GLOBALS.fontheight) + 2;
 	y0 = liney - 2;
 	yu = (y0 + y1) / 2;
-	ytext = yu - (wavefont->ascent / 2) + wavefont->ascent;
+	ytext = yu - (GLOBALS.wavefont->ascent / 2) + GLOBALS.wavefont->ascent;
 
-	ysiz = wavefont->ascent - 1;
+	ysiz = GLOBALS.wavefont->ascent - 1;
 	if (ysiz < 1)
 		ysiz = 1;
 
 
-	if ((display_grid) && (enable_horiz_grid)) {
+	if ((GLOBALS.display_grid) && (GLOBALS.enable_horiz_grid)) {
 		if(!(t->flags & TR_ANALOGMASK))
 			{
 			pr_setgray(prc, 0.75);
 			pr_draw_line(prc,
-				     (tims.start < tims.first) ? (tims.first - tims.start) * pxns : 0, liney,
-				     (tims.last <= tims.end) ? (tims.last - tims.start) * pxns : wavewidth - 1, liney);
+				     (GLOBALS.tims.start < GLOBALS.tims.first) ? (GLOBALS.tims.first - GLOBALS.tims.start) * GLOBALS.pxns : 0, liney,
+				     (GLOBALS.tims.last <= GLOBALS.tims.end) ? (GLOBALS.tims.last - GLOBALS.tims.start) * GLOBALS.pxns : GLOBALS.wavewidth - 1, liney);
 			}
 	}
 
 	if((t->flags & TR_ANALOGMASK) && (!(h->flags&HIST_STRING) || !(h->flags&HIST_REAL))) {
 	        Trptr te = t->t_next;
 	        int ext = 0;
-		int num_traces_displayable = signalarea->allocation.height / fontheight;
+		int num_traces_displayable = GLOBALS.signalarea->allocation.height / GLOBALS.fontheight;
                           
 	        while(te)
 	                {
@@ -1445,34 +1372,34 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 		if (!h)
 			break;
 		tim = (h->time);
-		if ((tim > tims.end) || (tim > tims.last))
+		if ((tim > GLOBALS.tims.end) || (tim > GLOBALS.tims.last))
 			break;
 
-		x0 = (tim - tims.start) * pxns;
+		x0 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 		if (x0 < -1)
 			x0 = -1;
-		else if (x0 > wavewidth)
+		else if (x0 > GLOBALS.wavewidth)
 			break;
 
 		h2 = h->next;
 		if (!h2)
 			break;
 		h2tim = tim = (h2->time);
-		if (tim > tims.last)
-			tim = tims.last;
-		else if (tim > tims.end + 1)
-			tim = tims.end + 1;
-		x1 = (tim - tims.start) * pxns;
+		if (tim > GLOBALS.tims.last)
+			tim = GLOBALS.tims.last;
+		else if (tim > GLOBALS.tims.end + 1)
+			tim = GLOBALS.tims.end + 1;
+		x1 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 
 		if (x1 < -1)
 			x1 = -1;
-		else if (x1 > wavewidth)
-			x1 = wavewidth;
+		else if (x1 > GLOBALS.wavewidth)
+			x1 = GLOBALS.wavewidth;
 
 		/* draw trans */
 		type = (!(h->flags&(HIST_REAL|HIST_STRING))) ? vtype(t,h->v.h_vector) : AN_0;
 		if (x0 > -1) {
-			if (use_roundcaps) {
+			if (GLOBALS.use_roundcaps) {
 				if (type == AN_Z) {
 					if (lasttype != -1) {
 						pr_draw_line(prc,
@@ -1521,7 +1448,7 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 
 		if (x0 != x1) {
 			if (type == AN_Z) {
-				if (use_roundcaps) {
+				if (GLOBALS.use_roundcaps) {
 					pr_draw_line(prc,
 						     x0 + 1, yu,
 						     x1 - 1, yu);
@@ -1532,7 +1459,7 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 				}
 			} else {
 
-				if (use_roundcaps) {
+				if (GLOBALS.use_roundcaps) {
 					pr_draw_line(prc,
 						     x0 + 2, y0,
 						     x1 - 2, y0);
@@ -1552,10 +1479,10 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 				if (x0 < 0)
 					x0 = 0;	/* fixup left margin */
 
-				width = ((prc->gpd == &ps_print_device) || (x1 < wavewidth)) ? x1 - x0 : wavewidth - x0;	/* truncate render
+				width = ((prc->gpd == &GLOBALS.ps_print_device) || (x1 < GLOBALS.wavewidth)) ? x1 - x0 : GLOBALS.wavewidth - x0;	/* truncate render
 																 * window for non-ps */
 
-				if (width > vector_padding) {
+				if (width > GLOBALS.vector_padding) {
 					if (h->flags & HIST_REAL) {
 						if (!(h->flags & HIST_STRING)) {
 							ascii = convert_ascii_real((double *) h->v.h_vector);
@@ -1567,22 +1494,22 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 					}
 
 
-					if (((pixlen = gdk_string_measure(wavefont, ascii)) + vector_padding <= width) || ((x1 >= wavewidth) && (prc->gpd == &ps_print_device))) {
+					if (((pixlen = gdk_string_measure(GLOBALS.wavefont, ascii)) + GLOBALS.vector_padding <= width) || ((x1 >= GLOBALS.wavewidth) && (prc->gpd == &GLOBALS.ps_print_device))) {
 						pr_draw_string(prc, x0 + 2, ytext, ascii, pixlen, ysiz);
 					} else {
 						char           *mod;
 
-						mod = bsearch_trunc(ascii, width - vector_padding);
+						mod = bsearch_trunc(ascii, width - GLOBALS.vector_padding);
 						if (mod) {
 							*mod = '+';
 							*(mod + 1) = 0;
-							pr_draw_string(prc, x0 + 2, ytext, ascii, maxlen_trunc, ysiz);
+							pr_draw_string(prc, x0 + 2, ytext, ascii, GLOBALS.maxlen_trunc, ysiz);
 						}
 					}
 				}
 			}
 		} else {
-			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * nspx) + tims.start + shift_timebase;	/* skip to next pixel */
+			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS.nspx) + GLOBALS.tims.start + GLOBALS.shift_timebase;	/* skip to next pixel */
 			h3 = bsearch_node(t->n.nd, newtime);
 			if (h3->time > h->time) {
 				h = h3;
@@ -1599,8 +1526,8 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 		lasttype = type;
 	}
 
-	tims.start += shift_timebase;
-	tims.end += shift_timebase;
+	GLOBALS.tims.start += GLOBALS.shift_timebase;
+	GLOBALS.tims.end += GLOBALS.shift_timebase;
 }
 
 
@@ -1621,13 +1548,13 @@ pr_draw_vptr_trace_analog(pr_context * prc, Trptr t, vptr v, int which, int num_
 	double          tmin = mynan, tmax = mynan, tv, tv2;
 
 	h = v;
-	liney = ((which + 2 + num_extension) * fontheight) - 2;
-	y1 = ((which + 1) * fontheight) + 2;
+	liney = ((which + 2 + num_extension) * GLOBALS.fontheight) - 2;
+	y1 = ((which + 1) * GLOBALS.fontheight) + 2;
 	y0 = liney - 2;
 	yu = (y0 + y1) / 2;
-	ytext = yu - (wavefont->ascent / 2) + wavefont->ascent;
+	ytext = yu - (GLOBALS.wavefont->ascent / 2) + GLOBALS.wavefont->ascent;
 
-	ysiz = wavefont->ascent - 1;
+	ysiz = GLOBALS.wavefont->ascent - 1;
 	if (ysiz < 1)
 		ysiz = 1;
 
@@ -1636,17 +1563,17 @@ pr_draw_vptr_trace_analog(pr_context * prc, Trptr t, vptr v, int which, int num_
 		if (!h2)
 			break;
 		tim = h2->time;
-		if ((tim > tims.end) || (tim > tims.last))
+		if ((tim > GLOBALS.tims.end) || (tim > GLOBALS.tims.last))
 			break;
-		x0 = (tim - tims.start) * pxns;
-		if (x0 > wavewidth)
+		x0 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
+		if (x0 > GLOBALS.wavewidth)
 			break;
 		h3=h2;
 		h2 = h2->next;
 		if (!h2)
 			break;
 		tim = h2->time;
-		x1 = (tim - tims.start) * pxns;
+		x1 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 		if (x1 < 0)
 			continue;
 		tv = convert_real(t,h3);
@@ -1671,29 +1598,29 @@ pr_draw_vptr_trace_analog(pr_context * prc, Trptr t, vptr v, int which, int num_
 		if (!h)
 			break;
 		tim = (h->time);
-		if ((tim > tims.end) || (tim > tims.last))
+		if ((tim > GLOBALS.tims.end) || (tim > GLOBALS.tims.last))
 			break;
 
-		x0 = (tim - tims.start) * pxns;
+		x0 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 		if (x0 < -1)
 			x0 = -1;
-		else if (x0 > wavewidth)
+		else if (x0 > GLOBALS.wavewidth)
 			break;
 
 		h2 = h->next;
 		if (!h2)
 			break;
 		h2tim = tim = (h2->time);
-		if (tim > tims.last)
-			tim = tims.last;
-		else if (tim > tims.end + 1)
-			tim = tims.end + 1;
-		x1 = (tim - tims.start) * pxns;
+		if (tim > GLOBALS.tims.last)
+			tim = GLOBALS.tims.last;
+		else if (tim > GLOBALS.tims.end + 1)
+			tim = GLOBALS.tims.end + 1;
+		x1 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 
 		if (x1 < -1)
 			x1 = -1;
-		else if (x1 > wavewidth)
-			x1 = wavewidth;
+		else if (x1 > GLOBALS.wavewidth)
+			x1 = GLOBALS.wavewidth;
 
 
 		/* draw trans */
@@ -1722,7 +1649,7 @@ pr_draw_vptr_trace_analog(pr_context * prc, Trptr t, vptr v, int which, int num_
 					     x1, yt1);
 			}
 		} else {
-			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * nspx) + tims.start + shift_timebase;	/* skip to next pixel */
+			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS.nspx) + GLOBALS.tims.start + GLOBALS.shift_timebase;	/* skip to next pixel */
 			h3 = bsearch_vector(t->n.vec, newtime);
 			if (h3->time > h->time) {
 				h = h3;
@@ -1735,8 +1662,8 @@ pr_draw_vptr_trace_analog(pr_context * prc, Trptr t, vptr v, int which, int num_
 		lasttype = type;
 	}
 
-	tims.start += shift_timebase;
-	tims.end += shift_timebase;
+	GLOBALS.tims.start += GLOBALS.shift_timebase;
+	GLOBALS.tims.end += GLOBALS.shift_timebase;
 }
 
 static void 
@@ -1751,25 +1678,25 @@ pr_draw_vptr_trace(pr_context * prc, Trptr t, vptr v, int which)
 	int             type;
 	int             lasttype = -1;
 
-	tims.start -= shift_timebase;
-	tims.end -= shift_timebase;
+	GLOBALS.tims.start -= GLOBALS.shift_timebase;
+	GLOBALS.tims.end -= GLOBALS.shift_timebase;
 
 	h = v;
-	liney = ((which + 2) * fontheight) - 2;
-	y1 = ((which + 1) * fontheight) + 2;
+	liney = ((which + 2) * GLOBALS.fontheight) - 2;
+	y1 = ((which + 1) * GLOBALS.fontheight) + 2;
 	y0 = liney - 2;
 	yu = (y0 + y1) / 2;
-	ytext = yu - (wavefont->ascent / 2) + wavefont->ascent;
+	ytext = yu - (GLOBALS.wavefont->ascent / 2) + GLOBALS.wavefont->ascent;
 
-	ysiz = wavefont->ascent - 1;
+	ysiz = GLOBALS.wavefont->ascent - 1;
 	if (ysiz < 1)
 		ysiz = 1;
 
-	if ((display_grid) && (enable_horiz_grid)) {
+	if ((GLOBALS.display_grid) && (GLOBALS.enable_horiz_grid)) {
 		pr_setgray(prc, 0.75);
 		pr_draw_line(prc,
-			     (tims.start < tims.first) ? (tims.first - tims.start) * pxns : 0, liney,
-			     (tims.last <= tims.end) ? (tims.last - tims.start) * pxns : wavewidth - 1, liney);
+			     (GLOBALS.tims.start < GLOBALS.tims.first) ? (GLOBALS.tims.first - GLOBALS.tims.start) * GLOBALS.pxns : 0, liney,
+			     (GLOBALS.tims.last <= GLOBALS.tims.end) ? (GLOBALS.tims.last - GLOBALS.tims.start) * GLOBALS.pxns : GLOBALS.wavewidth - 1, liney);
 	}
 
 	if(t->flags & TR_ANALOGMASK) {
@@ -1798,33 +1725,33 @@ pr_draw_vptr_trace(pr_context * prc, Trptr t, vptr v, int which)
 		if (!h)
 			break;
 		tim = (h->time);
-		if ((tim > tims.end) || (tim > tims.last))
+		if ((tim > GLOBALS.tims.end) || (tim > GLOBALS.tims.last))
 			break;
 
-		x0 = (tim - tims.start) * pxns;
+		x0 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 		if (x0 < -1)
 			x0 = -1;
-		else if (x0 > wavewidth)
+		else if (x0 > GLOBALS.wavewidth)
 			break;
 
 		h2 = h->next;
 		if (!h2)
 			break;
 		h2tim = tim = (h2->time);
-		if (tim > tims.last)
-			tim = tims.last;
-		else if (tim > tims.end + 1)
-			tim = tims.end + 1;
-		x1 = (tim - tims.start) * pxns;
+		if (tim > GLOBALS.tims.last)
+			tim = GLOBALS.tims.last;
+		else if (tim > GLOBALS.tims.end + 1)
+			tim = GLOBALS.tims.end + 1;
+		x1 = (tim - GLOBALS.tims.start) * GLOBALS.pxns;
 		if (x1 < -1)
 			x1 = -1;
-		else if (x1 > wavewidth)
-			x1 = wavewidth;
+		else if (x1 > GLOBALS.wavewidth)
+			x1 = GLOBALS.wavewidth;
 
 		/* draw trans */
 		type = vtype2(t, h);
 		if (x0 > -1) {
-			if (use_roundcaps) {
+			if (GLOBALS.use_roundcaps) {
 				if (type == 2) {
 					if (lasttype != -1) {
 						pr_draw_line(prc,
@@ -1873,7 +1800,7 @@ pr_draw_vptr_trace(pr_context * prc, Trptr t, vptr v, int which)
 
 		if (x0 != x1) {
 			if (type == 2) {
-				if (use_roundcaps) {
+				if (GLOBALS.use_roundcaps) {
 					pr_draw_line(prc,
 						     x0 + 1, yu,
 						     x1 - 1, yu);
@@ -1884,7 +1811,7 @@ pr_draw_vptr_trace(pr_context * prc, Trptr t, vptr v, int which)
 				}
 			} else {
 
-				if (use_roundcaps) {
+				if (GLOBALS.use_roundcaps) {
 					pr_draw_line(prc,
 						     x0 + 2, y0,
 						     x1 - 2, y0);
@@ -1903,30 +1830,30 @@ pr_draw_vptr_trace(pr_context * prc, Trptr t, vptr v, int which)
 				if (x0 < 0)
 					x0 = 0;	/* fixup left margin */
 
-				width = ((prc->gpd == &ps_print_device) || (x1 < wavewidth)) ? x1 - x0 : wavewidth - x0;	/* truncate render
+				width = ((prc->gpd == &GLOBALS.ps_print_device) || (x1 < GLOBALS.wavewidth)) ? x1 - x0 : GLOBALS.wavewidth - x0;	/* truncate render
 																 * window for non-ps */
 
-				if (width > vector_padding) {
+				if (width > GLOBALS.vector_padding) {
 					ascii = convert_ascii(t, h);
 
-					if (((pixlen = gdk_string_measure(wavefont, ascii)) + vector_padding <= width) || ((x1 >= wavewidth) && (prc->gpd == &ps_print_device))) {
+					if (((pixlen = gdk_string_measure(GLOBALS.wavefont, ascii)) + GLOBALS.vector_padding <= width) || ((x1 >= GLOBALS.wavewidth) && (prc->gpd == &GLOBALS.ps_print_device))) {
 						pr_draw_string(prc, x0 + 2, ytext, ascii, pixlen, ysiz);
 					} else {
 						char           *mod;
 
-						mod = bsearch_trunc(ascii, width - vector_padding);
+						mod = bsearch_trunc(ascii, width - GLOBALS.vector_padding);
 						if (mod) {
 							*mod = '+';
 							*(mod + 1) = 0;
 
 							pr_draw_string(prc,
-								       x0 + 2, ytext, ascii, maxlen_trunc, ysiz);
+								       x0 + 2, ytext, ascii, GLOBALS.maxlen_trunc, ysiz);
 						}
 					}
 				}
 			}
 		} else {
-			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * nspx) + tims.start + shift_timebase;	/* skip to next pixel */
+			newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS.nspx) + GLOBALS.tims.start + GLOBALS.shift_timebase;	/* skip to next pixel */
 			h3 = bsearch_vector(t->n.vec, newtime);
 			if (h3->time > h->time) {
 				h = h3;
@@ -1943,32 +1870,32 @@ pr_draw_vptr_trace(pr_context * prc, Trptr t, vptr v, int which)
 		lasttype = type;
 	}
 
-	tims.start += shift_timebase;
-	tims.end += shift_timebase;
+	GLOBALS.tims.start += GLOBALS.shift_timebase;
+	GLOBALS.tims.end += GLOBALS.shift_timebase;
 }
 
 static void
 pr_rendertraces(pr_context * prc)
 {
-	if (!topmost_trace) {
-		topmost_trace = traces.first;
+	if (!GLOBALS.topmost_trace) {
+		GLOBALS.topmost_trace = GLOBALS.traces.first;
 	}
-	if (topmost_trace) {
+	if (GLOBALS.topmost_trace) {
 		Trptr           t;
 		hptr            h;
 		vptr            v;
 		int             i, num_traces_displayable;
 
-		num_traces_displayable = wavearea->allocation.height / (fontheight);
+		num_traces_displayable = GLOBALS.wavearea->allocation.height / (GLOBALS.fontheight);
 		num_traces_displayable--;	/* for the time trace that is
 						 * always there */
 
-		t = topmost_trace;
+		t = GLOBALS.topmost_trace;
 		for (i = 0; ((i < num_traces_displayable) && (t)); i++) {
 			if (!(t->flags & (TR_EXCLUDE | TR_BLANK | TR_ANALOG_BLANK_STRETCH))) {
-				shift_timebase = t->shift;
+				GLOBALS.shift_timebase = t->shift;
 				if (!t->vector) {
-					h = bsearch_node(t->n.nd, tims.start);
+					h = bsearch_node(t->n.nd, GLOBALS.tims.start);
 					DEBUG(printf
 					      ("Bit Trace: %s, %s\n", t->name, t->n.nd->nname));
 					DEBUG(printf
@@ -1981,7 +1908,7 @@ pr_rendertraces(pr_context * prc)
 						pr_draw_hptr_trace_vector(prc, t, h, i);
 					}
 				} else {
-					v = bsearch_vector(t->n.vec, tims.start);
+					v = bsearch_vector(t->n.vec, GLOBALS.tims.start);
 					DEBUG(printf
 					      ("Vector Trace: %s, %s\n", t->name, t->n.vec->name));
 					DEBUG(printf
@@ -2032,7 +1959,7 @@ pr_RenderSig(pr_context * prc, Trptr t, int i)
 
 	if ((t->name) && (t->shift)) {
 		sbuf[0] = '(';
-		reformat_time(sbuf + 1, t->shift, time_dimension);
+		reformat_time(sbuf + 1, t->shift, GLOBALS.time_dimension);
 		strcpy(sbuf + (bufclen = strlen(sbuf + 1) + 1), ")");
 		bufclen++;
 	} 
@@ -2043,11 +1970,11 @@ pr_RenderSig(pr_context * prc, Trptr t, int i)
                 }
 
 
-	liney = ((i + 2) * fontheight) - 2;
+	liney = ((i + 2) * GLOBALS.fontheight) - 2;
 
-	texty = liney - (signalfont->descent);
+	texty = liney - (GLOBALS.signalfont->descent);
 
-	retval = liney - fontheight + 1;
+	retval = liney - GLOBALS.fontheight + 1;
 
 	if (t->flags & TR_HIGHLIGHT)
 		pr_setgray(prc, 0.75);
@@ -2055,10 +1982,10 @@ pr_RenderSig(pr_context * prc, Trptr t, int i)
 		pr_setgray(prc, 0.95);
 
 	pr_draw_box(prc, 2, retval + 1,
-		    pr_signal_fill_width - 2, retval + fontheight - 3);
+		    GLOBALS.pr_signal_fill_width_print_c_1 - 2, retval + GLOBALS.fontheight - 3);
 	pr_setgray(prc, 0.75);
 
-	pr_draw_line(prc, 0, liney, pr_signal_fill_width - 1, liney);
+	pr_draw_line(prc, 0, liney, GLOBALS.pr_signal_fill_width_print_c_1 - 1, liney);
 
 	/* if (!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))) */
 	{
@@ -2081,13 +2008,13 @@ pr_RenderSig(pr_context * prc, Trptr t, int i)
 			if ((t->asciivalue) && (!(t->flags & TR_EXCLUDE)))
 				strcat(buf, t->asciivalue);
 
-			realwidth = maxwidth * ps_chwidth;
+			realwidth = maxwidth * GLOBALS.ps_chwidth_print_c_1;
 
 			if (maxwidth == 0)
 				return (retval);
 			pr_setgray(prc, 0.0);
 			pr_draw_string(prc, 3, texty - 1, buf, realwidth,
-				  signalfont->ascent - signalfont->descent);
+				  GLOBALS.signalfont->ascent - GLOBALS.signalfont->descent);
 		}
 	}
 
@@ -2103,25 +2030,25 @@ pr_RenderSigs(pr_context * prc, int trtarget)
 	GtkAdjustment  *hadj;
 	gint            xsrc;
 
-	hadj = GTK_ADJUSTMENT(signal_hslider);
+	hadj = GTK_ADJUSTMENT(GLOBALS.signal_hslider);
 	xsrc = (gint) hadj->value;
 
-	num_traces_displayable = signalarea->allocation.height / (fontheight);
+	num_traces_displayable = GLOBALS.signalarea->allocation.height / (GLOBALS.fontheight);
 	num_traces_displayable--;	/* for the time trace that is always
 					 * there */
 
 	pr_setgray(prc, 0.75);
-	pr_draw_line(prc, 0, fontheight - 1, pr_signal_fill_width - 1,
-		     fontheight - 1);
+	pr_draw_line(prc, 0, GLOBALS.fontheight - 1, GLOBALS.pr_signal_fill_width_print_c_1 - 1,
+		     GLOBALS.fontheight - 1);
 	pr_setgray(prc, 0.0);
-	pr_draw_string(prc, 3, fontheight, "Time",
+	pr_draw_string(prc, 3, GLOBALS.fontheight, "Time",
 		       (width =
-		     gdk_string_measure(wavefont, "Time")) * 2, fontheight);
+		     gdk_string_measure(GLOBALS.wavefont, "Time")) * 2, GLOBALS.fontheight);
 
-	ps_chwidth =
-		((gdouble) (pr_signal_fill_width - 6)) / ((gdouble) (ps_nummaxchars));
+	GLOBALS.ps_chwidth_print_c_1 =
+		((gdouble) (GLOBALS.pr_signal_fill_width_print_c_1 - 6)) / ((gdouble) (GLOBALS.ps_nummaxchars_print_c_1));
 
-	t = traces.first;
+	t = GLOBALS.traces.first;
 	trwhich = 0;
 	while (t) {
 		if ((trwhich < trtarget) && (GiveNextTrace(t))) {
@@ -2132,7 +2059,7 @@ pr_RenderSigs(pr_context * prc, int trtarget)
 		}
 	}
 
-	topmost_trace = t;
+	GLOBALS.topmost_trace = t;
 	if (t) {
 		for (i = 0; (i < num_traces_displayable) && (t); i++) {
 			pr_RenderSig(prc, t, i);
@@ -2149,12 +2076,12 @@ print_image(pr_context * prc)
 	GtkAdjustment  *sadj;
 	int             trtarget;
 
-	if ((traces.total + 1) * fontheight > wavearea->allocation.height)
-		liney_max = wavearea->allocation.height;
+	if ((GLOBALS.traces.total + 1) * GLOBALS.fontheight > GLOBALS.wavearea->allocation.height)
+		GLOBALS.liney_max = GLOBALS.wavearea->allocation.height;
 	else
-		liney_max = (traces.total + 1) * fontheight;
+		GLOBALS.liney_max = (GLOBALS.traces.total + 1) * GLOBALS.fontheight;
 
-	pr_signal_fill_width = ps_MaxSignalLength();
+	GLOBALS.pr_signal_fill_width_print_c_1 = ps_MaxSignalLength();
 	pr_wave_init(prc);
 	pr_header(prc);
 	pr_rendertimes(prc);
@@ -2162,7 +2089,7 @@ print_image(pr_context * prc)
 
 	pr_signal_init(prc);
 
-	sadj = GTK_ADJUSTMENT(wave_vslider);
+	sadj = GTK_ADJUSTMENT(GLOBALS.wave_vslider);
 	trtarget = (int) (sadj->value);
 	pr_RenderSigs(prc, trtarget);
 
@@ -2174,7 +2101,7 @@ print_ps_image(FILE * wave, gdouble px, gdouble py)
 {
 	pr_context      prc;
 
-	prc.gpd = &ps_print_device;
+	prc.gpd = &GLOBALS.ps_print_device;
 	prc.PageX = px;		/* Legal page width */
 	prc.PageY = py;		/* Legal page height */
 	prc.LM = 1;		/* Left Margin (inch) */
@@ -2182,7 +2109,7 @@ print_ps_image(FILE * wave, gdouble px, gdouble py)
 	prc.BM = 1;		/* Bottom Margin (inch) */
 	prc.TM = 1;		/* Top Margin (inch) */
 	prc.handle = wave;
-	prc.fullpage = ps_fullpage;
+	prc.fullpage = GLOBALS.ps_fullpage;
 	print_image(&prc);
 }
 
@@ -2191,7 +2118,7 @@ print_mif_image(FILE * wave, gdouble px, gdouble py)
 {
 	pr_context      prc;
 
-	prc.gpd = &mif_print_device;
+	prc.gpd = &GLOBALS.mif_print_device;
 	prc.PageX = px;		/* Legal page width */
 	prc.PageY = py;		/* Legal page height */
 	prc.LM = 1;		/* Left Margin (inch) */
@@ -2201,13 +2128,16 @@ print_mif_image(FILE * wave, gdouble px, gdouble py)
 	prc.tr_x = 0;
 	prc.tr_y = 0;
 	prc.handle = wave;
-	prc.fullpage = ps_fullpage;
+	prc.fullpage = GLOBALS.ps_fullpage;
 	print_image(&prc);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:28  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

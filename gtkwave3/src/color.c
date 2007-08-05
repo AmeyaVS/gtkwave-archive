@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -11,39 +11,8 @@
 #include "color.h"
 #include "debug.h"
 
-int color_back=-1;
-int color_baseline=-1;
-int color_grid=-1;
-int color_high=-1;
-int color_low=-1;
-int color_mark=-1;
-int color_mid=-1;
-int color_time=-1;
-int color_timeb=-1;
-int color_trans=-1;
-int color_umark=-1;
-int color_value=-1;
-int color_vbox=-1;
-int color_vtrans=-1;
-int color_x=-1;
-int color_xfill=-1;
 
-int color_0=-1;
-int color_1=-1;
-int color_ufill=-1;
-int color_u=-1;
-int color_wfill=-1;
-int color_w=-1;
-int color_dashfill=-1;
-int color_dash=-1;
 
-int color_white = -1;
-int color_black = -1;
-int color_ltgray = -1;
-int color_normal = -1;
-int color_mdgray = -1;
-int color_dkgray = -1;
-int color_dkblue = -1;
 
 
 /* 
@@ -79,6 +48,9 @@ return(fallback);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

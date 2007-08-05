@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,8 +20,6 @@ struct logfile_chain *next;
 char *name;
 };
 
-extern char *whoami;
-extern char *stems_name, *aet_name;
 
 GtkWidget *create_text(void);
 GtkWidget *create_zoom_buttons(void);
@@ -47,24 +45,17 @@ int stems_are_active(void);
 void activate_stems_reader(char *stems_name);
 
 
-extern GtkWidget *mainwindow;
-extern GtkWidget *signalwindow;
-extern GtkWidget *wavewindow;
-extern char paned_pack_semantics;    /* 1 for paned_pack, 0 for paned_add */
-extern int initial_window_x, initial_window_y; /* inital window sizes */
-extern int initial_window_xpos, initial_window_ypos; /* inital window position */
-extern int xpos_delta, ypos_delta;
 
-extern int splash_disable;
-extern int possibly_use_rc_defaults;
 
-extern int stems_type;
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:28  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

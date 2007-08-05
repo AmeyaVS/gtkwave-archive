@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -23,7 +23,6 @@ unsigned int offs;
 unsigned int elem_siz;
 };
 
-extern int vlist_compression_depth; /* 0-9 zlib value, -1 disables */
 
 
 struct vlist_t *vlist_create(unsigned int elem_siz, unsigned int elem_start_cnt);
@@ -39,6 +38,9 @@ void vlist_uncompress(struct vlist_t **v);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

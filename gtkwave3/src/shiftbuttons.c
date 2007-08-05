@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@ GtkAdjustment *hadj;
 gfloat inc;
 TimeType ntinc;
 
-if(helpbox_is_active)
+if(GLOBALS.helpbox_is_active)
         {
         help_text_bold("\n\nShift Left");
         help_text(
@@ -33,15 +33,15 @@ if(helpbox_is_active)
         }
 
 
-if(nspx>1.0) inc=nspx; else inc=1.0;
+if(GLOBALS.nspx>1.0) inc=GLOBALS.nspx; else inc=1.0;
 
-hadj=GTK_ADJUSTMENT(wave_hslider);
-if((hadj->value-inc)>tims.first) hadj->value=hadj->value-inc;
-	else hadj->value=tims.first;
+hadj=GTK_ADJUSTMENT(GLOBALS.wave_hslider);
+if((hadj->value-inc)>GLOBALS.tims.first) hadj->value=hadj->value-inc;
+	else hadj->value=GLOBALS.tims.first;
 
 ntinc=(TimeType)inc;
-if((tims.start-ntinc)>tims.first) tims.timecache=tims.start-ntinc;
-	else tims.timecache=tims.first;
+if((GLOBALS.tims.start-ntinc)>GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.start-ntinc;
+	else GLOBALS.tims.timecache=GLOBALS.tims.first;
 
 time_update();
 
@@ -55,7 +55,7 @@ GtkAdjustment *hadj;
 gfloat inc;
 TimeType ntinc, pageinc;
 
-if(helpbox_is_active)
+if(GLOBALS.helpbox_is_active)
         {
         help_text_bold("\n\nShift Right");
         help_text(
@@ -68,20 +68,20 @@ if(helpbox_is_active)
         return;
         }
 
-if(nspx>1.0) inc=nspx; else inc=1.0;
+if(GLOBALS.nspx>1.0) inc=GLOBALS.nspx; else inc=1.0;
 ntinc=(TimeType)inc;
 
-hadj=GTK_ADJUSTMENT(wave_hslider);
-if((hadj->value+inc)<tims.last) hadj->value=hadj->value+inc;
-	else hadj->value=tims.last-inc;
+hadj=GTK_ADJUSTMENT(GLOBALS.wave_hslider);
+if((hadj->value+inc)<GLOBALS.tims.last) hadj->value=hadj->value+inc;
+	else hadj->value=GLOBALS.tims.last-inc;
 
-pageinc=(TimeType)(((gdouble)wavewidth)*nspx);
+pageinc=(TimeType)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);
 
-if((tims.start+ntinc)<(tims.last-pageinc+1)) tims.timecache=tims.start+ntinc;
+if((GLOBALS.tims.start+ntinc)<(GLOBALS.tims.last-pageinc+1)) GLOBALS.tims.timecache=GLOBALS.tims.start+ntinc;
 	else 
 	{
-	tims.timecache=tims.last-pageinc+1;
-	if(tims.timecache<tims.first) tims.timecache=tims.first;
+	GLOBALS.tims.timecache=GLOBALS.tims.last-pageinc+1;
+	if(GLOBALS.tims.timecache<GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.first;
 	}
 
 time_update();
@@ -106,9 +106,9 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-pixmapwid1=gtk_pixmap_new(larrow_pixmap, larrow_mask);
+pixmapwid1=gtk_pixmap_new(GLOBALS.larrow_pixmap, GLOBALS.larrow_mask);
 gtk_widget_show(pixmapwid1);
-pixmapwid2=gtk_pixmap_new(rarrow_pixmap, rarrow_mask);
+pixmapwid2=gtk_pixmap_new(GLOBALS.rarrow_pixmap, GLOBALS.rarrow_mask);
 gtk_widget_show(pixmapwid2);
    
 /* Create a table to hold the text widget and scrollbars */
@@ -154,6 +154,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:21  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

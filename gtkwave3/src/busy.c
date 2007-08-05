@@ -1,4 +1,4 @@
-/*
+#include"globals.h"/*
  * Copyright (c) Tony Bybell 2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -10,12 +10,10 @@
 #include "busy.h"
 
 
-static GdkCursor *busycursor = NULL;
-static int busy = 0;
 
 static void GuiDoEvent(GdkEvent *event)
 {
-if(!busy)
+if(!GLOBALS.busy_busy_c_1)
 	{
 	gtk_main_do_event(event);
 	}
@@ -36,38 +34,38 @@ if(!busy)
 
 void init_busy(void)
 {
-busycursor = gdk_cursor_new(GDK_WATCH);
+GLOBALS.busycursor_busy_c_1 = gdk_cursor_new(GDK_WATCH);
 gdk_event_handler_set((GdkEventFunc)GuiDoEvent, 0, 0);
 }
 
 
 void set_window_busy(GtkWidget *w)
 {
-if(w) gdk_window_set_cursor (w->window, busycursor);
+if(w) gdk_window_set_cursor (w->window, GLOBALS.busycursor_busy_c_1);
 else
-if(mainwindow) gdk_window_set_cursor (mainwindow->window, busycursor);
+if(GLOBALS.mainwindow) gdk_window_set_cursor (GLOBALS.mainwindow->window, GLOBALS.busycursor_busy_c_1);
 
-busy++;
+GLOBALS.busy_busy_c_1++;
 busy_window_refresh();
 }
 
 
 void set_window_idle(GtkWidget *w)
 {
-if(busy)
+if(GLOBALS.busy_busy_c_1)
 	{
 	if(w) gdk_window_set_cursor (w->window, NULL);
 	else
-	if(mainwindow) gdk_window_set_cursor (mainwindow->window, NULL);
+	if(GLOBALS.mainwindow) gdk_window_set_cursor (GLOBALS.mainwindow->window, NULL);
 
-	busy--;
+	GLOBALS.busy_busy_c_1--;
 	}
 }
 
 
 void busy_window_refresh(void)
 {
-if(busy)
+if(GLOBALS.busy_busy_c_1)
 	{
 	while (gtk_events_pending()) gtk_main_iteration();
 	}
@@ -76,6 +74,9 @@ if(busy)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

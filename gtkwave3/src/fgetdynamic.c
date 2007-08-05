@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,7 +13,6 @@
 #include "fgetdynamic.h"
 #include "debug.h"
 
-int fgetmalloc_len;
 
 char *fgetmalloc(FILE *handle)
 {
@@ -32,16 +31,16 @@ for(;;)
 	*pnt = (char)ch;
 	}
 
-fgetmalloc_len = vlist_size(v);
+GLOBALS.fgetmalloc_len = vlist_size(v);
 
-if(!fgetmalloc_len) 
+if(!GLOBALS.fgetmalloc_len) 
 	{
 	pnt = NULL;
 	}
 	else
 	{
-	pnt=malloc_2(fgetmalloc_len+1);
-	for(i=0;i<fgetmalloc_len;i++)
+	pnt=malloc_2(GLOBALS.fgetmalloc_len+1);
+	for(i=0;i<GLOBALS.fgetmalloc_len;i++)
 		{
 		pnt[i] = *((char *)vlist_locate(v, i));
 		}
@@ -76,12 +75,12 @@ if(s)
 		free_2(s);
 		s = s3;
 
-		fgetmalloc_len = len;
+		GLOBALS.fgetmalloc_len = len;
 		}
 		else
 		{
 		free_2(s); s = NULL;
-		fgetmalloc_len = 0;
+		GLOBALS.fgetmalloc_len = 0;
 		}
 	}
 
@@ -91,6 +90,9 @@ return(s);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:23  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

@@ -1,4 +1,4 @@
-/*
+#include"globals.h"/*
  * Copyright (c) Tony Bybell 1999-2004.
  *
  * This program is free software; you can redistribute it and/or
@@ -24,6 +24,9 @@ void wave_regex_alloc_free(void *pnt);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

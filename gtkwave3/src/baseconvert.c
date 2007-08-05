@@ -1,4 +1,4 @@
-/* 
+#include"globals.h"/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -26,7 +26,6 @@
 #define strcasecmp _stricmp
 #endif
 
-char color_active_in_filter = 0;
 
 
 /*
@@ -93,7 +92,7 @@ if(flags&TR_ASCII)
 
 	len=(nbits/8)+2+2;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='"'; }
+	if(GLOBALS.show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -118,12 +117,12 @@ if(flags&TR_ASCII)
 		
 		parse+=8;
 		}
-	if (!found && !show_base) {
+	if (!found && !GLOBALS.show_base) {
 		*(pnt++)='"';
 		*(pnt++)='"';
 	}
 		
-	if(show_base) { *(pnt++)='"'; }
+	if(GLOBALS.show_base) { *(pnt++)='"'; }
 	*(pnt++)=0x00;
 	}
 else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
@@ -132,7 +131,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 
 	len=(nbits/4)+2+1;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='$'; }
+	if(GLOBALS.show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -254,7 +253,7 @@ else if(flags&TR_OCT)
 
 	len=(nbits/3)+2+1;		/* #xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='#'; }
+	if(GLOBALS.show_base) { *(pnt++)='#'; }
 
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
@@ -291,7 +290,7 @@ else if(flags&TR_BIN)
 
 	len=(nbits/1)+2+1;		/* %xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='%'; }
+	if(GLOBALS.show_base) { *(pnt++)='%'; }
 
 	parse=newbuff+3;
 
@@ -375,7 +374,7 @@ else if(flags&TR_REAL)
 		{
 rl_go_binary:	len=(nbits/1)+2+1;		/* %xxxxx */
 		os=pnt=(char *)calloc_2(1,len);
-		if(show_base) { *(pnt++)='%'; }
+		if(GLOBALS.show_base) { *(pnt++)='%'; }
 	
 		parse=newbuff+3;
 	
@@ -614,7 +613,7 @@ if(flags&TR_ASCII)
 
 	len=(nbits/8)+2+2;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='"'; }
+	if(GLOBALS.show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -638,12 +637,12 @@ if(flags&TR_ASCII)
 		
 		parse+=8;
 		}
-	if (!found && !show_base) {
+	if (!found && !GLOBALS.show_base) {
 		*(pnt++)='"';
 		*(pnt++)='"';
 	}
 		
-	if(show_base) { *(pnt++)='"'; }
+	if(GLOBALS.show_base) { *(pnt++)='"'; }
 	*(pnt++)=0x00;
 	}
 else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
@@ -652,7 +651,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 
 	len=(nbits/4)+2+1;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='$'; }
+	if(GLOBALS.show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -774,7 +773,7 @@ else if(flags&TR_OCT)
 
 	len=(nbits/3)+2+1;		/* #xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='#'; }
+	if(GLOBALS.show_base) { *(pnt++)='#'; }
 
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
@@ -810,7 +809,7 @@ else if(flags&TR_BIN)
 
 	len=(nbits/1)+2+1;		/* %xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(show_base) { *(pnt++)='%'; }
+	if(GLOBALS.show_base) { *(pnt++)='%'; }
 
 	parse=newbuff+3;
 
@@ -894,7 +893,7 @@ else if(flags&TR_REAL)
 		{
 rl_go_binary:	len=(nbits/1)+2+1;		/* %xxxxx */
 		os=pnt=(char *)calloc_2(1,len);
-		if(show_base) { *(pnt++)='%'; }
+		if(GLOBALS.show_base) { *(pnt++)='%'; }
 	
 		parse=newbuff+3;
 	
@@ -942,16 +941,16 @@ return(os);
 
 static char *dofilter(Trptr t, char *s)
 {
-xl_file_filter[t->f_filter] = xl_splay(s, xl_file_filter[t->f_filter]);
+GLOBALS.xl_file_filter[t->f_filter] = xl_splay(s, GLOBALS.xl_file_filter[t->f_filter]);
 	
-if(!strcasecmp(s, xl_file_filter[t->f_filter]->item))
+if(!strcasecmp(s, GLOBALS.xl_file_filter[t->f_filter]->item))
 	{
 	free_2(s);
-	s = malloc_2(strlen(xl_file_filter[t->f_filter]->trans) + 1);
-	strcpy(s, xl_file_filter[t->f_filter]->trans);
+	s = malloc_2(strlen(GLOBALS.xl_file_filter[t->f_filter]->trans) + 1);
+	strcpy(s, GLOBALS.xl_file_filter[t->f_filter]->trans);
 	}
 
-if((*s == '?') && (!color_active_in_filter))
+if((*s == '?') && (!GLOBALS.color_active_in_filter))
 	{
 	char *s2a;
 	char *s2 = strchr(s+1, '?');
@@ -971,7 +970,7 @@ return(s);
 #if !defined _MSC_VER && !defined __MINGW32__
 static char *pdofilter(Trptr t, char *s)
 {
-struct pipe_ctx *p = proc_filter[t->p_filter];
+struct pipe_ctx *p = GLOBALS.proc_filter[t->p_filter];
 char buf[1025];
 int n;
 
@@ -999,7 +998,7 @@ if(p)
 		}
 	}	
 
-if((*s == '?') && (!color_active_in_filter))
+if((*s == '?') && (!GLOBALS.color_active_in_filter))
 	{
 	char *s2a;
 	char *s2 = strchr(s+1, '?');
@@ -1358,6 +1357,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
  * Revision 1.2  2007/07/23 23:13:08  gtkwave
  * adds for color tags in filtered trace data
  *
