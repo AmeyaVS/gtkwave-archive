@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,6 +13,7 @@
  * window and don't do the op. same for "dnd_state".
  */
 
+#include "globals.h"
 #include <config.h>
 #include <string.h>
 #include "gtk12compat.h"
@@ -2328,6 +2329,8 @@ entrybox("Regexp Highlight",300,GLOBALS.regexp_string_menu_c_1,128,GTK_SIGNAL_FU
 
 static char *append_array_row(nptr n)
 {
+if(!GLOBALS.buf_menu_c_1) GLOBALS.buf_menu_c_1 = calloc(1, 65537);
+
 if(!n->array_height)
 	{
 	return(n->nname);
@@ -3874,7 +3877,9 @@ if(GLOBALS.helpbox_is_active)
 	DEBUG(printf("Show Mouseover\n"));
 	}
 
+#if !defined __MINGW32__ && !defined _MSC_VER
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS.item_factory_menu_c_1, GLOBALS.menu_items_menu_c_1[WV_MENU_VSMO].path))->active=(GLOBALS.disable_mouseover)?FALSE:TRUE;
+#endif
 }
 
 /**/
@@ -3903,7 +3908,9 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS.item_factory_menu_c_1, G
 
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS.item_factory_menu_c_1, GLOBALS.menu_items_menu_c_1[WV_MENU_VSG].path))->active=(GLOBALS.display_grid)?TRUE:FALSE;
 
+#if !defined __MINGW32__ && !defined _MSC_VER
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS.item_factory_menu_c_1,GLOBALS.menu_items_menu_c_1[WV_MENU_VSMO].path))->active=(GLOBALS.disable_mouseover)?FALSE:TRUE;
+#endif
 
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS.item_factory_menu_c_1, GLOBALS.menu_items_menu_c_1[WV_MENU_VSBS].path))->active=(GLOBALS.show_base)?TRUE:FALSE;
 
@@ -3936,6 +3943,8 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS.item_factory_menu_c_1, G
  */
 void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 {
+    GLOBALS.regexp_string_menu_c_1 = calloc_2(1, 129);
+
     int nmenu_items = sizeof(GLOBALS.menu_items_menu_c_1) / sizeof(GLOBALS.menu_items_menu_c_1[0]);
     GtkAccelGroup *global_accel;
 
@@ -4083,6 +4092,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

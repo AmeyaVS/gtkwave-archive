@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -7,25 +7,27 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "currenttime.h"
 #include "symbol.h"
 
-
-   
+static char *time_prefix=" munpf";
+static char *maxtime_label_text="Maximum Time";
+static char *marker_label_text ="Marker Time";
 
 
 void update_maxmarker_labels(void)
 {
 if(GLOBALS.use_maxtime_display) 
 	{
-	gtk_label_set(GTK_LABEL(GLOBALS.max_or_marker_label_currenttime_c_1),GLOBALS.maxtime_label_text_currenttime_c_1);
+	gtk_label_set(GTK_LABEL(GLOBALS.max_or_marker_label_currenttime_c_1),maxtime_label_text);
 	update_maxtime(GLOBALS.max_time);
 	}
 	else
 	{
-	gtk_label_set(GTK_LABEL(GLOBALS.max_or_marker_label_currenttime_c_1),GLOBALS.marker_label_text_currenttime_c_1);
+	gtk_label_set(GTK_LABEL(GLOBALS.max_or_marker_label_currenttime_c_1),marker_label_text);
 	update_markertime(GLOBALS.tims.marker);
 	}
 }
@@ -48,16 +50,16 @@ if((pnt=GLOBALS.atoi_cont_ptr))
 		ich=tolower((int)ch);		
 		if(ich=='s') ich=' ';	/* as in plain vanilla seconds */
 
-		offs=strchr(GLOBALS.time_prefix_currenttime_c_1, ich);
+		offs=strchr(time_prefix, ich);
 		break;
 		}
 	}
 
 if(!offs) return(rval);
-doffs=strchr(GLOBALS.time_prefix_currenttime_c_1, (int)dim);
+doffs=strchr(time_prefix, (int)dim);
 if(!doffs) return(rval); /* should *never* happen */
 
-delta= (doffs-GLOBALS.time_prefix_currenttime_c_1) - (offs-GLOBALS.time_prefix_currenttime_c_1);
+delta= (doffs-time_prefix) - (offs-time_prefix);
 if(delta<0)
 	{
 	for(i=delta;i<0;i++)
@@ -81,8 +83,8 @@ void reformat_time(char *buf, TimeType val, char dim)
 char *pnt;
 int i, offset;
 
-pnt=strchr(GLOBALS.time_prefix_currenttime_c_1, (int)dim);
-if(pnt) { offset=pnt-GLOBALS.time_prefix_currenttime_c_1; } else offset=0;
+pnt=strchr(time_prefix, (int)dim);
+if(pnt) { offset=pnt-time_prefix; } else offset=0;
 
 for(i=offset; i>0; i--)
 	{
@@ -92,7 +94,7 @@ for(i=offset; i>0; i--)
 
 if(i)
 	{
-	sprintf(buf, TTFormat" %cs", val, GLOBALS.time_prefix_currenttime_c_1[i]);
+	sprintf(buf, TTFormat" %cs", val, time_prefix[i]);
 	}
 	else
 	{
@@ -107,12 +109,14 @@ char *pnt;
 int offset;
 double k;
 
-pnt=strchr(GLOBALS.time_prefix_currenttime_c_1, (int)dim);
-if(pnt) { offset=pnt-GLOBALS.time_prefix_currenttime_c_1; } else offset=0;
+static const double negpow[] = { 1.0, 1.0e-3, 1.0e-6, 1.0e-9, 1.0e-12, 1.0e-15 };
+
+pnt=strchr(time_prefix, (int)dim);
+if(pnt) { offset=pnt-time_prefix; } else offset=0;
 
 if(val)
 	{
-	k = 1 / ((double)val * GLOBALS.negpow_currenttime_c_1[offset]);
+	k = 1 / ((double)val * negpow[offset]);
 
 	sprintf(buf, "%e Hz", k);
 	}
@@ -142,8 +146,8 @@ while(bt)
 	bt=bt->next;
 	}
 
-pnt=strchr(GLOBALS.time_prefix_currenttime_c_1, (int)dim);
-if(pnt) { offset=pnt-GLOBALS.time_prefix_currenttime_c_1; } else offset=0;
+pnt=strchr(time_prefix, (int)dim);
+if(pnt) { offset=pnt-time_prefix; } else offset=0;
 
 for(i=offset; i>0; i--)
 	{
@@ -153,7 +157,7 @@ for(i=offset; i>0; i--)
 
 if(i)
 	{
-	sprintf(buf, TTFormat"%c%cs", val, blackout, GLOBALS.time_prefix_currenttime_c_1[i]);
+	sprintf(buf, TTFormat"%c%cs", val, blackout, time_prefix[i]);
 	}
 	else
 	{
@@ -300,8 +304,8 @@ GtkWidget *mainbox;
 GtkWidget *eventbox;
 
 GLOBALS.max_or_marker_label_currenttime_c_1=(GLOBALS.use_maxtime_display)
-	? gtk_label_new(GLOBALS.maxtime_label_text_currenttime_c_1)
-	: gtk_label_new(GLOBALS.marker_label_text_currenttime_c_1);
+	? gtk_label_new(maxtime_label_text)
+	: gtk_label_new(marker_label_text);
 
 GLOBALS.maxtext_currenttime_c_1=(char *)malloc_2(40);
 if(GLOBALS.use_maxtime_display)
@@ -416,6 +420,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:21  gtkwave
  * Imported sources
  *

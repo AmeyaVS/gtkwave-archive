@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 2001-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@
 #include <io.h>
 #endif
 
+#include"globals.h"
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
@@ -115,6 +116,7 @@ return(nmemb);
 #define MAP_SHARED (0)
 
 HANDLE hIn, hInMap;
+
 char *win_fname = NULL;
 
 void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)
@@ -183,8 +185,6 @@ inline static usigned int get_64(offset) {
  */
 
 #if defined(__i386__) || defined(__x86_64__)
-
-//#define get_byte(offset)        ((unsigned int)(*((unsigned char *)mm+offset)))
 
 inline static unsigned int get_byte(offset) {
   return ((unsigned int)(*((unsigned char *) GLOBALS.mm_lxt_c_1+offset)));
@@ -268,9 +268,10 @@ static void create_double_endian_mask(int offset)
 {
 double d;
 int i, j;
+static double p = 3.14159;
 
 d= *((double *)((unsigned char *)GLOBALS.mm_lxt_c_1+offset));
-if(GLOBALS.p_lxt_c_1==d) 
+if(p==d) 
 	{
 	GLOBALS.double_is_native_lxt_c_1=1;
 	}
@@ -279,7 +280,7 @@ if(GLOBALS.p_lxt_c_1==d)
 	char *remote, *here;
 
 	remote = (char *)&d;
-	here = (char *)&GLOBALS.p_lxt_c_1;
+	here = (char *)&p;
 	for(i=0;i<8;i++)
 		{
 		for(j=0;j<8;j++)
@@ -386,7 +387,7 @@ GLOBALS.dict_32_offset_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+16);
 GLOBALS.dict_width_lxt_c_1 = get_32(GLOBALS.zdictionary_offset_lxt_c_1+20);
 
 DEBUG(fprintf(stderr, LXTHDR"zdictionary_offset = %08x\n", zdictionary_offset));
-DEBUG(fprintf(stderr, LXTHDR"zdictionary_predec_size = %08x\n\n", zdictionary_predec_size));
+DEBUG(fprintf(stderr, LXTHDR"zdictionary_predec_size = %08x\n\n", GLOBALS.zdictionary_predec_size_lxt_c_1));
 DEBUG(fprintf(stderr, LXTHDR"dict_num_entries = %d\n", dict_num_entries));
 DEBUG(fprintf(stderr, LXTHDR"dict_string_mem_required = %d\n", dict_string_mem_required));
 DEBUG(fprintf(stderr, LXTHDR"dict_16_offset = %d\n", dict_16_offset));
@@ -397,9 +398,9 @@ fprintf(stderr, LXTHDR"Dictionary compressed MVL2 change records detected...\n")
 
 #if defined __MINGW32__ || defined _MSC_VER
 {
-unsigned char *t = (char *)mm+offs;
+unsigned char *t = (char *)GLOBALS.mm_lxt_c_1+offs;
 tmp = tmpfile(); if(!tmp) { fprintf(stderr, LXTHDR"could not open decompression tempfile, exiting.\n"); exit(255); }
-fwrite(t, zdictionary_predec_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
+fwrite(t, GLOBALS.zdictionary_predec_size_lxt_c_1, 1, tmp); fseek(tmp, 0, SEEK_SET);
 zhandle = gzdopen(dup(fileno(tmp)), "rb");
 }
 #else
@@ -455,9 +456,9 @@ if(GLOBALS.zfacname_size_lxt_c_1)
 	{
 	int rc;
 #if defined __MINGW32__ || defined _MSC_VER
-	unsigned char *t = (char *)mm+offs;
+	unsigned char *t = (char *)GLOBALS.mm_lxt_c_1+offs;
 	tmp = tmpfile(); if(!tmp) { fprintf(stderr, LXTHDR"could not open decompression tempfile, exiting.\n"); exit(255); }
-	fwrite(t, zfacname_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
+	fwrite(t, GLOBALS.zfacname_size_lxt_c_1, 1, tmp); fseek(tmp, 0, SEEK_SET);
 	zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
 	if(offs!=lseek(GLOBALS.fd_lxt_c_1, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zfacname lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
@@ -468,7 +469,7 @@ if(GLOBALS.zfacname_size_lxt_c_1)
 	decmem = malloc_2(total_mem = GLOBALS.zfacname_predec_size_lxt_c_1); GLOBALS.mm_lxt_c_1 = decmem;
 
 	rc=gzread(zhandle, decmem, total_mem);
-	DEBUG(printf(LXTHDR"section offs for name decompression = %08x of len %d\n", offs, zfacname_size));
+	DEBUG(printf(LXTHDR"section offs for name decompression = %08x of len %d\n", offs, GLOBALS.zfacname_size_lxt_c_1));
 	DEBUG(printf(LXTHDR"Decompressed size is %d bytes (vs %d)\n", rc, total_mem));	
 	if(rc!=total_mem) { fprintf(stderr, LXTHDR"decompression size disparity  %d bytes (vs %d)\n", rc, total_mem); exit(255); }
 
@@ -513,9 +514,9 @@ if(GLOBALS.zfacgeometry_size_lxt_c_1)
 	int rc;
 
 #if defined __MINGW32__ || defined _MSC_VER
-	unsigned char *t = (char *)mm+offs;
+	unsigned char *t = (char *)GLOBALS.mm_lxt_c_1+offs;
 	tmp = tmpfile(); if(!tmp) { fprintf(stderr, LXTHDR"could not open decompression tempfile, exiting.\n"); exit(255); }
-	fwrite(t, zfacgeometry_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
+	fwrite(t, GLOBALS.zfacgeometry_size_lxt_c_1, 1, tmp); fseek(tmp, 0, SEEK_SET);
 	zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
 	if(offs!=lseek(GLOBALS.fd_lxt_c_1, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zfacgeometry lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
@@ -526,7 +527,7 @@ if(GLOBALS.zfacgeometry_size_lxt_c_1)
 	decmem = malloc_2(total_mem); GLOBALS.mm_lxt_c_1 = decmem;
 
 	rc=gzread(zhandle, decmem, total_mem);
-	DEBUG(printf(LXTHDR"section offs for facgeometry decompression = %08x of len %d\n", offs, zfacgeometry_size));
+	DEBUG(printf(LXTHDR"section offs for facgeometry decompression = %08x of len %d\n", offs, GLOBALS.zfacgeometry_size_lxt_c_1));
 	DEBUG(printf(LXTHDR"Decompressed size is %d bytes (vs %d)\n", rc, total_mem));	
 	if(rc!=total_mem) { fprintf(stderr, LXTHDR"decompression size disparity  %d bytes (vs %d)\n", rc, total_mem); exit(255); }
 
@@ -606,9 +607,9 @@ if(GLOBALS.time_table_offset_lxt_c_1)
 		int rc;
 
 #if defined __MINGW32__ || defined _MSC_VER
-		unsigned char *t = (char *)mm+offs+4;
+		unsigned char *t = (char *)GLOBALS.mm_lxt_c_1+offs+4;
 		tmp = tmpfile(); if(!tmp) { fprintf(stderr, LXTHDR"could not open decompression tempfile, exiting.\n"); exit(255); }
-		fwrite(t, ztime_table_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
+		fwrite(t, GLOBALS.ztime_table_size_lxt_c_1, 1, tmp); fseek(tmp, 0, SEEK_SET);
 		zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
 		if((offs+4)!=lseek(GLOBALS.fd_lxt_c_1, offs+4, SEEK_SET)) { fprintf(stderr, LXTHDR"ztime_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
@@ -619,7 +620,7 @@ if(GLOBALS.time_table_offset_lxt_c_1)
 		decmem = malloc_2(total_mem); GLOBALS.mm_lxt_c_1 = decmem;
 
 		rc=gzread(zhandle, decmem, total_mem);
-		DEBUG(printf(LXTHDR"section offs for timetable decompression = %08x of len %d\n", offs, ztime_table_size));
+		DEBUG(printf(LXTHDR"section offs for timetable decompression = %08x of len %d\n", offs, GLOBALS.ztime_table_size_lxt_c_1));
 		DEBUG(printf(LXTHDR"Decompressed size is %d bytes (vs %d)\n", rc, total_mem));	
 		if(rc!=total_mem) { fprintf(stderr, LXTHDR"decompression size disparity  %d bytes (vs %d)\n", rc, total_mem); exit(255); }
 
@@ -679,9 +680,9 @@ if(GLOBALS.time_table_offset_lxt_c_1)
 		int rc;
 
 #if defined __MINGW32__ || defined _MSC_VER
-		unsigned char *t = (char *)mm+offs+4;
+		unsigned char *t = (char *)GLOBALS.mm_lxt_c_1+offs+4;
 		tmp = tmpfile(); if(!tmp) { fprintf(stderr, LXTHDR"could not open decompression tempfile, exiting.\n"); exit(255); }
-		fwrite(t, ztime_table_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
+		fwrite(t, GLOBALS.ztime_table_size_lxt_c_1, 1, tmp); fseek(tmp, 0, SEEK_SET);
 		zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
 		if((offs+4)!=lseek(GLOBALS.fd_lxt_c_1, offs+4, SEEK_SET)) { fprintf(stderr, LXTHDR"ztime_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
@@ -692,7 +693,7 @@ if(GLOBALS.time_table_offset_lxt_c_1)
 		decmem = malloc_2(total_mem); GLOBALS.mm_lxt_c_1 = decmem;
 
 		rc=gzread(zhandle, decmem, total_mem);
-		DEBUG(printf(LXTHDR"section offs for timetable decompression = %08x of len %d\n", offs, ztime_table_size));
+		DEBUG(printf(LXTHDR"section offs for timetable decompression = %08x of len %d\n", offs, GLOBALS.ztime_table_size_lxt_c_1));
 		DEBUG(printf(LXTHDR"Decompressed size is %d bytes (vs %d)\n", rc, total_mem));	
 		if(rc!=total_mem) { fprintf(stderr, LXTHDR"decompression size disparity  %d bytes (vs %d)\n", rc, total_mem); exit(255); }
 	
@@ -747,9 +748,9 @@ if(GLOBALS.sync_table_offset_lxt_c_1)
 		{
 		int rc;
 #if defined __MINGW32__ || defined _MSC_VER
-		unsigned char *t = (char *)mm+offs;
+		unsigned char *t = (char *)GLOBALS.mm_lxt_c_1+offs;
 		tmp = tmpfile(); if(!tmp) { fprintf(stderr, LXTHDR"could not open decompression tempfile, exiting.\n"); exit(255); }
-		fwrite(t, zsync_table_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
+		fwrite(t, GLOBALS.zsync_table_size_lxt_c_1, 1, tmp); fseek(tmp, 0, SEEK_SET);
 		zhandle = gzdopen(dup(fileno(tmp)), "rb");
 #else
 		if(offs!=lseek(GLOBALS.fd_lxt_c_1, offs, SEEK_SET)) { fprintf(stderr, LXTHDR"zsync_table lseek error at offset %08x\n", (unsigned int)offs); exit(255); }
@@ -759,7 +760,7 @@ if(GLOBALS.sync_table_offset_lxt_c_1)
 		decmem = malloc_2(total_mem = GLOBALS.numfacs * 4); GLOBALS.mm_lxt_c_1 = decmem;
 
 		rc=gzread(zhandle, decmem, total_mem);
-		DEBUG(printf(LXTHDR"section offs for synctable decompression = %08x of len %d\n", offs, zsync_table_size));
+		DEBUG(printf(LXTHDR"section offs for synctable decompression = %08x of len %d\n", offs, GLOBALS.zsync_table_size_lxt_c_1));
 		DEBUG(printf(LXTHDR"Decompressed size is %d bytes (vs %d)\n", rc, total_mem));	
 		if(rc!=total_mem) { fprintf(stderr, LXTHDR"decompression size disparity  %d bytes (vs %d)\n", rc, total_mem); exit(255); }
 	
@@ -871,10 +872,10 @@ if(GLOBALS.zchg_size_lxt_c_1)
 		fprintf(stderr, LXTHDR"Compressed change records detected...\n");
 #if defined __MINGW32__ || defined _MSC_VER
 		{
-		unsigned char *t = (char *)mm+change_field_offset;
+		unsigned char *t = (char *)GLOBALS.mm_lxt_c_1+GLOBALS.change_field_offset_lxt_c_1;
 		tmp = tmpfile(); if(!tmp) { fprintf(stderr, LXTHDR"could not open decompression tempfile, exiting.\n"); exit(255); }
-		fwrite(t, zchg_size, 1, tmp); fseek(tmp, 0, SEEK_SET);
-		is_bz2 = (get_byte(change_field_offset)=='B') && (get_byte(change_field_offset+1)=='Z');
+		fwrite(t, GLOBALS.zchg_size_lxt_c_1, 1, tmp); fseek(tmp, 0, SEEK_SET);
+		is_bz2 = (get_byte(GLOBALS.change_field_offset_lxt_c_1)=='B') && (get_byte(GLOBALS.change_field_offset_lxt_c_1+1)=='Z');
 		}
 #else		
 		if(GLOBALS.change_field_offset_lxt_c_1 != lseek(GLOBALS.fd_lxt_c_1, GLOBALS.change_field_offset_lxt_c_1, SEEK_SET)) { fprintf(stderr, LXTHDR"lseek error at offset %08x\n", (unsigned int)GLOBALS.change_field_offset_lxt_c_1); exit(255); }
@@ -1753,7 +1754,7 @@ treesort(GLOBALS.treeroot, NULL);
 fprintf(stderr, "built.\n\n");
 
 #ifdef DEBUG_FACILITIES
-treedebug(treeroot,"");
+treedebug(GLOBALS.treeroot,"");
 #endif
 
 GLOBALS.min_time = GLOBALS.first_cycle_lxt_c_2*GLOBALS.time_scale; GLOBALS.max_time=GLOBALS.last_cycle_lxt_c_2*GLOBALS.time_scale;
@@ -2190,7 +2191,7 @@ while(offs)
 			if(GLOBALS.double_is_native_lxt_c_1)
 				{
 				htemp->v.h_vector = ((char *)GLOBALS.mm_lxt_c_1+offs_dbl);
-				DEBUG(printf(LXTHDR"Added double '%.16g'\n", *((double *)(mm+offs_dbl))));
+				DEBUG(printf(LXTHDR"Added double '%.16g'\n", *((double *)(GLOBALS.mm_lxt_c_1+offs_dbl))));
 				}
 				else
 				{
@@ -2210,7 +2211,7 @@ while(offs)
 			htemp->flags = HIST_REAL|HIST_STRING;
 
 			htemp->v.h_vector = ((char *)GLOBALS.mm_lxt_c_1+offs_str);
-			DEBUG(printf(LXTHDR"Added string '%s'\n", (unsigned char *)mm+offs_str));
+			DEBUG(printf(LXTHDR"Added string '%s'\n", (unsigned char *)GLOBALS.mm_lxt_c_1+offs_str));
 			htemp->time = tmval;
 			htemp->next = histent_head;
 			histent_head = htemp;
@@ -2323,6 +2324,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

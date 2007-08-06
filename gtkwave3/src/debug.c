@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,64 +13,30 @@
  * malloc debugs added on 13jul99ajb
  */
 #include <config.h>
+#include "globals.h"
 #include "debug.h"
 
 #undef free_2
 
-#ifdef DEBUG_MALLOC	/* normally this should be undefined..this is *only* for finding stray allocations/frees */
-	static struct memchunk *mem=NULL;
-	static size_t mem_total=0;
-	static int mem_chunks=0;
+void free_outstanding(void)
+{
+void **t = (void **)GLOBALS.alloc2_chain;
+void **t2;
+int ctr = 0;
 
-	static void mem_addnode(void *ptr, size_t size)
+printf("\n*** cleanup ***\n");
+printf("Freeing %d chunks\n", GLOBALS.outstanding);
+system("date");
+while(t)
 	{
-	struct memchunk *m;
-	
-	m=(struct memchunk *)malloc(sizeof(struct memchunk));
-	m->ptr=ptr;
-	m->size=size;
-	m->next=mem;
-	
-	mem=m;
-	mem_total+=size;
-	mem_chunks++;
-	
-	fprintf(stderr,"mem_addnode:  TC:%05d TOT:%010d PNT:%010p LEN:+%d\n",mem_chunks,mem_total,ptr,size);
+	t2 = (void **) *(t+1);
+	free(t);
+	t = t2;
+	ctr++;
 	}
-	
-	static void mem_freenode(void *ptr)
-	{
-	struct memchunk *m, *mprev=NULL;
-	m=mem;
-	
-	while(m)
-		{
-		if(m->ptr==ptr)
-			{
-			if(mprev)
-				{
-				mprev->next=m->next;
-				}
-				else
-				{
-				mem=m->next;
-				}
-	
-			mem_total=mem_total-m->size;
-			mem_chunks--;
-			fprintf(stderr,"mem_freenode: TC:%05d TOT:%010d PNT:%010p LEN:-%d\n",mem_chunks,mem_total,ptr,m->size);
-			free(m);
-			return;
-			}
-		mprev=m;
-		m=m->next;
-		}
-	
-	fprintf(stderr,"mem_freenode: PNT:%010p *INVALID*\n",ptr);
-	sleep(1);
-	}
-#endif
-
+printf("Freed %d chunks\n", ctr);
+system("date");
+}
 
 /*
  * wrapped malloc family...
@@ -78,11 +44,21 @@
 void *malloc_2(size_t size)
 {
 void *ret;
-ret=malloc(size);
+ret=malloc(size + 2*sizeof(void *));
 if(ret)
 	{
-	DEBUG_M(mem_addnode(ret,size));
-	return(ret);
+	void **ret2 = (void **)ret;
+	*(ret2+0) = NULL;
+	*(ret2+1) = GLOBALS.alloc2_chain;
+	if(GLOBALS.alloc2_chain)
+		{
+		*(GLOBALS.alloc2_chain+0) = ret2;
+		}
+	GLOBALS.alloc2_chain = ret2;
+
+	GLOBALS.outstanding++;
+
+	return(ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -94,12 +70,39 @@ if(ret)
 void *realloc_2(void *ptr, size_t size)
 {
 void *ret;
-ret=realloc(ptr, size);
+
+void **ret2 = ((void **)ptr) - 2;
+void **prv = (void **)*(ret2+0);
+void **nxt = (void **)*(ret2+1);
+                 
+if(prv)
+	{
+        *(prv+1) = nxt;
+        }
+        else
+        {
+        GLOBALS.alloc2_chain = nxt;
+        }
+        
+if(nxt)
+	{
+        *(nxt+0) = prv;
+        }
+
+ret=realloc(ptr - 2*sizeof(void *), size + 2*sizeof(void *));
+
+ret2 = (void **)ret;
+*(ret2+0) = NULL;
+*(ret2+1) = GLOBALS.alloc2_chain;
+if(GLOBALS.alloc2_chain)
+	{
+	*(GLOBALS.alloc2_chain+0) = ret2;
+	}
+GLOBALS.alloc2_chain = ret2;
+
 if(ret)
 	{
-	DEBUG_M(mem_freenode(ptr));
-	DEBUG_M(mem_addnode(ret,size));
-	return(ret);
+	return(ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -111,11 +114,21 @@ if(ret)
 void *calloc_2(size_t nmemb, size_t size)
 {
 void *ret;
-ret=calloc(nmemb, size);
+ret=calloc(1, (nmemb * size) + 2*sizeof(void *));
 if(ret)
 	{
-	DEBUG_M(mem_addnode(ret, nmemb*size));
-	return(ret);
+	void **ret2 = (void **)ret;
+	*(ret2+0) = NULL;
+	*(ret2+1) = GLOBALS.alloc2_chain;
+	if(GLOBALS.alloc2_chain)
+		{
+		*(GLOBALS.alloc2_chain+0) = ret2;
+		}
+	GLOBALS.alloc2_chain = ret2;
+
+	GLOBALS.outstanding++;
+
+	return(ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -125,33 +138,38 @@ if(ret)
 }
 
 
-#ifdef DEBUG_MALLOC_LINES
-void free_2(void *ptr, char *filename, int lineno)
-{
-if(ptr)
-	{
-	DEBUG_M(mem_freenode(ptr));
-	free(ptr);
-	}
-	else
-	{
-	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught: \"%s\", line %d.\n", filename, lineno);
-	}
-}
-#else
 void free_2(void *ptr)
 {
 if(ptr)
 	{
-	DEBUG_M(mem_freenode(ptr));
-	free(ptr);
+	void **ret2 = ((void **)ptr) - 2;
+	void **prv = (void **)*(ret2+0);
+	void **nxt = (void **)*(ret2+1);
+
+	if(prv)
+		{
+		*(prv+1) = nxt;
+		}	
+		else
+		{
+		GLOBALS.alloc2_chain = nxt;
+		}
+
+	if(nxt)
+		{
+		*(nxt+0) = prv;
+		}
+
+	GLOBALS.outstanding--;
+
+	DEBUG_M(mem_freenode(ptr - 2*sizeof(void *)));
+	free(ptr - 2*sizeof(void *));
 	}
 	else
 	{
 	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught.\n");
 	}
 }
-#endif
 
 
 char *strdup_2(const char *s)
@@ -174,7 +192,6 @@ return(s2);
  * y/on     default to '1'
  * n/nonnum default to '0'
  */
-
 TimeType atoi_64(const char *str)
 {
 TimeType val=0;
@@ -230,7 +247,6 @@ return(nflag?(-val):val);
 /*
  * wrapped tooltips
  */
-
 void gtk_tooltips_set_tip_2(GtkTooltips *tooltips, GtkWidget *widget, 
 	const gchar *tip_text, const gchar *tip_private)
 {
@@ -305,9 +321,6 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
- * Revision 1.2  2007/06/01 21:13:41  gtkwave
- * regenerate configure for cygwin with proper flags, add missing files
- *
  * Revision 1.1.1.1  2007/05/30 04:27:23  gtkwave
  * Imported sources
  *

@@ -1,4 +1,4 @@
-#include"globals.h"/*  GHDL Wavefile reader library.
+/*  GHDL Wavefile reader library.
     Copyright (C) 2005 Tristan Gingold
 
     GHDL is free software; you can redistribute it and/or modify it under
@@ -1602,6 +1602,18 @@ ghw_read_dump (struct ghw_handler *h)
     }
 }
 
+struct ghw_section ghw_sections[] = {
+  { "\0\0\0", NULL },
+  { "STR", ghw_read_str },
+  { "HIE", ghw_read_hie },
+  { "TYP", ghw_read_type },
+  { "WKT", ghw_read_wk_types },
+  { "EOH", ghw_read_eoh },
+  { "SNP", ghw_read_snapshot },
+  { "CYC", ghw_read_cycle },
+  { "DIR", ghw_read_directory },
+  { "TAI", ghw_read_tailer }
+};
 
 int
 ghw_read_section (struct ghw_handler *h)
@@ -1617,8 +1629,8 @@ ghw_read_section (struct ghw_handler *h)
 	return -1;
     }
   
-  for (i = 1; i < sizeof (GLOBALS.ghw_sections) / sizeof (*GLOBALS.ghw_sections); i++)
-    if (memcmp (hdr, GLOBALS.ghw_sections[i].name, 4) == 0)
+  for (i = 1; i < sizeof (ghw_sections) / sizeof (*ghw_sections); i++)
+    if (memcmp (hdr, ghw_sections[i].name, 4) == 0)
       return i;
 
   fprintf (stderr, "ghw_read_section: unknown GHW section %c%c%c%c\n",

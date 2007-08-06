@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,6 +13,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -35,16 +36,17 @@
 #include "vlist.h"
 #include "rc.h"
 
-#ifndef _MSC_VER
-#ifndef __MINGW32__
-	#include <unistd.h>
-	#include <pwd.h>
+#ifndef _MSC_VER   
+#ifndef __MINGW32__ 
+        #include <unistd.h>
+        #include <pwd.h>
+        static char *rcname=".gtkwaverc";       /* name of environment file--POSIX */
 #else
-	static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
+        static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
 #endif
 #else
-	static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
-	#define strcasecmp _stricmp
+        static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
+        #define strcasecmp _stricmp
 #endif
 
 
@@ -520,47 +522,14 @@ return(strcasecmp((char *)v1, ((struct rc_entry *)v2)->name));
 int rgb; \
 if((rgb=get_rgb_from_name(str))!=~0) \
 	{ \
-	color_##Z=rgb; \
+	GLOBALS.color_##Z=rgb; \
 	} \
 return(0); \
 }
 
 
 
-int f_color_back (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_back=rgb; } return(0); }
-int f_color_baseline (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_baseline=rgb; } return(0); }
-int f_color_grid (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_grid=rgb; } return(0); }
-int f_color_high (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_high=rgb; } return(0); }
-int f_color_low (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_low=rgb; } return(0); }
-int f_color_1 (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_1=rgb; } return(0); }
-int f_color_0 (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_0=rgb; } return(0); }
-int f_color_mark (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_mark=rgb; } return(0); }
-int f_color_mid (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_mid=rgb; } return(0); }
-int f_color_time (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_time=rgb; } return(0); }
-int f_color_timeb (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_timeb=rgb; } return(0); }
-int f_color_trans (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_trans=rgb; } return(0); }
-int f_color_umark (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_umark=rgb; } return(0); }
-int f_color_value (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_value=rgb; } return(0); }
-int f_color_vbox (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_vbox=rgb; } return(0); }
-int f_color_vtrans (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_vtrans=rgb; } return(0); }
-int f_color_x (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_x=rgb; } return(0); }
-int f_color_xfill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_xfill=rgb; } return(0); }
-int f_color_u (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_u=rgb; } return(0); }
-int f_color_ufill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_ufill=rgb; } return(0); }
-int f_color_w (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_w=rgb; } return(0); }
-int f_color_wfill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_wfill=rgb; } return(0); }
-int f_color_dash (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_dash=rgb; } return(0); }
-int f_color_dashfill (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_dashfill=rgb; } return(0); }
-int f_color_white (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_white=rgb; } return(0); }
-int f_color_black (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_black=rgb; } return(0); }
-int f_color_ltgray (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_ltgray=rgb; } return(0); }
-int f_color_normal (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_normal=rgb; } return(0); }
-int f_color_mdgray (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_mdgray=rgb; } return(0); }
-int f_color_dkgray (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_dkgray=rgb; } return(0); }
-int f_color_dkblue (char *str) { int rgb; if((rgb=get_rgb_from_name(str))!=~0) { GLOBALS.color_dkblue=rgb; } return(0); }
-
-
-/*color_make(back)
+color_make(back)
 color_make(baseline)
 color_make(grid)
 color_make(high)
@@ -590,12 +559,104 @@ color_make(ltgray)
 color_make(normal)
 color_make(mdgray)
 color_make(dkgray)
-color_make(dkblue)*/
+color_make(dkblue)
 
 
 /*
  * rc variables...these MUST be in alphabetical order for the bsearch!
  */ 
+static struct rc_entry rcitems[]=
+{
+{ "accel", f_accel },
+{ "alt_hier_delimeter", f_alt_hier_delimeter },
+{ "append_vcd_hier", f_append_vcd_hier },
+{ "atomic_vectors", f_atomic_vectors },
+{ "autocoalesce", f_autocoalesce },
+{ "autocoalesce_reversal", f_autocoalesce_reversal },
+{ "autoname_bundles", f_autoname_bundles },
+{ "color_0", f_color_0 },
+{ "color_1", f_color_1 },
+{ "color_back", f_color_back },
+{ "color_baseline", f_color_baseline },
+{ "color_black", f_color_black },
+{ "color_dash", f_color_dash },
+{ "color_dashfill", f_color_dashfill },
+{ "color_dkblue", f_color_dkblue },
+{ "color_dkgray", f_color_dkgray },
+{ "color_grid", f_color_grid },
+{ "color_high", f_color_high },
+{ "color_low", f_color_low },
+{ "color_ltgray", f_color_ltgray },
+{ "color_mark", f_color_mark },
+{ "color_mdgray", f_color_mdgray },
+{ "color_mid", f_color_mid },
+{ "color_normal", f_color_normal },
+{ "color_time", f_color_time },
+{ "color_timeb", f_color_timeb },
+{ "color_trans", f_color_trans },
+{ "color_u", f_color_u },
+{ "color_ufill", f_color_ufill },
+{ "color_umark", f_color_umark },
+{ "color_value", f_color_value },
+{ "color_vbox", f_color_vbox },
+{ "color_vtrans", f_color_vtrans },
+{ "color_w", f_color_w },
+{ "color_wfill", f_color_wfill },
+{ "color_white", f_color_white },
+{ "color_x", f_color_x },
+{ "color_xfill", f_color_xfill },
+{ "constant_marker_update", f_constant_marker_update },
+{ "convert_to_reals", f_convert_to_reals },
+{ "cursor_snap", f_cursor_snap },
+{ "disable_mouseover", f_disable_mouseover },
+{ "disable_tooltips", f_disable_tooltips },
+{ "do_initial_zoom_fit", f_do_initial_zoom_fit },
+{ "dynamic_resizing", f_dynamic_resizing },
+{ "enable_fast_exit", f_enable_fast_exit },
+{ "enable_ghost_marker", f_enable_ghost_marker },
+{ "enable_horiz_grid", f_enable_horiz_grid }, 
+{ "enable_vcd_autosave", f_enable_vcd_autosave },
+{ "enable_vert_grid", f_enable_vert_grid }, 
+{ "fontname_logfile", f_fontname_logfile }, 
+{ "fontname_signals", f_fontname_signals }, 
+{ "fontname_waves", f_fontname_waves }, 
+{ "force_toolbars", f_force_toolbars }, 
+{ "hide_sst", f_hide_sst },
+{ "hier_delimeter", f_hier_delimeter },
+{ "hier_grouping", f_hier_grouping },
+{ "hier_max_level", f_hier_max_level },
+{ "hpane_pack", f_hpane_pack },
+{ "ignore_savefile_pos", f_ignore_savefile_pos },
+{ "ignore_savefile_size", f_ignore_savefile_size },
+{ "initial_window_x", f_initial_window_x },
+{ "initial_window_xpos", f_initial_window_xpos },
+{ "initial_window_y", f_initial_window_y },
+{ "initial_window_ypos", f_initial_window_ypos },
+{ "left_justify_sigs", f_left_justify_sigs },
+{ "lxt_clock_compress_to_z", f_lxt_clock_compress_to_z },
+{ "page_divisor", f_page_divisor },
+{ "ps_maxveclen", f_ps_maxveclen },
+{ "show_base_symbols", f_show_base_symbols },
+{ "show_grid", f_show_grid },
+{ "splash_disable", f_splash_disable },
+{ "sst_expanded", f_sst_expanded },
+{ "use_big_fonts", f_use_big_fonts },
+{ "use_frequency_display", f_use_frequency_display },
+{ "use_full_precision", f_use_full_precision },
+{ "use_maxtime_display", f_use_maxtime_display },
+{ "use_nonprop_fonts", f_use_nonprop_fonts },
+{ "use_roundcaps", f_use_roundcaps },
+{ "use_scrollbar_only", f_use_scrollbar_only },
+{ "vcd_explicit_zero_subscripts", f_vcd_explicit_zero_subscripts },
+{ "vcd_preserve_glitches", f_vcd_preserve_glitches },
+{ "vcd_warning_filesize", f_vcd_warning_filesize },
+{ "vector_padding", f_vector_padding },
+{ "vlist_compression", f_vlist_compression },
+{ "wave_scrolling", f_wave_scrolling },
+{ "zoom_base", f_zoom_base },
+{ "zoom_center", f_zoom_center },
+{ "zoom_pow10_snap", f_zoom_pow10_snap }
+};
 
 
 static void vanilla_rc(void)
@@ -648,13 +709,13 @@ void read_rc_file(char *override_rc)
 {
 FILE *handle;
 int i;
-int num_rcitems = sizeof(GLOBALS.rcitems_rc_c_1)/sizeof(struct rc_entry);
+int num_rcitems = sizeof(rcitems)/sizeof(struct rc_entry);
 
 for(i=0;i<(num_rcitems-1);i++)
 	{
-	if(strcmp(GLOBALS.rcitems_rc_c_1[i].name, GLOBALS.rcitems_rc_c_1[i+1].name) > 0)
+	if(strcmp(rcitems[i].name, rcitems[i+1].name) > 0)
 		{
-		fprintf(stderr, "GLOBALS.rcitems_rc_c_1 misordering: '%s' vs '%s'\n", GLOBALS.rcitems_rc_c_1[i].name, GLOBALS.rcitems_rc_c_1[i+1].name);
+		fprintf(stderr, "rcitems misordering: '%s' vs '%s'\n", rcitems[i].name, rcitems[i+1].name);
 		exit(255);
 		}
 	}
@@ -668,16 +729,16 @@ if((override_rc)&&((handle=fopen(override_rc,"rb"))))
 	}
 else
 #if !defined __MINGW32__ && !defined _MSC_VER
-if(!(handle=fopen(GLOBALS.rcname_rc_c_1,"rb")))
+if(!(handle=fopen(rcname,"rb")))
 	{
 	char *home;
 	char *rcpath;
 	
 	home=getpwuid(geteuid())->pw_dir;
-	rcpath=(char *)alloca(strlen(home)+1+strlen(GLOBALS.rcname_rc_c_1)+1);
+	rcpath=(char *)alloca(strlen(home)+1+strlen(rcname)+1);
 	strcpy(rcpath,home);
 	strcat(rcpath,"/");
-	strcat(rcpath,GLOBALS.rcname_rc_c_1);
+	strcat(rcpath,rcname);
 
 	if(!(handle=fopen(rcpath,"rb")))
 		{
@@ -689,7 +750,7 @@ if(!(handle=fopen(GLOBALS.rcname_rc_c_1,"rb")))
 if(!(handle=fopen(rcname,"rb")))		/* no concept of ~ in win32 */
 	{
 	errno=0;
-	if(possibly_use_rc_defaults) vanilla_rc();
+	if(GLOBALS.possibly_use_rc_defaults) vanilla_rc();
 	return; /* no .rc file */
 	} 
 #endif
@@ -722,8 +783,8 @@ while(!feof(handle))
 							struct rc_entry *r;
 	
 							if((str[i]==' ')||(str[i]=='\t')) continue;
-							if((r=bsearch((void *)(str+pos), (void *)GLOBALS.rcitems_rc_c_1, 
-								sizeof(GLOBALS.rcitems_rc_c_1)/sizeof(struct rc_entry), 
+							if((r=bsearch((void *)(str+pos), (void *)rcitems, 
+								sizeof(rcitems)/sizeof(struct rc_entry), 
 								sizeof(struct rc_entry), rc_compare)))
 								{
 								int j;
@@ -763,6 +824,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

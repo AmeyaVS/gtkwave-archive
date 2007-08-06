@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "debug.h"
@@ -20,16 +21,12 @@ realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
 
 
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-#endif
-
-
 void help_text(char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 gtk_text_buffer_insert (GTK_TEXT_VIEW (GLOBALS.text_help_c_1)->buffer, &GLOBALS.iter_help_c_1, str, -1);
 #else
-gtk_text_insert (GTK_TEXT (text), NULL, &text->style->black, NULL, str, -1);
+gtk_text_insert (GTK_TEXT (GLOBALS.text_help_c_1), NULL, &GLOBALS.text_help_c_1->style->black, NULL, str, -1);
 #endif
 }
 
@@ -39,7 +36,7 @@ void help_text_bold(char *str)
 gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (GLOBALS.text_help_c_1)->buffer, &GLOBALS.iter_help_c_1,
                                  str, -1, GLOBALS.bold_tag_help_c_1, NULL);
 #else
-gtk_text_insert (GTK_TEXT (text), NULL, &text->style->fg[GTK_STATE_SELECTED], &text->style->bg[GTK_STATE_SELECTED], str, -1);
+gtk_text_insert (GTK_TEXT (GLOBALS.text_help_c_1), NULL, &GLOBALS.text_help_c_1->style->fg[GTK_STATE_SELECTED], &GLOBALS.text_help_c_1->style->bg[GTK_STATE_SELECTED], str, -1);
 #endif
 }
 
@@ -67,7 +64,7 @@ gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS.
 GLOBALS.bold_tag_help_c_1 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (GLOBALS.text_help_c_1)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
 #else
-text = gtk_text_new (NULL, NULL);
+GLOBALS.text_help_c_1 = gtk_text_new (NULL, NULL);
 #endif
 gtk_table_attach (GTK_TABLE (table), GLOBALS.text_help_c_1, 0, 14, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
@@ -84,7 +81,7 @@ tc->set_scroll_adjustments(GTK_TEXT_VIEW (GLOBALS.text_help_c_1), NULL, NULL);
 GLOBALS.vscrollbar_help_c_1 = gtk_vscrollbar_new (GTK_TEXT_VIEW (GLOBALS.text_help_c_1)->vadjustment);
 }
 #else 
-vscrollbar = gtk_vscrollbar_new (GTK_TEXT (text)->vadj);
+GLOBALS.vscrollbar_help_c_1 = gtk_vscrollbar_new (GTK_TEXT (GLOBALS.text_help_c_1)->vadj);
 #endif
 gtk_table_attach (GTK_TABLE (table), GLOBALS.vscrollbar_help_c_1, 15, 16, 0, 1,GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
 gtk_widget_show (GLOBALS.vscrollbar_help_c_1);
@@ -97,7 +94,7 @@ gtk_signal_connect (GTK_OBJECT (GLOBALS.text_help_c_1), "realize",
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(GLOBALS.text_help_c_1), GTK_WRAP_WORD);
 #else
-gtk_text_set_word_wrap(GTK_TEXT(text), TRUE);
+gtk_text_set_word_wrap(GTK_TEXT(GLOBALS.text_help_c_1), TRUE);
 #endif
 return(table);
 }
@@ -171,6 +168,9 @@ void helpbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/05 02:27:20  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.5  2007/08/01 01:13:56  kermin
  * Fix compile issue related to line bug
  *

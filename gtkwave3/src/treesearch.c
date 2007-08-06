@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include "gtk12compat.h"
 
 /*
@@ -28,6 +29,9 @@ void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:27  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
  * Imported sources
  *

@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -7,17 +7,81 @@
  * of the License, or (at your option) any later version.
  */
 #include <config.h>
+#include "globals.h"
 #include <ctype.h>
 #include "gtk12compat.h"
 #include "strace.h"
 #include "currenttime.h"
 
 
+static char *logical[]=
+        {"AND", "OR", "XOR", "NAND", "NOR", "XNOR"};
 
+static char *stype[WAVE_STYPE_COUNT]=
+        {"Don't Care", "High", "Z (Mid)", "X", "Low", "String",
+         "Rising Edge", "Falling Edge", "Any Edge"};
 
+static struct item_mark_string item_mark_start_strings[]=
+	{
+	   { "Start of Time"  },
+	   { "Named Marker A" },
+	   { "Named Marker B" },
+	   { "Named Marker C" },
+	   { "Named Marker D" },
+	   { "Named Marker E" },
+	   { "Named Marker F" },
+	   { "Named Marker G" },
+	   { "Named Marker H" },
+	   { "Named Marker I" },
+	   { "Named Marker J" },
+	   { "Named Marker K" },
+	   { "Named Marker L" },
+	   { "Named Marker M" },
+	   { "Named Marker N" },
+	   { "Named Marker O" },
+	   { "Named Marker P" },
+	   { "Named Marker Q" },
+	   { "Named Marker R" },
+	   { "Named Marker S" },
+	   { "Named Marker T" },
+	   { "Named Marker U" },
+	   { "Named Marker V" },
+	   { "Named Marker W" },
+	   { "Named Marker X" },
+	   { "Named Marker Y" },
+	   { "Named Marker Z" }
+	};
 
-
-
+static struct item_mark_string item_mark_end_strings[]=
+	{
+	   { "End of Time"    },
+	   { "Named Marker A" },
+	   { "Named Marker B" },
+	   { "Named Marker C" },
+	   { "Named Marker D" },
+	   { "Named Marker E" },
+	   { "Named Marker F" },
+	   { "Named Marker G" },
+	   { "Named Marker H" },
+	   { "Named Marker I" },
+	   { "Named Marker J" },
+	   { "Named Marker K" },
+	   { "Named Marker L" },
+	   { "Named Marker M" },
+	   { "Named Marker N" },
+	   { "Named Marker O" },
+	   { "Named Marker P" },
+	   { "Named Marker Q" },
+	   { "Named Marker R" },
+	   { "Named Marker S" },
+	   { "Named Marker T" },
+	   { "Named Marker U" },
+	   { "Named Marker V" },
+	   { "Named Marker W" },
+	   { "Named Marker X" },
+	   { "Named Marker Y" },
+	   { "Named Marker Z" }
+	};
 
 
 /*
@@ -129,7 +193,7 @@ DEBUG(printf("Trace %s Search Type: %s\n", s->trace->name, stype[(int)s->value])
 static void start_clicked(GtkWidget *widget, gpointer which)
 {
 GLOBALS.mark_idx_start=((struct item_mark_string*)which)->idx;
-if (GLOBALS.mark_idx_start<0 || GLOBALS.mark_idx_start>=(sizeof(GLOBALS.item_mark_start_strings_strace_c_1)/sizeof(struct item_mark_string)))
+if (GLOBALS.mark_idx_start<0 || GLOBALS.mark_idx_start>=(sizeof(item_mark_start_strings)/sizeof(struct item_mark_string)))
 	{
 	fprintf(stderr, "Internal error: GLOBALS.mark_idx_start out of range %d\n", GLOBALS.mark_idx_start);
 	exit(255);
@@ -140,7 +204,7 @@ DEBUG(printf("start: %s\n", ((struct item_mark_string*)which)->str));
 static void end_clicked(GtkWidget *widget, gpointer which)
 {
 GLOBALS.mark_idx_end=((struct item_mark_string*)which)->idx;
-if (GLOBALS.mark_idx_end<0 || GLOBALS.mark_idx_end>=(sizeof(GLOBALS.item_mark_end_strings_strace_c_1)/sizeof(struct item_mark_string)))
+if (GLOBALS.mark_idx_end<0 || GLOBALS.mark_idx_end>=(sizeof(item_mark_end_strings)/sizeof(struct item_mark_string)))
 	{
 	fprintf(stderr, "Internal error: GLOBALS.mark_idx_end out of range %d\n",GLOBALS.mark_idx_end);
 	exit(255);
@@ -287,7 +351,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 
     for(i=0;i<6;i++)
 	{
-    	menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.logical_strace_c_1[i]);
+    	menuitem = gtk_radio_menu_item_new_with_label (group, logical[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
@@ -358,7 +422,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	b->parent=s;
 	b->which=i;
 	s->back[i]=b;
-    	menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.stype_strace_c_1[i]);
+    	menuitem = gtk_radio_menu_item_new_with_label (group, stype[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
@@ -416,16 +480,16 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_start),ptr_mark_start_label,TRUE,FALSE,0);
 	ptr_mark_count_start = gtk_menu_new ();
 	group=NULL;
-	for(idx=0; idx<sizeof(GLOBALS.item_mark_start_strings_strace_c_1)/sizeof(struct item_mark_string); ++idx)
+	for(idx=0; idx<sizeof(item_mark_start_strings)/sizeof(struct item_mark_string); ++idx)
 		{
-		GLOBALS.item_mark_start_strings_strace_c_1[idx].idx=idx;
-    		menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.item_mark_start_strings_strace_c_1[idx].str);
+		item_mark_start_strings[idx].idx=idx;
+    		menuitem = gtk_radio_menu_item_new_with_label (group, item_mark_start_strings[idx].str);
     		group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     		gtk_menu_append (GTK_MENU (ptr_mark_count_start), menuitem);
     		gtk_widget_show (menuitem);
         	gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(start_clicked),
-                                 &GLOBALS.item_mark_start_strings_strace_c_1[idx]);
+                                 &item_mark_start_strings[idx]);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_start);
@@ -442,16 +506,16 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_end),ptr_mark_end_label,TRUE,FALSE,0);
 	ptr_mark_count_end = gtk_menu_new ();
 	group=NULL;
-	for(idx=0; idx<sizeof(GLOBALS.item_mark_end_strings_strace_c_1)/sizeof(struct item_mark_string); ++idx)
+	for(idx=0; idx<sizeof(item_mark_end_strings)/sizeof(struct item_mark_string); ++idx)
 		{
-		GLOBALS.item_mark_end_strings_strace_c_1[idx].idx=idx;
-    		menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.item_mark_end_strings_strace_c_1[idx].str);
+		item_mark_end_strings[idx].idx=idx;
+    		menuitem = gtk_radio_menu_item_new_with_label (group, item_mark_end_strings[idx].str);
     		group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     		gtk_menu_append (GTK_MENU (ptr_mark_count_end), menuitem);
     		gtk_widget_show (menuitem);
         	gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(end_clicked),
-                                 &GLOBALS.item_mark_end_strings_strace_c_1[idx]);
+                                 &item_mark_end_strings[idx]);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_end);
@@ -1298,7 +1362,7 @@ if(GLOBALS.mark_idx_start>0)
 		basetime=GLOBALS.named_markers[GLOBALS.mark_idx_start-1];
 	else
 		{
-		status_text(GLOBALS.item_mark_start_strings_strace_c_1[GLOBALS.mark_idx_start].str);
+		status_text(item_mark_start_strings[GLOBALS.mark_idx_start].str);
 		status_text(" not in use.\n");
 		}
 	}
@@ -1309,7 +1373,7 @@ if(GLOBALS.mark_idx_end>0)
 		endtime=GLOBALS.named_markers[GLOBALS.mark_idx_end-1];
 	else
 		{
-		status_text(GLOBALS.item_mark_end_strings_strace_c_1[GLOBALS.mark_idx_end].str);
+		status_text(item_mark_end_strings[GLOBALS.mark_idx_end].str);
 		status_text(" not in use.\n");
 		}
 	}
@@ -1596,6 +1660,9 @@ if(GLOBALS.timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

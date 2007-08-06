@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include "gtk12compat.h"
 #include "currenttime.h"
 #include "pixmaps.h"
@@ -32,19 +33,8 @@ static void rendertraces(void);
 static void rendertimes(void);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+static const GdkModifierType   bmask[4]= {0, GDK_BUTTON1_MASK, 0, GDK_BUTTON3_MASK };                   /* button 1, 3 press/rel encodings */
+static const GdkModifierType m_bmask[4]= {0, GDK_BUTTON1_MOTION_MASK, 0, GDK_BUTTON3_MOTION_MASK };     /* button 1, 3 motion encodings */
 
 /******************************************************************/
 
@@ -78,10 +68,10 @@ static void wave_gdk_draw_line(GdkDrawable *drawable, GdkGC *gc, gint x1, gint y
 GdkSegment *seg;
 int *seg_cnt;
 
-if(gc==gc_trans) 	{ seg = seg_trans; seg_cnt = &seg_trans_cnt; }
-else if(gc==gc_low) 	{ seg = seg_low; seg_cnt = &seg_low_cnt; }
-else if(gc==gc_high) 	{ seg = seg_high; seg_cnt = &seg_high_cnt; }
-else if(gc==gc_mid) 	{ seg = seg_mid; seg_cnt = &seg_mid_cnt; }
+if(gc==GLOBALS.gc_trans_wavewindow_c_1) 	{ seg = seg_trans; seg_cnt = &seg_trans_cnt; }
+else if(gc==GLOBALS.gc_low_wavewindow_c_1) 	{ seg = seg_low; seg_cnt = &seg_low_cnt; }
+else if(gc==GLOBALS.gc_high_wavewindow_c_1) 	{ seg = seg_high; seg_cnt = &seg_high_cnt; }
+else if(gc==GLOBALS.gc_mid_wavewindow_c_1) 	{ seg = seg_mid; seg_cnt = &seg_mid_cnt; }
 else 			{ gdk_draw_line(drawable, gc, x1, y1, x2, y2); return; }
 
 seg[*seg_cnt].x1 = x1;
@@ -100,25 +90,25 @@ static void wave_gdk_draw_line_flush(GdkDrawable *drawable)
 {
 if(seg_mid)
 	{
-	gdk_draw_segments(drawable, gc_mid, seg_mid, seg_mid_cnt);
+	gdk_draw_segments(drawable, GLOBALS.gc_mid_wavewindow_c_1, seg_mid, seg_mid_cnt);
 	seg_mid_cnt = 0;
 	}
 
 if(seg_high)
 	{
-	gdk_draw_segments(drawable, gc_high, seg_high, seg_high_cnt);
+	gdk_draw_segments(drawable, GLOBALS.gc_high_wavewindow_c_1, seg_high, seg_high_cnt);
 	seg_high_cnt = 0;
 	}
 
 if(seg_low)
 	{
-	gdk_draw_segments(drawable, gc_low, seg_low, seg_low_cnt);
+	gdk_draw_segments(drawable, GLOBALS.gc_low_wavewindow_c_1, seg_low, seg_low_cnt);
 	seg_low_cnt = 0;
 	}
 
 if(seg_trans)
 	{
-	gdk_draw_segments(drawable, gc_trans, seg_trans, seg_trans_cnt);
+	gdk_draw_segments(drawable, GLOBALS.gc_trans_wavewindow_c_1, seg_trans, seg_trans_cnt);
 	seg_trans_cnt = 0;
 	}
 }
@@ -686,7 +676,7 @@ if(event->is_hint)
 do
 	{
 	scrolled=0;
-	if(state&GLOBALS.bmask_wavewindow_c_1[GLOBALS.in_button_press_wavewindow_c_1]) /* needed for retargeting in AIX/X11 */
+	if(state&bmask[GLOBALS.in_button_press_wavewindow_c_1]) /* needed for retargeting in AIX/X11 */
 		{
 		if(x<0)
 			{ 
@@ -764,7 +754,7 @@ do
 		GLOBALS.prevtim_wavewindow_c_1=newcurr;
 		}
 	
-	if(state&GLOBALS.bmask_wavewindow_c_1[GLOBALS.in_button_press_wavewindow_c_1])
+	if(state&bmask[GLOBALS.in_button_press_wavewindow_c_1])
 		{
 		button_motion_common(x,y,0,0);
 		}
@@ -832,7 +822,7 @@ do
 	WAVE_GDK_GET_POINTER(event->window, &x, &y, &xi, &yi, &state);
 	WAVE_GDK_GET_POINTER_COPY;
 
-	} while((scrolled)&&(state&GLOBALS.bmask_wavewindow_c_1[GLOBALS.in_button_press_wavewindow_c_1]));
+	} while((scrolled)&&(state&bmask[GLOBALS.in_button_press_wavewindow_c_1]));
 
 return(TRUE);
 }
@@ -879,7 +869,7 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS.in_button_press_wavewindow
 	GLOBALS.tims.timecache=GLOBALS.tims.start;
 
 	gdk_pointer_grab(widget->window, FALSE,
-		GLOBALS.m_bmask_wavewindow_c_1[GLOBALS.in_button_press_wavewindow_c_1] | 				/* key up on motion for button pressed ONLY */
+		m_bmask[GLOBALS.in_button_press_wavewindow_c_1] | /* key up on motion for button pressed ONLY */
 		GDK_POINTER_MOTION_HINT_MASK |
 	      	GDK_BUTTON_RELEASE_MASK, NULL, NULL, event->time);
 	
@@ -1606,7 +1596,7 @@ if(!GLOBALS.in_button_press_wavewindow_c_1)
 
 			if((3*GLOBALS.max_signal_name_pixel_width) < (2*wx))	/* 2/3 width max */
 #else
-			if((3*max_signal_name_pixel_width) < (2*(wavewidth + signalwindow->allocation.width)))
+			if((3*GLOBALS.max_signal_name_pixel_width) < (2*(GLOBALS.wavewidth + GLOBALS.signalwindow->allocation.width)))
 #endif
 				{
 				int os;
@@ -2213,7 +2203,7 @@ if(x0!=x1)
 h=h->next;
 }
 
-wave_gdk_draw_line_flush(wavepixmap); /* clear out state */
+wave_gdk_draw_line_flush(GLOBALS.wavepixmap_wavewindow_c_1); /* clear out state */
 
 GLOBALS.tims.start+=GLOBALS.shift_timebase;
 GLOBALS.tims.end+=GLOBALS.shift_timebase;
@@ -2398,7 +2388,7 @@ h=h->next;
 lasttype=type;
 }
 
-wave_gdk_draw_line_flush(wavepixmap);
+wave_gdk_draw_line_flush(GLOBALS.wavepixmap_wavewindow_c_1);
 
 GLOBALS.tims.start+=GLOBALS.shift_timebase;
 GLOBALS.tims.end+=GLOBALS.shift_timebase;
@@ -2684,7 +2674,7 @@ lasttype=type;
 
 GLOBALS.color_active_in_filter = 0;
 
-wave_gdk_draw_line_flush(wavepixmap);
+wave_gdk_draw_line_flush(GLOBALS.wavepixmap_wavewindow_c_1);
 
 GLOBALS.tims.start+=GLOBALS.shift_timebase;
 GLOBALS.tims.end+=GLOBALS.shift_timebase;
@@ -2839,7 +2829,7 @@ h=h->next;
 lasttype=type;
 }
 
-wave_gdk_draw_line_flush(wavepixmap);
+wave_gdk_draw_line_flush(GLOBALS.wavepixmap_wavewindow_c_1);
 
 GLOBALS.tims.start+=GLOBALS.shift_timebase;
 GLOBALS.tims.end+=GLOBALS.shift_timebase;
@@ -3106,7 +3096,7 @@ h=h->next;
 
 GLOBALS.color_active_in_filter = 0;
 
-wave_gdk_draw_line_flush(wavepixmap);
+wave_gdk_draw_line_flush(GLOBALS.wavepixmap_wavewindow_c_1);
 
 GLOBALS.tims.start+=GLOBALS.shift_timebase;
 GLOBALS.tims.end+=GLOBALS.shift_timebase;
@@ -3115,6 +3105,9 @@ GLOBALS.tims.end+=GLOBALS.shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/05 02:27:28  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.4  2007/07/31 03:18:02  kermin
  * Merge Complete - I hope
  *

@@ -1,4 +1,4 @@
-#include"globals.h"/*
+/*
  * Copyright (c) Tony Bybell 2005-7.
  *
  * This program is free software; you can redistribute it and/or
@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include "vcd_saver.h"
 #include "helpers/lxt_write.h"
 #include "ghw.h"
@@ -849,6 +850,9 @@ return(nh_curr->name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:54  gtkwave
  * Imported sources
  *

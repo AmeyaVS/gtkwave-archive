@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -12,6 +12,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h" 
 #include <config.h>
 #include "analyzer.h"
 #include "symbol.h"
@@ -2819,6 +2820,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/05 02:27:18  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.1  2007/07/28 19:50:39  kermin
  * Merged in the main line
  *

@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,6 +13,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -192,7 +193,7 @@ if(dfile)
 #else
 	if((len)&&(dfile[len-1]!='\\'))
 		{
-		strcpy(ftext_main + len, "\\");
+		strcpy(GLOBALS.ftext_main_main_c_1 + len, "\\");
 		}
 #endif
 	}
@@ -205,6 +206,10 @@ return(GLOBALS.ftext_main_main_c_1);
 
 int main(int argc, char *argv[])
 {
+static char *winprefix="GTKWave - ";
+static char *winstd="GTKWave (stdio) ";
+static char *vcd_autosave_name="vcd_autosave.sav";
+
 int i;
 int c;
 char is_vcd=0;
@@ -259,8 +264,36 @@ while (1)
         {
         int option_index = 0;
 
+        static struct option long_options[] =
+                {
+                {"dump", 1, 0, 'f'},
+                {"optimize", 0, 0, 'o'},
+                {"nocli", 1, 0, 'n'},
+                {"save", 1, 0, 'a'},
+                {"autosavename", 0, 0, 'A'},
+                {"rcfile", 1, 0, 'r'},
+                {"defaultskip", 0, 0, 'd'},
+                {"indirect", 1, 0, 'i'},
+                {"logfile", 1, 0, 'l'},
+                {"start", 1, 0, 's'},
+                {"end", 1, 0, 'e'},
+                {"cpus", 1, 0, 'c'},
+                {"stems", 1, 0, 't'},
+                {"nowm", 0, 0, 'N'},
+                {"script", 1, 0, 'S'},
+                {"vcd", 0, 0, 'v'},
+                {"version", 0, 0, 'V'},
+                {"help", 0, 0, 'h'},
+                {"exit", 0, 0, 'x'},
+                {"xid", 1, 0, 'X'},
+                {"nomenus", 0, 0, 'M'},
+                {"dualid", 1, 0, 'D'},
+                {"interactive", 0, 0, 'I'},
+                {"legacy", 0, 0, 'L'},  
+                {0, 0, 0, 0}
+                };
 
-        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IL", GLOBALS.long_options_main_c_1, &option_index);
+        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IL", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -507,7 +540,7 @@ fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
 
 if((!wname)&&(GLOBALS.make_vcd_save_file))
 	{
-	GLOBALS.vcd_save_handle=fopen(GLOBALS.vcd_autosave_name_main_c_1,"wb");
+	GLOBALS.vcd_save_handle=fopen(vcd_autosave_name,"wb");
 	errno=0;	/* just in case */
 	is_smartsave = (GLOBALS.vcd_save_handle != NULL); /* use smartsave if for some reason can't open auto savefile */
 	}
@@ -517,15 +550,15 @@ GLOBALS.sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 /* load either the vcd or aet file depending on suffix then mode setting */
 if(is_vcd)
 	{
-	winname=malloc_2(strlen(GLOBALS.winstd_main_c_1)+4+1);
-	strcpy(winname,GLOBALS.winstd_main_c_1);
+	winname=malloc_2(strlen(winstd)+4+1);
+	strcpy(winname,winstd);
 	}
 	else
 	{
 	if(!is_interactive)
 		{
-		winname=malloc_2(strlen(fname)+strlen(GLOBALS.winprefix_main_c_1)+1);
-		strcpy(winname,GLOBALS.winprefix_main_c_1);
+		winname=malloc_2(strlen(fname)+strlen(winprefix)+1);
+		strcpy(winname,winprefix);
 		}
 		else
 		{
@@ -747,7 +780,7 @@ if((wname)||(GLOBALS.vcd_save_handle)||(is_smartsave))
 
 	if(GLOBALS.vcd_save_handle)
 		{
-		wname=GLOBALS.vcd_autosave_name_main_c_1;
+		wname=vcd_autosave_name;
 		GLOBALS.do_initial_zoom_fit=1;
 		}
 	else
@@ -1265,8 +1298,8 @@ get_window_size (int *x, int *y)
 #ifdef WAVE_USE_GTK2
   gtk_window_get_size (GTK_WINDOW (GLOBALS.mainwindow), x, y);
 #else
-  *x = initial_window_x;
-  *y = initial_window_y;
+  *x = GLOBALS.initial_window_x;
+  *y = GLOBALS.initial_window_y;
 #endif
 }
 
@@ -1330,7 +1363,7 @@ if((GLOBALS.initial_window_xpos>=0)||(GLOBALS.initial_window_ypos>=0))
 #ifdef WAVE_USE_GTK2
 	gtk_window_move(GTK_WINDOW(GLOBALS.mainwindow), GLOBALS.initial_window_xpos, GLOBALS.initial_window_ypos);
 #else
-	gtk_window_reposition(GTK_WINDOW(mainwindow), initial_window_xpos, initial_window_ypos);
+	gtk_window_reposition(GTK_WINDOW(GLOBALS.mainwindow), GLOBALS.initial_window_xpos, GLOBALS.initial_window_ypos);
 #endif
 
 	if(!GLOBALS.initial_window_set_valid)
@@ -1375,13 +1408,14 @@ void activate_stems_reader(char *stems_name)
 #if !defined _MSC_VER && !defined __MINGW32__
 
 #ifdef __CYGWIN__
+/* ajb : ok static as this is a one-time warning message... */
 static int cyg_called = 0;
 #endif
 
 if(!stems_name) return;
 
 #ifdef __CYGWIN__
-if(stems_type != WAVE_ANNO_NONE)
+if(GLOBALS.stems_type != WAVE_ANNO_NONE)
 	{
 	if(!cyg_called)
 		{
@@ -1461,6 +1495,9 @@ if(GLOBALS.stems_type != WAVE_ANNO_NONE)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

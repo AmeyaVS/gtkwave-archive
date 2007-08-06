@@ -96,6 +96,8 @@ void free_2(void *ptr);
 #endif
 
 
+void free_outstanding(void);
+
 void *malloc_2(size_t size);
 void *realloc_2(void *ptr, size_t size);
 void *calloc_2(size_t nmemb, size_t size);
@@ -180,6 +182,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.1  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
  * Revision 1.2  2007/06/01 21:13:41  gtkwave
  * regenerate configure for cygwin with proper flags, add missing files
  *

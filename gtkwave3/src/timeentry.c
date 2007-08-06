@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include <gtk/gtk.h>
 #include "gtk12compat.h"
 #include "symbol.h"
@@ -169,6 +170,9 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:24  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

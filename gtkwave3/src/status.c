@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2004
  *
  * This program is free software; you can redistribute it and/or
@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "symbol.h"
@@ -19,10 +20,6 @@ realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
 
 
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-#endif
-
-
 void status_text(char *str)
 {
 if(GLOBALS.text_status_c_2)
@@ -30,7 +27,7 @@ if(GLOBALS.text_status_c_2)
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
         gtk_text_buffer_insert (GTK_TEXT_VIEW (GLOBALS.text_status_c_2)->buffer, &GLOBALS.iter_status_c_3, str, -1);
 #else
-        gtk_text_insert (GTK_TEXT (text), NULL, &text->style->black, NULL, str, -1);
+        gtk_text_insert (GTK_TEXT (GLOBALS.text_status_c_2), NULL, &GLOBALS.text_status_c_2->style->black, NULL, str, -1);
 #endif
 	}
 	else
@@ -86,7 +83,7 @@ if((GLOBALS.is_vcd)||(GLOBALS.is_ghw))
 	{
 	if(!GLOBALS.partial_vcd)
 		{
-		sprintf(buf,"[%d] GLOBALS.regions found.\n",GLOBALS.regions);
+		sprintf(buf,"[%d] regions found.\n",GLOBALS.regions);
 		status_text(buf);
 		}
 	}
@@ -126,7 +123,7 @@ gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS.
 GLOBALS.bold_tag_status_c_3 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (GLOBALS.text_status_c_2)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
 #else
-text = gtk_text_new (NULL, NULL);
+GLOBALS.text_status_c_2 = gtk_text_new (NULL, NULL);
 #endif
 gtk_table_attach (GTK_TABLE (table), GLOBALS.text_status_c_2, 0, 14, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
@@ -143,7 +140,7 @@ tc->set_scroll_adjustments(GTK_TEXT_VIEW (GLOBALS.text_status_c_2), NULL, NULL);
 GLOBALS.vscrollbar_status_c_2 = gtk_vscrollbar_new (GTK_TEXT_VIEW (GLOBALS.text_status_c_2)->vadjustment);  
 }
 #else 
-vscrollbar = gtk_vscrollbar_new ((GTK_TEXT (text))->vadj);
+GLOBALS.vscrollbar_status_c_2 = gtk_vscrollbar_new ((GTK_TEXT (GLOBALS.text_status_c_2))->vadj);
 #endif
 gtk_table_attach (GTK_TABLE (table), GLOBALS.vscrollbar_status_c_2, 15, 16, 0, 1,
 			GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
@@ -160,6 +157,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:29  gtkwave
  * Imported sources
  *

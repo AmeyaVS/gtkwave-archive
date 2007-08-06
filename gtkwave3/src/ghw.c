@@ -1,4 +1,4 @@
-#include"globals.h"/*  GHDL Wavefile reader interface.
+/*  GHDL Wavefile reader interface.
     Copyright (C) 2005-2006 Tristan Gingold and Tony Bybell
 
     GHDL is free software; you can redistribute it and/or modify it under
@@ -17,6 +17,7 @@
     02111-1307, USA.
 */
 
+#include "globals.h"
 #include <config.h>
 #include "ghw.h"
 
@@ -321,8 +322,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
   if (dim == base->nbr_dim)
     {
       struct tree *t;
-      sprintf (GLOBALS.asbuf_ghw_c_1, "%s]", pfx);
-      name = strdup_2(GLOBALS.asbuf_ghw_c_1);
+      sprintf (GLOBALS.asbuf, "%s]", pfx);
+      name = strdup_2(GLOBALS.asbuf);
 
       t = build_hierarchy_type (h, base->el, name, sig);
       
@@ -347,8 +348,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS.asbuf_ghw_c_1, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup_2(GLOBALS.asbuf_ghw_c_1);
+	    sprintf(GLOBALS.asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
+            name = strdup_2(GLOBALS.asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
 	    free_2(name);
 	    if (v == r->right)
@@ -373,8 +374,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS.asbuf_ghw_c_1, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup_2(GLOBALS.asbuf_ghw_c_1);
+	    sprintf(GLOBALS.asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
+            name = strdup_2(GLOBALS.asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
 	    free_2(name);
 	    if (v == r->right)
@@ -413,7 +414,7 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
     case ghdl_rtik_type_p32:
     case ghdl_rtik_type_p64:
 
-      s = calloc(1, sizeof(struct symbol));
+      s = calloc_2(1, sizeof(struct symbol));
       if(!GLOBALS.sym_head_ghw_c_1)
 		{
 		GLOBALS.sym_head_ghw_c_1 = GLOBALS.sym_curr_ghw_c_1 = s;
@@ -792,7 +793,12 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       if (GLOBALS.xlat_1164_ghw_c_1 && sig_type->en.wkt == ghw_wkt_std_ulogic)
 	{
 	  /* Res: 0->0, 1->X, 2->Z, 3->1 */
-	  he->v.h_val = GLOBALS.map_su2vlg_ghw_c_1[sig->val->e8];
+          static const char map_su2vlg[9] = {
+            /* U */ AN_U, /* X */ AN_X, /* 0 */ AN_0, /* 1 */ AN_1,
+            /* Z */ AN_Z, /* W */ AN_W, /* L */ AN_L, /* H */ AN_H,
+            /* - */ AN_DASH
+          };
+	  he->v.h_val = map_su2vlg[sig->val->e8];
 	}
       else
         {
@@ -810,14 +816,14 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       break;
     case ghdl_rtik_type_i32:
     case ghdl_rtik_type_p32:
-      sprintf (GLOBALS.asbuf_ghw_c_1, "%d", sig->val->i32);
-      he->v.h_vector = strdup_2(GLOBALS.asbuf_ghw_c_1);    
+      sprintf (GLOBALS.asbuf, "%d", sig->val->i32);
+      he->v.h_vector = strdup_2(GLOBALS.asbuf);    
       is_vector = 1;
       break;
     case ghdl_rtik_type_i64:
     case ghdl_rtik_type_p64:
-      sprintf (GLOBALS.asbuf_ghw_c_1, TTFormat, sig->val->i64);
-      he->v.h_vector = strdup_2(GLOBALS.asbuf_ghw_c_1);    
+      sprintf (GLOBALS.asbuf, TTFormat, sig->val->i64);
+      he->v.h_vector = strdup_2(GLOBALS.asbuf);    
       is_vector = 1;
       break;
     default:
@@ -975,6 +981,7 @@ ghw_main(char *fname)
 
  GLOBALS.time_scale = 1;
  GLOBALS.time_dimension = 'f';
+ GLOBALS.asbuf = malloc_2(4097);
 
  if (ghw_read_base (&handle) < 0)
    {
@@ -1002,14 +1009,14 @@ ghw_main(char *fname)
  add_tail (&handle);
  
  set_fac_name (&handle);
- free(GLOBALS.nxp_ghw_c_1); GLOBALS.nxp_ghw_c_1 = NULL;
+ free_2(GLOBALS.nxp_ghw_c_1); GLOBALS.nxp_ghw_c_1 = NULL;
 
  /* fix up names on aliased nodes via cloning... */
  for(i=0;i<GLOBALS.numfacs;i++)
 	{
 	if(strcmp(GLOBALS.facs[i]->name, GLOBALS.facs[i]->n->nname))
 		{
-		struct Node *n = malloc(sizeof(struct Node));
+		struct Node *n = malloc_2(sizeof(struct Node));
 		memcpy(n, GLOBALS.facs[i]->n, sizeof(struct Node));
 		GLOBALS.facs[i]->n = n;
 		n->nname = GLOBALS.facs[i]->name;
@@ -1033,7 +1040,7 @@ ghw_main(char *fname)
  ghw_sortfacs();	/* sort nets as ghw is unsorted ... also fix hier tree (it should really be built *after* facs are sorted!) */
 
 #if 0
- treedebug(treeroot,"");
+ treedebug(GLOBALS.treeroot,"");
  facs_debug();
 #endif
 
@@ -1052,6 +1059,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.1  2007/08/05 02:27:20  kermin
+ * Semi working global struct
+ *
  * Revision 1.2  2007/06/01 21:13:41  gtkwave
  * regenerate configure for cygwin with proper flags, add missing files
  *

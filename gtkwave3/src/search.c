@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,6 +13,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "gtk12compat.h"
@@ -113,6 +114,10 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 }
 
 /***************************************************************************/
+
+static char *regex_type[]={"\\(\\[.*\\]\\)*$", "\\>.\\([0-9]\\)*$",
+                           "\\(\\[.*\\]\\)*$", "\\>.\\([0-9]\\)*$", ""};
+static char *regex_name[]={"WRange", "WStrand", "Range", "Strand", "None"};
 
 
 static void regex_clicked(GtkWidget *widget, gpointer which)
@@ -647,11 +652,11 @@ GLOBALS.num_rows_search_c_2=0;
 gtk_clist_freeze(cl=GTK_CLIST(GLOBALS.clist_search_c_3));
 gtk_clist_clear(cl);
 
-entry_suffixed=wave_alloca(strlen(entry_text)+strlen(GLOBALS.regex_type_search_c_1[GLOBALS.regex_which_search_c_1])+1+((GLOBALS.regex_which_search_c_1<2)?2:0));
+entry_suffixed=wave_alloca(strlen(entry_text)+strlen(regex_type[GLOBALS.regex_which_search_c_1])+1+((GLOBALS.regex_which_search_c_1<2)?2:0));
 *entry_suffixed=0x00;
 if(GLOBALS.regex_which_search_c_1<2) strcpy(entry_suffixed, "\\<");	/* match on word boundary */
 strcat(entry_suffixed,entry_text);
-strcat(entry_suffixed,GLOBALS.regex_type_search_c_1[GLOBALS.regex_which_search_c_1]);
+strcat(entry_suffixed,regex_type[GLOBALS.regex_which_search_c_1]);
 wave_regex_compile(entry_suffixed, WAVE_REGEX_SEARCH);
 for(i=0;i<GLOBALS.numfacs;i++)
 	{
@@ -896,7 +901,7 @@ void searchbox(char *title, GtkSignalFunc func)
     
     for(i=0;i<5;i++)
         {
-        menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.regex_name_search_c_1[i]);
+        menuitem = gtk_radio_menu_item_new_with_label (group, regex_name[i]);
         group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
         gtk_menu_append (GTK_MENU (menu), menuitem);
         gtk_widget_show (menuitem);
@@ -1010,6 +1015,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

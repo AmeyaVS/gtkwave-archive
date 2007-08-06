@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@
 #endif
 
 #include <config.h>
+#include "globals.h"
 #include "vcd.h"
 
 #undef VCD_BSEARCH_IS_PERFECT		/* bsearch is imperfect under linux, but OK under AIX */
@@ -104,6 +105,12 @@ enum Tokens   { T_VAR, T_END, T_SCOPE, T_UPSCOPE,
 		T_TIMESCALE, T_VERSION, T_VCDCLOSE,
 		T_EOF, T_STRING, T_UNKNOWN_KEY };
 
+static char *tokens[]={ "var", "end", "scope", "upscope",
+                 "comment", "date", "dumpall", "dumpoff", "dumpon",
+                 "dumpvars", "enddefinitions",
+                 "dumpports", "dumpportsoff", "dumpportson", "dumpportsall",
+                 "timescale", "version", "vcdclose",
+                 "", "", "" };
 
 #define NUM_TOKENS 18
 
@@ -411,7 +418,7 @@ do
 yyshadow++;
 for(i=0;i<NUM_TOKENS;i++)
 	{
-	if(!strcmp(yyshadow,GLOBALS.tokens_vcd_c_1[i]))
+	if(!strcmp(yyshadow,tokens[i]))
 		{
 		return(i);
 		}
@@ -976,6 +983,8 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 
 static void evcd_strcpy(char *dst, char *src)
 {
+static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
+static char  *vcd="01xz0101xz0101xzxxxxxxx";
 
 char ch;
 int i;
@@ -984,9 +993,9 @@ while((ch=*src))
 	{
 	for(i=0;i<23;i++)
 		{
-		if(GLOBALS.evcd_vcd_c_1[i]==ch)
+		if(evcd[i]==ch)
 			{
-			*dst=GLOBALS.vcd_vcd_c_1[i];
+			*dst=vcd[i];
 			break;
 			}
 		}	
@@ -2418,6 +2427,9 @@ return(GLOBALS.max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:27  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:02  kermin
  * Merge Complete - I hope
  *

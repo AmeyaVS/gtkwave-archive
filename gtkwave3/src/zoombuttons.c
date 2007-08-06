@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include "pixmaps.h"
 #include "currenttime.h"
 #include "debug.h"
@@ -379,7 +380,6 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-printf("zoomin_pixmap: %x, zoomin_mask: %x\n",GLOBALS.zoomin_pixmap, GLOBALS.zoomin_mask); 
 pixmapzin=gtk_pixmap_new(GLOBALS.zoomin_pixmap, GLOBALS.zoomin_mask);
 gtk_widget_show(pixmapzin);
 pixmapzout=gtk_pixmap_new(GLOBALS.zoomout_pixmap, GLOBALS.zoomout_mask);
@@ -480,6 +480,9 @@ return table;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:20  gtkwave
  * Imported sources
  *

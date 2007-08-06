@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2001.
  *
  * This program is free software; you can redistribute it and/or
@@ -13,6 +13,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "gtk12compat.h"
@@ -22,10 +23,6 @@
 #include "vcd.h"
 #include "busy.h"
 #include "debug.h"
-
-
-
-
 
 
 int hier_searchbox_is_active(void)
@@ -41,6 +38,7 @@ GtkCList *cl;
 int len;
 int row;
 int pixlen=0, maxpixlen=0;
+static char *dotdot="..";
 struct treechain *tc;
 
 gtk_clist_freeze(cl=GTK_CLIST(GLOBALS.clist_hiersearch_c_1));
@@ -50,7 +48,7 @@ GLOBALS.num_rows_hiersearch_c_1=0;
 
 if(t!=GLOBALS.treeroot)
 	{
-	maxpixlen=gdk_string_measure(GLOBALS.signalfont,(gchar *)(GLOBALS.dotdot_hiersearch_c_1));
+	maxpixlen=gdk_string_measure(GLOBALS.signalfont,(gchar *)(dotdot));
 	}
 
 if(!GLOBALS.hier_grouping)
@@ -186,7 +184,7 @@ if(!GLOBALS.hier_grouping)
 
 if(t!=GLOBALS.treeroot)
 	{
-	row=gtk_clist_prepend(cl,(gchar **)&GLOBALS.dotdot_hiersearch_c_1);
+	row=gtk_clist_prepend(cl,(gchar **)&dotdot);
 	gtk_clist_set_row_data(cl, row,NULL); 
 	GLOBALS.num_rows_hiersearch_c_1++;
 	}
@@ -982,6 +980,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:20  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

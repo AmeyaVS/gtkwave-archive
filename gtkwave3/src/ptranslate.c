@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 2005-6.
  *
  * This program is free software; you can redistribute it and/or
@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "gtk12compat.h"
@@ -26,6 +27,9 @@
 void init_proctrans_data(void)
 {
 int i;
+
+if(!GLOBALS.procsel_filter) { GLOBALS.procsel_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(char *)); }
+if(!GLOBALS.proc_filter) { GLOBALS.proc_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(struct pipe_ctx *)); }
 
 for(i=0;i<PROC_FILTER_MAX+1;i++)
 	{
@@ -393,6 +397,9 @@ if(GLOBALS.num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:22  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

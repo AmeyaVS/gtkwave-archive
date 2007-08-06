@@ -1,4 +1,4 @@
-#include"globals.h"/*
+/*
  * Copyright (c) Tony Bybell 1999-2005. 
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -22,6 +22,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include "currenttime.h"
 #include "analyzer.h"
@@ -32,9 +33,6 @@
 #include "strace.h"
 #include "print.h"
 
-/*
- * Constants 
- */
 
 /**********************************************
  * this is essentially wavewindow.c's rendering
@@ -44,6 +42,32 @@
 #define WAVE_COURIER_SCALE_FAC 1.6	/* more or less is the correct
 					 * pixel->ps scale mapping  */
 
+
+/* 
+ * PostScript device specific operations
+ */
+gtk_print_device ps_print_device = {
+                                    ps_header,
+                                    ps_trailer,
+                                    ps_signal_init,
+                                    ps_setgray,
+                                    ps_draw_line,
+                                    ps_draw_box,
+                                    ps_draw_string
+};
+
+/*
+ * MIF device specific operations
+ */
+gtk_print_device mif_print_device = {
+                                     mif_header,
+                                     mif_trailer,
+                                     mif_signal_init,
+                                     mif_setgray,
+                                     mif_draw_line,
+                                     mif_draw_box,
+                                     mif_draw_string
+};
 
 
 
@@ -272,13 +296,13 @@ ps_trailer(pr_context * prc)
  */
 #ifndef _MSC_VER
 static          gdouble
-max(gdouble a, gdouble b)
+maxdbl(gdouble a, gdouble b)
 {
 	return (a > b ? a : b);
 }
 
 static          gdouble
-min(gdouble a, gdouble b)
+mindbl(gdouble a, gdouble b)
 {
 	return (a < b ? a : b);
 }
@@ -345,9 +369,9 @@ mif_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 	ty2 = y2 * prc->yscale + prc->tr_y;
 
 	/* The exprssion below is derived from: */
-	/* rx = min((prc->PageX * inch - tx1), (prc->PageX * inch - tx2)) */
-	rx = (int) (prc->PageX * GLOBALS.inch_print_c_1 - max(tx2, tx1));
-	ry = (int) min(ty1, ty2);
+	/* rx = mindbl((prc->PageX * inch - tx1), (prc->PageX * inch - tx2)) */
+	rx = (int) (prc->PageX * GLOBALS.inch_print_c_1 - maxdbl(tx2, tx1));
+	ry = (int) mindbl(ty1, ty2);
 	rw = abs((int) (tx2 - tx1));
 	rh = abs((int) (ty2 - ty1));
 
@@ -860,7 +884,7 @@ top:
 		len     = gdk_string_measure(GLOBALS.wavefont, timebuff) >> 1;
 		lenhalf = len >> 1;
 
-		if ((prc->gpd == &GLOBALS.ps_print_device)
+		if ((prc->gpd == &ps_print_device)
 		|| ((x - lenhalf >= 0) && (x + lenhalf < GLOBALS.wavewidth))) {
 			pr_setgray(prc, 0.0);
 			if((x-lenhalf >= lastx) || (GLOBALS.pixelsperframe >= 200))
@@ -916,7 +940,7 @@ pr_draw_named_markers(pr_context * prc)
 						       GLOBALS.fontheight - 1, nbuff,
 						       xsize,
 						       (prc->gpd ==
-							&GLOBALS.ps_print_device) ? GLOBALS.wavefont->ascent /
+							&ps_print_device) ? GLOBALS.wavefont->ascent /
 						       2 : GLOBALS.wavefont->ascent);
 				}
 			}
@@ -1479,7 +1503,7 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 				if (x0 < 0)
 					x0 = 0;	/* fixup left margin */
 
-				width = ((prc->gpd == &GLOBALS.ps_print_device) || (x1 < GLOBALS.wavewidth)) ? x1 - x0 : GLOBALS.wavewidth - x0;	/* truncate render
+				width = ((prc->gpd == &ps_print_device) || (x1 < GLOBALS.wavewidth)) ? x1 - x0 : GLOBALS.wavewidth - x0;	/* truncate render
 																 * window for non-ps */
 
 				if (width > GLOBALS.vector_padding) {
@@ -1494,7 +1518,7 @@ pr_draw_hptr_trace_vector(pr_context * prc, Trptr t, hptr h, int which)
 					}
 
 
-					if (((pixlen = gdk_string_measure(GLOBALS.wavefont, ascii)) + GLOBALS.vector_padding <= width) || ((x1 >= GLOBALS.wavewidth) && (prc->gpd == &GLOBALS.ps_print_device))) {
+					if (((pixlen = gdk_string_measure(GLOBALS.wavefont, ascii)) + GLOBALS.vector_padding <= width) || ((x1 >= GLOBALS.wavewidth) && (prc->gpd == &ps_print_device))) {
 						pr_draw_string(prc, x0 + 2, ytext, ascii, pixlen, ysiz);
 					} else {
 						char           *mod;
@@ -1830,13 +1854,13 @@ pr_draw_vptr_trace(pr_context * prc, Trptr t, vptr v, int which)
 				if (x0 < 0)
 					x0 = 0;	/* fixup left margin */
 
-				width = ((prc->gpd == &GLOBALS.ps_print_device) || (x1 < GLOBALS.wavewidth)) ? x1 - x0 : GLOBALS.wavewidth - x0;	/* truncate render
+				width = ((prc->gpd == &ps_print_device) || (x1 < GLOBALS.wavewidth)) ? x1 - x0 : GLOBALS.wavewidth - x0;	/* truncate render
 																 * window for non-ps */
 
 				if (width > GLOBALS.vector_padding) {
 					ascii = convert_ascii(t, h);
 
-					if (((pixlen = gdk_string_measure(GLOBALS.wavefont, ascii)) + GLOBALS.vector_padding <= width) || ((x1 >= GLOBALS.wavewidth) && (prc->gpd == &GLOBALS.ps_print_device))) {
+					if (((pixlen = gdk_string_measure(GLOBALS.wavefont, ascii)) + GLOBALS.vector_padding <= width) || ((x1 >= GLOBALS.wavewidth) && (prc->gpd == &ps_print_device))) {
 						pr_draw_string(prc, x0 + 2, ytext, ascii, pixlen, ysiz);
 					} else {
 						char           *mod;
@@ -2101,7 +2125,7 @@ print_ps_image(FILE * wave, gdouble px, gdouble py)
 {
 	pr_context      prc;
 
-	prc.gpd = &GLOBALS.ps_print_device;
+	prc.gpd = &ps_print_device;
 	prc.PageX = px;		/* Legal page width */
 	prc.PageY = py;		/* Legal page height */
 	prc.LM = 1;		/* Left Margin (inch) */
@@ -2118,7 +2142,7 @@ print_mif_image(FILE * wave, gdouble px, gdouble py)
 {
 	pr_context      prc;
 
-	prc.gpd = &GLOBALS.mif_print_device;
+	prc.gpd = &mif_print_device;
 	prc.PageX = px;		/* Legal page width */
 	prc.PageY = py;		/* Legal page height */
 	prc.LM = 1;		/* Left Margin (inch) */
@@ -2135,6 +2159,9 @@ print_mif_image(FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:22  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:28  gtkwave
  * Imported sources
  *

@@ -1,5 +1,5 @@
-#include"globals.h"/* 
- * Copyright (c) Tony Bybell 1999-2006
+/* 
+ * Copyright (c) Tony Bybell1 1999-2006
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -7,16 +7,24 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include "currenttime.h"
 #include "print.h"
 #include "menu.h"
 #include <errno.h>
 
+static char *render_targets[]=
+        {"PS", "MIF"};
 
+static char *page_size[]=
+        {"Letter (8.5\" x 11\")", "A4 (11.68\" x 8.26\")", "Legal (14\" x 8.5\")", "Letter Prop (6.57\" x 8.5\")", "A4 Prop (8.26\" x 5.84\")"};
 
+static char *render_type[]=
+        {"Full", "Minimal"};
 
-
+static gdouble px[]={11.00, 11.68, 14.00, 8.50, 8.26};
+static gdouble py[]={ 8.50,  8.26,  8.50, 6.57, 5.84};
 
 
 
@@ -79,7 +87,7 @@ if(GLOBALS.filesel_ok)
                 }
                 else
                 {
-                print_ps_image(wave,GLOBALS.px_renderopt_c_1[GLOBALS.page_size_type_renderopt_c_1],GLOBALS.py_renderopt_c_1[GLOBALS.page_size_type_renderopt_c_1]);
+                print_ps_image(wave,px[GLOBALS.page_size_type_renderopt_c_1],py[GLOBALS.page_size_type_renderopt_c_1]);
                 fclose(wave);
                 }
         }  
@@ -102,7 +110,7 @@ if(GLOBALS.filesel_ok)
                 }
                 else
                 {
-		print_mif_image(wave,GLOBALS.px_renderopt_c_1[GLOBALS.page_size_type_renderopt_c_1],GLOBALS.py_renderopt_c_1[GLOBALS.page_size_type_renderopt_c_1]);
+		print_mif_image(wave,px[GLOBALS.page_size_type_renderopt_c_1],py[GLOBALS.page_size_type_renderopt_c_1]);
                 fclose(wave);
                 }
         }  
@@ -152,9 +160,9 @@ void renderbox(char *title)
 		memset(GLOBALS.target_mutex_renderopt_c_1, 0, 2); GLOBALS.target_mutex_renderopt_c_1[0] = 1; /* PS */
 		for(i=0;i<2;i++)
 			{
-			if(!strcmp(s1, GLOBALS.render_targets_renderopt_c_1[i]))
+			if(!strcmp(s1, render_targets[i]))
 				{
-				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  GLOBALS.render_targets_renderopt_c_1[i]);
+				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  render_targets[i]);
 				memset(GLOBALS.target_mutex_renderopt_c_1, 0, 2); GLOBALS.target_mutex_renderopt_c_1[i] = 1; break;
 				}
 			}
@@ -163,9 +171,9 @@ void renderbox(char *title)
 		GLOBALS.page_size_type_renderopt_c_1 = 0;
 		for(i=0;i<5;i++)
 			{
-			if(!strcmp(s2, GLOBALS.page_size_renderopt_c_1[i]))
+			if(!strcmp(s2, page_size[i]))
 				{
-				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  GLOBALS.page_size_renderopt_c_1[i]);
+				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  page_size[i]);
 				memset(GLOBALS.page_mutex_renderopt_c_1, 0, 5); GLOBALS.page_mutex_renderopt_c_1[i] = 1; 
 				GLOBALS.page_size_type_renderopt_c_1 = i;
 				break;
@@ -175,9 +183,9 @@ void renderbox(char *title)
 		memset(GLOBALS.render_mutex_renderopt_c_1, 0, 2); GLOBALS.render_mutex_renderopt_c_1[0] = 1; /* Full */
 		for(i=0;i<2;i++)
 			{
-			if(!strcmp(s3, GLOBALS.render_type_renderopt_c_1[i]))
+			if(!strcmp(s3, render_type[i]))
 				{
-				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  GLOBALS.render_type_renderopt_c_1[i]);
+				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  render_type[i]);
 				memset(GLOBALS.render_mutex_renderopt_c_1, 0, 2); GLOBALS.render_mutex_renderopt_c_1[i] = 1; break;
 				}
 			}
@@ -222,7 +230,7 @@ void renderbox(char *title)
 
     for(i=0;i<2;i++)
 	{
-    	menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.render_targets_renderopt_c_1[i]);
+    	menuitem = gtk_radio_menu_item_new_with_label (group, render_targets[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
@@ -244,7 +252,7 @@ void renderbox(char *title)
 
     for(i=0;i<5;i++)
 	{
-    	menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.page_size_renderopt_c_1[i]);
+    	menuitem = gtk_radio_menu_item_new_with_label (group, page_size[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
@@ -269,7 +277,7 @@ void renderbox(char *title)
 
     for(i=0;i<2;i++)
 	{
-    	menuitem = gtk_radio_menu_item_new_with_label (group, GLOBALS.render_type_renderopt_c_1[i]);
+    	menuitem = gtk_radio_menu_item_new_with_label (group, render_type[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
@@ -320,6 +328,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

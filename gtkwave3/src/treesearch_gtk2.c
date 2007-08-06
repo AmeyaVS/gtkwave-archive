@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tristan Gingold and Tony Bybell 2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 #include <config.h>
+#include "globals.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
@@ -1495,6 +1496,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:27  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:02  kermin
  * Merge Complete - I hope
  *

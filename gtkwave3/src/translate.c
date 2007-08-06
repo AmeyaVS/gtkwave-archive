@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 2005-6.
  *
  * This program is free software; you can redistribute it and/or
@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include <gtk/gtk.h>
 #include "gtk12compat.h"
 #include "symbol.h"
@@ -115,6 +116,9 @@ static xl_Tree * xl_insert(char *i, xl_Tree * t, char *trans) {
 void init_filetrans_data(void)
 {
 int i;
+
+if(!GLOBALS.filesel_filter) { GLOBALS.filesel_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(char *)); }
+if(!GLOBALS.xl_file_filter) { GLOBALS.xl_file_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(struct xl_tree_node *)); }
 
 for(i=0;i<FILE_FILTER_MAX+1;i++)
 	{
@@ -488,6 +492,9 @@ if(GLOBALS.num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:24  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

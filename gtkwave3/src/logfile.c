@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "debug.h"
@@ -27,10 +28,6 @@ char *text;
 when our window is realized. We could also force our window to be
 realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
-
-
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-#endif
 
 
 void log_text(GtkWidget *text, GdkFont *font, char *str)
@@ -146,15 +143,15 @@ if(oe->has_selection)
 			{
 			if(strlen(sel)&&(sel[0]>='0')&&(sel[0]<='9'))
 				{
-				TimeType tm = unformat_time(sel, time_dimension);
-				if((tm >= tims.first) && (tm <= tims.last))
+				TimeType tm = unformat_time(sel, GLOBALS.time_dimension);
+				if((tm >= GLOBALS.tims.first) && (tm <= GLOBALS.tims.last))
 					{
-					tims.lmbcache = -1;
-				        update_markertime(tims.marker = tm);
+					GLOBALS.tims.lmbcache = -1;
+				        update_markertime(GLOBALS.tims.marker = tm);
 					center_op();
-					signalarea_configure_event(signalarea, NULL);
-        				wavearea_configure_event(wavearea, NULL);
-				        update_markertime(tims.marker = tm); /* centering problem in GTK2 */
+					signalarea_configure_event(GLOBALS.signalarea, NULL);
+        				wavearea_configure_event(GLOBALS.wavearea, NULL);
+				        update_markertime(GLOBALS.tims.marker = tm); /* centering problem in GTK2 */
 					}
 				}
 			g_free(sel);
@@ -275,21 +272,21 @@ void logbox(char *title, int width, char *default_text)
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 /* nothing */
 #else
-    if(!font) 
+    if(!GLOBALS.font_logfile_c_1) 
 	{
-	if(fontname_logfile)
+	if(GLOBALS.fontname_logfile)
 		{
-		font=gdk_font_load(fontname_logfile);
+		GLOBALS.font_logfile_c_1=gdk_font_load(GLOBALS.fontname_logfile);
 		}
 
-	if(!font)
+	if(!GLOBALS.font_logfile_c_1)
 		{
 #ifndef __CYGWIN__
-		font=gdk_font_load(use_big_fonts 
+		 GLOBALS.font_logfile_c_1=gdk_font_load(GLOBALS.use_big_fonts 
 				? "-*-courier-*-r-*-*-18-*-*-*-*-*-*-*"
 				: "-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
 #else
-		font=gdk_font_load(use_big_fonts 
+		 GLOBALS.font_logfile_c_1=gdk_font_load(GLOBALS.use_big_fonts 
 				? "-misc-fixed-*-*-*-*-18-*-*-*-*-*-*-*"
 				: "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
 
@@ -401,6 +398,9 @@ void logbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:20  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:03  gtkwave
  * Imported sources
  *

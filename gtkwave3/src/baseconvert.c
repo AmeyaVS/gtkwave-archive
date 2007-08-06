@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <math.h>
 #include <string.h>
@@ -1357,6 +1358,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/05 02:27:18  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.1  2007/07/28 19:50:39  kermin
  * Merged in the main line
  *

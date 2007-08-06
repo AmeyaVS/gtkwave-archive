@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -12,6 +12,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -151,7 +152,7 @@ gtk_widget_show(GLOBALS.mo_area_mouseover_c_1);
 gtk_widget_show(GLOBALS.mouseover_mouseover_c_1);
 
 #ifndef WAVE_USE_GTK2
-gtk_window_reposition(GTK_WINDOW(mouseover), x, y); /* cuts down on GTK+-1.2 visual noise by moving it here */
+gtk_window_reposition(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), x, y); /* cuts down on GTK+-1.2 visual noise by moving it here */
 #endif
 
 GLOBALS.mo_pixmap_mouseover_c_1 = gdk_pixmap_new(GLOBALS.mo_area_mouseover_c_1->window, GLOBALS.mouseover_mouseover_c_1->allocation.width, GLOBALS.mouseover_mouseover_c_1->allocation.height, -1);
@@ -264,7 +265,7 @@ if(!GLOBALS.mouseover_mouseover_c_1)
 #ifdef WAVE_USE_GTK2
 	gdk_window_get_origin(GLOBALS.wavearea->window, &xd, &yd);
 #else
-	gdk_window_get_deskrelative_origin(wavearea->window, &xd, &yd);
+	gdk_window_get_deskrelative_origin(GLOBALS.wavearea->window, &xd, &yd);
 #endif
 	create_mouseover(xin + xd + 8, yin + yd + 20, totalmax, num_info_rows * fh + 7);
 	}
@@ -274,8 +275,8 @@ if(!GLOBALS.mouseover_mouseover_c_1)
 	gdk_window_get_origin(GLOBALS.wavearea->window, &xd, &yd);
         gtk_window_move(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
 #else
-	gdk_window_get_deskrelative_origin(wavearea->window, &xd, &yd);
-        gtk_window_reposition(GTK_WINDOW(mouseover), xin + xd + 8, yin + yd + 20);
+	gdk_window_get_deskrelative_origin(GLOBALS.wavearea->window, &xd, &yd);
+        gtk_window_reposition(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
 #endif
 	}
 
@@ -321,6 +322,9 @@ if(alternate_name) { free_2(alternate_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

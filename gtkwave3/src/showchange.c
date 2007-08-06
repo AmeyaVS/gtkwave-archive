@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -11,6 +11,7 @@
 
 /* radiobuttons.c */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "analyzer.h"
@@ -264,6 +265,9 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
  * Merge Complete - I hope
  *

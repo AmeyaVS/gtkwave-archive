@@ -15,12 +15,12 @@ bin_PROGRAMS=	gtkwave twinwave
 AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS)
 
 gtkwave_SOURCES= \
-	ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
+	globals.c globals.h ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
 	bsearch.c bsearch.h busy.c busy.h \
 	clipping.c clipping.h color.c color.h currenttime.c currenttime.h \
 	debug.c debug.h discardbuttons.c \
 	entry.c fetchbuttons.c fgetdynamic.c fgetdynamic.h file.c fonts.c getopt.c \
-	getopt1.c ghw.c ghw.h ghwlib.c globals.c globals.h ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
+	getopt1.c ghw.c ghw.h ghwlib.c ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
 	help.c helpers/lxt2_read.c \
 	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c \
 	logfile.c lx2.c lx2.h lxt.c lxt.h main.c main.h markerbox.c menu.c menu.h mouseover.c \
