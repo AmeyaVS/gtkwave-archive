@@ -4237,7 +4237,7 @@ for(i=0;i<WV_MENU_NUMITEMS;i++)
 		{
 		if(!strcmp(menu_items[i].path, path))
 			{
-			menu_items[i].accelerator = accel ? strdup(accel) : NULL;
+			menu_items[i].accelerator = accel ? strdup_2(accel) : NULL;
 			break;
 			}
 		}
@@ -4249,6 +4249,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *
