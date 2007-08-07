@@ -111,7 +111,8 @@ if(ret)
 	}
 }
 
-void *calloc_2(size_t nmemb, size_t size)
+
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size)
 {
 void *ret;
 ret=calloc(1, (nmemb * size) + 2*sizeof(void *));
@@ -119,14 +120,14 @@ if(ret)
 	{
 	void **ret2 = (void **)ret;
 	*(ret2+0) = NULL;
-	*(ret2+1) = GLOBALS->alloc2_chain;
-	if(GLOBALS->alloc2_chain)
+	*(ret2+1) = g->alloc2_chain;
+	if(g->alloc2_chain)
 		{
-		*(GLOBALS->alloc2_chain+0) = ret2;
+		*(g->alloc2_chain+0) = ret2;
 		}
-	GLOBALS->alloc2_chain = ret2;
+	g->alloc2_chain = ret2;
 
-	GLOBALS->outstanding++;
+	g->outstanding++;
 
 	return(ret + 2*sizeof(void *));
 	}
@@ -136,6 +137,13 @@ if(ret)
 	exit(1);
 	}
 }
+
+
+void *calloc_2(size_t nmemb, size_t size)
+{
+return(calloc_2_into_context(GLOBALS, nmemb, size));
+}
+
 
 
 void free_2(void *ptr)
@@ -321,6 +329,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.3  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.2.2.2  2007/08/06 03:50:45  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

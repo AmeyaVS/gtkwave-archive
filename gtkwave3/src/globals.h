@@ -979,8 +979,8 @@ char do_initial_zoom_fit;//from zoombuttons.c 721
 };
 
 
-void initialize_globals();
-
+struct Global *initialize_globals(void);
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size);
 
 extern struct Global *GLOBALS;
 #endif

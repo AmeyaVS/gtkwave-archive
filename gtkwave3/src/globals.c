@@ -34,9 +34,9 @@
 
 struct Global *GLOBALS = NULL;
 
-void initialize_globals(struct Global **old_globals) {
-struct Global globals_temp = {
-
+/* make this const so if we try to write to it we coredump */
+static const struct Global globals_base_values = 
+{ 
 /*
  * analyzer.c
  */
@@ -525,7 +525,7 @@ NULL,//pdata 344
 NULL,//window_search_c_7 354
 NULL,//entry_search_c_3 355
 NULL,//clist_search_c_3 356
-"",//searchbox_text_search_c_1 358
+NULL,//searchbox_text_search_c_1 358
 0,//bundle_direction_search_c_2 359
 NULL,//cleanup_search_c_5 360
 0,//num_rows_search_c_2 361
@@ -965,44 +965,22 @@ NULL,//gc_dkblue 656
  */
 1,//do_zoom_center 660
 0,//do_initial_zoom_fit 661
-
-
 };
-int i;
 
-if((*old_globals) != NULL) {
-  // Free the calloced buffers
-  free_outstanding();
-  free((*old_globals));
-}
 
-if(((*old_globals) = calloc(1,sizeof(struct Global))) == NULL) {
-  fprintf(stderr, "Internal error, unable to allocate global struct\r\n");
-  exit(1);
-} 
+/*
+ * context manipulation functions
+ */
+struct Global *initialize_globals(void) 
+{
+struct Global *g = calloc(1,sizeof(struct Global));	/* allocate viewer context */
 
-if(((*old_globals)->buf_menu_c_1 = calloc_2(1, 65537)) == NULL) {
-  fprintf(stderr, "Internal error, unable to allocate global struct\r\n");
-  exit(1);
-}
+memcpy(g, &globals_base_values, sizeof(struct Global));	/* fill in the blanks */
 
-if(((*old_globals)->regexp_string_menu_c_1 = calloc_2(1, 129)) == NULL) {
-  fprintf(stderr, "Internal error, unable to allocate global struct\r\n");
-  exit(1);
-}
+g->buf_menu_c_1 = calloc_2_into_context(g, 1, 65537);	/* do remaining mallocs into new ctx */
+g->regexp_string_menu_c_1 = calloc_2_into_context(g, 1, 129);
+g->regex_ok_regex_c_1 = calloc_2_into_context(g, WAVE_REGEX_TOTAL, sizeof(int));
+g->preg_regex_c_1 = calloc_2_into_context(g, WAVE_REGEX_TOTAL, sizeof(regex_t));
 
-if(((*old_globals)->regex_ok_regex_c_1 = calloc_2(WAVE_REGEX_TOTAL, sizeof(int))) == NULL) {
-  fprintf(stderr, "Internal error, unable to allocate global struct\r\n");
-  exit(1);
-}
-
-if(((*old_globals)->preg_regex_c_1 = calloc_2(WAVE_REGEX_TOTAL, sizeof(regex_t))) == NULL) {
-  fprintf(stderr, "Internal error, unable to allocate global struct\r\n");
-  exit(1);
-}
-
-for(i = 0; i < sizeof(struct Global); i++) {
-  ((char *)(*old_globals))[i] = ((char *) &globals_temp)[i];
-}
-
+return(g);						/* what to do with ctx is at discretion of caller */
 }

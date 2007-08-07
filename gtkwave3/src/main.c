@@ -247,8 +247,8 @@ char *skip_start=NULL, *skip_end=NULL;
 
 WAVE_LOCALE_FIX
 
-/* Initialize the GLOBALS structure */ 
-initialize_globals(&GLOBALS);
+/* Initialize the GLOBALS structure for the first time... */ 
+GLOBALS = initialize_globals();
 
 GLOBALS->whoami=malloc_2(strlen(argv[0])+1);	/* cache name in case we fork later */
 strcpy(GLOBALS->whoami, argv[0]);
@@ -1498,6 +1498,9 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

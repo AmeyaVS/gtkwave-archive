@@ -642,9 +642,17 @@ gtk_grab_add(widget);
 
 entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS->entry_search_c_3));
 DEBUG(printf("Entry contents: %s\n", entry_text));
-/* if(!(len=strlen(entry_text))) searchbox_text=NULL; */
-if(!(len=strlen(entry_text))) GLOBALS->searchbox_text_search_c_1="";
-      else strcpy((GLOBALS->searchbox_text_search_c_1=(char *)malloc_2(len+1)),entry_text);
+
+free_2(GLOBALS->searchbox_text_search_c_1);
+
+if((entry_text)&&(strlen(entry_text)))
+	{
+	GLOBALS->searchbox_text_search_c_1 = strdup_2(entry_text);
+	}
+	else
+	{
+	GLOBALS->searchbox_text_search_c_1 = strdup_2("");
+	}
 
 GLOBALS->num_rows_search_c_2=0;
 gtk_clist_freeze(cl=GTK_CLIST(GLOBALS->clist_search_c_3));
@@ -775,6 +783,8 @@ void searchbox(char *title, GtkSignalFunc func)
 	gdk_window_raise(GLOBALS->window_search_c_7->window);
 	return;
 	}
+
+    if(!GLOBALS->searchbox_text_search_c_1) GLOBALS->searchbox_text_search_c_1 = strdup_2("");
 
     GLOBALS->is_active_search_c_4=1;
     GLOBALS->cleanup_search_c_5=func;
@@ -1013,6 +1023,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

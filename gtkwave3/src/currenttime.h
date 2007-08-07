@@ -17,20 +17,13 @@
 #include "analyzer.h"
 #include "regex_wave.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.30_pre3 (w)1999-2007 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.0_soc (w)1999-2007 BSI"
 
 struct blackout_region_t
 {
 struct blackout_region_t *next;
 TimeType bstart, bend;
 };
-
-
-
-
-
-
-
 
 
 char *convert_ascii(Trptr t, vptr v);
@@ -137,6 +130,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.2  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
  * Revision 1.2.2.1  2007/07/28 19:50:39  kermin
  * Merged in the main line
  *

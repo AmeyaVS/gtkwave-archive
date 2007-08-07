@@ -237,7 +237,8 @@ gboolean filter_edit_cb (GtkWidget *widget, GdkEventKey *ev, gpointer *data)
       /* Get the filter string, save it and change the store.  */
       if(GLOBALS->filter_str_treesearch_gtk2_c_1)
 	{
-      	free ((char *)GLOBALS->filter_str_treesearch_gtk2_c_1);
+      	free_2((char *)GLOBALS->filter_str_treesearch_gtk2_c_1);
+	GLOBALS->filter_str_treesearch_gtk2_c_1 = NULL;
 	}
       t = gtk_entry_get_text (GTK_ENTRY (widget));
       if (t == NULL || *t == 0)
@@ -1496,6 +1497,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
