@@ -20,7 +20,7 @@ GtkAdjustment *hadj;
 gfloat inc;
 TimeType ntinc;
 
-if(GLOBALS.helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nShift Left");
         help_text(
@@ -34,15 +34,15 @@ if(GLOBALS.helpbox_is_active)
         }
 
 
-if(GLOBALS.nspx>1.0) inc=GLOBALS.nspx; else inc=1.0;
+if(GLOBALS->nspx>1.0) inc=GLOBALS->nspx; else inc=1.0;
 
-hadj=GTK_ADJUSTMENT(GLOBALS.wave_hslider);
-if((hadj->value-inc)>GLOBALS.tims.first) hadj->value=hadj->value-inc;
-	else hadj->value=GLOBALS.tims.first;
+hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+if((hadj->value-inc)>GLOBALS->tims.first) hadj->value=hadj->value-inc;
+	else hadj->value=GLOBALS->tims.first;
 
 ntinc=(TimeType)inc;
-if((GLOBALS.tims.start-ntinc)>GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.start-ntinc;
-	else GLOBALS.tims.timecache=GLOBALS.tims.first;
+if((GLOBALS->tims.start-ntinc)>GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.start-ntinc;
+	else GLOBALS->tims.timecache=GLOBALS->tims.first;
 
 time_update();
 
@@ -56,7 +56,7 @@ GtkAdjustment *hadj;
 gfloat inc;
 TimeType ntinc, pageinc;
 
-if(GLOBALS.helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nShift Right");
         help_text(
@@ -69,20 +69,20 @@ if(GLOBALS.helpbox_is_active)
         return;
         }
 
-if(GLOBALS.nspx>1.0) inc=GLOBALS.nspx; else inc=1.0;
+if(GLOBALS->nspx>1.0) inc=GLOBALS->nspx; else inc=1.0;
 ntinc=(TimeType)inc;
 
-hadj=GTK_ADJUSTMENT(GLOBALS.wave_hslider);
-if((hadj->value+inc)<GLOBALS.tims.last) hadj->value=hadj->value+inc;
-	else hadj->value=GLOBALS.tims.last-inc;
+hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+if((hadj->value+inc)<GLOBALS->tims.last) hadj->value=hadj->value+inc;
+	else hadj->value=GLOBALS->tims.last-inc;
 
-pageinc=(TimeType)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);
+pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
 
-if((GLOBALS.tims.start+ntinc)<(GLOBALS.tims.last-pageinc+1)) GLOBALS.tims.timecache=GLOBALS.tims.start+ntinc;
+if((GLOBALS->tims.start+ntinc)<(GLOBALS->tims.last-pageinc+1)) GLOBALS->tims.timecache=GLOBALS->tims.start+ntinc;
 	else 
 	{
-	GLOBALS.tims.timecache=GLOBALS.tims.last-pageinc+1;
-	if(GLOBALS.tims.timecache<GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.first;
+	GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
+	if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
 	}
 
 time_update();
@@ -107,9 +107,9 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-pixmapwid1=gtk_pixmap_new(GLOBALS.larrow_pixmap, GLOBALS.larrow_mask);
+pixmapwid1=gtk_pixmap_new(GLOBALS->larrow_pixmap, GLOBALS->larrow_mask);
 gtk_widget_show(pixmapwid1);
-pixmapwid2=gtk_pixmap_new(GLOBALS.rarrow_pixmap, GLOBALS.rarrow_mask);
+pixmapwid2=gtk_pixmap_new(GLOBALS->rarrow_pixmap, GLOBALS->rarrow_mask);
 gtk_widget_show(pixmapwid2);
    
 /* Create a table to hold the text widget and scrollbars */
@@ -155,6 +155,10 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
  * Semi working global struct
  *

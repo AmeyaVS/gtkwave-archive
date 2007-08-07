@@ -74,8 +74,8 @@ int hash(char *s);
 /* typically use zero for hashval as it doesn't matter if facs are sorted as symfind will bsearch... */
 #define symadd_name_exists_sym_exists(s, nam, hv) \
 (s)->name = (nam); \
-(s)->next=GLOBALS.sym[(hv)]; \
-GLOBALS.sym[(hv)]=(s);
+(s)->next=GLOBALS->sym[(hv)]; \
+GLOBALS->sym[(hv)]=(s);
 
 void facsplit(char *, int *, int *);
 int sigcmp(char *, char *);
@@ -110,6 +110,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:24  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:55  gtkwave
  * Imported sources
  *

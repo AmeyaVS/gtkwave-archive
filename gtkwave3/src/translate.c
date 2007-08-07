@@ -117,22 +117,22 @@ void init_filetrans_data(void)
 {
 int i;
 
-if(!GLOBALS.filesel_filter) { GLOBALS.filesel_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(char *)); }
-if(!GLOBALS.xl_file_filter) { GLOBALS.xl_file_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(struct xl_tree_node *)); }
+if(!GLOBALS->filesel_filter) { GLOBALS->filesel_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(char *)); }
+if(!GLOBALS->xl_file_filter) { GLOBALS->xl_file_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(struct xl_tree_node *)); }
 
 for(i=0;i<FILE_FILTER_MAX+1;i++)
 	{
-	GLOBALS.filesel_filter[i] = NULL;
-	GLOBALS.xl_file_filter[i] = NULL;
+	GLOBALS->filesel_filter[i] = NULL;
+	GLOBALS->xl_file_filter[i] = NULL;
 	}
 }
 
 static void regen_display(void)
 {
-GLOBALS.signalwindow_width_dirty=1;
+GLOBALS->signalwindow_width_dirty=1;
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
@@ -147,10 +147,10 @@ free_2(t);
 
 void remove_file_filter(int which, int regen)
 {
-if(GLOBALS.xl_file_filter[which])
+if(GLOBALS->xl_file_filter[which])
 	{
-	remove_file_filter_2(GLOBALS.xl_file_filter[which]);
-	GLOBALS.xl_file_filter[which] = NULL;
+	remove_file_filter_2(GLOBALS->xl_file_filter[which]);
+	GLOBALS->xl_file_filter[which] = NULL;
 	}
 
 if(regen)
@@ -193,7 +193,7 @@ while(!feof(f))
 					while(*xlt && isspace(*xlt)) xlt++;
 					if(*xlt)
 						{
-						GLOBALS.xl_file_filter[which] =  xl_insert(lhs, GLOBALS.xl_file_filter[which], xlt);
+						GLOBALS->xl_file_filter[which] =  xl_insert(lhs, GLOBALS->xl_file_filter[which], xlt);
 						}
 					}
 				}
@@ -210,9 +210,9 @@ void install_file_filter(int which)
 {
 int found = 0;
 
-if(GLOBALS.traces.first)  
+if(GLOBALS->traces.first)  
         {
-        Trptr t = GLOBALS.traces.first;
+        Trptr t = GLOBALS->traces.first;
         while(t)
                 {
                 if(t->flags&TR_HIGHLIGHT)
@@ -248,27 +248,27 @@ if(found)
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-GLOBALS.is_active_translate_c_5=0;
-gtk_widget_destroy(GLOBALS.window_translate_c_11);
-GLOBALS.window_translate_c_11 = NULL;
+GLOBALS->is_active_translate_c_5=0;
+gtk_widget_destroy(GLOBALS->window_translate_c_11);
+GLOBALS->window_translate_c_11 = NULL;
 }
 
 static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-install_file_filter(GLOBALS.current_filter_translate_c_2);
+install_file_filter(GLOBALS->current_filter_translate_c_2);
 destroy_callback(widget, nothing);
 }
 
 static void select_row_callback(GtkWidget *widget, gint row, gint column,
 	GdkEventButton *event, gpointer data)
 {
-GLOBALS.current_filter_translate_c_2 = row + 1;
+GLOBALS->current_filter_translate_c_2 = row + 1;
 }
 
 static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
 	GdkEventButton *event, gpointer data)
 {
-GLOBALS.current_filter_translate_c_2 = 0; /* none */
+GLOBALS->current_filter_translate_c_2 = 0; /* none */
 }
 
 
@@ -277,15 +277,15 @@ static void add_filter_callback_2(GtkWidget *widget, GtkWidget *nothing)
 int i;
 GtkCList *cl;
 
-if(!GLOBALS.filesel_ok) { return; }
+if(!GLOBALS->filesel_ok) { return; }
 
-if(*GLOBALS.fileselbox_text)
+if(*GLOBALS->fileselbox_text)
 	{
-	for(i=0;i<GLOBALS.num_file_filters;i++)
+	for(i=0;i<GLOBALS->num_file_filters;i++)
 		{
-		if(GLOBALS.filesel_filter[i])
+		if(GLOBALS->filesel_filter[i])
 			{
-			if(!strcmp(GLOBALS.filesel_filter[i], *GLOBALS.fileselbox_text)) 
+			if(!strcmp(GLOBALS->filesel_filter[i], *GLOBALS->fileselbox_text)) 
 				{
 				status_text("Filter already imported.\n");
 				return;
@@ -294,36 +294,36 @@ if(*GLOBALS.fileselbox_text)
 		}
 	}
 
-GLOBALS.num_file_filters++;
-load_file_filter(GLOBALS.num_file_filters, *GLOBALS.fileselbox_text);
-if(GLOBALS.xl_file_filter[GLOBALS.num_file_filters])
+GLOBALS->num_file_filters++;
+load_file_filter(GLOBALS->num_file_filters, *GLOBALS->fileselbox_text);
+if(GLOBALS->xl_file_filter[GLOBALS->num_file_filters])
 	{
-	if(GLOBALS.filesel_filter[GLOBALS.num_file_filters]) free_2(GLOBALS.filesel_filter[GLOBALS.num_file_filters]);
-	GLOBALS.filesel_filter[GLOBALS.num_file_filters] = malloc_2(strlen(*GLOBALS.fileselbox_text) + 1);
-	strcpy(GLOBALS.filesel_filter[GLOBALS.num_file_filters], *GLOBALS.fileselbox_text);
+	if(GLOBALS->filesel_filter[GLOBALS->num_file_filters]) free_2(GLOBALS->filesel_filter[GLOBALS->num_file_filters]);
+	GLOBALS->filesel_filter[GLOBALS->num_file_filters] = malloc_2(strlen(*GLOBALS->fileselbox_text) + 1);
+	strcpy(GLOBALS->filesel_filter[GLOBALS->num_file_filters], *GLOBALS->fileselbox_text);
 
-	cl=GTK_CLIST(GLOBALS.clist_translate_c_4);
+	cl=GTK_CLIST(GLOBALS->clist_translate_c_4);
 	gtk_clist_freeze(cl);
-	gtk_clist_append(cl,(gchar **)&(GLOBALS.filesel_filter[GLOBALS.num_file_filters]));
+	gtk_clist_append(cl,(gchar **)&(GLOBALS->filesel_filter[GLOBALS->num_file_filters]));
 
 	gtk_clist_set_column_width(cl,0,gtk_clist_optimal_column_width(cl,0));
 	gtk_clist_thaw(cl);
 	}
 	else
 	{
-	GLOBALS.num_file_filters--;
+	GLOBALS->num_file_filters--;
 	}
 }
 
 static void add_filter_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-if(GLOBALS.num_file_filters == FILE_FILTER_MAX)
+if(GLOBALS->num_file_filters == FILE_FILTER_MAX)
 	{
 	status_text("Max number of file filters installed already.\n");
 	return;
 	}
 
-fileselbox("Select Filter File",&GLOBALS.fcurr_translate_c_2,GTK_SIGNAL_FUNC(add_filter_callback_2), GTK_SIGNAL_FUNC(NULL),NULL, 0);
+fileselbox("Select Filter File",&GLOBALS->fcurr_translate_c_2,GTK_SIGNAL_FUNC(add_filter_callback_2), GTK_SIGNAL_FUNC(NULL),NULL, 0);
 }
 
 /*
@@ -341,19 +341,19 @@ void trans_searchbox(char *title)
     GtkWidget *table;
     GtkTooltips *tooltips;
 
-    if(GLOBALS.is_active_translate_c_5) 
+    if(GLOBALS->is_active_translate_c_5) 
 	{
-	gdk_window_raise(GLOBALS.window_translate_c_11->window);
+	gdk_window_raise(GLOBALS->window_translate_c_11->window);
 	return;
 	}
 
-    GLOBALS.is_active_translate_c_5=1;
-    GLOBALS.current_filter_translate_c_2 = 0;
+    GLOBALS->is_active_translate_c_5=1;
+    GLOBALS->current_filter_translate_c_2 = 0;
 
     /* create a new modal window */
-    GLOBALS.window_translate_c_11 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW (GLOBALS.window_translate_c_11), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS.window_translate_c_11), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    GLOBALS->window_translate_c_11 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_translate_c_11), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_translate_c_11), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
 
@@ -373,20 +373,20 @@ void trans_searchbox(char *title)
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
-    GLOBALS.clist_translate_c_4=gtk_clist_new_with_titles(1,titles);
-    gtk_clist_column_titles_passive(GTK_CLIST(GLOBALS.clist_translate_c_4)); 
+    GLOBALS->clist_translate_c_4=gtk_clist_new_with_titles(1,titles);
+    gtk_clist_column_titles_passive(GTK_CLIST(GLOBALS->clist_translate_c_4)); 
 
-    gtk_clist_set_selection_mode(GTK_CLIST(GLOBALS.clist_translate_c_4), GTK_SELECTION_EXTENDED);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS.clist_translate_c_4), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS.clist_translate_c_4), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
+    gtk_clist_set_selection_mode(GTK_CLIST(GLOBALS->clist_translate_c_4), GTK_SELECTION_EXTENDED);
+    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_translate_c_4), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
+    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_translate_c_4), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
 
-    for(i=0;i<GLOBALS.num_file_filters;i++)
+    for(i=0;i<GLOBALS->num_file_filters;i++)
 	{
-	gtk_clist_append(GTK_CLIST(GLOBALS.clist_translate_c_4),(gchar **)&(GLOBALS.filesel_filter[i+1]));
+	gtk_clist_append(GTK_CLIST(GLOBALS->clist_translate_c_4),(gchar **)&(GLOBALS->filesel_filter[i+1]));
 	}
-    gtk_clist_set_column_width(GTK_CLIST(GLOBALS.clist_translate_c_4),0,gtk_clist_optimal_column_width(GTK_CLIST(GLOBALS.clist_translate_c_4),0));
+    gtk_clist_set_column_width(GTK_CLIST(GLOBALS->clist_translate_c_4),0,gtk_clist_optimal_column_width(GTK_CLIST(GLOBALS->clist_translate_c_4),0));
 
-    gtk_widget_show (GLOBALS.clist_translate_c_4);
+    gtk_widget_show (GLOBALS->clist_translate_c_4);
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
@@ -396,7 +396,7 @@ void trans_searchbox(char *title)
     gtk_widget_show(scrolled_win);
 
     /* gtk_scrolled_window_add_with_viewport doesn't seen to work right here.. */
-    gtk_container_add (GTK_CONTAINER (scrolled_win), GLOBALS.clist_translate_c_4);
+    gtk_container_add (GTK_CONTAINER (scrolled_win), GLOBALS->clist_translate_c_4);
 
     gtk_container_add (GTK_CONTAINER (frame2), scrolled_win);
 
@@ -414,7 +414,7 @@ void trans_searchbox(char *title)
 
     button6 = gtk_button_new_with_label (" Add Filter to List ");
     gtk_container_border_width (GTK_CONTAINER (button6), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(add_filter_callback),GTK_OBJECT (GLOBALS.window_translate_c_11));
+    gtk_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(add_filter_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
     gtk_widget_show (button6);
     gtk_tooltips_set_tip_2(tooltips, button6, 
 		"Bring up a file requester to add a filter to the filter select window.",NULL);
@@ -435,7 +435,7 @@ void trans_searchbox(char *title)
 
     button1 = gtk_button_new_with_label (" OK ");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS.window_translate_c_11));
+    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signals to end of the display on the main window.",NULL);
@@ -444,17 +444,17 @@ void trans_searchbox(char *title)
 
     button5 = gtk_button_new_with_label (" Cancel ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS.window_translate_c_11));
+    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
     gtk_box_pack_start (GTK_BOX (hbox), button5, TRUE, FALSE, 0);
 
     gtk_container_add (GTK_CONTAINER (frameh), hbox);
-    gtk_container_add (GTK_CONTAINER (GLOBALS.window_translate_c_11), table);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_translate_c_11), table);
 
-    gtk_widget_set_usize(GTK_WIDGET(GLOBALS.window_translate_c_11), 400, 400);
-    gtk_widget_show(GLOBALS.window_translate_c_11);
+    gtk_widget_set_usize(GTK_WIDGET(GLOBALS->window_translate_c_11), 400, 400);
+    gtk_widget_show(GLOBALS->window_translate_c_11);
 }
 
 
@@ -465,26 +465,26 @@ void set_current_translate_file(char *name)
 {
 int i;
 
-for(i=1;i<GLOBALS.num_file_filters+1;i++)
+for(i=1;i<GLOBALS->num_file_filters+1;i++)
 	{
-	if(!strcmp(GLOBALS.filesel_filter[i], name)) { GLOBALS.current_translate_file = i; return; } 
+	if(!strcmp(GLOBALS->filesel_filter[i], name)) { GLOBALS->current_translate_file = i; return; } 
 	}
 
-if(GLOBALS.num_file_filters < FILE_FILTER_MAX)
+if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 	{
-	GLOBALS.num_file_filters++;
-	load_file_filter(GLOBALS.num_file_filters, name);
-	if(!GLOBALS.xl_file_filter[GLOBALS.num_file_filters])
+	GLOBALS->num_file_filters++;
+	load_file_filter(GLOBALS->num_file_filters, name);
+	if(!GLOBALS->xl_file_filter[GLOBALS->num_file_filters])
 		{
-		GLOBALS.num_file_filters--;
-		GLOBALS.current_translate_file = 0;
+		GLOBALS->num_file_filters--;
+		GLOBALS->current_translate_file = 0;
 		}
 		else
 		{
-		if(GLOBALS.filesel_filter[GLOBALS.num_file_filters]) free_2(GLOBALS.filesel_filter[GLOBALS.num_file_filters]);
-		GLOBALS.filesel_filter[GLOBALS.num_file_filters] = malloc_2(strlen(name) + 1);
-		strcpy(GLOBALS.filesel_filter[GLOBALS.num_file_filters], name);
-		GLOBALS.current_translate_file = GLOBALS.num_file_filters;
+		if(GLOBALS->filesel_filter[GLOBALS->num_file_filters]) free_2(GLOBALS->filesel_filter[GLOBALS->num_file_filters]);
+		GLOBALS->filesel_filter[GLOBALS->num_file_filters] = malloc_2(strlen(name) + 1);
+		strcpy(GLOBALS->filesel_filter[GLOBALS->num_file_filters], name);
+		GLOBALS->current_translate_file = GLOBALS->num_file_filters;
 		}
 	}
 }
@@ -492,6 +492,10 @@ if(GLOBALS.num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:49  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:24  kermin
  * Semi working global struct
  *

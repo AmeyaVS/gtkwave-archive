@@ -30,9 +30,9 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-pixmapwid1=gtk_pixmap_new(GLOBALS.larrow_pixmap, GLOBALS.larrow_mask);
+pixmapwid1=gtk_pixmap_new(GLOBALS->larrow_pixmap, GLOBALS->larrow_mask);
 gtk_widget_show(pixmapwid1);
-pixmapwid2=gtk_pixmap_new(GLOBALS.rarrow_pixmap, GLOBALS.rarrow_mask);
+pixmapwid2=gtk_pixmap_new(GLOBALS->rarrow_pixmap, GLOBALS->rarrow_mask);
 gtk_widget_show(pixmapwid2);
    
 /* Create a table to hold the text widget and scrollbars */
@@ -78,6 +78,10 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
  * Semi working global struct
  *

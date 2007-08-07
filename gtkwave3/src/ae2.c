@@ -72,7 +72,7 @@ static int regex_matches = 0;
  */
 int aet2_rd_get_fac_process_mask(unsigned int facidx)
 {
-if(facidx<GLOBALS.numfacs)
+if(facidx<GLOBALS->numfacs)
 	{
 	int process_idx = facidx/8;
 	int process_bit = facidx&7;
@@ -88,7 +88,7 @@ int aet2_rd_set_fac_process_mask(unsigned int facidx)
 {
 int rc=1;
 
-if(facidx<GLOBALS.numfacs)
+if(facidx<GLOBALS->numfacs)
 	{
 	int idx = facidx/8;
 	int bitpos = facidx&7;
@@ -104,7 +104,7 @@ int aet2_rd_clr_fac_process_mask(unsigned int facidx)
 {
 int rc=1;
 
-if(facidx<GLOBALS.numfacs)
+if(facidx<GLOBALS->numfacs)
 	{
 	int idx = facidx/8;
 	int bitpos = facidx&7;
@@ -191,11 +191,11 @@ if ( (!(f=fopen(fname, "rb"))) || (!(ae2 = ae2_read_initialize(f))) )
 
 /* SPLASH */                            splash_create();
 
-GLOBALS.time_dimension = 'n';
+GLOBALS->time_dimension = 'n';
 
 num_sections=ae2_read_num_sections(ae2);
-GLOBALS.numfacs=ae2_read_num_symbols(ae2);
-process_mask = calloc_2(1, GLOBALS.numfacs/8+1);
+GLOBALS->numfacs=ae2_read_num_symbols(ae2);
+process_mask = calloc_2(1, GLOBALS->numfacs/8+1);
 
 if(indirect_fname)
 	{
@@ -264,7 +264,7 @@ if(indirect_fname)
 			{
 			struct regex_links *rpnt;
 	
-			for(i=0;i<GLOBALS.numfacs;i++)
+			for(i=0;i<GLOBALS->numfacs;i++)
 				{
 			        char buf[65537];
 			        int idx = i+1;
@@ -299,11 +299,11 @@ if(indirect_fname)
 	
 		if(regex_matches)
 			{
-			fprintf(stderr, AET2_RDLOAD"Matched %d/%d facilities against indirect file.\n", regex_matches, GLOBALS.numfacs);
+			fprintf(stderr, AET2_RDLOAD"Matched %d/%d facilities against indirect file.\n", regex_matches, GLOBALS->numfacs);
 			}
 			else
 			{
-			fprintf(stderr, AET2_RDLOAD"Matched %d/%d facilities against indirect file, exiting.\n", regex_matches, GLOBALS.numfacs);
+			fprintf(stderr, AET2_RDLOAD"Matched %d/%d facilities against indirect file, exiting.\n", regex_matches, GLOBALS->numfacs);
 			exit(0);
 			}
 		}
@@ -311,8 +311,8 @@ if(indirect_fname)
 
 if(!regex_matches)
 	{
-	fr=calloc_2(GLOBALS.numfacs, sizeof(FACREF));
-	lx2_table=(struct lx2_entry **)calloc_2(GLOBALS.numfacs, sizeof(struct lx2_entry *));
+	fr=calloc_2(GLOBALS->numfacs, sizeof(FACREF));
+	lx2_table=(struct lx2_entry **)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry *));
 	}
 	else
 	{
@@ -321,7 +321,7 @@ if(!regex_matches)
 	}
 
 match_idx = 0;
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
 	{
         char buf[65537];
         int idx = i+1;
@@ -350,13 +350,13 @@ total_cycles = last_cycle - first_cycle + 1;
 
 /* do your stuff here..all useful info has been initialized by now */
 
-if(!GLOBALS.hier_was_explicitly_set)    /* set default hierarchy split char */
+if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
         {
-        GLOBALS.hier_delimeter='.';
+        GLOBALS->hier_delimeter='.';
         }
 
 match_idx = 0;
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
         {
 	char *str;	
         char buf[65537];
@@ -373,13 +373,13 @@ for(i=0;i<GLOBALS.numfacs;i++)
 		{
 		int len2 = sprintf(buf+len, "[%d:%d]", 0, fr[match_idx].length-1);
 		str=malloc_2(len + len2 + 1);
-		if(!GLOBALS.alt_hier_delimeter)
+		if(!GLOBALS->alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
 			}
 	        s=symadd_name_exists(str,0);
 		prevsymroot = prevsym = NULL;
@@ -387,26 +387,26 @@ for(i=0;i<GLOBALS.numfacs;i++)
 		else
 		{
 		str=malloc_2(len+1);
-		if(!GLOBALS.alt_hier_delimeter)
+		if(!GLOBALS->alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
 			}
 	        s=symadd_name_exists(str,0);
 		prevsymroot = prevsym = NULL;
 		}
 		
-        if(!GLOBALS.firstnode)
+        if(!GLOBALS->firstnode)
                 {
-                GLOBALS.firstnode=GLOBALS.curnode=s;   
+                GLOBALS->firstnode=GLOBALS->curnode=s;   
                 }
                 else
                 {
-                GLOBALS.curnode->nextinaet=s;
-                GLOBALS.curnode=s;   
+                GLOBALS->curnode->nextinaet=s;
+                GLOBALS->curnode=s;   
                 }
 
 
@@ -441,107 +441,107 @@ for(i=0;i<GLOBALS.numfacs;i++)
 if(regex_matches)
 	{
 	free_2(process_mask);
-	GLOBALS.numfacs = regex_matches;
+	GLOBALS->numfacs = regex_matches;
 	regex_matches = 0;
-	process_mask = calloc_2(1, GLOBALS.numfacs/8+1);
+	process_mask = calloc_2(1, GLOBALS->numfacs/8+1);
 	}
 
 /* SPLASH */                            splash_sync(2, 5);
-GLOBALS.facs=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
+GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
-if(GLOBALS.fast_tree_sort)
+if(GLOBALS->fast_tree_sort)
 	{
-	GLOBALS.curnode=GLOBALS.firstnode;
-	for(i=0;i<GLOBALS.numfacs;i++)
+	GLOBALS->curnode=GLOBALS->firstnode;
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		int len;
-		GLOBALS.facs[i]=GLOBALS.curnode;
-	        if((len=strlen(GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
-		GLOBALS.curnode=GLOBALS.curnode->nextinaet;
+		GLOBALS->facs[i]=GLOBALS->curnode;
+	        if((len=strlen(GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
 		}
 
 /* SPLASH */                            splash_sync(3, 5);
 	fprintf(stderr, AET2_RDLOAD"Building facility hierarchy tree.\n");
 
 	init_tree();		
-	for(i=0;i<GLOBALS.numfacs;i++)	
+	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
-		build_tree_from_name(GLOBALS.facs[i]->name, i);
+		build_tree_from_name(GLOBALS->facs[i]->name, i);
 		}
 /* SPLASH */                            splash_sync(4, 5);
-	treegraft(GLOBALS.treeroot);
+	treegraft(GLOBALS->treeroot);
 
 	fprintf(stderr, AET2_RDLOAD"Sorting facility hierarchy tree.\n");
-	treesort(GLOBALS.treeroot, NULL);
+	treesort(GLOBALS->treeroot, NULL);
 /* SPLASH */                            splash_sync(5, 5);
-	order_facs_from_treesort(GLOBALS.treeroot, &GLOBALS.facs);
+	order_facs_from_treesort(GLOBALS->treeroot, &GLOBALS->facs);
 
-	GLOBALS.facs_are_sorted=1;
+	GLOBALS->facs_are_sorted=1;
 	}
 	else
 	{
-	GLOBALS.curnode=GLOBALS.firstnode;
-	for(i=0;i<GLOBALS.numfacs;i++)
+	GLOBALS->curnode=GLOBALS->firstnode;
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;	
 		int len;
 
-		GLOBALS.facs[i]=GLOBALS.curnode;
-	        if((len=strlen(subst=GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
-		GLOBALS.curnode=GLOBALS.curnode->nextinaet;
+		GLOBALS->facs[i]=GLOBALS->curnode;
+	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
 		while((ch=(*subst)))
 			{	
-			if(ch==GLOBALS.hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
+			if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
 			subst++;
 			}
 		}
 	
 /* SPLASH */                            splash_sync(3, 5);
 	fprintf(stderr, AET2_RDLOAD"Sorting facilities at hierarchy boundaries.\n");
-	wave_heapsort(GLOBALS.facs,GLOBALS.numfacs);
+	wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
 	
-	for(i=0;i<GLOBALS.numfacs;i++)
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
 	
-		subst=GLOBALS.facs[i]->name;
+		subst=GLOBALS->facs[i]->name;
 		while((ch=(*subst)))
 			{	
-			if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS.hier_delimeter; }	/* restore back to normal */
+			if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; }	/* restore back to normal */
 			subst++;
 			}
 		}
 	
-	GLOBALS.facs_are_sorted=1;
+	GLOBALS->facs_are_sorted=1;
 
 /* SPLASH */                            splash_sync(4, 5);
 	fprintf(stderr, AET2_RDLOAD"Building facility hierarchy tree.\n");
 
 	init_tree();		
-	for(i=0;i<GLOBALS.numfacs;i++)	
+	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
-		build_tree_from_name(GLOBALS.facs[i]->name, i);
+		build_tree_from_name(GLOBALS->facs[i]->name, i);
 		}
 /* SPLASH */                            splash_sync(5, 5);
-	treegraft(GLOBALS.treeroot);
-	treesort(GLOBALS.treeroot, NULL);
+	treegraft(GLOBALS->treeroot);
+	treesort(GLOBALS->treeroot, NULL);
 	}
 
-GLOBALS.min_time = first_cycle; GLOBALS.max_time=last_cycle;
-GLOBALS.is_lx2 = LXT2_IS_AET2;
+GLOBALS->min_time = first_cycle; GLOBALS->max_time=last_cycle;
+GLOBALS->is_lx2 = LXT2_IS_AET2;
 
 if(skip_start || skip_end)
 	{
 	TimeType b_start, b_end;
 
-	if(!skip_start) b_start = GLOBALS.min_time; else b_start = unformat_time(skip_start, GLOBALS.time_dimension);
-	if(!skip_end) b_end = GLOBALS.max_time; else b_end = unformat_time(skip_end, GLOBALS.time_dimension);
+	if(!skip_start) b_start = GLOBALS->min_time; else b_start = unformat_time(skip_start, GLOBALS->time_dimension);
+	if(!skip_end) b_end = GLOBALS->max_time; else b_end = unformat_time(skip_end, GLOBALS->time_dimension);
 
-	if(b_start<GLOBALS.min_time) b_start = GLOBALS.min_time;
-	else if(b_start>GLOBALS.max_time) b_start = GLOBALS.max_time;
+	if(b_start<GLOBALS->min_time) b_start = GLOBALS->min_time;
+	else if(b_start>GLOBALS->max_time) b_start = GLOBALS->max_time;
 
-	if(b_end<GLOBALS.min_time) b_end = GLOBALS.min_time;
-	else if(b_end>GLOBALS.max_time) b_end = GLOBALS.max_time;
+	if(b_end<GLOBALS->min_time) b_end = GLOBALS->min_time;
+	else if(b_end>GLOBALS->max_time) b_end = GLOBALS->max_time;
 
         if(b_start > b_end)
                 {
@@ -550,12 +550,12 @@ if(skip_start || skip_end)
                 b_end = tmp_time;
                 }
 
-	GLOBALS.min_time = b_start;
-	GLOBALS.max_time = b_end;
+	GLOBALS->min_time = b_start;
+	GLOBALS->max_time = b_end;
 	}
 
-fprintf(stderr, AET2_RDLOAD"["TTFormat"] start time.\n"AET2_RDLOAD"["TTFormat"] end time.\n", GLOBALS.min_time, GLOBALS.max_time);
-return(GLOBALS.max_time);
+fprintf(stderr, AET2_RDLOAD"["TTFormat"] start time.\n"AET2_RDLOAD"["TTFormat"] end time.\n", GLOBALS->min_time, GLOBALS->max_time);
+return(GLOBALS->max_time);
 }
 
 
@@ -625,9 +625,9 @@ char buf[65537];
 ae2_msg_suppress = 1;
 did_twirl = 0;
 
-autofacs = calloc_2(GLOBALS.numfacs, sizeof(struct ae2_ncycle_autosort));
+autofacs = calloc_2(GLOBALS->numfacs, sizeof(struct ae2_ncycle_autosort));
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
 	{
 	if(aet2_rd_get_fac_process_mask(i))
 		{
@@ -657,7 +657,7 @@ for(j=0;j<num_sections;j++)
 
 	autosort = calloc_2(ecyc - cyc + 1, sizeof(struct ae2_ncycle_autosort *));
 	
-	for(i=0;i<GLOBALS.numfacs;i++)
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		if(aet2_rd_get_fac_process_mask(i))
 			{
@@ -702,7 +702,7 @@ for(j=0;j<num_sections;j++)
 
 	deadlist=NULL;
 
-	for(i=0;i<GLOBALS.numfacs;i++)
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		uint64_t ncyc;
 		nptr np;
@@ -843,7 +843,7 @@ for(j=0;j<num_sections;j++)
 	}
 
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
 	{
 	if(aet2_rd_get_fac_process_mask(i))
 		{
@@ -894,7 +894,7 @@ if((1)||(f->row <= 1)) /* sorry, arrays not supported yet in the viewer */
 	fprintf(stderr, "Import: %s\n", np->nname);
 
 	aet2_rd_set_fac_process_mask(txidx);
-	ae2_iterator(GLOBALS.min_time, GLOBALS.max_time);
+	ae2_iterator(GLOBALS->min_time, GLOBALS->max_time);
 	aet2_rd_clr_fac_process_mask(txidx);
 	}
 	else
@@ -990,7 +990,7 @@ void ae2_import_masked(void)
 {
 int txidx, i, cnt=0;
 
-for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
+for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 	{
 	if(aet2_rd_get_fac_process_mask(txidx))
 		{
@@ -1006,10 +1006,10 @@ if(cnt>100)
 	}
 
 set_window_busy(NULL);
-ae2_iterator(GLOBALS.min_time, GLOBALS.max_time);
+ae2_iterator(GLOBALS->min_time, GLOBALS->max_time);
 set_window_idle(NULL);
 
-for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
+for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 	{
 	if(aet2_rd_get_fac_process_mask(txidx))
 		{
@@ -1085,6 +1085,10 @@ for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.2  2007/08/05 02:27:18  kermin
  * Semi working global struct
  *

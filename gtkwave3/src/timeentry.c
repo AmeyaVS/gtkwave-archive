@@ -19,16 +19,16 @@ void update_endcap_times_for_partial_vcd(void)
 {
 char str[40];
 
-if(GLOBALS.from_entry)
+if(GLOBALS->from_entry)
 	{
-	reformat_time(str, GLOBALS.tims.first, GLOBALS.time_dimension);
-	gtk_entry_set_text(GTK_ENTRY(GLOBALS.from_entry),str);
+	reformat_time(str, GLOBALS->tims.first, GLOBALS->time_dimension);
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),str);
 	}
 
-if(GLOBALS.to_entry)
+if(GLOBALS->to_entry)
 	{
-	reformat_time(str, GLOBALS.tims.last, GLOBALS.time_dimension);
-	gtk_entry_set_text(GTK_ENTRY(GLOBALS.to_entry),str);
+	reformat_time(str, GLOBALS->tims.last, GLOBALS->time_dimension);
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),str);
 	}
 }
 
@@ -36,10 +36,10 @@ void time_update(void)
 {
 DEBUG(printf("Timeentry Configure Event\n"));
 
-calczoom(GLOBALS.tims.zoom);
+calczoom(GLOBALS->tims.zoom);
 fix_wavehadj();
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS.wave_hslider)), "changed");
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS.wave_hslider)), "value_changed");
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed");
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed");
 }
 
    
@@ -53,19 +53,19 @@ char fromstr[40];
 entry_text=gtk_entry_get_text(GTK_ENTRY(entry));
 DEBUG(printf("From Entry contents: %s\n",entry_text));
 
-newlo=unformat_time(entry_text, GLOBALS.time_dimension);
+newlo=unformat_time(entry_text, GLOBALS->time_dimension);
 
-if(newlo<GLOBALS.min_time) 
+if(newlo<GLOBALS->min_time) 
 	{
-	newlo=GLOBALS.min_time; 
+	newlo=GLOBALS->min_time; 
 	}
 
-if(newlo<(GLOBALS.tims.last)) 
+if(newlo<(GLOBALS->tims.last)) 
 	{ 
-	GLOBALS.tims.first=newlo;
-	if(GLOBALS.tims.start<GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.start=GLOBALS.tims.first;
+	GLOBALS->tims.first=newlo;
+	if(GLOBALS->tims.start<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.start=GLOBALS->tims.first;
 
-	reformat_time(fromstr, GLOBALS.tims.first, GLOBALS.time_dimension);
+	reformat_time(fromstr, GLOBALS->tims.first, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),fromstr);
 
 	time_update(); 
@@ -73,7 +73,7 @@ if(newlo<(GLOBALS.tims.last))
 	}
 	else
 	{
-	reformat_time(fromstr, GLOBALS.tims.first, GLOBALS.time_dimension);
+	reformat_time(fromstr, GLOBALS->tims.first, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),fromstr);
 	return;
 	}
@@ -89,24 +89,24 @@ char tostr[40];
 entry_text=gtk_entry_get_text(GTK_ENTRY(entry));
 DEBUG(printf("To Entry contents: %s\n",entry_text));
 
-newhi=unformat_time(entry_text, GLOBALS.time_dimension);
+newhi=unformat_time(entry_text, GLOBALS->time_dimension);
 
-if(newhi>GLOBALS.max_time) 
+if(newhi>GLOBALS->max_time) 
 	{
-	newhi=GLOBALS.max_time; 
+	newhi=GLOBALS->max_time; 
 	}
 
-if(newhi>(GLOBALS.tims.first)) 
+if(newhi>(GLOBALS->tims.first)) 
 	{ 
-	GLOBALS.tims.last=newhi;
-	reformat_time(tostr, GLOBALS.tims.last, GLOBALS.time_dimension);
+	GLOBALS->tims.last=newhi;
+	reformat_time(tostr, GLOBALS->tims.last, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),tostr);
 	time_update(); 
 	return;
 	}
 	else
 	{
-	reformat_time(tostr, GLOBALS.tims.last, GLOBALS.time_dimension);
+	reformat_time(tostr, GLOBALS->tims.last, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),tostr);
 	return;
 	}
@@ -128,35 +128,35 @@ tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
 label=gtk_label_new("From:");
-GLOBALS.from_entry=gtk_entry_new_with_max_length(40);
+GLOBALS->from_entry=gtk_entry_new_with_max_length(40);
 
-reformat_time(fromstr, GLOBALS.min_time, GLOBALS.time_dimension);
+reformat_time(fromstr, GLOBALS->min_time, GLOBALS->time_dimension);
 
-gtk_entry_set_text(GTK_ENTRY(GLOBALS.from_entry),fromstr);
-gtk_signal_connect (GTK_OBJECT (GLOBALS.from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS.from_entry);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),fromstr);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS->from_entry);
 box=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0); 
 gtk_widget_show(label);
-gtk_box_pack_start(GTK_BOX(box), GLOBALS.from_entry, TRUE, TRUE, 0); 
-gtk_widget_set_usize(GTK_WIDGET(GLOBALS.from_entry), 90, 22); 
-gtk_tooltips_set_tip_2(tooltips, GLOBALS.from_entry, "Scroll Lower Bound", NULL);
-gtk_widget_show(GLOBALS.from_entry);
+gtk_box_pack_start(GTK_BOX(box), GLOBALS->from_entry, TRUE, TRUE, 0); 
+gtk_widget_set_usize(GTK_WIDGET(GLOBALS->from_entry), 90, 22); 
+gtk_tooltips_set_tip_2(tooltips, GLOBALS->from_entry, "Scroll Lower Bound", NULL);
+gtk_widget_show(GLOBALS->from_entry);
 
 
 label2=gtk_label_new("To:");
-GLOBALS.to_entry=gtk_entry_new_with_max_length(40);
+GLOBALS->to_entry=gtk_entry_new_with_max_length(40);
 
-reformat_time(tostr, GLOBALS.max_time, GLOBALS.time_dimension);
+reformat_time(tostr, GLOBALS->max_time, GLOBALS->time_dimension);
 
-gtk_entry_set_text(GTK_ENTRY(GLOBALS.to_entry),tostr);
-gtk_signal_connect (GTK_OBJECT (GLOBALS.to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS.to_entry);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),tostr);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS->to_entry);
 box2=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box2), label2, TRUE, TRUE, 0); 
 gtk_widget_show(label2);
-gtk_box_pack_start(GTK_BOX(box2), GLOBALS.to_entry, TRUE, TRUE, 0); 
-gtk_widget_set_usize(GTK_WIDGET(GLOBALS.to_entry), 90, 22); 
-gtk_tooltips_set_tip_2(tooltips, GLOBALS.to_entry, "Scroll Upper Bound", NULL);
-gtk_widget_show(GLOBALS.to_entry);
+gtk_box_pack_start(GTK_BOX(box2), GLOBALS->to_entry, TRUE, TRUE, 0); 
+gtk_widget_set_usize(GTK_WIDGET(GLOBALS->to_entry), 90, 22); 
+gtk_tooltips_set_tip_2(tooltips, GLOBALS->to_entry, "Scroll Upper Bound", NULL);
+gtk_widget_show(GLOBALS->to_entry);
 
 mainbox=gtk_vbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(mainbox), box, TRUE, FALSE, 1);
@@ -170,6 +170,10 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:49  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:24  kermin
  * Semi working global struct
  *

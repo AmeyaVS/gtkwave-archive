@@ -54,12 +54,12 @@ int i;
                                          
 for(i=0;i<15;i++)
         {
-        GLOBALS.buf_vcd_saver_c_3[i]=(char)((value%94)+33); /* for range 33..126 */
+        GLOBALS->buf_vcd_saver_c_3[i]=(char)((value%94)+33); /* for range 33..126 */
         value=value/94;
-        if(!value) {GLOBALS.buf_vcd_saver_c_3[i+1]=0; break;}
+        if(!value) {GLOBALS->buf_vcd_saver_c_3[i+1]=0; break;}
         }
                     
-return(GLOBALS.buf_vcd_saver_c_3);
+return(GLOBALS->buf_vcd_saver_c_3);
 }
 
 static char *vcd_truncate_bitvec(char *s)
@@ -258,7 +258,7 @@ for(;;)
         l=2*i+1;
         r=l+1;
                          
-        if((l<heap_size)&&(hpcmp(GLOBALS.hp_vcd_saver_c_1[l],GLOBALS.hp_vcd_saver_c_1[i])>0))
+        if((l<heap_size)&&(hpcmp(GLOBALS->hp_vcd_saver_c_1[l],GLOBALS->hp_vcd_saver_c_1[i])>0))
                 {
                 largest=l;
                 }   
@@ -266,16 +266,16 @@ for(;;)
                 {
                 largest=i;
                 }
-        if((r<heap_size)&&(hpcmp(GLOBALS.hp_vcd_saver_c_1[r],GLOBALS.hp_vcd_saver_c_1[largest])>0))
+        if((r<heap_size)&&(hpcmp(GLOBALS->hp_vcd_saver_c_1[r],GLOBALS->hp_vcd_saver_c_1[largest])>0))
                 {
                 largest=r;
                 }
         
         if(i!=largest)
                 {
-                t=GLOBALS.hp_vcd_saver_c_1[i];
-                GLOBALS.hp_vcd_saver_c_1[i]=GLOBALS.hp_vcd_saver_c_1[largest];
-                GLOBALS.hp_vcd_saver_c_1[largest]=t;
+                t=GLOBALS->hp_vcd_saver_c_1[i];
+                GLOBALS->hp_vcd_saver_c_1[i]=GLOBALS->hp_vcd_saver_c_1[largest];
+                GLOBALS->hp_vcd_saver_c_1[largest]=t;
                 
                 if(largest<=maxele)
                         {
@@ -299,10 +299,10 @@ for(;;)
  */ 
 int save_nodes_to_export(const char *fname, int export_typ)
 {
-Trptr t = GLOBALS.traces.first;
+Trptr t = GLOBALS->traces.first;
 int nodecnt = 0;
 vcdsav_Tree *vt = NULL;
-vcdsav_Tree **hp_clone = GLOBALS.hp_vcd_saver_c_1;
+vcdsav_Tree **hp_clone = GLOBALS->hp_vcd_saver_c_1;
 nptr n;
 ExtNode *e;
 int msi, lsi;
@@ -327,8 +327,8 @@ if(lxt)
 	}
 	else
 	{
-	GLOBALS.f_vcd_saver_c_1 = fopen(fname, "wb");
-	if(!GLOBALS.f_vcd_saver_c_1)
+	GLOBALS->f_vcd_saver_c_1 = fopen(fname, "wb");
+	if(!GLOBALS->f_vcd_saver_c_1)
 		{
 		return(VCDSAV_FILE_ERROR);
 		}
@@ -400,10 +400,10 @@ while(t)
 		t=t->t_next;
 		if(!t) 
 			{
-	                if(GLOBALS.shadow_straces)
+	                if(GLOBALS->shadow_straces)
 	                        {
 	                        swap_strace_contexts();
-				st = GLOBALS.straces;
+				st = GLOBALS->straces;
 
 				strace_append = 1;
 				t = st ? st->trace : NULL;
@@ -432,7 +432,7 @@ if(lxt)
 	lt_set_time64(lt, 0);
 	lt_symbol_bracket_stripping(lt, 1);
 
-	switch(GLOBALS.time_dimension)
+	switch(GLOBALS->time_dimension)
 		{
 		case 'm':	dim = -3; break;
 		case 'u':	dim = -6; break;
@@ -447,40 +447,40 @@ if(lxt)
 	else
 	{
 	time(&walltime);
-	fprintf(GLOBALS.f_vcd_saver_c_1, "$date\n");
-	fprintf(GLOBALS.f_vcd_saver_c_1, "\t%s",asctime(localtime(&walltime)));
-	fprintf(GLOBALS.f_vcd_saver_c_1, "$end\n");
-	fprintf(GLOBALS.f_vcd_saver_c_1, "$version\n\t"WAVE_VERSION_INFO"\n$end\n");
-	fprintf(GLOBALS.f_vcd_saver_c_1, "$timescale\n\t%d%c%s\n$end\n", (int)GLOBALS.time_scale, GLOBALS.time_dimension, (GLOBALS.time_dimension=='s') ? "" : "s");
+	fprintf(GLOBALS->f_vcd_saver_c_1, "$date\n");
+	fprintf(GLOBALS->f_vcd_saver_c_1, "\t%s",asctime(localtime(&walltime)));
+	fprintf(GLOBALS->f_vcd_saver_c_1, "$end\n");
+	fprintf(GLOBALS->f_vcd_saver_c_1, "$version\n\t"WAVE_VERSION_INFO"\n$end\n");
+	fprintf(GLOBALS->f_vcd_saver_c_1, "$timescale\n\t%d%c%s\n$end\n", (int)GLOBALS->time_scale, GLOBALS->time_dimension, (GLOBALS->time_dimension=='s') ? "" : "s");
 	}
 
 /* write out netnames here ... */
-hp_clone = GLOBALS.hp_vcd_saver_c_1 = calloc_2(nodecnt, sizeof(vcdsav_Tree *));
+hp_clone = GLOBALS->hp_vcd_saver_c_1 = calloc_2(nodecnt, sizeof(vcdsav_Tree *));
 recurse_build(vt, &hp_clone);
 
 for(i=0;i<nodecnt;i++)
 	{
-	char *netname = lxt ? GLOBALS.hp_vcd_saver_c_1[i]->item->nname : output_hier(GLOBALS.hp_vcd_saver_c_1[i]->item->nname);
+	char *netname = lxt ? GLOBALS->hp_vcd_saver_c_1[i]->item->nname : output_hier(GLOBALS->hp_vcd_saver_c_1[i]->item->nname);
 
-	if(GLOBALS.hp_vcd_saver_c_1[i]->flags & (HIST_REAL|HIST_STRING))
+	if(GLOBALS->hp_vcd_saver_c_1[i]->flags & (HIST_REAL|HIST_STRING))
 		{
 		if(lxt)
 			{
-			GLOBALS.hp_vcd_saver_c_1[i]->handle.p = lt_symbol_add(lt, netname, 0, 0, 0, GLOBALS.hp_vcd_saver_c_1[i]->flags & HIST_STRING ? LT_SYM_F_STRING : LT_SYM_F_DOUBLE);
+			GLOBALS->hp_vcd_saver_c_1[i]->handle.p = lt_symbol_add(lt, netname, 0, 0, 0, GLOBALS->hp_vcd_saver_c_1[i]->flags & HIST_STRING ? LT_SYM_F_STRING : LT_SYM_F_DOUBLE);
 			}
 			else
 			{
-			fprintf(GLOBALS.f_vcd_saver_c_1, "$var real 1 %s %s $end\n", vcdid(GLOBALS.hp_vcd_saver_c_1[i]->val), netname);
+			fprintf(GLOBALS->f_vcd_saver_c_1, "$var real 1 %s %s $end\n", vcdid(GLOBALS->hp_vcd_saver_c_1[i]->val), netname);
 			}
 		}
 		else
 		{
 		int msi = -1, lsi = -1;
 
-		if(GLOBALS.hp_vcd_saver_c_1[i]->item->ext)
+		if(GLOBALS->hp_vcd_saver_c_1[i]->item->ext)
 			{
-			msi = GLOBALS.hp_vcd_saver_c_1[i]->item->ext->msi;
-			lsi = GLOBALS.hp_vcd_saver_c_1[i]->item->ext->lsi;
+			msi = GLOBALS->hp_vcd_saver_c_1[i]->item->ext->msi;
+			lsi = GLOBALS->hp_vcd_saver_c_1[i]->item->ext->lsi;
 			}
 		
 		if(msi==lsi)
@@ -492,11 +492,11 @@ for(i=0;i<nodecnt;i++)
 					{
 					msi = lsi = atoi(netname + strand_idx + 1);
 					}
-				GLOBALS.hp_vcd_saver_c_1[i]->handle.p = lt_symbol_add(lt, netname, 0, msi, lsi, LT_SYM_F_BITS);
+				GLOBALS->hp_vcd_saver_c_1[i]->handle.p = lt_symbol_add(lt, netname, 0, msi, lsi, LT_SYM_F_BITS);
 				}
 				else
 				{
-				fprintf(GLOBALS.f_vcd_saver_c_1, "$var wire 1 %s %s $end\n", vcdid(GLOBALS.hp_vcd_saver_c_1[i]->val), netname);
+				fprintf(GLOBALS->f_vcd_saver_c_1, "$var wire 1 %s %s $end\n", vcdid(GLOBALS->hp_vcd_saver_c_1[i]->val), netname);
 				}
 			}
 			else
@@ -504,13 +504,13 @@ for(i=0;i<nodecnt;i++)
 			int len = (msi < lsi) ? (lsi - msi + 1) : (msi - lsi + 1);
 			if(lxt)
 				{
-				GLOBALS.hp_vcd_saver_c_1[i]->handle.p = lt_symbol_add(lt, netname, 0, msi, lsi, LT_SYM_F_BITS);
+				GLOBALS->hp_vcd_saver_c_1[i]->handle.p = lt_symbol_add(lt, netname, 0, msi, lsi, LT_SYM_F_BITS);
 				}
 				else
 				{
-				fprintf(GLOBALS.f_vcd_saver_c_1, "$var wire %d %s %s $end\n", len, vcdid(GLOBALS.hp_vcd_saver_c_1[i]->val), netname);
+				fprintf(GLOBALS->f_vcd_saver_c_1, "$var wire %d %s %s $end\n", len, vcdid(GLOBALS->hp_vcd_saver_c_1[i]->val), netname);
 				}
-			GLOBALS.hp_vcd_saver_c_1[i]->len = len;
+			GLOBALS->hp_vcd_saver_c_1[i]->len = len;
 			if(len > max_len) max_len = len;
 			}
 		}
@@ -524,8 +524,8 @@ if(!lxt)
 	output_hier("");
 	free_hier();
 
-	fprintf(GLOBALS.f_vcd_saver_c_1, "$enddefinitions $end\n");
-	fprintf(GLOBALS.f_vcd_saver_c_1, "$dumpvars\n");
+	fprintf(GLOBALS->f_vcd_saver_c_1, "$enddefinitions $end\n");
+	fprintf(GLOBALS->f_vcd_saver_c_1, "$dumpvars\n");
 	}
 
 /* value changes */
@@ -539,15 +539,15 @@ for(;;)
 	{
 	heapify(0, nodecnt);
 
-	if(!GLOBALS.hp_vcd_saver_c_1[0]->hist) break;
-	if(GLOBALS.hp_vcd_saver_c_1[0]->hist->time > GLOBALS.max_time) break;
+	if(!GLOBALS->hp_vcd_saver_c_1[0]->hist) break;
+	if(GLOBALS->hp_vcd_saver_c_1[0]->hist->time > GLOBALS->max_time) break;
 
-	if((GLOBALS.hp_vcd_saver_c_1[0]->hist->time != prevtime) && (GLOBALS.hp_vcd_saver_c_1[0]->hist->time >= LLDescriptor(0)))
+	if((GLOBALS->hp_vcd_saver_c_1[0]->hist->time != prevtime) && (GLOBALS->hp_vcd_saver_c_1[0]->hist->time >= LLDescriptor(0)))
 		{
-		TimeType tnorm = GLOBALS.hp_vcd_saver_c_1[0]->hist->time;
-		if(GLOBALS.time_scale != 1)
+		TimeType tnorm = GLOBALS->hp_vcd_saver_c_1[0]->hist->time;
+		if(GLOBALS->time_scale != 1)
 			{
-			tnorm /= GLOBALS.time_scale;
+			tnorm /= GLOBALS->time_scale;
 			}
 
 		if(lxt)
@@ -556,31 +556,31 @@ for(;;)
 			}
 			else
 			{
-			fprintf(GLOBALS.f_vcd_saver_c_1, "#"TTFormat"\n", tnorm);
+			fprintf(GLOBALS->f_vcd_saver_c_1, "#"TTFormat"\n", tnorm);
 			}
-		prevtime = GLOBALS.hp_vcd_saver_c_1[0]->hist->time;
+		prevtime = GLOBALS->hp_vcd_saver_c_1[0]->hist->time;
 		}
 	
-	if(GLOBALS.hp_vcd_saver_c_1[0]->hist->time >= LLDescriptor(0))
+	if(GLOBALS->hp_vcd_saver_c_1[0]->hist->time >= LLDescriptor(0))
 		{
-		if(GLOBALS.hp_vcd_saver_c_1[0]->flags & (HIST_REAL|HIST_STRING))
+		if(GLOBALS->hp_vcd_saver_c_1[0]->flags & (HIST_REAL|HIST_STRING))
 			{
-			if(GLOBALS.hp_vcd_saver_c_1[0]->flags & HIST_STRING)
+			if(GLOBALS->hp_vcd_saver_c_1[0]->flags & HIST_STRING)
 				{
-				char *vec = GLOBALS.hp_vcd_saver_c_1[0]->hist->v.h_vector ? GLOBALS.hp_vcd_saver_c_1[0]->hist->v.h_vector : "UNDEF";
+				char *vec = GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_vector ? GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_vector : "UNDEF";
 
 				if(lxt)
 					{
-					lt_emit_value_string(lt, GLOBALS.hp_vcd_saver_c_1[0]->handle.p, 0, vec);
+					lt_emit_value_string(lt, GLOBALS->hp_vcd_saver_c_1[0]->handle.p, 0, vec);
 					}
 					else
 					{
-					fprintf(GLOBALS.f_vcd_saver_c_1, "s%s %s\n", vec, vcdid(GLOBALS.hp_vcd_saver_c_1[0]->val));
+					fprintf(GLOBALS->f_vcd_saver_c_1, "s%s %s\n", vec, vcdid(GLOBALS->hp_vcd_saver_c_1[0]->val));
 					}
 				}
 				else
 				{
-				double *d = (double *)GLOBALS.hp_vcd_saver_c_1[0]->hist->v.h_vector;
+				double *d = (double *)GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_vector;
                                 double value;
 
 				if(!d)
@@ -594,27 +594,27 @@ for(;;)
 
 				if(lxt)
 					{
-					lt_emit_value_double(lt, GLOBALS.hp_vcd_saver_c_1[0]->handle.p, 0, value);
+					lt_emit_value_double(lt, GLOBALS->hp_vcd_saver_c_1[0]->handle.p, 0, value);
 					}
 					else
 					{
-					fprintf(GLOBALS.f_vcd_saver_c_1, "r%.16g %s\n", value, vcdid(GLOBALS.hp_vcd_saver_c_1[0]->val));	
+					fprintf(GLOBALS->f_vcd_saver_c_1, "r%.16g %s\n", value, vcdid(GLOBALS->hp_vcd_saver_c_1[0]->val));	
 					}
 				}	
 			}
 		else
-		if(GLOBALS.hp_vcd_saver_c_1[0]->len)
+		if(GLOBALS->hp_vcd_saver_c_1[0]->len)
 			{
-			if(GLOBALS.hp_vcd_saver_c_1[0]->hist->v.h_vector)
+			if(GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_vector)
 				{
-				for(i=0;i<GLOBALS.hp_vcd_saver_c_1[0]->len;i++)
+				for(i=0;i<GLOBALS->hp_vcd_saver_c_1[0]->len;i++)
 					{
-					row_data[i] = analyzer_demang(lxt, GLOBALS.hp_vcd_saver_c_1[0]->hist->v.h_vector[i]);
+					row_data[i] = analyzer_demang(lxt, GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_vector[i]);
 					}				
 				}
 				else
 				{
-				for(i=0;i<GLOBALS.hp_vcd_saver_c_1[0]->len;i++)
+				for(i=0;i<GLOBALS->hp_vcd_saver_c_1[0]->len;i++)
 					{
 					row_data[i] = 'x';
 					}				
@@ -623,51 +623,51 @@ for(;;)
 			
 			if(lxt)
 				{
-				lt_emit_value_bit_string(lt, GLOBALS.hp_vcd_saver_c_1[0]->handle.p, 0, row_data);
+				lt_emit_value_bit_string(lt, GLOBALS->hp_vcd_saver_c_1[0]->handle.p, 0, row_data);
 				}
 				else
 				{
-				fprintf(GLOBALS.f_vcd_saver_c_1, "b%s %s\n", vcd_truncate_bitvec(row_data), vcdid(GLOBALS.hp_vcd_saver_c_1[0]->val));
+				fprintf(GLOBALS->f_vcd_saver_c_1, "b%s %s\n", vcd_truncate_bitvec(row_data), vcdid(GLOBALS->hp_vcd_saver_c_1[0]->val));
 				}
 			}
 		else
 			{
 			if(lxt)
 				{
-				row_data[0] = analyzer_demang(lxt, GLOBALS.hp_vcd_saver_c_1[0]->hist->v.h_val);
+				row_data[0] = analyzer_demang(lxt, GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_val);
 				row_data[1] = 0;
 
-				lt_emit_value_bit_string(lt, GLOBALS.hp_vcd_saver_c_1[0]->handle.p, 0, row_data);
+				lt_emit_value_bit_string(lt, GLOBALS->hp_vcd_saver_c_1[0]->handle.p, 0, row_data);
 				}
 				else
 				{
-				fprintf(GLOBALS.f_vcd_saver_c_1, "%c%s\n", analyzer_demang(lxt, GLOBALS.hp_vcd_saver_c_1[0]->hist->v.h_val), vcdid(GLOBALS.hp_vcd_saver_c_1[0]->val));
+				fprintf(GLOBALS->f_vcd_saver_c_1, "%c%s\n", analyzer_demang(lxt, GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_val), vcdid(GLOBALS->hp_vcd_saver_c_1[0]->val));
 				}
 			}
 		}
 
-	GLOBALS.hp_vcd_saver_c_1[0]->hist = GLOBALS.hp_vcd_saver_c_1[0]->hist->next;
+	GLOBALS->hp_vcd_saver_c_1[0]->hist = GLOBALS->hp_vcd_saver_c_1[0]->hist->next;
 	}
 
-if(prevtime < GLOBALS.max_time)
+if(prevtime < GLOBALS->max_time)
 	{
 	if(lxt)
 		{
-		lt_set_time64(lt, GLOBALS.max_time / GLOBALS.time_scale);
+		lt_set_time64(lt, GLOBALS->max_time / GLOBALS->time_scale);
 		}
 		else
 		{
-		fprintf(GLOBALS.f_vcd_saver_c_1, "#"TTFormat"\n", GLOBALS.max_time / GLOBALS.time_scale);
+		fprintf(GLOBALS->f_vcd_saver_c_1, "#"TTFormat"\n", GLOBALS->max_time / GLOBALS->time_scale);
 		}
 	}
 
 
 for(i=0;i<nodecnt;i++)
 	{
-	free_2(GLOBALS.hp_vcd_saver_c_1[i]);
+	free_2(GLOBALS->hp_vcd_saver_c_1[i]);
 	}
 
-free_2(GLOBALS.hp_vcd_saver_c_1); GLOBALS.hp_vcd_saver_c_1 = NULL;
+free_2(GLOBALS->hp_vcd_saver_c_1); GLOBALS->hp_vcd_saver_c_1 = NULL;
 free_2(row_data); row_data = NULL;
 
 if(lxt)
@@ -676,7 +676,7 @@ if(lxt)
 	}
 	else
 	{
-	fclose(GLOBALS.f_vcd_saver_c_1); GLOBALS.f_vcd_saver_c_1 = NULL;
+	fclose(GLOBALS->f_vcd_saver_c_1); GLOBALS->f_vcd_saver_c_1 = NULL;
 	}
 
 return(VCDSAV_OK);
@@ -697,12 +697,12 @@ void free_hier(void)
 {
 struct namehier *nhtemp;
 
-while(GLOBALS.nhold_vcd_saver_c_1)
+while(GLOBALS->nhold_vcd_saver_c_1)
 	{
-	nhtemp=GLOBALS.nhold_vcd_saver_c_1->next;	
-	free_2(GLOBALS.nhold_vcd_saver_c_1->name);
-	free_2(GLOBALS.nhold_vcd_saver_c_1);
-	GLOBALS.nhold_vcd_saver_c_1=nhtemp;
+	nhtemp=GLOBALS->nhold_vcd_saver_c_1->next;	
+	free_2(GLOBALS->nhold_vcd_saver_c_1->name);
+	free_2(GLOBALS->nhold_vcd_saver_c_1);
+	GLOBALS->nhold_vcd_saver_c_1=nhtemp;
 	}
 }
 
@@ -718,7 +718,7 @@ if(!nh2)
 	{
 	while((nh1)&&(nh1->not_final))
 		{
-		fprintf(GLOBALS.f_vcd_saver_c_1, "$scope module %s $end\n", nh1->name);
+		fprintf(GLOBALS->f_vcd_saver_c_1, "$scope module %s $end\n", nh1->name);
 		nh1=nh1->next;
 		}
 	return;
@@ -736,7 +736,7 @@ for(;;)
 		nhtemp=nh1;
 		while((nh1)&&(nh1->not_final))
 			{
-			fprintf(GLOBALS.f_vcd_saver_c_1, "$scope module %s $end\n", nh1->name);
+			fprintf(GLOBALS->f_vcd_saver_c_1, "$scope module %s $end\n", nh1->name);
 			nh1=nh1->next;
 			}
 		break;
@@ -747,7 +747,7 @@ for(;;)
 		nhtemp=nh2;
 		while((nh2)&&(nh2->not_final))
 			{
-			fprintf(GLOBALS.f_vcd_saver_c_1, "$upscope $end\n");
+			fprintf(GLOBALS->f_vcd_saver_c_1, "$upscope $end\n");
 			nh2=nh2->next;
 			}
 		break;
@@ -758,14 +758,14 @@ for(;;)
 		nhtemp=nh2;				/* prune old hier */
 		while((nh2)&&(nh2->not_final))
 			{
-			fprintf(GLOBALS.f_vcd_saver_c_1, "$upscope $end\n");
+			fprintf(GLOBALS->f_vcd_saver_c_1, "$upscope $end\n");
 			nh2=nh2->next;
 			}
 
 		nhtemp=nh1;				/* add new hier */
 		while((nh1)&&(nh1->not_final))
 			{
-			fprintf(GLOBALS.f_vcd_saver_c_1, "$scope module %s $end\n", nh1->name);
+			fprintf(GLOBALS->f_vcd_saver_c_1, "$scope module %s $end\n", nh1->name);
 			nh1=nh1->next;
 			}
 		break;
@@ -820,9 +820,9 @@ if(!*pnt2) break;
 pnt=(++pnt2);
 }
 
-diff_hier(nh_head, GLOBALS.nhold_vcd_saver_c_1);
+diff_hier(nh_head, GLOBALS->nhold_vcd_saver_c_1);
 free_hier();
-GLOBALS.nhold_vcd_saver_c_1=nh_head;
+GLOBALS->nhold_vcd_saver_c_1=nh_head;
 
 if(*nh_curr->name == '\\')
 	{
@@ -850,6 +850,10 @@ return(nh_curr->name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:50  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
  * Semi working global struct
  *

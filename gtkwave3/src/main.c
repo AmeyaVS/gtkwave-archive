@@ -81,11 +81,11 @@
 #if !defined _MSC_VER && !defined __MINGW32__
 static void kill_browser(void)
 {
-if(GLOBALS.anno_ctx)
+if(GLOBALS->anno_ctx)
 	{
-	if(GLOBALS.anno_ctx->browser_process)
+	if(GLOBALS->anno_ctx->browser_process)
 		{
-		kill(GLOBALS.anno_ctx->browser_process, SIGKILL);
+		kill(GLOBALS->anno_ctx->browser_process, SIGKILL);
 		}
 	}
 }
@@ -183,24 +183,24 @@ static char *wave_get_filename(char *dfile)
 if(dfile) 
 	{
 	int len = strlen(dfile);
-	GLOBALS.ftext_main_main_c_1 = malloc_2(strlen(dfile)+2);
-	strcpy(GLOBALS.ftext_main_main_c_1, dfile);
+	GLOBALS->ftext_main_main_c_1 = malloc_2(strlen(dfile)+2);
+	strcpy(GLOBALS->ftext_main_main_c_1, dfile);
 #if !defined _MSC_VER && !defined __MINGW32__
 	if((len)&&(dfile[len-1]!='/'))
 		{
-		strcpy(GLOBALS.ftext_main_main_c_1 + len, "/");
+		strcpy(GLOBALS->ftext_main_main_c_1 + len, "/");
 		}
 #else
 	if((len)&&(dfile[len-1]!='\\'))
 		{
-		strcpy(GLOBALS.ftext_main_main_c_1 + len, "\\");
+		strcpy(GLOBALS->ftext_main_main_c_1 + len, "\\");
 		}
 #endif
 	}
-fileselbox_old("GTKWave: Select a dumpfile...",&GLOBALS.ftext_main_main_c_1,GTK_SIGNAL_FUNC(wave_get_filename_cleanup), GTK_SIGNAL_FUNC(wave_get_filename_cleanup), NULL);
+fileselbox_old("GTKWave: Select a dumpfile...",&GLOBALS->ftext_main_main_c_1,GTK_SIGNAL_FUNC(wave_get_filename_cleanup), GTK_SIGNAL_FUNC(wave_get_filename_cleanup), NULL);
 gtk_main();
 
-return(GLOBALS.ftext_main_main_c_1);
+return(GLOBALS->ftext_main_main_c_1);
 }
 
 
@@ -247,8 +247,11 @@ char *skip_start=NULL, *skip_end=NULL;
 
 WAVE_LOCALE_FIX
 
-GLOBALS.whoami=malloc_2(strlen(argv[0])+1);	/* cache name in case we fork later */
-strcpy(GLOBALS.whoami, argv[0]);
+/* Initialize the GLOBALS structure */ 
+initialize_globals(&GLOBALS);
+
+GLOBALS->whoami=malloc_2(strlen(argv[0])+1);	/* cache name in case we fork later */
+strcpy(GLOBALS->whoami, argv[0]);
 
 if(!gtk_init_check(&argc, &argv))
 	{
@@ -324,20 +327,20 @@ while (1)
 			char *plus = strchr(s, '+');
 			if((plus)&&(*(plus+1)))
 				{
-				sscanf(plus+1, "%x", &GLOBALS.dual_attach_id_main_c_1);
+				sscanf(plus+1, "%x", &GLOBALS->dual_attach_id_main_c_1);
 				if(plus != s)
 					{
 					char p = *(plus-1);
 
 					if(p=='0')
 						{
-						GLOBALS.dual_id = 0;
+						GLOBALS->dual_id = 0;
 						break;
 						}
 					else
 					if(p=='1')
 						{
-						GLOBALS.dual_id = 1;
+						GLOBALS->dual_id = 1;
 						break;
 						}
 					}
@@ -367,16 +370,16 @@ while (1)
                         break;
 
 		case 'o':
-			GLOBALS.optimize_vcd = 1;
+			GLOBALS->optimize_vcd = 1;
 			break;
 
 		case 'n':
 			wave_get_filename(optarg);
-			if(GLOBALS.filesel_ok)
+			if(GLOBALS->filesel_ok)
 				{
 				if(fname) free_2(fname);
-				fname = GLOBALS.ftext_main_main_c_1;
-				GLOBALS.ftext_main_main_c_1 = NULL;
+				fname = GLOBALS->ftext_main_main_c_1;
+				GLOBALS->ftext_main_main_c_1 = NULL;
 				}
 			break;
 
@@ -386,13 +389,13 @@ while (1)
 
 #ifdef WAVE_USE_XID
                 case 'X': 
-                        sscanf(optarg, "%x", &GLOBALS.socket_xid);
+                        sscanf(optarg, "%x", &GLOBALS->socket_xid);
 			splash_disable_rc_override = 1;
                         break;
 #endif
 
 		case 'M':
-			GLOBALS.disable_menus = 1;
+			GLOBALS->disable_menus = 1;
 			break;
 
                 case 'x':
@@ -401,7 +404,7 @@ while (1)
                         break;
 
 		case 'd':
-			GLOBALS.possibly_use_rc_defaults = 0;
+			GLOBALS->possibly_use_rc_defaults = 0;
 			break;
 
                 case 'f':
@@ -443,22 +446,22 @@ while (1)
 
 		case 't':
 #if !defined _MSC_VER && !defined __MINGW32__
-			if(GLOBALS.stems_name) free_2(GLOBALS.stems_name);
-			GLOBALS.stems_name = malloc_2(strlen(optarg)+1);
-			strcpy(GLOBALS.stems_name, optarg);
+			if(GLOBALS->stems_name) free_2(GLOBALS->stems_name);
+			GLOBALS->stems_name = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->stems_name, optarg);
 #endif
 			break;
 
                 case 'c':
 #if !defined _MSC_VER && !defined __MINGW32__ && !defined __FreeBSD__ && !defined __CYGWIN__
-			GLOBALS.num_cpus = atoi(optarg);
-			if(GLOBALS.num_cpus<1) GLOBALS.num_cpus = 1;
-			if(GLOBALS.num_cpus>8) GLOBALS.num_cpus = 8;
+			GLOBALS->num_cpus = atoi(optarg);
+			if(GLOBALS->num_cpus<1) GLOBALS->num_cpus = 1;
+			if(GLOBALS->num_cpus>8) GLOBALS->num_cpus = 8;
 #endif
                         break;
 
 		case 'N':
-			GLOBALS.disable_window_manager = 1;
+			GLOBALS->disable_window_manager = 1;
 			break;
 
 		case 'S':
@@ -475,15 +478,15 @@ while (1)
 			l->name = malloc_2(strlen(optarg)+1);
 			strcpy(l->name, optarg);
 
-			if(GLOBALS.logfile)
+			if(GLOBALS->logfile)
 				{
-				ltraverse = GLOBALS.logfile;
+				ltraverse = GLOBALS->logfile;
 				while(ltraverse->next) ltraverse = ltraverse->next;
 				ltraverse->next = l;
 				}
 				else
 				{
-				GLOBALS.logfile = l;
+				GLOBALS->logfile = l;
 				}
 			}
 			break;
@@ -533,19 +536,19 @@ if(!fname)
 	}
 
 read_rc_file(override_rc);
-GLOBALS.splash_disable |= splash_disable_rc_override;
+GLOBALS->splash_disable |= splash_disable_rc_override;
 
 
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
 
-if((!wname)&&(GLOBALS.make_vcd_save_file))
+if((!wname)&&(GLOBALS->make_vcd_save_file))
 	{
-	GLOBALS.vcd_save_handle=fopen(vcd_autosave_name,"wb");
+	GLOBALS->vcd_save_handle=fopen(vcd_autosave_name,"wb");
 	errno=0;	/* just in case */
-	is_smartsave = (GLOBALS.vcd_save_handle != NULL); /* use smartsave if for some reason can't open auto savefile */
+	is_smartsave = (GLOBALS->vcd_save_handle != NULL); /* use smartsave if for some reason can't open auto savefile */
 	}
 
-GLOBALS.sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
+GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
 /* load either the vcd or aet file depending on suffix then mode setting */
 if(is_vcd)
@@ -598,9 +601,9 @@ if((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".lxt"))||(!strcasecmp
 		else
 		{
 #if !defined _MSC_VER && !defined __MINGW32__
-		GLOBALS.stems_type = WAVE_ANNO_LXT2;
-		GLOBALS.aet_name = malloc_2(strlen(fname)+1);
-		strcpy(GLOBALS.aet_name, fname);
+		GLOBALS->stems_type = WAVE_ANNO_LXT2;
+		GLOBALS->aet_name = malloc_2(strlen(fname)+1);
+		strcpy(GLOBALS->aet_name, fname);
 #endif
 		lx2_main(fname, skip_start, skip_end);
 		}	
@@ -609,9 +612,9 @@ else
 if((strlen(fname)>3)&&(!strcasecmp(fname+strlen(fname)-4,".vzt")))
 	{
 #if !defined _MSC_VER && !defined __MINGW32__
-	GLOBALS.stems_type = WAVE_ANNO_VZT;
-	GLOBALS.aet_name = malloc_2(strlen(fname)+1);
-	strcpy(GLOBALS.aet_name, fname);
+	GLOBALS->stems_type = WAVE_ANNO_VZT;
+	GLOBALS->aet_name = malloc_2(strlen(fname)+1);
+	strcpy(GLOBALS->aet_name, fname);
 #endif
 
 	vzt_main(fname, skip_start, skip_end);
@@ -619,9 +622,9 @@ if((strlen(fname)>3)&&(!strcasecmp(fname+strlen(fname)-4,".vzt")))
 else if ((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".aet"))||(!strcasecmp(fname+strlen(fname)-4,".ae2"))))
 	{
 #if !defined _MSC_VER && !defined __MINGW32__
-	GLOBALS.stems_type = WAVE_ANNO_AE2;
-	GLOBALS.aet_name = malloc_2(strlen(fname)+1);
-	strcpy(GLOBALS.aet_name, fname);
+	GLOBALS->stems_type = WAVE_ANNO_AE2;
+	GLOBALS->aet_name = malloc_2(strlen(fname)+1);
+	strcpy(GLOBALS->aet_name, fname);
 #endif
 
 	ae2_main(fname, skip_start, skip_end, indirect_fname);
@@ -642,9 +645,9 @@ else if (strlen(fname)>4)	/* case for .aet? type filenames */
 	if(!strcasecmp(sufbuf, ".aet"))	/* strncasecmp() in windows? */
 		{
 #if !defined _MSC_VER && !defined __MINGW32__
-		GLOBALS.stems_type = WAVE_ANNO_AE2;
-		GLOBALS.aet_name = malloc_2(strlen(fname)+1);
-		strcpy(GLOBALS.aet_name, fname);
+		GLOBALS->stems_type = WAVE_ANNO_AE2;
+		GLOBALS->aet_name = malloc_2(strlen(fname)+1);
+		strcpy(GLOBALS->aet_name, fname);
 #endif
 
 		ae2_main(fname, skip_start, skip_end, indirect_fname);
@@ -658,9 +661,9 @@ else	/* nothing else left so default to "something" */
 	{
 load_vcd:
 #if !defined _MSC_VER && !defined __MINGW32__
-	if(GLOBALS.optimize_vcd)
+	if(GLOBALS->optimize_vcd)
 		{
-		GLOBALS.optimize_vcd = 0;
+		GLOBALS->optimize_vcd = 0;
 
 		if(!strcmp("-vcd", fname))
 			{
@@ -764,24 +767,24 @@ if(skip_end)
 	free_2(skip_end); skip_end=NULL;
 	}
 
-for(i=0;i<26;i++) GLOBALS.named_markers[i]=-1;	/* reset all named markers */
+for(i=0;i<26;i++) GLOBALS->named_markers[i]=-1;	/* reset all named markers */
 
-GLOBALS.tims.last=GLOBALS.max_time;
-GLOBALS.tims.end=GLOBALS.tims.last;		/* until the configure_event of wavearea */
-GLOBALS.tims.first=GLOBALS.tims.start=GLOBALS.tims.laststart=GLOBALS.min_time;
-GLOBALS.tims.zoom=GLOBALS.tims.prevzoom=0;	/* 1 pixel/ns default */
-GLOBALS.tims.marker=GLOBALS.tims.lmbcache=-1;	/* uninitialized at first */
-GLOBALS.tims.baseline=-1;		/* middle button toggle marker */
+GLOBALS->tims.last=GLOBALS->max_time;
+GLOBALS->tims.end=GLOBALS->tims.last;		/* until the configure_event of wavearea */
+GLOBALS->tims.first=GLOBALS->tims.start=GLOBALS->tims.laststart=GLOBALS->min_time;
+GLOBALS->tims.zoom=GLOBALS->tims.prevzoom=0;	/* 1 pixel/ns default */
+GLOBALS->tims.marker=GLOBALS->tims.lmbcache=-1;	/* uninitialized at first */
+GLOBALS->tims.baseline=-1;		/* middle button toggle marker */
 
-if((wname)||(GLOBALS.vcd_save_handle)||(is_smartsave))
+if((wname)||(GLOBALS->vcd_save_handle)||(is_smartsave))
 	{
 	int wave_is_compressed;
         char *str = NULL;
 
-	if(GLOBALS.vcd_save_handle)
+	if(GLOBALS->vcd_save_handle)
 		{
 		wname=vcd_autosave_name;
-		GLOBALS.do_initial_zoom_fit=1;
+		GLOBALS->do_initial_zoom_fit=1;
 		}
 	else
 	if((!wname) /* && (is_smartsave) */)
@@ -833,8 +836,8 @@ if((wname)||(GLOBALS.vcd_save_handle)||(is_smartsave))
 	        wave=fopen(wname,"rb");
 	        wave_is_compressed=0;
 
-		GLOBALS.filesel_writesave = malloc_2(strlen(wname)+1); /* don't handle compressed files */
-		strcpy(GLOBALS.filesel_writesave, wname);
+		GLOBALS->filesel_writesave = malloc_2(strlen(wname)+1); /* don't handle compressed files */
+		strcpy(GLOBALS->filesel_writesave, wname);
 	        }
 
 	if(!wave)
@@ -846,7 +849,7 @@ if((wname)||(GLOBALS.vcd_save_handle)||(is_smartsave))
 	        char *iline;
 		char any_shadow = 0;
 
-		if(GLOBALS.is_lx2)
+		if(GLOBALS->is_lx2)
 			{
 		        while((iline=fgetmalloc(wave)))
 		                {
@@ -854,7 +857,7 @@ if((wname)||(GLOBALS.vcd_save_handle)||(is_smartsave))
 				free_2(iline);
 		                }
 
-			switch(GLOBALS.is_lx2)
+			switch(GLOBALS->is_lx2)
 				{
 				case LXT2_IS_LXT2: lx2_import_masked(); break;
 				case LXT2_IS_AET2: ae2_import_masked(); break;
@@ -880,37 +883,37 @@ if((wname)||(GLOBALS.vcd_save_handle)||(is_smartsave))
 			        }	
 			}
 
-		GLOBALS.default_flags=TR_RJUSTIFY;
-		GLOBALS.shift_timebase_default_for_add=LLDescriptor(0);
+		GLOBALS->default_flags=TR_RJUSTIFY;
+		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
 	        while((iline=fgetmalloc(wave)))
 	                {
 	                parsewavline(iline, 0);
-			any_shadow |= GLOBALS.shadow_active;
+			any_shadow |= GLOBALS->shadow_active;
 			free_2(iline);
 	                }
-		GLOBALS.default_flags=TR_RJUSTIFY;
-		GLOBALS.shift_timebase_default_for_add=LLDescriptor(0);
+		GLOBALS->default_flags=TR_RJUSTIFY;
+		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
 
 		if(wave_is_compressed) pclose(wave); else fclose(wave);
 
                 if(any_shadow)
                         {
-                        if(GLOBALS.shadow_straces)
+                        if(GLOBALS->shadow_straces)
                                 {
-                                GLOBALS.shadow_active = 1;
+                                GLOBALS->shadow_active = 1;
 
                                 swap_strace_contexts();
                                 strace_maketimetrace(1);
                                 swap_strace_contexts();
 
-				GLOBALS.shadow_active = 0;
+				GLOBALS->shadow_active = 0;
                                 }
                         }
 	        }
 	}
 
 savefile_bail:
-GLOBALS.current_translate_file = 0;
+GLOBALS->current_translate_file = 0;
 
 if(fast_exit)
 	{
@@ -918,51 +921,51 @@ if(fast_exit)
 	exit(0);
 	}
 
-if ((!GLOBALS.zoom_was_explicitly_set)&&
-	((GLOBALS.tims.last-GLOBALS.tims.first)<=400)) GLOBALS.do_initial_zoom_fit=1;  /* force zoom on small traces */
+if ((!GLOBALS->zoom_was_explicitly_set)&&
+	((GLOBALS->tims.last-GLOBALS->tims.first)<=400)) GLOBALS->do_initial_zoom_fit=1;  /* force zoom on small traces */
 
-calczoom(GLOBALS.tims.zoom);
+calczoom(GLOBALS->tims.zoom);
 
 #ifdef WAVE_USE_XID
-if(!GLOBALS.socket_xid)
+if(!GLOBALS->socket_xid)
 #endif
         {
-	GLOBALS.mainwindow = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(GLOBALS.mainwindow), winname);
-	gtk_widget_set_usize(GTK_WIDGET(GLOBALS.mainwindow), GLOBALS.initial_window_x, GLOBALS.initial_window_y);
+	GLOBALS->mainwindow = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), winname);
+	gtk_widget_set_usize(GTK_WIDGET(GLOBALS->mainwindow), GLOBALS->initial_window_x, GLOBALS->initial_window_y);
 
-	if((GLOBALS.initial_window_width>0)&&(GLOBALS.initial_window_height>0))
+	if((GLOBALS->initial_window_width>0)&&(GLOBALS->initial_window_height>0))
 		{
-		gtk_window_set_default_size(GTK_WINDOW (GLOBALS.mainwindow), GLOBALS.initial_window_width, GLOBALS.initial_window_height);
+		gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mainwindow), GLOBALS->initial_window_width, GLOBALS->initial_window_height);
 		}
 
-	gtk_signal_connect(GTK_OBJECT(GLOBALS.mainwindow), "delete_event", 	/* formerly was "destroy" */GTK_SIGNAL_FUNC(file_quit_cmd_callback), "WM destroy");
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "delete_event", 	/* formerly was "destroy" */GTK_SIGNAL_FUNC(file_quit_cmd_callback), "WM destroy");
 
-	gtk_widget_show(GLOBALS.mainwindow);
+	gtk_widget_show(GLOBALS->mainwindow);
 	}
 #ifdef WAVE_USE_XID
 	else
 	{
-        GLOBALS.mainwindow = gtk_plug_new(GLOBALS.socket_xid);
-        gtk_widget_show(GLOBALS.mainwindow);
+        GLOBALS->mainwindow = gtk_plug_new(GLOBALS->socket_xid);
+        gtk_widget_show(GLOBALS->mainwindow);
                                 
-        gtk_signal_connect(GTK_OBJECT(GLOBALS.mainwindow), "destroy",   /* formerly was "destroy" */GTK_SIGNAL_FUNC(plug_destroy),"Plug destroy");
+        gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "destroy",   /* formerly was "destroy" */GTK_SIGNAL_FUNC(plug_destroy),"Plug destroy");
 	}
 #endif
 
-make_pixmaps(GLOBALS.mainwindow);
+make_pixmaps(GLOBALS->mainwindow);
 
 main_vbox = gtk_vbox_new(FALSE, 5);
 gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
-gtk_container_add(GTK_CONTAINER(GLOBALS.mainwindow), main_vbox);
+gtk_container_add(GTK_CONTAINER(GLOBALS->mainwindow), main_vbox);
 gtk_widget_show(main_vbox);
 
-if(!GLOBALS.disable_menus)
+if(!GLOBALS->disable_menus)
 	{
-	get_main_menu(GLOBALS.mainwindow, &menubar);
+	get_main_menu(GLOBALS->mainwindow, &menubar);
 	gtk_widget_show(menubar);
 
-	if(GLOBALS.force_toolbars)
+	if(GLOBALS->force_toolbars)
 		{
 		toolhandle=gtk_handle_box_new();
 		gtk_widget_show(toolhandle);
@@ -977,7 +980,7 @@ if(!GLOBALS.disable_menus)
 
 top_table = gtk_table_new (1, 284, FALSE);
 
-if(GLOBALS.force_toolbars)
+if(GLOBALS->force_toolbars)
 	{
 	toolhandle=gtk_handle_box_new();
 	gtk_widget_show(toolhandle);
@@ -1005,7 +1008,7 @@ gtk_table_attach (GTK_TABLE (top_table), zoombuttons, 171, 173, 0, 1,
                       	GTK_SHRINK, 0, 0);
 gtk_widget_show (zoombuttons);
 
-if(!GLOBALS.use_scrollbar_only)
+if(!GLOBALS->use_scrollbar_only)
 	{
 	pagebuttons = create_page_buttons ();
 	gtk_table_attach (GTK_TABLE (top_table), pagebuttons, 173, 174, 0, 1,
@@ -1048,95 +1051,95 @@ gtk_table_attach (GTK_TABLE (top_table), timebox, 216, 284, 0, 1,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 20, 0);
 gtk_widget_show (timebox);
 
-GLOBALS.wavewindow = create_wavewindow();
+GLOBALS->wavewindow = create_wavewindow();
 load_all_fonts(); /* must be done before create_signalwindow() */
-gtk_widget_show(GLOBALS.wavewindow);
-GLOBALS.signalwindow = create_signalwindow();
+gtk_widget_show(GLOBALS->wavewindow);
+GLOBALS->signalwindow = create_signalwindow();
 
-if(GLOBALS.do_resize_signals) 
+if(GLOBALS->do_resize_signals) 
                 {
                 int os;
-                os=GLOBALS.max_signal_name_pixel_width;
+                os=GLOBALS->max_signal_name_pixel_width;
                 os=(os<48)?48:os;
-                gtk_widget_set_usize(GTK_WIDGET(GLOBALS.signalwindow),
+                gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow),
                                 os+30, -1);
                 }
 
-gtk_widget_show(GLOBALS.signalwindow);
+gtk_widget_show(GLOBALS->signalwindow);
 
 #if GTK_CHECK_VERSION(2,4,0)
-if(!GLOBALS.hide_sst)
+if(!GLOBALS->hide_sst)
 	{
-	GLOBALS.toppanedwindow = gtk_hpaned_new();
-	GLOBALS.sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
+	GLOBALS->toppanedwindow = gtk_hpaned_new();
+	GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
  
-	GLOBALS.expanderwindow = gtk_expander_new_with_mnemonic("_SST");
-	gtk_expander_set_expanded(GTK_EXPANDER(GLOBALS.expanderwindow), (GLOBALS.sst_expanded==TRUE));
-	gtk_container_add(GTK_CONTAINER(GLOBALS.expanderwindow), GLOBALS.sstpane);
-	gtk_widget_show(GLOBALS.expanderwindow);
+	GLOBALS->expanderwindow = gtk_expander_new_with_mnemonic("_SST");
+	gtk_expander_set_expanded(GTK_EXPANDER(GLOBALS->expanderwindow), (GLOBALS->sst_expanded==TRUE));
+	gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
+	gtk_widget_show(GLOBALS->expanderwindow);
 	}
 #endif
 
 panedwindow=gtk_hpaned_new();
 
 #ifdef HAVE_PANED_PACK
-if(GLOBALS.paned_pack_semantics)
+if(GLOBALS->paned_pack_semantics)
 	{
-	gtk_paned_pack1(GTK_PANED(panedwindow), GLOBALS.signalwindow, 0, 0); 
-	gtk_paned_pack2(GTK_PANED(panedwindow), GLOBALS.wavewindow, ~0, 0);
+	gtk_paned_pack1(GTK_PANED(panedwindow), GLOBALS->signalwindow, 0, 0); 
+	gtk_paned_pack2(GTK_PANED(panedwindow), GLOBALS->wavewindow, ~0, 0);
 	}
 	else
 #endif
 	{
-	gtk_paned_add1(GTK_PANED(panedwindow), GLOBALS.signalwindow);
-	gtk_paned_add2(GTK_PANED(panedwindow), GLOBALS.wavewindow);
+	gtk_paned_add1(GTK_PANED(panedwindow), GLOBALS->signalwindow);
+	gtk_paned_add2(GTK_PANED(panedwindow), GLOBALS->wavewindow);
 	}
 
 gtk_widget_show(panedwindow);
 
 #if GTK_CHECK_VERSION(2,4,0)
-if(!GLOBALS.hide_sst)
+if(!GLOBALS->hide_sst)
 	{
-	gtk_paned_pack1(GTK_PANED(GLOBALS.toppanedwindow), GLOBALS.expanderwindow, 0, 0);
-	gtk_paned_pack2(GTK_PANED(GLOBALS.toppanedwindow), panedwindow, ~0, 0);
-	gtk_widget_show(GLOBALS.toppanedwindow);
+	gtk_paned_pack1(GTK_PANED(GLOBALS->toppanedwindow), GLOBALS->expanderwindow, 0, 0);
+	gtk_paned_pack2(GTK_PANED(GLOBALS->toppanedwindow), panedwindow, ~0, 0);
+	gtk_widget_show(GLOBALS->toppanedwindow);
 	}
 #endif
 
 gtk_widget_show(top_table);
 
-gtk_table_attach (GTK_TABLE (whole_table), GLOBALS.force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
+gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
                       	GTK_FILL | GTK_EXPAND,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 
-gtk_table_attach (GTK_TABLE (whole_table), GLOBALS.toppanedwindow ? GLOBALS.toppanedwindow : panedwindow, 0, 16, 1, 256,
+gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->toppanedwindow ? GLOBALS->toppanedwindow : panedwindow, 0, 16, 1, 256,
                       	GTK_FILL | GTK_EXPAND,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 gtk_widget_show(whole_table);
 gtk_container_add (GTK_CONTAINER (main_vbox), whole_table);
 
-update_markertime(time_trunc(GLOBALS.tims.marker));
+update_markertime(time_trunc(GLOBALS->tims.marker));
 
-set_window_xypos(GLOBALS.initial_window_xpos, GLOBALS.initial_window_ypos);
-GLOBALS.xy_ignore_main_c_1 = 1;
+set_window_xypos(GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
+GLOBALS->xy_ignore_main_c_1 = 1;
 
-if(GLOBALS.logfile) 
+if(GLOBALS->logfile) 
 	{
 	struct logfile_chain *lprev;
 	char buf[50];
 	int which = 1;
-	while(GLOBALS.logfile)
+	while(GLOBALS->logfile)
 		{
 		sprintf(buf, "Logfile viewer [%d]", which++);
-		logbox(buf, 480, GLOBALS.logfile->name);
-		lprev = GLOBALS.logfile;
-		GLOBALS.logfile = GLOBALS.logfile->next;
+		logbox(buf, 480, GLOBALS->logfile->name);
+		lprev = GLOBALS->logfile;
+		GLOBALS->logfile = GLOBALS->logfile->next;
 		free_2(lprev->name);
 		free_2(lprev);
 		}
 	}
 
-activate_stems_reader(GLOBALS.stems_name);
+activate_stems_reader(GLOBALS->stems_name);
 
 while (gtk_events_pending()) gtk_main_iteration();
 
@@ -1155,102 +1158,102 @@ if(scriptfile)
 	}
 
 #if !defined _MSC_VER && !defined __MINGW32__
-if(GLOBALS.dual_attach_id_main_c_1)
+if(GLOBALS->dual_attach_id_main_c_1)
 	{
-	fprintf(stderr, "GTKWAVE | Attaching %08X as dual head session %d\n", GLOBALS.dual_attach_id_main_c_1, GLOBALS.dual_id);
+	fprintf(stderr, "GTKWAVE | Attaching %08X as dual head session %d\n", GLOBALS->dual_attach_id_main_c_1, GLOBALS->dual_id);
 
-	GLOBALS.dual_ctx = shmat(GLOBALS.dual_attach_id_main_c_1, NULL, 0);
-	if(GLOBALS.dual_ctx)
+	GLOBALS->dual_ctx = shmat(GLOBALS->dual_attach_id_main_c_1, NULL, 0);
+	if(GLOBALS->dual_ctx)
 		{
-		if(memcmp(GLOBALS.dual_ctx[GLOBALS.dual_id].matchword, DUAL_MATCHWORD, 4))
+		if(memcmp(GLOBALS->dual_ctx[GLOBALS->dual_id].matchword, DUAL_MATCHWORD, 4))
 			{
 			fprintf(stderr, "Not a valid shared memory ID for dual head operation, exiting.\n");
 			exit(255);
 			}
 
-		GLOBALS.dual_ctx[GLOBALS.dual_id].viewer_is_initialized = 1;
+		GLOBALS->dual_ctx[GLOBALS->dual_id].viewer_is_initialized = 1;
 		for(;;)
 			{
 		        GtkAdjustment *hadj;
 		        TimeType pageinc, gt;
 			struct timeval tv;
 
-			if(GLOBALS.dual_ctx[1-GLOBALS.dual_id].use_new_times)
+			if(GLOBALS->dual_ctx[1-GLOBALS->dual_id].use_new_times)
 				{
-				GLOBALS.dual_race_lock = 1;
+				GLOBALS->dual_race_lock = 1;
 
-			        gt = GLOBALS.dual_ctx[GLOBALS.dual_id].left_margin_time = GLOBALS.dual_ctx[1-GLOBALS.dual_id].left_margin_time;
+			        gt = GLOBALS->dual_ctx[GLOBALS->dual_id].left_margin_time = GLOBALS->dual_ctx[1-GLOBALS->dual_id].left_margin_time;
 
-				GLOBALS.dual_ctx[GLOBALS.dual_id].marker = GLOBALS.dual_ctx[1-GLOBALS.dual_id].marker;
-				GLOBALS.dual_ctx[GLOBALS.dual_id].baseline = GLOBALS.dual_ctx[1-GLOBALS.dual_id].baseline;
-				GLOBALS.dual_ctx[GLOBALS.dual_id].zoom = GLOBALS.dual_ctx[1-GLOBALS.dual_id].zoom;
-				GLOBALS.dual_ctx[1-GLOBALS.dual_id].use_new_times = 0;
-				GLOBALS.dual_ctx[GLOBALS.dual_id].use_new_times = 0;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].marker = GLOBALS->dual_ctx[1-GLOBALS->dual_id].marker;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].baseline = GLOBALS->dual_ctx[1-GLOBALS->dual_id].baseline;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].zoom = GLOBALS->dual_ctx[1-GLOBALS->dual_id].zoom;
+				GLOBALS->dual_ctx[1-GLOBALS->dual_id].use_new_times = 0;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].use_new_times = 0;
 
-				if(GLOBALS.dual_ctx[GLOBALS.dual_id].baseline != GLOBALS.tims.baseline)
+				if(GLOBALS->dual_ctx[GLOBALS->dual_id].baseline != GLOBALS->tims.baseline)
 					{
-					if((GLOBALS.tims.marker != -1) && (GLOBALS.dual_ctx[GLOBALS.dual_id].marker == -1))
+					if((GLOBALS->tims.marker != -1) && (GLOBALS->dual_ctx[GLOBALS->dual_id].marker == -1))
 						{
 				        	Trptr t;
   
-        					for(t=GLOBALS.traces.first;t;t=t->t_next)
+        					for(t=GLOBALS->traces.first;t;t=t->t_next)
                 					{
                 					if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
                 					}
 
-	        				for(t=GLOBALS.traces.buffer;t;t=t->t_next)
+	        				for(t=GLOBALS->traces.buffer;t;t=t->t_next)
 	                				{
 	                				if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
 	                				}
 						}
 
-					GLOBALS.tims.marker = GLOBALS.dual_ctx[GLOBALS.dual_id].marker;
-					GLOBALS.tims.baseline = GLOBALS.dual_ctx[GLOBALS.dual_id].baseline;
-					update_basetime(GLOBALS.tims.baseline);
-					update_markertime(GLOBALS.tims.marker);
-					GLOBALS.signalwindow_width_dirty = 1;
+					GLOBALS->tims.marker = GLOBALS->dual_ctx[GLOBALS->dual_id].marker;
+					GLOBALS->tims.baseline = GLOBALS->dual_ctx[GLOBALS->dual_id].baseline;
+					update_basetime(GLOBALS->tims.baseline);
+					update_markertime(GLOBALS->tims.marker);
+					GLOBALS->signalwindow_width_dirty = 1;
 					button_press_release_common();
 					}
 				else
-				if(GLOBALS.dual_ctx[GLOBALS.dual_id].marker != GLOBALS.tims.marker)
+				if(GLOBALS->dual_ctx[GLOBALS->dual_id].marker != GLOBALS->tims.marker)
 					{
-					if((GLOBALS.tims.marker != -1) && (GLOBALS.dual_ctx[GLOBALS.dual_id].marker == -1))
+					if((GLOBALS->tims.marker != -1) && (GLOBALS->dual_ctx[GLOBALS->dual_id].marker == -1))
 						{
 				        	Trptr t;
   
-        					for(t=GLOBALS.traces.first;t;t=t->t_next)
+        					for(t=GLOBALS->traces.first;t;t=t->t_next)
                 					{
                 					if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
                 					}
 
-	        				for(t=GLOBALS.traces.buffer;t;t=t->t_next)
+	        				for(t=GLOBALS->traces.buffer;t;t=t->t_next)
 	                				{
 	                				if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
 	                				}
 						}
 
-					GLOBALS.tims.marker = GLOBALS.dual_ctx[GLOBALS.dual_id].marker;
-					update_markertime(GLOBALS.tims.marker);
-					GLOBALS.signalwindow_width_dirty = 1;
+					GLOBALS->tims.marker = GLOBALS->dual_ctx[GLOBALS->dual_id].marker;
+					update_markertime(GLOBALS->tims.marker);
+					GLOBALS->signalwindow_width_dirty = 1;
 					button_press_release_common();
 					}
 
-				GLOBALS.tims.prevzoom=GLOBALS.tims.zoom;
-				GLOBALS.tims.zoom=GLOBALS.dual_ctx[GLOBALS.dual_id].zoom;
+				GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
+				GLOBALS->tims.zoom=GLOBALS->dual_ctx[GLOBALS->dual_id].zoom;
 
-			        if(gt<GLOBALS.tims.first) gt=GLOBALS.tims.first;
-			        else if(gt>GLOBALS.tims.last) gt=GLOBALS.tims.last;
+			        if(gt<GLOBALS->tims.first) gt=GLOBALS->tims.first;
+			        else if(gt>GLOBALS->tims.last) gt=GLOBALS->tims.last;
 
-			        hadj=GTK_ADJUSTMENT(GLOBALS.wave_hslider);
+			        hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 			        hadj->value=gt;
         
-			        pageinc=(TimeType)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);
-			        if(gt<(GLOBALS.tims.last-pageinc+1))
-			                GLOBALS.tims.timecache=gt;
+			        pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+			        if(gt<(GLOBALS->tims.last-pageinc+1))
+			                GLOBALS->tims.timecache=gt;
 			                else
 			                {
-			                GLOBALS.tims.timecache=GLOBALS.tims.last-pageinc+1;
-			                if(GLOBALS.tims.timecache<GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.first;
+			                GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
+			                if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
 			                }
 
 			        time_update();
@@ -1265,7 +1268,7 @@ if(GLOBALS.dual_attach_id_main_c_1)
 				while (gtk_events_pending()) gtk_main_iteration();
 				}
 
-			GLOBALS.dual_race_lock = 0;
+			GLOBALS->dual_race_lock = 0;
 
 			tv.tv_sec = 0;
        			tv.tv_usec = 1000000 / 25;
@@ -1274,7 +1277,7 @@ if(GLOBALS.dual_attach_id_main_c_1)
 		}
 		else
 		{
-		fprintf(stderr, "Could not attach to %08X, exiting.\n", GLOBALS.dual_attach_id_main_c_1);
+		fprintf(stderr, "Could not attach to %08X, exiting.\n", GLOBALS->dual_attach_id_main_c_1);
 		exit(255);
 		}
 	}
@@ -1296,26 +1299,26 @@ void
 get_window_size (int *x, int *y)
 {
 #ifdef WAVE_USE_GTK2
-  gtk_window_get_size (GTK_WINDOW (GLOBALS.mainwindow), x, y);
+  gtk_window_get_size (GTK_WINDOW (GLOBALS->mainwindow), x, y);
 #else
-  *x = GLOBALS.initial_window_x;
-  *y = GLOBALS.initial_window_y;
+  *x = GLOBALS->initial_window_x;
+  *y = GLOBALS->initial_window_y;
 #endif
 }
 
 void
 set_window_size (int x, int y)
 {
-  if (GLOBALS.mainwindow == NULL)
+  if (GLOBALS->mainwindow == NULL)
     {
-      GLOBALS.initial_window_width = x;
-      GLOBALS.initial_window_height = y;
+      GLOBALS->initial_window_width = x;
+      GLOBALS->initial_window_height = y;
     }
   else
     {
-      if(!GLOBALS.socket_xid)
+      if(!GLOBALS->socket_xid)
 	{
-      	gtk_window_set_default_size(GTK_WINDOW (GLOBALS.mainwindow), x, y);
+      	gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mainwindow), x, y);
 	}
     }
 }
@@ -1324,21 +1327,21 @@ set_window_size (int x, int y)
 void 
 get_window_xypos(int *root_x, int *root_y)
 {
-if(!GLOBALS.mainwindow) return;
+if(!GLOBALS->mainwindow) return;
 
 #ifdef WAVE_USE_GTK2
-gtk_window_get_position(GTK_WINDOW(GLOBALS.mainwindow), root_x, root_y);
+gtk_window_get_position(GTK_WINDOW(GLOBALS->mainwindow), root_x, root_y);
 
-if(!GLOBALS.initial_window_get_valid)
+if(!GLOBALS->initial_window_get_valid)
 	{
-	if((GLOBALS.mainwindow->window))
+	if((GLOBALS->mainwindow->window))
 		{
-		GLOBALS.initial_window_get_valid = 1;
-		GLOBALS.initial_window_xpos_get = *root_x;
-		GLOBALS.initial_window_ypos_get = *root_y;
+		GLOBALS->initial_window_get_valid = 1;
+		GLOBALS->initial_window_xpos_get = *root_x;
+		GLOBALS->initial_window_ypos_get = *root_y;
 
-		GLOBALS.xpos_delta = GLOBALS.initial_window_xpos_set - GLOBALS.initial_window_xpos_get;
-		GLOBALS.ypos_delta = GLOBALS.initial_window_ypos_set - GLOBALS.initial_window_ypos_get;
+		GLOBALS->xpos_delta = GLOBALS->initial_window_xpos_set - GLOBALS->initial_window_xpos_get;
+		GLOBALS->ypos_delta = GLOBALS->initial_window_ypos_set - GLOBALS->initial_window_ypos_get;
 		}
 	}
 #else
@@ -1349,28 +1352,28 @@ if(!GLOBALS.initial_window_get_valid)
 void 
 set_window_xypos(int root_x, int root_y)
 {
-if(GLOBALS.xy_ignore_main_c_1) return;
+if(GLOBALS->xy_ignore_main_c_1) return;
 
 #if !defined __MINGW32__ && !defined _MSC_VER
-GLOBALS.initial_window_xpos = root_x;
-GLOBALS.initial_window_ypos = root_y;
+GLOBALS->initial_window_xpos = root_x;
+GLOBALS->initial_window_ypos = root_y;
 
-if(!GLOBALS.mainwindow) return;
-if((GLOBALS.initial_window_xpos>=0)||(GLOBALS.initial_window_ypos>=0))
+if(!GLOBALS->mainwindow) return;
+if((GLOBALS->initial_window_xpos>=0)||(GLOBALS->initial_window_ypos>=0))
 	{
-	if (GLOBALS.initial_window_xpos<0) { GLOBALS.initial_window_xpos = 0; }
-	if (GLOBALS.initial_window_ypos<0) { GLOBALS.initial_window_ypos = 0; }
+	if (GLOBALS->initial_window_xpos<0) { GLOBALS->initial_window_xpos = 0; }
+	if (GLOBALS->initial_window_ypos<0) { GLOBALS->initial_window_ypos = 0; }
 #ifdef WAVE_USE_GTK2
-	gtk_window_move(GTK_WINDOW(GLOBALS.mainwindow), GLOBALS.initial_window_xpos, GLOBALS.initial_window_ypos);
+	gtk_window_move(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
 #else
-	gtk_window_reposition(GTK_WINDOW(GLOBALS.mainwindow), GLOBALS.initial_window_xpos, GLOBALS.initial_window_ypos);
+	gtk_window_reposition(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
 #endif
 
-	if(!GLOBALS.initial_window_set_valid)
+	if(!GLOBALS->initial_window_set_valid)
 		{
-		GLOBALS.initial_window_set_valid = 1;
-		GLOBALS.initial_window_xpos_set = GLOBALS.initial_window_xpos;
-		GLOBALS.initial_window_ypos_set = GLOBALS.initial_window_ypos;
+		GLOBALS->initial_window_set_valid = 1;
+		GLOBALS->initial_window_xpos_set = GLOBALS->initial_window_xpos;
+		GLOBALS->initial_window_ypos_set = GLOBALS->initial_window_ypos;
 		}
 	}
 #endif
@@ -1383,10 +1386,10 @@ if((GLOBALS.initial_window_xpos>=0)||(GLOBALS.initial_window_ypos>=0))
 #if !defined _MSC_VER && !defined __MINGW32__
 int stems_are_active(void)
 {
-if(GLOBALS.anno_ctx && GLOBALS.anno_ctx->browser_process)
+if(GLOBALS->anno_ctx && GLOBALS->anno_ctx->browser_process)
 	{
 	int stat =0;
-	pid_t pid = waitpid(GLOBALS.anno_ctx->browser_process, &stat, WNOHANG);
+	pid_t pid = waitpid(GLOBALS->anno_ctx->browser_process, &stat, WNOHANG);
 	if(!pid)
 		{
 		status_text("Stems reader already active.\n");
@@ -1394,8 +1397,8 @@ if(GLOBALS.anno_ctx && GLOBALS.anno_ctx->browser_process)
 		}
 		else
 		{
-		shmdt(GLOBALS.anno_ctx);
-		GLOBALS.anno_ctx = NULL;
+		shmdt(GLOBALS->anno_ctx);
+		GLOBALS->anno_ctx = NULL;
 		}
 	}
 
@@ -1415,7 +1418,7 @@ static int cyg_called = 0;
 if(!stems_name) return;
 
 #ifdef __CYGWIN__
-if(GLOBALS.stems_type != WAVE_ANNO_NONE)
+if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 	{
 	if(!cyg_called)
 		{
@@ -1426,27 +1429,27 @@ if(GLOBALS.stems_type != WAVE_ANNO_NONE)
 	}
 #endif
 
-if(GLOBALS.stems_type != WAVE_ANNO_NONE)
+if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 	{
 	int shmid = shmget(0, sizeof(struct gtkwave_annotate_ipc_t), IPC_CREAT | 0600 );
 	if(shmid >=0)
 		{
 		struct shmid_ds ds;
 
-		GLOBALS.anno_ctx = shmat(shmid, NULL, 0);
-		if(GLOBALS.anno_ctx)
+		GLOBALS->anno_ctx = shmat(shmid, NULL, 0);
+		if(GLOBALS->anno_ctx)
 			{
 			pid_t pid;
 
-			memset(GLOBALS.anno_ctx, 0, sizeof(struct gtkwave_annotate_ipc_t));
+			memset(GLOBALS->anno_ctx, 0, sizeof(struct gtkwave_annotate_ipc_t));
 
-			memcpy(GLOBALS.anno_ctx->matchword, WAVE_MATCHWORD, 4);
-			GLOBALS.anno_ctx->aet_type = GLOBALS.stems_type;			
-			strcpy(GLOBALS.anno_ctx->aet_name, GLOBALS.aet_name);
-			strcpy(GLOBALS.anno_ctx->stems_name, stems_name);
+			memcpy(GLOBALS->anno_ctx->matchword, WAVE_MATCHWORD, 4);
+			GLOBALS->anno_ctx->aet_type = GLOBALS->stems_type;			
+			strcpy(GLOBALS->anno_ctx->aet_name, GLOBALS->aet_name);
+			strcpy(GLOBALS->anno_ctx->stems_name, stems_name);
 
-			GLOBALS.anno_ctx->gtkwave_process = getpid();			
-			update_markertime(GLOBALS.tims.marker);
+			GLOBALS->anno_ctx->gtkwave_process = getpid();			
+			update_markertime(GLOBALS->tims.marker);
 
 #ifdef __linux__
 			shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
@@ -1462,7 +1465,7 @@ if(GLOBALS.stems_type != WAVE_ANNO_NONE)
 				{
 			        if(pid) /* parent==original server_pid */
 			                {
-					GLOBALS.anno_ctx->browser_process = pid;
+					GLOBALS->anno_ctx->browser_process = pid;
 					atexit(kill_browser);
 #ifndef __linux__
 					sleep(2);
@@ -1481,7 +1484,7 @@ if(GLOBALS.stems_type != WAVE_ANNO_NONE)
 			else
 			{
 			shmctl(shmid, IPC_RMID, &ds); /* actually destroy */
-			GLOBALS.stems_type = WAVE_ANNO_NONE;
+			GLOBALS->stems_type = WAVE_ANNO_NONE;
 			}
 		}
 	}
@@ -1495,6 +1498,10 @@ if(GLOBALS.stems_type != WAVE_ANNO_NONE)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

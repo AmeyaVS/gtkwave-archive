@@ -67,7 +67,7 @@ do
 	ch=*(from++);
 	if(ch==delim)
 		{
-		ch=GLOBALS.hier_delimeter;
+		ch=GLOBALS->hier_delimeter;
 		}
 	} while((*(too++)=ch));
 }
@@ -81,14 +81,14 @@ int found = 0;
 do
 	{
 	ch=*(from++);
-	if(ch==GLOBALS.hier_delimeter)
+	if(ch==GLOBALS->hier_delimeter)
 		{
 		ch=VCDNAM_ESCAPE;
 		found = 1;
 		}
 	} while((*(too++)=ch));
 
-if(found) GLOBALS.escaped_names_found_vcd_c_1 = found;
+if(found) GLOBALS->escaped_names_found_vcd_c_1 = found;
 
 return(found);
 }
@@ -130,13 +130,13 @@ static char *tokens[]={ "var", "end", "scope", "upscope",
 
 struct HistEnt *histent_calloc(void)
 {
-if(GLOBALS.he_curr_vcd_c_1==GLOBALS.he_fini_vcd_c_1)
+if(GLOBALS->he_curr_vcd_c_1==GLOBALS->he_fini_vcd_c_1)
 	{
-	GLOBALS.he_curr_vcd_c_1=(struct HistEnt *)calloc_2(VCD_HISTENT_GRANULARITY, sizeof(struct HistEnt));
-	GLOBALS.he_fini_vcd_c_1=GLOBALS.he_curr_vcd_c_1+VCD_HISTENT_GRANULARITY;
+	GLOBALS->he_curr_vcd_c_1=(struct HistEnt *)calloc_2(VCD_HISTENT_GRANULARITY, sizeof(struct HistEnt));
+	GLOBALS->he_fini_vcd_c_1=GLOBALS->he_curr_vcd_c_1+VCD_HISTENT_GRANULARITY;
 	}
 
-return(GLOBALS.he_curr_vcd_c_1++);	
+return(GLOBALS->he_curr_vcd_c_1++);	
 }
 
 /******************************************************************/
@@ -187,20 +187,20 @@ static struct vcdsymbol *bsearch_vcd(char *key, int len)
 struct vcdsymbol **v;
 struct vcdsymbol *t;
 
-if(GLOBALS.indexed_vcd_c_1)
+if(GLOBALS->indexed_vcd_c_1)
         {
         unsigned int hsh = vcdid_hash(key, len);
-        if((hsh>=GLOBALS.vcd_minid_vcd_c_1)&&(hsh<=GLOBALS.vcd_maxid_vcd_c_1))
+        if((hsh>=GLOBALS->vcd_minid_vcd_c_1)&&(hsh<=GLOBALS->vcd_maxid_vcd_c_1))
                 {
-                return(GLOBALS.indexed_vcd_c_1[hsh-GLOBALS.vcd_minid_vcd_c_1]);
+                return(GLOBALS->indexed_vcd_c_1[hsh-GLOBALS->vcd_minid_vcd_c_1]);
                 }
 
 	return(NULL);
         }
 
-if(GLOBALS.sorted_vcd_c_1)
+if(GLOBALS->sorted_vcd_c_1)
 	{
-	v=(struct vcdsymbol **)bsearch(key, GLOBALS.sorted_vcd_c_1, GLOBALS.numsyms_vcd_c_1, 
+	v=(struct vcdsymbol **)bsearch(key, GLOBALS->sorted_vcd_c_1, GLOBALS->numsyms_vcd_c_1, 
 		sizeof(struct vcdsymbol *), vcdsymbsearchcompare);
 
 	if(v)
@@ -210,7 +210,7 @@ if(GLOBALS.sorted_vcd_c_1)
 				{
 				t=*v;
 		
-				if((v==GLOBALS.sorted_vcd_c_1)||(strcmp((*(--v))->id, key)))
+				if((v==GLOBALS->sorted_vcd_c_1)||(strcmp((*(--v))->id, key)))
 					{
 					return(t);
 					}
@@ -226,10 +226,10 @@ if(GLOBALS.sorted_vcd_c_1)
 	}
 	else
 	{
-	if(!GLOBALS.err_vcd_c_1)
+	if(!GLOBALS->err_vcd_c_1)
 		{
-		fprintf(stderr, "Near byte %d, VCD search table NULL..is this a VCD file?\n", (int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)));
-		GLOBALS.err_vcd_c_1=1;
+		fprintf(stderr, "Near byte %d, VCD search table NULL..is this a VCD file?\n", (int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)));
+		GLOBALS->err_vcd_c_1=1;
 		}
 	return(NULL);
 	}
@@ -259,46 +259,46 @@ struct vcdsymbol *v;
 struct vcdsymbol **pnt;
 unsigned int vcd_distance;
 
-if(GLOBALS.sorted_vcd_c_1) 
+if(GLOBALS->sorted_vcd_c_1) 
 	{
-	free_2(GLOBALS.sorted_vcd_c_1);	/* this means we saw a 2nd enddefinition chunk! */
-	GLOBALS.sorted_vcd_c_1=NULL;
+	free_2(GLOBALS->sorted_vcd_c_1);	/* this means we saw a 2nd enddefinition chunk! */
+	GLOBALS->sorted_vcd_c_1=NULL;
 	}
 
-if(GLOBALS.indexed_vcd_c_1)
+if(GLOBALS->indexed_vcd_c_1)
 	{
-	free_2(GLOBALS.indexed_vcd_c_1);
-	GLOBALS.indexed_vcd_c_1=NULL;
+	free_2(GLOBALS->indexed_vcd_c_1);
+	GLOBALS->indexed_vcd_c_1=NULL;
 	}
 
-if(GLOBALS.numsyms_vcd_c_1)
+if(GLOBALS->numsyms_vcd_c_1)
 	{
-        vcd_distance = GLOBALS.vcd_maxid_vcd_c_1 - GLOBALS.vcd_minid_vcd_c_1 + 1;
+        vcd_distance = GLOBALS->vcd_maxid_vcd_c_1 - GLOBALS->vcd_minid_vcd_c_1 + 1;
 
         if(vcd_distance <= VCD_INDEXSIZ)
                 {
-                GLOBALS.indexed_vcd_c_1 = (struct vcdsymbol **)calloc_2(vcd_distance, sizeof(struct vcdsymbol *));
+                GLOBALS->indexed_vcd_c_1 = (struct vcdsymbol **)calloc_2(vcd_distance, sizeof(struct vcdsymbol *));
          
 		/* printf("%d symbols span ID range of %d, using indexing...\n", numsyms, vcd_distance); */
 
-                v=GLOBALS.vcdsymroot_vcd_c_1;
+                v=GLOBALS->vcdsymroot_vcd_c_1;
                 while(v)
                         {
-                        if(!GLOBALS.indexed_vcd_c_1[v->nid - GLOBALS.vcd_minid_vcd_c_1]) GLOBALS.indexed_vcd_c_1[v->nid - GLOBALS.vcd_minid_vcd_c_1] = v;
+                        if(!GLOBALS->indexed_vcd_c_1[v->nid - GLOBALS->vcd_minid_vcd_c_1]) GLOBALS->indexed_vcd_c_1[v->nid - GLOBALS->vcd_minid_vcd_c_1] = v;
                         v=v->next;
                         }
                 }
                 else
 		{	
-		pnt=GLOBALS.sorted_vcd_c_1=(struct vcdsymbol **)calloc_2(GLOBALS.numsyms_vcd_c_1, sizeof(struct vcdsymbol *));
-		v=GLOBALS.vcdsymroot_vcd_c_1;
+		pnt=GLOBALS->sorted_vcd_c_1=(struct vcdsymbol **)calloc_2(GLOBALS->numsyms_vcd_c_1, sizeof(struct vcdsymbol *));
+		v=GLOBALS->vcdsymroot_vcd_c_1;
 		while(v)
 			{
 			*(pnt++)=v;
 			v=v->next;
 			}
 	
-		qsort(GLOBALS.sorted_vcd_c_1, GLOBALS.numsyms_vcd_c_1, sizeof(struct vcdsymbol *), vcdsymcompare);
+		qsort(GLOBALS->sorted_vcd_c_1, GLOBALS->numsyms_vcd_c_1, sizeof(struct vcdsymbol *), vcdsymcompare);
 		}
 	}
 }
@@ -310,13 +310,13 @@ if(GLOBALS.numsyms_vcd_c_1)
  */
 static void getch_alloc(void)
 {
-GLOBALS.vend_vcd_c_1=GLOBALS.vst_vcd_c_1=GLOBALS.vcdbuf_vcd_c_1=(char *)calloc_2(1,VCD_BSIZ);
+GLOBALS->vend_vcd_c_1=GLOBALS->vst_vcd_c_1=GLOBALS->vcdbuf_vcd_c_1=(char *)calloc_2(1,VCD_BSIZ);
 }
 
 static void getch_free(void)
 {
-free_2(GLOBALS.vcdbuf_vcd_c_1);
-GLOBALS.vcdbuf_vcd_c_1=GLOBALS.vst_vcd_c_1=GLOBALS.vend_vcd_c_1=NULL;
+free_2(GLOBALS->vcdbuf_vcd_c_1);
+GLOBALS->vcdbuf_vcd_c_1=GLOBALS->vst_vcd_c_1=GLOBALS->vend_vcd_c_1=NULL;
 }
 
 
@@ -326,38 +326,38 @@ static int getch_fetch(void)
 size_t rd;
 
 errno = 0;
-if(feof(GLOBALS.vcd_handle_vcd_c_1)) return(-1);
+if(feof(GLOBALS->vcd_handle_vcd_c_1)) return(-1);
 
-GLOBALS.vcdbyteno_vcd_c_1+=(GLOBALS.vend_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1);
-rd=fread(GLOBALS.vcdbuf_vcd_c_1, sizeof(char), VCD_BSIZ, GLOBALS.vcd_handle_vcd_c_1);
-GLOBALS.vend_vcd_c_1=(GLOBALS.vst_vcd_c_1=GLOBALS.vcdbuf_vcd_c_1)+rd;
+GLOBALS->vcdbyteno_vcd_c_1+=(GLOBALS->vend_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1);
+rd=fread(GLOBALS->vcdbuf_vcd_c_1, sizeof(char), VCD_BSIZ, GLOBALS->vcd_handle_vcd_c_1);
+GLOBALS->vend_vcd_c_1=(GLOBALS->vst_vcd_c_1=GLOBALS->vcdbuf_vcd_c_1)+rd;
 
 if((!rd)||(errno)) return(-1);
 
-if(GLOBALS.vcd_fsiz_vcd_c_1)
+if(GLOBALS->vcd_fsiz_vcd_c_1)
 	{
-	splash_sync(GLOBALS.vcdbyteno_vcd_c_1, GLOBALS.vcd_fsiz_vcd_c_1); /* gnome 2.18 seems to set errno so splash moved here... */
+	splash_sync(GLOBALS->vcdbyteno_vcd_c_1, GLOBALS->vcd_fsiz_vcd_c_1); /* gnome 2.18 seems to set errno so splash moved here... */
 	}
 
-return((int)(*(GLOBALS.vst_vcd_c_1++)));
+return((int)(*(GLOBALS->vst_vcd_c_1++)));
 }
 
 static char getch() {
-  return ((GLOBALS.vst_vcd_c_1!=GLOBALS.vend_vcd_c_1)?((int)(*(GLOBALS.vst_vcd_c_1++))):(getch_fetch()));
+  return ((GLOBALS->vst_vcd_c_1!=GLOBALS->vend_vcd_c_1)?((int)(*(GLOBALS->vst_vcd_c_1++))):(getch_fetch()));
 }
 
 static int getch_patched(void)
 {
 char ch;
 
-ch=*GLOBALS.vsplitcurr_vcd_c_1;
+ch=*GLOBALS->vsplitcurr_vcd_c_1;
 if(!ch)
 	{
 	return(-1);
 	}
 	else
 	{
-	GLOBALS.vsplitcurr_vcd_c_1++;
+	GLOBALS->vsplitcurr_vcd_c_1++;
 	return((int)ch);
 	}
 }
@@ -381,7 +381,7 @@ for(;;)
 	}
 if(ch=='$') 
 	{
-	GLOBALS.yytext_vcd_c_1[len++]=ch;
+	GLOBALS->yytext_vcd_c_1[len++]=ch;
 	for(;;)
 		{
 		ch=getch();
@@ -395,24 +395,24 @@ if(ch=='$')
 	is_string=1;
 	}
 
-for(GLOBALS.yytext_vcd_c_1[len++]=ch;;GLOBALS.yytext_vcd_c_1[len++]=ch)
+for(GLOBALS->yytext_vcd_c_1[len++]=ch;;GLOBALS->yytext_vcd_c_1[len++]=ch)
 	{
-	if(len==GLOBALS.T_MAX_STR_vcd_c_1)
+	if(len==GLOBALS->T_MAX_STR_vcd_c_1)
 		{
-		GLOBALS.yytext_vcd_c_1=(char *)realloc_2(GLOBALS.yytext_vcd_c_1, (GLOBALS.T_MAX_STR_vcd_c_1=GLOBALS.T_MAX_STR_vcd_c_1*2)+1);
+		GLOBALS->yytext_vcd_c_1=(char *)realloc_2(GLOBALS->yytext_vcd_c_1, (GLOBALS->T_MAX_STR_vcd_c_1=GLOBALS->T_MAX_STR_vcd_c_1*2)+1);
 		}
 	ch=getch();
 	if(ch<=' ') break;
 	}
-GLOBALS.yytext_vcd_c_1[len]=0;	/* terminator */
+GLOBALS->yytext_vcd_c_1[len]=0;	/* terminator */
 
 if(is_string) 
 	{
-	GLOBALS.yylen_vcd_c_1=len;
+	GLOBALS->yylen_vcd_c_1=len;
 	return(T_STRING);
 	}
 
-yyshadow=GLOBALS.yytext_vcd_c_1;
+yyshadow=GLOBALS->yytext_vcd_c_1;
 do
 {
 yyshadow++;
@@ -435,54 +435,54 @@ static int get_vartoken_patched(int match_kw)
 int ch;
 int len=0;
 
-if(!GLOBALS.var_prevch_vcd_c_1)
+if(!GLOBALS->var_prevch_vcd_c_1)
 	{
 	for(;;)
 		{
 		ch=getch_patched();
-		if(ch<0) { free_2(GLOBALS.varsplit_vcd_c_1); GLOBALS.varsplit_vcd_c_1=NULL; return(V_END); }
+		if(ch<0) { free_2(GLOBALS->varsplit_vcd_c_1); GLOBALS->varsplit_vcd_c_1=NULL; return(V_END); }
 		if((ch==' ')||(ch=='\t')||(ch=='\n')||(ch=='\r')) continue;
 		break;
 		}
 	}
 	else
 	{
-	ch=GLOBALS.var_prevch_vcd_c_1;
-	GLOBALS.var_prevch_vcd_c_1=0;
+	ch=GLOBALS->var_prevch_vcd_c_1;
+	GLOBALS->var_prevch_vcd_c_1=0;
 	}
 	
 if(ch=='[') return(V_LB);
 if(ch==':') return(V_COLON);
 if(ch==']') return(V_RB);
 
-for(GLOBALS.yytext_vcd_c_1[len++]=ch;;GLOBALS.yytext_vcd_c_1[len++]=ch)
+for(GLOBALS->yytext_vcd_c_1[len++]=ch;;GLOBALS->yytext_vcd_c_1[len++]=ch)
 	{
-	if(len==GLOBALS.T_MAX_STR_vcd_c_1)
+	if(len==GLOBALS->T_MAX_STR_vcd_c_1)
 		{
-		GLOBALS.yytext_vcd_c_1=(char *)realloc_2(GLOBALS.yytext_vcd_c_1, (GLOBALS.T_MAX_STR_vcd_c_1=GLOBALS.T_MAX_STR_vcd_c_1*2)+1);
+		GLOBALS->yytext_vcd_c_1=(char *)realloc_2(GLOBALS->yytext_vcd_c_1, (GLOBALS->T_MAX_STR_vcd_c_1=GLOBALS->T_MAX_STR_vcd_c_1*2)+1);
 		}
 	ch=getch_patched();
-	if(ch<0) { free_2(GLOBALS.varsplit_vcd_c_1); GLOBALS.varsplit_vcd_c_1=NULL; break; }
+	if(ch<0) { free_2(GLOBALS->varsplit_vcd_c_1); GLOBALS->varsplit_vcd_c_1=NULL; break; }
 	if((ch==':')||(ch==']'))
 		{
-		GLOBALS.var_prevch_vcd_c_1=ch;
+		GLOBALS->var_prevch_vcd_c_1=ch;
 		break;
 		}
 	}
-GLOBALS.yytext_vcd_c_1[len]=0;	/* terminator */
+GLOBALS->yytext_vcd_c_1[len]=0;	/* terminator */
 
 if(match_kw)
 	{
-	int vt = vcd_keyword_code(GLOBALS.yytext_vcd_c_1, len);
+	int vt = vcd_keyword_code(GLOBALS->yytext_vcd_c_1, len);
 	if(vt != V_STRING)
 		{
-		if(ch<0) { free_2(GLOBALS.varsplit_vcd_c_1); GLOBALS.varsplit_vcd_c_1=NULL; }
+		if(ch<0) { free_2(GLOBALS->varsplit_vcd_c_1); GLOBALS->varsplit_vcd_c_1=NULL; }
 		return(vt);
 		}
 	}
 
-GLOBALS.yylen_vcd_c_1=len;
-if(ch<0) { free_2(GLOBALS.varsplit_vcd_c_1); GLOBALS.varsplit_vcd_c_1=NULL; }
+GLOBALS->yylen_vcd_c_1=len;
+if(ch<0) { free_2(GLOBALS->varsplit_vcd_c_1); GLOBALS->varsplit_vcd_c_1=NULL; }
 return(V_STRING);
 }
 
@@ -491,14 +491,14 @@ static int get_vartoken(int match_kw)
 int ch;
 int len=0;
 
-if(GLOBALS.varsplit_vcd_c_1)
+if(GLOBALS->varsplit_vcd_c_1)
 	{
 	int rc=get_vartoken_patched(match_kw);
 	if(rc!=V_END) return(rc);
-	GLOBALS.var_prevch_vcd_c_1=0;
+	GLOBALS->var_prevch_vcd_c_1=0;
 	}
 
-if(!GLOBALS.var_prevch_vcd_c_1)
+if(!GLOBALS->var_prevch_vcd_c_1)
 	{
 	for(;;)
 		{
@@ -510,8 +510,8 @@ if(!GLOBALS.var_prevch_vcd_c_1)
 	}
 	else
 	{
-	ch=GLOBALS.var_prevch_vcd_c_1;
-	GLOBALS.var_prevch_vcd_c_1=0;
+	ch=GLOBALS->var_prevch_vcd_c_1;
+	GLOBALS->var_prevch_vcd_c_1=0;
 	}
 	
 if(ch=='[') return(V_LB);
@@ -520,56 +520,56 @@ if(ch==']') return(V_RB);
 
 if(ch=='#')     /* for MTI System Verilog '$var reg 64 >w #implicit-var###VarElem:ram_di[0.0] [63:0] $end' style declarations */
         {       /* debussy simply escapes until the space */
-        GLOBALS.yytext_vcd_c_1[len++]= '\\';
+        GLOBALS->yytext_vcd_c_1[len++]= '\\';
         }
 
-for(GLOBALS.yytext_vcd_c_1[len++]=ch;;GLOBALS.yytext_vcd_c_1[len++]=ch)
+for(GLOBALS->yytext_vcd_c_1[len++]=ch;;GLOBALS->yytext_vcd_c_1[len++]=ch)
 	{
-	if(len==GLOBALS.T_MAX_STR_vcd_c_1)
+	if(len==GLOBALS->T_MAX_STR_vcd_c_1)
 		{
-		GLOBALS.yytext_vcd_c_1=(char *)realloc_2(GLOBALS.yytext_vcd_c_1, (GLOBALS.T_MAX_STR_vcd_c_1=GLOBALS.T_MAX_STR_vcd_c_1*2)+1);
+		GLOBALS->yytext_vcd_c_1=(char *)realloc_2(GLOBALS->yytext_vcd_c_1, (GLOBALS->T_MAX_STR_vcd_c_1=GLOBALS->T_MAX_STR_vcd_c_1*2)+1);
 		}
 	ch=getch();
 	if((ch==' ')||(ch=='\t')||(ch=='\n')||(ch=='\r')||(ch<0)) break;
-	if((ch=='[')&&(GLOBALS.yytext_vcd_c_1[0]!='\\'))
+	if((ch=='[')&&(GLOBALS->yytext_vcd_c_1[0]!='\\'))
 		{
-		GLOBALS.varsplit_vcd_c_1=GLOBALS.yytext_vcd_c_1+len;		/* keep looping so we get the *last* one */
+		GLOBALS->varsplit_vcd_c_1=GLOBALS->yytext_vcd_c_1+len;		/* keep looping so we get the *last* one */
 		}
 	else
-	if(((ch==':')||(ch==']'))&&(!GLOBALS.varsplit_vcd_c_1)&&(GLOBALS.yytext_vcd_c_1[0]!='\\'))
+	if(((ch==':')||(ch==']'))&&(!GLOBALS->varsplit_vcd_c_1)&&(GLOBALS->yytext_vcd_c_1[0]!='\\'))
 		{
-		GLOBALS.var_prevch_vcd_c_1=ch;
+		GLOBALS->var_prevch_vcd_c_1=ch;
 		break;
 		}
 	}
-GLOBALS.yytext_vcd_c_1[len]=0;	/* absolute terminator */
-if((GLOBALS.varsplit_vcd_c_1)&&(GLOBALS.yytext_vcd_c_1[len-1]==']'))
+GLOBALS->yytext_vcd_c_1[len]=0;	/* absolute terminator */
+if((GLOBALS->varsplit_vcd_c_1)&&(GLOBALS->yytext_vcd_c_1[len-1]==']'))
 	{
 	char *vst;
-	vst=malloc_2(strlen(GLOBALS.varsplit_vcd_c_1)+1);
-	strcpy(vst, GLOBALS.varsplit_vcd_c_1);
+	vst=malloc_2(strlen(GLOBALS->varsplit_vcd_c_1)+1);
+	strcpy(vst, GLOBALS->varsplit_vcd_c_1);
 
-	*GLOBALS.varsplit_vcd_c_1=0x00;		/* zero out var name at the left bracket */
-	len=GLOBALS.varsplit_vcd_c_1-GLOBALS.yytext_vcd_c_1;
+	*GLOBALS->varsplit_vcd_c_1=0x00;		/* zero out var name at the left bracket */
+	len=GLOBALS->varsplit_vcd_c_1-GLOBALS->yytext_vcd_c_1;
 
-	GLOBALS.varsplit_vcd_c_1=GLOBALS.vsplitcurr_vcd_c_1=vst;
-	GLOBALS.var_prevch_vcd_c_1=0;
+	GLOBALS->varsplit_vcd_c_1=GLOBALS->vsplitcurr_vcd_c_1=vst;
+	GLOBALS->var_prevch_vcd_c_1=0;
 	}
 	else
 	{
-	GLOBALS.varsplit_vcd_c_1=NULL;
+	GLOBALS->varsplit_vcd_c_1=NULL;
 	}
 
 if(match_kw)
 	{
-	int vt = vcd_keyword_code(GLOBALS.yytext_vcd_c_1, len);
+	int vt = vcd_keyword_code(GLOBALS->yytext_vcd_c_1, len);
 	if(vt != V_STRING)
 		{
 		return(vt);
 		}
 	}
 
-GLOBALS.yylen_vcd_c_1=len;
+GLOBALS->yylen_vcd_c_1=len;
 return(V_STRING);
 }
 
@@ -578,7 +578,7 @@ static int get_strtoken(void)
 int ch;
 int len=0;
 
-if(!GLOBALS.var_prevch_vcd_c_1)
+if(!GLOBALS->var_prevch_vcd_c_1)
       {
       for(;;)
               {
@@ -590,22 +590,22 @@ if(!GLOBALS.var_prevch_vcd_c_1)
       }
       else
       {
-      ch=GLOBALS.var_prevch_vcd_c_1;
-      GLOBALS.var_prevch_vcd_c_1=0;
+      ch=GLOBALS->var_prevch_vcd_c_1;
+      GLOBALS->var_prevch_vcd_c_1=0;
       }
       
-for(GLOBALS.yytext_vcd_c_1[len++]=ch;;GLOBALS.yytext_vcd_c_1[len++]=ch)
+for(GLOBALS->yytext_vcd_c_1[len++]=ch;;GLOBALS->yytext_vcd_c_1[len++]=ch)
       {
-	if(len==GLOBALS.T_MAX_STR_vcd_c_1)
+	if(len==GLOBALS->T_MAX_STR_vcd_c_1)
 		{
-		GLOBALS.yytext_vcd_c_1=(char *)realloc_2(GLOBALS.yytext_vcd_c_1, (GLOBALS.T_MAX_STR_vcd_c_1=GLOBALS.T_MAX_STR_vcd_c_1*2)+1);
+		GLOBALS->yytext_vcd_c_1=(char *)realloc_2(GLOBALS->yytext_vcd_c_1, (GLOBALS->T_MAX_STR_vcd_c_1=GLOBALS->T_MAX_STR_vcd_c_1*2)+1);
 		}
       ch=getch();
       if((ch==' ')||(ch=='\t')||(ch=='\n')||(ch=='\r')||(ch<0)) break;
       }
-GLOBALS.yytext_vcd_c_1[len]=0;        /* terminator */
+GLOBALS->yytext_vcd_c_1[len]=0;        /* terminator */
 
-GLOBALS.yylen_vcd_c_1=len;
+GLOBALS->yylen_vcd_c_1=len;
 return(V_STRING);
 }
 
@@ -628,41 +628,41 @@ char *build_slisthier(void)
 struct slist *s;
 int len=0;
 
-if(GLOBALS.slisthier)
+if(GLOBALS->slisthier)
 	{
-        free_2(GLOBALS.slisthier);
+        free_2(GLOBALS->slisthier);
         }
 
-if(!GLOBALS.slistroot)
+if(!GLOBALS->slistroot)
 	{
-	GLOBALS.slisthier_len=0;
-	GLOBALS.slisthier=(char *)malloc_2(1);
-	*GLOBALS.slisthier=0;
-	return(GLOBALS.slisthier);
+	GLOBALS->slisthier_len=0;
+	GLOBALS->slisthier=(char *)malloc_2(1);
+	*GLOBALS->slisthier=0;
+	return(GLOBALS->slisthier);
 	}
 
-s=GLOBALS.slistroot; len=0;
+s=GLOBALS->slistroot; len=0;
 while(s)
 	{
 	len+=s->len+(s->next?1:0);
 	s=s->next;
 	}
 
-GLOBALS.slisthier=(char *)malloc_2((GLOBALS.slisthier_len=len)+1);
-s=GLOBALS.slistroot; len=0;
+GLOBALS->slisthier=(char *)malloc_2((GLOBALS->slisthier_len=len)+1);
+s=GLOBALS->slistroot; len=0;
 while(s)
 	{
-	strcpy(GLOBALS.slisthier+len,s->str);
+	strcpy(GLOBALS->slisthier+len,s->str);
 	len+=s->len;
 	if(s->next)
 		{
-		strcpy(GLOBALS.slisthier+len,GLOBALS.vcd_hier_delimeter);
+		strcpy(GLOBALS->slisthier+len,GLOBALS->vcd_hier_delimeter);
 		len++;
 		}
 	s=s->next;
 	}
 
-return(GLOBALS.slisthier);
+return(GLOBALS->slisthier);
 }
 
 
@@ -674,14 +674,14 @@ s->len=strlen(str);
 s->str=(char *)malloc_2(s->len+1);
 strcpy(s->str,str);
 
-if(GLOBALS.slistcurr)
+if(GLOBALS->slistcurr)
 	{
-	GLOBALS.slistcurr->next=s;
-	GLOBALS.slistcurr=s;
+	GLOBALS->slistcurr->next=s;
+	GLOBALS->slistcurr=s;
 	}
 	else
 	{
-	GLOBALS.slistcurr=GLOBALS.slistroot=s;
+	GLOBALS->slistcurr=GLOBALS->slistroot=s;
 	}
 
 build_slisthier();
@@ -695,7 +695,7 @@ struct vcdsymbol *v;
 char *vector;
 int vlen;
 
-switch(GLOBALS.yytext_vcd_c_1[0])
+switch(GLOBALS->yytext_vcd_c_1[0])
 	{
 	case '0':
 	case '1':
@@ -706,39 +706,39 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 	case 'w': case 'W':
 	case 'l': case 'L':
 	case '-':
-		if(GLOBALS.yylen_vcd_c_1>1)
+		if(GLOBALS->yylen_vcd_c_1>1)
 			{
-			v=bsearch_vcd(GLOBALS.yytext_vcd_c_1+1, GLOBALS.yylen_vcd_c_1-1);	
+			v=bsearch_vcd(GLOBALS->yytext_vcd_c_1+1, GLOBALS->yylen_vcd_c_1-1);	
 			if(!v)
 				{
-				fprintf(stderr,"Near byte %d, Unknown VCD identifier: '%s'\n",(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)),GLOBALS.yytext_vcd_c_1+1);
+				fprintf(stderr,"Near byte %d, Unknown VCD identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)),GLOBALS->yytext_vcd_c_1+1);
 				}
 				else
 				{
 				if(v->vartype!=V_EVENT)
 					{
-					v->value[0]=GLOBALS.yytext_vcd_c_1[0];
+					v->value[0]=GLOBALS->yytext_vcd_c_1[0];
 					DEBUG(fprintf(stderr,"%s = '%c'\n",v->name,v->value[0]));
-					add_histent(GLOBALS.current_time_vcd_c_1,v->narray[0],v->value[0],1, NULL);
+					add_histent(GLOBALS->current_time_vcd_c_1,v->narray[0],v->value[0],1, NULL);
 					}
 					else
 					{
-					v->value[0]=(GLOBALS.dumping_off_vcd_c_1)?'x':'1'; /* only '1' is relevant */
-					if(GLOBALS.current_time_vcd_c_1!=(v->ev->last_event_time+1))
+					v->value[0]=(GLOBALS->dumping_off_vcd_c_1)?'x':'1'; /* only '1' is relevant */
+					if(GLOBALS->current_time_vcd_c_1!=(v->ev->last_event_time+1))
 						{
 						/* dump degating event */
 						DEBUG(fprintf(stderr,"#"TTFormat" %s = '%c' (event)\n",v->ev->last_event_time+1,v->name,'0'));
 						add_histent(v->ev->last_event_time+1,v->narray[0],'0',1, NULL);
 						}
 					DEBUG(fprintf(stderr,"%s = '%c' (event)\n",v->name,v->value[0]));
-					add_histent(GLOBALS.current_time_vcd_c_1,v->narray[0],v->value[0],1, NULL);
-					v->ev->last_event_time=GLOBALS.current_time_vcd_c_1;
+					add_histent(GLOBALS->current_time_vcd_c_1,v->narray[0],v->value[0],1, NULL);
+					v->ev->last_event_time=GLOBALS->current_time_vcd_c_1;
 					}
 				}
 			}
 			else
 			{
-			fprintf(stderr,"Near byte %d, Malformed VCD identifier\n", (int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)));
+			fprintf(stderr,"Near byte %d, Malformed VCD identifier\n", (int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)));
 			}
 		break;
 
@@ -746,20 +746,20 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 	case 'B':
 		{
 		/* extract binary number then.. */
-		vector=malloc_2(GLOBALS.yylen_cache_vcd_c_1=GLOBALS.yylen_vcd_c_1); 
-		strcpy(vector,GLOBALS.yytext_vcd_c_1+1);
-		vlen=GLOBALS.yylen_vcd_c_1-1;
+		vector=malloc_2(GLOBALS->yylen_cache_vcd_c_1=GLOBALS->yylen_vcd_c_1); 
+		strcpy(vector,GLOBALS->yytext_vcd_c_1+1);
+		vlen=GLOBALS->yylen_vcd_c_1-1;
 
 		get_strtoken();
-		v=bsearch_vcd(GLOBALS.yytext_vcd_c_1, GLOBALS.yylen_vcd_c_1);	
+		v=bsearch_vcd(GLOBALS->yytext_vcd_c_1, GLOBALS->yylen_vcd_c_1);	
 		if(!v)
 			{
-			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)), GLOBALS.yytext_vcd_c_1);
+			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(vector);
 			}
 			else
 			{
-			if ((v->vartype==V_REAL)||((GLOBALS.convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
+			if ((v->vartype==V_REAL)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
 				{
 				double *d;
 				char *pnt;
@@ -775,12 +775,12 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 			
 				if(!v)
 					{
-					fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)), GLOBALS.yytext_vcd_c_1);
+					fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 					free_2(d);
 					}
 					else
 					{
-					add_histent(GLOBALS.current_time_vcd_c_1, v->narray[0],'g',1,(char *)d);
+					add_histent(GLOBALS->current_time_vcd_c_1, v->narray[0],'g',1,(char *)d);
 					}
 				break;
 				}
@@ -812,24 +812,24 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 				}
 			DEBUG(fprintf(stderr,"%s = '%s'\n",v->name, v->value));
 
-			if((v->size==1)||(!GLOBALS.atomic_vectors))
+			if((v->size==1)||(!GLOBALS->atomic_vectors))
 				{
 				int i;
 				for(i=0;i<v->size;i++)
 					{
-					add_histent(GLOBALS.current_time_vcd_c_1, v->narray[i],v->value[i],1, NULL);
+					add_histent(GLOBALS->current_time_vcd_c_1, v->narray[i],v->value[i],1, NULL);
 					}
 				free_2(vector);
 				}
 				else
 				{
-				if(GLOBALS.yylen_cache_vcd_c_1!=(v->size+1))
+				if(GLOBALS->yylen_cache_vcd_c_1!=(v->size+1))
 					{
 					free_2(vector);
 					vector=malloc_2(v->size+1);
 					}
 				strcpy(vector,v->value);
-				add_histent(GLOBALS.current_time_vcd_c_1, v->narray[0],0,1,vector);
+				add_histent(GLOBALS->current_time_vcd_c_1, v->narray[0],0,1,vector);
 				}
 
 			}
@@ -838,22 +838,22 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 
 	case 'p':
 		/* extract port dump value.. */
-		vector=malloc_2(GLOBALS.yylen_cache_vcd_c_1=GLOBALS.yylen_vcd_c_1); 
-		strcpy(vector,GLOBALS.yytext_vcd_c_1+1);
-		vlen=GLOBALS.yylen_vcd_c_1-1;
+		vector=malloc_2(GLOBALS->yylen_cache_vcd_c_1=GLOBALS->yylen_vcd_c_1); 
+		strcpy(vector,GLOBALS->yytext_vcd_c_1+1);
+		vlen=GLOBALS->yylen_vcd_c_1-1;
 
 		get_strtoken();	/* throw away 0_strength_component */
 		get_strtoken(); /* throw away 0_strength_component */
 		get_strtoken(); /* this is the id                  */
-		v=bsearch_vcd(GLOBALS.yytext_vcd_c_1, GLOBALS.yylen_vcd_c_1);	
+		v=bsearch_vcd(GLOBALS->yytext_vcd_c_1, GLOBALS->yylen_vcd_c_1);	
 		if(!v)
 			{
-			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)), GLOBALS.yytext_vcd_c_1);
+			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(vector);
 			}
 			else
 			{
-			if ((v->vartype==V_REAL)||((GLOBALS.convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
+			if ((v->vartype==V_REAL)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
 				{
 				double *d;
 				char *pnt;
@@ -869,12 +869,12 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 			
 				if(!v)
 					{
-					fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)), GLOBALS.yytext_vcd_c_1);
+					fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 					free_2(d);
 					}
 					else
 					{
-					add_histent(GLOBALS.current_time_vcd_c_1, v->narray[0],'g',1,(char *)d);
+					add_histent(GLOBALS->current_time_vcd_c_1, v->narray[0],'g',1,(char *)d);
 					}
 				break;
 				}
@@ -906,24 +906,24 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 				}
 			DEBUG(fprintf(stderr,"%s = '%s'\n",v->name, v->value));
 
-			if((v->size==1)||(!GLOBALS.atomic_vectors))
+			if((v->size==1)||(!GLOBALS->atomic_vectors))
 				{
 				int i;
 				for(i=0;i<v->size;i++)
 					{
-					add_histent(GLOBALS.current_time_vcd_c_1, v->narray[i],v->value[i],1, NULL);
+					add_histent(GLOBALS->current_time_vcd_c_1, v->narray[i],v->value[i],1, NULL);
 					}
 				free_2(vector);
 				}
 				else
 				{
-				if(GLOBALS.yylen_cache_vcd_c_1<v->size)
+				if(GLOBALS->yylen_cache_vcd_c_1<v->size)
 					{
 					free_2(vector);
 					vector=malloc_2(v->size+1);
 					}
 				strcpy(vector,v->value);
-				add_histent(GLOBALS.current_time_vcd_c_1, v->narray[0],0,1,vector);
+				add_histent(GLOBALS->current_time_vcd_c_1, v->narray[0],0,1,vector);
 				}
 			}
 		break;
@@ -935,18 +935,18 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 		double *d;
 
 		d=malloc_2(sizeof(double));
-		sscanf(GLOBALS.yytext_vcd_c_1+1,"%lg",d);
+		sscanf(GLOBALS->yytext_vcd_c_1+1,"%lg",d);
 		
 		get_strtoken();
-		v=bsearch_vcd(GLOBALS.yytext_vcd_c_1, GLOBALS.yylen_vcd_c_1);	
+		v=bsearch_vcd(GLOBALS->yytext_vcd_c_1, GLOBALS->yylen_vcd_c_1);	
 		if(!v)
 			{
-			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)), GLOBALS.yytext_vcd_c_1);
+			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(d);
 			}
 			else
 			{
-			add_histent(GLOBALS.current_time_vcd_c_1, v->narray[0],'g',1,(char *)d);
+			add_histent(GLOBALS->current_time_vcd_c_1, v->narray[0],'g',1,(char *)d);
 			}
 
 		break;
@@ -958,19 +958,19 @@ switch(GLOBALS.yytext_vcd_c_1[0])
 		{
 		char *d;
 
-		d=(char *)malloc_2(GLOBALS.yylen_vcd_c_1);
-		strcpy(d, GLOBALS.yytext_vcd_c_1+1);
+		d=(char *)malloc_2(GLOBALS->yylen_vcd_c_1);
+		strcpy(d, GLOBALS->yytext_vcd_c_1+1);
 		
 		get_strtoken();
-		v=bsearch_vcd(GLOBALS.yytext_vcd_c_1, GLOBALS.yylen_vcd_c_1);	
+		v=bsearch_vcd(GLOBALS->yytext_vcd_c_1, GLOBALS->yylen_vcd_c_1);	
 		if(!v)
 			{
-			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)), GLOBALS.yytext_vcd_c_1);
+			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(d);
 			}
 			else
 			{
-			add_histent(GLOBALS.current_time_vcd_c_1, v->narray[0],'s',1,(char *)d);
+			add_histent(GLOBALS->current_time_vcd_c_1, v->narray[0],'s',1,(char *)d);
 			}
 
 		break;
@@ -1034,13 +1034,13 @@ for(;;)
 
 			vtok=get_token();
 			if((vtok==T_END)||(vtok==T_EOF)) break;
-			GLOBALS.time_scale=atoi_64(GLOBALS.yytext_vcd_c_1);
-			if(!GLOBALS.time_scale) GLOBALS.time_scale=1;
-			for(i=0;i<GLOBALS.yylen_vcd_c_1;i++)
+			GLOBALS->time_scale=atoi_64(GLOBALS->yytext_vcd_c_1);
+			if(!GLOBALS->time_scale) GLOBALS->time_scale=1;
+			for(i=0;i<GLOBALS->yylen_vcd_c_1;i++)
 				{
-				if((GLOBALS.yytext_vcd_c_1[i]<'0')||(GLOBALS.yytext_vcd_c_1[i]>'9'))
+				if((GLOBALS->yytext_vcd_c_1[i]<'0')||(GLOBALS->yytext_vcd_c_1[i]>'9'))
 					{
-					prefix=GLOBALS.yytext_vcd_c_1[i];
+					prefix=GLOBALS->yytext_vcd_c_1[i];
 					break;
 					}
 				}
@@ -1048,7 +1048,7 @@ for(;;)
 				{
 				vtok=get_token();
 				if((vtok==T_END)||(vtok==T_EOF)) break;
-				prefix=GLOBALS.yytext_vcd_c_1[0];		
+				prefix=GLOBALS->yytext_vcd_c_1[0];		
 				}
 			switch(prefix)
 				{
@@ -1058,13 +1058,13 @@ for(;;)
 				case 'n':
 				case 'p':
 				case 'f':
-					GLOBALS.time_dimension=prefix;
+					GLOBALS->time_dimension=prefix;
 					break;
 				case 's':
-					GLOBALS.time_dimension=' ';
+					GLOBALS->time_dimension=' ';
 					break;
 				default:	/* unknown */
-					GLOBALS.time_dimension='n';
+					GLOBALS->time_dimension='n';
 					break;
 				}
 
@@ -1079,18 +1079,18 @@ for(;;)
 				{
 				struct slist *s;
 				s=(struct slist *)calloc_2(1,sizeof(struct slist));
-				s->len=GLOBALS.yylen_vcd_c_1;
-				s->str=(char *)malloc_2(GLOBALS.yylen_vcd_c_1+1);
-				strcpy(s->str, GLOBALS.yytext_vcd_c_1);
+				s->len=GLOBALS->yylen_vcd_c_1;
+				s->str=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+1);
+				strcpy(s->str, GLOBALS->yytext_vcd_c_1);
 
-				if(GLOBALS.slistcurr)
+				if(GLOBALS->slistcurr)
 					{
-					GLOBALS.slistcurr->next=s;
-					GLOBALS.slistcurr=s;
+					GLOBALS->slistcurr->next=s;
+					GLOBALS->slistcurr=s;
 					}
 					else
 					{
-					GLOBALS.slistcurr=GLOBALS.slistroot=s;
+					GLOBALS->slistcurr=GLOBALS->slistroot=s;
 					}
 
 				build_slisthier();
@@ -1099,16 +1099,16 @@ for(;;)
 			sync_end(NULL);
 			break;
 		case T_UPSCOPE:
-			if(GLOBALS.slistroot)
+			if(GLOBALS->slistroot)
 				{
 				struct slist *s;
 
-				s=GLOBALS.slistroot;
+				s=GLOBALS->slistroot;
 				if(!s->next)
 					{
 					free_2(s->str);
 					free_2(s);
-					GLOBALS.slistroot=GLOBALS.slistcurr=NULL;
+					GLOBALS->slistroot=GLOBALS->slistcurr=NULL;
 					}
 				else
 				for(;;)
@@ -1118,7 +1118,7 @@ for(;;)
 						free_2(s->next->str);
 						free_2(s->next);
 						s->next=NULL;
-						GLOBALS.slistcurr=s;
+						GLOBALS->slistcurr=s;
 						break;
 						}
 					s=s->next;
@@ -1129,10 +1129,10 @@ for(;;)
 			sync_end(NULL);
 			break;
 		case T_VAR:
-			if((GLOBALS.header_over_vcd_c_1)&&(0))
+			if((GLOBALS->header_over_vcd_c_1)&&(0))
 			{
 			fprintf(stderr,"$VAR encountered after $ENDDEFINITIONS near byte %d.  VCD is malformed, exiting.\n",
-				(int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)));
+				(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)));
 			exit(0);
 			}
 			else
@@ -1140,26 +1140,26 @@ for(;;)
 			int vtok;
 			struct vcdsymbol *v=NULL;
 
-			GLOBALS.var_prevch_vcd_c_1=0;
+			GLOBALS->var_prevch_vcd_c_1=0;
 
-			if(GLOBALS.varsplit_vcd_c_1)
+			if(GLOBALS->varsplit_vcd_c_1)
 				{
-				free_2(GLOBALS.varsplit_vcd_c_1);
-				GLOBALS.varsplit_vcd_c_1=NULL;
+				free_2(GLOBALS->varsplit_vcd_c_1);
+				GLOBALS->varsplit_vcd_c_1=NULL;
 				}
 			vtok=get_vartoken(1);
 			if(vtok>V_PORT) goto bail;
 
 			v=(struct vcdsymbol *)calloc_2(1,sizeof(struct vcdsymbol));
 			v->vartype=vtok;
-			v->msi=v->lsi=GLOBALS.vcd_explicit_zero_subscripts; /* indicate [un]subscripted status */
+			v->msi=v->lsi=GLOBALS->vcd_explicit_zero_subscripts; /* indicate [un]subscripted status */
 
 			if(vtok==V_PORT)
 				{
 				vtok=get_vartoken(0);
 				if(vtok==V_STRING)
 					{
-					v->size=atoi_64(GLOBALS.yytext_vcd_c_1);
+					v->size=atoi_64(GLOBALS->yytext_vcd_c_1);
 					if(!v->size) v->size=1;
 					}
 					else 
@@ -1168,7 +1168,7 @@ for(;;)
 					vtok=get_vartoken(1);
 					if(vtok==V_END) goto err;
 					if(vtok!=V_STRING) goto err;
-					v->msi=atoi_64(GLOBALS.yytext_vcd_c_1);
+					v->msi=atoi_64(GLOBALS->yytext_vcd_c_1);
 					vtok=get_vartoken(0);
 					if(vtok==V_RB)
 						{
@@ -1180,7 +1180,7 @@ for(;;)
 						if(vtok!=V_COLON) goto err;
 						vtok=get_vartoken(0);
 						if(vtok!=V_STRING) goto err;
-						v->lsi=atoi_64(GLOBALS.yytext_vcd_c_1);
+						v->lsi=atoi_64(GLOBALS->yytext_vcd_c_1);
 						vtok=get_vartoken(0);
 						if(vtok!=V_RB) goto err;
 
@@ -1198,33 +1198,33 @@ for(;;)
 
 				vtok=get_strtoken();
 				if(vtok==V_END) goto err;
-				v->id=(char *)malloc_2(GLOBALS.yylen_vcd_c_1+1);
-				strcpy(v->id, GLOBALS.yytext_vcd_c_1);
-                                v->nid=vcdid_hash(GLOBALS.yytext_vcd_c_1,GLOBALS.yylen_vcd_c_1);
+				v->id=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+1);
+				strcpy(v->id, GLOBALS->yytext_vcd_c_1);
+                                v->nid=vcdid_hash(GLOBALS->yytext_vcd_c_1,GLOBALS->yylen_vcd_c_1);
 
-                                if(v->nid < GLOBALS.vcd_minid_vcd_c_1) GLOBALS.vcd_minid_vcd_c_1 = v->nid;
-                                if(v->nid > GLOBALS.vcd_maxid_vcd_c_1) GLOBALS.vcd_maxid_vcd_c_1 = v->nid;
+                                if(v->nid < GLOBALS->vcd_minid_vcd_c_1) GLOBALS->vcd_minid_vcd_c_1 = v->nid;
+                                if(v->nid > GLOBALS->vcd_maxid_vcd_c_1) GLOBALS->vcd_maxid_vcd_c_1 = v->nid;
 
 				vtok=get_vartoken(0);
 				if(vtok!=V_STRING) goto err;
-				if(GLOBALS.slisthier_len)
+				if(GLOBALS->slisthier_len)
 					{
-					v->name=(char *)malloc_2(GLOBALS.slisthier_len+1+GLOBALS.yylen_vcd_c_1+1);
-					strcpy(v->name,GLOBALS.slisthier);
-					strcpy(v->name+GLOBALS.slisthier_len,GLOBALS.vcd_hier_delimeter);
-					if(GLOBALS.alt_hier_delimeter)
+					v->name=(char *)malloc_2(GLOBALS->slisthier_len+1+GLOBALS->yylen_vcd_c_1+1);
+					strcpy(v->name,GLOBALS->slisthier);
+					strcpy(v->name+GLOBALS->slisthier_len,GLOBALS->vcd_hier_delimeter);
+					if(GLOBALS->alt_hier_delimeter)
 						{
-						strcpy_vcdalt(v->name+GLOBALS.slisthier_len+1,GLOBALS.yytext_vcd_c_1,GLOBALS.alt_hier_delimeter);
+						strcpy_vcdalt(v->name+GLOBALS->slisthier_len+1,GLOBALS->yytext_vcd_c_1,GLOBALS->alt_hier_delimeter);
 						}
 						else
 						{
-						if((strcpy_delimfix(v->name+GLOBALS.slisthier_len+1,GLOBALS.yytext_vcd_c_1)) && (GLOBALS.yytext_vcd_c_1[0] != '\\'))
+						if((strcpy_delimfix(v->name+GLOBALS->slisthier_len+1,GLOBALS->yytext_vcd_c_1)) && (GLOBALS->yytext_vcd_c_1[0] != '\\'))
 							{
-							char *sd=(char *)malloc_2(GLOBALS.slisthier_len+1+GLOBALS.yylen_vcd_c_1+2);
-							strcpy(sd,GLOBALS.slisthier);
-							strcpy(sd+GLOBALS.slisthier_len,GLOBALS.vcd_hier_delimeter);
-							sd[GLOBALS.slisthier_len+1] = '\\';
-							strcpy(sd+GLOBALS.slisthier_len+2,v->name+GLOBALS.slisthier_len+1);
+							char *sd=(char *)malloc_2(GLOBALS->slisthier_len+1+GLOBALS->yylen_vcd_c_1+2);
+							strcpy(sd,GLOBALS->slisthier);
+							strcpy(sd+GLOBALS->slisthier_len,GLOBALS->vcd_hier_delimeter);
+							sd[GLOBALS->slisthier_len+1] = '\\';
+							strcpy(sd+GLOBALS->slisthier_len+2,v->name+GLOBALS->slisthier_len+1);
 							free_2(v->name);
 							v->name = sd;
 							}
@@ -1232,16 +1232,16 @@ for(;;)
 					}
 					else
 					{
-					v->name=(char *)malloc_2(GLOBALS.yylen_vcd_c_1+1);
-					if(GLOBALS.alt_hier_delimeter)
+					v->name=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+1);
+					if(GLOBALS->alt_hier_delimeter)
 						{
-						strcpy_vcdalt(v->name,GLOBALS.yytext_vcd_c_1,GLOBALS.alt_hier_delimeter);
+						strcpy_vcdalt(v->name,GLOBALS->yytext_vcd_c_1,GLOBALS->alt_hier_delimeter);
 						}
 						else
 						{
-						if((strcpy_delimfix(v->name,GLOBALS.yytext_vcd_c_1)) && (GLOBALS.yytext_vcd_c_1[0] != '\\'))
+						if((strcpy_delimfix(v->name,GLOBALS->yytext_vcd_c_1)) && (GLOBALS->yytext_vcd_c_1[0] != '\\'))
 							{
-							char *sd=(char *)malloc_2(GLOBALS.yylen_vcd_c_1+2);
+							char *sd=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+2);
 							sd[0] = '\\';
 							strcpy(sd+1,v->name);
 							free_2(v->name);
@@ -1250,59 +1250,59 @@ for(;;)
 						}
 					}
 
-                                if(GLOBALS.pv_vcd_c_1)
+                                if(GLOBALS->pv_vcd_c_1)
                                         { 
-                                        if(!strcmp(GLOBALS.pv_vcd_c_1->name,v->name))
+                                        if(!strcmp(GLOBALS->pv_vcd_c_1->name,v->name))
                                                 {
-                                                GLOBALS.pv_vcd_c_1->chain=v;
-                                                v->root=GLOBALS.rootv_vcd_c_1;
-                                                if(GLOBALS.pv_vcd_c_1==GLOBALS.rootv_vcd_c_1) GLOBALS.pv_vcd_c_1->root=GLOBALS.rootv_vcd_c_1;
+                                                GLOBALS->pv_vcd_c_1->chain=v;
+                                                v->root=GLOBALS->rootv_vcd_c_1;
+                                                if(GLOBALS->pv_vcd_c_1==GLOBALS->rootv_vcd_c_1) GLOBALS->pv_vcd_c_1->root=GLOBALS->rootv_vcd_c_1;
                                                 }
                                                 else
                                                 {
-                                                GLOBALS.rootv_vcd_c_1=v;
+                                                GLOBALS->rootv_vcd_c_1=v;
                                                 }
                                         }
 					else
 					{
-					GLOBALS.rootv_vcd_c_1=v;
+					GLOBALS->rootv_vcd_c_1=v;
 					}
-                                GLOBALS.pv_vcd_c_1=v;
+                                GLOBALS->pv_vcd_c_1=v;
 				}
 				else	/* regular vcd var, not an evcd port var */
 				{
 				vtok=get_vartoken(1);
 				if(vtok==V_END) goto err;
-				v->size=atoi_64(GLOBALS.yytext_vcd_c_1);
+				v->size=atoi_64(GLOBALS->yytext_vcd_c_1);
 				vtok=get_strtoken();
 				if(vtok==V_END) goto err;
-				v->id=(char *)malloc_2(GLOBALS.yylen_vcd_c_1+1);
-				strcpy(v->id, GLOBALS.yytext_vcd_c_1);
-                                v->nid=vcdid_hash(GLOBALS.yytext_vcd_c_1,GLOBALS.yylen_vcd_c_1);
+				v->id=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+1);
+				strcpy(v->id, GLOBALS->yytext_vcd_c_1);
+                                v->nid=vcdid_hash(GLOBALS->yytext_vcd_c_1,GLOBALS->yylen_vcd_c_1);
                                 
-                                if(v->nid < GLOBALS.vcd_minid_vcd_c_1) GLOBALS.vcd_minid_vcd_c_1 = v->nid;
-                                if(v->nid > GLOBALS.vcd_maxid_vcd_c_1) GLOBALS.vcd_maxid_vcd_c_1 = v->nid;
+                                if(v->nid < GLOBALS->vcd_minid_vcd_c_1) GLOBALS->vcd_minid_vcd_c_1 = v->nid;
+                                if(v->nid > GLOBALS->vcd_maxid_vcd_c_1) GLOBALS->vcd_maxid_vcd_c_1 = v->nid;
 
 				vtok=get_vartoken(0);
 				if(vtok!=V_STRING) goto err;
-				if(GLOBALS.slisthier_len)
+				if(GLOBALS->slisthier_len)
 					{
-					v->name=(char *)malloc_2(GLOBALS.slisthier_len+1+GLOBALS.yylen_vcd_c_1+1);
-					strcpy(v->name,GLOBALS.slisthier);
-					strcpy(v->name+GLOBALS.slisthier_len,GLOBALS.vcd_hier_delimeter);
-					if(GLOBALS.alt_hier_delimeter)
+					v->name=(char *)malloc_2(GLOBALS->slisthier_len+1+GLOBALS->yylen_vcd_c_1+1);
+					strcpy(v->name,GLOBALS->slisthier);
+					strcpy(v->name+GLOBALS->slisthier_len,GLOBALS->vcd_hier_delimeter);
+					if(GLOBALS->alt_hier_delimeter)
 						{
-						strcpy_vcdalt(v->name+GLOBALS.slisthier_len+1,GLOBALS.yytext_vcd_c_1,GLOBALS.alt_hier_delimeter);
+						strcpy_vcdalt(v->name+GLOBALS->slisthier_len+1,GLOBALS->yytext_vcd_c_1,GLOBALS->alt_hier_delimeter);
 						}
 						else
 						{
-						if((strcpy_delimfix(v->name+GLOBALS.slisthier_len+1,GLOBALS.yytext_vcd_c_1)) && (GLOBALS.yytext_vcd_c_1[0] != '\\'))
+						if((strcpy_delimfix(v->name+GLOBALS->slisthier_len+1,GLOBALS->yytext_vcd_c_1)) && (GLOBALS->yytext_vcd_c_1[0] != '\\'))
 							{
-                                                        char *sd=(char *)malloc_2(GLOBALS.slisthier_len+1+GLOBALS.yylen_vcd_c_1+2);
-                                                        strcpy(sd,GLOBALS.slisthier);
-                                                        strcpy(sd+GLOBALS.slisthier_len,GLOBALS.vcd_hier_delimeter);
-                                                        sd[GLOBALS.slisthier_len+1] = '\\';
-                                                        strcpy(sd+GLOBALS.slisthier_len+2,v->name+GLOBALS.slisthier_len+1);
+                                                        char *sd=(char *)malloc_2(GLOBALS->slisthier_len+1+GLOBALS->yylen_vcd_c_1+2);
+                                                        strcpy(sd,GLOBALS->slisthier);
+                                                        strcpy(sd+GLOBALS->slisthier_len,GLOBALS->vcd_hier_delimeter);
+                                                        sd[GLOBALS->slisthier_len+1] = '\\';
+                                                        strcpy(sd+GLOBALS->slisthier_len+2,v->name+GLOBALS->slisthier_len+1);
                                                         free_2(v->name);
                                                         v->name = sd;
 							}
@@ -1310,16 +1310,16 @@ for(;;)
 					}
 					else
 					{
-					v->name=(char *)malloc_2(GLOBALS.yylen_vcd_c_1+1);
-					if(GLOBALS.alt_hier_delimeter)
+					v->name=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+1);
+					if(GLOBALS->alt_hier_delimeter)
 						{
-						strcpy_vcdalt(v->name,GLOBALS.yytext_vcd_c_1,GLOBALS.alt_hier_delimeter);
+						strcpy_vcdalt(v->name,GLOBALS->yytext_vcd_c_1,GLOBALS->alt_hier_delimeter);
 						}
 						else
 						{
-                                                if((strcpy_delimfix(v->name,GLOBALS.yytext_vcd_c_1)) && (GLOBALS.yytext_vcd_c_1[0] != '\\'))
+                                                if((strcpy_delimfix(v->name,GLOBALS->yytext_vcd_c_1)) && (GLOBALS->yytext_vcd_c_1[0] != '\\'))
                                                         {
-                                                        char *sd=(char *)malloc_2(GLOBALS.yylen_vcd_c_1+2);
+                                                        char *sd=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+2);
                                                         sd[0] = '\\';
                                                         strcpy(sd+1,v->name);
                                                         free_2(v->name);
@@ -1328,31 +1328,31 @@ for(;;)
 						}
 					}
 
-                                if(GLOBALS.pv_vcd_c_1)
+                                if(GLOBALS->pv_vcd_c_1)
                                         { 
-                                        if(!strcmp(GLOBALS.pv_vcd_c_1->name,v->name))
+                                        if(!strcmp(GLOBALS->pv_vcd_c_1->name,v->name))
                                                 {
-                                                GLOBALS.pv_vcd_c_1->chain=v;
-                                                v->root=GLOBALS.rootv_vcd_c_1;
-                                                if(GLOBALS.pv_vcd_c_1==GLOBALS.rootv_vcd_c_1) GLOBALS.pv_vcd_c_1->root=GLOBALS.rootv_vcd_c_1;
+                                                GLOBALS->pv_vcd_c_1->chain=v;
+                                                v->root=GLOBALS->rootv_vcd_c_1;
+                                                if(GLOBALS->pv_vcd_c_1==GLOBALS->rootv_vcd_c_1) GLOBALS->pv_vcd_c_1->root=GLOBALS->rootv_vcd_c_1;
                                                 }
                                                 else
                                                 {
-                                                GLOBALS.rootv_vcd_c_1=v;
+                                                GLOBALS->rootv_vcd_c_1=v;
                                                 }
                                         }
 					else
 					{
-					GLOBALS.rootv_vcd_c_1=v;
+					GLOBALS->rootv_vcd_c_1=v;
 					}
-                                GLOBALS.pv_vcd_c_1=v;
+                                GLOBALS->pv_vcd_c_1=v;
 				
 				vtok=get_vartoken(1);
 				if(vtok==V_END) goto dumpv;
 				if(vtok!=V_LB) goto err;
 				vtok=get_vartoken(0);
 				if(vtok!=V_STRING) goto err;
-				v->msi=atoi_64(GLOBALS.yytext_vcd_c_1);
+				v->msi=atoi_64(GLOBALS->yytext_vcd_c_1);
 				vtok=get_vartoken(0);
 				if(vtok==V_RB)
 					{
@@ -1362,7 +1362,7 @@ for(;;)
 				if(vtok!=V_COLON) goto err;
 				vtok=get_vartoken(0);
 				if(vtok!=V_STRING) goto err;
-				v->lsi=atoi_64(GLOBALS.yytext_vcd_c_1);
+				v->lsi=atoi_64(GLOBALS->yytext_vcd_c_1);
 				vtok=get_vartoken(0);
 				if(vtok!=V_RB) goto err;
 				}
@@ -1370,7 +1370,7 @@ for(;;)
 			dumpv:
                         if(v->size == 0) { v->vartype = V_REAL; } /* MTI fix */
 
-			if((v->vartype==V_REAL)||((GLOBALS.convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
+			if((v->vartype==V_REAL)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
 				{
 				v->vartype=V_REAL;
 				v->size=1;		/* override any data we parsed in */
@@ -1409,7 +1409,7 @@ for(;;)
 			v->narray=(struct Node **)calloc_2(v->size,sizeof(struct Node *));
 				{
 				int i;
-				if(GLOBALS.atomic_vectors)
+				if(GLOBALS->atomic_vectors)
 					{
 					for(i=0;i<v->size;i++)
 						{
@@ -1438,41 +1438,41 @@ for(;;)
 				v->ev=q=(struct queuedevent *)calloc_2(1,sizeof(struct queuedevent));
 				q->sym=v;
 				q->last_event_time=-1;		
-				q->next=GLOBALS.queuedevents_vcd_c_1;
-				GLOBALS.queuedevents_vcd_c_1=q;		
+				q->next=GLOBALS->queuedevents_vcd_c_1;
+				GLOBALS->queuedevents_vcd_c_1=q;		
 				}
 
-			if(!GLOBALS.vcdsymroot_vcd_c_1)
+			if(!GLOBALS->vcdsymroot_vcd_c_1)
 				{
-				GLOBALS.vcdsymroot_vcd_c_1=GLOBALS.vcdsymcurr_vcd_c_1=v;
+				GLOBALS->vcdsymroot_vcd_c_1=GLOBALS->vcdsymcurr_vcd_c_1=v;
 				}
 				else
 				{
-				GLOBALS.vcdsymcurr_vcd_c_1->next=v;
-				GLOBALS.vcdsymcurr_vcd_c_1=v;
+				GLOBALS->vcdsymcurr_vcd_c_1->next=v;
+				GLOBALS->vcdsymcurr_vcd_c_1=v;
 				}
-			GLOBALS.numsyms_vcd_c_1++;
+			GLOBALS->numsyms_vcd_c_1++;
 
-			if(GLOBALS.vcd_save_handle)
+			if(GLOBALS->vcd_save_handle)
 				{
 				if(v->msi==v->lsi)
 					{
 					if(v->vartype==V_REAL)
 						{
-						fprintf(GLOBALS.vcd_save_handle,"%s\n",v->name);
+						fprintf(GLOBALS->vcd_save_handle,"%s\n",v->name);
 						}
 						else
 						{
 						if(v->msi>=0)
 							{
-							if(!GLOBALS.vcd_explicit_zero_subscripts)
-								fprintf(GLOBALS.vcd_save_handle,"%s%c%d\n",v->name,GLOBALS.hier_delimeter,v->msi);
+							if(!GLOBALS->vcd_explicit_zero_subscripts)
+								fprintf(GLOBALS->vcd_save_handle,"%s%c%d\n",v->name,GLOBALS->hier_delimeter,v->msi);
 								else
-								fprintf(GLOBALS.vcd_save_handle,"%s[%d]\n",v->name,v->msi);
+								fprintf(GLOBALS->vcd_save_handle,"%s[%d]\n",v->name,v->msi);
 							}
 							else
 							{
-							fprintf(GLOBALS.vcd_save_handle,"%s\n",v->name);
+							fprintf(GLOBALS->vcd_save_handle,"%s\n",v->name);
 							}
 						}
 					}
@@ -1480,34 +1480,34 @@ for(;;)
 					{
 					int i;
 
-					if(!GLOBALS.atomic_vectors)
+					if(!GLOBALS->atomic_vectors)
 						{
-						fprintf(GLOBALS.vcd_save_handle,"#%s[%d:%d]",v->name,v->msi,v->lsi);
+						fprintf(GLOBALS->vcd_save_handle,"#%s[%d:%d]",v->name,v->msi,v->lsi);
 						if(v->msi>v->lsi)
 							{
 							for(i=v->msi;i>=v->lsi;i--)
 								{
-								if(!GLOBALS.vcd_explicit_zero_subscripts)
-									fprintf(GLOBALS.vcd_save_handle," %s%c%d",v->name,GLOBALS.hier_delimeter,i);
+								if(!GLOBALS->vcd_explicit_zero_subscripts)
+									fprintf(GLOBALS->vcd_save_handle," %s%c%d",v->name,GLOBALS->hier_delimeter,i);
 									else
-									fprintf(GLOBALS.vcd_save_handle," %s[%d]",v->name,i);
+									fprintf(GLOBALS->vcd_save_handle," %s[%d]",v->name,i);
 								}
 							}
 							else
 							{
 							for(i=v->msi;i<=v->lsi;i++)
 								{
-								if(!GLOBALS.vcd_explicit_zero_subscripts)
-									fprintf(GLOBALS.vcd_save_handle," %s%c%d",v->name,GLOBALS.hier_delimeter,i);
+								if(!GLOBALS->vcd_explicit_zero_subscripts)
+									fprintf(GLOBALS->vcd_save_handle," %s%c%d",v->name,GLOBALS->hier_delimeter,i);
 									else
-									fprintf(GLOBALS.vcd_save_handle," %s[%d]",v->name,i);
+									fprintf(GLOBALS->vcd_save_handle," %s[%d]",v->name,i);
 								}
 							}
-						fprintf(GLOBALS.vcd_save_handle,"\n");
+						fprintf(GLOBALS->vcd_save_handle,"\n");
 						}
 						else
 						{
-						fprintf(GLOBALS.vcd_save_handle,"%s[%d:%d]\n",v->name,v->msi,v->lsi);
+						fprintf(GLOBALS->vcd_save_handle,"%s[%d:%d]\n",v->name,v->msi,v->lsi);
 						}
 					}
 				}
@@ -1519,20 +1519,20 @@ for(;;)
 			err:
 			if(v)
 				{
-				GLOBALS.error_count_vcd_c_1++;
+				GLOBALS->error_count_vcd_c_1++;
 				if(v->name) 
 					{
-					fprintf(stderr, "Near byte %d, $VAR parse error encountered with '%s'\n", (int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)), v->name);
+					fprintf(stderr, "Near byte %d, $VAR parse error encountered with '%s'\n", (int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), v->name);
 					free_2(v->name);
 					}
 					else
 					{
-					fprintf(stderr, "Near byte %d, $VAR parse error encountered\n", (int)(GLOBALS.vcdbyteno_vcd_c_1+(GLOBALS.vst_vcd_c_1-GLOBALS.vcdbuf_vcd_c_1)));
+					fprintf(stderr, "Near byte %d, $VAR parse error encountered\n", (int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)));
 					}
 				if(v->id) free_2(v->id);
 				if(v->value) free_2(v->value);
 				free_2(v);
-				GLOBALS.pv_vcd_c_1 = NULL;
+				GLOBALS->pv_vcd_c_1 = NULL;
 				}
 
 			bail:
@@ -1540,40 +1540,40 @@ for(;;)
 			break;
 			}
 		case T_ENDDEFINITIONS:
-			GLOBALS.header_over_vcd_c_1=1;	/* do symbol table management here */
+			GLOBALS->header_over_vcd_c_1=1;	/* do symbol table management here */
 			create_sorted_table();
-			if((!GLOBALS.sorted_vcd_c_1)&&(!GLOBALS.indexed_vcd_c_1))
+			if((!GLOBALS->sorted_vcd_c_1)&&(!GLOBALS->indexed_vcd_c_1))
 				{
 				fprintf(stderr, "No symbols in VCD file..nothing to do!\n");
 				exit(1);
 				}
-			if(GLOBALS.error_count_vcd_c_1)
+			if(GLOBALS->error_count_vcd_c_1)
 				{
-				fprintf(stderr, "\n%d VCD parse errors encountered, exiting.\n", GLOBALS.error_count_vcd_c_1);
+				fprintf(stderr, "\n%d VCD parse errors encountered, exiting.\n", GLOBALS->error_count_vcd_c_1);
 				exit(1);
 				}
 			break;
 		case T_STRING:
-			if(!GLOBALS.header_over_vcd_c_1)
+			if(!GLOBALS->header_over_vcd_c_1)
 				{
-				GLOBALS.header_over_vcd_c_1=1;	/* do symbol table management here */
+				GLOBALS->header_over_vcd_c_1=1;	/* do symbol table management here */
 				create_sorted_table();
-				if((!GLOBALS.sorted_vcd_c_1)&&(!GLOBALS.indexed_vcd_c_1)) break;
+				if((!GLOBALS->sorted_vcd_c_1)&&(!GLOBALS->indexed_vcd_c_1)) break;
 				}
 				{
 				/* catchall for events when header over */
-				if(GLOBALS.yytext_vcd_c_1[0]=='#')
+				if(GLOBALS->yytext_vcd_c_1[0]=='#')
 					{
 					TimeType time;
-					time=atoi_64(GLOBALS.yytext_vcd_c_1+1);
+					time=atoi_64(GLOBALS->yytext_vcd_c_1+1);
 					
-					if(GLOBALS.start_time_vcd_c_1<0)
+					if(GLOBALS->start_time_vcd_c_1<0)
 						{
-						GLOBALS.start_time_vcd_c_1=time;
+						GLOBALS->start_time_vcd_c_1=time;
 						}
 
-					GLOBALS.current_time_vcd_c_1=time;
-					if(GLOBALS.end_time_vcd_c_1<time) GLOBALS.end_time_vcd_c_1=time;	/* in case of malformed vcd files */
+					GLOBALS->current_time_vcd_c_1=time;
+					if(GLOBALS->end_time_vcd_c_1<time) GLOBALS->end_time_vcd_c_1=time;	/* in case of malformed vcd files */
 					DEBUG(fprintf(stderr,"#"TTFormat"\n",time));
 					}
 					else
@@ -1587,28 +1587,28 @@ for(;;)
 			break;	/* just loop through..                 */
 		case T_DUMPOFF:
 		case T_DUMPPORTSOFF:
-			GLOBALS.dumping_off_vcd_c_1=1;
-			if((!GLOBALS.blackout_regions)||((GLOBALS.blackout_regions)&&(GLOBALS.blackout_regions->bstart<=GLOBALS.blackout_regions->bend)))
+			GLOBALS->dumping_off_vcd_c_1=1;
+			if((!GLOBALS->blackout_regions)||((GLOBALS->blackout_regions)&&(GLOBALS->blackout_regions->bstart<=GLOBALS->blackout_regions->bend)))
 				{
 				struct blackout_region_t *bt = calloc_2(1, sizeof(struct blackout_region_t));
 
-				bt->bstart = GLOBALS.current_time_vcd_c_1;
-				bt->next = GLOBALS.blackout_regions;
-				GLOBALS.blackout_regions = bt;
+				bt->bstart = GLOBALS->current_time_vcd_c_1;
+				bt->next = GLOBALS->blackout_regions;
+				GLOBALS->blackout_regions = bt;
 				}
 			break;
 		case T_DUMPON:
 		case T_DUMPPORTSON:
-			GLOBALS.dumping_off_vcd_c_1=0;
-			if((GLOBALS.blackout_regions)&&(GLOBALS.blackout_regions->bstart>GLOBALS.blackout_regions->bend))
+			GLOBALS->dumping_off_vcd_c_1=0;
+			if((GLOBALS->blackout_regions)&&(GLOBALS->blackout_regions->bstart>GLOBALS->blackout_regions->bend))
 				{
-				GLOBALS.blackout_regions->bend = GLOBALS.current_time_vcd_c_1;
+				GLOBALS->blackout_regions->bend = GLOBALS->current_time_vcd_c_1;
 				}
 			break;
 		case T_DUMPVARS:
 		case T_DUMPPORTS:
-			if(GLOBALS.current_time_vcd_c_1<0)
-				{ GLOBALS.start_time_vcd_c_1=GLOBALS.current_time_vcd_c_1=GLOBALS.end_time_vcd_c_1=0; }
+			if(GLOBALS->current_time_vcd_c_1<0)
+				{ GLOBALS->start_time_vcd_c_1=GLOBALS->current_time_vcd_c_1=GLOBALS->end_time_vcd_c_1=0; }
 			break;
 		case T_VCDCLOSE:
 			break;	/* next token will be '#' time related followed by $end */
@@ -1618,9 +1618,9 @@ for(;;)
 			sync_end(NULL);	/* skip over unknown keywords */
 			break;
 		case T_EOF:
-			if((GLOBALS.blackout_regions)&&(GLOBALS.blackout_regions->bstart>GLOBALS.blackout_regions->bend))
+			if((GLOBALS->blackout_regions)&&(GLOBALS->blackout_regions->bstart>GLOBALS->blackout_regions->bend))
 				{
-				GLOBALS.blackout_regions->bend = GLOBALS.current_time_vcd_c_1;
+				GLOBALS->blackout_regions->bend = GLOBALS->current_time_vcd_c_1;
 				}
 			return;
 		default:
@@ -1652,7 +1652,7 @@ if(!n->curr)
 	}
 	else
 	{
-	if(regadd) { time*=(GLOBALS.time_scale); }
+	if(regadd) { time*=(GLOBALS->time_scale); }
 
 	if(ch=='0')              heval=AN_0; else
 	if(ch=='1')              heval=AN_1; else
@@ -1664,7 +1664,7 @@ if(!n->curr)
         if((ch=='l')||(ch=='L')) heval=AN_L; else
         /* if(ch=='-') */        heval=AN_DASH;		/* default */
 	
-	if((n->curr->v.h_val!=heval)||(time==GLOBALS.start_time_vcd_c_1)||(GLOBALS.vcd_preserve_glitches)) /* same region == go skip */ 
+	if((n->curr->v.h_val!=heval)||(time==GLOBALS->start_time_vcd_c_1)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
         	{
 		if(n->curr->time==time)
 			{
@@ -1672,11 +1672,11 @@ if(!n->curr)
 				time, n, AN_STR[n->curr->v.h_val], ch));
 			n->curr->v.h_val=heval;		/* we have a glitch! */
 
-			GLOBALS.num_glitches_vcd_c_2++;
+			GLOBALS->num_glitches_vcd_c_2++;
 			if(!(n->curr->flags&HIST_GLITCH))
 				{
 				n->curr->flags|=HIST_GLITCH;	/* set the glitch flag */
-				GLOBALS.num_glitch_regions_vcd_c_2++;
+				GLOBALS->num_glitch_regions_vcd_c_2++;
 				}
 			}
 			else
@@ -1687,7 +1687,7 @@ if(!n->curr)
 
                 	n->curr->next=he;
 			n->curr=he;
-                	GLOBALS.regions+=regadd;
+                	GLOBALS->regions+=regadd;
 			}
                 }
        }
@@ -1712,7 +1712,7 @@ switch(ch)
 		}
 		else
 		{
-		if(regadd) { time*=(GLOBALS.time_scale); }
+		if(regadd) { time*=(GLOBALS->time_scale); }
 	
 			if(n->curr->time==time)
 				{
@@ -1721,11 +1721,11 @@ switch(ch)
 				if(n->curr->v.h_vector) free_2(n->curr->v.h_vector);
 				n->curr->v.h_vector=vector;		/* we have a glitch! */
 	
-				GLOBALS.num_glitches_vcd_c_2++;
+				GLOBALS->num_glitches_vcd_c_2++;
 				if(!(n->curr->flags&HIST_GLITCH))
 					{
 					n->curr->flags|=HIST_GLITCH;	/* set the glitch flag */
-					GLOBALS.num_glitch_regions_vcd_c_2++;
+					GLOBALS->num_glitch_regions_vcd_c_2++;
 					}
 				}
 				else
@@ -1737,7 +1737,7 @@ switch(ch)
 	
 	                	n->curr->next=he;
 				n->curr=he;
-	                	GLOBALS.regions+=regadd;
+	                	GLOBALS->regions+=regadd;
 				}
 	       }
 	break;
@@ -1758,13 +1758,13 @@ switch(ch)
 		}
 		else
 		{
-		if(regadd) { time*=(GLOBALS.time_scale); }
+		if(regadd) { time*=(GLOBALS->time_scale); }
 	
 		if(
 		  (n->curr->v.h_vector&&vector&&(*(double *)n->curr->v.h_vector!=*(double *)vector))
-			||(time==GLOBALS.start_time_vcd_c_1)
+			||(time==GLOBALS->start_time_vcd_c_1)
 			||(!n->curr->v.h_vector)
-			||(GLOBALS.vcd_preserve_glitches)
+			||(GLOBALS->vcd_preserve_glitches)
 			) /* same region == go skip */ 
 	        	{
 			if(n->curr->time==time)
@@ -1774,11 +1774,11 @@ switch(ch)
 				if(n->curr->v.h_vector) free_2(n->curr->v.h_vector);
 				n->curr->v.h_vector=vector;		/* we have a glitch! */
 	
-				GLOBALS.num_glitches_vcd_c_2++;
+				GLOBALS->num_glitches_vcd_c_2++;
 				if(!(n->curr->flags&HIST_GLITCH))
 					{
 					n->curr->flags|=HIST_GLITCH;	/* set the glitch flag */
-					GLOBALS.num_glitch_regions_vcd_c_2++;
+					GLOBALS->num_glitch_regions_vcd_c_2++;
 					}
 				}
 				else
@@ -1790,7 +1790,7 @@ switch(ch)
 	
 	                	n->curr->next=he;
 				n->curr=he;
-	                	GLOBALS.regions+=regadd;
+	                	GLOBALS->regions+=regadd;
 				}
 	                }
 			else
@@ -1815,13 +1815,13 @@ switch(ch)
 		}
 		else
 		{
-		if(regadd) { time*=(GLOBALS.time_scale); }
+		if(regadd) { time*=(GLOBALS->time_scale); }
 	
 		if(
 		  (n->curr->v.h_vector&&vector&&(strcmp(n->curr->v.h_vector,vector)))
-			||(time==GLOBALS.start_time_vcd_c_1)
+			||(time==GLOBALS->start_time_vcd_c_1)
 			||(!n->curr->v.h_vector)
-			||(GLOBALS.vcd_preserve_glitches)
+			||(GLOBALS->vcd_preserve_glitches)
 			) /* same region == go skip */ 
 	        	{
 			if(n->curr->time==time)
@@ -1831,11 +1831,11 @@ switch(ch)
 				if(n->curr->v.h_vector) free_2(n->curr->v.h_vector);
 				n->curr->v.h_vector=vector;		/* we have a glitch! */
 	
-				GLOBALS.num_glitches_vcd_c_2++;
+				GLOBALS->num_glitches_vcd_c_2++;
 				if(!(n->curr->flags&HIST_GLITCH))
 					{
 					n->curr->flags|=HIST_GLITCH;	/* set the glitch flag */
-					GLOBALS.num_glitch_regions_vcd_c_2++;
+					GLOBALS->num_glitch_regions_vcd_c_2++;
 					}
 				}
 				else
@@ -1846,7 +1846,7 @@ switch(ch)
 	
 	                	n->curr->next=he;
 				n->curr=he;
-	                	GLOBALS.regions+=regadd;
+	                	GLOBALS->regions+=regadd;
 				}
 	                }
 			else
@@ -1869,11 +1869,11 @@ struct vcdsymbol *v;
 
 /* dump out any pending events 1st */
 struct queuedevent *q;
-q=GLOBALS.queuedevents_vcd_c_1;
+q=GLOBALS->queuedevents_vcd_c_1;
 while(q)
 	{	
 	v=q->sym;
-	if(GLOBALS.current_time_vcd_c_1!=(v->ev->last_event_time+1))
+	if(GLOBALS->current_time_vcd_c_1!=(v->ev->last_event_time+1))
 		{
 		/* dump degating event */
 		DEBUG(fprintf(stderr,"#"TTFormat" %s = '%c' (event)\n",v->ev->last_event_time+1,v->name,'0'));
@@ -1884,7 +1884,7 @@ while(q)
 
 /* then do 'x' trailers */
 
-v=GLOBALS.vcdsymroot_vcd_c_1;
+v=GLOBALS->vcdsymroot_vcd_c_1;
 while(v)
 	{
 	if(v->vartype==V_REAL)
@@ -1896,7 +1896,7 @@ while(v)
 		add_histent(MAX_HISTENT_TIME-1, v->narray[0], 'g', 0, (char *)d);
 		}
 	else
-	if((v->size==1)||(!GLOBALS.atomic_vectors))
+	if((v->size==1)||(!GLOBALS->atomic_vectors))
 	for(j=0;j<v->size;j++)
 		{
 		add_histent(MAX_HISTENT_TIME-1, v->narray[j], 'x', 0, NULL);
@@ -1909,7 +1909,7 @@ while(v)
 	v=v->next;
 	}
 
-v=GLOBALS.vcdsymroot_vcd_c_1;
+v=GLOBALS->vcdsymroot_vcd_c_1;
 while(v)
 	{
 	if(v->vartype==V_REAL)
@@ -1921,7 +1921,7 @@ while(v)
 		add_histent(MAX_HISTENT_TIME, v->narray[0], 'g', 0, (char *)d);
 		}
 	else
-	if((v->size==1)||(!GLOBALS.atomic_vectors))
+	if((v->size==1)||(!GLOBALS->atomic_vectors))
 	for(j=0;j<v->size;j++)
 		{
 		add_histent(MAX_HISTENT_TIME, v->narray[j], 'z', 0, NULL);
@@ -1947,7 +1947,7 @@ char hashdirty;
 struct vcdsymbol *v, *vprime;
 char *str = NULL;
 
-v=GLOBALS.vcdsymroot_vcd_c_1;
+v=GLOBALS->vcdsymroot_vcd_c_1;
 while(v)
 	{
 	int msi;
@@ -1967,7 +1967,7 @@ while(v)
 
 		if(v->msi>=0)
 			{
-			strcpy(str+slen,GLOBALS.vcd_hier_delimeter);
+			strcpy(str+slen,GLOBALS->vcd_hier_delimeter);
 			slen++;
 			}
 
@@ -1983,7 +1983,7 @@ while(v)
 				}
 			}
 
-		if(((v->size==1)||(!GLOBALS.atomic_vectors))&&(v->vartype!=V_REAL))
+		if(((v->size==1)||(!GLOBALS->atomic_vectors))&&(v->vartype!=V_REAL))
 			{
 			struct symbol *s = NULL;
 	
@@ -1991,7 +1991,7 @@ while(v)
 				{
 				if(v->msi>=0) 
 					{
-					if(!GLOBALS.vcd_explicit_zero_subscripts)
+					if(!GLOBALS->vcd_explicit_zero_subscripts)
 						sprintf(str+slen,"%d",msi);
 						else
 						sprintf(str+slen-1,"[%d]",msi);
@@ -2004,7 +2004,7 @@ while(v)
 					hashdirty=1;
 					DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
-					do sprintf(dupfix, "$DUP%d%s%s", duphier++, GLOBALS.vcd_hier_delimeter, str);
+					do sprintf(dupfix, "$DUP%d%s%s", duphier++, GLOBALS->vcd_hier_delimeter, str);
 						while(symfind(dupfix, NULL));
 
 					strcpy(str, dupfix);
@@ -2013,7 +2013,7 @@ while(v)
 					}
 					/* fallthrough */
 					{
-					s=symadd(str,hashdirty?hash(str):GLOBALS.hashcache);
+					s=symadd(str,hashdirty?hash(str):GLOBALS->hashcache);
 	
 					s->n=v->narray[j];
 					if(substnode)
@@ -2031,17 +2031,17 @@ while(v)
 	
 					s->n->nname=s->name;
 					s->h=s->n->curr;
-					if(!GLOBALS.firstnode)
+					if(!GLOBALS->firstnode)
 						{
-						GLOBALS.firstnode=GLOBALS.curnode=s;
+						GLOBALS->firstnode=GLOBALS->curnode=s;
 						}
 						else
 						{
-						GLOBALS.curnode->nextinaet=s;
-						GLOBALS.curnode=s;
+						GLOBALS->curnode->nextinaet=s;
+						GLOBALS->curnode=s;
 						}
 	
-					GLOBALS.numfacs++;
+					GLOBALS->numfacs++;
 					DEBUG(fprintf(stderr,"Added: %s\n",str));
 					}
 				msi+=delta;
@@ -2085,7 +2085,7 @@ while(v)
 				hashdirty=1;
 				DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
-				do sprintf(dupfix, "$DUP%d%s%s", duphier++, GLOBALS.vcd_hier_delimeter, str);
+				do sprintf(dupfix, "$DUP%d%s%s", duphier++, GLOBALS->vcd_hier_delimeter, str);
 					while(symfind(dupfix, NULL));
 
 				strcpy(str, dupfix);
@@ -2096,7 +2096,7 @@ while(v)
 				{
 				struct symbol *s;
 
-				s=symadd(str,hashdirty?hash(str):GLOBALS.hashcache);	/* cut down on double lookups.. */
+				s=symadd(str,hashdirty?hash(str):GLOBALS->hashcache);	/* cut down on double lookups.. */
 
 				s->n=v->narray[0];
 				if(substnode)
@@ -2124,17 +2124,17 @@ while(v)
 
 				s->n->nname=s->name;
 				s->h=s->n->curr;
-				if(!GLOBALS.firstnode)
+				if(!GLOBALS->firstnode)
 					{
-					GLOBALS.firstnode=GLOBALS.curnode=s;
+					GLOBALS->firstnode=GLOBALS->curnode=s;
 					}
 					else
 					{
-					GLOBALS.curnode->nextinaet=s;
-					GLOBALS.curnode=s;
+					GLOBALS->curnode->nextinaet=s;
+					GLOBALS->curnode=s;
 					}
 
-				GLOBALS.numfacs++;
+				GLOBALS->numfacs++;
 				DEBUG(fprintf(stderr,"Added: %s\n",str));
 				}
 			}
@@ -2168,34 +2168,34 @@ void vcd_sortfacs(void)
 {
 int i;
 
-GLOBALS.facs=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
-GLOBALS.curnode=GLOBALS.firstnode;
-for(i=0;i<GLOBALS.numfacs;i++)
+GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
+GLOBALS->curnode=GLOBALS->firstnode;
+for(i=0;i<GLOBALS->numfacs;i++)
         {
         char *subst, ch;
         int len;
                  
-        GLOBALS.facs[i]=GLOBALS.curnode;
-        if((len=strlen(subst=GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
-        GLOBALS.curnode=GLOBALS.curnode->nextinaet;
+        GLOBALS->facs[i]=GLOBALS->curnode;
+        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+        GLOBALS->curnode=GLOBALS->curnode->nextinaet;
         while((ch=(*subst)))
                 {
-                if(ch==GLOBALS.hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
+                if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
                 subst++;
                 }
         }
 
 /* quicksort(facs,0,numfacs-1); */	/* quicksort deprecated because it degenerates on sorted traces..badly.  very badly. */
-wave_heapsort(GLOBALS.facs,GLOBALS.numfacs);
+wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
         {
         char *subst, ch;
          
-        subst=GLOBALS.facs[i]->name;
+        subst=GLOBALS->facs[i]->name;
         while((ch=(*subst)))
                 {
-                if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS.hier_delimeter; } /* restore back to normal */
+                if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
                 subst++;
                 }
         
@@ -2204,30 +2204,30 @@ for(i=0;i<GLOBALS.numfacs;i++)
 #endif
         }
 
-GLOBALS.facs_are_sorted=1;
+GLOBALS->facs_are_sorted=1;
 
 init_tree();
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
 {                       
-build_tree_from_name(GLOBALS.facs[i]->name, i);
+build_tree_from_name(GLOBALS->facs[i]->name, i);
 
-if(GLOBALS.escaped_names_found_vcd_c_1)
+if(GLOBALS->escaped_names_found_vcd_c_1)
 	{
         char *subst, ch;
-        subst=GLOBALS.facs[i]->name;
+        subst=GLOBALS->facs[i]->name;
         while((ch=(*subst)))
                 {
-                if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS.hier_delimeter; } /* restore back to normal */
+                if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
                 subst++;
                 }
 	}
 }                       
-treegraft(GLOBALS.treeroot);
-treesort(GLOBALS.treeroot, NULL);
+treegraft(GLOBALS->treeroot);
+treesort(GLOBALS->treeroot, NULL);
 
-if(GLOBALS.escaped_names_found_vcd_c_1) 
+if(GLOBALS->escaped_names_found_vcd_c_1) 
 	{
-	treenamefix(GLOBALS.treeroot);
+	treenamefix(GLOBALS->treeroot);
 	}
 }
 
@@ -2238,17 +2238,17 @@ static void vcd_cleanup(void)
 struct slist *s, *s2;
 struct vcdsymbol *v, *vt;
 
-if(GLOBALS.indexed_vcd_c_1)
+if(GLOBALS->indexed_vcd_c_1)
 	{
-	free_2(GLOBALS.indexed_vcd_c_1); GLOBALS.indexed_vcd_c_1=NULL; 
+	free_2(GLOBALS->indexed_vcd_c_1); GLOBALS->indexed_vcd_c_1=NULL; 
 	}
 
-if(GLOBALS.sorted_vcd_c_1)
+if(GLOBALS->sorted_vcd_c_1)
 	{
-	free_2(GLOBALS.sorted_vcd_c_1); GLOBALS.sorted_vcd_c_1=NULL; 
+	free_2(GLOBALS->sorted_vcd_c_1); GLOBALS->sorted_vcd_c_1=NULL; 
 	}
 
-v=GLOBALS.vcdsymroot_vcd_c_1;
+v=GLOBALS->vcdsymroot_vcd_c_1;
 while(v)
 	{
 	if(v->name) free_2(v->name);
@@ -2260,10 +2260,10 @@ while(v)
 	v=v->next;
 	free_2(vt);
 	}
-GLOBALS.vcdsymroot_vcd_c_1=GLOBALS.vcdsymcurr_vcd_c_1=NULL;
+GLOBALS->vcdsymroot_vcd_c_1=GLOBALS->vcdsymcurr_vcd_c_1=NULL;
 
-if(GLOBALS.slisthier) { free_2(GLOBALS.slisthier); GLOBALS.slisthier=NULL; }
-s=GLOBALS.slistroot;
+if(GLOBALS->slisthier) { free_2(GLOBALS->slisthier); GLOBALS->slisthier=NULL; }
+s=GLOBALS->slistroot;
 while(s)
 	{
 	s2=s->next;
@@ -2272,22 +2272,22 @@ while(s)
 	s=s2;
 	}
 
-GLOBALS.slistroot=GLOBALS.slistcurr=NULL; GLOBALS.slisthier_len=0;
-GLOBALS.queuedevents_vcd_c_1=NULL; /* deallocated in the symbol stuff */
+GLOBALS->slistroot=GLOBALS->slistcurr=NULL; GLOBALS->slisthier_len=0;
+GLOBALS->queuedevents_vcd_c_1=NULL; /* deallocated in the symbol stuff */
 
-if(GLOBALS.vcd_is_compressed_vcd_c_1)
+if(GLOBALS->vcd_is_compressed_vcd_c_1)
 	{
-	pclose(GLOBALS.vcd_handle_vcd_c_1);
+	pclose(GLOBALS->vcd_handle_vcd_c_1);
 	}
 	else
 	{
-	fclose(GLOBALS.vcd_handle_vcd_c_1);
+	fclose(GLOBALS->vcd_handle_vcd_c_1);
 	}
 
-if(GLOBALS.yytext_vcd_c_1)
+if(GLOBALS->yytext_vcd_c_1)
 	{
-	free_2(GLOBALS.yytext_vcd_c_1);
-	GLOBALS.yytext_vcd_c_1=NULL;
+	free_2(GLOBALS->yytext_vcd_c_1);
+	GLOBALS->yytext_vcd_c_1=NULL;
 	}
 }
 
@@ -2297,16 +2297,16 @@ TimeType vcd_main(char *fname)
 {
 int flen;
 
-GLOBALS.pv_vcd_c_1=GLOBALS.rootv_vcd_c_1=NULL;
-GLOBALS.vcd_hier_delimeter[0]=GLOBALS.hier_delimeter;
+GLOBALS->pv_vcd_c_1=GLOBALS->rootv_vcd_c_1=NULL;
+GLOBALS->vcd_hier_delimeter[0]=GLOBALS->hier_delimeter;
 
 errno=0;	/* reset in case it's set for some reason */
 
-GLOBALS.yytext_vcd_c_1=(char *)malloc_2(GLOBALS.T_MAX_STR_vcd_c_1+1);
+GLOBALS->yytext_vcd_c_1=(char *)malloc_2(GLOBALS->T_MAX_STR_vcd_c_1+1);
 
-if(!GLOBALS.hier_was_explicitly_set) /* set default hierarchy split char */
+if(!GLOBALS->hier_was_explicitly_set) /* set default hierarchy split char */
 	{
-	GLOBALS.hier_delimeter='.';
+	GLOBALS->hier_delimeter='.';
 	}
 
 flen=strlen(fname);
@@ -2319,47 +2319,47 @@ if (((flen>2)&&(!strcmp(fname+flen-3,".gz")))||
 	str=wave_alloca(strlen(fname)+dlen+1);
 	strcpy(str,WAVE_DECOMPRESSOR);
 	strcpy(str+dlen,fname);
-	GLOBALS.vcd_handle_vcd_c_1=popen(str,"r");
-	GLOBALS.vcd_is_compressed_vcd_c_1=~0;
+	GLOBALS->vcd_handle_vcd_c_1=popen(str,"r");
+	GLOBALS->vcd_is_compressed_vcd_c_1=~0;
 	}
 	else
 	{
 	if(strcmp("-vcd",fname))
 		{
-		GLOBALS.vcd_handle_vcd_c_1=fopen(fname,"rb");
+		GLOBALS->vcd_handle_vcd_c_1=fopen(fname,"rb");
 
-		if(GLOBALS.vcd_handle_vcd_c_1)
+		if(GLOBALS->vcd_handle_vcd_c_1)
 			{
-			fseeko(GLOBALS.vcd_handle_vcd_c_1, 0, SEEK_END);	/* do status bar for vcd load */
-			GLOBALS.vcd_fsiz_vcd_c_1 = ftello(GLOBALS.vcd_handle_vcd_c_1);
-			fseeko(GLOBALS.vcd_handle_vcd_c_1, 0, SEEK_SET);
+			fseeko(GLOBALS->vcd_handle_vcd_c_1, 0, SEEK_END);	/* do status bar for vcd load */
+			GLOBALS->vcd_fsiz_vcd_c_1 = ftello(GLOBALS->vcd_handle_vcd_c_1);
+			fseeko(GLOBALS->vcd_handle_vcd_c_1, 0, SEEK_SET);
 			}
 
-		if(GLOBALS.vcd_warning_filesize < 0) GLOBALS.vcd_warning_filesize = VCD_SIZE_WARN;
+		if(GLOBALS->vcd_warning_filesize < 0) GLOBALS->vcd_warning_filesize = VCD_SIZE_WARN;
 
-		if(GLOBALS.vcd_warning_filesize)
-		if(GLOBALS.vcd_fsiz_vcd_c_1 > (GLOBALS.vcd_warning_filesize * (1024 * 1024)))
+		if(GLOBALS->vcd_warning_filesize)
+		if(GLOBALS->vcd_fsiz_vcd_c_1 > (GLOBALS->vcd_warning_filesize * (1024 * 1024)))
 			{
 			fprintf(stderr, "Warning! File size is %d MB.  This might fail to load.\n"
 					"Consider converting it to lxt, lxt2, or vzt database formats instead.  (See\n"
 					"the vcd2lxt(1), vcd2lxt2(1), and vzt2vzt(1) manpages for more information.)\n"
 					"To disable this warning, set rc variable vcd_warning_filesize to zero.\n"
 					"Alternatively, use the -o, --optimize command line option to convert to LXT2.\n\n",
-						(int)(GLOBALS.vcd_fsiz_vcd_c_1/(1024*1024)));
+						(int)(GLOBALS->vcd_fsiz_vcd_c_1/(1024*1024)));
 			}
 		}
 		else
 		{
-		GLOBALS.vcd_handle_vcd_c_1=stdin;
-		GLOBALS.splash_disable = 1;
+		GLOBALS->vcd_handle_vcd_c_1=stdin;
+		GLOBALS->splash_disable = 1;
 		}
-	GLOBALS.vcd_is_compressed_vcd_c_1=0;
+	GLOBALS->vcd_is_compressed_vcd_c_1=0;
 	}
 
-if(!GLOBALS.vcd_handle_vcd_c_1)
+if(!GLOBALS->vcd_handle_vcd_c_1)
 	{
 	fprintf(stderr, "Error opening %s .vcd file '%s'.\n",
-		GLOBALS.vcd_is_compressed_vcd_c_1?"compressed":"", fname);
+		GLOBALS->vcd_is_compressed_vcd_c_1?"compressed":"", fname);
 	exit(1);
 	}
 
@@ -2370,36 +2370,36 @@ getch_alloc();		/* alloc membuff for vcd getch buffer */
 build_slisthier();
 
 vcd_parse();
-if(GLOBALS.varsplit_vcd_c_1)
+if(GLOBALS->varsplit_vcd_c_1)
 	{
-	free_2(GLOBALS.varsplit_vcd_c_1);
-	GLOBALS.varsplit_vcd_c_1=NULL;
+	free_2(GLOBALS->varsplit_vcd_c_1);
+	GLOBALS->varsplit_vcd_c_1=NULL;
 	}
 
-if((!GLOBALS.sorted_vcd_c_1)&&(!GLOBALS.indexed_vcd_c_1))
+if((!GLOBALS->sorted_vcd_c_1)&&(!GLOBALS->indexed_vcd_c_1))
 	{
 	fprintf(stderr, "No symbols in VCD file..is it malformed?  Exiting!\n");
 	exit(1);
 	}
 add_tail_histents();
 
-if(GLOBALS.vcd_save_handle) fclose(GLOBALS.vcd_save_handle);
+if(GLOBALS->vcd_save_handle) fclose(GLOBALS->vcd_save_handle);
 
-fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS.start_time_vcd_c_1*GLOBALS.time_scale, GLOBALS.end_time_vcd_c_1*GLOBALS.time_scale);
-if(GLOBALS.num_glitches_vcd_c_2) fprintf(stderr, "Warning: encountered %d glitch%s across %d glitch region%s.\n", 
-		GLOBALS.num_glitches_vcd_c_2, (GLOBALS.num_glitches_vcd_c_2!=1)?"es":"",
-		GLOBALS.num_glitch_regions_vcd_c_2, (GLOBALS.num_glitch_regions_vcd_c_2!=1)?"s":"");
+fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS->start_time_vcd_c_1*GLOBALS->time_scale, GLOBALS->end_time_vcd_c_1*GLOBALS->time_scale);
+if(GLOBALS->num_glitches_vcd_c_2) fprintf(stderr, "Warning: encountered %d glitch%s across %d glitch region%s.\n", 
+		GLOBALS->num_glitches_vcd_c_2, (GLOBALS->num_glitches_vcd_c_2!=1)?"es":"",
+		GLOBALS->num_glitch_regions_vcd_c_2, (GLOBALS->num_glitch_regions_vcd_c_2!=1)?"s":"");
 
-if(GLOBALS.vcd_fsiz_vcd_c_1)
+if(GLOBALS->vcd_fsiz_vcd_c_1)
         {
-        splash_sync(GLOBALS.vcd_fsiz_vcd_c_1, GLOBALS.vcd_fsiz_vcd_c_1);
-	GLOBALS.vcd_fsiz_vcd_c_1 = 0;
+        splash_sync(GLOBALS->vcd_fsiz_vcd_c_1, GLOBALS->vcd_fsiz_vcd_c_1);
+	GLOBALS->vcd_fsiz_vcd_c_1 = 0;
         }
 else
-if(GLOBALS.vcd_is_compressed_vcd_c_1)
+if(GLOBALS->vcd_is_compressed_vcd_c_1)
 	{
         splash_sync(1,1);
-	GLOBALS.vcd_fsiz_vcd_c_1 = 0;
+	GLOBALS->vcd_fsiz_vcd_c_1 = 0;
 	}
 
 vcd_build_symbols();
@@ -2408,18 +2408,18 @@ vcd_cleanup();
 
 getch_free();		/* free membuff for vcd getch buffer */
 
-GLOBALS.min_time=GLOBALS.start_time_vcd_c_1*GLOBALS.time_scale;
-GLOBALS.max_time=GLOBALS.end_time_vcd_c_1*GLOBALS.time_scale;
+GLOBALS->min_time=GLOBALS->start_time_vcd_c_1*GLOBALS->time_scale;
+GLOBALS->max_time=GLOBALS->end_time_vcd_c_1*GLOBALS->time_scale;
 
-if((GLOBALS.min_time==GLOBALS.max_time)||(GLOBALS.max_time==0))
+if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
         {
         fprintf(stderr, "VCD times range is equal to zero.  Exiting.\n");
         exit(1);
         }
 
-GLOBALS.is_vcd=~0;
+GLOBALS->is_vcd=~0;
 
-return(GLOBALS.max_time);
+return(GLOBALS->max_time);
 }
 
 /*******************************************************************************/
@@ -2427,6 +2427,10 @@ return(GLOBALS.max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:50  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:27  kermin
  * Semi working global struct
  *

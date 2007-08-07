@@ -164,12 +164,12 @@ int i;
 struct symbol *psr = NULL;
 struct symbol *root = NULL;
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
 	{
 	if(psr)
 		{
-		char *fstr1 = GLOBALS.facs[i-1]->name;
-		char *fstr2 = GLOBALS.facs[i]->name;
+		char *fstr1 = GLOBALS->facs[i-1]->name;
+		char *fstr2 = GLOBALS->facs[i]->name;
 		int p1 = strand_pnt(fstr1);
 		int p2 = strand_pnt(fstr2);
 
@@ -179,10 +179,10 @@ for(i=0;i<GLOBALS.numfacs;i++)
 				{
 				if(!strncmp(fstr1, fstr2, p1))
 					{
-					root = GLOBALS.facs[i-1];
+					root = GLOBALS->facs[i-1];
 					root->vec_root = root;
-					root->vec_chain = GLOBALS.facs[i];
-					GLOBALS.facs[i]->vec_root = root;
+					root->vec_chain = GLOBALS->facs[i];
+					GLOBALS->facs[i]->vec_root = root;
 					}
 				}
 			}				
@@ -192,8 +192,8 @@ for(i=0;i<GLOBALS.numfacs;i++)
 				{
 				if(!strncmp(fstr1, fstr2, p1))
 					{
-					psr->vec_chain = GLOBALS.facs[i];
-					GLOBALS.facs[i]->vec_root = root;
+					psr->vec_chain = GLOBALS->facs[i];
+					GLOBALS->facs[i]->vec_root = root;
 					}
 					else
 					{
@@ -207,7 +207,7 @@ for(i=0;i<GLOBALS.numfacs;i++)
 			}
 		}
 	
-	psr = GLOBALS.facs[i];
+	psr = GLOBALS->facs[i];
 	}
 }
 
@@ -223,7 +223,7 @@ if(t)
 	if(t->child) { recurse_tree_build_whichcache(t->child); }
 	if(t->next) { recurse_tree_build_whichcache(t->next); }
 
-	if(t->which >= 0) GLOBALS.gwt_ghw_c_1 = ghw_insert(t, GLOBALS.gwt_ghw_c_1, t->which, GLOBALS.facs[t->which]);
+	if(t->which >= 0) GLOBALS->gwt_ghw_c_1 = ghw_insert(t, GLOBALS->gwt_ghw_c_1, t->which, GLOBALS->facs[t->which]);
 	}
 }
 
@@ -236,10 +236,10 @@ if(t)
 
 	if(t->which >= 0) 
 		{
-		GLOBALS.gwt_ghw_c_1 = ghw_splay(t, GLOBALS.gwt_ghw_c_1);
-		GLOBALS.gwt_corr_ghw_c_1 = ghw_splay(GLOBALS.gwt_ghw_c_1->sym, GLOBALS.gwt_corr_ghw_c_1); /* all facs are in this tree so this is OK */
+		GLOBALS->gwt_ghw_c_1 = ghw_splay(t, GLOBALS->gwt_ghw_c_1);
+		GLOBALS->gwt_corr_ghw_c_1 = ghw_splay(GLOBALS->gwt_ghw_c_1->sym, GLOBALS->gwt_corr_ghw_c_1); /* all facs are in this tree so this is OK */
 
-		t->which = GLOBALS.gwt_corr_ghw_c_1->val_old;				
+		t->which = GLOBALS->gwt_corr_ghw_c_1->val_old;				
 		}
 	}
 }
@@ -261,46 +261,46 @@ static void ghw_sortfacs(void)
 {
 int i;  
 
-recurse_tree_build_whichcache(GLOBALS.treeroot);
+recurse_tree_build_whichcache(GLOBALS->treeroot);
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
         {
         char *subst, ch;
         int len;
-        struct symbol *curnode = GLOBALS.facs[i];
+        struct symbol *curnode = GLOBALS->facs[i];
 
-        if((len=strlen(subst=curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
+        if((len=strlen(subst=curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
         while((ch=(*subst)))
                 { 
-                if(ch==GLOBALS.hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
+                if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
                 subst++;
                 }
         }
 
-wave_heapsort(GLOBALS.facs,GLOBALS.numfacs);
+wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	GLOBALS.gwt_corr_ghw_c_1 = ghw_insert(GLOBALS.facs[i], GLOBALS.gwt_corr_ghw_c_1, i, NULL);
+	GLOBALS->gwt_corr_ghw_c_1 = ghw_insert(GLOBALS->facs[i], GLOBALS->gwt_corr_ghw_c_1, i, NULL);
 	}
 
-recurse_tree_fix_from_whichcache(GLOBALS.treeroot);
-incinerate_whichcache_tree(GLOBALS.gwt_ghw_c_1); GLOBALS.gwt_ghw_c_1 = NULL;
-incinerate_whichcache_tree(GLOBALS.gwt_corr_ghw_c_1); GLOBALS.gwt_corr_ghw_c_1 = NULL;
+recurse_tree_fix_from_whichcache(GLOBALS->treeroot);
+incinerate_whichcache_tree(GLOBALS->gwt_ghw_c_1); GLOBALS->gwt_ghw_c_1 = NULL;
+incinerate_whichcache_tree(GLOBALS->gwt_corr_ghw_c_1); GLOBALS->gwt_corr_ghw_c_1 = NULL;
  
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
         {
         char *subst, ch;
 
-        subst=GLOBALS.facs[i]->name;
+        subst=GLOBALS->facs[i]->name;
         while((ch=(*subst)))
                 {
-                if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS.hier_delimeter; } /* restore back to normal */
+                if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
                 subst++;
                 }
         }
 
-GLOBALS.facs_are_sorted=1;
+GLOBALS->facs_are_sorted=1;
 }
 
 /*******************************************************************************/
@@ -322,8 +322,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
   if (dim == base->nbr_dim)
     {
       struct tree *t;
-      sprintf (GLOBALS.asbuf, "%s]", pfx);
-      name = strdup_2(GLOBALS.asbuf);
+      sprintf (GLOBALS->asbuf, "%s]", pfx);
+      name = strdup_2(GLOBALS->asbuf);
 
       t = build_hierarchy_type (h, base->el, name, sig);
       
@@ -348,8 +348,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS.asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup_2(GLOBALS.asbuf);
+	    sprintf(GLOBALS->asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
+            name = strdup_2(GLOBALS->asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
 	    free_2(name);
 	    if (v == r->right)
@@ -374,8 +374,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS.asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup_2(GLOBALS.asbuf);
+	    sprintf(GLOBALS->asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
+            name = strdup_2(GLOBALS->asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
 	    free_2(name);
 	    if (v == r->right)
@@ -415,21 +415,21 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
     case ghdl_rtik_type_p64:
 
       s = calloc_2(1, sizeof(struct symbol));
-      if(!GLOBALS.sym_head_ghw_c_1)
+      if(!GLOBALS->sym_head_ghw_c_1)
 		{
-		GLOBALS.sym_head_ghw_c_1 = GLOBALS.sym_curr_ghw_c_1 = s;
+		GLOBALS->sym_head_ghw_c_1 = GLOBALS->sym_curr_ghw_c_1 = s;
 		}
 		else
 		{
-		GLOBALS.sym_curr_ghw_c_1->next = s; GLOBALS.sym_curr_ghw_c_1 = s;
+		GLOBALS->sym_curr_ghw_c_1->next = s; GLOBALS->sym_curr_ghw_c_1 = s;
 		}
 
-      GLOBALS.nbr_sig_ref_ghw_c_1++;
+      GLOBALS->nbr_sig_ref_ghw_c_1++;
       res = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(pfx));
       strcpy(res->name, (char *)pfx);
       res->which = *(*sig)++;
 
-      s->n = GLOBALS.nxp_ghw_c_1[res->which];
+      s->n = GLOBALS->nxp_ghw_c_1[res->which];
       return res;
     case ghdl_rtik_subtype_array:
     case ghdl_rtik_subtype_array_ptr:
@@ -567,11 +567,11 @@ facs_debug (void)
   int i;
   struct Node *n;
 
-  for (i = 0; i < GLOBALS.numfacs; i++)
+  for (i = 0; i < GLOBALS->numfacs; i++)
     {
       hptr h;
 
-      n = GLOBALS.facs[i]->n;
+      n = GLOBALS->facs[i]->n;
       printf ("%d: %s\n", i, n->nname);
       if (n->ext)
 	printf ("  ext: %d - %d\n", n->ext->msi, n->ext->lsi);
@@ -586,21 +586,21 @@ static void
 create_facs (struct ghw_handler *h)
 {
   int i;
-  struct symbol *s = GLOBALS.sym_head_ghw_c_1;
+  struct symbol *s = GLOBALS->sym_head_ghw_c_1;
 
-  GLOBALS.numfacs = GLOBALS.nbr_sig_ref_ghw_c_1;
-  GLOBALS.facs=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
+  GLOBALS->numfacs = GLOBALS->nbr_sig_ref_ghw_c_1;
+  GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
   i = 0;
   while(s)
 	{
-	GLOBALS.facs[i++] = s;
+	GLOBALS->facs[i++] = s;
 	s = s->next;
 	}
 
   for (i = 0; i < h->nbr_sigs; i++)
     {
-      struct Node *n = GLOBALS.nxp_ghw_c_1[i];
+      struct Node *n = GLOBALS->nxp_ghw_c_1[i];
 
       if (h->sigs[i].type)
 	switch (h->sigs[i].type->kind)
@@ -613,7 +613,7 @@ create_facs (struct ghw_handler *h)
 	      }
 	    /* FALLTHROUGH */
 	  case ghdl_rtik_type_e8:
-	    if (GLOBALS.xlat_1164_ghw_c_1 && h->sigs[i].type->en.wkt == ghw_wkt_std_ulogic)
+	    if (GLOBALS->xlat_1164_ghw_c_1 && h->sigs[i].type->en.wkt == ghw_wkt_std_ulogic)
 	      {
 		n->ext = NULL;
 		break;
@@ -625,7 +625,7 @@ create_facs (struct ghw_handler *h)
 	  case ghdl_rtik_type_f64:
 	  case ghdl_rtik_type_p32:
 	  case ghdl_rtik_type_p64:
-	    n->ext = &GLOBALS.dummy_en_ghw_c_1;
+	    n->ext = &GLOBALS->dummy_en_ghw_c_1;
 	    break;
 	  default:
 	    fprintf (stderr, "ghw:create_facs: unhandled kind %d\n",
@@ -644,7 +644,7 @@ set_fac_name_1 (struct tree *t)
 {
   for (; t != NULL; t = t->next)
     {
-      int prev_len = GLOBALS.fac_name_len_ghw_c_1;
+      int prev_len = GLOBALS->fac_name_len_ghw_c_1;
 
       /* Complete the name.  */
       if(t->name[0]) /* originally (t->name != NULL) when using pointers */
@@ -652,61 +652,61 @@ set_fac_name_1 (struct tree *t)
 	  int len;
 	  
 	  len = strlen (t->name) + 1;
-	  if (len + GLOBALS.fac_name_len_ghw_c_1 >= GLOBALS.fac_name_max_ghw_c_1)
+	  if (len + GLOBALS->fac_name_len_ghw_c_1 >= GLOBALS->fac_name_max_ghw_c_1)
 	    {
-	      GLOBALS.fac_name_max_ghw_c_1 *= 2;
-	      if (GLOBALS.fac_name_max_ghw_c_1 <= len + GLOBALS.fac_name_len_ghw_c_1)
-		GLOBALS.fac_name_max_ghw_c_1 = len + GLOBALS.fac_name_len_ghw_c_1 + 1;
-	      GLOBALS.fac_name_ghw_c_1 = realloc_2(GLOBALS.fac_name_ghw_c_1, GLOBALS.fac_name_max_ghw_c_1);
+	      GLOBALS->fac_name_max_ghw_c_1 *= 2;
+	      if (GLOBALS->fac_name_max_ghw_c_1 <= len + GLOBALS->fac_name_len_ghw_c_1)
+		GLOBALS->fac_name_max_ghw_c_1 = len + GLOBALS->fac_name_len_ghw_c_1 + 1;
+	      GLOBALS->fac_name_ghw_c_1 = realloc_2(GLOBALS->fac_name_ghw_c_1, GLOBALS->fac_name_max_ghw_c_1);
 	    }
           if(t->name[0] != '[')
 		{
-	  	GLOBALS.fac_name_ghw_c_1[GLOBALS.fac_name_len_ghw_c_1] = '.';
+	  	GLOBALS->fac_name_ghw_c_1[GLOBALS->fac_name_len_ghw_c_1] = '.';
 	  	/* The NUL is copied, since LEN is 1 + strlen.  */
-	  	memcpy (GLOBALS.fac_name_ghw_c_1 + GLOBALS.fac_name_len_ghw_c_1 + 1, t->name, len);
-	  	GLOBALS.fac_name_len_ghw_c_1 += len;
+	  	memcpy (GLOBALS->fac_name_ghw_c_1 + GLOBALS->fac_name_len_ghw_c_1 + 1, t->name, len);
+	  	GLOBALS->fac_name_len_ghw_c_1 += len;
 		}
 		else
 		{
-	  	memcpy (GLOBALS.fac_name_ghw_c_1 + GLOBALS.fac_name_len_ghw_c_1, t->name, len);
-	  	GLOBALS.fac_name_len_ghw_c_1 += (len - 1);
+	  	memcpy (GLOBALS->fac_name_ghw_c_1 + GLOBALS->fac_name_len_ghw_c_1, t->name, len);
+	  	GLOBALS->fac_name_len_ghw_c_1 += (len - 1);
 		}
 	}
 
       if (t->which >= 0)
 	{
-        struct symbol *s = GLOBALS.sym_head_ghw_c_1;
+        struct symbol *s = GLOBALS->sym_head_ghw_c_1;
 
-	s->name = strdup_2(GLOBALS.fac_name_ghw_c_1);
-	s->n = GLOBALS.nxp_ghw_c_1[t->which];
+	s->name = strdup_2(GLOBALS->fac_name_ghw_c_1);
+	s->n = GLOBALS->nxp_ghw_c_1[t->which];
 	if(!s->n->nname) s->n->nname = s->name;
 
-	t->which = GLOBALS.sym_which_ghw_c_1++; /* patch in gtkwave "which" as node is correct */
+	t->which = GLOBALS->sym_which_ghw_c_1++; /* patch in gtkwave "which" as node is correct */
 
-	GLOBALS.sym_head_ghw_c_1 = GLOBALS.sym_head_ghw_c_1->next;
+	GLOBALS->sym_head_ghw_c_1 = GLOBALS->sym_head_ghw_c_1->next;
 	}
 
       if (t->child)
 	set_fac_name_1 (t->child);
 
       /* Revert name.  */
-      GLOBALS.fac_name_len_ghw_c_1 = prev_len;
-      GLOBALS.fac_name_ghw_c_1[GLOBALS.fac_name_len_ghw_c_1] = 0;
+      GLOBALS->fac_name_len_ghw_c_1 = prev_len;
+      GLOBALS->fac_name_ghw_c_1[GLOBALS->fac_name_len_ghw_c_1] = 0;
     }
 }
 
 static void
 set_fac_name (struct ghw_handler *h)
 {
-  if (GLOBALS.fac_name_max_ghw_c_1 == 0)
+  if (GLOBALS->fac_name_max_ghw_c_1 == 0)
     {
-      GLOBALS.fac_name_max_ghw_c_1 = 1024;
-      GLOBALS.fac_name_ghw_c_1 = malloc_2(GLOBALS.fac_name_max_ghw_c_1);
+      GLOBALS->fac_name_max_ghw_c_1 = 1024;
+      GLOBALS->fac_name_ghw_c_1 = malloc_2(GLOBALS->fac_name_max_ghw_c_1);
     }
-  GLOBALS.fac_name_len_ghw_c_1 = 3;
-  memcpy (GLOBALS.fac_name_ghw_c_1, "top", 4);
-  GLOBALS.last_fac_ghw_c_1 = h->nbr_sigs;
-  set_fac_name_1 (GLOBALS.treeroot);
+  GLOBALS->fac_name_len_ghw_c_1 = 3;
+  memcpy (GLOBALS->fac_name_ghw_c_1, "top", 4);
+  GLOBALS->last_fac_ghw_c_1 = h->nbr_sigs;
+  set_fac_name_1 (GLOBALS->treeroot);
 }
 
 static void
@@ -721,7 +721,7 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
   if (sig_type == NULL)
     return;
 
-  GLOBALS.regions++;
+  GLOBALS->regions++;
 
   switch (sig_type->kind)
     {
@@ -733,7 +733,7 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
 	}
       /* FALLTHROUGH */
     case ghdl_rtik_type_e8:
-      if (GLOBALS.xlat_1164_ghw_c_1 && sig_type->en.wkt == ghw_wkt_std_ulogic)
+      if (GLOBALS->xlat_1164_ghw_c_1 && sig_type->en.wkt == ghw_wkt_std_ulogic)
 	{
 	  flags = 0;
 	  break;
@@ -747,9 +747,9 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       flags = HIST_STRING|HIST_REAL;
       if (HIST_STRING == 0)
 	{
-	  if (!GLOBALS.warned_ghw_c_1)
+	  if (!GLOBALS->warned_ghw_c_1)
 	    fprintf (stderr, "warning: do not compile with STRICT_VCD\n");
-	  GLOBALS.warned_ghw_c_1 = 1;
+	  GLOBALS->warned_ghw_c_1 = 1;
 	  return;
 	}
       break;
@@ -790,7 +790,7 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
         }
       break;
     case ghdl_rtik_type_e8:
-      if (GLOBALS.xlat_1164_ghw_c_1 && sig_type->en.wkt == ghw_wkt_std_ulogic)
+      if (GLOBALS->xlat_1164_ghw_c_1 && sig_type->en.wkt == ghw_wkt_std_ulogic)
 	{
 	  /* Res: 0->0, 1->X, 2->Z, 3->1 */
           static const char map_su2vlg[9] = {
@@ -816,14 +816,14 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       break;
     case ghdl_rtik_type_i32:
     case ghdl_rtik_type_p32:
-      sprintf (GLOBALS.asbuf, "%d", sig->val->i32);
-      he->v.h_vector = strdup_2(GLOBALS.asbuf);    
+      sprintf (GLOBALS->asbuf, "%d", sig->val->i32);
+      he->v.h_vector = strdup_2(GLOBALS->asbuf);    
       is_vector = 1;
       break;
     case ghdl_rtik_type_i64:
     case ghdl_rtik_type_p64:
-      sprintf (GLOBALS.asbuf, TTFormat, sig->val->i64);
-      he->v.h_vector = strdup_2(GLOBALS.asbuf);    
+      sprintf (GLOBALS->asbuf, TTFormat, sig->val->i64);
+      he->v.h_vector = strdup_2(GLOBALS->asbuf);    
       is_vector = 1;
       break;
     default:
@@ -833,11 +833,11 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
     /* deglitch */
     if(n->curr->time == he->time)
 	{
-        GLOBALS.num_glitches_ghw_c_1++;
+        GLOBALS->num_glitches_ghw_c_1++;
 	if(!(n->curr->flags&HIST_GLITCH))
         	{
                 n->curr->flags|=HIST_GLITCH;    /* set the glitch flag */
-                GLOBALS.num_glitch_regions_ghw_c_1++;
+                GLOBALS->num_glitch_regions_ghw_c_1++;
                 }
 
         if(is_vector)
@@ -880,7 +880,7 @@ add_tail (struct ghw_handler *h)
   for (i = 0; i < h->nbr_sigs; i++)
     {
       struct ghw_sig *sig = &h->sigs[i];
-      struct Node *n = GLOBALS.nxp_ghw_c_1[i];
+      struct Node *n = GLOBALS->nxp_ghw_c_1[i];
       struct HistEnt *he;
       
       if (sig->type == NULL || n == NULL || !n->curr)
@@ -905,7 +905,7 @@ read_traces (struct ghw_handler *h)
   int i;
   enum ghw_res res;
   
-  list = malloc_2((GLOBALS.numfacs + 1) * sizeof (int));
+  list = malloc_2((GLOBALS->numfacs + 1) * sizeof (int));
   
   while (1)
     {
@@ -920,12 +920,12 @@ read_traces (struct ghw_handler *h)
 	case ghw_res_other:
 	  break;
 	case ghw_res_snapshot:
-	  if (h->snap_time > GLOBALS.max_time)
-	    GLOBALS.max_time = h->snap_time;
+	  if (h->snap_time > GLOBALS->max_time)
+	    GLOBALS->max_time = h->snap_time;
 	  /* printf ("Time is "TTFormat"\n", h->snap_time); */
 
 	  for (i = 0; i < h->nbr_sigs; i++)
-	    add_history (h, GLOBALS.nxp_ghw_c_1[i], i);
+	    add_history (h, GLOBALS->nxp_ghw_c_1[i], i);
 	  break;
 	case ghw_res_cycle:
 	  while (1)
@@ -935,11 +935,11 @@ read_traces (struct ghw_handler *h)
 	      /* printf ("Time is "TTFormat"\n", h->snap_time); */
 	      if (h->snap_time < LLDescriptor(9223372036854775807))
 		{
-		  if (h->snap_time > GLOBALS.max_time)
-		    GLOBALS.max_time = h->snap_time;
+		  if (h->snap_time > GLOBALS->max_time)
+		    GLOBALS->max_time = h->snap_time;
 		  
 		  for (i = 0; (sig = list[i]) != 0; i++)
-		    add_history (h, GLOBALS.nxp_ghw_c_1[sig], sig);
+		    add_history (h, GLOBALS->nxp_ghw_c_1[sig], sig);
 		}
 	      res = ghw_read_cycle_next (h);
 	      if (res != 1)
@@ -967,9 +967,9 @@ ghw_main(char *fname)
   int i;
   int rc;
 
-  if(!GLOBALS.hier_was_explicitly_set) /* set default hierarchy split char */
+  if(!GLOBALS->hier_was_explicitly_set) /* set default hierarchy split char */
     {
-      GLOBALS.hier_delimeter='.';
+      GLOBALS->hier_delimeter='.';
     }
 
  handle.flag_verbose = 0;
@@ -979,9 +979,9 @@ ghw_main(char *fname)
      exit(1);
    }
 
- GLOBALS.time_scale = 1;
- GLOBALS.time_dimension = 'f';
- GLOBALS.asbuf = malloc_2(4097);
+ GLOBALS->time_scale = 1;
+ GLOBALS->time_dimension = 'f';
+ GLOBALS->asbuf = malloc_2(4097);
 
  if (ghw_read_base (&handle) < 0)
    {
@@ -989,18 +989,18 @@ ghw_main(char *fname)
      exit(1);
    }
 
- GLOBALS.min_time = 0;
- GLOBALS.max_time = 0;
+ GLOBALS->min_time = 0;
+ GLOBALS->max_time = 0;
 
- GLOBALS.nbr_sig_ref_ghw_c_1 = 0;
+ GLOBALS->nbr_sig_ref_ghw_c_1 = 0;
 
- GLOBALS.nxp_ghw_c_1 =(struct Node **)calloc_2(handle.nbr_sigs, sizeof(struct Node *));
+ GLOBALS->nxp_ghw_c_1 =(struct Node **)calloc_2(handle.nbr_sigs, sizeof(struct Node *));
  for(i=0;i<handle.nbr_sigs;i++)
 	{
-        GLOBALS.nxp_ghw_c_1[i] = (struct Node *)calloc_2(1,sizeof(struct Node));
+        GLOBALS->nxp_ghw_c_1[i] = (struct Node *)calloc_2(1,sizeof(struct Node));
 	}
 
- GLOBALS.treeroot = build_hierarchy (&handle, handle.hie);
+ GLOBALS->treeroot = build_hierarchy (&handle, handle.hie);
  /* GHW does not contains a 'top' name.
     FIXME: should use basename of the file.  */
 
@@ -1009,17 +1009,17 @@ ghw_main(char *fname)
  add_tail (&handle);
  
  set_fac_name (&handle);
- free_2(GLOBALS.nxp_ghw_c_1); GLOBALS.nxp_ghw_c_1 = NULL;
+ free_2(GLOBALS->nxp_ghw_c_1); GLOBALS->nxp_ghw_c_1 = NULL;
 
  /* fix up names on aliased nodes via cloning... */
- for(i=0;i<GLOBALS.numfacs;i++)
+ for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	if(strcmp(GLOBALS.facs[i]->name, GLOBALS.facs[i]->n->nname))
+	if(strcmp(GLOBALS->facs[i]->name, GLOBALS->facs[i]->n->nname))
 		{
 		struct Node *n = malloc_2(sizeof(struct Node));
-		memcpy(n, GLOBALS.facs[i]->n, sizeof(struct Node));
-		GLOBALS.facs[i]->n = n;
-		n->nname = GLOBALS.facs[i]->name;
+		memcpy(n, GLOBALS->facs[i]->n, sizeof(struct Node));
+		GLOBALS->facs[i]->n = n;
+		n->nname = GLOBALS->facs[i]->name;
 		}
 	}
 
@@ -1028,10 +1028,10 @@ ghw_main(char *fname)
  const char *base_hier = "top";
 
  struct tree *t = calloc_2(1, sizeof(struct tree) + strlen(base_hier));
- memcpy(t, GLOBALS.treeroot, sizeof(struct tree));
+ memcpy(t, GLOBALS->treeroot, sizeof(struct tree));
  strcpy(t->name, base_hier);
- free_2(GLOBALS.treeroot);
- GLOBALS.treeroot = t;
+ free_2(GLOBALS->treeroot);
+ GLOBALS->treeroot = t;
  }
 
  ghw_close (&handle);
@@ -1040,18 +1040,18 @@ ghw_main(char *fname)
  ghw_sortfacs();	/* sort nets as ghw is unsorted ... also fix hier tree (it should really be built *after* facs are sorted!) */
 
 #if 0
- treedebug(GLOBALS.treeroot,"");
+ treedebug(GLOBALS->treeroot,"");
  facs_debug();
 #endif
 
-  GLOBALS.is_ghw = 1;
+  GLOBALS->is_ghw = 1;
 
-  fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS.min_time*GLOBALS.time_scale, GLOBALS.max_time*GLOBALS.time_scale);
-  if(GLOBALS.num_glitches_ghw_c_1) fprintf(stderr, "Warning: encountered %d glitch%s across %d glitch region%s.\n",
-                GLOBALS.num_glitches_ghw_c_1, (GLOBALS.num_glitches_ghw_c_1!=1)?"es":"",
-                GLOBALS.num_glitch_regions_ghw_c_1, (GLOBALS.num_glitch_regions_ghw_c_1!=1)?"s":"");
+  fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS->min_time*GLOBALS->time_scale, GLOBALS->max_time*GLOBALS->time_scale);
+  if(GLOBALS->num_glitches_ghw_c_1) fprintf(stderr, "Warning: encountered %d glitch%s across %d glitch region%s.\n",
+                GLOBALS->num_glitches_ghw_c_1, (GLOBALS->num_glitches_ghw_c_1!=1)?"es":"",
+                GLOBALS->num_glitch_regions_ghw_c_1, (GLOBALS->num_glitch_regions_ghw_c_1!=1)?"s":"");
 
-  return GLOBALS.max_time;
+  return GLOBALS->max_time;
 }
 
 /*******************************************************************************/
@@ -1059,6 +1059,10 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.2  2007/08/06 03:50:46  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.2.2.1  2007/08/05 02:27:20  kermin
  * Semi working global struct
  *

@@ -2734,39 +2734,43 @@ GtkStyle *style;
 
 style=gtk_widget_get_style(window);
 
-GLOBALS.larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.larrow_mask,
+GLOBALS->larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->larrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_larrow);
-GLOBALS.rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.rarrow_mask,
+GLOBALS->rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->rarrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_rarrow);
 
-GLOBALS.zoomout_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.zoomout_mask,
+GLOBALS->zoomout_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomout_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomout);
-GLOBALS.zoomin_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.zoomin_mask,
+GLOBALS->zoomin_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomin_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomin);
-GLOBALS.zoomfit_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.zoomfit_mask,
+GLOBALS->zoomfit_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomfit_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomfit);
-GLOBALS.zoomundo_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.zoomundo_mask,
+GLOBALS->zoomundo_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomundo_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomundo);
 
-GLOBALS.zoom_larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.zoom_larrow_mask,
+GLOBALS->zoom_larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoom_larrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)zoom_larrow);
-GLOBALS.zoom_rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.zoom_rarrow_mask,
+GLOBALS->zoom_rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoom_rarrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)zoom_rarrow);
 
-GLOBALS.prev_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.prev_page_mask,
+GLOBALS->prev_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->prev_page_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)prev_page_xpm);
-GLOBALS.next_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.next_page_mask,
+GLOBALS->next_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->next_page_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)next_page_xpm);
 
-GLOBALS.wave_info_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.wave_info_mask,
+GLOBALS->wave_info_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->wave_info_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)wave_info);
-GLOBALS.wave_alert_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS.wave_alert_mask,
+GLOBALS->wave_alert_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->wave_alert_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)wave_alert);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

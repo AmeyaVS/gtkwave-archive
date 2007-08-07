@@ -20,7 +20,6 @@
 #include"fgetdynamic.h"
 #include"ghw.h"
 #include"globals.h"
-#include"gnu-getopt.h"
 #include"gnu_regex.h"
 #include"gtk12compat.h"
 #include"lx2.h"
@@ -400,7 +399,6 @@ char enable_fast_exit;//from menu.c 253
 FILE *script_handle;//from menu.c 254
 char ignore_savefile_pos;//from menu.c 255
 char ignore_savefile_size;//from menu.c 256
-struct _GtkItemFactoryEntry menu_items_menu_c_1[137];// from menu.c 257
 struct _GtkItemFactory *item_factory_menu_c_1;// from menu.c 258
 char *regexp_string_menu_c_1;// from menu.c 259
 struct TraceEnt *trace_to_alias_menu_c_1;// from menu.c 260
@@ -536,7 +534,6 @@ int regex_which_search_c_1;// from search.c 372
 struct _GtkWidget *window_search_c_7;// from search.c 373
 struct _GtkWidget *entry_search_c_3;// from search.c 374
 struct _GtkWidget *clist_search_c_3;// from search.c 375
-char default_null_searchbox_text_search_c_1;// from search.c 376
 char *searchbox_text_search_c_1;// from search.c 377
 char bundle_direction_search_c_2;// from search.c 378
 void (*cleanup_search_c_5)();// from search.c 379
@@ -982,7 +979,10 @@ char do_initial_zoom_fit;//from zoombuttons.c 721
 };
 
 
-extern struct Global GLOBALS;
+void initialize_globals();
+
+
+extern struct Global *GLOBALS;
 #endif
 
 

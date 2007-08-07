@@ -19,7 +19,7 @@ service_left_page(GtkWidget *text, gpointer data)
 {
 TimeType ntinc, ntfrac;
 
-if(GLOBALS.helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nPage Left");
         help_text(
@@ -32,14 +32,14 @@ if(GLOBALS.helpbox_is_active)
         return;
         }
 
-ntinc=(TimeType)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);	/* really don't need this var but the speed of ui code is human dependent.. */
-ntfrac=ntinc*GLOBALS.page_divisor;
+ntinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);	/* really don't need this var but the speed of ui code is human dependent.. */
+ntfrac=ntinc*GLOBALS->page_divisor;
 if((ntfrac<1)||(ntinc<1)) ntfrac=ntinc=1;
 
-if((GLOBALS.tims.start-ntfrac)>GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.start-ntfrac;
-	else GLOBALS.tims.timecache=GLOBALS.tims.first;
+if((GLOBALS->tims.start-ntfrac)>GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.start-ntfrac;
+	else GLOBALS->tims.timecache=GLOBALS->tims.first;
 
-GTK_ADJUSTMENT(GLOBALS.wave_hslider)->value=GLOBALS.tims.timecache;
+GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache;
 time_update();
 
 DEBUG(printf("Left Page\n"));
@@ -50,7 +50,7 @@ service_right_page(GtkWidget *text, gpointer data)
 {
 TimeType ntinc, ntfrac;
 
-if(GLOBALS.helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nPage Right");
         help_text(
@@ -63,21 +63,21 @@ if(GLOBALS.helpbox_is_active)
         return;
         }
 
-ntinc=(TimeType)(((gdouble)GLOBALS.wavewidth)*GLOBALS.nspx);
-ntfrac=ntinc*GLOBALS.page_divisor;
+ntinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+ntfrac=ntinc*GLOBALS->page_divisor;
 if((ntfrac<1)||(ntinc<1)) ntfrac=ntinc=1;
 
-if((GLOBALS.tims.start+ntfrac)<(GLOBALS.tims.last-ntinc+1)) 
+if((GLOBALS->tims.start+ntfrac)<(GLOBALS->tims.last-ntinc+1)) 
 	{
-	GLOBALS.tims.timecache=GLOBALS.tims.start+ntfrac;
+	GLOBALS->tims.timecache=GLOBALS->tims.start+ntfrac;
 	}
         else 
 	{
-	GLOBALS.tims.timecache=GLOBALS.tims.last-ntinc+1;
-	if(GLOBALS.tims.timecache<GLOBALS.tims.first) GLOBALS.tims.timecache=GLOBALS.tims.first;
+	GLOBALS->tims.timecache=GLOBALS->tims.last-ntinc+1;
+	if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
 	}
 
-GTK_ADJUSTMENT(GLOBALS.wave_hslider)->value=GLOBALS.tims.timecache;
+GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache;
 time_update();
 
 DEBUG(printf("Right Page\n"));
@@ -101,9 +101,9 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-pixmapwid1=gtk_pixmap_new(GLOBALS.prev_page_pixmap, GLOBALS.prev_page_mask);
+pixmapwid1=gtk_pixmap_new(GLOBALS->prev_page_pixmap, GLOBALS->prev_page_mask);
 gtk_widget_show(pixmapwid1);
-pixmapwid2=gtk_pixmap_new(GLOBALS.next_page_pixmap, GLOBALS.next_page_mask);
+pixmapwid2=gtk_pixmap_new(GLOBALS->next_page_pixmap, GLOBALS->next_page_mask);
 gtk_widget_show(pixmapwid2);
    
 /* Create a table to hold the text widget and scrollbars */
@@ -149,6 +149,10 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

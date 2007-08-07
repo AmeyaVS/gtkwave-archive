@@ -34,7 +34,7 @@ enum TreeBuildTypes { MAKETREE_FLATTEN, MAKETREE_LEAF, MAKETREE_NODE };
 void init_tree(void)
 {
 /* treeroot=(struct tree *)calloc_2(1,sizeof(struct tree)); */
-GLOBALS.module_tree_c_1=(char *)malloc_2(GLOBALS.longestname+1);
+GLOBALS->module_tree_c_1=(char *)malloc_2(GLOBALS->longestname+1);
 }
 
 
@@ -48,22 +48,22 @@ static const char *get_module_name(const char *s)
 char ch;
 char *pnt;
 
-pnt=GLOBALS.module_tree_c_1;
+pnt=GLOBALS->module_tree_c_1;
 
 for(;;)
 	{
 	ch=*(s++);
 
-	if((ch==GLOBALS.hier_delimeter) || (ch == '|'))
+	if((ch==GLOBALS->hier_delimeter) || (ch == '|'))
 		{
 		*(pnt)=0;	
-		GLOBALS.module_len_tree_c_1 = pnt - GLOBALS.module_tree_c_1;
+		GLOBALS->module_len_tree_c_1 = pnt - GLOBALS->module_tree_c_1;
 		return(s);		
 		}
 
 	if(!(*(pnt++)=ch))
 		{
-		GLOBALS.module_len_tree_c_1 = pnt - GLOBALS.module_tree_c_1;
+		GLOBALS->module_len_tree_c_1 = pnt - GLOBALS->module_tree_c_1;
 		return(NULL);	/* nothing left to extract */		
 		}
 	}
@@ -75,7 +75,7 @@ for(;;)
  */
 int treegraft(struct tree *t)
 {
-struct tree *tx = GLOBALS.terminals_tchain_tree_c_1;
+struct tree *tx = GLOBALS->terminals_tchain_tree_c_1;
 struct tree *t2;
 struct tree *par;
 
@@ -119,7 +119,7 @@ void treenamefix_str(char *s)
 {
 while(*s)
 	{
-	if(*s==VCDNAM_ESCAPE) *s=GLOBALS.hier_delimeter;
+	if(*s==VCDNAM_ESCAPE) *s=GLOBALS->hier_delimeter;
 	s++;
 	}
 }
@@ -179,16 +179,16 @@ gchar *text [1];
 
 if(t2->which!=-1)
 	{
-        if(GLOBALS.facs[t2->which]->vec_root)
+        if(GLOBALS->facs[t2->which]->vec_root)
         	{
-                if(GLOBALS.autocoalesce)
+                if(GLOBALS->autocoalesce)
                 	{
-                        if(GLOBALS.facs[t2->which]->vec_root!=GLOBALS.facs[t2->which])
+                        if(GLOBALS->facs[t2->which]->vec_root!=GLOBALS->facs[t2->which])
                         	{
 				return(NULL);
                                 }
 
-                        tmp2=makename_chain(GLOBALS.facs[t2->which]);
+                        tmp2=makename_chain(GLOBALS->facs[t2->which]);
                         tmp3=leastsig_hiername(tmp2);
                         tmp=wave_alloca(strlen(tmp3)+4);
                         strcpy(tmp,   "[] ");
@@ -218,26 +218,26 @@ switch(mode)
 	case MAKETREE_FLATTEN:
 		if(t2->child)
 			{
-		        sibling = gtk_ctree_insert_node (GLOBALS.ctree_main, subtree, sibling, text, 3,
+		        sibling = gtk_ctree_insert_node (GLOBALS->ctree_main, subtree, sibling, text, 3,
                 	                       NULL, NULL, NULL, NULL,
                 	                       FALSE, FALSE);
-			gtk_ctree_node_set_row_data(GLOBALS.ctree_main, sibling, t2);
+			gtk_ctree_node_set_row_data(GLOBALS->ctree_main, sibling, t2);
 			maketree(sibling, t2->child);
 			}
 			else
 			{
-		        sibling = gtk_ctree_insert_node (GLOBALS.ctree_main, subtree, sibling, text, 3,
+		        sibling = gtk_ctree_insert_node (GLOBALS->ctree_main, subtree, sibling, text, 3,
                 	                       NULL, NULL, NULL, NULL,
                 	                       TRUE, FALSE);
-			gtk_ctree_node_set_row_data(GLOBALS.ctree_main, sibling, t2);
+			gtk_ctree_node_set_row_data(GLOBALS->ctree_main, sibling, t2);
 			}
 		break;
 
 	default:
-	        sibling = gtk_ctree_insert_node (GLOBALS.ctree_main, subtree, sibling, text, 3,
+	        sibling = gtk_ctree_insert_node (GLOBALS->ctree_main, subtree, sibling, text, 3,
                	                       NULL, NULL, NULL, NULL,
                	                       (mode==MAKETREE_LEAF), FALSE);
-		gtk_ctree_node_set_row_data(GLOBALS.ctree_main, sibling, t2);
+		gtk_ctree_node_set_row_data(GLOBALS->ctree_main, sibling, t2);
 		break;
 	}
 
@@ -259,7 +259,7 @@ if(nam)
 	t=nam;
 	while((ch=*(t++)))
 		{
-		if(ch==GLOBALS.hier_delimeter) pnt=t;
+		if(ch==GLOBALS->hier_delimeter) pnt=t;
 		}
 	}
 
@@ -318,7 +318,7 @@ if(t->next)
 		}
 		else
 		{
-		GLOBALS.treeroot = srt[0];
+		GLOBALS->treeroot = srt[0];
 		}
 
 	for(i=0;i<(cnt-1);i++)
@@ -354,8 +354,8 @@ while(t)
 	if(t->which>=0) /* for when valid netnames like A.B.C, A.B.C.D exist (not legal excluding texsim) */
 			/* otherwise this would be an 'else' */
 		{
-		GLOBALS.facs2_tree_c_1[GLOBALS.facs2_pos_tree_c_1] = GLOBALS.facs[t->which];
-		t->which = GLOBALS.facs2_pos_tree_c_1--;
+		GLOBALS->facs2_tree_c_1[GLOBALS->facs2_pos_tree_c_1] = GLOBALS->facs[t->which];
+		t->which = GLOBALS->facs2_pos_tree_c_1--;
 		}
 
 	t=t->next;
@@ -367,20 +367,20 @@ void order_facs_from_treesort(struct tree *t, void *v)
 {
 struct symbol ***f = (struct symbol ***)v; /* eliminate compiler warning in tree.h as symbol.h refs tree.h */
 
-GLOBALS.facs2_tree_c_1=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
-GLOBALS.facs2_pos_tree_c_1 = GLOBALS.numfacs-1;
+GLOBALS->facs2_tree_c_1=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
+GLOBALS->facs2_pos_tree_c_1 = GLOBALS->numfacs-1;
 order_facs_from_treesort_2(t);
 
-if(GLOBALS.facs2_pos_tree_c_1>=0)
+if(GLOBALS->facs2_pos_tree_c_1>=0)
 	{
-	fprintf(stderr, "Internal Error: GLOBALS.facs2_pos_tree_c_1 = %d\n",GLOBALS.facs2_pos_tree_c_1);
+	fprintf(stderr, "Internal Error: GLOBALS->facs2_pos_tree_c_1 = %d\n",GLOBALS->facs2_pos_tree_c_1);
 	fprintf(stderr, "[This is usually the result of multiply defined facilities.]\n");
 	exit(255);
 	}
 
 free_2(*f);
-*f = GLOBALS.facs2_tree_c_1;
-GLOBALS.facs2_tree_c_1 = NULL;
+*f = GLOBALS->facs2_tree_c_1;
+GLOBALS->facs2_tree_c_1 = NULL;
 }
 
 
@@ -392,7 +392,7 @@ struct tree *prevt;
 
 if(s==NULL || !s[0]) return;
 
-t = GLOBALS.treeroot;
+t = GLOBALS->treeroot;
 
 if(t)
 	{
@@ -401,7 +401,7 @@ if(t)
 		{
 rs:		s=get_module_name(s);
 
-		if(t && !strcmp(t->name, GLOBALS.module_tree_c_1))
+		if(t && !strcmp(t->name, GLOBALS->module_tree_c_1))
 			{
 			prevt = t;
 			t = t->child;
@@ -414,7 +414,7 @@ rs:		s=get_module_name(s);
 		      	nt = t->next;
 		      	while(nt)
 				{
-				if(nt && !strcmp(nt->name, GLOBALS.module_tree_c_1))
+				if(nt && !strcmp(nt->name, GLOBALS->module_tree_c_1))
 					{
 					prevt = nt;
 					t = nt->child;
@@ -425,8 +425,8 @@ rs:		s=get_module_name(s);
 				}
 			}
 
-		nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS.module_len_tree_c_1);
-		memcpy(nt->name, GLOBALS.module_tree_c_1, GLOBALS.module_len_tree_c_1);
+		nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
+		memcpy(nt->name, GLOBALS->module_tree_c_1, GLOBALS->module_len_tree_c_1);
 
 		if(s)
 			{
@@ -447,8 +447,8 @@ rs:		s=get_module_name(s);
 			{
 			nt->child = prevt;			/* parent */
 			nt->which = which;
-			nt->next = GLOBALS.terminals_tchain_tree_c_1;
-			GLOBALS.terminals_tchain_tree_c_1 = nt;
+			nt->next = GLOBALS->terminals_tchain_tree_c_1;
+			GLOBALS->terminals_tchain_tree_c_1 = nt;
 			return;
 			}
 	
@@ -458,8 +458,8 @@ rs:		s=get_module_name(s);
 			{
 			s=get_module_name(s);
 		
-			nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS.module_len_tree_c_1);
-			memcpy(nt->name, GLOBALS.module_tree_c_1, GLOBALS.module_len_tree_c_1);
+			nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
+			memcpy(nt->name, GLOBALS->module_tree_c_1, GLOBALS->module_len_tree_c_1);
 
 			if(s)
 				{
@@ -471,8 +471,8 @@ rs:		s=get_module_name(s);
 				{
 				nt->child = t;			/* parent */
 				nt->which = which;
-				nt->next = GLOBALS.terminals_tchain_tree_c_1;
-				GLOBALS.terminals_tchain_tree_c_1 = nt;
+				nt->next = GLOBALS->terminals_tchain_tree_c_1;
+				GLOBALS->terminals_tchain_tree_c_1 = nt;
 				}
 			}
 		}
@@ -484,19 +484,19 @@ else
 		{
 		s=get_module_name(s);
 
-		nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS.module_len_tree_c_1);
-		memcpy(nt->name, GLOBALS.module_tree_c_1, GLOBALS.module_len_tree_c_1);
+		nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
+		memcpy(nt->name, GLOBALS->module_tree_c_1, GLOBALS->module_len_tree_c_1);
 
 		if(!s) nt->which=which; else nt->which=-1;
 
-		if(GLOBALS.treeroot)
+		if(GLOBALS->treeroot)
 			{
 			t->child = nt;
 			t = nt;
 			}
 			else
 			{
-			GLOBALS.treeroot = t = nt;
+			GLOBALS->treeroot = t = nt;
 			}
 		}
 	
@@ -555,7 +555,7 @@ void maketree(GtkCTreeNode *subtree, struct tree *t)
 GtkCTreeNode *sibling=NULL, *sibling_test;
 struct tree *t2;
 
-if(!GLOBALS.hier_grouping)
+if(!GLOBALS->hier_grouping)
 	{
 	t2=t;
 	while(t2)
@@ -604,6 +604,10 @@ if(!GLOBALS.hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:49  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:24  kermin
  * Semi working global struct
  *

@@ -30,62 +30,62 @@ int ent_idx;
 
 ent_idx = ((int) (((long) which) & 31L)) % 26;
  
-entry=GLOBALS.entries_markerbox_c_1[ent_idx];
+entry=GLOBALS->entries_markerbox_c_1[ent_idx];
 
 entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
 if(!(len=strlen(entry_text))) goto failure;
 
-temp=unformat_time(entry_text, GLOBALS.time_dimension);
-if((temp<GLOBALS.tims.start)||(temp>GLOBALS.tims.last)) goto failure;
+temp=unformat_time(entry_text, GLOBALS->time_dimension);
+if((temp<GLOBALS->tims.start)||(temp>GLOBALS->tims.last)) goto failure;
 
 for(i=0;i<26;i++)
 	{
-	if(temp==GLOBALS.shadow_markers_markerbox_c_1[i]) goto failure;
+	if(temp==GLOBALS->shadow_markers_markerbox_c_1[i]) goto failure;
 	}
 
-reformat_time(buf, temp, GLOBALS.time_dimension);
+reformat_time(buf, temp, GLOBALS->time_dimension);
 gtk_entry_set_text (GTK_ENTRY (entry), buf);
 
-GLOBALS.shadow_markers_markerbox_c_1[ent_idx]=temp;
-GLOBALS.dirty_markerbox_c_1=1;
+GLOBALS->shadow_markers_markerbox_c_1[ent_idx]=temp;
+GLOBALS->dirty_markerbox_c_1=1;
 gtk_entry_select_region (GTK_ENTRY (entry),
 			     0, GTK_ENTRY(entry)->text_length);
 return;
 
 failure:
 modify=(TimeType *)which;
-if(GLOBALS.shadow_markers_markerbox_c_1[ent_idx]==-1)
+if(GLOBALS->shadow_markers_markerbox_c_1[ent_idx]==-1)
 	{
 	sprintf(buf,"<None>");
 	}
 	else
 	{
-	reformat_time(buf, GLOBALS.shadow_markers_markerbox_c_1[ent_idx], GLOBALS.time_dimension);
+	reformat_time(buf, GLOBALS->shadow_markers_markerbox_c_1[ent_idx], GLOBALS->time_dimension);
 	}
 gtk_entry_set_text (GTK_ENTRY (entry), buf);
 }
 
 static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-if(GLOBALS.dirty_markerbox_c_1)
+if(GLOBALS->dirty_markerbox_c_1)
 	{
 	int i;
-	for(i=0;i<26;i++) GLOBALS.named_markers[i]=GLOBALS.shadow_markers_markerbox_c_1[i];
+	for(i=0;i<26;i++) GLOBALS->named_markers[i]=GLOBALS->shadow_markers_markerbox_c_1[i];
         MaxSignalLength();
-        signalarea_configure_event(GLOBALS.signalarea, NULL);
-        wavearea_configure_event(GLOBALS.wavearea, NULL);
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        wavearea_configure_event(GLOBALS->wavearea, NULL);
 	}
 
-  gtk_grab_remove(GLOBALS.window_markerbox_c_4);
-  gtk_widget_destroy(GLOBALS.window_markerbox_c_4);
+  gtk_grab_remove(GLOBALS->window_markerbox_c_4);
+  gtk_widget_destroy(GLOBALS->window_markerbox_c_4);
 
-  GLOBALS.cleanup_markerbox_c_4();
+  GLOBALS->cleanup_markerbox_c_4();
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-  gtk_grab_remove(GLOBALS.window_markerbox_c_4);
-  gtk_widget_destroy(GLOBALS.window_markerbox_c_4);
+  gtk_grab_remove(GLOBALS->window_markerbox_c_4);
+  gtk_widget_destroy(GLOBALS->window_markerbox_c_4);
 }
 
 void markerbox(char *title, GtkSignalFunc func)
@@ -97,16 +97,16 @@ void markerbox(char *title, GtkSignalFunc func)
     char labtitle[2]={0,0};
     int i;
 
-    GLOBALS.cleanup_markerbox_c_4=func;
-    GLOBALS.dirty_markerbox_c_1=0;
+    GLOBALS->cleanup_markerbox_c_4=func;
+    GLOBALS->dirty_markerbox_c_1=0;
 
-    for(i=0;i<26;i++) GLOBALS.shadow_markers_markerbox_c_1[i]=GLOBALS.named_markers[i];
+    for(i=0;i<26;i++) GLOBALS->shadow_markers_markerbox_c_1[i]=GLOBALS->named_markers[i];
 
     /* create a new modal window */
-    GLOBALS.window_markerbox_c_4 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_grab_add(GLOBALS.window_markerbox_c_4);
-    gtk_window_set_title(GTK_WINDOW (GLOBALS.window_markerbox_c_4), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS.window_markerbox_c_4), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    GLOBALS->window_markerbox_c_4 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_grab_add(GLOBALS->window_markerbox_c_4);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_markerbox_c_4), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_markerbox_c_4), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
@@ -150,17 +150,17 @@ void markerbox(char *title, GtkSignalFunc func)
     gtk_widget_show (label);
     gtk_box_pack_start (GTK_BOX (vbox_g), label, TRUE, TRUE, 0);
 
-    GLOBALS.entries_markerbox_c_1[i]=entry = gtk_entry_new_with_max_length (48);
+    GLOBALS->entries_markerbox_c_1[i]=entry = gtk_entry_new_with_max_length (48);
     gtk_signal_connect(GTK_OBJECT(entry), "activate",
 		       GTK_SIGNAL_FUNC(enter_callback),
 		       (void *)((long) i));
-    if(GLOBALS.shadow_markers_markerbox_c_1[i]==-1)
+    if(GLOBALS->shadow_markers_markerbox_c_1[i]==-1)
 	{
 	sprintf(buf,"<None>");
 	}
 	else
 	{
-	reformat_time(buf, GLOBALS.shadow_markers_markerbox_c_1[i], GLOBALS.time_dimension);
+	reformat_time(buf, GLOBALS->shadow_markers_markerbox_c_1[i], GLOBALS->time_dimension);
 	}
 
     gtk_entry_set_text (GTK_ENTRY (entry), buf);
@@ -200,13 +200,17 @@ void markerbox(char *title, GtkSignalFunc func)
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_container_add (GTK_CONTAINER (GLOBALS.window_markerbox_c_4), table); /* need this table to keep ok/cancel buttons from stretching! */
-    gtk_widget_show(GLOBALS.window_markerbox_c_4);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_markerbox_c_4), table); /* need this table to keep ok/cancel buttons from stretching! */
+    gtk_widget_show(GLOBALS->window_markerbox_c_4);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

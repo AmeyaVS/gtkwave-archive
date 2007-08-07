@@ -171,12 +171,12 @@ void import_trace(nptr np)
 {
 set_window_busy(NULL);
 
-if(GLOBALS.is_lxt)
+if(GLOBALS->is_lxt)
 	{
 	import_lxt_trace(np);
 	}
 else
-if(GLOBALS.is_lx2)
+if(GLOBALS->is_lx2)
 	{
 	import_lx2_trace(np);
 	}
@@ -442,11 +442,11 @@ if(len)
 	memcpy(wild,str,len);
 	wave_regex_compile(wild, WAVE_REGEX_WILD);
 
-	for(i=0;i<GLOBALS.numfacs;i++)
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
-		if(wave_regex_match(GLOBALS.facs[i]->name, WAVE_REGEX_WILD))
+		if(wave_regex_match(GLOBALS->facs[i]->name, WAVE_REGEX_WILD))
 			{
-			AddNode(GLOBALS.facs[i]->n,NULL);
+			AddNode(GLOBALS->facs[i]->n,NULL);
 			made=~0;
 			if(quick_return) break;
 			}
@@ -545,11 +545,11 @@ if(len)
 		else
 		{
 		wave_regex_compile(wild, WAVE_REGEX_WILD);
-		for(i=GLOBALS.numfacs-1;i>=0;i--)	/* to keep vectors in little endian hi..lo order */
+		for(i=GLOBALS->numfacs-1;i>=0;i--)	/* to keep vectors in little endian hi..lo order */
 			{
-			if(wave_regex_match(GLOBALS.facs[i]->name, WAVE_REGEX_WILD))
+			if(wave_regex_match(GLOBALS->facs[i]->name, WAVE_REGEX_WILD))
 				{
-				n[nodepnt++]=GLOBALS.facs[i]->n;
+				n[nodepnt++]=GLOBALS->facs[i]->n;
 				if(nodepnt==512) { free_2(wild); goto ifnode; }
 				}
 			}
@@ -712,20 +712,20 @@ struct Node *n[512];
 struct Bits *b=NULL;
 
 if(!direction)
-for(i=GLOBALS.numfacs-1;i>=0;i--)	/* to keep vectors in hi..lo order */
+for(i=GLOBALS->numfacs-1;i>=0;i--)	/* to keep vectors in hi..lo order */
 	{
-	if(GLOBALS.facs[i]->selected)
+	if(GLOBALS->facs[i]->selected)
 		{
-		n[nodepnt++]=GLOBALS.facs[i]->n;
+		n[nodepnt++]=GLOBALS->facs[i]->n;
 		if((nodepnt==512)||(numrows==nodepnt)) break;
 		}
 	}
 else
-for(i=0;i<GLOBALS.numfacs;i++)		/* to keep vectors in lo..hi order */
+for(i=0;i<GLOBALS->numfacs;i++)		/* to keep vectors in lo..hi order */
 	{
-	if(GLOBALS.facs[i]->selected)
+	if(GLOBALS->facs[i]->selected)
 		{
-		n[nodepnt++]=GLOBALS.facs[i]->n;
+		n[nodepnt++]=GLOBALS->facs[i]->n;
 		if((nodepnt==512)||(numrows==nodepnt)) break;
 		}
 	}
@@ -792,9 +792,9 @@ struct Bits *b=NULL;
 struct symbol *symhi = NULL, *symlo = NULL;
 char hier_delimeter2;
 
-if(!GLOBALS.vcd_explicit_zero_subscripts)	/* 0==yes, -1==no */
+if(!GLOBALS->vcd_explicit_zero_subscripts)	/* 0==yes, -1==no */
 	{
-	hier_delimeter2=GLOBALS.hier_delimeter;
+	hier_delimeter2=GLOBALS->hier_delimeter;
 	}
 	else
 	{
@@ -803,7 +803,7 @@ if(!GLOBALS.vcd_explicit_zero_subscripts)	/* 0==yes, -1==no */
 
 n=(struct Node **)wave_alloca(len*sizeof(struct Node *));
 
-if(!GLOBALS.autocoalesce_reversal)		/* normal case for MTI */
+if(!GLOBALS->autocoalesce_reversal)		/* normal case for MTI */
 	{
 	symhi=sym;
 	while(sym)
@@ -891,7 +891,7 @@ if(nodepnt)
 			int add1, add2, totallen;
 
 			add1=l1-root1len; add2=l2-root2len;
-			if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+			if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 				{
 				add1--;
 				add2--;
@@ -912,7 +912,7 @@ if(nodepnt)
 					+1		/* add 0x00	      */
 					;
 
-				if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+				if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 					{
 					fixup1=*(s1+l1-1); *(s1+l1-1)=0;
 					fixup2=*(s2+l2-1); *(s2+l2-1)=0;
@@ -922,7 +922,7 @@ if(nodepnt)
 				strncpy(b->name,s1,root1len-1);
 				sprintf(b->name+root1len-1,"[%s:%s]",s1+root1len, s2+root2len);
 
-				if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+				if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 					{
 					*(s1+l1-1)=fixup1;
 					*(s2+l2-1)=fixup2;
@@ -941,7 +941,7 @@ if(nodepnt)
 					+1		/* add 0x00	      */
 					;
 
-				if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+				if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 					{
 					fixup1=*(s1+l1-1); *(s1+l1-1)=0;
 					}
@@ -950,7 +950,7 @@ if(nodepnt)
 				strncpy(b->name,s1,root1len-1);
 				sprintf(b->name+root1len-1,"[%s]",s1+root1len);
 
-				if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+				if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 					{
 					*(s1+l1-1)=fixup1;
 					}
@@ -1014,13 +1014,13 @@ struct Bits *b=NULL;
 if(!direction)
 for(i=hi;i>=lo;i--)	/* to keep vectors in hi..lo order */
 	{
-	n[nodepnt++]=GLOBALS.facs[i]->n;
+	n[nodepnt++]=GLOBALS->facs[i]->n;
 	if(nodepnt==512) break;
 	}
 else
 for(i=lo;i<=hi;i++)	/* to keep vectors in lo..hi order */
 	{
-	n[nodepnt++]=GLOBALS.facs[i]->n;
+	n[nodepnt++]=GLOBALS->facs[i]->n;
 	if(nodepnt==512) break;
 	}
 
@@ -1049,26 +1049,26 @@ if(nodepnt)
 
 		if(!direction)
 			{
-			s1=GLOBALS.facs[hi]->n->nname;
-			s2=GLOBALS.facs[lo]->n->nname;
+			s1=GLOBALS->facs[hi]->n->nname;
+			s2=GLOBALS->facs[lo]->n->nname;
 			}
 			else
 			{
-			s1=GLOBALS.facs[lo]->n->nname;
-			s2=GLOBALS.facs[hi]->n->nname;
+			s1=GLOBALS->facs[lo]->n->nname;
+			s2=GLOBALS->facs[hi]->n->nname;
 			}
 		
 		l1=strlen(s1); 
 
 		for(i=l1-1;i>=0;i--)
 			{
-			if(s1[i]==GLOBALS.hier_delimeter) { root1len=i+1; break; }
+			if(s1[i]==GLOBALS->hier_delimeter) { root1len=i+1; break; }
 			}
 
 		l2=strlen(s2);	
 		for(i=l2-1;i>=0;i--)
 			{
-			if(s2[i]==GLOBALS.hier_delimeter) { root2len=i+1; break; }
+			if(s2[i]==GLOBALS->hier_delimeter) { root2len=i+1; break; }
 			}
 
 		if((root1len!=root2len)||(!root1len)||(!root2len)||
@@ -1168,7 +1168,7 @@ if(lo!=hi)
 	}
 	else
 	{
-	return(AddNode(GLOBALS.facs[lo]->n,NULL));
+	return(AddNode(GLOBALS->facs[lo]->n,NULL));
 	}
 }
 
@@ -1443,16 +1443,16 @@ char *s1, *s2;
 int root1len=0, root2len=0;
 int l1, l2;
 
-if(!GLOBALS.vcd_explicit_zero_subscripts)	/* 0==yes, -1==no */
+if(!GLOBALS->vcd_explicit_zero_subscripts)	/* 0==yes, -1==no */
 	{
-	hier_delimeter2=GLOBALS.hier_delimeter;
+	hier_delimeter2=GLOBALS->hier_delimeter;
 	}
 	else
 	{
 	hier_delimeter2='[';
 	}
 
-if(!GLOBALS.autocoalesce_reversal)		/* normal case for MTI */
+if(!GLOBALS->autocoalesce_reversal)		/* normal case for MTI */
 	{
 	symhi=sym;
 	while(sym)
@@ -1506,7 +1506,7 @@ if((root1len!=root2len)||(!root1len)||(!root2len)||
 	int add1, add2, totallen;
 
 	add1=l1-root1len; add2=l2-root2len;
-	if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+	if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 		{
 		add1--;
 		add2--;
@@ -1527,7 +1527,7 @@ if((root1len!=root2len)||(!root1len)||(!root2len)||
 			+1		/* add 0x00	      */
 			;
 
-		if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+		if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 			{
 			fixup1=*(s1+l1-1); *(s1+l1-1)=0;
 			fixup2=*(s2+l2-1); *(s2+l2-1)=0;
@@ -1537,7 +1537,7 @@ if((root1len!=root2len)||(!root1len)||(!root2len)||
 		strncpy(name,s1,root1len-1);
 		sprintf(name+root1len-1,"[%s:%s]",s1+root1len, s2+root2len);
 
-		if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+		if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 			{
 			*(s1+l1-1)=fixup1;
 			*(s2+l2-1)=fixup2;
@@ -1556,7 +1556,7 @@ if((root1len!=root2len)||(!root1len)||(!root2len)||
 			+1		/* add 0x00	      */
 			;
 
-		if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+		if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 			{
 			fixup1=*(s1+l1-1); *(s1+l1-1)=0;
 			}
@@ -1565,7 +1565,7 @@ if((root1len!=root2len)||(!root1len)||(!root2len)||
 		strncpy(name,s1,root1len-1);
 		sprintf(name+root1len-1,"[%s]",s1+root1len);
 
-		if(GLOBALS.vcd_explicit_zero_subscripts==-1)
+		if(GLOBALS->vcd_explicit_zero_subscripts==-1)
 			{
 			*(s1+l1-1)=fixup1;
 			}
@@ -1697,7 +1697,7 @@ if(!n->ext)
 	for(i=0;i<n->numhist;i++)
 		{
 		h=n->harray[i];
-		if((h->time<GLOBALS.min_time)||(h->time>GLOBALS.max_time))
+		if((h->time<GLOBALS->min_time)||(h->time>GLOBALS->max_time))
 			{
 			for(j=0;j<width;j++)
 				{
@@ -1881,7 +1881,7 @@ if(!n->ext)
 	for(i=0;i<n->numhist;i++)
 		{
 		h=n->harray[i];
-		if((h->time<GLOBALS.min_time)||(h->time>GLOBALS.max_time))
+		if((h->time<GLOBALS->min_time)||(h->time>GLOBALS->max_time))
 			{
 			if(np->curr)
 				{
@@ -1994,7 +1994,7 @@ if(w)
 		*lbrack = *colon = *rbrack = 0;
 		msbs = lbrack + 1;
 		lsbs = colon + 1;
-		rname = hier_extract(w, GLOBALS.hier_max_level);
+		rname = hier_extract(w, GLOBALS->hier_max_level);
 
 		msb = atoi(msbs);
 		lsb = atoi(lsbs);
@@ -2095,7 +2095,7 @@ if(*w2=='*')
 	TimeType ttlocal;
 	int which=0;
 
-	GLOBALS.zoom_was_explicitly_set=~0;
+	GLOBALS->zoom_was_explicitly_set=~0;
 	w2++;
 
 	for(;;)
@@ -2103,15 +2103,15 @@ if(*w2=='*')
 		while(*w2==' ') w2++;
 		if(*w2==0) return(~0);
 
-		if(!which) { sscanf(w2,"%f",&f); GLOBALS.tims.zoom=(gdouble)f; }
+		if(!which) { sscanf(w2,"%f",&f); GLOBALS->tims.zoom=(gdouble)f; }
 		else
 		{
 		sscanf(w2,TTFormat,&ttlocal);
 		switch(which)
 			{
-			case 1:  GLOBALS.tims.marker=ttlocal; break;
+			case 1:  GLOBALS->tims.marker=ttlocal; break;
 			default: 
-				if((which-2)<26) GLOBALS.named_markers[which-2]=ttlocal; 
+				if((which-2)<26) GLOBALS->named_markers[which-2]=ttlocal; 
 				break;
 			}
 		}
@@ -2134,16 +2134,16 @@ else
 if(*w2=='>')
 	{
 	char *nptr=(*(w2+1)!=0)?(w2+1):NULL;
-	GLOBALS.shift_timebase_default_for_add=nptr?atoi_64(nptr):LLDescriptor(0);
+	GLOBALS->shift_timebase_default_for_add=nptr?atoi_64(nptr):LLDescriptor(0);
 	}
 else
 if(*w2=='@')
 	{
 	/* handle trace flags */
-	sscanf(w2+1, "%x", &GLOBALS.default_flags);
-	if( (GLOBALS.default_flags & (TR_FTRANSLATED|TR_PTRANSLATED)) == (TR_FTRANSLATED|TR_PTRANSLATED) )
+	sscanf(w2+1, "%x", &GLOBALS->default_flags);
+	if( (GLOBALS->default_flags & (TR_FTRANSLATED|TR_PTRANSLATED)) == (TR_FTRANSLATED|TR_PTRANSLATED) )
 		{
-		GLOBALS.default_flags &= ~TR_PTRANSLATED; /* safest bet though this is a cfg file error */
+		GLOBALS->default_flags &= ~TR_PTRANSLATED; /* safest bet though this is a cfg file error */
 		}
 
 	return(~0);
@@ -2285,25 +2285,25 @@ if(*w2=='!')
 			{
 			if(ch=='!')
 				{
-				GLOBALS.shadow_active = 0;
+				GLOBALS->shadow_active = 0;
 				return(~0);
 				}
 
-			if((!i)&&(GLOBALS.shadow_straces))
+			if((!i)&&(GLOBALS->shadow_straces))
 				{
 				delete_strace_context();
 				}
 
-			GLOBALS.shadow_logical_mutex[i] = (ch & 1);
+			GLOBALS->shadow_logical_mutex[i] = (ch & 1);
 			}
 			else	/* in case of short read */
 			{
-			GLOBALS.shadow_logical_mutex[i] = 0;
+			GLOBALS->shadow_logical_mutex[i] = 0;
 			}
 		}
 
-	GLOBALS.shadow_mark_idx_start = 0;
-	GLOBALS.shadow_mark_idx_end = 0;
+	GLOBALS->shadow_mark_idx_start = 0;
+	GLOBALS->shadow_mark_idx_end = 0;
 
 	if(i==6)
 		{
@@ -2311,18 +2311,18 @@ if(*w2=='!')
 		if(ch != 0)
 			{
 			if (isupper(ch) || ch=='@')
-				GLOBALS.shadow_mark_idx_start = ch - '@';
+				GLOBALS->shadow_mark_idx_start = ch - '@';
 		
 			ch = *(w2+8);
 			if(ch != 0)
 				{
 				if (isupper(ch) || ch=='@')
-					GLOBALS.shadow_mark_idx_end = ch - '@';
+					GLOBALS->shadow_mark_idx_end = ch - '@';
 				}
 			}
 		}
 
-	GLOBALS.shadow_active = 1;
+	GLOBALS->shadow_active = 1;
 	return(~0);
 	}
 	else
@@ -2332,22 +2332,22 @@ if(*w2=='?')
 	if(*(w2+1)=='\"')
 		{
 		int len = strlen(w2+2);
-		if(GLOBALS.shadow_string) free_2(GLOBALS.shadow_string);
-		GLOBALS.shadow_string=NULL;
+		if(GLOBALS->shadow_string) free_2(GLOBALS->shadow_string);
+		GLOBALS->shadow_string=NULL;
 
 		if(len)
 			{
-			GLOBALS.shadow_string = malloc_2(len+1);		
-			strcpy(GLOBALS.shadow_string, w2+2);
+			GLOBALS->shadow_string = malloc_2(len+1);		
+			strcpy(GLOBALS->shadow_string, w2+2);
 			}
 
-		GLOBALS.shadow_type = ST_STRING;
+		GLOBALS->shadow_type = ST_STRING;
 		}
 		else
 		{
 		int hex;
 		sscanf(w2+1, "%x", &hex);	
-		GLOBALS.shadow_type = hex;
+		GLOBALS->shadow_type = hex;
 		}
 
 	return(~0);
@@ -2356,7 +2356,7 @@ else if(*w2=='^')
 	{
 	if(*(w2+1) == '>')
 		{
-		GLOBALS.current_translate_proc = 0;	/* will overwrite if loadable/translatable */
+		GLOBALS->current_translate_proc = 0;	/* will overwrite if loadable/translatable */
 
 		if(*(w2+2) != '0')
 			{
@@ -2373,7 +2373,7 @@ else if(*w2=='^')
 		}
 		else
 		{
-		GLOBALS.current_translate_file = 0;	/* will overwrite if loadable/translatable */
+		GLOBALS->current_translate_file = 0;	/* will overwrite if loadable/translatable */
 
 		if(*(w2+1) != '0')
 			{
@@ -2402,7 +2402,7 @@ else if (*w2 == '[')
     *w++ = 0;
     if (strcmp (w2, "size") == 0)
       {
-      if(!GLOBALS.ignore_savefile_size)
+      if(!GLOBALS->ignore_savefile_size)
 	{
 	/* Main window size.  */
 	int x, y;
@@ -2412,7 +2412,7 @@ else if (*w2 == '[')
       }
     else if (strcmp (w2, "pos") == 0)
       {
-      if(!GLOBALS.ignore_savefile_pos)
+      if(!GLOBALS->ignore_savefile_pos)
 	{
 	/* Main window position.  */
 	int x, y;
@@ -2527,11 +2527,11 @@ if(len)
 	memcpy(wild,str,len);
 	wave_regex_compile(wild, WAVE_REGEX_WILD);
 
-	for(i=0;i<GLOBALS.numfacs;i++)
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
-		if(wave_regex_match(GLOBALS.facs[i]->name, WAVE_REGEX_WILD))
+		if(wave_regex_match(GLOBALS->facs[i]->name, WAVE_REGEX_WILD))
 			{
-			lx2_set_fac_process_mask(GLOBALS.facs[i]->n);
+			lx2_set_fac_process_mask(GLOBALS->facs[i]->n);
 			made = ~0;
 			if(quick_return) break;
 			}
@@ -2622,11 +2622,11 @@ if(len)
 		else
 		{
 		wave_regex_compile(wild, WAVE_REGEX_WILD);
-		for(i=GLOBALS.numfacs-1;i>=0;i--)	/* to keep vectors in little endian hi..lo order */
+		for(i=GLOBALS->numfacs-1;i>=0;i--)	/* to keep vectors in little endian hi..lo order */
 			{
-			if(wave_regex_match(GLOBALS.facs[i]->name, WAVE_REGEX_WILD))
+			if(wave_regex_match(GLOBALS->facs[i]->name, WAVE_REGEX_WILD))
 				{
-				lx2_set_fac_process_mask(GLOBALS.facs[i]->n);
+				lx2_set_fac_process_mask(GLOBALS->facs[i]->n);
 				rc = 1;
 				}
 			}
@@ -2820,6 +2820,10 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.2  2007/08/05 02:27:18  kermin
  * Semi working global struct
  *

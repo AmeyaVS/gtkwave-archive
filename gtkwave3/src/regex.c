@@ -50,11 +50,6 @@
 #include "regex_wave.h"
 #include "debug.h"
 
-static void check_for_necessary_allocs(void)
-{
-if(!GLOBALS.regex_ok_regex_c_1) { GLOBALS.regex_ok_regex_c_1 = calloc_2(WAVE_REGEX_TOTAL, sizeof(int)); }
-if(!GLOBALS.preg_regex_c_1) { GLOBALS.preg_regex_c_1 = calloc_2(WAVE_REGEX_TOTAL, sizeof(regex_t)); }
-}
 
 /*
  * compile a regular expression into a regex_t and
@@ -64,11 +59,10 @@ int wave_regex_compile(char *regex, int which)
 {
 int comp_rc;
 
-check_for_necessary_allocs();
 
-if(GLOBALS.regex_ok_regex_c_1[which]) { regfree(&GLOBALS.preg_regex_c_1[which]); } /* free previous regex_t ancillary data if valid */
-comp_rc=regcomp(&GLOBALS.preg_regex_c_1[which], regex, REG_ICASE|REG_NOSUB);
-return(GLOBALS.regex_ok_regex_c_1[which]=(comp_rc)?0:1);
+if(GLOBALS->regex_ok_regex_c_1[which]) { regfree(&GLOBALS->preg_regex_c_1[which]); } /* free previous regex_t ancillary data if valid */
+comp_rc=regcomp(&GLOBALS->preg_regex_c_1[which], regex, REG_ICASE|REG_NOSUB);
+return(GLOBALS->regex_ok_regex_c_1[which]=(comp_rc)?0:1);
 }
 
 
@@ -79,11 +73,10 @@ int wave_regex_match(char *str, int which)
 {
 int rc;
 
-check_for_necessary_allocs();
 
-if(GLOBALS.regex_ok_regex_c_1[which])
+if(GLOBALS->regex_ok_regex_c_1[which])
 	{
-	rc = regexec(&GLOBALS.preg_regex_c_1[which], str, 0, NULL, 0);
+	rc = regexec(&GLOBALS->preg_regex_c_1[which], str, 0, NULL, 0);
 	}
 	else
 	{
@@ -141,6 +134,10 @@ if(mreg)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
  * Semi working global struct
  *

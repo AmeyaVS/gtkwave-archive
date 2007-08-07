@@ -93,7 +93,7 @@ if(flags&TR_ASCII)
 
 	len=(nbits/8)+2+2;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='"'; }
+	if(GLOBALS->show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -118,12 +118,12 @@ if(flags&TR_ASCII)
 		
 		parse+=8;
 		}
-	if (!found && !GLOBALS.show_base) {
+	if (!found && !GLOBALS->show_base) {
 		*(pnt++)='"';
 		*(pnt++)='"';
 	}
 		
-	if(GLOBALS.show_base) { *(pnt++)='"'; }
+	if(GLOBALS->show_base) { *(pnt++)='"'; }
 	*(pnt++)=0x00;
 	}
 else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
@@ -132,7 +132,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 
 	len=(nbits/4)+2+1;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='$'; }
+	if(GLOBALS->show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -254,7 +254,7 @@ else if(flags&TR_OCT)
 
 	len=(nbits/3)+2+1;		/* #xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='#'; }
+	if(GLOBALS->show_base) { *(pnt++)='#'; }
 
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
@@ -291,7 +291,7 @@ else if(flags&TR_BIN)
 
 	len=(nbits/1)+2+1;		/* %xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='%'; }
+	if(GLOBALS->show_base) { *(pnt++)='%'; }
 
 	parse=newbuff+3;
 
@@ -375,7 +375,7 @@ else if(flags&TR_REAL)
 		{
 rl_go_binary:	len=(nbits/1)+2+1;		/* %xxxxx */
 		os=pnt=(char *)calloc_2(1,len);
-		if(GLOBALS.show_base) { *(pnt++)='%'; }
+		if(GLOBALS->show_base) { *(pnt++)='%'; }
 	
 		parse=newbuff+3;
 	
@@ -614,7 +614,7 @@ if(flags&TR_ASCII)
 
 	len=(nbits/8)+2+2;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='"'; }
+	if(GLOBALS->show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -638,12 +638,12 @@ if(flags&TR_ASCII)
 		
 		parse+=8;
 		}
-	if (!found && !GLOBALS.show_base) {
+	if (!found && !GLOBALS->show_base) {
 		*(pnt++)='"';
 		*(pnt++)='"';
 	}
 		
-	if(GLOBALS.show_base) { *(pnt++)='"'; }
+	if(GLOBALS->show_base) { *(pnt++)='"'; }
 	*(pnt++)=0x00;
 	}
 else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
@@ -652,7 +652,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 
 	len=(nbits/4)+2+1;		/* $xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='$'; }
+	if(GLOBALS->show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
 
@@ -774,7 +774,7 @@ else if(flags&TR_OCT)
 
 	len=(nbits/3)+2+1;		/* #xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='#'; }
+	if(GLOBALS->show_base) { *(pnt++)='#'; }
 
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
@@ -810,7 +810,7 @@ else if(flags&TR_BIN)
 
 	len=(nbits/1)+2+1;		/* %xxxxx */
 	os=pnt=(char *)calloc_2(1,len);
-	if(GLOBALS.show_base) { *(pnt++)='%'; }
+	if(GLOBALS->show_base) { *(pnt++)='%'; }
 
 	parse=newbuff+3;
 
@@ -894,7 +894,7 @@ else if(flags&TR_REAL)
 		{
 rl_go_binary:	len=(nbits/1)+2+1;		/* %xxxxx */
 		os=pnt=(char *)calloc_2(1,len);
-		if(GLOBALS.show_base) { *(pnt++)='%'; }
+		if(GLOBALS->show_base) { *(pnt++)='%'; }
 	
 		parse=newbuff+3;
 	
@@ -942,16 +942,16 @@ return(os);
 
 static char *dofilter(Trptr t, char *s)
 {
-GLOBALS.xl_file_filter[t->f_filter] = xl_splay(s, GLOBALS.xl_file_filter[t->f_filter]);
+GLOBALS->xl_file_filter[t->f_filter] = xl_splay(s, GLOBALS->xl_file_filter[t->f_filter]);
 	
-if(!strcasecmp(s, GLOBALS.xl_file_filter[t->f_filter]->item))
+if(!strcasecmp(s, GLOBALS->xl_file_filter[t->f_filter]->item))
 	{
 	free_2(s);
-	s = malloc_2(strlen(GLOBALS.xl_file_filter[t->f_filter]->trans) + 1);
-	strcpy(s, GLOBALS.xl_file_filter[t->f_filter]->trans);
+	s = malloc_2(strlen(GLOBALS->xl_file_filter[t->f_filter]->trans) + 1);
+	strcpy(s, GLOBALS->xl_file_filter[t->f_filter]->trans);
 	}
 
-if((*s == '?') && (!GLOBALS.color_active_in_filter))
+if((*s == '?') && (!GLOBALS->color_active_in_filter))
 	{
 	char *s2a;
 	char *s2 = strchr(s+1, '?');
@@ -971,7 +971,7 @@ return(s);
 #if !defined _MSC_VER && !defined __MINGW32__
 static char *pdofilter(Trptr t, char *s)
 {
-struct pipe_ctx *p = GLOBALS.proc_filter[t->p_filter];
+struct pipe_ctx *p = GLOBALS->proc_filter[t->p_filter];
 char buf[1025];
 int n;
 
@@ -999,7 +999,7 @@ if(p)
 		}
 	}	
 
-if((*s == '?') && (!GLOBALS.color_active_in_filter))
+if((*s == '?') && (!GLOBALS->color_active_in_filter))
 	{
 	char *s2a;
 	char *s2 = strchr(s+1, '?');
@@ -1358,6 +1358,10 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.2  2007/08/05 02:27:18  kermin
  * Semi working global struct
  *

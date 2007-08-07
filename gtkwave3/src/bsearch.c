@@ -26,10 +26,10 @@ int rv;
 key=*((TimeType *)s1);
 obj=*(cpos=(TimeType *)s2);
 
-if((obj<=key)&&(obj>GLOBALS.max_compare_time_tc_bsearch_c_1))
+if((obj<=key)&&(obj>GLOBALS->max_compare_time_tc_bsearch_c_1))
 	{
-	GLOBALS.max_compare_time_tc_bsearch_c_1=obj;
-	GLOBALS.max_compare_pos_tc_bsearch_c_1=cpos;
+	GLOBALS->max_compare_time_tc_bsearch_c_1=obj;
+	GLOBALS->max_compare_pos_tc_bsearch_c_1=cpos;
 	}
 
 delta=key-obj;
@@ -44,17 +44,17 @@ int bsearch_timechain(TimeType key)
 {
 void *bsearch_dummy_rv;
 
-GLOBALS.max_compare_time_tc_bsearch_c_1=-2+GLOBALS.shift_timebase; GLOBALS.max_compare_pos_tc_bsearch_c_1=NULL; 
+GLOBALS->max_compare_time_tc_bsearch_c_1=-2+GLOBALS->shift_timebase; GLOBALS->max_compare_pos_tc_bsearch_c_1=NULL; 
 
-if(!GLOBALS.timearray) return(-1);
+if(!GLOBALS->timearray) return(-1);
 
-bsearch_dummy_rv = bsearch(&key, GLOBALS.timearray, GLOBALS.timearray_size, sizeof(TimeType), compar_timechain);
-if((!GLOBALS.max_compare_pos_tc_bsearch_c_1)||(GLOBALS.max_compare_time_tc_bsearch_c_1<GLOBALS.shift_timebase)) 
+bsearch_dummy_rv = bsearch(&key, GLOBALS->timearray, GLOBALS->timearray_size, sizeof(TimeType), compar_timechain);
+if((!GLOBALS->max_compare_pos_tc_bsearch_c_1)||(GLOBALS->max_compare_time_tc_bsearch_c_1<GLOBALS->shift_timebase)) 
 	{
-	GLOBALS.max_compare_pos_tc_bsearch_c_1=GLOBALS.timearray; /* aix bsearch fix */
+	GLOBALS->max_compare_pos_tc_bsearch_c_1=GLOBALS->timearray; /* aix bsearch fix */
 	}
 
-return(GLOBALS.max_compare_pos_tc_bsearch_c_1-GLOBALS.timearray);
+return(GLOBALS->max_compare_pos_tc_bsearch_c_1-GLOBALS->timearray);
 }
 
 /*****************************************************************************************/
@@ -66,13 +66,13 @@ hptr cpos;
 int rv;
 
 key=*((TimeType *)s1);
-obj=(cpos=(*((hptr *)s2)))->time+GLOBALS.shift_timebase;
+obj=(cpos=(*((hptr *)s2)))->time+GLOBALS->shift_timebase;
 
-if((obj<=key)&&(obj>GLOBALS.max_compare_time_bsearch_c_1))
+if((obj<=key)&&(obj>GLOBALS->max_compare_time_bsearch_c_1))
 	{
-	GLOBALS.max_compare_time_bsearch_c_1=obj;
-	GLOBALS.max_compare_pos_bsearch_c_1=cpos;
-	GLOBALS.max_compare_index=(hptr *)s2;
+	GLOBALS->max_compare_time_bsearch_c_1=obj;
+	GLOBALS->max_compare_pos_bsearch_c_1=cpos;
+	GLOBALS->max_compare_index=(hptr *)s2;
 	}
 
 delta=key-obj;
@@ -87,16 +87,16 @@ hptr bsearch_node(nptr n, TimeType key)
 {
 void *bsearch_dummy_rv;
 
-GLOBALS.max_compare_time_bsearch_c_1=-2+GLOBALS.shift_timebase; GLOBALS.max_compare_pos_bsearch_c_1=NULL; GLOBALS.max_compare_index=NULL;
+GLOBALS->max_compare_time_bsearch_c_1=-2+GLOBALS->shift_timebase; GLOBALS->max_compare_pos_bsearch_c_1=NULL; GLOBALS->max_compare_index=NULL;
 
 bsearch_dummy_rv = bsearch(&key, n->harray, n->numhist, sizeof(hptr), compar_histent);
-if((!GLOBALS.max_compare_pos_bsearch_c_1)||(GLOBALS.max_compare_time_bsearch_c_1<GLOBALS.shift_timebase)) 
+if((!GLOBALS->max_compare_pos_bsearch_c_1)||(GLOBALS->max_compare_time_bsearch_c_1<GLOBALS->shift_timebase)) 
 	{
-	GLOBALS.max_compare_pos_bsearch_c_1=n->harray[1]; /* aix bsearch fix */
-	GLOBALS.max_compare_index=&(n->harray[1]); 
+	GLOBALS->max_compare_pos_bsearch_c_1=n->harray[1]; /* aix bsearch fix */
+	GLOBALS->max_compare_index=&(n->harray[1]); 
 	}
 
-return(GLOBALS.max_compare_pos_bsearch_c_1);
+return(GLOBALS->max_compare_pos_bsearch_c_1);
 }
 
 /*****************************************************************************************/
@@ -109,13 +109,13 @@ vptr cpos;
 int rv;
 
 key=*((TimeType *)s1);
-obj=(cpos=(*((vptr *)s2)))->time+GLOBALS.shift_timebase;
+obj=(cpos=(*((vptr *)s2)))->time+GLOBALS->shift_timebase;
 
-if((obj<=key)&&(obj>GLOBALS.vmax_compare_time_bsearch_c_1))
+if((obj<=key)&&(obj>GLOBALS->vmax_compare_time_bsearch_c_1))
 	{
-	GLOBALS.vmax_compare_time_bsearch_c_1=obj;
-	GLOBALS.vmax_compare_pos_bsearch_c_1=cpos;
-        GLOBALS.vmax_compare_index=(vptr *)s2;
+	GLOBALS->vmax_compare_time_bsearch_c_1=obj;
+	GLOBALS->vmax_compare_pos_bsearch_c_1=cpos;
+        GLOBALS->vmax_compare_index=(vptr *)s2;
 	}
 
 delta=key-obj;
@@ -130,16 +130,16 @@ vptr bsearch_vector(bvptr b, TimeType key)
 {
 void *bsearch_dummy_rv;
 
-GLOBALS.vmax_compare_time_bsearch_c_1=-2+GLOBALS.shift_timebase; GLOBALS.vmax_compare_pos_bsearch_c_1=NULL; GLOBALS.vmax_compare_index=NULL;
+GLOBALS->vmax_compare_time_bsearch_c_1=-2+GLOBALS->shift_timebase; GLOBALS->vmax_compare_pos_bsearch_c_1=NULL; GLOBALS->vmax_compare_index=NULL;
 
 bsearch_dummy_rv = bsearch(&key, b->vectors, b->numregions, sizeof(vptr), compar_vectorent);
-if((!GLOBALS.vmax_compare_pos_bsearch_c_1)||(GLOBALS.vmax_compare_time_bsearch_c_1<GLOBALS.shift_timebase)) 
+if((!GLOBALS->vmax_compare_pos_bsearch_c_1)||(GLOBALS->vmax_compare_time_bsearch_c_1<GLOBALS->shift_timebase)) 
 	{
-	GLOBALS.vmax_compare_pos_bsearch_c_1=b->vectors[1]; /* aix bsearch fix */
-	GLOBALS.vmax_compare_index=&(b->vectors[1]);
+	GLOBALS->vmax_compare_pos_bsearch_c_1=b->vectors[1]; /* aix bsearch fix */
+	GLOBALS->vmax_compare_index=&(b->vectors[1]);
 	}
 
-return(GLOBALS.vmax_compare_pos_bsearch_c_1);
+return(GLOBALS->vmax_compare_pos_bsearch_c_1);
 }
 
 /*****************************************************************************************/
@@ -158,14 +158,14 @@ vcache[0]=*str;
 vcache[1]=*(str+1);
 *str='+';
 *(str+1)=0;
-obj=gdk_string_measure(GLOBALS.wavefont,GLOBALS.trunc_asciibase_bsearch_c_1);
+obj=gdk_string_measure(GLOBALS->wavefont,GLOBALS->trunc_asciibase_bsearch_c_1);
 *str=vcache[0];
 *(str+1)=vcache[1];
 
-if((obj<=key)&&(obj>GLOBALS.maxlen_trunc))
+if((obj<=key)&&(obj>GLOBALS->maxlen_trunc))
         {
-        GLOBALS.maxlen_trunc=obj;
-        GLOBALS.maxlen_trunc_pos_bsearch_c_1=str;
+        GLOBALS->maxlen_trunc=obj;
+        GLOBALS->maxlen_trunc_pos_bsearch_c_1=str;
         }
 
 return(key-obj);
@@ -179,10 +179,10 @@ int len;
 
 if((maxlen<=0)||(!ascii)||(!(len=strlen(ascii)))) return(NULL);
 
-GLOBALS.maxlen_trunc=0; GLOBALS.maxlen_trunc_pos_bsearch_c_1=NULL;
+GLOBALS->maxlen_trunc=0; GLOBALS->maxlen_trunc_pos_bsearch_c_1=NULL;
 
-bsearch_dummy_rv = bsearch(&maxlen, GLOBALS.trunc_asciibase_bsearch_c_1=ascii, len, sizeof(char), compar_trunc);
-return(GLOBALS.maxlen_trunc_pos_bsearch_c_1);
+bsearch_dummy_rv = bsearch(&maxlen, GLOBALS->trunc_asciibase_bsearch_c_1=ascii, len, sizeof(char), compar_trunc);
+return(GLOBALS->maxlen_trunc_pos_bsearch_c_1);
 }
 
 /*****************************************************************************************/
@@ -220,7 +220,7 @@ if(ascii[len-1]=='}')
 			char *tsc = wave_alloca(i+1);
 			memcpy(tsc, ascii, i+1);
 			tsc[i] = 0;
-			rc=(struct symbol **)bsearch(tsc, GLOBALS.facs, GLOBALS.numfacs, sizeof(struct symbol *), compar_facs);
+			rc=(struct symbol **)bsearch(tsc, GLOBALS->facs, GLOBALS->numfacs, sizeof(struct symbol *), compar_facs);
 			if(rc) 
 				{
 				unsigned int whichrow = atoi(&ascii[i+1]);
@@ -237,13 +237,17 @@ if(ascii[len-1]=='}')
 	
 	}
 
-rc=(struct symbol **)bsearch(ascii, GLOBALS.facs, GLOBALS.numfacs, sizeof(struct symbol *), compar_facs);
+rc=(struct symbol **)bsearch(ascii, GLOBALS->facs, GLOBALS->numfacs, sizeof(struct symbol *), compar_facs);
 if(rc) return(*rc); else return(NULL);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:18  kermin
  * Semi working global struct
  *

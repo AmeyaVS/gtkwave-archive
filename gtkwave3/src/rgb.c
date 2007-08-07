@@ -818,7 +818,7 @@ if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(cha
 	offset=match-cnames;
 	rgb=((int)c_red[offset]<<16)|((int)c_grn[offset]<<8)|((int)c_blu[offset]);
 
-	if(!rgb_contexts[offset]) rgb_contexts[offset] = alloc_color(GLOBALS.wavearea, rgb, GLOBALS.wavearea->style->white_gc);
+	if(!rgb_contexts[offset]) rgb_contexts[offset] = alloc_color(GLOBALS->wavearea, rgb, GLOBALS->wavearea->style->white_gc);
 
 	return(rgb_contexts[offset]);
 	}
@@ -853,9 +853,9 @@ if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(cha
 			else
 			{
 			#if defined _MSC_VER || defined __MINGW32__
-			fprintf(stderr, "** gtkwave.ini (line %d): '%s' is an unknown color value; ignoring.\n", GLOBALS.rc_line_no, str);
+			fprintf(stderr, "** gtkwave.ini (line %d): '%s' is an unknown color value; ignoring.\n", GLOBALS->rc_line_no, str);
 			#else
-			fprintf(stderr, "** .gtkwaverc (line %d): '%s' is an unknown color value; ignoring.\n", GLOBALS.rc_line_no, str);
+			fprintf(stderr, "** .gtkwaverc (line %d): '%s' is an unknown color value; ignoring.\n", GLOBALS->rc_line_no, str);
 			#endif
 			return(~0);
 			}
@@ -869,6 +869,10 @@ if((match=(char **)bsearch((void *)str, (void *)cnames, C_ARRAY_SIZE, sizeof(cha
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.2  2007/07/23 23:13:08  gtkwave
  * adds for color tags in filtered trace data
  *

@@ -28,9 +28,9 @@ static void select_row_callback(GtkWidget *widget, gint row, gint column,
 {
 struct tree *t;
 
-t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.ctree_main), row);
+t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->ctree_main), row);
 DEBUG(printf("TS: %08x %s\n",t,t->name));
-GLOBALS.selectedtree_treesearch_gtk1_c=t;
+GLOBALS->selectedtree_treesearch_gtk1_c=t;
 }
 
 static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
@@ -38,9 +38,9 @@ static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
 {
 struct tree *t;
 
-t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.ctree_main), row);
+t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->ctree_main), row);
 DEBUG(printf("TU: %08x %s\n",t,t->name));
-GLOBALS.selectedtree_treesearch_gtk1_c=NULL;
+GLOBALS->selectedtree_treesearch_gtk1_c=NULL;
 }
 
 
@@ -48,30 +48,30 @@ GLOBALS.selectedtree_treesearch_gtk1_c=NULL;
 
 int treebox_is_active(void)
 {
-return(GLOBALS.is_active_treesearch_gtk1_c);
+return(GLOBALS->is_active_treesearch_gtk1_c);
 }
 
 static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
 {
   G_CONST_RETURN gchar *entry_text;
   int len;
-  entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS.entry_a_treesearch_gtk1_c));
+  entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS->entry_a_treesearch_gtk1_c));
   DEBUG(printf("Entry contents: %s\n", entry_text));
-  if(!(len=strlen(entry_text))) GLOBALS.entrybox_text_local_treesearch_gtk1_c=NULL;
-	else strcpy((GLOBALS.entrybox_text_local_treesearch_gtk1_c=(char *)malloc_2(len+1)),entry_text);
+  if(!(len=strlen(entry_text))) GLOBALS->entrybox_text_local_treesearch_gtk1_c=NULL;
+	else strcpy((GLOBALS->entrybox_text_local_treesearch_gtk1_c=(char *)malloc_2(len+1)),entry_text);
 
-  gtk_grab_remove(GLOBALS.window1_treesearch_gtk1_c);
-  gtk_widget_destroy(GLOBALS.window1_treesearch_gtk1_c);
+  gtk_grab_remove(GLOBALS->window1_treesearch_gtk1_c);
+  gtk_widget_destroy(GLOBALS->window1_treesearch_gtk1_c);
 
-  GLOBALS.cleanup_e_treesearch_gtk1_c();
+  GLOBALS->cleanup_e_treesearch_gtk1_c();
 }
 
 static void destroy_callback_e(GtkWidget *widget, GtkWidget *nothing)
 {
   DEBUG(printf("Entry Cancel\n"));
-  GLOBALS.entrybox_text_local_treesearch_gtk1_c=NULL;
-  gtk_grab_remove(GLOBALS.window1_treesearch_gtk1_c);
-  gtk_widget_destroy(GLOBALS.window1_treesearch_gtk1_c);
+  GLOBALS->entrybox_text_local_treesearch_gtk1_c=NULL;
+  gtk_grab_remove(GLOBALS->window1_treesearch_gtk1_c);
+  gtk_widget_destroy(GLOBALS->window1_treesearch_gtk1_c);
 }
 
 static void entrybox_local(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -79,29 +79,29 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     GtkWidget *vbox, *hbox;
     GtkWidget *button1, *button2;
 
-    GLOBALS.cleanup_e_treesearch_gtk1_c=func;
+    GLOBALS->cleanup_e_treesearch_gtk1_c=func;
 
     /* create a new modal window */
-    GLOBALS.window1_treesearch_gtk1_c = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_grab_add(GLOBALS.window1_treesearch_gtk1_c);
-    gtk_widget_set_usize( GTK_WIDGET (GLOBALS.window1_treesearch_gtk1_c), width, 60);
-    gtk_window_set_title(GTK_WINDOW (GLOBALS.window1_treesearch_gtk1_c), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS.window1_treesearch_gtk1_c), "delete_event",
+    GLOBALS->window1_treesearch_gtk1_c = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_grab_add(GLOBALS->window1_treesearch_gtk1_c);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_treesearch_gtk1_c), width, 60);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_treesearch_gtk1_c), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window1_treesearch_gtk1_c), "delete_event",
                        (GtkSignalFunc) destroy_callback_e, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (GLOBALS.window1_treesearch_gtk1_c), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window1_treesearch_gtk1_c), vbox);
     gtk_widget_show (vbox);
 
-    GLOBALS.entry_a_treesearch_gtk1_c = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(GLOBALS.entry_a_treesearch_gtk1_c), "activate",
+    GLOBALS->entry_a_treesearch_gtk1_c = gtk_entry_new_with_max_length (maxch);
+    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_a_treesearch_gtk1_c), "activate",
 		       GTK_SIGNAL_FUNC(enter_callback_e),
-		       GLOBALS.entry_a_treesearch_gtk1_c);
-    gtk_entry_set_text (GTK_ENTRY (GLOBALS.entry_a_treesearch_gtk1_c), default_text);
-    gtk_entry_select_region (GTK_ENTRY (GLOBALS.entry_a_treesearch_gtk1_c),
-			     0, GTK_ENTRY(GLOBALS.entry_a_treesearch_gtk1_c)->text_length);
-    gtk_box_pack_start (GTK_BOX (vbox), GLOBALS.entry_a_treesearch_gtk1_c, TRUE, TRUE, 0);
-    gtk_widget_show (GLOBALS.entry_a_treesearch_gtk1_c);
+		       GLOBALS->entry_a_treesearch_gtk1_c);
+    gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_a_treesearch_gtk1_c), default_text);
+    gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_a_treesearch_gtk1_c),
+			     0, GTK_ENTRY(GLOBALS->entry_a_treesearch_gtk1_c)->text_length);
+    gtk_box_pack_start (GTK_BOX (vbox), GLOBALS->entry_a_treesearch_gtk1_c, TRUE, TRUE, 0);
+    gtk_widget_show (GLOBALS->entry_a_treesearch_gtk1_c);
 
     hbox = gtk_hbox_new (FALSE, 1);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
@@ -129,7 +129,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_widget_show(GLOBALS.window1_treesearch_gtk1_c);
+    gtk_widget_show(GLOBALS->window1_treesearch_gtk1_c);
 }
 
 /***************************************************************************/
@@ -197,18 +197,18 @@ if(t)
 static void
 bundle_cleanup(GtkWidget *widget, gpointer data)
 { 
-if(GLOBALS.entrybox_text_local_treesearch_gtk1_c) 
+if(GLOBALS->entrybox_text_local_treesearch_gtk1_c) 
         {
         char *efix;
  
-	if(!strlen(GLOBALS.entrybox_text_local_treesearch_gtk1_c))
+	if(!strlen(GLOBALS->entrybox_text_local_treesearch_gtk1_c))
 		{
 	        DEBUG(printf("Bundle name is not specified--recursing into hierarchy.\n"));
-		fetchvex(GLOBALS.selectedtree_treesearch_gtk1_c, GLOBALS.bundle_direction_treesearch_gtk1_c);
+		fetchvex(GLOBALS->selectedtree_treesearch_gtk1_c, GLOBALS->bundle_direction_treesearch_gtk1_c);
 		}
 		else
 		{
-	        efix=GLOBALS.entrybox_text_local_treesearch_gtk1_c;
+	        efix=GLOBALS->entrybox_text_local_treesearch_gtk1_c;
 	        while(*efix)
 	                {
 	                if(*efix==' ')
@@ -218,37 +218,37 @@ if(GLOBALS.entrybox_text_local_treesearch_gtk1_c)
 	                efix++;
 	                }
 	 
-	        DEBUG(printf("Bundle name is: %s\n",GLOBALS.entrybox_text_local_treesearch_gtk1_c));
-	        add_vector_range(GLOBALS.entrybox_text_local_treesearch_gtk1_c, 
-				fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which,
-				fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which, 
-				GLOBALS.bundle_direction_treesearch_gtk1_c);
+	        DEBUG(printf("Bundle name is: %s\n",GLOBALS->entrybox_text_local_treesearch_gtk1_c));
+	        add_vector_range(GLOBALS->entrybox_text_local_treesearch_gtk1_c, 
+				fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which,
+				fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which, 
+				GLOBALS->bundle_direction_treesearch_gtk1_c);
 		}
-        free_2(GLOBALS.entrybox_text_local_treesearch_gtk1_c);
+        free_2(GLOBALS->entrybox_text_local_treesearch_gtk1_c);
         }
 	else
 	{
         DEBUG(printf("Bundle name is not specified--recursing into hierarchy.\n"));
-	fetchvex(GLOBALS.selectedtree_treesearch_gtk1_c, GLOBALS.bundle_direction_treesearch_gtk1_c);
+	fetchvex(GLOBALS->selectedtree_treesearch_gtk1_c, GLOBALS->bundle_direction_treesearch_gtk1_c);
 	}
 
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
  
 static void
 bundle_callback_generic(void)
 {
-if(GLOBALS.selectedtree_treesearch_gtk1_c)
+if(GLOBALS->selectedtree_treesearch_gtk1_c)
 	{
-	if(!GLOBALS.autoname_bundles)
+	if(!GLOBALS->autoname_bundles)
 	        {
 	        entrybox_local("Enter Bundle Name",300,"",128,GTK_SIGNAL_FUNC(bundle_cleanup));
 	        }
 	        else
 	        {
-	        GLOBALS.entrybox_text_local_treesearch_gtk1_c=NULL;
+	        GLOBALS->entrybox_text_local_treesearch_gtk1_c=NULL;
 	        bundle_cleanup(NULL, NULL);
 	        }
 	}
@@ -257,14 +257,14 @@ if(GLOBALS.selectedtree_treesearch_gtk1_c)
 static void
 bundle_callback_up(GtkWidget *widget, gpointer data)
 {
-GLOBALS.bundle_direction_treesearch_gtk1_c=0;
+GLOBALS->bundle_direction_treesearch_gtk1_c=0;
 bundle_callback_generic();
 }
 
 static void
 bundle_callback_down(GtkWidget *widget, gpointer data)
 {
-GLOBALS.bundle_direction_treesearch_gtk1_c=1;
+GLOBALS->bundle_direction_treesearch_gtk1_c=1;
 bundle_callback_generic();
 }
 
@@ -273,35 +273,35 @@ static void insert_callback(GtkWidget *widget, GtkWidget *nothing)
 Traces tcache;
 int i;
 
-if(!GLOBALS.selectedtree_treesearch_gtk1_c) return;
+if(!GLOBALS->selectedtree_treesearch_gtk1_c) return;
 
-memcpy(&tcache,&GLOBALS.traces,sizeof(Traces));
-GLOBALS.traces.total=0;
-GLOBALS.traces.first=GLOBALS.traces.last=NULL;
+memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
+GLOBALS->traces.total=0;
+GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
         {
         struct symbol *s;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS.autocoalesce;
+		s->vec_root->selected=GLOBALS->autocoalesce;
 		}
         }
 
 /* LX2 */
-if(GLOBALS.is_lx2)
+if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
                 {
                 struct symbol *s, *t;
-                s=GLOBALS.facs[i];
+                s=GLOBALS->facs[i];
                 t=s->vec_root;
-                if((t)&&(GLOBALS.autocoalesce))
+                if((t)&&(GLOBALS->autocoalesce))
                         {
                         if(t->selected)
                                 {
@@ -333,13 +333,13 @@ if(GLOBALS.is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
         {
 	int len;
         struct symbol *s, *t;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	t=s->vec_root;
-	if((t)&&(GLOBALS.autocoalesce))
+	if((t)&&(GLOBALS->autocoalesce))
 		{
 		if(t->selected)
 			{
@@ -361,22 +361,22 @@ for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBA
 
 set_window_idle(widget);
 
-GLOBALS.traces.buffercount=GLOBALS.traces.total;
-GLOBALS.traces.buffer=GLOBALS.traces.first;
-GLOBALS.traces.bufferlast=GLOBALS.traces.last;
-GLOBALS.traces.first=tcache.first;
-GLOBALS.traces.last=tcache.last;
-GLOBALS.traces.total=tcache.total;
+GLOBALS->traces.buffercount=GLOBALS->traces.total;
+GLOBALS->traces.buffer=GLOBALS->traces.first;
+GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+GLOBALS->traces.first=tcache.first;
+GLOBALS->traces.last=tcache.last;
+GLOBALS->traces.total=tcache.total;
 
 PasteBuffer();
 
-GLOBALS.traces.buffercount=tcache.buffercount;
-GLOBALS.traces.buffer=tcache.buffer;
-GLOBALS.traces.bufferlast=tcache.bufferlast;
+GLOBALS->traces.buffercount=tcache.buffercount;
+GLOBALS->traces.buffer=tcache.buffer;
+GLOBALS->traces.bufferlast=tcache.bufferlast;
 
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 static void replace_callback(GtkWidget *widget, GtkWidget *nothing)
@@ -385,35 +385,35 @@ Traces tcache;
 int i;
 Trptr tfirst=NULL, tlast=NULL;
 
-if(!GLOBALS.selectedtree_treesearch_gtk1_c) return;
+if(!GLOBALS->selectedtree_treesearch_gtk1_c) return;
 
-memcpy(&tcache,&GLOBALS.traces,sizeof(Traces));
-GLOBALS.traces.total=0;
-GLOBALS.traces.first=GLOBALS.traces.last=NULL;
+memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
+GLOBALS->traces.total=0;
+GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
         {
         struct symbol *s;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS.autocoalesce;
+		s->vec_root->selected=GLOBALS->autocoalesce;
 		}
         }
 
 /* LX2 */
-if(GLOBALS.is_lx2)
+if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
                 {
                 struct symbol *s, *t;
-                s=GLOBALS.facs[i];
+                s=GLOBALS->facs[i];
                 t=s->vec_root;
-                if((t)&&(GLOBALS.autocoalesce))
+                if((t)&&(GLOBALS->autocoalesce))
                         {
                         if(t->selected)
                                 {
@@ -445,13 +445,13 @@ if(GLOBALS.is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
         {
 	int len;
         struct symbol *s, *t;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	t=s->vec_root;
-	if((t)&&(GLOBALS.autocoalesce))
+	if((t)&&(GLOBALS->autocoalesce))
 		{
 		if(t->selected)
 			{
@@ -473,20 +473,20 @@ for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBA
 
 set_window_idle(widget);
 
-tfirst=GLOBALS.traces.first; tlast=GLOBALS.traces.last;	/* cache for highlighting */
+tfirst=GLOBALS->traces.first; tlast=GLOBALS->traces.last;	/* cache for highlighting */
 
-GLOBALS.traces.buffercount=GLOBALS.traces.total;
-GLOBALS.traces.buffer=GLOBALS.traces.first;
-GLOBALS.traces.bufferlast=GLOBALS.traces.last;
-GLOBALS.traces.first=tcache.first;
-GLOBALS.traces.last=tcache.last;
-GLOBALS.traces.total=tcache.total;
+GLOBALS->traces.buffercount=GLOBALS->traces.total;
+GLOBALS->traces.buffer=GLOBALS->traces.first;
+GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+GLOBALS->traces.first=tcache.first;
+GLOBALS->traces.last=tcache.last;
+GLOBALS->traces.total=tcache.total;
 
 PasteBuffer();
 
-GLOBALS.traces.buffercount=tcache.buffercount;
-GLOBALS.traces.buffer=tcache.buffer;
-GLOBALS.traces.bufferlast=tcache.bufferlast;
+GLOBALS->traces.buffercount=tcache.buffercount;
+GLOBALS->traces.buffer=tcache.buffer;
+GLOBALS->traces.bufferlast=tcache.bufferlast;
 
 CutBuffer();
 
@@ -498,39 +498,39 @@ while(tfirst)
 	}
 
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 int i;
 
-if(!GLOBALS.selectedtree_treesearch_gtk1_c) return;
+if(!GLOBALS->selectedtree_treesearch_gtk1_c) return;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
         {
         struct symbol *s;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS.autocoalesce;
+		s->vec_root->selected=GLOBALS->autocoalesce;
 		}
         }
 
 /* LX2 */
-if(GLOBALS.is_lx2)
+if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
                 {
                 struct symbol *s, *t;
-                s=GLOBALS.facs[i];
+                s=GLOBALS->facs[i];
                 t=s->vec_root;
-                if((t)&&(GLOBALS.autocoalesce))
+                if((t)&&(GLOBALS->autocoalesce))
                         {
                         if(t->selected)
                                 {
@@ -562,13 +562,13 @@ if(GLOBALS.is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
         {
 	int len;
         struct symbol *s, *t;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	t=s->vec_root;
-	if((t)&&(GLOBALS.autocoalesce))
+	if((t)&&(GLOBALS->autocoalesce))
 		{
 		if(t->selected)
 			{
@@ -591,15 +591,15 @@ for(i=fetchlow(GLOBALS.selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBA
 set_window_idle(widget);
 
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-  GLOBALS.is_active_treesearch_gtk1_c=0;
-  gtk_widget_destroy(GLOBALS.window_treesearch_gtk1_c);
+  GLOBALS->is_active_treesearch_gtk1_c=0;
+  gtk_widget_destroy(GLOBALS->window_treesearch_gtk1_c);
 }
 
 
@@ -617,19 +617,19 @@ void treebox(char *title, GtkSignalFunc func)
     GtkTooltips *tooltips;
     GtkCList  *clist;
 
-    if(GLOBALS.is_active_treesearch_gtk1_c) 
+    if(GLOBALS->is_active_treesearch_gtk1_c) 
 	{
-	gdk_window_raise(GLOBALS.window_treesearch_gtk1_c->window);
+	gdk_window_raise(GLOBALS->window_treesearch_gtk1_c->window);
 	return;
 	}
 
-    GLOBALS.is_active_treesearch_gtk1_c=1;
-    GLOBALS.cleanup_treesearch_gtk1_c=func;
+    GLOBALS->is_active_treesearch_gtk1_c=1;
+    GLOBALS->cleanup_treesearch_gtk1_c=func;
 
     /* create a new modal window */
-    GLOBALS.window_treesearch_gtk1_c = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW (GLOBALS.window_treesearch_gtk1_c), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS.window_treesearch_gtk1_c), "delete_event",
+    GLOBALS->window_treesearch_gtk1_c = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_treesearch_gtk1_c), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c), "delete_event",
                        (GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
@@ -645,13 +645,13 @@ void treebox(char *title, GtkSignalFunc func)
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
-    GLOBALS.tree_treesearch_gtk1_c=gtk_ctree_new(1,0);
-    GLOBALS.ctree_main=GTK_CTREE(GLOBALS.tree_treesearch_gtk1_c);
+    GLOBALS->tree_treesearch_gtk1_c=gtk_ctree_new(1,0);
+    GLOBALS->ctree_main=GTK_CTREE(GLOBALS->tree_treesearch_gtk1_c);
 
-    gtk_clist_set_column_auto_resize (GTK_CLIST (GLOBALS.tree_treesearch_gtk1_c), 0, TRUE);
-    gtk_widget_show(GLOBALS.tree_treesearch_gtk1_c);
+    gtk_clist_set_column_auto_resize (GTK_CLIST (GLOBALS->tree_treesearch_gtk1_c), 0, TRUE);
+    gtk_widget_show(GLOBALS->tree_treesearch_gtk1_c);
 
-    clist=GTK_CLIST(GLOBALS.tree_treesearch_gtk1_c);
+    clist=GTK_CLIST(GLOBALS->tree_treesearch_gtk1_c);
     gtk_signal_connect_object (GTK_OBJECT (clist), "select_row",
                                GTK_SIGNAL_FUNC(select_row_callback),
                                NULL);
@@ -662,10 +662,10 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_clist_freeze(clist);
     gtk_clist_clear(clist);
 
-    maketree(NULL, GLOBALS.treeroot);
+    maketree(NULL, GLOBALS->treeroot);
 
     gtk_clist_thaw(clist);
-    GLOBALS.selectedtree_treesearch_gtk1_c=NULL;
+    GLOBALS->selectedtree_treesearch_gtk1_c=NULL;
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
     gtk_widget_set_usize( GTK_WIDGET (scrolled_win), -1, 300);
@@ -673,7 +673,7 @@ void treebox(char *title, GtkSignalFunc func)
                                       GTK_POLICY_AUTOMATIC,
                                       GTK_POLICY_AUTOMATIC);
     gtk_widget_show(scrolled_win);
-    gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (GLOBALS.tree_treesearch_gtk1_c));
+    gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (GLOBALS->tree_treesearch_gtk1_c));
     gtk_container_add (GTK_CONTAINER (frame2), scrolled_win);
 
     frameh = gtk_frame_new (NULL);
@@ -691,7 +691,7 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
     gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",
 			       GTK_SIGNAL_FUNC(ok_callback),
-			       GTK_OBJECT (GLOBALS.window_treesearch_gtk1_c));
+			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signal hierarchy to end of the display on the main window.",NULL);
@@ -702,19 +702,19 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
     gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",
 			       GTK_SIGNAL_FUNC(insert_callback),
-			       GTK_OBJECT (GLOBALS.window_treesearch_gtk1_c));
+			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add selected signal hierarchy after last highlighted signal on the main window.",NULL);
     gtk_box_pack_start (GTK_BOX (hbox), button2, TRUE, FALSE, 0);
 
-    if(GLOBALS.vcd_explicit_zero_subscripts>=0)
+    if(GLOBALS->vcd_explicit_zero_subscripts>=0)
 	{
     	button3 = gtk_button_new_with_label (" Bundle Up ");
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
     	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",
 			       GTK_SIGNAL_FUNC(bundle_callback_up),
-			       GTK_OBJECT (GLOBALS.window_treesearch_gtk1_c));
+			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -730,7 +730,7 @@ void treebox(char *title, GtkSignalFunc func)
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
     	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",
 			       GTK_SIGNAL_FUNC(bundle_callback_down),
-			       GTK_OBJECT (GLOBALS.window_treesearch_gtk1_c));
+			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -747,7 +747,7 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
     gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",
 			       GTK_SIGNAL_FUNC(replace_callback),
-			       GTK_OBJECT (GLOBALS.window_treesearch_gtk1_c));
+			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with signals selected above.",NULL);
@@ -757,21 +757,25 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
     gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",
 			       GTK_SIGNAL_FUNC(destroy_callback),
-			       GTK_OBJECT (GLOBALS.window_treesearch_gtk1_c));
+			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
     gtk_box_pack_start (GTK_BOX (hbox), button5, TRUE, FALSE, 0);
 
     gtk_container_add (GTK_CONTAINER (frameh), hbox);
-    gtk_container_add (GTK_CONTAINER (GLOBALS.window_treesearch_gtk1_c), table);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_treesearch_gtk1_c), table);
 
-    gtk_widget_show(GLOBALS.window_treesearch_gtk1_c);
+    gtk_widget_show(GLOBALS->window_treesearch_gtk1_c);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/06 03:50:50  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:58  gtkwave
  * Imported sources
  *

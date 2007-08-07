@@ -20,23 +20,23 @@ static void enter_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   G_CONST_RETURN gchar *entry_text;
   int len;
-  entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS.entry_entry_c_1));
+  entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS->entry_entry_c_1));
   DEBUG(printf("Entry contents: %s\n", entry_text));
-  if(!(len=strlen(entry_text))) GLOBALS.entrybox_text=NULL;
-	else strcpy((GLOBALS.entrybox_text=(char *)malloc_2(len+1)),entry_text);
+  if(!(len=strlen(entry_text))) GLOBALS->entrybox_text=NULL;
+	else strcpy((GLOBALS->entrybox_text=(char *)malloc_2(len+1)),entry_text);
 
-  gtk_grab_remove(GLOBALS.window_entry_c_1);
-  gtk_widget_destroy(GLOBALS.window_entry_c_1);
+  gtk_grab_remove(GLOBALS->window_entry_c_1);
+  gtk_widget_destroy(GLOBALS->window_entry_c_1);
 
-  GLOBALS.cleanup_entry_c_1();
+  GLOBALS->cleanup_entry_c_1();
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   DEBUG(printf("Entry Cancel\n"));
-  GLOBALS.entrybox_text=NULL;
-  gtk_grab_remove(GLOBALS.window_entry_c_1);
-  gtk_widget_destroy(GLOBALS.window_entry_c_1);
+  GLOBALS->entrybox_text=NULL;
+  gtk_grab_remove(GLOBALS->window_entry_c_1);
+  gtk_widget_destroy(GLOBALS->window_entry_c_1);
 }
 
 void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -44,45 +44,45 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
     GtkWidget *vbox, *hbox;
     GtkWidget *button1, *button2;
 
-    GLOBALS.cleanup_entry_c_1=func;
+    GLOBALS->cleanup_entry_c_1=func;
 
-    if(GLOBALS.script_handle)
+    if(GLOBALS->script_handle)
 	{
         char *s = NULL;
 
-        while((!s)&&(!feof(GLOBALS.script_handle))) s = fgetmalloc_stripspaces(GLOBALS.script_handle);
+        while((!s)&&(!feof(GLOBALS->script_handle))) s = fgetmalloc_stripspaces(GLOBALS->script_handle);
 	if(s)
 		{
 		fprintf(stderr, "GTKWAVE | Entry '%s'\n", s);
-		GLOBALS.entrybox_text = s;
-		GLOBALS.cleanup_entry_c_1();
+		GLOBALS->entrybox_text = s;
+		GLOBALS->cleanup_entry_c_1();
 		}
 		else
 		{
-		GLOBALS.entrybox_text = NULL;
+		GLOBALS->entrybox_text = NULL;
 		}
 
 	return;
 	}
 
     /* create a new modal window */
-    GLOBALS.window_entry_c_1 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_grab_add(GLOBALS.window_entry_c_1);
-    gtk_widget_set_usize( GTK_WIDGET (GLOBALS.window_entry_c_1), width, 60);
-    gtk_window_set_title(GTK_WINDOW (GLOBALS.window_entry_c_1), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS.window_entry_c_1), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
-    gtk_window_set_policy(GTK_WINDOW(GLOBALS.window_entry_c_1), FALSE, FALSE, FALSE);
+    GLOBALS->window_entry_c_1 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_grab_add(GLOBALS->window_entry_c_1);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_entry_c_1), width, 60);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_entry_c_1), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_entry_c_1), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtk_window_set_policy(GTK_WINDOW(GLOBALS->window_entry_c_1), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (GLOBALS.window_entry_c_1), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_entry_c_1), vbox);
     gtk_widget_show (vbox);
 
-    GLOBALS.entry_entry_c_1 = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(GLOBALS.entry_entry_c_1), "activate",GTK_SIGNAL_FUNC(enter_callback),GLOBALS.entry_entry_c_1);
-    gtk_entry_set_text (GTK_ENTRY (GLOBALS.entry_entry_c_1), default_text);
-    gtk_entry_select_region (GTK_ENTRY (GLOBALS.entry_entry_c_1),0, GTK_ENTRY(GLOBALS.entry_entry_c_1)->text_length);
-    gtk_box_pack_start (GTK_BOX (vbox), GLOBALS.entry_entry_c_1, FALSE, FALSE, 0);
-    gtk_widget_show (GLOBALS.entry_entry_c_1);
+    GLOBALS->entry_entry_c_1 = gtk_entry_new_with_max_length (maxch);
+    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_entry_c_1), "activate",GTK_SIGNAL_FUNC(enter_callback),GLOBALS->entry_entry_c_1);
+    gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_entry_c_1), default_text);
+    gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_entry_c_1),0, GTK_ENTRY(GLOBALS->entry_entry_c_1)->text_length);
+    gtk_box_pack_start (GTK_BOX (vbox), GLOBALS->entry_entry_c_1, FALSE, FALSE, 0);
+    gtk_widget_show (GLOBALS->entry_entry_c_1);
 
     hbox = gtk_hbox_new (FALSE, 1);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
@@ -111,12 +111,16 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_widget_show(GLOBALS.window_entry_c_1);
+    gtk_widget_show(GLOBALS->window_entry_c_1);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:46  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:19  kermin
  * Semi working global struct
  *

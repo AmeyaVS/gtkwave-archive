@@ -27,7 +27,7 @@
 
 int hier_searchbox_is_active(void)
 {
-return(GLOBALS.is_active_hiersearch_c_1);
+return(GLOBALS->is_active_hiersearch_c_1);
 }
 
 
@@ -41,17 +41,17 @@ int pixlen=0, maxpixlen=0;
 static char *dotdot="..";
 struct treechain *tc;
 
-gtk_clist_freeze(cl=GTK_CLIST(GLOBALS.clist_hiersearch_c_1));
+gtk_clist_freeze(cl=GTK_CLIST(GLOBALS->clist_hiersearch_c_1));
 gtk_clist_clear(cl);
 
-GLOBALS.num_rows_hiersearch_c_1=0;
+GLOBALS->num_rows_hiersearch_c_1=0;
 
-if(t!=GLOBALS.treeroot)
+if(t!=GLOBALS->treeroot)
 	{
-	maxpixlen=gdk_string_measure(GLOBALS.signalfont,(gchar *)(dotdot));
+	maxpixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(dotdot));
 	}
 
-if(!GLOBALS.hier_grouping)
+if(!GLOBALS->hier_grouping)
 	{
         char *tmp, *tmp2, *tmp3;
 	t2=t;
@@ -67,17 +67,17 @@ if(!GLOBALS.hier_grouping)
                         	else
 				if(t2->which!=-1)
 				{
-				if(GLOBALS.facs[t2->which]->vec_root)
+				if(GLOBALS->facs[t2->which]->vec_root)
 					{
-					if(GLOBALS.autocoalesce)
+					if(GLOBALS->autocoalesce)
 						{
-						if(GLOBALS.facs[t2->which]->vec_root!=GLOBALS.facs[t2->which])
+						if(GLOBALS->facs[t2->which]->vec_root!=GLOBALS->facs[t2->which])
 							{
 							t2=t2->next;
 							continue;
 							}
 
-						tmp2=makename_chain(GLOBALS.facs[t2->which]);
+						tmp2=makename_chain(GLOBALS->facs[t2->which]);
 						tmp3=leastsig_hiername(tmp2);
 						tmp=wave_alloca(strlen(tmp3)+4);
 						strcpy(tmp,   "[] ");
@@ -101,11 +101,11 @@ if(!GLOBALS.hier_grouping)
 	                        tmp=t2->name;
 	                        }
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
-			pixlen=gdk_string_measure(GLOBALS.signalfont,(gchar *)(tmp));
+			pixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
 			}
 		maxpixlen=(pixlen>maxpixlen)?pixlen:maxpixlen;		
 		gtk_clist_set_row_data(cl, row,t2); 
-		GLOBALS.num_rows_hiersearch_c_1++;
+		GLOBALS->num_rows_hiersearch_c_1++;
 		t2=t2->next;
 		}
 	}
@@ -120,17 +120,17 @@ if(!GLOBALS.hier_grouping)
                         {
 			if(t2->which!=-1)
 				{
-				if(GLOBALS.facs[t2->which]->vec_root)
+				if(GLOBALS->facs[t2->which]->vec_root)
 					{
-					if(GLOBALS.autocoalesce)
+					if(GLOBALS->autocoalesce)
 						{
-						if(GLOBALS.facs[t2->which]->vec_root!=GLOBALS.facs[t2->which])
+						if(GLOBALS->facs[t2->which]->vec_root!=GLOBALS->facs[t2->which])
 							{
 							t2=t2->next;
 							continue;
 							}
 
-						tmp2=makename_chain(GLOBALS.facs[t2->which]);
+						tmp2=makename_chain(GLOBALS->facs[t2->which]);
 						tmp3=leastsig_hiername(tmp2);
 						tmp=wave_alloca(strlen(tmp3)+4);
 						strcpy(tmp,   "[] ");
@@ -155,10 +155,10 @@ if(!GLOBALS.hier_grouping)
 	                        }
 
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
-			pixlen=gdk_string_measure(GLOBALS.signalfont,(gchar *)(tmp));
+			pixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
 			maxpixlen=(pixlen>maxpixlen)?pixlen:maxpixlen;		
 			gtk_clist_set_row_data(cl, row,t2); 
-			GLOBALS.num_rows_hiersearch_c_1++;
+			GLOBALS->num_rows_hiersearch_c_1++;
                         }
 		t2=t2->next;
 		}
@@ -172,27 +172,27 @@ if(!GLOBALS.hier_grouping)
                         strcpy(tmp,   "(+) ");
                         strcpy(tmp+4, t2->name);
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
-			pixlen=gdk_string_measure(GLOBALS.signalfont,(gchar *)(tmp));
+			pixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
 			maxpixlen=(pixlen>maxpixlen)?pixlen:maxpixlen;		
 			gtk_clist_set_row_data(cl, row,t2); 
-			GLOBALS.num_rows_hiersearch_c_1++;
+			GLOBALS->num_rows_hiersearch_c_1++;
                         }
 		t2=t2->next;
 		}
 	}
 
 
-if(t!=GLOBALS.treeroot)
+if(t!=GLOBALS->treeroot)
 	{
 	row=gtk_clist_prepend(cl,(gchar **)&dotdot);
 	gtk_clist_set_row_data(cl, row,NULL); 
-	GLOBALS.num_rows_hiersearch_c_1++;
+	GLOBALS->num_rows_hiersearch_c_1++;
 	}
 
-if(maxpixlen)gtk_clist_set_column_width(GTK_CLIST(GLOBALS.clist_hiersearch_c_1),0,maxpixlen);
+if(maxpixlen)gtk_clist_set_column_width(GTK_CLIST(GLOBALS->clist_hiersearch_c_1),0,maxpixlen);
 gtk_clist_thaw(cl);
 
-if((tc=GLOBALS.treechain_hiersearch_c_1))
+if((tc=GLOBALS->treechain_hiersearch_c_1))
 	{
 	char *buf;
 	char hier_str[2];
@@ -206,22 +206,22 @@ if((tc=GLOBALS.treechain_hiersearch_c_1))
 		}
 
 	buf=calloc_2(1,len);
-	hier_str[0]=GLOBALS.hier_delimeter;
+	hier_str[0]=GLOBALS->hier_delimeter;
 	hier_str[1]=0;
 
-	tc=GLOBALS.treechain_hiersearch_c_1;
+	tc=GLOBALS->treechain_hiersearch_c_1;
 	while(tc)
 		{
 		strcat(buf,tc->label->name);
 		if(tc->next) strcat(buf,hier_str);
 		tc=tc->next;
 		}
-	gtk_entry_set_text(GTK_ENTRY(GLOBALS.entry_main_hiersearch_c_1), buf);
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS->entry_main_hiersearch_c_1), buf);
 	free_2(buf);
 	}
 	else
 	{
-	gtk_entry_set_text(GTK_ENTRY(GLOBALS.entry_main_hiersearch_c_1),"");
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS->entry_main_hiersearch_c_1),"");
 	}
 }
 
@@ -230,23 +230,23 @@ static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
 {
   G_CONST_RETURN gchar *entry_text;
   int len;
-  entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS.entry_hiersearch_c_2));
+  entry_text = gtk_entry_get_text(GTK_ENTRY(GLOBALS->entry_hiersearch_c_2));
   DEBUG(printf("Entry contents: %s\n", entry_text));
-  if(!(len=strlen(entry_text))) GLOBALS.entrybox_text_local_hiersearch_c_1=NULL;
-	else strcpy((GLOBALS.entrybox_text_local_hiersearch_c_1=(char *)malloc_2(len+1)),entry_text);
+  if(!(len=strlen(entry_text))) GLOBALS->entrybox_text_local_hiersearch_c_1=NULL;
+	else strcpy((GLOBALS->entrybox_text_local_hiersearch_c_1=(char *)malloc_2(len+1)),entry_text);
 
-  gtk_grab_remove(GLOBALS.window1_hiersearch_c_1);
-  gtk_widget_destroy(GLOBALS.window1_hiersearch_c_1);
+  gtk_grab_remove(GLOBALS->window1_hiersearch_c_1);
+  gtk_widget_destroy(GLOBALS->window1_hiersearch_c_1);
 
-  GLOBALS.cleanup_e_hiersearch_c_1();
+  GLOBALS->cleanup_e_hiersearch_c_1();
 }
 
 static void destroy_callback_e(GtkWidget *widget, GtkWidget *nothing)
 {
   DEBUG(printf("Entry Cancel\n"));
-  GLOBALS.entrybox_text_local_hiersearch_c_1=NULL;
-  gtk_grab_remove(GLOBALS.window1_hiersearch_c_1);
-  gtk_widget_destroy(GLOBALS.window1_hiersearch_c_1);
+  GLOBALS->entrybox_text_local_hiersearch_c_1=NULL;
+  gtk_grab_remove(GLOBALS->window1_hiersearch_c_1);
+  gtk_widget_destroy(GLOBALS->window1_hiersearch_c_1);
 }
 
 static void entrybox_local(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -254,25 +254,25 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     GtkWidget *vbox, *hbox;
     GtkWidget *button1, *button2;
 
-    GLOBALS.cleanup_e_hiersearch_c_1=func;
+    GLOBALS->cleanup_e_hiersearch_c_1=func;
 
     /* create a new modal window */
-    GLOBALS.window1_hiersearch_c_1 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_grab_add(GLOBALS.window1_hiersearch_c_1);
-    gtk_widget_set_usize( GTK_WIDGET (GLOBALS.window1_hiersearch_c_1), width, 60);
-    gtk_window_set_title(GTK_WINDOW (GLOBALS.window1_hiersearch_c_1), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS.window1_hiersearch_c_1), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
+    GLOBALS->window1_hiersearch_c_1 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_grab_add(GLOBALS->window1_hiersearch_c_1);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_hiersearch_c_1), width, 60);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_hiersearch_c_1), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window1_hiersearch_c_1), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (GLOBALS.window1_hiersearch_c_1), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window1_hiersearch_c_1), vbox);
     gtk_widget_show (vbox);
 
-    GLOBALS.entry_hiersearch_c_2 = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(GLOBALS.entry_hiersearch_c_2), "activate",GTK_SIGNAL_FUNC(enter_callback_e),GLOBALS.entry_hiersearch_c_2);
-    gtk_entry_set_text (GTK_ENTRY (GLOBALS.entry_hiersearch_c_2), default_text);
-    gtk_entry_select_region (GTK_ENTRY (GLOBALS.entry_hiersearch_c_2),0, GTK_ENTRY(GLOBALS.entry_hiersearch_c_2)->text_length);
-    gtk_box_pack_start (GTK_BOX (vbox), GLOBALS.entry_hiersearch_c_2, TRUE, TRUE, 0);
-    gtk_widget_show (GLOBALS.entry_hiersearch_c_2);
+    GLOBALS->entry_hiersearch_c_2 = gtk_entry_new_with_max_length (maxch);
+    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_hiersearch_c_2), "activate",GTK_SIGNAL_FUNC(enter_callback_e),GLOBALS->entry_hiersearch_c_2);
+    gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_hiersearch_c_2), default_text);
+    gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_hiersearch_c_2),0, GTK_ENTRY(GLOBALS->entry_hiersearch_c_2)->text_length);
+    gtk_box_pack_start (GTK_BOX (vbox), GLOBALS->entry_hiersearch_c_2, TRUE, TRUE, 0);
+    gtk_widget_show (GLOBALS->entry_hiersearch_c_2);
 
     hbox = gtk_hbox_new (FALSE, 1);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
@@ -300,7 +300,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_widget_show(GLOBALS.window1_hiersearch_c_1);
+    gtk_widget_show(GLOBALS->window1_hiersearch_c_1);
 }
 
 /***************************************************************************/
@@ -309,31 +309,31 @@ static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 int i;
  
-if(!GLOBALS.h_selectedtree_hiersearch_c_1) return;
+if(!GLOBALS->h_selectedtree_hiersearch_c_1) return;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
         {
         struct symbol *s;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS.autocoalesce;
+		s->vec_root->selected=GLOBALS->autocoalesce;
 		}
         }
 
 /* LX2 */
-if(GLOBALS.is_lx2)
+if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
 	        {
 	        struct symbol *s, *t;  
-	        s=GLOBALS.facs[i];
+	        s=GLOBALS->facs[i];
 		t=s->vec_root;
-		if((t)&&(GLOBALS.autocoalesce))
+		if((t)&&(GLOBALS->autocoalesce))
 			{
 			if(t->selected)
 				{
@@ -365,13 +365,13 @@ if(GLOBALS.is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
         {
 	int len;
         struct symbol *s, *t;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	t=s->vec_root;
-	if((t)&&(GLOBALS.autocoalesce))
+	if((t)&&(GLOBALS->autocoalesce))
 		{
 		if(t->selected)
 			{
@@ -394,8 +394,8 @@ for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBAL
 set_window_idle(widget);
 
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
@@ -404,35 +404,35 @@ static void insert_callback(GtkWidget *widget, GtkWidget *nothing)
 Traces tcache;
 int i;
     
-if(!GLOBALS.h_selectedtree_hiersearch_c_1) return;
+if(!GLOBALS->h_selectedtree_hiersearch_c_1) return;
 
-memcpy(&tcache,&GLOBALS.traces,sizeof(Traces));
-GLOBALS.traces.total=0; 
-GLOBALS.traces.first=GLOBALS.traces.last=NULL;
+memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
+GLOBALS->traces.total=0; 
+GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
         {
         struct symbol *s;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS.autocoalesce;
+		s->vec_root->selected=GLOBALS->autocoalesce;
 		}
         }
 
 /* LX2 */
-if(GLOBALS.is_lx2)
+if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
 	        {
 	        struct symbol *s, *t;  
-	        s=GLOBALS.facs[i];
+	        s=GLOBALS->facs[i];
 		t=s->vec_root;
-		if((t)&&(GLOBALS.autocoalesce))
+		if((t)&&(GLOBALS->autocoalesce))
 			{
 			if(t->selected)
 				{
@@ -464,13 +464,13 @@ if(GLOBALS.is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
         {
 	int len;
         struct symbol *s, *t;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	t=s->vec_root;
-	if((t)&&(GLOBALS.autocoalesce))
+	if((t)&&(GLOBALS->autocoalesce))
 		{
 		if(t->selected)
 			{
@@ -492,22 +492,22 @@ for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBAL
 
 set_window_idle(widget);
 
-GLOBALS.traces.buffercount=GLOBALS.traces.total;
-GLOBALS.traces.buffer=GLOBALS.traces.first;
-GLOBALS.traces.bufferlast=GLOBALS.traces.last;
-GLOBALS.traces.first=tcache.first;
-GLOBALS.traces.last=tcache.last;
-GLOBALS.traces.total=tcache.total;
+GLOBALS->traces.buffercount=GLOBALS->traces.total;
+GLOBALS->traces.buffer=GLOBALS->traces.first;
+GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+GLOBALS->traces.first=tcache.first;
+GLOBALS->traces.last=tcache.last;
+GLOBALS->traces.total=tcache.total;
 
 PasteBuffer();
  
-GLOBALS.traces.buffercount=tcache.buffercount;
-GLOBALS.traces.buffer=tcache.buffer;
-GLOBALS.traces.bufferlast=tcache.bufferlast;
+GLOBALS->traces.buffercount=tcache.buffercount;
+GLOBALS->traces.buffer=tcache.buffer;
+GLOBALS->traces.bufferlast=tcache.bufferlast;
 
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
@@ -517,35 +517,35 @@ Traces tcache;
 int i;
 Trptr tfirst=NULL, tlast=NULL;
 
-if(!GLOBALS.h_selectedtree_hiersearch_c_1) return;
+if(!GLOBALS->h_selectedtree_hiersearch_c_1) return;
         
-memcpy(&tcache,&GLOBALS.traces,sizeof(Traces));
-GLOBALS.traces.total=0;
-GLOBALS.traces.first=GLOBALS.traces.last=NULL;  
+memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
+GLOBALS->traces.total=0;
+GLOBALS->traces.first=GLOBALS->traces.last=NULL;  
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
         {
         struct symbol *s;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS.autocoalesce;
+		s->vec_root->selected=GLOBALS->autocoalesce;
 		}
         }
 
 /* LX2 */
-if(GLOBALS.is_lx2)
+if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
 	        {
 	        struct symbol *s, *t;  
-	        s=GLOBALS.facs[i];
+	        s=GLOBALS->facs[i];
 		t=s->vec_root;
-		if((t)&&(GLOBALS.autocoalesce))
+		if((t)&&(GLOBALS->autocoalesce))
 			{
 			if(t->selected)
 				{
@@ -577,13 +577,13 @@ if(GLOBALS.is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
         {
 	int len;
         struct symbol *s, *t;  
-        s=GLOBALS.facs[i];
+        s=GLOBALS->facs[i];
 	t=s->vec_root;
-	if((t)&&(GLOBALS.autocoalesce))
+	if((t)&&(GLOBALS->autocoalesce))
 		{
 		if(t->selected)
 			{
@@ -605,20 +605,20 @@ for(i=fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBAL
  
 set_window_idle(widget);
 
-tfirst=GLOBALS.traces.first; tlast=GLOBALS.traces.last; /* cache for highlighting */
+tfirst=GLOBALS->traces.first; tlast=GLOBALS->traces.last; /* cache for highlighting */
 
-GLOBALS.traces.buffercount=GLOBALS.traces.total;
-GLOBALS.traces.buffer=GLOBALS.traces.first;
-GLOBALS.traces.bufferlast=GLOBALS.traces.last;
-GLOBALS.traces.first=tcache.first;
-GLOBALS.traces.last=tcache.last;
-GLOBALS.traces.total=tcache.total;
+GLOBALS->traces.buffercount=GLOBALS->traces.total;
+GLOBALS->traces.buffer=GLOBALS->traces.first;
+GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+GLOBALS->traces.first=tcache.first;
+GLOBALS->traces.last=tcache.last;
+GLOBALS->traces.total=tcache.total;
 
 PasteBuffer();
  
-GLOBALS.traces.buffercount=tcache.buffercount;
-GLOBALS.traces.buffer=tcache.buffer;
-GLOBALS.traces.bufferlast=tcache.bufferlast;
+GLOBALS->traces.buffercount=tcache.buffercount;
+GLOBALS->traces.buffer=tcache.buffer;
+GLOBALS->traces.bufferlast=tcache.bufferlast;
         
 CutBuffer();
         
@@ -630,26 +630,26 @@ while(tfirst)
         }
         
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
 static void
 bundle_cleanup(GtkWidget *widget, gpointer data)
 {
-if(GLOBALS.entrybox_text_local_hiersearch_c_1)  
+if(GLOBALS->entrybox_text_local_hiersearch_c_1)  
         {
         char *efix;
 
-	if(!strlen(GLOBALS.entrybox_text_local_hiersearch_c_1))
+	if(!strlen(GLOBALS->entrybox_text_local_hiersearch_c_1))
 		{
         	DEBUG(printf("Bundle name is not specified--recursing into hierarchy.\n"));
-        	fetchvex(GLOBALS.h_selectedtree_hiersearch_c_1, GLOBALS.bundle_direction_hiersearch_c_1);
+        	fetchvex(GLOBALS->h_selectedtree_hiersearch_c_1, GLOBALS->bundle_direction_hiersearch_c_1);
 		}
 		else
 		{         
-	        efix=GLOBALS.entrybox_text_local_hiersearch_c_1;
+	        efix=GLOBALS->entrybox_text_local_hiersearch_c_1;
 	        while(*efix)
 	                {
 	                if(*efix==' ')
@@ -660,35 +660,35 @@ if(GLOBALS.entrybox_text_local_hiersearch_c_1)
 	                }
 	
 	        DEBUG(printf("Bundle name is: %s\n",entrybox_text_local));
-	        add_vector_range(GLOBALS.entrybox_text_local_hiersearch_c_1,
-	                        fetchlow(GLOBALS.h_selectedtree_hiersearch_c_1)->which,
-	                        fetchhigh(GLOBALS.h_selectedtree_hiersearch_c_1)->which,
-	                        GLOBALS.bundle_direction_hiersearch_c_1);
+	        add_vector_range(GLOBALS->entrybox_text_local_hiersearch_c_1,
+	                        fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which,
+	                        fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which,
+	                        GLOBALS->bundle_direction_hiersearch_c_1);
 		}
-        free_2(GLOBALS.entrybox_text_local_hiersearch_c_1);
+        free_2(GLOBALS->entrybox_text_local_hiersearch_c_1);
         }
         else
         {
         DEBUG(printf("Bundle name is not specified--recursing into hierarchy.\n"));
-        fetchvex(GLOBALS.h_selectedtree_hiersearch_c_1, GLOBALS.bundle_direction_hiersearch_c_1);
+        fetchvex(GLOBALS->h_selectedtree_hiersearch_c_1, GLOBALS->bundle_direction_hiersearch_c_1);
         }  
 
 MaxSignalLength();
-signalarea_configure_event(GLOBALS.signalarea, NULL);
-wavearea_configure_event(GLOBALS.wavearea, NULL);
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
 static void
 bundle_callback_generic(void)
 {
-if(!GLOBALS.autoname_bundles)
+if(!GLOBALS->autoname_bundles)
 	{
 	entrybox_local("Enter Bundle Name",300,"",128,GTK_SIGNAL_FUNC(bundle_cleanup));
 	}
 	else
 	{
-	GLOBALS.entrybox_text_local_hiersearch_c_1=NULL;
+	GLOBALS->entrybox_text_local_hiersearch_c_1=NULL;
 	bundle_cleanup(NULL, NULL);
 	}
 }
@@ -697,14 +697,14 @@ if(!GLOBALS.autoname_bundles)
 static void
 bundle_callback_up(GtkWidget *widget, gpointer data)
 {
-GLOBALS.bundle_direction_hiersearch_c_1=0;
+GLOBALS->bundle_direction_hiersearch_c_1=0;
 bundle_callback_generic();
 }
                 
 static void
 bundle_callback_down(GtkWidget *widget, gpointer data)
 {
-GLOBALS.bundle_direction_hiersearch_c_1=1;
+GLOBALS->bundle_direction_hiersearch_c_1=1;
 bundle_callback_generic();
 }
 
@@ -715,42 +715,42 @@ static void select_row_callback(GtkWidget *widget, gint row, gint column,
 {
 struct tree *t;
 
-t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_hiersearch_c_1), row);
+t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_hiersearch_c_1), row);
 if(t)
 	{
-        GLOBALS.h_selectedtree_hiersearch_c_1=t;
+        GLOBALS->h_selectedtree_hiersearch_c_1=t;
 	DEBUG(printf("Selected: %s\n",t->name));
 	if(t->child)
 		{
 		struct treechain *tc, *tc2;
 
-		tc=GLOBALS.treechain_hiersearch_c_1;
+		tc=GLOBALS->treechain_hiersearch_c_1;
 		if(tc)
 			{
 			while(tc->next) tc=tc->next;			
 
     			tc2=calloc_2(1,sizeof(struct treechain));
 			tc2->label=t;
-			tc2->tree=GLOBALS.current_tree_hiersearch_c_1;
+			tc2->tree=GLOBALS->current_tree_hiersearch_c_1;
 			tc->next=tc2;
 			}
 			else
 			{
-    			GLOBALS.treechain_hiersearch_c_1=calloc_2(1,sizeof(struct treechain));
-    			GLOBALS.treechain_hiersearch_c_1->tree=GLOBALS.current_tree_hiersearch_c_1;
-			GLOBALS.treechain_hiersearch_c_1->label=t;
+    			GLOBALS->treechain_hiersearch_c_1=calloc_2(1,sizeof(struct treechain));
+    			GLOBALS->treechain_hiersearch_c_1->tree=GLOBALS->current_tree_hiersearch_c_1;
+			GLOBALS->treechain_hiersearch_c_1->label=t;
 			}
 
-		GLOBALS.current_tree_hiersearch_c_1=t->child;
-		refresh_tree(GLOBALS.current_tree_hiersearch_c_1);
+		GLOBALS->current_tree_hiersearch_c_1=t->child;
+		refresh_tree(GLOBALS->current_tree_hiersearch_c_1);
 		}
 	}
 	else
 	{
 	struct treechain *tc;
 
-	GLOBALS.h_selectedtree_hiersearch_c_1=NULL;
-	tc=GLOBALS.treechain_hiersearch_c_1;
+	GLOBALS->h_selectedtree_hiersearch_c_1=NULL;
+	tc=GLOBALS->treechain_hiersearch_c_1;
 	if(tc)
 		{
 		for(;;)
@@ -764,7 +764,7 @@ if(t)
 					}
 					else
 					{
-					GLOBALS.current_tree_hiersearch_c_1=tc->next->tree;
+					GLOBALS->current_tree_hiersearch_c_1=tc->next->tree;
 					free_2(tc->next);
 					tc->next=NULL;
 					break;
@@ -773,13 +773,13 @@ if(t)
 				else
 				{
 				free_2(tc);
-				GLOBALS.treechain_hiersearch_c_1=NULL;
-				GLOBALS.current_tree_hiersearch_c_1=GLOBALS.treeroot;
+				GLOBALS->treechain_hiersearch_c_1=NULL;
+				GLOBALS->current_tree_hiersearch_c_1=GLOBALS->treeroot;
 				break;
 				}
 					
 			}
-		refresh_tree(GLOBALS.current_tree_hiersearch_c_1);
+		refresh_tree(GLOBALS->current_tree_hiersearch_c_1);
 		}
 	}
 
@@ -790,8 +790,8 @@ static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
 {
 struct tree *t;
 
-t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS.clist_hiersearch_c_1), row);
-GLOBALS.h_selectedtree_hiersearch_c_1=NULL;
+t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_hiersearch_c_1), row);
+GLOBALS->h_selectedtree_hiersearch_c_1=NULL;
 
 if(t)
 	{
@@ -806,8 +806,8 @@ if(t)
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-  GLOBALS.is_active_hiersearch_c_1=0;
-  gtk_widget_destroy(GLOBALS.window_hiersearch_c_3);
+  GLOBALS->is_active_hiersearch_c_1=0;
+  gtk_widget_destroy(GLOBALS->window_hiersearch_c_3);
 }
 
 
@@ -825,20 +825,20 @@ void hier_searchbox(char *title, GtkSignalFunc func)
     GtkWidget *table;
     GtkTooltips *tooltips;
 
-    if(GLOBALS.is_active_hiersearch_c_1) 
+    if(GLOBALS->is_active_hiersearch_c_1) 
 	{
-	gdk_window_raise(GLOBALS.window_hiersearch_c_3->window);
+	gdk_window_raise(GLOBALS->window_hiersearch_c_3->window);
 	return;
 	}
 
-    GLOBALS.is_active_hiersearch_c_1=1;
-    GLOBALS.cleanup_hiersearch_c_3=func;
-    GLOBALS.num_rows_hiersearch_c_1=GLOBALS.selected_rows_hiersearch_c_1=0;
+    GLOBALS->is_active_hiersearch_c_1=1;
+    GLOBALS->cleanup_hiersearch_c_3=func;
+    GLOBALS->num_rows_hiersearch_c_1=GLOBALS->selected_rows_hiersearch_c_1=0;
 
     /* create a new modal window */
-    GLOBALS.window_hiersearch_c_3 = gtk_window_new(GLOBALS.disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW (GLOBALS.window_hiersearch_c_3), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS.window_hiersearch_c_3), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    GLOBALS->window_hiersearch_c_3 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_hiersearch_c_3), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_hiersearch_c_3), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
 
@@ -860,16 +860,16 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     gtk_box_pack_start (GTK_BOX (vbox1), label, TRUE, TRUE, 0);
 
-    GLOBALS.entry_main_hiersearch_c_1 = gtk_entry_new();
-    gtk_entry_set_editable(GTK_ENTRY(GLOBALS.entry_main_hiersearch_c_1), FALSE);
-    gtk_widget_show (GLOBALS.entry_main_hiersearch_c_1);
-    gtk_tooltips_set_tip_2(tooltips, GLOBALS.entry_main_hiersearch_c_1, 
+    GLOBALS->entry_main_hiersearch_c_1 = gtk_entry_new();
+    gtk_entry_set_editable(GTK_ENTRY(GLOBALS->entry_main_hiersearch_c_1), FALSE);
+    gtk_widget_show (GLOBALS->entry_main_hiersearch_c_1);
+    gtk_tooltips_set_tip_2(tooltips, GLOBALS->entry_main_hiersearch_c_1, 
 		"The hierarchy is built here by clicking on the appropriate "
 		"items below in the scrollable window.  Click on \"..\" to "
 		"go up a level."
 		,NULL);
 
-    gtk_box_pack_start (GTK_BOX (vbox1), GLOBALS.entry_main_hiersearch_c_1, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox1), GLOBALS->entry_main_hiersearch_c_1, TRUE, TRUE, 0);
     gtk_container_add (GTK_CONTAINER (frame1), vbox1);
 
     frame2 = gtk_frame_new (NULL);
@@ -880,13 +880,13 @@ void hier_searchbox(char *title, GtkSignalFunc func)
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
-    GLOBALS.clist_hiersearch_c_1=gtk_clist_new_with_titles(1,titles);
-    gtk_clist_column_titles_passive(GTK_CLIST(GLOBALS.clist_hiersearch_c_1)); 
+    GLOBALS->clist_hiersearch_c_1=gtk_clist_new_with_titles(1,titles);
+    gtk_clist_column_titles_passive(GTK_CLIST(GLOBALS->clist_hiersearch_c_1)); 
 
-    gtk_clist_set_selection_mode(GTK_CLIST(GLOBALS.clist_hiersearch_c_1), GTK_SELECTION_SINGLE);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS.clist_hiersearch_c_1), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS.clist_hiersearch_c_1), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
-    gtk_widget_show (GLOBALS.clist_hiersearch_c_1);
+    gtk_clist_set_selection_mode(GTK_CLIST(GLOBALS->clist_hiersearch_c_1), GTK_SELECTION_SINGLE);
+    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_hiersearch_c_1), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
+    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_hiersearch_c_1), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
+    gtk_widget_show (GLOBALS->clist_hiersearch_c_1);
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
@@ -896,7 +896,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
     gtk_widget_show(scrolled_win);
 
     /* gtk_scrolled_window_add_with_viewport doesn't seen to work right here.. */
-    gtk_container_add (GTK_CONTAINER (scrolled_win), GLOBALS.clist_hiersearch_c_1);
+    gtk_container_add (GTK_CONTAINER (scrolled_win), GLOBALS->clist_hiersearch_c_1);
 
     gtk_container_add (GTK_CONTAINER (frame2), scrolled_win);
 
@@ -913,7 +913,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button1 = gtk_button_new_with_label ("Append");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS.window_hiersearch_c_3));
+    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS->window_hiersearch_c_3));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signals to end of the display on the main window.",NULL);
@@ -922,17 +922,17 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button2 = gtk_button_new_with_label (" Insert ");
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (GLOBALS.window_hiersearch_c_3));
+    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (GLOBALS->window_hiersearch_c_3));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add children after last highlighted signal on the main window.",NULL);
     gtk_box_pack_start (GTK_BOX (hbox), button2, TRUE, FALSE, 0);
 
-    if(GLOBALS.vcd_explicit_zero_subscripts>=0)
+    if(GLOBALS->vcd_explicit_zero_subscripts>=0)
 	{
     	button3 = gtk_button_new_with_label (" Bundle Up ");
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (GLOBALS.window_hiersearch_c_3));
+    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (GLOBALS->window_hiersearch_c_3));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle children into a single bit vector with the topmost signal as the LSB and the lowest as the MSB.",NULL);
@@ -940,7 +940,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     	button3a = gtk_button_new_with_label (" Bundle Down ");
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (GLOBALS.window_hiersearch_c_3));
+    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (GLOBALS->window_hiersearch_c_3));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle children into a single bit vector with the topmost signal as the MSB and the lowest as the LSB.",NULL);
@@ -949,7 +949,7 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button4 = gtk_button_new_with_label (" Replace ");
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (GLOBALS.window_hiersearch_c_3));
+    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (GLOBALS->window_hiersearch_c_3));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with children shown above.",NULL);
@@ -957,29 +957,33 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     button5 = gtk_button_new_with_label (" Exit ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS.window_hiersearch_c_3));
+    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_hiersearch_c_3));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
     gtk_box_pack_start (GTK_BOX (hbox), button5, TRUE, FALSE, 0);
 
     gtk_container_add (GTK_CONTAINER (frameh), hbox);
-    gtk_container_add (GTK_CONTAINER (GLOBALS.window_hiersearch_c_3), table);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_hiersearch_c_3), table);
 
-    gtk_widget_show(GLOBALS.window_hiersearch_c_3);
+    gtk_widget_show(GLOBALS->window_hiersearch_c_3);
 
-    if(!GLOBALS.current_tree_hiersearch_c_1) 
+    if(!GLOBALS->current_tree_hiersearch_c_1) 
 	{
-	GLOBALS.current_tree_hiersearch_c_1=GLOBALS.treeroot;
-    	GLOBALS.h_selectedtree_hiersearch_c_1=NULL;
+	GLOBALS->current_tree_hiersearch_c_1=GLOBALS->treeroot;
+    	GLOBALS->h_selectedtree_hiersearch_c_1=NULL;
 	}
 
-    refresh_tree(GLOBALS.current_tree_hiersearch_c_1);
+    refresh_tree(GLOBALS->current_tree_hiersearch_c_1);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:20  kermin
  * Semi working global struct
  *

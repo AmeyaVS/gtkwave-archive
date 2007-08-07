@@ -47,108 +47,108 @@ unsigned int numalias = 0;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
 
-GLOBALS.vzt_vzt_c_1 = vzt_rd_init_smp(fname, GLOBALS.num_cpus);
-if(!GLOBALS.vzt_vzt_c_1)
+GLOBALS->vzt_vzt_c_1 = vzt_rd_init_smp(fname, GLOBALS->num_cpus);
+if(!GLOBALS->vzt_vzt_c_1)
         {
         fprintf(stderr, "Could not initialize '%s', exiting.\n", fname);
         exit(0);
         }
 /* SPLASH */                            splash_create();
 
-vzt_rd_process_blocks_linearly(GLOBALS.vzt_vzt_c_1, 1);
+vzt_rd_process_blocks_linearly(GLOBALS->vzt_vzt_c_1, 1);
 /* vzt_rd_set_max_block_mem_usage(vzt, 0); */
 
-scale=(signed char)vzt_rd_get_timescale(GLOBALS.vzt_vzt_c_1);
+scale=(signed char)vzt_rd_get_timescale(GLOBALS->vzt_vzt_c_1);
 exponent_to_time_scale(scale);
 
-GLOBALS.numfacs=vzt_rd_get_num_facs(GLOBALS.vzt_vzt_c_1);
-GLOBALS.mvlfacs_vzt_c_3=(struct fac *)calloc_2(GLOBALS.numfacs,sizeof(struct fac));
-GLOBALS.vzt_table_vzt_c_1=(struct lx2_entry *)calloc_2(GLOBALS.numfacs, sizeof(struct lx2_entry));
-sym_block = (struct symbol *)calloc_2(GLOBALS.numfacs, sizeof(struct symbol));
-node_block=(struct Node *)calloc_2(GLOBALS.numfacs,sizeof(struct Node));
+GLOBALS->numfacs=vzt_rd_get_num_facs(GLOBALS->vzt_vzt_c_1);
+GLOBALS->mvlfacs_vzt_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
+GLOBALS->vzt_table_vzt_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry));
+sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
+node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	GLOBALS.mvlfacs_vzt_c_3[i].array_height=vzt_rd_get_fac_rows(GLOBALS.vzt_vzt_c_1, i);
-	GLOBALS.mvlfacs_vzt_c_3[i].msb=vzt_rd_get_fac_msb(GLOBALS.vzt_vzt_c_1, i);
-	GLOBALS.mvlfacs_vzt_c_3[i].lsb=vzt_rd_get_fac_lsb(GLOBALS.vzt_vzt_c_1, i);
-	GLOBALS.mvlfacs_vzt_c_3[i].flags=vzt_rd_get_fac_flags(GLOBALS.vzt_vzt_c_1, i);
-	GLOBALS.mvlfacs_vzt_c_3[i].len=vzt_rd_get_fac_len(GLOBALS.vzt_vzt_c_1, i);
+	GLOBALS->mvlfacs_vzt_c_3[i].array_height=vzt_rd_get_fac_rows(GLOBALS->vzt_vzt_c_1, i);
+	GLOBALS->mvlfacs_vzt_c_3[i].msb=vzt_rd_get_fac_msb(GLOBALS->vzt_vzt_c_1, i);
+	GLOBALS->mvlfacs_vzt_c_3[i].lsb=vzt_rd_get_fac_lsb(GLOBALS->vzt_vzt_c_1, i);
+	GLOBALS->mvlfacs_vzt_c_3[i].flags=vzt_rd_get_fac_flags(GLOBALS->vzt_vzt_c_1, i);
+	GLOBALS->mvlfacs_vzt_c_3[i].len=vzt_rd_get_fac_len(GLOBALS->vzt_vzt_c_1, i);
 	}
 
-fprintf(stderr, VZT_RDLOAD"Finished building %d facs.\n", GLOBALS.numfacs);
+fprintf(stderr, VZT_RDLOAD"Finished building %d facs.\n", GLOBALS->numfacs);
 /* SPLASH */                            splash_sync(1, 5);
 
-GLOBALS.first_cycle_vzt_c_3 = (TimeType) vzt_rd_get_start_time(GLOBALS.vzt_vzt_c_1) * GLOBALS.time_scale;
-GLOBALS.last_cycle_vzt_c_3 = (TimeType) vzt_rd_get_end_time(GLOBALS.vzt_vzt_c_1) * GLOBALS.time_scale;
-GLOBALS.total_cycles_vzt_c_3 = GLOBALS.last_cycle_vzt_c_3 - GLOBALS.first_cycle_vzt_c_3 + 1;
+GLOBALS->first_cycle_vzt_c_3 = (TimeType) vzt_rd_get_start_time(GLOBALS->vzt_vzt_c_1) * GLOBALS->time_scale;
+GLOBALS->last_cycle_vzt_c_3 = (TimeType) vzt_rd_get_end_time(GLOBALS->vzt_vzt_c_1) * GLOBALS->time_scale;
+GLOBALS->total_cycles_vzt_c_3 = GLOBALS->last_cycle_vzt_c_3 - GLOBALS->first_cycle_vzt_c_3 + 1;
 
 /* do your stuff here..all useful info has been initialized by now */
 
-if(!GLOBALS.hier_was_explicitly_set)    /* set default hierarchy split char */
+if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
         {
-        GLOBALS.hier_delimeter='.';
+        GLOBALS->hier_delimeter='.';
         }
 
-if(GLOBALS.numfacs)
+if(GLOBALS->numfacs)
 	{
-	char *fnam = vzt_rd_get_facname(GLOBALS.vzt_vzt_c_1, 0);
+	char *fnam = vzt_rd_get_facname(GLOBALS->vzt_vzt_c_1, 0);
 	int flen = strlen(fnam);
 
-	GLOBALS.mvlfacs_vzt_c_3[0].name=malloc_2(flen+1);
-	strcpy(GLOBALS.mvlfacs_vzt_c_3[0].name, fnam);
+	GLOBALS->mvlfacs_vzt_c_3[0].name=malloc_2(flen+1);
+	strcpy(GLOBALS->mvlfacs_vzt_c_3[0].name, fnam);
 	}
 
-for(i=0;i<GLOBALS.numfacs;i++)
+for(i=0;i<GLOBALS->numfacs;i++)
         {
 	char buf[65537];
 	char *str;	
 	struct fac *f;
 
-	if(i!=(GLOBALS.numfacs-1))
+	if(i!=(GLOBALS->numfacs-1))
 		{
-		char *fnam = vzt_rd_get_facname(GLOBALS.vzt_vzt_c_1, i+1);
+		char *fnam = vzt_rd_get_facname(GLOBALS->vzt_vzt_c_1, i+1);
 		int flen = strlen(fnam);
 
-		GLOBALS.mvlfacs_vzt_c_3[i+1].name=malloc_2(flen+1);
-		strcpy(GLOBALS.mvlfacs_vzt_c_3[i+1].name, fnam);
+		GLOBALS->mvlfacs_vzt_c_3[i+1].name=malloc_2(flen+1);
+		strcpy(GLOBALS->mvlfacs_vzt_c_3[i+1].name, fnam);
 		}
 
 	if(i>1)
 		{
-		free_2(GLOBALS.mvlfacs_vzt_c_3[i-2].name);
-		GLOBALS.mvlfacs_vzt_c_3[i-2].name = NULL;
+		free_2(GLOBALS->mvlfacs_vzt_c_3[i-2].name);
+		GLOBALS->mvlfacs_vzt_c_3[i-2].name = NULL;
 		}
 
-	if(GLOBALS.mvlfacs_vzt_c_3[i].flags&VZT_RD_SYM_F_ALIAS)
+	if(GLOBALS->mvlfacs_vzt_c_3[i].flags&VZT_RD_SYM_F_ALIAS)
 		{
-		int alias = GLOBALS.mvlfacs_vzt_c_3[i].array_height;
-		f=GLOBALS.mvlfacs_vzt_c_3+alias;
+		int alias = GLOBALS->mvlfacs_vzt_c_3[i].array_height;
+		f=GLOBALS->mvlfacs_vzt_c_3+alias;
 
 		while(f->flags&VZT_RD_SYM_F_ALIAS)
 			{
-			f=GLOBALS.mvlfacs_vzt_c_3+f->array_height;
+			f=GLOBALS->mvlfacs_vzt_c_3+f->array_height;
 			}
 
 		numalias++;
 		}
 		else
 		{
-		f=GLOBALS.mvlfacs_vzt_c_3+i;
+		f=GLOBALS->mvlfacs_vzt_c_3+i;
 		}
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
-		int len=sprintf(buf, "%s[%d:%d]", GLOBALS.mvlfacs_vzt_c_3[i].name,GLOBALS.mvlfacs_vzt_c_3[i].msb, GLOBALS.mvlfacs_vzt_c_3[i].lsb);
+		int len=sprintf(buf, "%s[%d:%d]", GLOBALS->mvlfacs_vzt_c_3[i].name,GLOBALS->mvlfacs_vzt_c_3[i].msb, GLOBALS->mvlfacs_vzt_c_3[i].lsb);
 		str=malloc_2(len+1);
 
-		if(!GLOBALS.alt_hier_delimeter)
+		if(!GLOBALS->alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
@@ -156,25 +156,25 @@ for(i=0;i<GLOBALS.numfacs;i++)
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
-			((i!=GLOBALS.numfacs-1)&&(!strcmp(GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.mvlfacs_vzt_c_3[i+1].name))))
+			((i!=GLOBALS->numfacs-1)&&(!strcmp(GLOBALS->mvlfacs_vzt_c_3[i].name, GLOBALS->mvlfacs_vzt_c_3[i+1].name))))
 			||
-			(((i!=0)&&(!strcmp(GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.mvlfacs_vzt_c_3[i-1].name))) &&
-			(GLOBALS.mvlfacs_vzt_c_3[i].msb!=-1)&&(GLOBALS.mvlfacs_vzt_c_3[i].lsb!=-1))
+			(((i!=0)&&(!strcmp(GLOBALS->mvlfacs_vzt_c_3[i].name, GLOBALS->mvlfacs_vzt_c_3[i-1].name))) &&
+			(GLOBALS->mvlfacs_vzt_c_3[i].msb!=-1)&&(GLOBALS->mvlfacs_vzt_c_3[i].lsb!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", GLOBALS.mvlfacs_vzt_c_3[i].name,GLOBALS.mvlfacs_vzt_c_3[i].msb);
+		int len = sprintf(buf, "%s[%d]", GLOBALS->mvlfacs_vzt_c_3[i].name,GLOBALS->mvlfacs_vzt_c_3[i].msb);
 		str=malloc_2(len+1);
-		if(!GLOBALS.alt_hier_delimeter)
+		if(!GLOBALS->alt_hier_delimeter)
 			{
 			strcpy(str, buf);
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, GLOBALS.alt_hier_delimeter);
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.mvlfacs_vzt_c_3[i-1].name)))	/* allow chaining for search functions.. */
+		if((prevsym)&&(i>0)&&(!strcmp(GLOBALS->mvlfacs_vzt_c_3[i].name, GLOBALS->mvlfacs_vzt_c_3[i-1].name)))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -188,14 +188,14 @@ for(i=0;i<GLOBALS.numfacs;i++)
 		}
 		else
 		{
-		str=malloc_2(strlen(GLOBALS.mvlfacs_vzt_c_3[i].name)+1);
-		if(!GLOBALS.alt_hier_delimeter)
+		str=malloc_2(strlen(GLOBALS->mvlfacs_vzt_c_3[i].name)+1);
+		if(!GLOBALS->alt_hier_delimeter)
 			{
-			strcpy(str, GLOBALS.mvlfacs_vzt_c_3[i].name);
+			strcpy(str, GLOBALS->mvlfacs_vzt_c_3[i].name);
 			}
 			else
 			{
-			strcpy_vcdalt(str, GLOBALS.mvlfacs_vzt_c_3[i].name, GLOBALS.alt_hier_delimeter);
+			strcpy_vcdalt(str, GLOBALS->mvlfacs_vzt_c_3[i].name, GLOBALS->alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
@@ -203,32 +203,32 @@ for(i=0;i<GLOBALS.numfacs;i++)
 
 		if(f->flags&VZT_RD_SYM_F_INTEGER)
 			{
-			GLOBALS.mvlfacs_vzt_c_3[i].msb=31;
-			GLOBALS.mvlfacs_vzt_c_3[i].lsb=0;
-			GLOBALS.mvlfacs_vzt_c_3[i].len=32;
+			GLOBALS->mvlfacs_vzt_c_3[i].msb=31;
+			GLOBALS->mvlfacs_vzt_c_3[i].lsb=0;
+			GLOBALS->mvlfacs_vzt_c_3[i].len=32;
 			}
 		}
 		
-        if(!GLOBALS.firstnode)
+        if(!GLOBALS->firstnode)
                 {
-                GLOBALS.firstnode=GLOBALS.curnode=s;   
+                GLOBALS->firstnode=GLOBALS->curnode=s;   
                 }
                 else
                 {
-                GLOBALS.curnode->nextinaet=s;
-                GLOBALS.curnode=s;   
+                GLOBALS->curnode->nextinaet=s;
+                GLOBALS->curnode=s;   
                 }
 
         n=&node_block[i];
         n->nname=s->name;
-        n->mv.mvlfac = GLOBALS.mvlfacs_vzt_c_3+i;
-	GLOBALS.mvlfacs_vzt_c_3[i].working_node = n;
+        n->mv.mvlfac = GLOBALS->mvlfacs_vzt_c_3+i;
+	GLOBALS->mvlfacs_vzt_c_3[i].working_node = n;
 
 	if((f->len>1)||(f->flags&&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 		{
 		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
-		ext->msi = GLOBALS.mvlfacs_vzt_c_3[i].msb;
-		ext->lsi = GLOBALS.mvlfacs_vzt_c_3[i].lsb;
+		ext->msi = GLOBALS->mvlfacs_vzt_c_3[i].msb;
+		ext->lsi = GLOBALS->mvlfacs_vzt_c_3[i].lsb;
 		n->ext = ext;
 		}
                  
@@ -237,152 +237,152 @@ for(i=0;i<GLOBALS.numfacs;i++)
         s->n=n;
         }
 
-for(i=0;((i<2)&&(i<GLOBALS.numfacs));i++)
+for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 	{
-	if(GLOBALS.mvlfacs_vzt_c_3[i].name)
+	if(GLOBALS->mvlfacs_vzt_c_3[i].name)
 		{
-		free_2(GLOBALS.mvlfacs_vzt_c_3[i].name);
-		GLOBALS.mvlfacs_vzt_c_3[i].name = NULL;
+		free_2(GLOBALS->mvlfacs_vzt_c_3[i].name);
+		GLOBALS->mvlfacs_vzt_c_3[i].name = NULL;
 		}
 	}
 
 
 /* SPLASH */                            splash_sync(2, 5);  
-GLOBALS.facs=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
+GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
-if(GLOBALS.fast_tree_sort)
+if(GLOBALS->fast_tree_sort)
         {
-        GLOBALS.curnode=GLOBALS.firstnode;
-        for(i=0;i<GLOBALS.numfacs;i++)
+        GLOBALS->curnode=GLOBALS->firstnode;
+        for(i=0;i<GLOBALS->numfacs;i++)
                 {
                 int len;
-                GLOBALS.facs[i]=GLOBALS.curnode; 
-                if((len=strlen(GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
-                GLOBALS.curnode=GLOBALS.curnode->nextinaet;
+                GLOBALS->facs[i]=GLOBALS->curnode; 
+                if((len=strlen(GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+                GLOBALS->curnode=GLOBALS->curnode->nextinaet;
                 }
                                 
         if(numalias)
                 {
                 unsigned int idx_lft = 0;
-                unsigned int idx_lftmax = GLOBALS.numfacs - numalias;
-                unsigned int idx_rgh = GLOBALS.numfacs - numalias;
-                struct symbol **facs_merge=(struct symbol **)malloc_2(GLOBALS.numfacs*sizeof(struct symbol *));
+                unsigned int idx_lftmax = GLOBALS->numfacs - numalias;
+                unsigned int idx_rgh = GLOBALS->numfacs - numalias;
+                struct symbol **facs_merge=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
 		fprintf(stderr, VZT_RDLOAD"Merging in %d aliases.\n", numalias);
 
-                for(i=0;i<GLOBALS.numfacs;i++)  /* fix possible tail appended aliases by remerging in partial one pass merge sort */
+                for(i=0;i<GLOBALS->numfacs;i++)  /* fix possible tail appended aliases by remerging in partial one pass merge sort */
                         { 
-                        if(strcmp(GLOBALS.facs[idx_lft]->name, GLOBALS.facs[idx_rgh]->name) <= 0)
+                        if(strcmp(GLOBALS->facs[idx_lft]->name, GLOBALS->facs[idx_rgh]->name) <= 0)
                                 {
-                                facs_merge[i] = GLOBALS.facs[idx_lft++];
+                                facs_merge[i] = GLOBALS->facs[idx_lft++];
                 
                                 if(idx_lft == idx_lftmax)
                                         {
-                                        for(i++;i<GLOBALS.numfacs;i++)
+                                        for(i++;i<GLOBALS->numfacs;i++)
                                                 {
-                                                facs_merge[i] = GLOBALS.facs[idx_rgh++];
+                                                facs_merge[i] = GLOBALS->facs[idx_rgh++];
                                                 }
                                         }
                                 }
                                 else
                                 {
-                                facs_merge[i] = GLOBALS.facs[idx_rgh++];
+                                facs_merge[i] = GLOBALS->facs[idx_rgh++];
         
-                                if(idx_rgh == GLOBALS.numfacs)
+                                if(idx_rgh == GLOBALS->numfacs)
                                         {
-                                        for(i++;i<GLOBALS.numfacs;i++)
+                                        for(i++;i<GLOBALS->numfacs;i++)
                                                 {
-                                                facs_merge[i] = GLOBALS.facs[idx_lft++];
+                                                facs_merge[i] = GLOBALS->facs[idx_lft++];
                                                 }
                                         }
                                 }
                         } 
                         
-                free_2(GLOBALS.facs); GLOBALS.facs = facs_merge;
+                free_2(GLOBALS->facs); GLOBALS->facs = facs_merge;
                 }
                 
 /* SPLASH */                            splash_sync(3, 5);  
         fprintf(stderr, VZT_RDLOAD"Building facility hierarchy tree.\n");
                                          
         init_tree();
-        for(i=0;i<GLOBALS.numfacs;i++)
+        for(i=0;i<GLOBALS->numfacs;i++)
                 {
-                build_tree_from_name(GLOBALS.facs[i]->name, i);
+                build_tree_from_name(GLOBALS->facs[i]->name, i);
                 }
 /* SPLASH */                            splash_sync(4, 5);  
-        treegraft(GLOBALS.treeroot);
+        treegraft(GLOBALS->treeroot);
                                 
         fprintf(stderr, VZT_RDLOAD"Sorting facility hierarchy tree.\n");
-        treesort(GLOBALS.treeroot, NULL);
+        treesort(GLOBALS->treeroot, NULL);
 /* SPLASH */                            splash_sync(5, 5);  
-        order_facs_from_treesort(GLOBALS.treeroot, &GLOBALS.facs);
+        order_facs_from_treesort(GLOBALS->treeroot, &GLOBALS->facs);
                                 
-        GLOBALS.facs_are_sorted=1;
+        GLOBALS->facs_are_sorted=1;
         }
         else
 	{
-	GLOBALS.curnode=GLOBALS.firstnode;
-	for(i=0;i<GLOBALS.numfacs;i++)
+	GLOBALS->curnode=GLOBALS->firstnode;
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
 		int len;
 
-		GLOBALS.facs[i]=GLOBALS.curnode;
-	        if((len=strlen(subst=GLOBALS.curnode->name))>GLOBALS.longestname) GLOBALS.longestname=len;
-		GLOBALS.curnode=GLOBALS.curnode->nextinaet;
+		GLOBALS->facs[i]=GLOBALS->curnode;
+	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
 		while((ch=(*subst)))
 			{	
-			if(ch==GLOBALS.hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
+			if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
 			subst++;
 			}
 		}
 
 /* SPLASH */                            splash_sync(3, 5);  
 	fprintf(stderr, VZT_RDLOAD"Sorting facilities at hierarchy boundaries.\n");
-	wave_heapsort(GLOBALS.facs,GLOBALS.numfacs);
+	wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
 	
-	for(i=0;i<GLOBALS.numfacs;i++)
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
 	
-		subst=GLOBALS.facs[i]->name;
+		subst=GLOBALS->facs[i]->name;
 		while((ch=(*subst)))
 			{	
-			if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS.hier_delimeter; }	/* restore back to normal */
+			if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; }	/* restore back to normal */
 			subst++;
 			}
 		}
 	
-	GLOBALS.facs_are_sorted=1;
+	GLOBALS->facs_are_sorted=1;
 
 /* SPLASH */                            splash_sync(4, 5);  
 	fprintf(stderr, VZT_RDLOAD"Building facility hierarchy tree.\n");
 
 	init_tree();		
-	for(i=0;i<GLOBALS.numfacs;i++)	
+	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
-		build_tree_from_name(GLOBALS.facs[i]->name, i);
+		build_tree_from_name(GLOBALS->facs[i]->name, i);
 		}
 /* SPLASH */                            splash_sync(5, 5);  
-	treegraft(GLOBALS.treeroot);
-	treesort(GLOBALS.treeroot, NULL);
+	treegraft(GLOBALS->treeroot);
+	treesort(GLOBALS->treeroot, NULL);
 	}
 
-GLOBALS.min_time = GLOBALS.first_cycle_vzt_c_3; GLOBALS.max_time=GLOBALS.last_cycle_vzt_c_3;
-GLOBALS.is_lx2 = LXT2_IS_VZT;
+GLOBALS->min_time = GLOBALS->first_cycle_vzt_c_3; GLOBALS->max_time=GLOBALS->last_cycle_vzt_c_3;
+GLOBALS->is_lx2 = LXT2_IS_VZT;
 
 if(skip_start || skip_end)
 	{
 	TimeType b_start, b_end;
 
-	if(!skip_start) b_start = GLOBALS.min_time; else b_start = unformat_time(skip_start, GLOBALS.time_dimension);
-	if(!skip_end) b_end = GLOBALS.max_time; else b_end = unformat_time(skip_end, GLOBALS.time_dimension);
+	if(!skip_start) b_start = GLOBALS->min_time; else b_start = unformat_time(skip_start, GLOBALS->time_dimension);
+	if(!skip_end) b_end = GLOBALS->max_time; else b_end = unformat_time(skip_end, GLOBALS->time_dimension);
 
-	if(b_start<GLOBALS.min_time) b_start = GLOBALS.min_time;
-	else if(b_start>GLOBALS.max_time) b_start = GLOBALS.max_time;
+	if(b_start<GLOBALS->min_time) b_start = GLOBALS->min_time;
+	else if(b_start>GLOBALS->max_time) b_start = GLOBALS->max_time;
 
-	if(b_end<GLOBALS.min_time) b_end = GLOBALS.min_time;
-	else if(b_end>GLOBALS.max_time) b_end = GLOBALS.max_time;
+	if(b_end<GLOBALS->min_time) b_end = GLOBALS->min_time;
+	else if(b_end>GLOBALS->max_time) b_end = GLOBALS->max_time;
 
         if(b_start > b_end)
                 {
@@ -391,19 +391,19 @@ if(skip_start || skip_end)
                 b_end = tmp_time;
                 }
 
-	if(!vzt_rd_limit_time_range(GLOBALS.vzt_vzt_c_1, b_start, b_end))
+	if(!vzt_rd_limit_time_range(GLOBALS->vzt_vzt_c_1, b_start, b_end))
 		{
 		fprintf(stderr, VZT_RDLOAD"--begin/--end options yield zero blocks, ignoring.\n");
-		vzt_rd_unlimit_time_range(GLOBALS.vzt_vzt_c_1);
+		vzt_rd_unlimit_time_range(GLOBALS->vzt_vzt_c_1);
 		}
 		else
 		{
-		GLOBALS.min_time = b_start;
-		GLOBALS.max_time = b_end;
+		GLOBALS->min_time = b_start;
+		GLOBALS->max_time = b_end;
 		}
 	}
 
-return(GLOBALS.max_time);
+return(GLOBALS->max_time);
 }
 
 
@@ -413,15 +413,15 @@ return(GLOBALS.max_time);
 static void vzt_callback(struct vzt_rd_trace **lt, lxtint64_t *time, lxtint32_t *facidx, char **value)
 {
 struct HistEnt *htemp = histent_calloc();
-struct lx2_entry *l2e = GLOBALS.vzt_table_vzt_c_1+(*facidx);
-struct fac *f = GLOBALS.mvlfacs_vzt_c_3+(*facidx);
+struct lx2_entry *l2e = GLOBALS->vzt_table_vzt_c_1+(*facidx);
+struct fac *f = GLOBALS->mvlfacs_vzt_c_3+(*facidx);
 
 
-GLOBALS.busycnt_vzt_c_2++; 
-if(GLOBALS.busycnt_vzt_c_2==WAVE_BUSY_ITER)
+GLOBALS->busycnt_vzt_c_2++; 
+if(GLOBALS->busycnt_vzt_c_2==WAVE_BUSY_ITER)
 	{
 	busy_window_refresh();
-	GLOBALS.busycnt_vzt_c_2 = 0;
+	GLOBALS->busycnt_vzt_c_2 = 0;
 	}
 
 /* fprintf(stderr, "%lld %d %s\n", *time, *facidx, *value); */
@@ -461,7 +461,7 @@ else	/* string */
 	}
 
 
-htemp->time = (*time) * (GLOBALS.time_scale);
+htemp->time = (*time) * (GLOBALS->time_scale);
 
 if(l2e->histent_head)
 	{
@@ -505,11 +505,11 @@ nptr nold = np;
 
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
-txidx = f - GLOBALS.mvlfacs_vzt_c_3;
+txidx = f - GLOBALS->mvlfacs_vzt_c_3;
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = vzt_rd_get_alias_root(GLOBALS.vzt_vzt_c_1, txidx);
-	np = GLOBALS.mvlfacs_vzt_c_3[txidx].working_node;
+	txidx = vzt_rd_get_alias_root(GLOBALS->vzt_vzt_c_1, txidx);
+	np = GLOBALS->mvlfacs_vzt_c_3[txidx].working_node;
 
 	if(!(f=np->mv.mvlfac)) 
 		{
@@ -525,9 +525,9 @@ len = np->mv.mvlfac->len;
 
 if(f->array_height <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
 	{
-	vzt_rd_set_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
-	vzt_rd_iter_blocks(GLOBALS.vzt_vzt_c_1, vzt_callback, NULL);
-	vzt_rd_clr_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
+	vzt_rd_set_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx);
+	vzt_rd_iter_blocks(GLOBALS->vzt_vzt_c_1, vzt_callback, NULL);
+	vzt_rd_clr_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx);
 	}
 
 histent_tail = htemp = histent_calloc();
@@ -555,10 +555,10 @@ if(len>1)
 htemp->time = MAX_HISTENT_TIME-1;
 htemp->next = histent_tail;			
 
-if(GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr)
+if(GLOBALS->vzt_table_vzt_c_1[txidx].histent_curr)
 	{
-	GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr->next = htemp;
-	htemp = GLOBALS.vzt_table_vzt_c_1[txidx].histent_head;
+	GLOBALS->vzt_table_vzt_c_1[txidx].histent_curr->next = htemp;
+	htemp = GLOBALS->vzt_table_vzt_c_1[txidx].histent_head;
 	}
 
 if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
@@ -581,9 +581,9 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 
 np->head.time  = -2;
 np->head.next = htemp;
-np->numhist=GLOBALS.vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
+np->numhist=GLOBALS->vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
 
-memset(GLOBALS.vzt_table_vzt_c_1+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
+memset(GLOBALS->vzt_table_vzt_c_1+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 np->curr = histent_tail;
 np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
@@ -605,20 +605,20 @@ int txidx;
 
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
-txidx = f-GLOBALS.mvlfacs_vzt_c_3;
+txidx = f-GLOBALS->mvlfacs_vzt_c_3;
 
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = vzt_rd_get_alias_root(GLOBALS.vzt_vzt_c_1, txidx);
-	np = GLOBALS.mvlfacs_vzt_c_3[txidx].working_node;
+	txidx = vzt_rd_get_alias_root(GLOBALS->vzt_vzt_c_1, txidx);
+	np = GLOBALS->mvlfacs_vzt_c_3[txidx].working_node;
 
 	if(!(np->mv.mvlfac)) return;	/* already imported */
 	}
 
 if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
 	{
-	vzt_rd_set_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
-	GLOBALS.vzt_table_vzt_c_1[txidx].np = np;
+	vzt_rd_set_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx);
+	GLOBALS->vzt_table_vzt_c_1[txidx].np = np;
 	}
 }
 
@@ -628,9 +628,9 @@ void vzt_import_masked(void)
 int txidx, i, cnt;
 
 cnt = 0;
-for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
+for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 	{
-	if(vzt_rd_get_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx))
+	if(vzt_rd_get_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx))
 		{
 		cnt++;
 		}
@@ -644,17 +644,17 @@ if(cnt>100)
 	}
 
 set_window_busy(NULL);
-vzt_rd_iter_blocks(GLOBALS.vzt_vzt_c_1, vzt_callback, NULL);
+vzt_rd_iter_blocks(GLOBALS->vzt_vzt_c_1, vzt_callback, NULL);
 set_window_idle(NULL);
 
-for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
+for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 	{
-	if(vzt_rd_get_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx))
+	if(vzt_rd_get_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx))
 		{
 		struct HistEnt *htemp, *histent_tail;
-		struct fac *f = GLOBALS.mvlfacs_vzt_c_3+txidx;
+		struct fac *f = GLOBALS->mvlfacs_vzt_c_3+txidx;
 		int len = f->len;
-		nptr np = GLOBALS.vzt_table_vzt_c_1[txidx].np;
+		nptr np = GLOBALS->vzt_table_vzt_c_1[txidx].np;
 
 		histent_tail = htemp = histent_calloc();
 		if(len>1)
@@ -681,10 +681,10 @@ for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
 		htemp->time = MAX_HISTENT_TIME-1;
 		htemp->next = histent_tail;			
 
-		if(GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr)
+		if(GLOBALS->vzt_table_vzt_c_1[txidx].histent_curr)
 			{
-			GLOBALS.vzt_table_vzt_c_1[txidx].histent_curr->next = htemp;
-			htemp = GLOBALS.vzt_table_vzt_c_1[txidx].histent_head;
+			GLOBALS->vzt_table_vzt_c_1[txidx].histent_curr->next = htemp;
+			htemp = GLOBALS->vzt_table_vzt_c_1[txidx].histent_head;
 			}
 
 		if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
@@ -707,13 +707,13 @@ for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
 
 		np->head.time  = -2;
 		np->head.next = htemp;
-		np->numhist=GLOBALS.vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
+		np->numhist=GLOBALS->vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
 
-		memset(GLOBALS.vzt_table_vzt_c_1+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
+		memset(GLOBALS->vzt_table_vzt_c_1+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
 
 		np->curr = histent_tail;
 		np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
-		vzt_rd_clr_fac_process_mask(GLOBALS.vzt_vzt_c_1, txidx);
+		vzt_rd_clr_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx);
 		}
 	}
 }
@@ -721,6 +721,10 @@ for(txidx=0;txidx<GLOBALS.numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:50  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
  * Semi working global struct
  *

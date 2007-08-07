@@ -32,16 +32,16 @@ for(;;)
 	*pnt = (char)ch;
 	}
 
-GLOBALS.fgetmalloc_len = vlist_size(v);
+GLOBALS->fgetmalloc_len = vlist_size(v);
 
-if(!GLOBALS.fgetmalloc_len) 
+if(!GLOBALS->fgetmalloc_len) 
 	{
 	pnt = NULL;
 	}
 	else
 	{
-	pnt=malloc_2(GLOBALS.fgetmalloc_len+1);
-	for(i=0;i<GLOBALS.fgetmalloc_len;i++)
+	pnt=malloc_2(GLOBALS->fgetmalloc_len+1);
+	for(i=0;i<GLOBALS->fgetmalloc_len;i++)
 		{
 		pnt[i] = *((char *)vlist_locate(v, i));
 		}
@@ -76,12 +76,12 @@ if(s)
 		free_2(s);
 		s = s3;
 
-		GLOBALS.fgetmalloc_len = len;
+		GLOBALS->fgetmalloc_len = len;
 		}
 		else
 		{
 		free_2(s); s = NULL;
-		GLOBALS.fgetmalloc_len = 0;
+		GLOBALS->fgetmalloc_len = 0;
 		}
 	}
 
@@ -91,6 +91,10 @@ return(s);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:46  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
  * Semi working global struct
  *

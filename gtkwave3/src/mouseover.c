@@ -33,7 +33,7 @@ int vlen=0;
 
 if(t->name)
 	{
-	len=gdk_string_measure(GLOBALS.wavefont, t->name);
+	len=gdk_string_measure(GLOBALS->wavefont, t->name);
 
 	if((tim!=-1)&&(!(t->flags&TR_EXCLUDE)))
 		{
@@ -46,7 +46,7 @@ if(t->name)
                         str=convert_ascii(t,v);
 			if(str)
 				{
-				vlen=gdk_string_measure(GLOBALS.wavefont,str);
+				vlen=gdk_string_measure(GLOBALS->wavefont,str);
 				*asciivalue=str;
 				}
 				else
@@ -74,7 +74,7 @@ if(t->name)
 						str[0]=AN_STR[h_ptr->v.h_val];
 						}
 					*asciivalue=str;
-					vlen=gdk_string_measure(GLOBALS.wavefont,str);
+					vlen=gdk_string_measure(GLOBALS->wavefont,str);
 					}
 					else
 					{
@@ -96,7 +96,7 @@ if(t->name)
 
 					if(str)
 						{
-						vlen=gdk_string_measure(GLOBALS.wavefont,str);
+						vlen=gdk_string_measure(GLOBALS->wavefont,str);
 						*asciivalue=str;
 						}
 						else
@@ -125,7 +125,7 @@ if(t->name)
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event)
 {       
 gdk_draw_pixmap(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)],
-                GLOBALS.mo_pixmap_mouseover_c_1,
+                GLOBALS->mo_pixmap_mouseover_c_1,
                 event->area.x, event->area.y,
                 event->area.x, event->area.y,
                 event->area.width, event->area.height);
@@ -135,42 +135,42 @@ return(FALSE);
 
 void create_mouseover(gint x, gint y, gint width, gint height)
 {
-GLOBALS.mo_width_mouseover_c_1 = width;
-GLOBALS.mo_height_mouseover_c_1 = height;
+GLOBALS->mo_width_mouseover_c_1 = width;
+GLOBALS->mo_height_mouseover_c_1 = height;
 
-GLOBALS.mouseover_mouseover_c_1 = gtk_window_new(GTK_WINDOW_POPUP);
-gtk_window_set_default_size(GTK_WINDOW (GLOBALS.mouseover_mouseover_c_1), width, height);
+GLOBALS->mouseover_mouseover_c_1 = gtk_window_new(GTK_WINDOW_POPUP);
+gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), width, height);
 
 #ifdef WAVE_USE_GTK2
-	gtk_window_set_type_hint(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
-        gtk_window_move(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), x, y);
+	gtk_window_set_type_hint(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
+        gtk_window_move(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), x, y);
 #endif
 
-GLOBALS.mo_area_mouseover_c_1=gtk_drawing_area_new();
-gtk_container_add(GTK_CONTAINER(GLOBALS.mouseover_mouseover_c_1), GLOBALS.mo_area_mouseover_c_1);
-gtk_widget_show(GLOBALS.mo_area_mouseover_c_1);
-gtk_widget_show(GLOBALS.mouseover_mouseover_c_1);
+GLOBALS->mo_area_mouseover_c_1=gtk_drawing_area_new();
+gtk_container_add(GTK_CONTAINER(GLOBALS->mouseover_mouseover_c_1), GLOBALS->mo_area_mouseover_c_1);
+gtk_widget_show(GLOBALS->mo_area_mouseover_c_1);
+gtk_widget_show(GLOBALS->mouseover_mouseover_c_1);
 
 #ifndef WAVE_USE_GTK2
-gtk_window_reposition(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), x, y); /* cuts down on GTK+-1.2 visual noise by moving it here */
+gtk_window_reposition(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), x, y); /* cuts down on GTK+-1.2 visual noise by moving it here */
 #endif
 
-GLOBALS.mo_pixmap_mouseover_c_1 = gdk_pixmap_new(GLOBALS.mo_area_mouseover_c_1->window, GLOBALS.mouseover_mouseover_c_1->allocation.width, GLOBALS.mouseover_mouseover_c_1->allocation.height, -1);
+GLOBALS->mo_pixmap_mouseover_c_1 = gdk_pixmap_new(GLOBALS->mo_area_mouseover_c_1->window, GLOBALS->mouseover_mouseover_c_1->allocation.width, GLOBALS->mouseover_mouseover_c_1->allocation.height, -1);
 
-if(!GLOBALS.mo_dk_gray_mouseover_c_1) GLOBALS.mo_dk_gray_mouseover_c_1 = alloc_color(GLOBALS.mo_area_mouseover_c_1, 0x00cccccc, NULL);
-if(!GLOBALS.mo_black_mouseover_c_1)   GLOBALS.mo_black_mouseover_c_1   = alloc_color(GLOBALS.mo_area_mouseover_c_1, 0x00000000, NULL);
+if(!GLOBALS->mo_dk_gray_mouseover_c_1) GLOBALS->mo_dk_gray_mouseover_c_1 = alloc_color(GLOBALS->mo_area_mouseover_c_1, 0x00cccccc, NULL);
+if(!GLOBALS->mo_black_mouseover_c_1)   GLOBALS->mo_black_mouseover_c_1   = alloc_color(GLOBALS->mo_area_mouseover_c_1, 0x00000000, NULL);
 
-gdk_draw_rectangle(GLOBALS.mo_pixmap_mouseover_c_1, GLOBALS.mo_dk_gray_mouseover_c_1,
+gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_dk_gray_mouseover_c_1,
 		TRUE,
 		0,0, 
-		GLOBALS.mo_width_mouseover_c_1, GLOBALS.mo_height_mouseover_c_1);
+		GLOBALS->mo_width_mouseover_c_1, GLOBALS->mo_height_mouseover_c_1);
 
-gdk_draw_rectangle(GLOBALS.mo_pixmap_mouseover_c_1, GLOBALS.mo_black_mouseover_c_1,
+gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_black_mouseover_c_1,
 		TRUE,
 		1,1, 
-		GLOBALS.mo_width_mouseover_c_1-2, GLOBALS.mo_height_mouseover_c_1-2);
+		GLOBALS->mo_width_mouseover_c_1-2, GLOBALS->mo_height_mouseover_c_1-2);
 
-gtk_signal_connect(GTK_OBJECT(GLOBALS.mo_area_mouseover_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+gtk_signal_connect(GTK_OBJECT(GLOBALS->mo_area_mouseover_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
 }
 
 #define MOUSEOVER_BREAKSIZE (32)
@@ -192,17 +192,17 @@ int num_info_rows = 2;
 char *alternate_name = NULL;
 int fh;
 
-if(GLOBALS.disable_mouseover)
+if(GLOBALS->disable_mouseover)
 	{
-	if(GLOBALS.mouseover_mouseover_c_1)
+	if(GLOBALS->mouseover_mouseover_c_1)
 		{
-		gtk_widget_destroy(GLOBALS.mouseover_mouseover_c_1); GLOBALS.mouseover_mouseover_c_1 = NULL;
-		gdk_pixmap_unref(GLOBALS.mo_pixmap_mouseover_c_1);   GLOBALS.mo_pixmap_mouseover_c_1 = NULL;
+		gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
+		gdk_pixmap_unref(GLOBALS->mo_pixmap_mouseover_c_1);   GLOBALS->mo_pixmap_mouseover_c_1 = NULL;
 		}
 	goto bot;
 	}
 
-fh = GLOBALS.wavefont->ascent+GLOBALS.wavefont->descent;
+fh = GLOBALS->wavefont->ascent+GLOBALS->wavefont->descent;
 
 if(t)
 	{
@@ -217,7 +217,7 @@ if(t)
 		strcpy(alternate_name, "...");
 		strcpy(alternate_name + 3, t->name + name_charlen - (MOUSEOVER_BREAKSIZE - 3));
 	
-		nmaxlen=gdk_string_measure(GLOBALS.wavefont, alternate_name);
+		nmaxlen=gdk_string_measure(GLOBALS->wavefont, alternate_name);
 		}
 
 	if(value_charlen > MOUSEOVER_BREAKSIZE)
@@ -232,7 +232,7 @@ if(t)
 			{
 			memset(breakbuf, 0, MOUSEOVER_BREAKSIZE+1);
 			strncpy(breakbuf, asciivalue + (i*MOUSEOVER_BREAKSIZE), MOUSEOVER_BREAKSIZE);
-			localmax = gdk_string_measure(GLOBALS.wavefont, breakbuf);
+			localmax = gdk_string_measure(GLOBALS->wavefont, breakbuf);
 			vmaxlen = (localmax > vmaxlen) ? localmax : vmaxlen;
 			}
 
@@ -243,58 +243,58 @@ if(t)
 	totalmax += 8;
 	totalmax = (totalmax + 1) & ~1; /* round up to next even pixel count */
 
-	if((GLOBALS.mouseover_mouseover_c_1)&&((totalmax != GLOBALS.mo_width_mouseover_c_1)||((num_info_rows * fh + 7) != GLOBALS.mo_height_mouseover_c_1)))
+	if((GLOBALS->mouseover_mouseover_c_1)&&((totalmax != GLOBALS->mo_width_mouseover_c_1)||((num_info_rows * fh + 7) != GLOBALS->mo_height_mouseover_c_1)))
 		{
-		gtk_widget_destroy(GLOBALS.mouseover_mouseover_c_1); GLOBALS.mouseover_mouseover_c_1 = NULL;
-		gdk_pixmap_unref(GLOBALS.mo_pixmap_mouseover_c_1);   GLOBALS.mo_pixmap_mouseover_c_1 = NULL;
+		gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
+		gdk_pixmap_unref(GLOBALS->mo_pixmap_mouseover_c_1);   GLOBALS->mo_pixmap_mouseover_c_1 = NULL;
 		}
 	}
 
-if((!t)||(yin<0)||(yin>GLOBALS.waveheight))
+if((!t)||(yin<0)||(yin>GLOBALS->waveheight))
 	{
-	if(GLOBALS.mouseover_mouseover_c_1)
+	if(GLOBALS->mouseover_mouseover_c_1)
 		{
-		gtk_widget_destroy(GLOBALS.mouseover_mouseover_c_1); GLOBALS.mouseover_mouseover_c_1 = NULL;
-		gdk_pixmap_unref(GLOBALS.mo_pixmap_mouseover_c_1);   GLOBALS.mo_pixmap_mouseover_c_1 = NULL;
+		gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
+		gdk_pixmap_unref(GLOBALS->mo_pixmap_mouseover_c_1);   GLOBALS->mo_pixmap_mouseover_c_1 = NULL;
 		}
 	goto bot;
 	}
 
-if(!GLOBALS.mouseover_mouseover_c_1)
+if(!GLOBALS->mouseover_mouseover_c_1)
 	{
 #ifdef WAVE_USE_GTK2
-	gdk_window_get_origin(GLOBALS.wavearea->window, &xd, &yd);
+	gdk_window_get_origin(GLOBALS->wavearea->window, &xd, &yd);
 #else
-	gdk_window_get_deskrelative_origin(GLOBALS.wavearea->window, &xd, &yd);
+	gdk_window_get_deskrelative_origin(GLOBALS->wavearea->window, &xd, &yd);
 #endif
 	create_mouseover(xin + xd + 8, yin + yd + 20, totalmax, num_info_rows * fh + 7);
 	}
 	else
 	{
 #ifdef WAVE_USE_GTK2
-	gdk_window_get_origin(GLOBALS.wavearea->window, &xd, &yd);
-        gtk_window_move(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
+	gdk_window_get_origin(GLOBALS->wavearea->window, &xd, &yd);
+        gtk_window_move(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
 #else
-	gdk_window_get_deskrelative_origin(GLOBALS.wavearea->window, &xd, &yd);
-        gtk_window_reposition(GTK_WINDOW(GLOBALS.mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
+	gdk_window_get_deskrelative_origin(GLOBALS->wavearea->window, &xd, &yd);
+        gtk_window_reposition(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
 #endif
 	}
 
-gdk_draw_rectangle(GLOBALS.mo_pixmap_mouseover_c_1, GLOBALS.mo_dk_gray_mouseover_c_1,
+gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_dk_gray_mouseover_c_1,
 		TRUE,
 		0,0, 
-		GLOBALS.mo_width_mouseover_c_1, GLOBALS.mo_height_mouseover_c_1);
+		GLOBALS->mo_width_mouseover_c_1, GLOBALS->mo_height_mouseover_c_1);
 
-gdk_draw_rectangle(GLOBALS.mo_pixmap_mouseover_c_1, GLOBALS.mo_black_mouseover_c_1,
+gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_black_mouseover_c_1,
 		TRUE,
 		1,1, 
-		GLOBALS.mo_width_mouseover_c_1-2, GLOBALS.mo_height_mouseover_c_1-2);
+		GLOBALS->mo_width_mouseover_c_1-2, GLOBALS->mo_height_mouseover_c_1-2);
 
-gdk_draw_string(GLOBALS.mo_pixmap_mouseover_c_1, GLOBALS.wavefont, GLOBALS.mo_dk_gray_mouseover_c_1, 4, fh + 2, alternate_name ? alternate_name : t->name);
+gdk_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, fh + 2, alternate_name ? alternate_name : t->name);
 
 if(num_info_rows == 2)
 	{
-	if(asciivalue) gdk_draw_string(GLOBALS.mo_pixmap_mouseover_c_1, GLOBALS.wavefont, GLOBALS.mo_dk_gray_mouseover_c_1, 4, 2*fh+2, asciivalue);
+	if(asciivalue) gdk_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, 2*fh+2, asciivalue);
 	}
 	else
 	{
@@ -306,12 +306,12 @@ if(num_info_rows == 2)
 		{
 		memset(breakbuf, 0, MOUSEOVER_BREAKSIZE+1);
 		strncpy(breakbuf, asciivalue + (i*MOUSEOVER_BREAKSIZE), MOUSEOVER_BREAKSIZE);
-		gdk_draw_string(GLOBALS.mo_pixmap_mouseover_c_1, GLOBALS.wavefont, GLOBALS.mo_dk_gray_mouseover_c_1, 4, ((2+i)*fh)+2, breakbuf);
+		gdk_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, ((2+i)*fh)+2, breakbuf);
 		}
 	}
 
-gdk_window_raise(GLOBALS.mouseover_mouseover_c_1->window);
-gdk_draw_pixmap(GLOBALS.mo_area_mouseover_c_1->window, GLOBALS.mo_area_mouseover_c_1->style->fg_gc[GTK_WIDGET_STATE(GLOBALS.mouseover_mouseover_c_1)],GLOBALS.mo_pixmap_mouseover_c_1,0,0,0,0,GLOBALS.mo_width_mouseover_c_1, GLOBALS.mo_height_mouseover_c_1);
+gdk_window_raise(GLOBALS->mouseover_mouseover_c_1->window);
+gdk_draw_pixmap(GLOBALS->mo_area_mouseover_c_1->window, GLOBALS->mo_area_mouseover_c_1->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->mouseover_mouseover_c_1)],GLOBALS->mo_pixmap_mouseover_c_1,0,0,0,0,GLOBALS->mo_width_mouseover_c_1, GLOBALS->mo_height_mouseover_c_1);
 
 bot:
 if(asciivalue) { free_2(asciivalue); }
@@ -322,6 +322,10 @@ if(alternate_name) { free_2(alternate_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

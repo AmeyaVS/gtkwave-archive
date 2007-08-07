@@ -20,12 +20,12 @@
 
 void free_outstanding(void)
 {
-void **t = (void **)GLOBALS.alloc2_chain;
+void **t = (void **)GLOBALS->alloc2_chain;
 void **t2;
 int ctr = 0;
 
 printf("\n*** cleanup ***\n");
-printf("Freeing %d chunks\n", GLOBALS.outstanding);
+printf("Freeing %d chunks\n", GLOBALS->outstanding);
 system("date");
 while(t)
 	{
@@ -49,14 +49,14 @@ if(ret)
 	{
 	void **ret2 = (void **)ret;
 	*(ret2+0) = NULL;
-	*(ret2+1) = GLOBALS.alloc2_chain;
-	if(GLOBALS.alloc2_chain)
+	*(ret2+1) = GLOBALS->alloc2_chain;
+	if(GLOBALS->alloc2_chain)
 		{
-		*(GLOBALS.alloc2_chain+0) = ret2;
+		*(GLOBALS->alloc2_chain+0) = ret2;
 		}
-	GLOBALS.alloc2_chain = ret2;
+	GLOBALS->alloc2_chain = ret2;
 
-	GLOBALS.outstanding++;
+	GLOBALS->outstanding++;
 
 	return(ret + 2*sizeof(void *));
 	}
@@ -81,7 +81,7 @@ if(prv)
         }
         else
         {
-        GLOBALS.alloc2_chain = nxt;
+        GLOBALS->alloc2_chain = nxt;
         }
         
 if(nxt)
@@ -93,12 +93,12 @@ ret=realloc(ptr - 2*sizeof(void *), size + 2*sizeof(void *));
 
 ret2 = (void **)ret;
 *(ret2+0) = NULL;
-*(ret2+1) = GLOBALS.alloc2_chain;
-if(GLOBALS.alloc2_chain)
+*(ret2+1) = GLOBALS->alloc2_chain;
+if(GLOBALS->alloc2_chain)
 	{
-	*(GLOBALS.alloc2_chain+0) = ret2;
+	*(GLOBALS->alloc2_chain+0) = ret2;
 	}
-GLOBALS.alloc2_chain = ret2;
+GLOBALS->alloc2_chain = ret2;
 
 if(ret)
 	{
@@ -119,14 +119,14 @@ if(ret)
 	{
 	void **ret2 = (void **)ret;
 	*(ret2+0) = NULL;
-	*(ret2+1) = GLOBALS.alloc2_chain;
-	if(GLOBALS.alloc2_chain)
+	*(ret2+1) = GLOBALS->alloc2_chain;
+	if(GLOBALS->alloc2_chain)
 		{
-		*(GLOBALS.alloc2_chain+0) = ret2;
+		*(GLOBALS->alloc2_chain+0) = ret2;
 		}
-	GLOBALS.alloc2_chain = ret2;
+	GLOBALS->alloc2_chain = ret2;
 
-	GLOBALS.outstanding++;
+	GLOBALS->outstanding++;
 
 	return(ret + 2*sizeof(void *));
 	}
@@ -152,7 +152,7 @@ if(ptr)
 		}	
 		else
 		{
-		GLOBALS.alloc2_chain = nxt;
+		GLOBALS->alloc2_chain = nxt;
 		}
 
 	if(nxt)
@@ -160,7 +160,7 @@ if(ptr)
 		*(nxt+0) = prv;
 		}
 
-	GLOBALS.outstanding--;
+	GLOBALS->outstanding--;
 
 	DEBUG_M(mem_freenode(ptr - 2*sizeof(void *)));
 	free(ptr - 2*sizeof(void *));
@@ -197,7 +197,7 @@ TimeType atoi_64(const char *str)
 TimeType val=0;
 unsigned char ch, nflag=0;
 
-GLOBALS.atoi_cont_ptr=NULL;
+GLOBALS->atoi_cont_ptr=NULL;
 
 switch(*str)
 	{
@@ -236,7 +236,7 @@ while((ch=*(str++)))
 	else
 	if(val)
 		{
-		GLOBALS.atoi_cont_ptr=str-1;
+		GLOBALS->atoi_cont_ptr=str-1;
 		break;
 		}
 	}
@@ -250,7 +250,7 @@ return(nflag?(-val):val);
 void gtk_tooltips_set_tip_2(GtkTooltips *tooltips, GtkWidget *widget, 
 	const gchar *tip_text, const gchar *tip_private)
 {
-if(!GLOBALS.disable_tooltips)
+if(!GLOBALS->disable_tooltips)
 	{
 	gtk_tooltips_set_tip(tooltips, widget, tip_text, tip_private);
 	}
@@ -259,7 +259,7 @@ if(!GLOBALS.disable_tooltips)
 
 void gtk_tooltips_set_delay_2(GtkTooltips *tooltips, guint delay)
 {
-if(!GLOBALS.disable_tooltips)
+if(!GLOBALS->disable_tooltips)
 	{
 	gtk_tooltips_set_delay(tooltips, delay);
 	}
@@ -268,7 +268,7 @@ if(!GLOBALS.disable_tooltips)
 
 GtkTooltips* gtk_tooltips_new_2(void)
 {
-if(!GLOBALS.disable_tooltips)
+if(!GLOBALS->disable_tooltips)
 	{
 	return(gtk_tooltips_new());
 	}
@@ -321,6 +321,10 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:23  gtkwave
  * Imported sources
  *

@@ -64,7 +64,7 @@ for(i=0;i<len;i++)
 		}
 	else
 		{
-		if(ch==GLOBALS.hier_delimeter) 
+		if(ch==GLOBALS->hier_delimeter) 
 			{
 			if(!only_nums_so_far) levels--;
 			if(!levels)
@@ -86,50 +86,50 @@ return(pnt); /* not as many levels as max, so give the full name.. */
  */
 static void AddTrace( Trptr t )
 {
-if(GLOBALS.default_flags&TR_NUMMASK) t->flags=GLOBALS.default_flags;
-	else t->flags=(t->flags&TR_NUMMASK)|GLOBALS.default_flags;
+if(GLOBALS->default_flags&TR_NUMMASK) t->flags=GLOBALS->default_flags;
+	else t->flags=(t->flags&TR_NUMMASK)|GLOBALS->default_flags;
 
-if(GLOBALS.default_flags & TR_FTRANSLATED)
+if(GLOBALS->default_flags & TR_FTRANSLATED)
 	{
-	t->f_filter = GLOBALS.current_translate_file;
+	t->f_filter = GLOBALS->current_translate_file;
 	}
 else
-if(GLOBALS.default_flags & TR_PTRANSLATED)
+if(GLOBALS->default_flags & TR_PTRANSLATED)
 	{
-	t->p_filter = GLOBALS.current_translate_proc;
+	t->p_filter = GLOBALS->current_translate_proc;
 	}
 
 
-if(GLOBALS.shift_timebase_default_for_add)
-	t->shift=GLOBALS.shift_timebase_default_for_add;
+if(GLOBALS->shift_timebase_default_for_add)
+	t->shift=GLOBALS->shift_timebase_default_for_add;
 
-if(!GLOBALS.shadow_active)
+if(!GLOBALS->shadow_active)
 	{
-	if( GLOBALS.traces.first == NULL )
+	if( GLOBALS->traces.first == NULL )
 		{
 		t->t_next = t->t_prev = NULL;
-		GLOBALS.traces.first = GLOBALS.traces.last = t;
+		GLOBALS->traces.first = GLOBALS->traces.last = t;
 	      	}
 	    	else
 	      	{
 		t->t_next = NULL;
-		t->t_prev = GLOBALS.traces.last;
-		GLOBALS.traces.last->t_next = t;
-		GLOBALS.traces.last = t;
+		t->t_prev = GLOBALS->traces.last;
+		GLOBALS->traces.last->t_next = t;
+		GLOBALS->traces.last = t;
 	      	}
-	GLOBALS.traces.total++;
+	GLOBALS->traces.total++;
 	}
 	else	/* hide offscreen */
 	{
 	struct strace *st = calloc_2(1, sizeof(struct strace));
-	st->next = GLOBALS.shadow_straces;
-	st->value = GLOBALS.shadow_type;
+	st->next = GLOBALS->shadow_straces;
+	st->value = GLOBALS->shadow_type;
 	st->trace = t;
 
-	st->string = GLOBALS.shadow_string;	/* copy string over */
-	GLOBALS.shadow_string = NULL;
+	st->string = GLOBALS->shadow_string;	/* copy string over */
+	GLOBALS->shadow_string = NULL;
 
-	GLOBALS.shadow_straces = st;
+	GLOBALS->shadow_straces = st;
 	}
 }
 
@@ -166,7 +166,7 @@ if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
 	return( 0 );
       	}
 AddTrace(t);
-t->flags = TR_BLANK | (GLOBALS.default_flags & (TR_COLLAPSED|TR_ANALOG_BLANK_STRETCH));
+t->flags = TR_BLANK | (GLOBALS->default_flags & (TR_COLLAPSED|TR_ANALOG_BLANK_STRETCH));
 if(t->flags & TR_ANALOG_BLANK_STRETCH)
 	{
 	t->flags &= ~TR_BLANK;
@@ -212,25 +212,25 @@ if((comm=precondition_string(comment)))
 	t->is_alias=1;
 	}
 
-if(!GLOBALS.traces.first)
+if(!GLOBALS->traces.first)
 	{
-	GLOBALS.traces.first=GLOBALS.traces.last=t;
-	GLOBALS.traces.total=1;
+	GLOBALS->traces.first=GLOBALS->traces.last=t;
+	GLOBALS->traces.total=1;
 	return(1);
 	}
 	else
 	{
-	tb.buffer=GLOBALS.traces.buffer;
-	tb.bufferlast=GLOBALS.traces.bufferlast;
-	tb.buffercount=GLOBALS.traces.buffercount;
+	tb.buffer=GLOBALS->traces.buffer;
+	tb.bufferlast=GLOBALS->traces.bufferlast;
+	tb.buffercount=GLOBALS->traces.buffercount;
 	
-	GLOBALS.traces.buffer=GLOBALS.traces.bufferlast=t;
-	GLOBALS.traces.buffercount=1;
+	GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=t;
+	GLOBALS->traces.buffercount=1;
 	PasteBuffer();
 
-	GLOBALS.traces.buffer=tb.buffer;
-	GLOBALS.traces.bufferlast=tb.bufferlast;
-	GLOBALS.traces.buffercount=tb.buffercount;
+	GLOBALS->traces.buffer=tb.buffer;
+	GLOBALS->traces.bufferlast=tb.bufferlast;
+	GLOBALS->traces.buffercount=tb.buffercount;
 
 	return(1);
 	}
@@ -251,7 +251,7 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
     if(!nd) return(0); /* passed it a null node ptr by mistake */
     if(nd->mv.mvlfac) import_trace(nd);
 
-    GLOBALS.signalwindow_width_dirty=1;
+    GLOBALS->signalwindow_width_dirty=1;
     
     if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
       {
@@ -305,13 +305,13 @@ if(aliasname)
 	}
 	else
 	{
-    	if(!GLOBALS.hier_max_level) 
+    	if(!GLOBALS->hier_max_level) 
 		{
 		t->name = nd->nname;
 		}
 		else
 		{
-		t->name = hier_extract(nd->nname, GLOBALS.hier_max_level);
+		t->name = hier_extract(nd->nname, GLOBALS->hier_max_level);
 		}
 	}
 
@@ -375,7 +375,7 @@ int AddVector( bvptr vec )
 
     if(!vec) return(0); /* must've passed it a null pointer by mistake */
 
-    GLOBALS.signalwindow_width_dirty=1;
+    GLOBALS->signalwindow_width_dirty=1;
 
     n = vec->nbits;
     t = (Trptr) calloc_2(1, sizeof( TraceEnt ) );
@@ -386,13 +386,13 @@ int AddVector( bvptr vec )
 	return( 0 );
       }
 
-    if(!GLOBALS.hier_max_level)
+    if(!GLOBALS->hier_max_level)
 	{	
     	t->name = vec->name;
 	}
 	else
 	{
-	t->name = hier_extract(vec->name, GLOBALS.hier_max_level);
+	t->name = hier_extract(vec->name, GLOBALS->hier_max_level);
 	}
     t->flags = ( n > 3 ) ? TR_HEX|TR_RJUSTIFY : TR_BIN|TR_RJUSTIFY;
     t->vector = TRUE;
@@ -407,13 +407,13 @@ int AddVector( bvptr vec )
  */
 void FreeTrace(Trptr t)
 {
-if(GLOBALS.straces)
+if(GLOBALS->straces)
 	{
 	struct strace_defer_free *sd = calloc_2(1, sizeof(struct strace_defer_free));
-	sd->next = GLOBALS.strace_defer_free_head;
+	sd->next = GLOBALS->strace_defer_free_head;
 	sd->defer = t;
 
-	GLOBALS.strace_defer_free_head = sd;
+	GLOBALS->strace_defer_free_head = sd;
 	return;
 	}
 
@@ -463,14 +463,14 @@ free_2( t );
  */ 
 void RemoveTrace( Trptr t, int dofree )
   {
-    GLOBALS.traces.total--;
-    if( t == GLOBALS.traces.first )
+    GLOBALS->traces.total--;
+    if( t == GLOBALS->traces.first )
       {
-	GLOBALS.traces.first = t->t_next;
+	GLOBALS->traces.first = t->t_next;
 	if( t->t_next )
             t->t_next->t_prev = NULL;
         else
-            GLOBALS.traces.last = NULL;
+            GLOBALS->traces.last = NULL;
       }
     else
       {
@@ -478,7 +478,7 @@ void RemoveTrace( Trptr t, int dofree )
         if( t->t_next )
             t->t_next->t_prev = t->t_prev;
         else
-            GLOBALS.traces.last = t->t_prev;
+            GLOBALS->traces.last = t->t_prev;
       }
     
     if(dofree)
@@ -495,7 +495,7 @@ void FreeCutBuffer(void)
 {
 Trptr t, t2;
 
-t=GLOBALS.traces.buffer;
+t=GLOBALS->traces.buffer;
 
 while(t)
 	{
@@ -504,8 +504,8 @@ while(t)
 	t=t2;	
 	}
 
-GLOBALS.traces.buffer=GLOBALS.traces.bufferlast=NULL;
-GLOBALS.traces.buffercount=0;
+GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
+GLOBALS->traces.buffercount=0;
 }
 
 
@@ -519,9 +519,9 @@ Trptr CutBuffer(void)
 Trptr t, tnext;
 Trptr first=NULL, current=NULL;
 
-GLOBALS.shift_click_trace=NULL;		/* so shift-clicking doesn't explode */
+GLOBALS->shift_click_trace=NULL;		/* so shift-clicking doesn't explode */
 
-t=GLOBALS.traces.first;
+t=GLOBALS->traces.first;
 while(t)
 	{
 	if((t->flags)&(TR_HIGHLIGHT)) break;
@@ -529,14 +529,14 @@ while(t)
 	}
 if(!t) return(NULL);	/* keeps a double cut from blowing out the buffer */
 
-GLOBALS.signalwindow_width_dirty=1;
+GLOBALS->signalwindow_width_dirty=1;
 
 FreeCutBuffer();
 
 /*
  * propagate cut for whole comment group if comment selected and collapsed...
  */
-t=GLOBALS.traces.first;
+t=GLOBALS->traces.first;
 while(t)
 	{
 	top_of_cut:
@@ -569,14 +569,14 @@ while(t)
 	t=t->t_next;
 	}
 
-t=GLOBALS.traces.first;
+t=GLOBALS->traces.first;
 while(t)
 	{
 	tnext=t->t_next;
 	if(t->flags&TR_HIGHLIGHT)
 		{
-		GLOBALS.traces.bufferlast=t;
-		GLOBALS.traces.buffercount++;
+		GLOBALS->traces.bufferlast=t;
+		GLOBALS->traces.buffercount++;
 
 		t->flags&=(~TR_HIGHLIGHT);
 		RemoveTrace(t, 0);
@@ -597,7 +597,7 @@ while(t)
 	t=tnext;
 	}
 
-return(GLOBALS.traces.buffer=first);
+return(GLOBALS->traces.buffer=first);
 }
 
 
@@ -609,24 +609,24 @@ Trptr PasteBuffer(void)
 {
 Trptr t, tinsert=NULL, tinsertnext;
 
-if(!GLOBALS.traces.buffer) return(NULL);
+if(!GLOBALS->traces.buffer) return(NULL);
 
-GLOBALS.signalwindow_width_dirty=1;
+GLOBALS->signalwindow_width_dirty=1;
 
-if(!(t=GLOBALS.traces.first))
+if(!(t=GLOBALS->traces.first))
 	{
-	t=GLOBALS.traces.last=GLOBALS.traces.first=GLOBALS.traces.buffer;
+	t=GLOBALS->traces.last=GLOBALS->traces.first=GLOBALS->traces.buffer;
 	while(t)
 		{
-		GLOBALS.traces.last=t;
-		GLOBALS.traces.total++;
+		GLOBALS->traces.last=t;
+		GLOBALS->traces.total++;
 		t=t->t_next;
 		}	
 
-	GLOBALS.traces.buffer=GLOBALS.traces.bufferlast=NULL;
-	GLOBALS.traces.buffercount=0;
+	GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
+	GLOBALS->traces.buffercount=0;
 
-	return(GLOBALS.traces.first);
+	return(GLOBALS->traces.first);
 	}
 
 while(t)
@@ -654,27 +654,27 @@ while(t)
 nxtl:	t=t->t_next;
 	}
 
-if(!tinsert) tinsert=GLOBALS.traces.last;
+if(!tinsert) tinsert=GLOBALS->traces.last;
 
 tinsertnext=tinsert->t_next;
-tinsert->t_next=GLOBALS.traces.buffer;
-GLOBALS.traces.buffer->t_prev=tinsert;
-GLOBALS.traces.bufferlast->t_next=tinsertnext;
-GLOBALS.traces.total+=GLOBALS.traces.buffercount;
+tinsert->t_next=GLOBALS->traces.buffer;
+GLOBALS->traces.buffer->t_prev=tinsert;
+GLOBALS->traces.bufferlast->t_next=tinsertnext;
+GLOBALS->traces.total+=GLOBALS->traces.buffercount;
 
 if(!tinsertnext)
 	{
-	GLOBALS.traces.last=GLOBALS.traces.bufferlast;
+	GLOBALS->traces.last=GLOBALS->traces.bufferlast;
 	}
 	else
 	{
-	tinsertnext->t_prev=GLOBALS.traces.bufferlast;
+	tinsertnext->t_prev=GLOBALS->traces.bufferlast;
 	}
 
-GLOBALS.traces.buffer=GLOBALS.traces.bufferlast=NULL;
-GLOBALS.traces.buffercount=0;
+GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
+GLOBALS->traces.buffercount=0;
 
-return(GLOBALS.traces.first);
+return(GLOBALS->traces.first);
 }
 
 
@@ -686,36 +686,36 @@ Trptr PrependBuffer(void)
 {
 Trptr t, prev;
 
-if(!GLOBALS.traces.buffer) return(NULL);
+if(!GLOBALS->traces.buffer) return(NULL);
 
-GLOBALS.signalwindow_width_dirty=1;
+GLOBALS->signalwindow_width_dirty=1;
 
-t=GLOBALS.traces.buffer;
+t=GLOBALS->traces.buffer;
 
 while(t)
 	{
 	prev=t;
 	t->flags&=(~TR_HIGHLIGHT);
-	GLOBALS.traces.total++;
+	GLOBALS->traces.total++;
 	t=t->t_next;
 	}
 
-if((prev->t_next=GLOBALS.traces.first))
+if((prev->t_next=GLOBALS->traces.first))
 	{
 	/* traces.last current value is ok as it stays the same */
-	GLOBALS.traces.first->t_prev=prev; /* but we need the reverse link back up */
+	GLOBALS->traces.first->t_prev=prev; /* but we need the reverse link back up */
 	}
 	else
 	{
-	GLOBALS.traces.last=prev;
+	GLOBALS->traces.last=prev;
 	}
 
-GLOBALS.traces.first=GLOBALS.traces.buffer;
+GLOBALS->traces.first=GLOBALS->traces.buffer;
 
-GLOBALS.traces.buffer=GLOBALS.traces.bufferlast=NULL;
-GLOBALS.traces.buffercount=0;
+GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
+GLOBALS->traces.buffercount=0;
 
-return(GLOBALS.traces.first);
+return(GLOBALS->traces.first);
 }
 
 
@@ -728,11 +728,11 @@ Trptr t;
 Trptr *tsort, *tsort_pnt;
 int i;
    
-if(!GLOBALS.traces.total) return(0);
+if(!GLOBALS->traces.total) return(0);
 
-t=GLOBALS.traces.first;
-tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS.traces.total);   
-for(i=0;i<GLOBALS.traces.total;i++)
+t=GLOBALS->traces.first;
+tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
+for(i=0;i<GLOBALS->traces.total;i++)
         {
         if(!t)
                 {
@@ -744,13 +744,13 @@ for(i=0;i<GLOBALS.traces.total;i++)
         t=t->t_next;
         }
 
-GLOBALS.traces.first=*(--tsort_pnt);
+GLOBALS->traces.first=*(--tsort_pnt);
 
-for(i=GLOBALS.traces.total-1;i>=0;i--)
+for(i=GLOBALS->traces.total-1;i>=0;i--)
         {
         t=*tsort_pnt;
 
-	if(i==GLOBALS.traces.total-1)
+	if(i==GLOBALS->traces.total-1)
 		{
 		t->t_prev=NULL;
 		}
@@ -765,8 +765,8 @@ for(i=GLOBALS.traces.total-1;i>=0;i--)
 		}
         }
 
-GLOBALS.traces.last=*tsort;
-GLOBALS.traces.last->t_next=NULL;
+GLOBALS->traces.last=*tsort;
+GLOBALS->traces.last->t_next=NULL;
 
 return(1);
 }  
@@ -872,11 +872,11 @@ char *subst, ch;
 int i;
 int (*cptr)(const void*, const void*);
    
-if(!GLOBALS.traces.total) return(0);
+if(!GLOBALS->traces.total) return(0);
 
-t=GLOBALS.traces.first;
-tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS.traces.total);   
-for(i=0;i<GLOBALS.traces.total;i++)
+t=GLOBALS->traces.first;
+tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
+for(i=0;i<GLOBALS->traces.total;i++)
         {
         if(!t)
                 {
@@ -888,7 +888,7 @@ for(i=0;i<GLOBALS.traces.total;i++)
 	if((subst=t->name))
 	        while((ch=(*subst)))
         	        {
-        	        if(ch==GLOBALS.hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
+        	        if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
         	        subst++;
         	        }
 
@@ -902,16 +902,16 @@ switch(mode)
 	default:	cptr=tracesignamecompare; break;
 	}
 
-qsort(tsort, GLOBALS.traces.total, sizeof(Trptr), cptr);
+qsort(tsort, GLOBALS->traces.total, sizeof(Trptr), cptr);
 
 tsort_pnt=tsort;
-for(i=0;i<GLOBALS.traces.total;i++)
+for(i=0;i<GLOBALS->traces.total;i++)
         {
         t=*(tsort_pnt++);
 
 	if(!i)
 		{
-		GLOBALS.traces.first=t;
+		GLOBALS->traces.first=t;
 		t->t_prev=NULL;
 		}
 		else
@@ -925,12 +925,12 @@ for(i=0;i<GLOBALS.traces.total;i++)
 	if((subst=t->name))
 	        while((ch=(*subst)))
         	        {
-        	        if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS.hier_delimeter; } /* restore hier */
+        	        if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; } /* restore hier */
         	        subst++;
         	        }
         }
 
-GLOBALS.traces.last=prev;
+GLOBALS->traces.last=prev;
 prev->t_next=NULL;
 
 return(1);
@@ -1022,7 +1022,7 @@ return(rc);
 
 int UpdateTracesVisible(void)
 {
-Trptr t = GLOBALS.traces.first;
+Trptr t = GLOBALS->traces.first;
 int cnt = 0;
 
 while(t)
@@ -1035,14 +1035,14 @@ while(t)
 	t=t->t_next;
 	}
 
-GLOBALS.traces.visible = cnt;
+GLOBALS->traces.visible = cnt;
 return(cnt);
 }
 
 
 void CollapseAllGroups(void)
 {
-Trptr t = GLOBALS.traces.first;
+Trptr t = GLOBALS->traces.first;
 int mode = 0;
 
 while(t)
@@ -1072,7 +1072,7 @@ UpdateTracesVisible();
 
 void ExpandAllGroups(void)
 {
-Trptr t = GLOBALS.traces.first;
+Trptr t = GLOBALS->traces.first;
 
 while(t)
 	{
@@ -1086,6 +1086,10 @@ UpdateTracesVisible();
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:18  kermin
  * Semi working global struct
  *

@@ -58,8 +58,8 @@ for(p=s;*p;p++)
         }
 
 h^=h2;						/* combine the two hashes */
-GLOBALS.hashcache=h%SYMPRIME;
-return(GLOBALS.hashcache);
+GLOBALS->hashcache=h%SYMPRIME;
+return(GLOBALS->hashcache);
 }
 
 
@@ -73,8 +73,8 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 strcpy(s->name=(char *)malloc_2(strlen(name)+1),name);
-s->next=GLOBALS.sym[hv];
-GLOBALS.sym[hv]=s;
+s->next=GLOBALS->sym[hv];
+GLOBALS->sym[hv]=s;
 return(s);
 }
 
@@ -84,8 +84,8 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 s->name = name;
-s->next=GLOBALS.sym[hv];
-GLOBALS.sym[hv]=s;
+s->next=GLOBALS->sym[hv];
+GLOBALS->sym[hv]=s;
 return(s);
 }
 
@@ -97,10 +97,10 @@ struct symbol *symfind(char *s, unsigned int *rows_return)
 int hv;
 struct symbol *temp;
 
-if(!GLOBALS.facs_are_sorted)
+if(!GLOBALS->facs_are_sorted)
 	{
 	hv=hash(s);
-	if(!(temp=GLOBALS.sym[hv])) return(NULL); /* no hash entry, add here wanted to add */
+	if(!(temp=GLOBALS->sym[hv])) return(NULL); /* no hash entry, add here wanted to add */
 	
 	while(temp)
 	        {
@@ -124,6 +124,10 @@ if(!GLOBALS.facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:49  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
  * Semi working global struct
  *

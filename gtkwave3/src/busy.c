@@ -13,7 +13,7 @@
 
 static void GuiDoEvent(GdkEvent *event)
 {
-if(!GLOBALS.busy_busy_c_1)
+if(!GLOBALS->busy_busy_c_1)
 	{
 	gtk_main_do_event(event);
 	}
@@ -34,38 +34,38 @@ if(!GLOBALS.busy_busy_c_1)
 
 void init_busy(void)
 {
-GLOBALS.busycursor_busy_c_1 = gdk_cursor_new(GDK_WATCH);
+GLOBALS->busycursor_busy_c_1 = gdk_cursor_new(GDK_WATCH);
 gdk_event_handler_set((GdkEventFunc)GuiDoEvent, 0, 0);
 }
 
 
 void set_window_busy(GtkWidget *w)
 {
-if(w) gdk_window_set_cursor (w->window, GLOBALS.busycursor_busy_c_1);
+if(w) gdk_window_set_cursor (w->window, GLOBALS->busycursor_busy_c_1);
 else
-if(GLOBALS.mainwindow) gdk_window_set_cursor (GLOBALS.mainwindow->window, GLOBALS.busycursor_busy_c_1);
+if(GLOBALS->mainwindow) gdk_window_set_cursor (GLOBALS->mainwindow->window, GLOBALS->busycursor_busy_c_1);
 
-GLOBALS.busy_busy_c_1++;
+GLOBALS->busy_busy_c_1++;
 busy_window_refresh();
 }
 
 
 void set_window_idle(GtkWidget *w)
 {
-if(GLOBALS.busy_busy_c_1)
+if(GLOBALS->busy_busy_c_1)
 	{
 	if(w) gdk_window_set_cursor (w->window, NULL);
 	else
-	if(GLOBALS.mainwindow) gdk_window_set_cursor (GLOBALS.mainwindow->window, NULL);
+	if(GLOBALS->mainwindow) gdk_window_set_cursor (GLOBALS->mainwindow->window, NULL);
 
-	GLOBALS.busy_busy_c_1--;
+	GLOBALS->busy_busy_c_1--;
 	}
 }
 
 
 void busy_window_refresh(void)
 {
-if(GLOBALS.busy_busy_c_1)
+if(GLOBALS->busy_busy_c_1)
 	{
 	while (gtk_events_pending()) gtk_main_iteration();
 	}
@@ -74,6 +74,10 @@ if(GLOBALS.busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:18  kermin
  * Semi working global struct
  *
