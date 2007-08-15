@@ -337,6 +337,11 @@ int max_compare_pos_tc_lxt_c_2;// from lxt.c 200
 /*
  * main.c
  */
+char *loaded_file_name;
+char *skip_start;
+char *skip_end;
+char *indirect_fname;
+enum FileType loaded_file_type;
 char *whoami;//from main.c 201
 struct logfile_chain *logfile;//from main.c 202
 char *stems_name;//from main.c 203

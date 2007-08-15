@@ -36,6 +36,7 @@ enum WV_MenuItems {
 #if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_FONV,
 #endif
+WV_MENU_FRW,
 WV_MENU_WRVCD,
 WV_MENU_WRLXT,
 WV_MENU_SEP2VCD,
@@ -281,6 +282,9 @@ void menu_version(GtkWidget *widget, gpointer data);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
  * Merged in the main line
  *

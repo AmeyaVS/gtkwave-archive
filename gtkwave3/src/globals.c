@@ -329,6 +329,11 @@ NULL,//lt_buf_lxt_c_1 183
 /* 
  * main.c
  */
+NULL, // loaded_file_name
+NULL, // skip_start
+NULL, // skip_end
+NULL, // indirect_fname
+NO_FILE, // loaded_file_type
 NULL,//whoami 190
 NULL,//logfile 191
 NULL,//stems_name 192

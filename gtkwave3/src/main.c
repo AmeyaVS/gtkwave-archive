@@ -219,13 +219,11 @@ char is_legacy = 0;
 char fast_exit=0;
 char opt_errors_encountered=0;
 
-char *fname=NULL;
 char *wname=NULL;
 char *override_rc=NULL;
 char *winname=NULL;
 char *scriptfile=NULL;
 FILE *wave;
-char *indirect_fname=NULL;
 
 GtkWidget *main_vbox, *top_table, *whole_table;
 GtkWidget *menubar;
@@ -242,8 +240,6 @@ GtkWidget *dummy1, *dummy2;
 GtkWidget *toolhandle=NULL;
 
 int splash_disable_rc_override = 0;
-
-char *skip_start=NULL, *skip_end=NULL;
 
 WAVE_LOCALE_FIX
 
@@ -364,9 +360,9 @@ while (1)
 
                 case 'v':
 			is_vcd = 1;
-			if(fname) free_2(fname);
-			fname = malloc_2(4+1);
-			strcpy(fname, "-vcd");
+			if(GLOBALS->loaded_file_name) free_2(GLOBALS->loaded_file_name);
+			GLOBALS->loaded_file_name = malloc_2(4+1);
+			strcpy(GLOBALS->loaded_file_name, "-vcd");
                         break;
 
 		case 'o':
@@ -377,8 +373,8 @@ while (1)
 			wave_get_filename(optarg);
 			if(GLOBALS->filesel_ok)
 				{
-				if(fname) free_2(fname);
-				fname = GLOBALS->ftext_main_main_c_1;
+				if(GLOBALS->loaded_file_name) free_2(GLOBALS->loaded_file_name);
+				GLOBALS->loaded_file_name = GLOBALS->ftext_main_main_c_1;
 				GLOBALS->ftext_main_main_c_1 = NULL;
 				}
 			break;
@@ -409,9 +405,9 @@ while (1)
 
                 case 'f':
 			is_vcd = 0;
-			if(fname) free_2(fname);
-			fname = malloc_2(strlen(optarg)+1);
-			strcpy(fname, optarg);
+			if(GLOBALS->loaded_file_name) free_2(GLOBALS->loaded_file_name);
+			GLOBALS->loaded_file_name = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->loaded_file_name, optarg);
 			break;
 
                 case 'a':
@@ -427,21 +423,21 @@ while (1)
 			break;
 
                 case 'i':
-			if(indirect_fname) free_2(indirect_fname);
-			indirect_fname = malloc_2(strlen(optarg)+1);
-			strcpy(indirect_fname, optarg);
+			if(GLOBALS->indirect_fname) free_2(GLOBALS->indirect_fname);
+			GLOBALS->indirect_fname = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->indirect_fname, optarg);
 			break;
 
                 case 's':
-			if(skip_start) free_2(skip_start);
-			skip_start = malloc_2(strlen(optarg)+1);
-			strcpy(skip_start, optarg);
+			if(GLOBALS->skip_start) free_2(GLOBALS->skip_start);
+			GLOBALS->skip_start = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->skip_start, optarg);
 			break;			
 
                 case 'e':
-			if(skip_end) free_2(skip_end);
-			skip_end = malloc_2(strlen(optarg)+1);
-			strcpy(skip_end, optarg);
+			if(GLOBALS->skip_end) free_2(GLOBALS->skip_end);
+			GLOBALS->skip_end = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->skip_end, optarg);
                         break;
 
 		case 't':
@@ -499,7 +495,7 @@ while (1)
                         /* unreachable */
                         break;
                 }
-        }
+        } // while(1);
 
 if(opt_errors_encountered)
 	{
@@ -510,11 +506,11 @@ if (optind < argc)
         {
         while (optind < argc)
 		{
-		if(!fname)
+		if(!GLOBALS->loaded_file_name)
 			{
 			is_vcd = 0;
-			fname = malloc_2(strlen(argv[optind])+1);
-			strcpy(fname, argv[optind++]);
+			GLOBALS->loaded_file_name = malloc_2(strlen(argv[optind])+1);
+			strcpy(GLOBALS->loaded_file_name, argv[optind++]);
 			}
 		else if(!wname)
 			{
@@ -530,11 +526,10 @@ if (optind < argc)
 		}
         }
 
-if(!fname)
+if(!GLOBALS->loaded_file_name)
 	{
 	print_help(argv[0]);
 	}
-
 read_rc_file(override_rc);
 GLOBALS->splash_disable |= splash_disable_rc_override;
 
@@ -560,24 +555,24 @@ if(is_vcd)
 	{
 	if(!is_interactive)
 		{
-		winname=malloc_2(strlen(fname)+strlen(winprefix)+1);
+		winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(winprefix)+1);
 		strcpy(winname,winprefix);
 		}
 		else
 		{
 		char *iact = "GTKWave - Interactive Shared Memory ID ";
-		winname=malloc_2(strlen(fname)+strlen(iact)+1);
+		winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(iact)+1);
 		strcpy(winname,iact);
 		}
 	}
 
-strcat(winname,fname);
+strcat(winname,GLOBALS->loaded_file_name);
 
 loader_check_head:
 
-if((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".lxt"))||(!strcasecmp(fname+strlen(fname)-4,".lx2"))))
+if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lxt"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lx2"))))
 	{
-	FILE *f = fopen(fname, "rb");
+	FILE *f = fopen(GLOBALS->loaded_file_name, "rb");
 	int typ = 0;
 
 	if(f)
@@ -596,61 +591,64 @@ if((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".lxt"))||(!strcasecmp
 
 	if(typ)
 		{
-		lxt_main(fname);
+	          GLOBALS->loaded_file_type = LXT_FILE;
+		  lxt_main(GLOBALS->loaded_file_name);
 		}
 		else
 		{
 #if !defined _MSC_VER && !defined __MINGW32__
 		GLOBALS->stems_type = WAVE_ANNO_LXT2;
-		GLOBALS->aet_name = malloc_2(strlen(fname)+1);
-		strcpy(GLOBALS->aet_name, fname);
+		GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+		strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-		lx2_main(fname, skip_start, skip_end);
+                GLOBALS->loaded_file_type = LX2_FILE;
+		lx2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
 		}	
 	}
 else
-if((strlen(fname)>3)&&(!strcasecmp(fname+strlen(fname)-4,".vzt")))
+if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".vzt")))
 	{
 #if !defined _MSC_VER && !defined __MINGW32__
 	GLOBALS->stems_type = WAVE_ANNO_VZT;
-	GLOBALS->aet_name = malloc_2(strlen(fname)+1);
-	strcpy(GLOBALS->aet_name, fname);
+	GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+	strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-
-	vzt_main(fname, skip_start, skip_end);
+        GLOBALS->loaded_file_type = VZT_FILE;
+	vzt_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
 	}
-else if ((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".aet"))||(!strcasecmp(fname+strlen(fname)-4,".ae2"))))
+else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".aet"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ae2"))))
 	{
 #if !defined _MSC_VER && !defined __MINGW32__
 	GLOBALS->stems_type = WAVE_ANNO_AE2;
-	GLOBALS->aet_name = malloc_2(strlen(fname)+1);
-	strcpy(GLOBALS->aet_name, fname);
+	GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+	strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-
-	ae2_main(fname, skip_start, skip_end, indirect_fname);
+        GLOBALS->loaded_file_type = AE2_FILE;
+	ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
 	}
 else if (
-	((strlen(fname)>3)&&(!strcasecmp(fname+strlen(fname)-4,".ghw"))) ||
-	((strlen(fname)>6)&&(!strcasecmp(fname+strlen(fname)-7,".ghw.gz"))) ||
-	((strlen(fname)>7)&&(!strcasecmp(fname+strlen(fname)-8,".ghw.bz2")))
+	((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ghw"))) ||
+	((strlen(GLOBALS->loaded_file_name)>6)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-7,".ghw.gz"))) ||
+	((strlen(GLOBALS->loaded_file_name)>7)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-8,".ghw.bz2")))
 	)
 	{
-	ghw_main(fname);
+          GLOBALS->loaded_file_type = GHW_FILE;
+	  ghw_main(GLOBALS->loaded_file_name);
 	}
-else if (strlen(fname)>4)	/* case for .aet? type filenames */
+else if (strlen(GLOBALS->loaded_file_name)>4)	/* case for .aet? type filenames */
 	{
 	char sufbuf[5];
-	memcpy(sufbuf, fname+strlen(fname)-5, 4);
+	memcpy(sufbuf, GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-5, 4);
 	sufbuf[4] = 0;
 	if(!strcasecmp(sufbuf, ".aet"))	/* strncasecmp() in windows? */
 		{
 #if !defined _MSC_VER && !defined __MINGW32__
 		GLOBALS->stems_type = WAVE_ANNO_AE2;
-		GLOBALS->aet_name = malloc_2(strlen(fname)+1);
-		strcpy(GLOBALS->aet_name, fname);
+		GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+		strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-
-		ae2_main(fname, skip_start, skip_end, indirect_fname);
+                GLOBALS->loaded_file_type = AE2_FILE;
+		ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
 		}
 		else
 		{
@@ -665,7 +663,7 @@ load_vcd:
 		{
 		GLOBALS->optimize_vcd = 0;
 
-		if(!strcmp("-vcd", fname))
+		if(!strcmp("-vcd", GLOBALS->loaded_file_name))
 			{
 			pid_t pid;
 			char *buf = malloc_2(strlen("vcd") + 4 + 1);
@@ -685,8 +683,8 @@ load_vcd:
 
 					if(rc > 0)
 						{
-						free_2(fname);
-						fname = buf;
+						free_2(GLOBALS->loaded_file_name);
+						GLOBALS->loaded_file_name = buf;
 						is_vcd = 0;
 						goto loader_check_head;						
 						}					
@@ -701,8 +699,8 @@ load_vcd:
 			else
 			{
 			pid_t pid;
-			char *buf = malloc_2(strlen(fname) + 4 + 1);
-			sprintf(buf, "%s.lx2", fname);
+			char *buf = malloc_2(strlen(GLOBALS->loaded_file_name) + 4 + 1);
+			sprintf(buf, "%s.lx2", GLOBALS->loaded_file_name);
 			pid = fork();
         
                         if(((int)pid) < 0)
@@ -718,15 +716,15 @@ load_vcd:
 
 					if(rc > 0)
 						{
-						free_2(fname);
-						fname = buf;
+						free_2(GLOBALS->loaded_file_name);
+						GLOBALS->loaded_file_name = buf;
 						is_vcd = 0;
 						goto loader_check_head;						
 						}					
 					}
 					else
 					{
-				        execlp("vcd2lxt2", "vcd2lxt2", fname, buf, NULL);
+				        execlp("vcd2lxt2", "vcd2lxt2", GLOBALS->loaded_file_name, buf, NULL);
 					exit(255);
 					}
 				}
@@ -737,35 +735,25 @@ load_vcd:
 #if !defined _MSC_VER && !defined __MINGW32__
 	if(is_interactive)
 		{
-		vcd_partial_main(fname);
+		GLOBALS->loaded_file_type = NO_FILE;
+		vcd_partial_main(GLOBALS->loaded_file_name);
 		}
 		else
 #endif
 		{
 		if(is_legacy)
 			{
-			vcd_main(fname);
+                          GLOBALS->loaded_file_type = VCD_FILE;
+			  vcd_main(GLOBALS->loaded_file_name);
 			}
 			else
 			{
-			vcd_recoder_main(fname);
+                          GLOBALS->loaded_file_type = VCD_RECODER_FILE;
+			  vcd_recoder_main(GLOBALS->loaded_file_name);
 			}
 		}
 	}
 
-if(indirect_fname)
-	{
-	free_2(indirect_fname);
-	indirect_fname=NULL;
-	}
-if(skip_start)
-	{
-	free_2(skip_start); skip_start=NULL;
-	}
-if(skip_end)
-	{
-	free_2(skip_end); skip_end=NULL;
-	}
 
 for(i=0;i<26;i++) GLOBALS->named_markers[i]=-1;	/* reset all named markers */
 
@@ -789,9 +777,9 @@ if((wname)||(GLOBALS->vcd_save_handle)||(is_smartsave))
 	else
 	if((!wname) /* && (is_smartsave) */)
 		{
-		char *pnt = wave_alloca(strlen(fname) + 1);
+		char *pnt = wave_alloca(strlen(GLOBALS->loaded_file_name) + 1);
 		char *pnt2;
-		strcpy(pnt, fname);
+		strcpy(pnt, GLOBALS->loaded_file_name);
 
 	        if((strlen(pnt)>2)&&(!strcasecmp(pnt+strlen(pnt)-3,".gz")))
 			{
@@ -1289,6 +1277,7 @@ if(is_interactive)
 	else
 #endif
 	{
+	  // Jump in to the main program loop
 	gtk_main();
 	}
 
@@ -1498,6 +1487,9 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/07 04:54:59  gtkwave
+ * slight modifications to global initialization scheme
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

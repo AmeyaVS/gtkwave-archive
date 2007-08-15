@@ -17,6 +17,7 @@
 #include <config.h>
 #include <string.h>
 #include "gtk12compat.h"
+#include "main.h"
 #include "menu.h"
 #include "vcd.h"
 #include "vcd_saver.h"
@@ -29,6 +30,10 @@
 #endif
 
 static GtkItemFactoryEntry menu_items[WV_MENU_NUMITEMS];
+
+/* These should eventually have error values */
+void write_save_helper(FILE *file);
+void read_save_helper(char *wname);
 
 /********** procsel filter install ********/
 
@@ -1727,6 +1732,122 @@ fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_
 }
 #endif
 
+void
+menu_reload_waveform(GtkWidget *widget, gpointer data)
+{
+  FILE *statefile;
+  struct Global *new_globals;
+  int i;
+
+if(GLOBALS->helpbox_is_active)
+	{
+	help_text_bold("\n\nReload Current Waveform");
+	help_text(
+		" Reload the currently displayed waveform "
+		" from a potentially updated file."
+	);
+	return;
+	}
+ printf("Called reload waveform\n");
+
+ // XXX if there's no file (for some reason), this function shouldn't occur
+ // we should probably gray it out.
+ if(GLOBALS->loaded_file_type == NO_FILE) {
+   printf("NO_FILE type cannor be reloaded\n");
+   return;
+ }
+
+  
+ // Save state to file
+ statefile = fopen(".temp","wb");
+ if(statefile == NULL) {
+   fprintf(stderr, "Failed to reload file.\n");
+   return;
+ }
+
+ write_save_helper(statefile);
+ fclose(statefile);
+
+
+ // Instantiate new global status
+ new_globals = initialize_globals();
+ 
+ // Time to copy over state
+ // Marker positions
+ for(i = 0; i < 26; i++) {
+   new_globals->named_markers[i] = GLOBALS->named_markers[i];
+ }
+
+ // Default colors
+
+ new_globals->signalarea = GLOBALS->signalarea;
+ new_globals->wavearea = GLOBALS->wavearea;
+
+ new_globals->mainwindow = GLOBALS->mainwindow;
+ new_globals->signalwindow = GLOBALS->signalwindow; 
+ new_globals->wavewindow = GLOBALS->wavewindow;
+ new_globals->toppanedwindow = GLOBALS->toppanedwindow;
+ new_globals->sstpane = GLOBALS->sstpane;
+ new_globals->expanderwindow = GLOBALS->expanderwindow;
+ new_globals->signal_hslider = GLOBALS->signal_hslider;
+ new_globals->wave_vslider = GLOBALS->wave_vslider;
+ new_globals->wave_hslider = GLOBALS->wave_hslider;
+ new_globals->signalfont = GLOBALS->signalfont;
+ new_globals->wavefont = GLOBALS->wavefont;
+ new_globals->max_or_marker_label_currenttime_c_1 = GLOBALS->max_or_marker_label_currenttime_c_1;
+ new_globals->maxtext_currenttime_c_1 = (char *) calloc_2_into_context(new_globals,1,40);
+ memcpy(new_globals->maxtext_currenttime_c_1, GLOBALS->maxtext_currenttime_c_1,40); 
+ new_globals->maxtimewid_currenttime_c_1 = GLOBALS->maxtimewid_currenttime_c_1;
+ new_globals->curtext_currenttime_c_1 = (char *) calloc_2_into_context(new_globals,1,40);
+ memcpy(new_globals->curtext_currenttime_c_1, GLOBALS->curtext_currenttime_c_1, 40);
+ new_globals->base_or_curtime_label_currenttime_c_1 = GLOBALS->base_or_curtime_label_currenttime_c_1;
+ new_globals->curtimewid_currenttime_c_1 = GLOBALS->curtimewid_currenttime_c_1;
+
+ // Times struct
+ memcpy(&(new_globals->tims), &(GLOBALS->tims), sizeof(Times));
+
+ // File name and type
+ new_globals->loaded_file_type = GLOBALS->loaded_file_type;
+ new_globals->loaded_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->loaded_file_name) + 1);
+ strcpy(new_globals->loaded_file_name, GLOBALS->loaded_file_name);
+
+ // Free the context 
+ free_outstanding();
+
+ // Free the old globals struct, memsetting it to zero in the hope of forcing crashes.
+ memset(GLOBALS, 0, sizeof(struct Global));
+ free(GLOBALS);
+
+ // Set the GLOBALS pointer to the newly allocated struct.
+ GLOBALS = new_globals;
+
+ // Initialize new variables
+ GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
+
+
+ // Load new file from disk, no reload on partial vcd.
+ switch(GLOBALS->loaded_file_type) {
+   case LXT_FILE: lxt_main(GLOBALS->loaded_file_name); break;
+   case LX2_FILE: lx2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); break;
+   case VZT_FILE: vzt_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); break;
+   case AE2_FILE: ae2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end,GLOBALS->indirect_fname); break;
+   case GHW_FILE: ghw_main(GLOBALS->loaded_file_name); break;
+   case VCD_FILE: vcd_main(GLOBALS->loaded_file_name); break;
+   case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
+ } 
+
+ load_all_fonts();
+
+ // Reload state from file
+ read_save_helper(".temp"); 
+
+ // unlink temp
+ unlink(".temp");
+
+ printf("Finished reload waveform\n");
+}
+
+
 /**/
 
 void
@@ -2339,31 +2460,16 @@ if(!n->array_height)
 	}
 }
 
-void
-menu_write_save_cleanup(GtkWidget *widget, gpointer data)
-{
-FILE *wave;
-struct strace *st;
 
-if(!GLOBALS->filesel_ok)
-	{
-	return;
-	}
 
-if(!(wave=fopen(*GLOBALS->fileselbox_text,"wb")))
-        {
-        fprintf(stderr, "Error opening save file '%s' for writing.\n",*GLOBALS->fileselbox_text);
-	perror("Why");
-	errno=0;
-        }
-	else
-	{
+void write_save_helper(FILE *wave) {
 	Trptr t;
 	int i;
 	unsigned int def=0;
 	int sz_x, sz_y;
 	TimeType prevshift=LLDescriptor(0);
 	int root_x, root_y;
+        struct strace *st;
 
 	DEBUG(printf("Write Save Fini: %s\n", *fileselbox_text));
 
@@ -2628,9 +2734,32 @@ if(!(wave=fopen(*GLOBALS->fileselbox_text,"wb")))
 
 		} /* if(timearray)... */
 
-	GLOBALS->save_success_menu_c_1 = 1;
-	fclose(wave);
+}
+
+
+void
+menu_write_save_cleanup(GtkWidget *widget, gpointer data)
+{
+FILE *wave;
+
+if(!GLOBALS->filesel_ok)
+	{
+	return;
 	}
+
+if(!(wave=fopen(*GLOBALS->fileselbox_text,"wb")))
+        {
+        fprintf(stderr, "Error opening save file '%s' for writing.\n",*GLOBALS->fileselbox_text);
+	perror("Why");
+	errno=0;
+        }
+	else
+	{
+          write_save_helper(wave);
+	  GLOBALS->save_success_menu_c_1 = 1;
+	  fclose(wave);
+	}
+
 }
 
 void
@@ -2687,21 +2816,12 @@ if(!GLOBALS->filesel_writesave)
 	}
 }
 /**/
-void
-menu_read_save_cleanup(GtkWidget *widget, gpointer data)
-{
-FILE *wave;
 
-if(GLOBALS->filesel_ok)
-	{
-	char *wname;
+
+void read_save_helper(char *wname) { 
+        FILE *wave;
         char *str = NULL;
         int wave_is_compressed;
-
-	DEBUG(printf("Read Save Fini: %s\n", *fileselbox_text));
-        
-        wname=*GLOBALS->fileselbox_text;
-        
         if(((strlen(wname)>2)&&(!strcmp(wname+strlen(wname)-3,".gz")))||
           ((strlen(wname)>3)&&(!strcmp(wname+strlen(wname)-4,".zip"))))
                 {
@@ -2806,8 +2926,28 @@ if(GLOBALS->filesel_ok)
                 }
 
 	GLOBALS->current_translate_file = 0;
-	}
+	
 }
+
+
+void
+menu_read_save_cleanup(GtkWidget *widget, gpointer data)
+{
+
+if(GLOBALS->filesel_ok)
+	{
+	char *wname;
+
+	DEBUG(printf("Read Save Fini: %s\n", *fileselbox_text));
+        
+        wname=*GLOBALS->fileselbox_text;
+        read_save_helper(wname);
+
+  }
+}
+
+
+
 
 void
 menu_read_save_file(GtkWidget *widget, gpointer data)
@@ -3898,6 +4038,7 @@ static GtkItemFactoryEntry menu_items[] =
 #if !defined __MINGW32__ && !defined _MSC_VER 
     WAVE_GTKIFE("/File/Open New Viewer", "Pause", menu_new_viewer, WV_MENU_FONV, "<Item>"),
 #endif
+    WAVE_GTKIFE("/File/Reload Waveform", "<Shift><Control>R", menu_reload_waveform, WV_MENU_FRW, "<Item>"),    
     WAVE_GTKIFE("/File/Export/Write VCD File As", NULL, menu_write_vcd_file, WV_MENU_WRVCD, "<Item>"),
     WAVE_GTKIFE("/File/Export/Write LXT File As", NULL, menu_write_lxt_file, WV_MENU_WRLXT, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2VCD, "<Separator>"),
@@ -4249,6 +4390,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/07 05:11:18  gtkwave
+ * update strdup to strdup_2()
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

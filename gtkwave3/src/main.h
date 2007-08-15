@@ -44,7 +44,16 @@ void set_window_xypos(int root_x, int root_y);
 int stems_are_active(void);
 void activate_stems_reader(char *stems_name);
 
-
+enum FileType {
+  LXT_FILE,
+  LX2_FILE,
+  VZT_FILE,
+  AE2_FILE,
+  GHW_FILE,
+  VCD_FILE,
+  VCD_RECODER_FILE,
+  NO_FILE
+};
 
 
 
@@ -53,6 +62,9 @@ void activate_stems_reader(char *stems_name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:28  gtkwave
  * Imported sources
  *
