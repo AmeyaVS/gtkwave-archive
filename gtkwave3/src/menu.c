@@ -1802,6 +1802,8 @@ if(GLOBALS->helpbox_is_active)
  memcpy(new_globals->curtext_currenttime_c_1, GLOBALS->curtext_currenttime_c_1, 40);
  new_globals->base_or_curtime_label_currenttime_c_1 = GLOBALS->base_or_curtime_label_currenttime_c_1;
  new_globals->curtimewid_currenttime_c_1 = GLOBALS->curtimewid_currenttime_c_1;
+ new_globals->from_entry = GLOBALS->from_entry;
+ new_globals->to_entry = GLOBALS->to_entry;
 
  // Times struct
  memcpy(&(new_globals->tims), &(GLOBALS->tims), sizeof(Times));
@@ -4390,6 +4392,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.8  2007/08/15 03:26:01  kermin
+ * Reload button does not cause a fault, however, state is still somehow incorrect.
+ *
  * Revision 1.1.1.1.2.7  2007/08/07 05:11:18  gtkwave
  * update strdup to strdup_2()
  *

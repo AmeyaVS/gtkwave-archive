@@ -662,6 +662,8 @@ static const char const * wave_splash_xpm[] = {
 
 void make_splash_pixmaps(GtkWidget *window)
 {
+
+printf("Calling splash_pixmaps");
 GtkStyle *style;
 
 style=gtk_widget_get_style(window);
@@ -812,6 +814,9 @@ void splash_sync(off_t current, off_t total)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
