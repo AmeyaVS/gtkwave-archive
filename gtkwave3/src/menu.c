@@ -1805,6 +1805,112 @@ if(GLOBALS->helpbox_is_active)
  new_globals->from_entry = GLOBALS->from_entry;
  new_globals->to_entry = GLOBALS->to_entry;
 
+ // rc.c
+  new_globals->color_back = GLOBALS->color_back;
+  new_globals->color_baseline = GLOBALS->color_baseline;
+  new_globals->color_grid = GLOBALS->color_grid;
+  new_globals->color_high = GLOBALS->color_high;
+  new_globals->color_low = GLOBALS->color_low;
+  new_globals->color_1 = GLOBALS->color_1;
+  new_globals->color_0 = GLOBALS->color_0;
+  new_globals->color_mark = GLOBALS->color_mark;
+  new_globals->color_mid = GLOBALS->color_mid;
+  new_globals->color_time = GLOBALS->color_time;
+  new_globals->color_timeb = GLOBALS->color_timeb;
+  new_globals->color_trans = GLOBALS->color_trans;
+  new_globals->color_umark = GLOBALS->color_umark;
+  new_globals->color_value = GLOBALS->color_value;
+  new_globals->color_vbox = GLOBALS->color_vbox;
+  new_globals->color_vtrans = GLOBALS->color_vtrans;
+  new_globals->color_x = GLOBALS->color_x;
+  new_globals->color_xfill = GLOBALS->color_xfill;
+  new_globals->color_u = GLOBALS->color_u;
+  new_globals->color_ufill = GLOBALS->color_ufill;
+  new_globals->color_w = GLOBALS->color_w;
+  new_globals->color_wfill = GLOBALS->color_wfill;
+  new_globals->color_dash = GLOBALS->color_dash;
+  new_globals->color_dashfill = GLOBALS->color_dashfill;
+  new_globals->color_white = GLOBALS->color_white;
+  new_globals->color_black = GLOBALS->color_black;
+  new_globals->color_ltgray = GLOBALS->color_ltgray;
+  new_globals->color_normal = GLOBALS->color_normal;
+  new_globals->color_mdgray = GLOBALS->color_mdgray;
+  new_globals->color_dkgray = GLOBALS->color_dkgray;
+  new_globals->color_dkblue = GLOBALS->color_dkblue;
+
+  new_globals->atomic_vectors = GLOBALS->atomic_vectors;
+  new_globals->autoname_bundles = GLOBALS->autoname_bundles;
+  new_globals->autocoalesce = GLOBALS->autocoalesce;
+  new_globals->autocoalesce_reversal = GLOBALS->autocoalesce_reversal;
+  new_globals->constant_marker_update = GLOBALS->constant_marker_update;
+  new_globals->convert_to_reals = GLOBALS->convert_to_reals;
+  new_globals->disable_mouseover = GLOBALS->disable_mouseover;
+  new_globals->disable_tooltips = GLOBALS->disable_tooltips;
+  new_globals->do_initial_zoom_fit = GLOBALS->do_initial_zoom_fit;
+  new_globals->do_resize_signals = GLOBALS->do_resize_signals;
+  new_globals->enable_fast_exit = GLOBALS->enable_fast_exit;
+  new_globals->enable_ghost_marker = GLOBALS->enable_ghost_marker;
+  new_globals->enable_horiz_grid = GLOBALS->enable_horiz_grid;
+  new_globals->make_vcd_save_file = GLOBALS->make_vcd_save_file;
+  new_globals->enable_vert_grid = GLOBALS->enable_vert_grid;
+  new_globals->force_toolbars = GLOBALS->force_toolbars;
+  new_globals->hide_sst = GLOBALS->hide_sst;
+  new_globals->sst_expanded = GLOBALS->sst_expanded;
+  new_globals->hier_grouping = GLOBALS->hier_grouping;
+  new_globals->hier_max_level = GLOBALS->hier_max_level;
+  new_globals->paned_pack_semantics = GLOBALS->paned_pack_semantics;
+  new_globals->ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
+  new_globals->ignore_savefile_size = GLOBALS->ignore_savefile_size;
+  new_globals->left_justify_sigs = GLOBALS->left_justify_sigs;
+  new_globals->lxt_clock_compress_to_z = GLOBALS->lxt_clock_compress_to_z;
+  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
+  new_globals->show_base = GLOBALS->show_base;
+  new_globals->display_grid = GLOBALS->display_grid;
+  new_globals->splash_disable = 1;
+  new_globals->use_big_fonts = GLOBALS->use_big_fonts;
+  new_globals->use_full_precision = GLOBALS->use_full_precision;
+  new_globals->use_frequency_delta = GLOBALS->use_frequency_delta;
+  new_globals->use_maxtime_display = GLOBALS->use_maxtime_display;
+  new_globals->use_nonprop_fonts = GLOBALS->use_nonprop_fonts;
+  new_globals->use_roundcaps = GLOBALS->use_roundcaps;
+  new_globals->use_scrollbar_only = GLOBALS->use_scrollbar_only;
+  new_globals->vcd_explicit_zero_subscripts = GLOBALS->vcd_explicit_zero_subscripts;
+  new_globals->vcd_preserve_glitches = GLOBALS->vcd_preserve_glitches;
+  new_globals->vcd_warning_filesize = GLOBALS->vcd_warning_filesize;
+  new_globals->vector_padding = GLOBALS->vector_padding;
+  new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
+  new_globals->wave_scrolling = GLOBALS->wave_scrolling;
+  new_globals->do_zoom_center = GLOBALS->do_zoom_center;
+  new_globals->zoom_pow10_snap = GLOBALS->zoom_pow10_snap;
+  new_globals->alt_hier_delimeter = GLOBALS->alt_hier_delimeter;
+  new_globals->cursor_snap = GLOBALS->cursor_snap;
+  new_globals->hier_delimeter = GLOBALS->hier_delimeter;
+  new_globals->hier_was_explicitly_set = GLOBALS->hier_was_explicitly_set;
+  new_globals->page_divisor = GLOBALS->page_divisor;
+  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
+  new_globals->vector_padding = GLOBALS->vector_padding;
+  new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
+  new_globals->zoombase = GLOBALS->zoombase;
+
+  if(GLOBALS->fontname_logfile)
+	{
+  	new_globals->fontname_logfile = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_logfile) + 1);
+  	strcpy(new_globals->fontname_logfile, GLOBALS->fontname_logfile);
+	}
+
+  if(GLOBALS->fontname_signals)
+	{
+  	new_globals->fontname_signals = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_signals) + 1);
+  	strcpy(new_globals->fontname_signals, GLOBALS->fontname_signals);
+	}
+
+  if(GLOBALS->fontname_waves)
+	{
+  	new_globals->fontname_waves = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_waves) + 1);
+  	strcpy(new_globals->fontname_waves, GLOBALS->fontname_waves);
+	}
+
+
  // Times struct
  memcpy(&(new_globals->tims), &(GLOBALS->tims), sizeof(Times));
 
@@ -4392,6 +4498,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.9  2007/08/15 04:08:34  kermin
+ * fixed from/to box issue
+ *
  * Revision 1.1.1.1.2.8  2007/08/15 03:26:01  kermin
  * Reload button does not cause a fault, however, state is still somehow incorrect.
  *
