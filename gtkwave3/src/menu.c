@@ -1753,7 +1753,7 @@ if(GLOBALS->helpbox_is_active)
  // XXX if there's no file (for some reason), this function shouldn't occur
  // we should probably gray it out.
  if(GLOBALS->loaded_file_type == NO_FILE) {
-   printf("NO_FILE type cannor be reloaded\n");
+   printf("NO_FILE type cannot be reloaded\n");
    return;
  }
 
@@ -1778,10 +1778,51 @@ if(GLOBALS->helpbox_is_active)
    new_globals->named_markers[i] = GLOBALS->named_markers[i];
  }
 
- // Default colors
+
+ // Default colors, X contexts, pixmaps, drawables, etc
 
  new_globals->signalarea = GLOBALS->signalarea;
  new_globals->wavearea = GLOBALS->wavearea;
+ new_globals->wavepixmap_wavewindow_c_1 = GLOBALS->wavepixmap_wavewindow_c_1;
+ new_globals->signalpixmap = GLOBALS->signalpixmap;
+ new_globals->wave_splash_pixmap = GLOBALS->wave_splash_pixmap;
+ new_globals->wave_splash_mask = GLOBALS->wave_splash_mask;
+
+ new_globals->gc_white = GLOBALS->gc_white;
+ new_globals->gc_black = GLOBALS->gc_black;
+ new_globals->gc_ltgray = GLOBALS->gc_ltgray;
+ new_globals->gc_normal = GLOBALS->gc_normal;
+ new_globals->gc_mdgray = GLOBALS->gc_mdgray;
+ new_globals->gc_dkgray = GLOBALS->gc_dkgray;
+ new_globals->gc_dkblue = GLOBALS->gc_dkblue;
+ new_globals->made_sgc_contexts_wavewindow_c_1 = GLOBALS->made_sgc_contexts_wavewindow_c_1;
+
+ new_globals->gc_back_wavewindow_c_1 = GLOBALS->gc_back_wavewindow_c_1;
+ new_globals->gc_baseline_wavewindow_c_1 = GLOBALS->gc_baseline_wavewindow_c_1;
+ new_globals->gc_grid_wavewindow_c_1 = GLOBALS->gc_grid_wavewindow_c_1;
+ new_globals->gc_time_wavewindow_c_1 = GLOBALS->gc_time_wavewindow_c_1;
+ new_globals->gc_timeb_wavewindow_c_1 = GLOBALS->gc_timeb_wavewindow_c_1;
+ new_globals->gc_value_wavewindow_c_1 = GLOBALS->gc_value_wavewindow_c_1;
+ new_globals->gc_low_wavewindow_c_1 = GLOBALS->gc_low_wavewindow_c_1;
+ new_globals->gc_high_wavewindow_c_1 = GLOBALS->gc_high_wavewindow_c_1;
+ new_globals->gc_trans_wavewindow_c_1 = GLOBALS->gc_trans_wavewindow_c_1;
+ new_globals->gc_mid_wavewindow_c_1 = GLOBALS->gc_mid_wavewindow_c_1;
+ new_globals->gc_xfill_wavewindow_c_1 = GLOBALS->gc_xfill_wavewindow_c_1;
+ new_globals->gc_x_wavewindow_c_1 = GLOBALS->gc_x_wavewindow_c_1;
+ new_globals->gc_vbox_wavewindow_c_1 = GLOBALS->gc_vbox_wavewindow_c_1;
+ new_globals->gc_vtrans_wavewindow_c_1 = GLOBALS->gc_vtrans_wavewindow_c_1;
+ new_globals->gc_mark_wavewindow_c_1 = GLOBALS->gc_mark_wavewindow_c_1;
+ new_globals->gc_umark_wavewindow_c_1 = GLOBALS->gc_umark_wavewindow_c_1;
+ new_globals->gc_0_wavewindow_c_1 = GLOBALS->gc_0_wavewindow_c_1;
+ new_globals->gc_1_wavewindow_c_1 = GLOBALS->gc_1_wavewindow_c_1;
+ new_globals->gc_ufill_wavewindow_c_1 = GLOBALS->gc_ufill_wavewindow_c_1;
+ new_globals->gc_u_wavewindow_c_1 = GLOBALS->gc_u_wavewindow_c_1;
+ new_globals->gc_wfill_wavewindow_c_1 = GLOBALS->gc_wfill_wavewindow_c_1;
+ new_globals->gc_w_wavewindow_c_1 = GLOBALS->gc_w_wavewindow_c_1;
+ new_globals->gc_dashfill_wavewindow_c_1 = GLOBALS->gc_dashfill_wavewindow_c_1;
+ new_globals->gc_dash_wavewindow_c_1 = GLOBALS->gc_dash_wavewindow_c_1;
+ new_globals->made_gc_contexts_wavewindow_c_1 = GLOBALS->made_gc_contexts_wavewindow_c_1;
+
 
  new_globals->mainwindow = GLOBALS->mainwindow;
  new_globals->signalwindow = GLOBALS->signalwindow; 
@@ -1805,92 +1846,110 @@ if(GLOBALS->helpbox_is_active)
  new_globals->from_entry = GLOBALS->from_entry;
  new_globals->to_entry = GLOBALS->to_entry;
 
- // rc.c
-  new_globals->color_back = GLOBALS->color_back;
-  new_globals->color_baseline = GLOBALS->color_baseline;
-  new_globals->color_grid = GLOBALS->color_grid;
-  new_globals->color_high = GLOBALS->color_high;
-  new_globals->color_low = GLOBALS->color_low;
-  new_globals->color_1 = GLOBALS->color_1;
-  new_globals->color_0 = GLOBALS->color_0;
-  new_globals->color_mark = GLOBALS->color_mark;
-  new_globals->color_mid = GLOBALS->color_mid;
-  new_globals->color_time = GLOBALS->color_time;
-  new_globals->color_timeb = GLOBALS->color_timeb;
-  new_globals->color_trans = GLOBALS->color_trans;
-  new_globals->color_umark = GLOBALS->color_umark;
-  new_globals->color_value = GLOBALS->color_value;
-  new_globals->color_vbox = GLOBALS->color_vbox;
-  new_globals->color_vtrans = GLOBALS->color_vtrans;
-  new_globals->color_x = GLOBALS->color_x;
-  new_globals->color_xfill = GLOBALS->color_xfill;
-  new_globals->color_u = GLOBALS->color_u;
-  new_globals->color_ufill = GLOBALS->color_ufill;
-  new_globals->color_w = GLOBALS->color_w;
-  new_globals->color_wfill = GLOBALS->color_wfill;
-  new_globals->color_dash = GLOBALS->color_dash;
-  new_globals->color_dashfill = GLOBALS->color_dashfill;
-  new_globals->color_white = GLOBALS->color_white;
-  new_globals->color_black = GLOBALS->color_black;
-  new_globals->color_ltgray = GLOBALS->color_ltgray;
-  new_globals->color_normal = GLOBALS->color_normal;
-  new_globals->color_mdgray = GLOBALS->color_mdgray;
-  new_globals->color_dkgray = GLOBALS->color_dkgray;
-  new_globals->color_dkblue = GLOBALS->color_dkblue;
+ // busy.c
+ new_globals->busycursor_busy_c_1 = GLOBALS->busycursor_busy_c_1;
+ new_globals->busy_busy_c_1 = GLOBALS->busy_busy_c_1;
 
-  new_globals->atomic_vectors = GLOBALS->atomic_vectors;
-  new_globals->autoname_bundles = GLOBALS->autoname_bundles;
-  new_globals->autocoalesce = GLOBALS->autocoalesce;
-  new_globals->autocoalesce_reversal = GLOBALS->autocoalesce_reversal;
-  new_globals->constant_marker_update = GLOBALS->constant_marker_update;
-  new_globals->convert_to_reals = GLOBALS->convert_to_reals;
-  new_globals->disable_mouseover = GLOBALS->disable_mouseover;
-  new_globals->disable_tooltips = GLOBALS->disable_tooltips;
-  new_globals->do_initial_zoom_fit = GLOBALS->do_initial_zoom_fit;
-  new_globals->do_resize_signals = GLOBALS->do_resize_signals;
-  new_globals->enable_fast_exit = GLOBALS->enable_fast_exit;
-  new_globals->enable_ghost_marker = GLOBALS->enable_ghost_marker;
-  new_globals->enable_horiz_grid = GLOBALS->enable_horiz_grid;
-  new_globals->make_vcd_save_file = GLOBALS->make_vcd_save_file;
-  new_globals->enable_vert_grid = GLOBALS->enable_vert_grid;
-  new_globals->force_toolbars = GLOBALS->force_toolbars;
-  new_globals->hide_sst = GLOBALS->hide_sst;
-  new_globals->sst_expanded = GLOBALS->sst_expanded;
-  new_globals->hier_grouping = GLOBALS->hier_grouping;
-  new_globals->hier_max_level = GLOBALS->hier_max_level;
-  new_globals->paned_pack_semantics = GLOBALS->paned_pack_semantics;
-  new_globals->ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
-  new_globals->ignore_savefile_size = GLOBALS->ignore_savefile_size;
-  new_globals->left_justify_sigs = GLOBALS->left_justify_sigs;
-  new_globals->lxt_clock_compress_to_z = GLOBALS->lxt_clock_compress_to_z;
-  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
-  new_globals->show_base = GLOBALS->show_base;
-  new_globals->display_grid = GLOBALS->display_grid;
-  new_globals->splash_disable = 1;
-  new_globals->use_big_fonts = GLOBALS->use_big_fonts;
-  new_globals->use_full_precision = GLOBALS->use_full_precision;
-  new_globals->use_frequency_delta = GLOBALS->use_frequency_delta;
-  new_globals->use_maxtime_display = GLOBALS->use_maxtime_display;
-  new_globals->use_nonprop_fonts = GLOBALS->use_nonprop_fonts;
-  new_globals->use_roundcaps = GLOBALS->use_roundcaps;
-  new_globals->use_scrollbar_only = GLOBALS->use_scrollbar_only;
-  new_globals->vcd_explicit_zero_subscripts = GLOBALS->vcd_explicit_zero_subscripts;
-  new_globals->vcd_preserve_glitches = GLOBALS->vcd_preserve_glitches;
-  new_globals->vcd_warning_filesize = GLOBALS->vcd_warning_filesize;
-  new_globals->vector_padding = GLOBALS->vector_padding;
-  new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
-  new_globals->wave_scrolling = GLOBALS->wave_scrolling;
-  new_globals->do_zoom_center = GLOBALS->do_zoom_center;
-  new_globals->zoom_pow10_snap = GLOBALS->zoom_pow10_snap;
-  new_globals->alt_hier_delimeter = GLOBALS->alt_hier_delimeter;
-  new_globals->cursor_snap = GLOBALS->cursor_snap;
-  new_globals->hier_delimeter = GLOBALS->hier_delimeter;
-  new_globals->hier_was_explicitly_set = GLOBALS->hier_was_explicitly_set;
-  new_globals->page_divisor = GLOBALS->page_divisor;
-  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
-  new_globals->vector_padding = GLOBALS->vector_padding;
-  new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
-  new_globals->zoombase = GLOBALS->zoombase;
+ // pixmaps.c
+ new_globals->larrow_pixmap = GLOBALS->larrow_pixmap;
+ new_globals->rarrow_pixmap = GLOBALS->rarrow_pixmap;
+ new_globals->zoomout_pixmap = GLOBALS->zoomout_pixmap;
+ new_globals->zoomin_pixmap = GLOBALS->zoomin_pixmap;
+ new_globals->zoomfit_pixmap = GLOBALS->zoomfit_pixmap;
+ new_globals->zoomundo_pixmap = GLOBALS->zoomundo_pixmap;
+ new_globals->zoom_larrow_pixmap = GLOBALS->zoom_larrow_pixmap;
+ new_globals->zoom_rarrow_pixmap = GLOBALS->zoom_rarrow_pixmap;
+ new_globals->prev_page_pixmap = GLOBALS->prev_page_pixmap;
+ new_globals->next_page_pixmap = GLOBALS->next_page_pixmap;
+ new_globals->wave_info_pixmap = GLOBALS->wave_info_pixmap;
+ new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
+
+ // rc.c
+ new_globals->color_back = GLOBALS->color_back;
+ new_globals->color_baseline = GLOBALS->color_baseline;
+ new_globals->color_grid = GLOBALS->color_grid;
+ new_globals->color_high = GLOBALS->color_high;
+ new_globals->color_low = GLOBALS->color_low;
+ new_globals->color_1 = GLOBALS->color_1;
+ new_globals->color_0 = GLOBALS->color_0;
+ new_globals->color_mark = GLOBALS->color_mark;
+ new_globals->color_mid = GLOBALS->color_mid;
+ new_globals->color_time = GLOBALS->color_time;
+ new_globals->color_timeb = GLOBALS->color_timeb;
+ new_globals->color_trans = GLOBALS->color_trans;
+ new_globals->color_umark = GLOBALS->color_umark;
+ new_globals->color_value = GLOBALS->color_value;
+ new_globals->color_vbox = GLOBALS->color_vbox;
+ new_globals->color_vtrans = GLOBALS->color_vtrans;
+ new_globals->color_x = GLOBALS->color_x;
+ new_globals->color_xfill = GLOBALS->color_xfill;
+ new_globals->color_u = GLOBALS->color_u;
+ new_globals->color_ufill = GLOBALS->color_ufill;
+ new_globals->color_w = GLOBALS->color_w;
+ new_globals->color_wfill = GLOBALS->color_wfill;
+ new_globals->color_dash = GLOBALS->color_dash;
+ new_globals->color_dashfill = GLOBALS->color_dashfill;
+ new_globals->color_white = GLOBALS->color_white;
+ new_globals->color_black = GLOBALS->color_black;
+ new_globals->color_ltgray = GLOBALS->color_ltgray;
+ new_globals->color_normal = GLOBALS->color_normal;
+ new_globals->color_mdgray = GLOBALS->color_mdgray;
+ new_globals->color_dkgray = GLOBALS->color_dkgray;
+ new_globals->color_dkblue = GLOBALS->color_dkblue;
+
+ new_globals->atomic_vectors = GLOBALS->atomic_vectors;
+ new_globals->autoname_bundles = GLOBALS->autoname_bundles;
+ new_globals->autocoalesce = GLOBALS->autocoalesce;
+ new_globals->autocoalesce_reversal = GLOBALS->autocoalesce_reversal;
+ new_globals->constant_marker_update = GLOBALS->constant_marker_update;
+ new_globals->convert_to_reals = GLOBALS->convert_to_reals;
+ new_globals->disable_mouseover = GLOBALS->disable_mouseover;
+ new_globals->disable_tooltips = GLOBALS->disable_tooltips;
+ new_globals->do_initial_zoom_fit = GLOBALS->do_initial_zoom_fit;
+ new_globals->do_resize_signals = GLOBALS->do_resize_signals;
+ new_globals->enable_fast_exit = GLOBALS->enable_fast_exit;
+ new_globals->enable_ghost_marker = GLOBALS->enable_ghost_marker;
+ new_globals->enable_horiz_grid = GLOBALS->enable_horiz_grid;
+ new_globals->make_vcd_save_file = GLOBALS->make_vcd_save_file;
+ new_globals->enable_vert_grid = GLOBALS->enable_vert_grid;
+ new_globals->force_toolbars = GLOBALS->force_toolbars;
+ new_globals->hide_sst = GLOBALS->hide_sst;
+ new_globals->sst_expanded = GLOBALS->sst_expanded;
+ new_globals->hier_grouping = GLOBALS->hier_grouping;
+ new_globals->hier_max_level = GLOBALS->hier_max_level;
+ new_globals->paned_pack_semantics = GLOBALS->paned_pack_semantics;
+ new_globals->ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
+ new_globals->ignore_savefile_size = GLOBALS->ignore_savefile_size;
+ new_globals->left_justify_sigs = GLOBALS->left_justify_sigs;
+ new_globals->lxt_clock_compress_to_z = GLOBALS->lxt_clock_compress_to_z;
+ new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
+ new_globals->show_base = GLOBALS->show_base;
+ new_globals->display_grid = GLOBALS->display_grid;
+ new_globals->use_big_fonts = GLOBALS->use_big_fonts;
+ new_globals->use_full_precision = GLOBALS->use_full_precision;
+ new_globals->use_frequency_delta = GLOBALS->use_frequency_delta;
+ new_globals->use_maxtime_display = GLOBALS->use_maxtime_display;
+ new_globals->use_nonprop_fonts = GLOBALS->use_nonprop_fonts;
+ new_globals->use_roundcaps = GLOBALS->use_roundcaps;
+ new_globals->use_scrollbar_only = GLOBALS->use_scrollbar_only;
+ new_globals->vcd_explicit_zero_subscripts = GLOBALS->vcd_explicit_zero_subscripts;
+ new_globals->vcd_preserve_glitches = GLOBALS->vcd_preserve_glitches;
+ new_globals->vcd_warning_filesize = GLOBALS->vcd_warning_filesize;
+ new_globals->vector_padding = GLOBALS->vector_padding;
+ new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
+ new_globals->wave_scrolling = GLOBALS->wave_scrolling;
+ new_globals->do_zoom_center = GLOBALS->do_zoom_center;
+ new_globals->zoom_pow10_snap = GLOBALS->zoom_pow10_snap;
+ new_globals->alt_hier_delimeter = GLOBALS->alt_hier_delimeter;
+ new_globals->cursor_snap = GLOBALS->cursor_snap;
+ new_globals->hier_delimeter = GLOBALS->hier_delimeter;
+ new_globals->hier_was_explicitly_set = GLOBALS->hier_was_explicitly_set;
+ new_globals->page_divisor = GLOBALS->page_divisor;
+ new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
+ new_globals->vector_padding = GLOBALS->vector_padding;
+ new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
+ new_globals->zoombase = GLOBALS->zoombase;
+ new_globals->splash_disable = 1; // to disable splash for reload
 
   if(GLOBALS->fontname_logfile)
 	{
@@ -1932,6 +1991,7 @@ if(GLOBALS->helpbox_is_active)
  // Initialize new variables
  GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
+ load_all_fonts();
 
  // Load new file from disk, no reload on partial vcd.
  switch(GLOBALS->loaded_file_type) {
@@ -1943,8 +2003,6 @@ if(GLOBALS->helpbox_is_active)
    case VCD_FILE: vcd_main(GLOBALS->loaded_file_name); break;
    case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
  } 
-
- load_all_fonts();
 
  // Reload state from file
  read_save_helper(".temp"); 
@@ -4498,6 +4556,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.10  2007/08/15 23:33:52  gtkwave
+ * added in rc.c context copy in reload
+ *
  * Revision 1.1.1.1.2.9  2007/08/15 04:08:34  kermin
  * fixed from/to box issue
  *
