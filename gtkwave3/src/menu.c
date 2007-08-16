@@ -2004,6 +2004,18 @@ if(GLOBALS->helpbox_is_active)
    case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
  } 
 
+ // Change SST - if it exists
+ // XXX need to destroy/free the old tree widgets.
+ #if GTK_CHECK_VERSION(2,4,0)
+ if(!GLOBALS->hide_sst) {
+   gtk_widget_hide(GLOBALS->expanderwindow);
+   gtk_container_remove(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
+   GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
+   gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
+   gtk_widget_show(GLOBALS->expanderwindow);
+ }
+ #endif
+
  // Reload state from file
  read_save_helper(".temp"); 
 
@@ -4556,6 +4568,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.11  2007/08/16 00:26:17  gtkwave
+ * removes drawable != NULL warning on reload
+ *
  * Revision 1.1.1.1.2.10  2007/08/15 23:33:52  gtkwave
  * added in rc.c context copy in reload
  *
