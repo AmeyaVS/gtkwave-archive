@@ -1768,6 +1768,8 @@ if(GLOBALS->helpbox_is_active)
  write_save_helper(statefile);
  fclose(statefile);
 
+ // Kill any open processes
+ remove_all_proc_filters();
 
  // Instantiate new global status
  new_globals = initialize_globals();
@@ -1969,7 +1971,7 @@ if(GLOBALS->helpbox_is_active)
   	strcpy(new_globals->fontname_waves, GLOBALS->fontname_waves);
 	}
 
-
+  
  // Times struct
  memcpy(&(new_globals->tims), &(GLOBALS->tims), sizeof(Times));
 
@@ -1991,6 +1993,7 @@ if(GLOBALS->helpbox_is_active)
  // Initialize new variables
  GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
+ init_proctrans_data();
  load_all_fonts();
 
  // Load new file from disk, no reload on partial vcd.
@@ -2003,6 +2006,45 @@ if(GLOBALS->helpbox_is_active)
    case VCD_FILE: vcd_main(GLOBALS->loaded_file_name); break;
    case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
  } 
+
+ // Setup timings we probably need to redraw here
+ GLOBALS->tims.last=GLOBALS->max_time;
+
+ GLOBALS->tims.first=GLOBALS->min_time;
+
+ if(GLOBALS->tims.start < GLOBALS->tims.first) {
+   GLOBALS->tims.start = GLOBALS->tims.first;
+ }
+
+ if(GLOBALS->tims.end > GLOBALS->tims.last) {
+   GLOBALS->tims.end = GLOBALS->tims.last;
+ }
+
+ if(GLOBALS->tims.marker < GLOBALS->tims.first) {
+   GLOBALS->tims.marker = GLOBALS->tims.first;
+ }
+
+ if(GLOBALS->tims.marker > GLOBALS->tims.last) {
+   GLOBALS->tims.marker = GLOBALS->tims.last;
+ }
+
+ if(GLOBALS->tims.prevmarker < GLOBALS->tims.first) {
+   GLOBALS->tims.prevmarker = GLOBALS->tims.first;
+ }
+
+ if(GLOBALS->tims.prevmarker > GLOBALS->tims.last) {
+   GLOBALS->tims.prevmarker = GLOBALS->tims.last;
+ }
+
+ if(GLOBALS->tims.laststart < GLOBALS->tims.first) {
+   GLOBALS->tims.laststart = GLOBALS->tims.first;
+ }
+
+ if(GLOBALS->tims.laststart > GLOBALS->tims.last) {
+   GLOBALS->tims.laststart = GLOBALS->tims.last;
+ } 
+
+
 
  // Change SST - if it exists
  // XXX need to destroy/free the old tree widgets.
@@ -4568,6 +4610,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.12  2007/08/16 03:29:07  kermin
+ * Reload the SST tree
+ *
  * Revision 1.1.1.1.2.11  2007/08/16 00:26:17  gtkwave
  * removes drawable != NULL warning on reload
  *
