@@ -47,6 +47,7 @@ static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
 
   gtk_grab_remove(GLOBALS->window1_search_c_2);
   gtk_widget_destroy(GLOBALS->window1_search_c_2);
+  GLOBALS->window1_search_c_2 = NULL;
 
   GLOBALS->cleanup_e_search_c_2();
 }
@@ -57,6 +58,7 @@ DEBUG(printf("Entry Cancel\n"));
 GLOBALS->entrybox_text_local_search_c_2=NULL;
 gtk_grab_remove(GLOBALS->window1_search_c_2);
 gtk_widget_destroy(GLOBALS->window1_search_c_2);
+GLOBALS->window1_search_c_2 = NULL;
 }
 
 static void entrybox_local(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -742,6 +744,7 @@ if((!GLOBALS->is_insert_running_search_c_1)&&(!GLOBALS->is_replace_running_searc
 	{
   	GLOBALS->is_active_search_c_4=0;
   	gtk_widget_destroy(GLOBALS->window_search_c_7);
+	GLOBALS->window_search_c_7 = NULL;
 	}
 }
 
@@ -1023,6 +1026,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/07 04:54:59  gtkwave
+ * slight modifications to global initialization scheme
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

@@ -54,11 +54,19 @@ void import_lxt_trace(nptr np);
 
 #define LXT_MMAP_MALLOC_BOUNDARY		(128*1024*1024)
 
+#if defined __MINGW32__ || defined _MSC_VER
+void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
+int munmap(void *start, size_t length);
+#endif
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:40  gtkwave
  * Imported sources
  *

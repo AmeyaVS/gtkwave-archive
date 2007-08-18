@@ -1980,6 +1980,139 @@ if(GLOBALS->helpbox_is_active)
  new_globals->loaded_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->loaded_file_name) + 1);
  strcpy(new_globals->loaded_file_name, GLOBALS->loaded_file_name);
 
+ // deallocate any loader-related stuff
+ switch(GLOBALS->loaded_file_type) {
+   case LXT_FILE:
+                if(GLOBALS->mm_lxt_mmap_addr)
+                        {
+                        munmap(GLOBALS->mm_lxt_mmap_addr, GLOBALS->mm_lxt_mmap_len);
+                        }
+                break;
+        
+   case LX2_FILE: lxt2_rd_close(GLOBALS->lx2_lx2_c_1); break;
+   case VZT_FILE: vzt_rd_close(GLOBALS->vzt_vzt_c_1); break;
+   case AE2_FILE: 
+#ifdef AET2_IS_PRESENT
+	ae2_read_close(GLOBALS->ae2); fclose(GLOBALS->ae2_f); 
+#endif
+	break;
+  
+   case GHW_FILE:
+   case VCD_FILE:
+   case VCD_RECODER_FILE: /* do nothing */ break;
+ }
+
+ // window destruction (of windows that aren't the parent window)
+ if(GLOBALS->window_entry_c_1)
+        {
+        gtk_grab_remove(GLOBALS->window_entry_c_1);
+        gtk_widget_destroy(GLOBALS->window_entry_c_1);
+        GLOBALS->window_entry_c_1 = NULL;
+        }
+
+ if(GLOBALS->window_help_c_2)
+        {
+        gtk_widget_destroy(GLOBALS->window_help_c_2);
+        GLOBALS->window_help_c_2 = NULL;
+        }
+                         
+ if(GLOBALS->window1_hiersearch_c_1)
+        {
+        gtk_grab_remove(GLOBALS->window1_hiersearch_c_1);
+        gtk_widget_destroy(GLOBALS->window1_hiersearch_c_1);
+        GLOBALS->window1_hiersearch_c_1 = NULL;
+        }
+ 
+ if(GLOBALS->window_hiersearch_c_3)
+        {
+        gtk_widget_destroy(GLOBALS->window_hiersearch_c_3);
+        GLOBALS->window_hiersearch_c_3 = NULL;   
+        }
+ 
+ if(GLOBALS->window_markerbox_c_4)
+        {
+        gtk_grab_remove(GLOBALS->window_markerbox_c_4);
+        gtk_widget_destroy(GLOBALS->window_markerbox_c_4);
+        GLOBALS->window_markerbox_c_4 = NULL;
+        }
+         
+ if(GLOBALS->mouseover_mouseover_c_1)
+        {
+        gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
+        gdk_pixmap_unref(GLOBALS->mo_pixmap_mouseover_c_1);   GLOBALS->mo_pixmap_mouseover_c_1 = NULL;
+        }
+         
+ if(GLOBALS->window_ptranslate_c_5)
+        {
+        gtk_widget_destroy(GLOBALS->window_ptranslate_c_5);
+        GLOBALS->window_ptranslate_c_5 = NULL;
+        }
+        
+ if(GLOBALS->window_renderopt_c_6)
+        {
+        gtk_widget_destroy(GLOBALS->window_renderopt_c_6);
+        GLOBALS->window_ptranslate_c_5 = NULL;
+        }
+
+ if(GLOBALS->window1_search_c_2)
+        {
+        gtk_grab_remove(GLOBALS->window1_search_c_2);
+        gtk_widget_destroy(GLOBALS->window1_search_c_2);
+        GLOBALS->window1_search_c_2 = NULL;
+        }
+        
+ if(GLOBALS->window_search_c_7)
+        {
+        gtk_widget_destroy(GLOBALS->window_search_c_7);
+        GLOBALS->window_search_c_7 = NULL;
+        }
+        
+ if(GLOBALS->window_showchange_c_8)
+        {
+        gtk_grab_remove(GLOBALS->window_showchange_c_8);
+        gtk_widget_destroy(GLOBALS->window_showchange_c_8);
+        GLOBALS->window_showchange_c_8 = NULL;
+        }
+         
+ if(GLOBALS->window_simplereq_c_9)
+        {
+        gtk_grab_remove(GLOBALS->window_simplereq_c_9);
+        gtk_widget_destroy(GLOBALS->window_simplereq_c_9);
+        GLOBALS->window_simplereq_c_9 = NULL; 
+        }
+
+ if(GLOBALS->window_strace_c_10)
+        {
+        gtk_widget_destroy(GLOBALS->window_strace_c_10);
+        GLOBALS->window_strace_c_10 = NULL;
+        }
+         
+ if(GLOBALS->window_translate_c_11)
+        {
+        gtk_widget_destroy(GLOBALS->window_translate_c_11);
+        GLOBALS->window_translate_c_11 = NULL;
+        }
+         
+ if(GLOBALS->window1_treesearch_gtk1_c)
+        {
+        gtk_grab_remove(GLOBALS->window1_treesearch_gtk1_c);
+        gtk_widget_destroy(GLOBALS->window1_treesearch_gtk1_c);
+        GLOBALS->window1_treesearch_gtk1_c = NULL;
+        }
+         
+ if(GLOBALS->window1_treesearch_gtk2_c_3)
+        {
+        gtk_grab_remove(GLOBALS->window1_treesearch_gtk2_c_3);
+        gtk_widget_destroy(GLOBALS->window1_treesearch_gtk2_c_3);
+        GLOBALS->window1_treesearch_gtk2_c_3 = NULL;
+        }
+
+ if(GLOBALS->window_treesearch_gtk2_c_12)
+        {
+        gtk_widget_destroy(GLOBALS->window_treesearch_gtk2_c_12);
+        GLOBALS->window_treesearch_gtk2_c_12 = NULL;
+        }
+
  // Free the context 
  free_outstanding();
 
@@ -4610,6 +4743,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.13  2007/08/17 03:11:29  kermin
+ * Correct lengths on reloaded files
+ *
  * Revision 1.1.1.1.2.12  2007/08/16 03:29:07  kermin
  * Reload the SST tree
  *

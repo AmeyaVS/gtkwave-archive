@@ -97,18 +97,6 @@ return(nmemb);
 #define LXTHDR "LXTLOAD | "
 
 
-/*
- * globals
- */
-
-
-
-
-
-
-
-
-
 
 				/* its mmap() variant doesn't use file descriptors    */
 #if defined __MINGW32__ || defined _MSC_VER
@@ -856,7 +844,8 @@ if(GLOBALS->zchg_size_lxt_c_1)
 	
 		GLOBALS->fd_lxt_c_1 = fd2;
 		GLOBALS->mm_lxt_c_1=mmap(NULL, GLOBALS->zchg_predec_size_lxt_c_1, PROT_READ, MAP_SHARED, GLOBALS->fd_lxt_c_1, 0);	
-
+		GLOBALS->mm_lxt_mmap_addr = GLOBALS->mm_lxt_c_1;
+		GLOBALS->mm_lxt_mmap_len = GLOBALS->zchg_predec_size_lxt_c_1;
 		GLOBALS->mm_lxt_c_1=(void *)((char *)GLOBALS->mm_lxt_c_1-4); /* because header and version don't exist in packed change records */
 		}
 		else
@@ -1222,6 +1211,8 @@ if(!GLOBALS->sync_table_offset_lxt_c_1)
 	if(GLOBALS->zchg_predec_size_lxt_c_1 > LXT_MMAP_MALLOC_BOUNDARY)
 		{
 		munmap((char *)GLOBALS->mm_lxt_c_1+4, GLOBALS->zchg_predec_size_lxt_c_1); close(GLOBALS->fd_lxt_c_1);
+		GLOBALS->mm_lxt_mmap_addr = NULL;
+		GLOBALS->mm_lxt_mmap_len = 0;
 		}
 		else
 #endif
@@ -1234,6 +1225,8 @@ if(!GLOBALS->sync_table_offset_lxt_c_1)
 	win_fname = nam;
 #endif
         GLOBALS->mm_lxt_c_1=mmap(NULL, GLOBALS->fpos_lxt_c_1-4, PROT_READ, MAP_SHARED, recfd, 0);
+	GLOBALS->mm_lxt_mmap_addr = GLOBALS->mm_lxt_c_1;
+	GLOBALS->mm_lxt_mmap_len = GLOBALS->fpos_lxt_c_1-4;
         GLOBALS->mm_lxt_c_1=(void *)((char *)GLOBALS->mm_lxt_c_1-4); /* because header and version don't exist in packed change records */
 	}
 }
@@ -1421,6 +1414,8 @@ GLOBALS->f_len_lxt_c_1=lseek(GLOBALS->fd_lxt_c_1, (off_t)0, SEEK_END);
 win_fname = fname;
 #endif
 GLOBALS->mm_lxt_c_1=mmap(NULL, GLOBALS->f_len_lxt_c_1, PROT_READ, MAP_SHARED, GLOBALS->fd_lxt_c_1, 0);
+GLOBALS->mm_lxt_mmap_addr = GLOBALS->mm_lxt_c_1;
+GLOBALS->mm_lxt_mmap_len = GLOBALS->f_len_lxt_c_1;
 
 if((i=get_16((off_t)0))!=LT_HDRID)
 	{
@@ -2324,6 +2319,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

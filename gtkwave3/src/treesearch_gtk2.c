@@ -272,6 +272,7 @@ static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
 
   gtk_grab_remove(GLOBALS->window1_treesearch_gtk2_c_3);
   gtk_widget_destroy(GLOBALS->window1_treesearch_gtk2_c_3);
+  GLOBALS->window1_treesearch_gtk2_c_3 = NULL;
 
   GLOBALS->cleanup_e_treesearch_gtk2_c_3();
 }
@@ -282,6 +283,7 @@ static void destroy_callback_e(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->entrybox_text_local_treesearch_gtk2_c_3=NULL;
   gtk_grab_remove(GLOBALS->window1_treesearch_gtk2_c_3);
   gtk_widget_destroy(GLOBALS->window1_treesearch_gtk2_c_3);
+  GLOBALS->window1_treesearch_gtk2_c_3 = NULL;
 }
 
 static void entrybox_local(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -723,6 +725,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   GLOBALS->is_active_treesearch_gtk2_c_6=0;
   gtk_widget_destroy(GLOBALS->window_treesearch_gtk2_c_12);
+  GLOBALS->window_treesearch_gtk2_c_12 = NULL;
   free_afl();
 }
 
@@ -1497,6 +1500,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/07 04:54:59  gtkwave
+ * slight modifications to global initialization scheme
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

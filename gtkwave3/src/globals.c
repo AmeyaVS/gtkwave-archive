@@ -38,6 +38,22 @@ struct Global *GLOBALS = NULL;
 static const struct Global globals_base_values = 
 { 
 /*
+ * ae2.c
+ */
+0, //ae2_num_sections
+NULL, //ae2_lx2_table
+NULL, //ae2_f
+NULL, //ae2
+NULL, //ae2_fr
+NULL, //ae2_process_mask
+0, //ae2_msg_suppress
+NULL, //ae2_regex_head
+0, // ae2_regex_matches
+0, // ae2_twirl_pos
+0, // ae2_did_twirl
+
+
+/*
  * analyzer.c
  */
 TR_RJUSTIFY,//default_flags 5
@@ -270,6 +286,8 @@ NULL,//mvlfacs_lx2_c_1 143
 /*
  * lxt.c
  */
+NULL, // mm_lxt_mmap_addr
+0, // mm_lxt_mmap_len
 #if defined __MINGW32__ || defined _MSC_VER
 NULL, // HANDLE hIn
 NULL, // HANDLE hInMap

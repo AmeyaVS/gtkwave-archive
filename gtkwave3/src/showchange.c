@@ -86,6 +86,7 @@ static void enter_callback(GtkWidget *widget, GtkWidget *nothing)
 
   gtk_grab_remove(GLOBALS->window_showchange_c_8);
   gtk_widget_destroy(GLOBALS->window_showchange_c_8);
+  GLOBALS->window_showchange_c_8 = NULL;
 
   GLOBALS->cleanup_showchange_c_6();
 }
@@ -95,6 +96,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   gtk_grab_remove(GLOBALS->window_showchange_c_8);
   gtk_widget_destroy(GLOBALS->window_showchange_c_8);
+  GLOBALS->window_showchange_c_8 = NULL;
 }
 
 
@@ -265,6 +267,9 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

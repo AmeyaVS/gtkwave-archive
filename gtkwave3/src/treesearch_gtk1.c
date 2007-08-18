@@ -62,6 +62,7 @@ static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
 
   gtk_grab_remove(GLOBALS->window1_treesearch_gtk1_c);
   gtk_widget_destroy(GLOBALS->window1_treesearch_gtk1_c);
+  GLOBALS->window1_treesearch_gtk1_c = NULL;
 
   GLOBALS->cleanup_e_treesearch_gtk1_c();
 }
@@ -72,6 +73,7 @@ static void destroy_callback_e(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->entrybox_text_local_treesearch_gtk1_c=NULL;
   gtk_grab_remove(GLOBALS->window1_treesearch_gtk1_c);
   gtk_widget_destroy(GLOBALS->window1_treesearch_gtk1_c);
+  GLOBALS->window1_treesearch_gtk1_c = NULL;
 }
 
 static void entrybox_local(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -600,6 +602,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   GLOBALS->is_active_treesearch_gtk1_c=0;
   gtk_widget_destroy(GLOBALS->window_treesearch_gtk1_c);
+  GLOBALS->window_treesearch_gtk1_c = NULL;
 }
 
 
@@ -772,6 +775,9 @@ void treebox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.1  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

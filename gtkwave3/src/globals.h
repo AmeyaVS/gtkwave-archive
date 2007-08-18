@@ -45,6 +45,22 @@
 
 struct Global{ 
 
+/*
+ * ae2.c
+ */
+unsigned long ae2_num_sections;
+struct lx2_entry **ae2_lx2_table;
+FILE *ae2_f;
+AE2_HANDLE *ae2;
+FACREF *ae2_fr;
+char *ae2_process_mask;
+char ae2_msg_suppress;
+struct regex_links *ae2_regex_head;
+int ae2_regex_matches;
+int ae2_twirl_pos;
+int ae2_did_twirl;
+
+
 
 /*
  * analyzer.c
@@ -279,6 +295,8 @@ int busycnt_lx2_c_1;// from lx2.c 150
 /*
  * lxt.c
  */
+char *mm_lxt_mmap_addr;
+size_t mm_lxt_mmap_len;
 #if defined __MINGW32__ || defined _MSC_VER
 HANDLE hIn, hInMap;
 char *win_fname;

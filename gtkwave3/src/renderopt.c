@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell1 1999-2006
+ * Copyright (c) Tony Bybell 1999-2006
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -134,6 +134,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   GLOBALS->is_active_renderopt_c_3=0;
   gtk_widget_destroy(GLOBALS->window_renderopt_c_6);
+  GLOBALS->window_renderopt_c_6 = NULL;
 }
 
 
@@ -328,6 +329,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

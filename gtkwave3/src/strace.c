@@ -287,6 +287,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
   free_straces();
   GLOBALS->ptr_mark_count_label_strace_c_1=NULL;
   gtk_widget_destroy(GLOBALS->window_strace_c_10);
+  GLOBALS->window_strace_c_10 = NULL;
 }
 
 /* update mark count label on pattern search dialog */
@@ -1660,6 +1661,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:49  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

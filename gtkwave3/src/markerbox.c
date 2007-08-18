@@ -78,6 +78,7 @@ if(GLOBALS->dirty_markerbox_c_1)
 
   gtk_grab_remove(GLOBALS->window_markerbox_c_4);
   gtk_widget_destroy(GLOBALS->window_markerbox_c_4);
+  GLOBALS->window_markerbox_c_4 = NULL;
 
   GLOBALS->cleanup_markerbox_c_4();
 }
@@ -86,6 +87,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   gtk_grab_remove(GLOBALS->window_markerbox_c_4);
   gtk_widget_destroy(GLOBALS->window_markerbox_c_4);
+  GLOBALS->window_markerbox_c_4 = NULL;
 }
 
 void markerbox(char *title, GtkSignalFunc func)
@@ -207,6 +209,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

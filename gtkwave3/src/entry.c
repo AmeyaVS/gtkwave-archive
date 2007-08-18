@@ -27,6 +27,7 @@ static void enter_callback(GtkWidget *widget, GtkWidget *nothing)
 
   gtk_grab_remove(GLOBALS->window_entry_c_1);
   gtk_widget_destroy(GLOBALS->window_entry_c_1);
+  GLOBALS->window_entry_c_1 = NULL;
 
   GLOBALS->cleanup_entry_c_1();
 }
@@ -37,6 +38,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->entrybox_text=NULL;
   gtk_grab_remove(GLOBALS->window_entry_c_1);
   gtk_widget_destroy(GLOBALS->window_entry_c_1);
+  GLOBALS->window_entry_c_1 = NULL;
 }
 
 void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -117,6 +119,9 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:46  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

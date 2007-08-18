@@ -237,6 +237,7 @@ static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
 
   gtk_grab_remove(GLOBALS->window1_hiersearch_c_1);
   gtk_widget_destroy(GLOBALS->window1_hiersearch_c_1);
+  GLOBALS->window1_hiersearch_c_1 = NULL;
 
   GLOBALS->cleanup_e_hiersearch_c_1();
 }
@@ -247,6 +248,7 @@ static void destroy_callback_e(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->entrybox_text_local_hiersearch_c_1=NULL;
   gtk_grab_remove(GLOBALS->window1_hiersearch_c_1);
   gtk_widget_destroy(GLOBALS->window1_hiersearch_c_1);
+  GLOBALS->window1_hiersearch_c_1 = NULL;
 }
 
 static void entrybox_local(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
@@ -808,6 +810,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   GLOBALS->is_active_hiersearch_c_1=0;
   gtk_widget_destroy(GLOBALS->window_hiersearch_c_3);
+  GLOBALS->window_hiersearch_c_3 = NULL;
 }
 
 
@@ -980,6 +983,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
