@@ -1867,6 +1867,9 @@ if(GLOBALS->helpbox_is_active)
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
 
  // rc.c
+ new_globals->ignore_savefile_pos = 1; /* to keep window from resizing/jumping */
+ new_globals->ignore_savefile_size = 1; /* to keep window from resizing/jumping */
+
  new_globals->color_back = GLOBALS->color_back;
  new_globals->color_baseline = GLOBALS->color_baseline;
  new_globals->color_grid = GLOBALS->color_grid;
@@ -1920,8 +1923,6 @@ if(GLOBALS->helpbox_is_active)
  new_globals->hier_grouping = GLOBALS->hier_grouping;
  new_globals->hier_max_level = GLOBALS->hier_max_level;
  new_globals->paned_pack_semantics = GLOBALS->paned_pack_semantics;
- new_globals->ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
- new_globals->ignore_savefile_size = GLOBALS->ignore_savefile_size;
  new_globals->left_justify_sigs = GLOBALS->left_justify_sigs;
  new_globals->lxt_clock_compress_to_z = GLOBALS->lxt_clock_compress_to_z;
  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
@@ -4743,6 +4744,10 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.14  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.13  2007/08/17 03:11:29  kermin
  * Correct lengths on reloaded files
  *
