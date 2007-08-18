@@ -1954,6 +1954,10 @@ if(GLOBALS->helpbox_is_active)
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; // to disable splash for reload
 
+ // menu.c 
+ new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
+
+
   if(GLOBALS->fontname_logfile)
 	{
   	new_globals->fontname_logfile = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_logfile) + 1);
@@ -4744,6 +4748,10 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.15  2007/08/18 21:56:15  gtkwave
+ * remove visual noise on resize/pos on reload as some windowmanagers handle
+ * this as a hint rather than an absolute (i.e., set "ignore" rc's to true)
+ *
  * Revision 1.1.1.1.2.14  2007/08/18 21:51:57  gtkwave
  * widget destroys and teardown of file formats which use external loaders
  * and are outside of malloc_2/free_2 control
