@@ -1954,6 +1954,9 @@ if(GLOBALS->helpbox_is_active)
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; // to disable splash for reload
 
+ // main.c 
+ new_globals->optimize_vcd = GLOBALS->optimize_vcd;
+
  // menu.c 
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
 
@@ -1982,8 +1985,15 @@ if(GLOBALS->helpbox_is_active)
 
  // File name and type
  new_globals->loaded_file_type = GLOBALS->loaded_file_type;
- new_globals->loaded_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->loaded_file_name) + 1);
+ new_globals->loaded_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->loaded_file_name) + 1);  
  strcpy(new_globals->loaded_file_name, GLOBALS->loaded_file_name);
+
+ if(new_globals->optimize_vcd) {
+   new_globals->unoptimized_vcd_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->unoptimized_vcd_file_name) + 1);  
+   strcpy(new_globals->unoptimized_vcd_file_name, GLOBALS->unoptimized_vcd_file_name);
+   
+ }
+
 
  // deallocate any loader-related stuff
  switch(GLOBALS->loaded_file_type) {
@@ -2134,6 +2144,13 @@ if(GLOBALS->helpbox_is_active)
  init_proctrans_data();
  load_all_fonts();
 
+ // Check to see if we need to reload a vcd file
+ #if !defined _MSC_VER && !defined __MINGW32__
+ if(GLOBALS->optimize_vcd) {
+   optimize_vcd_file();
+ }
+ #endif
+ 
  // Load new file from disk, no reload on partial vcd.
  switch(GLOBALS->loaded_file_type) {
    case LXT_FILE: lxt_main(GLOBALS->loaded_file_name); break;
@@ -4748,6 +4765,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.16  2007/08/18 22:14:55  gtkwave
+ * missing itemfactory pointer caused crash on check/uncheck in menus
+ *
  * Revision 1.1.1.1.2.15  2007/08/18 21:56:15  gtkwave
  * remove visual noise on resize/pos on reload as some windowmanagers handle
  * this as a hint rather than an absolute (i.e., set "ignore" rc's to true)

@@ -25,6 +25,7 @@
 #include"lx2.h"
 #include"lxt.h"
 #include"main.h"
+#include"memory.h"
 #include"menu.h"
 #include"pipeio.h"
 #include"pixmaps.h"
@@ -356,6 +357,7 @@ int max_compare_pos_tc_lxt_c_2;// from lxt.c 200
  * main.c
  */
 char *loaded_file_name;
+char *unoptimized_vcd_file_name;
 char *skip_start;
 char *skip_end;
 char *indirect_fname;
@@ -1003,7 +1005,7 @@ char do_initial_zoom_fit;//from zoombuttons.c 721
 
 
 struct Global *initialize_globals(void);
-void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size);
+
 
 extern struct Global *GLOBALS;
 #endif

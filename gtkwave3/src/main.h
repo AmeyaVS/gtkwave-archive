@@ -44,6 +44,9 @@ void set_window_xypos(int root_x, int root_y);
 int stems_are_active(void);
 void activate_stems_reader(char *stems_name);
 
+/* function for spawning vcd conversions */
+void optimize_vcd_file(void);
+
 enum FileType {
   LXT_FILE,
   LX2_FILE,
@@ -62,6 +65,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/15 03:26:01  kermin
+ * Reload button does not cause a fault, however, state is still somehow incorrect.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

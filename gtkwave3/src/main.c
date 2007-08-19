@@ -659,77 +659,14 @@ else	/* nothing else left so default to "something" */
 	{
 load_vcd:
 #if !defined _MSC_VER && !defined __MINGW32__
-	if(GLOBALS->optimize_vcd)
-		{
-		GLOBALS->optimize_vcd = 0;
+	if(GLOBALS->optimize_vcd) {
+                  GLOBALS->unoptimized_vcd_file_name = calloc_2(1,strlen(GLOBALS->loaded_file_name) + 1);
+                  strcpy(GLOBALS->unoptimized_vcd_file_name, GLOBALS->loaded_file_name);  
+                  optimize_vcd_file();
+                  is_vcd = 0;
+                  goto loader_check_head;
+        }
 
-		if(!strcmp("-vcd", GLOBALS->loaded_file_name))
-			{
-			pid_t pid;
-			char *buf = malloc_2(strlen("vcd") + 4 + 1);
-			sprintf(buf, "%s.lx2", "vcd");
-			pid = fork();
-        
-                        if(((int)pid) < 0)
-                                {
-                                /* can't do anything about this */
-                                }
-                                else
-				{
-				if(pid)
-					{
-					int stat;
-					int rc = waitpid(pid, &stat, 0);
-
-					if(rc > 0)
-						{
-						free_2(GLOBALS->loaded_file_name);
-						GLOBALS->loaded_file_name = buf;
-						is_vcd = 0;
-						goto loader_check_head;						
-						}					
-					}
-					else
-					{
-				        execlp("vcd2lxt2", "vcd2lxt2", "--", "-", buf, NULL);
-					exit(255);
-					}
-				}
-			}
-			else
-			{
-			pid_t pid;
-			char *buf = malloc_2(strlen(GLOBALS->loaded_file_name) + 4 + 1);
-			sprintf(buf, "%s.lx2", GLOBALS->loaded_file_name);
-			pid = fork();
-        
-                        if(((int)pid) < 0)
-                                {
-                                /* can't do anything about this */
-                                }
-                                else
-				{
-				if(pid)
-					{
-					int stat;
-					int rc = waitpid(pid, &stat, 0);
-
-					if(rc > 0)
-						{
-						free_2(GLOBALS->loaded_file_name);
-						GLOBALS->loaded_file_name = buf;
-						is_vcd = 0;
-						goto loader_check_head;						
-						}					
-					}
-					else
-					{
-				        execlp("vcd2lxt2", "vcd2lxt2", GLOBALS->loaded_file_name, buf, NULL);
-					exit(255);
-					}
-				}
-			}
-		}
 #endif
 
 #if !defined _MSC_VER && !defined __MINGW32__
@@ -1484,9 +1421,64 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 #endif
 }
 
+
+#if !defined _MSC_VER && !defined __MINGW32__
+void optimize_vcd_file(void) {
+  if(!strcmp("-vcd", GLOBALS->unoptimized_vcd_file_name)) {        
+    pid_t pid;
+    char *buf = malloc_2(strlen("vcd") + 4 + 1);
+    sprintf(buf, "%s.lx2", "vcd");
+    pid = fork();
+    if(((int)pid) < 0) {
+      /* can't do anything about this */
+    }
+    else {
+      if(pid) {
+        int stat;
+        int rc = waitpid(pid, &stat, 0);
+	if(rc > 0) {
+	  free_2(GLOBALS->loaded_file_name);
+	  GLOBALS->loaded_file_name = buf;
+	}					
+      }
+      else {
+        execlp("vcd2lxt2", "vcd2lxt2", "--", "-", buf, NULL);
+	exit(255);
+      }
+    }
+  }
+  else {
+    pid_t pid;
+    char *buf = malloc_2(strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1);
+    sprintf(buf, "%s.lx2", GLOBALS->unoptimized_vcd_file_name);
+    pid = fork(); 
+    if(((int)pid) < 0) {
+      /* can't do anything about this */
+    }
+    else {
+      if(pid) {
+	int stat;
+	int rc = waitpid(pid, &stat, 0);
+        if(rc > 0) {
+          free_2(GLOBALS->loaded_file_name);
+	  GLOBALS->loaded_file_name = buf;
+        }					
+      }
+      else {
+        execlp("vcd2lxt2", "vcd2lxt2", GLOBALS->unoptimized_vcd_file_name, buf, NULL);
+	exit(255);
+      }
+    }
+  }	
+}
+#endif
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.8  2007/08/15 03:26:01  kermin
+ * Reload button does not cause a fault, however, state is still somehow incorrect.
+ *
  * Revision 1.1.1.1.2.7  2007/08/07 04:54:59  gtkwave
  * slight modifications to global initialization scheme
  *

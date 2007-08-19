@@ -348,6 +348,7 @@ NULL,//lt_buf_lxt_c_1 183
  * main.c
  */
 NULL, // loaded_file_name
+NULL, // unoptimized_vcd_file_name   
 NULL, // skip_start
 NULL, // skip_end
 NULL, // indirect_fname
