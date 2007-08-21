@@ -2253,11 +2253,6 @@ if(GLOBALS->helpbox_is_active)
         gtk_entry_set_text(GTK_ENTRY(GLOBALS->filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1);
 	wave_regex_compile(GLOBALS->filter_str_treesearch_gtk2_c_1, WAVE_REGEX_TREE);
 	}
-
-   if(tree_frame_y != -1)
-	{
-	gtk_widget_set_size_request(GLOBALS->gtk2_tree_frame, -1, tree_frame_y);
-	}
  }
  #endif
 
@@ -2316,6 +2311,14 @@ if(GLOBALS->helpbox_is_active)
 		}
 	GLOBALS->selected_hierarchy_name = hiername_cache;
 	}
+
+
+   if(tree_frame_y != -1)
+	{
+	/* this doesn't work...this sets the *minimum* size */
+	/* gtk_widget_set_size_request(GLOBALS->gtk2_tree_frame, -1, tree_frame_y); */
+	}
+
  }
  #endif
 
@@ -4872,6 +4875,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.20  2007/08/21 23:29:17  gtkwave
+ * merge in tree select state from old ctx
+ *
  * Revision 1.1.1.1.2.19  2007/08/21 22:51:35  gtkwave
  * add tree hadj state merge
  *
