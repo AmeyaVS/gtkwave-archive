@@ -2010,7 +2010,11 @@ if(GLOBALS->helpbox_is_active)
 	new_globals->filter_str_treesearch_gtk2_c_1 = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->filter_str_treesearch_gtk2_c_1) + 1);
 	strcpy(new_globals->filter_str_treesearch_gtk2_c_1, GLOBALS->filter_str_treesearch_gtk2_c_1);
 	}
-
+  if(GLOBALS->selected_hierarchy_name)
+	{
+	new_globals->selected_hierarchy_name = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->selected_hierarchy_name) + 1);
+	strcpy(new_globals->selected_hierarchy_name, GLOBALS->selected_hierarchy_name);
+	}
 
   
  // Times struct
@@ -2268,6 +2272,13 @@ if(GLOBALS->helpbox_is_active)
  #if GTK_CHECK_VERSION(2,4,0)
  if(!GLOBALS->hide_sst) {
    GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
+   char *hiername_cache = NULL;	/* some strange race condition side effect in gtk selecting/deselecting blows this out so cache it */
+
+   if(GLOBALS->selected_hierarchy_name)
+	{
+	hiername_cache = strdup_2(GLOBALS->selected_hierarchy_name);
+   	select_tree_node(GLOBALS->selected_hierarchy_name);
+	}
 
    if(tree_vadj_value != 0.0)
 	{
@@ -2296,9 +2307,17 @@ if(GLOBALS->helpbox_is_active)
 		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "value_changed"); 
 		}
 	}
+
+    if(hiername_cache)
+	{
+	if(GLOBALS->selected_hierarchy_name)
+		{
+		free_2(GLOBALS->selected_hierarchy_name);
+		}
+	GLOBALS->selected_hierarchy_name = hiername_cache;
+	}
  }
  #endif
-
 
  printf("Finished reload waveform\n");
 }
@@ -4853,6 +4872,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.19  2007/08/21 22:51:35  gtkwave
+ * add tree hadj state merge
+ *
  * Revision 1.1.1.1.2.18  2007/08/21 22:35:39  gtkwave
  * prelim tree state merge
  *

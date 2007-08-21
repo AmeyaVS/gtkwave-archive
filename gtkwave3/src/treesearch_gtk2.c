@@ -339,12 +339,121 @@ generic_tree_expand_collapse_callback(0, node);
 }
 
 
+void select_tree_node(char *name)
+{
+GtkCTree *ctree = GLOBALS->ctree_main;
+
+if(ctree)
+	{
+	int namlen = strlen(name);
+	char *namecache = wave_alloca(namlen+1);
+	char *name_end = name + namlen - 1;
+	char *zap = name;
+	GtkCTreeNode *node = GLOBALS->any_tree_node;
+	GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
+
+	strcpy(namecache, name);
+
+	while(gctr->parent)
+		{
+		node = gctr->parent;
+		gctr = GTK_CTREE_ROW(node);
+		} 
+
+	for(;;)
+		{
+		struct tree *t = gctr->row.data;
+
+		while(*zap)
+			{
+			if(*zap != GLOBALS->hier_delimeter)
+				{
+				zap++;
+				}
+				else
+				{
+				*zap = 0;
+				break;
+				}
+			}
+
+		if(!strcmp(t->name, name))
+			{
+			if(zap == name_end)
+				{
+				/* printf("[treeselectnode] '%s' ok\n", name); */
+				gtk_ctree_select(ctree, node);
+
+				GLOBALS->sig_root_treesearch_gtk2_c_1 = t->child;
+				fill_sig_store ();
+
+				return;
+				}
+				else
+				{
+				node = gctr->children;
+				gctr = GTK_CTREE_ROW(node);
+				if(!gctr) break;
+
+				name = ++zap;
+				continue;
+				}
+			}
+
+		node = gctr->sibling;
+		if(!node) break;
+		gctr = GTK_CTREE_ROW(node);
+		}
+
+	/* printf("[treeselectnode] '%s' failed\n", name); */
+	}
+}
+
+
 
 /* Callbacks for tree area when a row is selected/deselected.  */
 static void select_row_callback(GtkWidget *widget, gint row, gint column,
         GdkEventButton *event, gpointer data)
 {
 struct tree *t;
+GtkCTreeNode* node = gtk_ctree_node_nth(GLOBALS->ctree_main, row);
+
+if(node)
+	{
+	GtkCTreeRow **gctr;
+	int depth, i;
+	int len = 1;
+	char *tstring;
+	char hier_suffix[2] = {GLOBALS->hier_delimeter,0};
+                
+	depth = GTK_CTREE_ROW(node)->level;
+	gctr = wave_alloca(depth * sizeof(GtkCTreeRow *));
+         
+	for(i=depth-1;i>=0;i--)
+	        {
+	        struct tree *t;
+	        gctr[i] = GTK_CTREE_ROW(node);
+	        t = gctr[i]->row.data;
+	        len += (strlen(t->name) + 1);
+	        node = gctr[i]->parent;
+	        }        
+
+	tstring = wave_alloca(len);
+	memset(tstring, 0, len);
+
+	for(i=0;i<depth;i++)
+	        {
+	        struct tree *t = gctr[i]->row.data;
+	        strcat(tstring, t->name);
+	        strcat(tstring, hier_suffix);
+	        }
+
+	if(GLOBALS->selected_hierarchy_name)
+		{
+		free_2(GLOBALS->selected_hierarchy_name);
+		}
+	GLOBALS->selected_hierarchy_name = strdup_2(tstring);
+	}
 
 t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->ctree_main), row);
 DEBUG(printf("TS: %08x %s\n",t,t->name));
@@ -356,6 +465,12 @@ static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
         GdkEventButton *event, gpointer data)
 {
 struct tree *t;
+
+if(GLOBALS->selected_hierarchy_name)
+	{
+	free_2(GLOBALS->selected_hierarchy_name);
+	GLOBALS->selected_hierarchy_name = NULL;
+	}
 
 t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->ctree_main), row);
 DEBUG(printf("TU: %08x %s\n",t,t->name));
@@ -867,6 +982,12 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->window_treesearch_gtk2_c_12 = NULL;
   GLOBALS->gtk2_tree_frame = NULL;
   free_afl();
+
+  if(GLOBALS->selected_hierarchy_name)
+	{
+	free_2(GLOBALS->selected_hierarchy_name);
+	GLOBALS->selected_hierarchy_name = NULL;
+	}
 }
 
 
@@ -1657,6 +1778,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.9  2007/08/21 22:35:40  gtkwave
+ * prelim tree state merge
+ *
  * Revision 1.1.1.1.2.8  2007/08/18 21:51:57  gtkwave
  * widget destroys and teardown of file formats which use external loaders
  * and are outside of malloc_2/free_2 control

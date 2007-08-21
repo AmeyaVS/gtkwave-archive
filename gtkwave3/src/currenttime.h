@@ -85,6 +85,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func);
 void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data);
 void dump_open_tree_nodes(FILE *wave, xl_Tree *t);
 void force_open_tree_node(char *name);
+void select_tree_node(char *name);
 
 void dnd_setup(GtkWidget *widget); /* dnd from gtk2 tree to signalwindow */
 
@@ -134,6 +135,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.4  2007/08/21 22:35:38  gtkwave
+ * prelim tree state merge
+ *
  * Revision 1.2.2.3  2007/08/07 04:54:58  gtkwave
  * slight modifications to global initialization scheme
  *

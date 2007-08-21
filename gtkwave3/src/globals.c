@@ -722,6 +722,7 @@ NULL, //void (*cleanup_treesearch_gtk1_c)();
 /*
  * treesearch_gtk2.c
  */
+NULL,//selected_hierarchy_name
 NULL,//gtk2_tree_frame
 NULL,//filter_entry
 NULL,//any_tree_node
