@@ -16,6 +16,7 @@
 #include <math.h>
 #include "analyzer.h"
 #include "regex_wave.h"
+#include "translate.h"
 
 #define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.0_soc (w)1999-2007 BSI"
 
@@ -78,9 +79,12 @@ void fileselbox(char *title, char **filesel_path, GtkSignalFunc ok_func, GtkSign
 void status_text(char *str);
 void searchbox(char *title, GtkSignalFunc func);
 void showchange(char *title, Trptr t, GtkSignalFunc func);
+
 void treebox(char *title, GtkSignalFunc func);
 GtkWidget* treeboxframe(char *title, GtkSignalFunc func);
 void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data);
+void dump_open_tree_nodes(FILE *wave, xl_Tree *t);
+void force_open_tree_node(char *name);
 
 void dnd_setup(GtkWidget *widget); /* dnd from gtk2 tree to signalwindow */
 
@@ -130,6 +134,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.3  2007/08/07 04:54:58  gtkwave
+ * slight modifications to global initialization scheme
+ *
  * Revision 1.2.2.2  2007/08/05 02:27:19  kermin
  * Semi working global struct
  *

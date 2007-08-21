@@ -32,6 +32,10 @@ struct xl_tree_node {
 
 
 xl_Tree * xl_splay (char *i, xl_Tree * t);
+xl_Tree * xl_insert(char *i, xl_Tree * t, char *trans);
+xl_Tree * xl_delete(char *i, xl_Tree * t);
+
+
 void trans_searchbox(char *title);
 void init_filetrans_data(void);
 void install_file_filter(int which);
@@ -42,6 +46,9 @@ void set_current_translate_file(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:24  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:21  gtkwave
  * Imported sources
  *

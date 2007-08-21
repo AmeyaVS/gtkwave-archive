@@ -29,11 +29,17 @@
 #include <unistd.h>
 #endif
 
+
 static GtkItemFactoryEntry menu_items[WV_MENU_NUMITEMS];
 
 /* These should eventually have error values */
 void write_save_helper(FILE *file);
 void read_save_helper(char *wname);
+
+
+/* prototypes (because of struct Global header recursion issues */
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size);
+
 
 /********** procsel filter install ********/
 
@@ -1738,6 +1744,8 @@ menu_reload_waveform(GtkWidget *widget, gpointer data)
   FILE *statefile;
   struct Global *new_globals;
   int i;
+  gint tree_frame_x = -1, tree_frame_y = -1;
+  gdouble tree_vadj_value = 0.0;
 
 if(GLOBALS->helpbox_is_active)
 	{
@@ -1757,7 +1765,7 @@ if(GLOBALS->helpbox_is_active)
    return;
  }
 
-  
+
  // Save state to file
  statefile = fopen(".temp","wb");
  if(statefile == NULL) {
@@ -1767,6 +1775,20 @@ if(GLOBALS->helpbox_is_active)
 
  write_save_helper(statefile);
  fclose(statefile);
+
+ // save off size of tree frame if active
+#if WAVE_USE_GTK2
+ if(GLOBALS->gtk2_tree_frame)
+	{
+	GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
+	GtkAdjustment *vadj = gtk_clist_get_vadjustment(cl);
+
+	tree_vadj_value = vadj->value;
+
+	tree_frame_x = (GLOBALS->gtk2_tree_frame)->allocation.width;
+	tree_frame_y = (GLOBALS->gtk2_tree_frame)->allocation.height;
+	}
+#endif
 
  // Kill any open processes
  remove_all_proc_filters();
@@ -1954,30 +1976,38 @@ if(GLOBALS->helpbox_is_active)
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; // to disable splash for reload
 
+ if(GLOBALS->fontname_logfile)
+	{
+  	new_globals->fontname_logfile = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_logfile) + 1);
+  	strcpy(new_globals->fontname_logfile, GLOBALS->fontname_logfile);
+	}
+
+ if(GLOBALS->fontname_signals)
+	{
+  	new_globals->fontname_signals = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_signals) + 1);
+  	strcpy(new_globals->fontname_signals, GLOBALS->fontname_signals);
+	}
+
+ if(GLOBALS->fontname_waves)
+	{
+  	new_globals->fontname_waves = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_waves) + 1);
+  	strcpy(new_globals->fontname_waves, GLOBALS->fontname_waves);
+	}
+
+
  // main.c 
  new_globals->optimize_vcd = GLOBALS->optimize_vcd;
 
  // menu.c 
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
 
-
-  if(GLOBALS->fontname_logfile)
+ // treesearch_gtk2.c
+ if(GLOBALS->filter_str_treesearch_gtk2_c_1)
 	{
-  	new_globals->fontname_logfile = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_logfile) + 1);
-  	strcpy(new_globals->fontname_logfile, GLOBALS->fontname_logfile);
+	new_globals->filter_str_treesearch_gtk2_c_1 = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->filter_str_treesearch_gtk2_c_1) + 1);
+	strcpy(new_globals->filter_str_treesearch_gtk2_c_1, GLOBALS->filter_str_treesearch_gtk2_c_1);
 	}
 
-  if(GLOBALS->fontname_signals)
-	{
-  	new_globals->fontname_signals = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_signals) + 1);
-  	strcpy(new_globals->fontname_signals, GLOBALS->fontname_signals);
-	}
-
-  if(GLOBALS->fontname_waves)
-	{
-  	new_globals->fontname_waves = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_waves) + 1);
-  	strcpy(new_globals->fontname_waves, GLOBALS->fontname_waves);
-	}
 
   
  // Times struct
@@ -2210,6 +2240,17 @@ if(GLOBALS->helpbox_is_active)
    GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
    gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
    gtk_widget_show(GLOBALS->expanderwindow);
+
+   if((GLOBALS->filter_str_treesearch_gtk2_c_1) && (GLOBALS->filter_entry))
+	{
+        gtk_entry_set_text(GTK_ENTRY(GLOBALS->filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1);
+	wave_regex_compile(GLOBALS->filter_str_treesearch_gtk2_c_1, WAVE_REGEX_TREE);
+	}
+
+   if(tree_frame_y != -1)
+	{
+	gtk_widget_set_size_request(GLOBALS->gtk2_tree_frame, -1, tree_frame_y);
+	}
  }
  #endif
 
@@ -2218,6 +2259,28 @@ if(GLOBALS->helpbox_is_active)
 
  // unlink temp
  unlink(".temp");
+
+
+ // part 2 of SST (which needs to be done after the tree is expanded from loading the savefile...)
+ #if GTK_CHECK_VERSION(2,4,0)
+ if(!GLOBALS->hide_sst) {
+   if(tree_vadj_value != 0.0)
+	{
+	GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
+	GtkAdjustment *vadj = gtk_clist_get_vadjustment(cl);
+
+	if((tree_vadj_value >= vadj->lower) && (tree_vadj_value <= vadj->upper))
+		{ 
+		vadj->value = tree_vadj_value;
+		gtk_clist_set_vadjustment(cl, vadj);
+
+		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "changed");
+		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "value_changed"); 
+		}
+	}
+ }
+ #endif
+
 
  printf("Finished reload waveform\n");
 }
@@ -2864,6 +2927,13 @@ void write_save_helper(FILE *wave) {
 		fprintf(wave," "TTFormat,nm);
 		}
 	fprintf(wave,"\n");
+
+#if WAVE_USE_GTK2
+	if(GLOBALS->open_tree_nodes)
+		{
+		dump_open_tree_nodes(wave, GLOBALS->open_tree_nodes);
+		}
+#endif
 
 	t=GLOBALS->traces.first;
 	while(t)
@@ -4765,6 +4835,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.17  2007/08/19 23:13:53  kermin
+ * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
+ *
  * Revision 1.1.1.1.2.16  2007/08/18 22:14:55  gtkwave
  * missing itemfactory pointer caused crash on check/uncheck in menus
  *

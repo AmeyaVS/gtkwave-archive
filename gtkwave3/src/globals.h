@@ -732,6 +732,10 @@ void (*cleanup_treesearch_gtk1_c)(); // ...end of manual adds
 /*
  * treesearch_gtk2.c
  */
+GtkWidget *gtk2_tree_frame;//from treesearch_gtk2.c
+GtkWidget *filter_entry;//from treesearch_gtk2.c
+GtkCTreeNode *any_tree_node;//from treesearch_gtk2.c
+struct xl_tree_node *open_tree_nodes;//from treesearch_gtk2.c
 char autoname_bundles;//from treesearch_gtk2.c 483
 struct _GtkWidget *window1_treesearch_gtk2_c_3;// from treesearch_gtk2.c 484
 struct _GtkWidget *entry_a_treesearch_gtk2_c_2;// from treesearch_gtk2.c 485

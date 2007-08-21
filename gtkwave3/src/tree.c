@@ -537,6 +537,7 @@ while(t2)
 		sibling_test=maketree_nodes(subtree, t2, sibling, MAKETREE_NODE);
 		if(sibling_test)
 			{
+			GLOBALS->any_tree_node = sibling_test;
 			maketree(sibling=sibling_test, t2->child);
 			}
 		}
@@ -604,6 +605,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:49  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

@@ -662,15 +662,12 @@ static const char const * wave_splash_xpm[] = {
 
 void make_splash_pixmaps(GtkWidget *window)
 {
-
-printf("Calling splash_pixmaps");
 GtkStyle *style;
 
 style=gtk_widget_get_style(window);
 
 GLOBALS->wave_splash_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->wave_splash_mask,
         &style->bg[GTK_STATE_NORMAL], (gchar **)wave_splash_xpm);
-
 }
 
 
@@ -814,6 +811,9 @@ void splash_sync(off_t current, off_t total)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/15 04:08:34  kermin
+ * fixed from/to box issue
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

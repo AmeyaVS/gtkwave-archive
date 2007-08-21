@@ -722,6 +722,10 @@ NULL, //void (*cleanup_treesearch_gtk1_c)();
 /*
  * treesearch_gtk2.c
  */
+NULL,//gtk2_tree_frame
+NULL,//filter_entry
+NULL,//any_tree_node
+NULL,//open_tree_nodes
 0,//autoname_bundles 453
 NULL,//window1_treesearch_gtk2_c_3 454
 NULL,//entry_a_treesearch_gtk2_c_2 455
@@ -990,6 +994,12 @@ NULL,//gc_dkblue 656
 1,//do_zoom_center 660
 0,//do_initial_zoom_fit 661
 };
+
+
+/*
+ * prototypes (because of struct Global header recursion issues
+ */
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size);
 
 
 /*

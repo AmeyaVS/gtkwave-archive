@@ -28,7 +28,6 @@
 
 
 
-
 /* SIG_ROOT is the branch currently selected.
    Signals of SIG_ROOT are displayed in the signals window.  */
 
@@ -199,6 +198,146 @@ fill_sig_store (void)
 		}
 	}
 }
+
+
+/*
+ * tree open/close handling
+ */
+void force_open_tree_node(char *name)
+{
+GtkCTree *ctree = GLOBALS->ctree_main;
+
+if(ctree)
+	{
+	int namlen = strlen(name);
+	char *namecache = wave_alloca(namlen+1);
+	char *name_end = name + namlen - 1;
+	char *zap = name;
+	GtkCTreeNode *node = GLOBALS->any_tree_node;
+	GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
+
+	strcpy(namecache, name);
+
+	while(gctr->parent)
+		{
+		node = gctr->parent;
+		gctr = GTK_CTREE_ROW(node);
+		} 
+
+	for(;;)
+		{
+		struct tree *t = gctr->row.data;
+
+		while(*zap)
+			{
+			if(*zap != GLOBALS->hier_delimeter)
+				{
+				zap++;
+				}
+				else
+				{
+				*zap = 0;
+				break;
+				}
+			}
+
+		if(!strcmp(t->name, name))
+			{
+			if(zap == name_end)
+				{
+				gtk_ctree_expand(ctree, node);
+				/* printf("[treeopennode] '%s' ok\n", name); */
+				GLOBALS->open_tree_nodes = xl_insert(namecache, GLOBALS->open_tree_nodes, NULL);
+				return;
+				}
+				else
+				{
+				node = gctr->children;
+				gctr = GTK_CTREE_ROW(node);
+				if(!gctr) break;
+
+				name = ++zap;
+				continue;
+				}
+			}
+
+		node = gctr->sibling;
+		if(!node) break;
+		gctr = GTK_CTREE_ROW(node);
+		}
+
+	/* printf("[treeopennode] '%s' failed\n", name); */
+	}
+}
+
+void dump_open_tree_nodes(FILE *wave, xl_Tree *t)
+{
+if(t->left)
+	{
+	dump_open_tree_nodes(wave, t->left);
+	}
+
+fprintf(wave, "[treeopen] %s\n", t->item);
+
+if(t->right)
+	{
+	dump_open_tree_nodes(wave, t->right);
+	}
+}
+
+static void generic_tree_expand_collapse_callback(int is_expand, GtkCTreeNode *node) 
+{
+GtkCTreeRow **gctr;
+int depth, i;
+int len = 1;
+char *tstring;
+char hier_suffix[2] = {GLOBALS->hier_delimeter,0};
+
+if(!node) return;
+
+depth = GTK_CTREE_ROW(node)->level;
+gctr = wave_alloca(depth * sizeof(GtkCTreeRow *));
+
+for(i=depth-1;i>=0;i--)
+	{
+	struct tree *t;
+	gctr[i] = GTK_CTREE_ROW(node);
+	t = gctr[i]->row.data;
+	len += (strlen(t->name) + 1);
+	node = gctr[i]->parent;
+	}
+
+tstring = wave_alloca(len);
+memset(tstring, 0, len);
+
+for(i=0;i<depth;i++)
+	{
+	struct tree *t = gctr[i]->row.data;
+	strcat(tstring, t->name);
+	strcat(tstring, hier_suffix);
+	}
+
+if(is_expand)
+	{
+	GLOBALS->open_tree_nodes = xl_insert(tstring, GLOBALS->open_tree_nodes, NULL);
+	}
+	else
+	{
+	GLOBALS->open_tree_nodes = xl_delete(tstring, GLOBALS->open_tree_nodes);
+	}
+
+}
+
+static void tree_expand_callback(GtkCTree *ctree, GtkCTreeNode *node, gpointer user_data)
+{
+generic_tree_expand_collapse_callback(1, node);
+}
+ 
+static void tree_collapse_callback(GtkCTree *ctree, GtkCTreeNode *node, gpointer user_data) 
+{
+generic_tree_expand_collapse_callback(0, node);
+}
+
 
 
 /* Callbacks for tree area when a row is selected/deselected.  */
@@ -726,6 +865,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->is_active_treesearch_gtk2_c_6=0;
   gtk_widget_destroy(GLOBALS->window_treesearch_gtk2_c_12);
   GLOBALS->window_treesearch_gtk2_c_12 = NULL;
+  GLOBALS->gtk2_tree_frame = NULL;
   free_afl();
 }
 
@@ -739,9 +879,9 @@ void treebox(char *title, GtkSignalFunc func)
     GtkWidget *scrolled_win, *sig_scroll_win;
     GtkWidget *hbox;
     GtkWidget *button1, *button2, *button3, *button3a, *button4, *button5;
-    GtkWidget *frame2, *frameh, *sig_frame;
+    GtkWidget *frameh, *sig_frame;
     GtkWidget *vbox, *vpan, *filter_hbox;
-    GtkWidget *filter_label, *filter_entry;
+    GtkWidget *filter_label;
     GtkWidget *sig_view;
     GtkTooltips *tooltips;
     GtkCList  *clist;
@@ -782,11 +922,11 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_box_pack_start (GTK_BOX (vbox), vpan, TRUE, TRUE, 1);
 
     /* Hierarchy.  */
-    frame2 = gtk_frame_new (NULL);
-    gtk_container_border_width (GTK_CONTAINER (frame2), 3);
-    gtk_widget_show(frame2);
+    GLOBALS->gtk2_tree_frame = gtk_frame_new (NULL);
+    gtk_container_border_width (GTK_CONTAINER (GLOBALS->gtk2_tree_frame), 3);
+    gtk_widget_show(GLOBALS->gtk2_tree_frame);
 
-    gtk_paned_pack1 (GTK_PANED (vpan), frame2, TRUE, FALSE);
+    gtk_paned_pack1 (GTK_PANED (vpan), GLOBALS->gtk2_tree_frame, TRUE, FALSE);
 
     GLOBALS->tree_treesearch_gtk2_c_1=gtk_ctree_new(1,0);
     GLOBALS->ctree_main=GTK_CTREE(GLOBALS->tree_treesearch_gtk2_c_1);
@@ -794,11 +934,18 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_widget_show(GLOBALS->tree_treesearch_gtk2_c_1);
 
     clist=GTK_CLIST(GLOBALS->tree_treesearch_gtk2_c_1);
+
     gtk_signal_connect_object (GTK_OBJECT (clist), "select_row",
                                GTK_SIGNAL_FUNC(select_row_callback),
                                NULL);
     gtk_signal_connect_object (GTK_OBJECT (clist), "unselect_row",
                                GTK_SIGNAL_FUNC(unselect_row_callback),
+                               NULL);
+    gtk_signal_connect_object (GTK_OBJECT (clist), "tree_expand",
+                               GTK_SIGNAL_FUNC(tree_expand_callback),
+                               NULL);
+    gtk_signal_connect_object (GTK_OBJECT (clist), "tree_collapse",
+                               GTK_SIGNAL_FUNC(tree_collapse_callback),
                                NULL);
 
     gtk_clist_freeze(clist);
@@ -814,7 +961,7 @@ void treebox(char *title, GtkSignalFunc func)
                                       GTK_POLICY_AUTOMATIC);
     gtk_widget_show(scrolled_win);
     gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (GLOBALS->tree_treesearch_gtk2_c_1));
-    gtk_container_add (GTK_CONTAINER (frame2), scrolled_win);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->gtk2_tree_frame), scrolled_win);
 
 
     /* Signal names.  */
@@ -872,19 +1019,23 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_widget_show (filter_label);
     gtk_box_pack_start (GTK_BOX (filter_hbox), filter_label, FALSE, FALSE, 1);
 
-    filter_entry = gtk_entry_new ();
-    if(GLOBALS->filter_str_treesearch_gtk2_c_1) { gtk_entry_set_text(GTK_ENTRY(filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1); }
-    gtk_widget_show (filter_entry);
+    GLOBALS->filter_entry = gtk_entry_new ();
+    if(GLOBALS->filter_str_treesearch_gtk2_c_1) 
+	{ 
+	gtk_entry_set_text(GTK_ENTRY(GLOBALS->filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1); 
+	}
 
-    gtk_signal_connect(GTK_OBJECT (filter_entry), "key_press_event",
+    gtk_widget_show (GLOBALS->filter_entry);
+
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->filter_entry), "key_press_event",
                        (GtkSignalFunc) filter_edit_cb, NULL);
-    gtk_tooltips_set_tip_2(tooltips, filter_entry,
+    gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
 			   "Add a POSIX filter. "
 			   "'.*' matches any number of characters,"
 			   " '.' matches any character.  Hit Return to apply",
 			   NULL);
 
-    gtk_box_pack_start (GTK_BOX (filter_hbox), filter_entry, FALSE, FALSE, 1);
+    gtk_box_pack_start (GTK_BOX (filter_hbox), GLOBALS->filter_entry, FALSE, FALSE, 1);
 
     gtk_box_pack_start (GTK_BOX (vbox), filter_hbox, FALSE, FALSE, 1);
 
@@ -978,9 +1129,9 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     GtkWidget *scrolled_win, *sig_scroll_win;
     GtkWidget *hbox;
     GtkWidget *button1, *button2, *button3, *button3a, *button4;
-    GtkWidget *frame2, *frameh, *sig_frame;
+    GtkWidget *frameh, *sig_frame;
     GtkWidget *vbox, *vpan, *filter_hbox;
-    GtkWidget *filter_label, *filter_entry;
+    GtkWidget *filter_label;
     GtkWidget *sig_view;
     GtkTooltips *tooltips;
     GtkCList  *clist;
@@ -999,11 +1150,11 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     gtk_box_pack_start (GTK_BOX (vbox), vpan, TRUE, TRUE, 1);
 
     /* Hierarchy.  */
-    frame2 = gtk_frame_new (NULL);
-    gtk_container_border_width (GTK_CONTAINER (frame2), 3);
-    gtk_widget_show(frame2);
+    GLOBALS->gtk2_tree_frame = gtk_frame_new (NULL);
+    gtk_container_border_width (GTK_CONTAINER (GLOBALS->gtk2_tree_frame), 3);
+    gtk_widget_show(GLOBALS->gtk2_tree_frame);
 
-    gtk_paned_pack1 (GTK_PANED (vpan), frame2, TRUE, FALSE);
+    gtk_paned_pack1 (GTK_PANED (vpan), GLOBALS->gtk2_tree_frame, TRUE, FALSE);
 
     GLOBALS->tree_treesearch_gtk2_c_1=gtk_ctree_new(1,0);
     GLOBALS->ctree_main=GTK_CTREE(GLOBALS->tree_treesearch_gtk2_c_1);
@@ -1016,6 +1167,12 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
                                NULL);
     gtk_signal_connect_object (GTK_OBJECT (clist), "unselect_row",
                                GTK_SIGNAL_FUNC(unselect_row_callback),
+                               NULL);
+    gtk_signal_connect_object (GTK_OBJECT (clist), "tree_expand",
+                               GTK_SIGNAL_FUNC(tree_expand_callback),
+                               NULL);
+    gtk_signal_connect_object (GTK_OBJECT (clist), "tree_collapse",
+                               GTK_SIGNAL_FUNC(tree_collapse_callback),
                                NULL);
 
     gtk_clist_freeze(clist);
@@ -1031,7 +1188,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
                                       GTK_POLICY_AUTOMATIC);
     gtk_widget_show(scrolled_win);
     gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (GLOBALS->tree_treesearch_gtk2_c_1));
-    gtk_container_add (GTK_CONTAINER (frame2), scrolled_win);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->gtk2_tree_frame), scrolled_win);
 
 
     /* Signal names.  */
@@ -1089,19 +1246,19 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     gtk_widget_show (filter_label);
     gtk_box_pack_start (GTK_BOX (filter_hbox), filter_label, FALSE, FALSE, 1);
 
-    filter_entry = gtk_entry_new ();
-    if(GLOBALS->filter_str_treesearch_gtk2_c_1) { gtk_entry_set_text(GTK_ENTRY(filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1); }
-    gtk_widget_show (filter_entry);
+    GLOBALS->filter_entry = gtk_entry_new ();
+    if(GLOBALS->filter_str_treesearch_gtk2_c_1) { gtk_entry_set_text(GTK_ENTRY(GLOBALS->filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1); }
+    gtk_widget_show (GLOBALS->filter_entry);
 
-    gtk_signal_connect(GTK_OBJECT (filter_entry), "key_press_event",
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->filter_entry), "key_press_event",
                        (GtkSignalFunc) filter_edit_cb, NULL);
-    gtk_tooltips_set_tip_2(tooltips, filter_entry,
+    gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
 			   "Add a POSIX filter. "
 			   "'.*' matches any number of characters,"
 			   " '.' matches any character.  Hit Return to apply",
 			   NULL);
 
-    gtk_box_pack_start (GTK_BOX (filter_hbox), filter_entry, FALSE, FALSE, 1);
+    gtk_box_pack_start (GTK_BOX (filter_hbox), GLOBALS->filter_entry, FALSE, FALSE, 1);
 
     gtk_box_pack_start (GTK_BOX (vbox), filter_hbox, FALSE, FALSE, 1);
 
@@ -1119,7 +1276,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
     gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",
 			       GTK_SIGNAL_FUNC(ok_callback),
-			       GTK_OBJECT (frame2));
+			       GTK_OBJECT (GLOBALS->gtk2_tree_frame));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signal hierarchy to end of the display on the main window.",NULL);
@@ -1130,7 +1287,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
     gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",
 			       GTK_SIGNAL_FUNC(insert_callback),
-			       GTK_OBJECT (frame2));
+			       GTK_OBJECT (GLOBALS->gtk2_tree_frame));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add selected signal hierarchy after last highlighted signal on the main window.",NULL);
@@ -1142,7 +1299,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
     	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",
 			       GTK_SIGNAL_FUNC(bundle_callback_up),
-			       GTK_OBJECT (frame2));
+			       GTK_OBJECT (GLOBALS->gtk2_tree_frame));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -1158,7 +1315,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
     	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",
 			       GTK_SIGNAL_FUNC(bundle_callback_down),
-			       GTK_OBJECT (frame2));
+			       GTK_OBJECT (GLOBALS->gtk2_tree_frame));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -1175,7 +1332,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
     gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",
 			       GTK_SIGNAL_FUNC(replace_callback),
-			       GTK_OBJECT (frame2));
+			       GTK_OBJECT (GLOBALS->gtk2_tree_frame));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with signals selected above.",NULL);
@@ -1500,6 +1657,10 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.8  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.7  2007/08/07 04:54:59  gtkwave
  * slight modifications to global initialization scheme
  *

@@ -71,7 +71,7 @@ xl_Tree * xl_splay (char *i, xl_Tree * t) {
 }
 
 
-static xl_Tree * xl_insert(char *i, xl_Tree * t, char *trans) {
+xl_Tree * xl_insert(char *i, xl_Tree * t, char *trans) {
 /* Insert i into the tree t, unless it's already there.    */
 /* Return a pointer to the resulting tree.                 */
     xl_Tree * n;
@@ -83,7 +83,7 @@ static xl_Tree * xl_insert(char *i, xl_Tree * t, char *trans) {
 	exit(255);
     }
     n->item = strcpy(malloc_2(strlen(i)+1), i);
-    n->trans = strcpy(malloc_2(strlen(trans)+1), trans);
+    if(trans) n->trans = strcpy(malloc_2(strlen(trans)+1), trans);
 
     if (t == NULL) {
 	n->left = n->right = NULL;
@@ -103,12 +103,34 @@ static xl_Tree * xl_insert(char *i, xl_Tree * t, char *trans) {
 	return n;
     } else { /* We get here if it's already in the tree */
              /* Don't add it again                      */
-	free_2(n->trans);
+	if(n->trans) free_2(n->trans);
 	free_2(n->item);
 	free_2(n);
 	return t;
     }
 }
+
+xl_Tree * xl_delete(char *i, xl_Tree * t) {
+/* Deletes i from the tree if it's there.               */
+/* Return a pointer to the resulting tree.              */
+    xl_Tree * x;
+    if (t==NULL) return NULL;
+    t = xl_splay(i,t);
+    if (strcmp(i, t->item) == 0) {               /* found it */
+        if (t->left == NULL) {
+            x = t->right;
+        } else {
+            x = xl_splay(i, t->left);
+            x->right = t->right;
+        }
+        if(t->trans) free_2(t->trans);
+        free_2(t->item);
+        free_2(t);
+        return x;
+    }
+    return t;                         /* It wasn't there */
+}
+
 
 /************************ splay ************************/
 
@@ -492,6 +514,9 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:49  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
