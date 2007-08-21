@@ -1746,6 +1746,7 @@ menu_reload_waveform(GtkWidget *widget, gpointer data)
   int i;
   gint tree_frame_x = -1, tree_frame_y = -1;
   gdouble tree_vadj_value = 0.0;
+  gdouble tree_hadj_value = 0.0;
 
 if(GLOBALS->helpbox_is_active)
 	{
@@ -1782,8 +1783,10 @@ if(GLOBALS->helpbox_is_active)
 	{
 	GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
 	GtkAdjustment *vadj = gtk_clist_get_vadjustment(cl);
+	GtkAdjustment *hadj = gtk_clist_get_hadjustment(cl);
 
 	tree_vadj_value = vadj->value;
+	tree_hadj_value = hadj->value;
 
 	tree_frame_x = (GLOBALS->gtk2_tree_frame)->allocation.width;
 	tree_frame_y = (GLOBALS->gtk2_tree_frame)->allocation.height;
@@ -2264,9 +2267,10 @@ if(GLOBALS->helpbox_is_active)
  // part 2 of SST (which needs to be done after the tree is expanded from loading the savefile...)
  #if GTK_CHECK_VERSION(2,4,0)
  if(!GLOBALS->hide_sst) {
+   GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
+
    if(tree_vadj_value != 0.0)
 	{
-	GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
 	GtkAdjustment *vadj = gtk_clist_get_vadjustment(cl);
 
 	if((tree_vadj_value >= vadj->lower) && (tree_vadj_value <= vadj->upper))
@@ -2276,6 +2280,20 @@ if(GLOBALS->helpbox_is_active)
 
 		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "changed");
 		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "value_changed"); 
+		}
+	}
+
+   if(tree_hadj_value != 0.0)
+	{
+	GtkAdjustment *hadj = gtk_clist_get_hadjustment(cl);
+
+	if((tree_hadj_value >= hadj->lower) && (tree_hadj_value <= hadj->upper))
+		{ 
+		hadj->value = tree_hadj_value;
+		gtk_clist_set_hadjustment(cl, hadj);
+
+		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "changed");
+		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "value_changed"); 
 		}
 	}
  }
@@ -4835,6 +4853,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.18  2007/08/21 22:35:39  gtkwave
+ * prelim tree state merge
+ *
  * Revision 1.1.1.1.2.17  2007/08/19 23:13:53  kermin
  * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
  *
