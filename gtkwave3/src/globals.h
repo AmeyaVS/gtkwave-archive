@@ -81,14 +81,14 @@ char color_active_in_filter;//from baseconvert.c 9
 /*
  * bsearch.c
  */
-long long shift_timebase;//from bsearch.c 10
-long long shift_timebase_default_for_add;//from bsearch.c 11
-long long max_compare_time_tc_bsearch_c_1;// from bsearch.c 12
-long long *max_compare_pos_tc_bsearch_c_1;// from bsearch.c 13
-long long max_compare_time_bsearch_c_1;// from bsearch.c 14
+TimeType shift_timebase;//from bsearch.c 10
+TimeType shift_timebase_default_for_add;//from bsearch.c 11
+TimeType max_compare_time_tc_bsearch_c_1;// from bsearch.c 12
+TimeType *max_compare_pos_tc_bsearch_c_1;// from bsearch.c 13
+TimeType max_compare_time_bsearch_c_1;// from bsearch.c 14
 struct HistEnt *max_compare_pos_bsearch_c_1;// from bsearch.c 15
 struct HistEnt **max_compare_index;//from bsearch.c 16
-long long vmax_compare_time_bsearch_c_1;// from bsearch.c 17
+TimeType vmax_compare_time_bsearch_c_1;// from bsearch.c 17
 struct VectorEnt *vmax_compare_pos_bsearch_c_1;// from bsearch.c 18
 struct VectorEnt **vmax_compare_index;//from bsearch.c 19
 int maxlen_trunc;//from bsearch.c 20
@@ -99,7 +99,7 @@ char *trunc_asciibase_bsearch_c_1;// from bsearch.c 22
 /* 
  * busy.c
  */
-struct _GdkCursor *busycursor_busy_c_1;// from busy.c 23
+GdkCursor *busycursor_busy_c_1;// from busy.c 23
 int busy_busy_c_1;// from busy.c 24
 
 
@@ -146,20 +146,20 @@ char is_vcd;//from currenttime.c 56
 char partial_vcd;//from currenttime.c 57
 char use_maxtime_display;//from currenttime.c 58
 char use_frequency_delta;//from currenttime.c 59
-struct _GtkWidget *max_or_marker_label_currenttime_c_1;// from currenttime.c 60
-struct _GtkWidget *base_or_curtime_label_currenttime_c_1;// from currenttime.c 61
-long long cached_currenttimeval_currenttime_c_1;// from currenttime.c 62
-long long currenttime;//from currenttime.c 63
-long long max_time;//from currenttime.c 64
-long long min_time;//from currenttime.c 65
+GtkWidget *max_or_marker_label_currenttime_c_1;// from currenttime.c 60
+GtkWidget *base_or_curtime_label_currenttime_c_1;// from currenttime.c 61
+TimeType cached_currenttimeval_currenttime_c_1;// from currenttime.c 62
+TimeType currenttime;//from currenttime.c 63
+TimeType max_time;//from currenttime.c 64
+TimeType min_time;//from currenttime.c 65
 char display_grid;//from currenttime.c 66
-long long time_scale;//from currenttime.c 67
+TimeType time_scale;//from currenttime.c 67
 char time_dimension;//from currenttime.c 68
-struct _GtkWidget *maxtimewid_currenttime_c_1;// from currenttime.c 70
-struct _GtkWidget *curtimewid_currenttime_c_1;// from currenttime.c 71
+GtkWidget *maxtimewid_currenttime_c_1;// from currenttime.c 70
+GtkWidget *curtimewid_currenttime_c_1;// from currenttime.c 71
 char *maxtext_currenttime_c_1;// from currenttime.c 72
 char *curtext_currenttime_c_1;// from currenttime.c 73
-long long time_trunc_val_currenttime_c_1;// from currenttime.c 77
+TimeType time_trunc_val_currenttime_c_1;// from currenttime.c 77
 char use_full_precision;//from currenttime.c 78
 
 
@@ -175,8 +175,8 @@ char disable_tooltips;//from debug.c 80
 /*
  * entry.c
  */
-struct _GtkWidget *window_entry_c_1;// from entry.c 81
-struct _GtkWidget *entry_entry_c_1;// from entry.c 82
+GtkWidget *window_entry_c_1;// from entry.c 81
+GtkWidget *entry_entry_c_1;// from entry.c 82
 char *entrybox_text;//from entry.c 83
 void (*cleanup_entry_c_1)();// from entry.c 84
 
@@ -184,7 +184,7 @@ void (*cleanup_entry_c_1)();// from entry.c 84
 /*
  * fetchbuttons.c
  */
-long long fetchwindow;//from fetchbuttons.c 85
+TimeType fetchwindow;//from fetchbuttons.c 85
 
 
 /*
@@ -196,7 +196,7 @@ int fgetmalloc_len;//from fgetdynamic.c 86
 /*
  * file.c
  */
-struct _GtkWidget *fs_file_c_1;// from file.c 87
+GtkWidget *fs_file_c_1;// from file.c 87
 char **fileselbox_text;//from file.c 88
 char filesel_ok;//from file.c 89
 void (*cleanup_file_c_2)();// from file.c 90
@@ -237,28 +237,28 @@ int warned_ghw_c_1;// from ghw.c 112
  * help.c
  */
 int helpbox_is_active;//from help.c 114
-struct _GtkWidget *text_help_c_1;// from help.c 115
-struct _GtkWidget *vscrollbar_help_c_1;// from help.c 116
+GtkWidget *text_help_c_1;// from help.c 115
+GtkWidget *vscrollbar_help_c_1;// from help.c 116
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-struct _GtkTextIter iter_help_c_1;// from help.c 117
+GtkTextIter iter_help_c_1;// from help.c 117
 #endif
-struct _GtkTextTag *bold_tag_help_c_1;// from help.c 118
-struct _GtkWidget *window_help_c_2;// from help.c 119
+GtkTextTag *bold_tag_help_c_1;// from help.c 118
+GtkWidget *window_help_c_2;// from help.c 119
 
 
 /*
  * hiersearch.c
  */
 char hier_grouping;//from hiersearch.c 120
-struct _GtkWidget *window_hiersearch_c_3;// from hiersearch.c 121
-struct _GtkWidget *entry_main_hiersearch_c_1;// from hiersearch.c 122
-struct _GtkWidget *clist_hiersearch_c_1;// from hiersearch.c 123
+GtkWidget *window_hiersearch_c_3;// from hiersearch.c 121
+GtkWidget *entry_main_hiersearch_c_1;// from hiersearch.c 122
+GtkWidget *clist_hiersearch_c_1;// from hiersearch.c 123
 char bundle_direction_hiersearch_c_1;// from hiersearch.c 124
 void (*cleanup_hiersearch_c_3)();// from hiersearch.c 125
 int num_rows_hiersearch_c_1;// from hiersearch.c 126
 int selected_rows_hiersearch_c_1;// from hiersearch.c 127
-struct _GtkWidget *window1_hiersearch_c_1;// from hiersearch.c 128
-struct _GtkWidget *entry_hiersearch_c_2;// from hiersearch.c 129
+GtkWidget *window1_hiersearch_c_1;// from hiersearch.c 128
+GtkWidget *entry_hiersearch_c_2;// from hiersearch.c 129
 char *entrybox_text_local_hiersearch_c_1;// from hiersearch.c 130
 void (*cleanup_e_hiersearch_c_1)();// from hiersearch.c 131
 struct tree *h_selectedtree_hiersearch_c_1;// from hiersearch.c 132
@@ -271,13 +271,13 @@ int is_active_hiersearch_c_1;// from hiersearch.c 135
  * logfile.c
  */
 char *fontname_logfile;//from logfile.c 137
-struct _GdkFont *font_logfile_c_1;// from logfile.c 138
+GdkFont *font_logfile_c_1;// from logfile.c 138
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-struct _GtkTextIter iter_logfile_c_2;// from logfile.c 139
+GtkTextIter iter_logfile_c_2;// from logfile.c 139
 #endif
-struct _GtkTextTag *bold_tag_logfile_c_2;// from logfile.c 140
-struct _GtkTextTag *mono_tag_logfile_c_1;// from logfile.c 141
-struct _GtkTextTag *size_tag_logfile_c_1;// from logfile.c 142
+GtkTextTag *bold_tag_logfile_c_2;// from logfile.c 140
+GtkTextTag *mono_tag_logfile_c_1;// from logfile.c 141
+GtkTextTag *size_tag_logfile_c_1;// from logfile.c 142
 
 
 /*
@@ -285,9 +285,9 @@ struct _GtkTextTag *size_tag_logfile_c_1;// from logfile.c 142
  */
 unsigned char is_lx2;//from lx2.c 143
 struct lxt2_rd_trace *lx2_lx2_c_1;// from lx2.c 144
-long long first_cycle_lx2_c_1;// from lx2.c 145
-long long last_cycle_lx2_c_1;// from lx2.c 146
-long long total_cycles_lx2_c_1;// from lx2.c 147
+TimeType first_cycle_lx2_c_1;// from lx2.c 145
+TimeType last_cycle_lx2_c_1;// from lx2.c 146
+TimeType total_cycles_lx2_c_1;// from lx2.c 147
 struct lx2_entry *lx2_table_lx2_c_1;// from lx2.c 148
 struct fac *mvlfacs_lx2_c_1;// from lx2.c 149
 int busycnt_lx2_c_1;// from lx2.c 150
@@ -309,14 +309,14 @@ void *mm_lxt_c_1;// from lxt.c 154
 void *mmcache_lxt_c_1;// from lxt.c 155
 int version_lxt_c_1;// from lxt.c 156
 struct fac *mvlfacs_lxt_c_2;// from lxt.c 157
-long long first_cycle_lxt_c_2;// from lxt.c 158
-long long last_cycle_lxt_c_2;// from lxt.c 159
-long long total_cycles_lxt_c_2;// from lxt.c 160
+TimeType first_cycle_lxt_c_2;// from lxt.c 158
+TimeType last_cycle_lxt_c_2;// from lxt.c 159
+TimeType total_cycles_lxt_c_2;// from lxt.c 160
 int maxchange_lxt_c_1;// from lxt.c 161
 int maxindex_lxt_c_1;// from lxt.c 162
 int f_len_lxt_c_1;// from lxt.c 163
 int *positional_information_lxt_c_1;// from lxt.c 164
-long long *time_information;//from lxt.c 165
+TimeType *time_information;//from lxt.c 165
 int change_field_offset_lxt_c_1;// from lxt.c 166
 int facname_offset_lxt_c_1;// from lxt.c 167
 int facgeometry_offset_lxt_c_1;// from lxt.c 168
@@ -372,12 +372,12 @@ struct gtkwave_dual_ipc_t *dual_ctx;//from main.c 207
 int dual_id;//from main.c 208
 int dual_attach_id_main_c_1;// from main.c 209
 int dual_race_lock;//from main.c 210
-struct _GtkWidget *mainwindow;//from main.c 211
-struct _GtkWidget *signalwindow;//from main.c 212
-struct _GtkWidget *wavewindow;//from main.c 213
-struct _GtkWidget *toppanedwindow;//from main.c 214
-struct _GtkWidget *sstpane;//from main.c 215
-struct _GtkWidget *expanderwindow;//from main.c 216
+GtkWidget *mainwindow;//from main.c 211
+GtkWidget *signalwindow;//from main.c 212
+GtkWidget *wavewindow;//from main.c 213
+GtkWidget *toppanedwindow;//from main.c 214
+GtkWidget *sstpane;//from main.c 215
+GtkWidget *expanderwindow;//from main.c 216
 char disable_window_manager;//from main.c 217
 char paned_pack_semantics;//from main.c 218
 char zoom_was_explicitly_set;//from main.c 219
@@ -410,11 +410,11 @@ char *ftext_main_main_c_1;// from main.c 243
 /*
  * markerbox.c
  */
-struct _GtkWidget *window_markerbox_c_4;// from markerbox.c 248
-struct _GtkWidget *entries_markerbox_c_1[26];// from markerbox.c 249
+GtkWidget *window_markerbox_c_4;// from markerbox.c 248
+GtkWidget *entries_markerbox_c_1[26];// from markerbox.c 249
 void (*cleanup_markerbox_c_4)();// from markerbox.c 250
 int dirty_markerbox_c_1;// from markerbox.c 251
-long long shadow_markers_markerbox_c_1[26];// from markerbox.c 252
+TimeType shadow_markers_markerbox_c_1[26];// from markerbox.c 252
 
 
 /*
@@ -424,7 +424,7 @@ char enable_fast_exit;//from menu.c 253
 FILE *script_handle;//from menu.c 254
 char ignore_savefile_pos;//from menu.c 255
 char ignore_savefile_size;//from menu.c 256
-struct _GtkItemFactory *item_factory_menu_c_1;// from menu.c 258
+GtkItemFactory *item_factory_menu_c_1;// from menu.c 258
 char *regexp_string_menu_c_1;// from menu.c 259
 struct TraceEnt *trace_to_alias_menu_c_1;// from menu.c 260
 struct TraceEnt *showchangeall_menu_c_1;// from menu.c 261
@@ -443,11 +443,11 @@ char *buf_menu_c_1;// from menu.c 270
  * mouseover.c
  */
 char disable_mouseover;//from mouseover.c 271
-struct _GtkWidget *mouseover_mouseover_c_1;// from mouseover.c 272
-struct _GtkWidget *mo_area_mouseover_c_1;// from mouseover.c 273
-struct _GdkDrawable *mo_pixmap_mouseover_c_1;// from mouseover.c 274
-struct _GdkGC *mo_dk_gray_mouseover_c_1;// from mouseover.c 275
-struct _GdkGC *mo_black_mouseover_c_1;// from mouseover.c 276
+GtkWidget *mouseover_mouseover_c_1;// from mouseover.c 272
+GtkWidget *mo_area_mouseover_c_1;// from mouseover.c 273
+GdkDrawable *mo_pixmap_mouseover_c_1;// from mouseover.c 274
+GdkGC *mo_dk_gray_mouseover_c_1;// from mouseover.c 275
+GdkGC *mo_black_mouseover_c_1;// from mouseover.c 276
 int mo_width_mouseover_c_1;// from mouseover.c 277
 int mo_height_mouseover_c_1;// from mouseover.c 278
 
@@ -461,30 +461,30 @@ double page_divisor;//from pagebuttons.c 279
 /*
  * pixmaps.c
  */ 
-struct _GdkDrawable *larrow_pixmap;//from pixmaps.c 281
-struct _GdkDrawable *larrow_mask;//from pixmaps.c 282
-struct _GdkDrawable *rarrow_pixmap;//from pixmaps.c 284
-struct _GdkDrawable *rarrow_mask;//from pixmaps.c 285
-struct _GdkDrawable *zoomin_pixmap;//from pixmaps.c 287
-struct _GdkDrawable *zoomin_mask;//from pixmaps.c 288
-struct _GdkDrawable *zoomout_pixmap;//from pixmaps.c 290
-struct _GdkDrawable *zoomout_mask;//from pixmaps.c 291
-struct _GdkDrawable *zoomfit_pixmap;//from pixmaps.c 293
-struct _GdkDrawable *zoomfit_mask;//from pixmaps.c 294
-struct _GdkDrawable *zoomundo_pixmap;//from pixmaps.c 296
-struct _GdkDrawable *zoomundo_mask;//from pixmaps.c 297
-struct _GdkDrawable *zoom_larrow_pixmap;//from pixmaps.c 299
-struct _GdkDrawable *zoom_larrow_mask;//from pixmaps.c 300
-struct _GdkDrawable *zoom_rarrow_pixmap;//from pixmaps.c 302
-struct _GdkDrawable *zoom_rarrow_mask;//from pixmaps.c 303
-struct _GdkDrawable *prev_page_pixmap;//from pixmaps.c 305
-struct _GdkDrawable *prev_page_mask;//from pixmaps.c 306
-struct _GdkDrawable *next_page_pixmap;//from pixmaps.c 308
-struct _GdkDrawable *next_page_mask;//from pixmaps.c 309
-struct _GdkDrawable *wave_info_pixmap;//from pixmaps.c 311
-struct _GdkDrawable *wave_info_mask;//from pixmaps.c 312
-struct _GdkDrawable *wave_alert_pixmap;//from pixmaps.c 314
-struct _GdkDrawable *wave_alert_mask;//from pixmaps.c 315
+GdkDrawable *larrow_pixmap;//from pixmaps.c 281
+GdkDrawable *larrow_mask;//from pixmaps.c 282
+GdkDrawable *rarrow_pixmap;//from pixmaps.c 284
+GdkDrawable *rarrow_mask;//from pixmaps.c 285
+GdkDrawable *zoomin_pixmap;//from pixmaps.c 287
+GdkDrawable *zoomin_mask;//from pixmaps.c 288
+GdkDrawable *zoomout_pixmap;//from pixmaps.c 290
+GdkDrawable *zoomout_mask;//from pixmaps.c 291
+GdkDrawable *zoomfit_pixmap;//from pixmaps.c 293
+GdkDrawable *zoomfit_mask;//from pixmaps.c 294
+GdkDrawable *zoomundo_pixmap;//from pixmaps.c 296
+GdkDrawable *zoomundo_mask;//from pixmaps.c 297
+GdkDrawable *zoom_larrow_pixmap;//from pixmaps.c 299
+GdkDrawable *zoom_larrow_mask;//from pixmaps.c 300
+GdkDrawable *zoom_rarrow_pixmap;//from pixmaps.c 302
+GdkDrawable *zoom_rarrow_mask;//from pixmaps.c 303
+GdkDrawable *prev_page_pixmap;//from pixmaps.c 305
+GdkDrawable *prev_page_mask;//from pixmaps.c 306
+GdkDrawable *next_page_pixmap;//from pixmaps.c 308
+GdkDrawable *next_page_mask;//from pixmaps.c 309
+GdkDrawable *wave_info_pixmap;//from pixmaps.c 311
+GdkDrawable *wave_info_mask;//from pixmaps.c 312
+GdkDrawable *wave_alert_pixmap;//from pixmaps.c 314
+GdkDrawable *wave_alert_mask;//from pixmaps.c 315
 
 
 /* 
@@ -510,8 +510,8 @@ char **procsel_filter;//from ptranslate.c 329
 struct pipe_ctx **proc_filter;//from ptranslate.c 330
 int is_active_ptranslate_c_2;// from ptranslate.c 331
 char *fcurr_ptranslate_c_1;// from ptranslate.c 332
-struct _GtkWidget *window_ptranslate_c_5;// from ptranslate.c 333
-struct _GtkWidget *clist_ptranslate_c_2;// from ptranslate.c 334
+GtkWidget *window_ptranslate_c_5;// from ptranslate.c 333
+GtkWidget *clist_ptranslate_c_2;// from ptranslate.c 334
 
 
 /*
@@ -532,7 +532,7 @@ int *regex_ok_regex_c_1;// from regex.c 340
  * renderopt.c
  */
 char is_active_renderopt_c_3;// from renderopt.c 341
-struct _GtkWidget *window_renderopt_c_6;// from renderopt.c 342
+GtkWidget *window_renderopt_c_6;// from renderopt.c 342
 char *filesel_print_ps_renderopt_c_1;// from renderopt.c 343
 char *filesel_print_mif_renderopt_c_1;// from renderopt.c 344
 char target_mutex_renderopt_c_1[2];// from renderopt.c 346
@@ -544,11 +544,12 @@ int page_size_type_renderopt_c_1;// from renderopt.c 351
 /*
  * search.c
  */
-struct _GtkWidget *window1_search_c_2;// from search.c 359
-struct _GtkWidget *entry_a_search_c_1;// from search.c 360
+GtkWidget *menuitem_search[5];// from search.c
+GtkWidget *window1_search_c_2;// from search.c 359
+GtkWidget *entry_a_search_c_1;// from search.c 360
 char *entrybox_text_local_search_c_2;// from search.c 361
 void (*cleanup_e_search_c_2)();// from search.c 362
-struct _SearchProgressData *pdata;//from search.c 363
+SearchProgressData *pdata;//from search.c 363
 int is_active_search_c_4;// from search.c 364
 char is_insert_running_search_c_1;// from search.c 365
 char is_replace_running_search_c_1;// from search.c 366
@@ -556,9 +557,9 @@ char is_append_running_search_c_1;// from search.c 367
 char is_searching_running_search_c_1;// from search.c 368
 char regex_mutex_search_c_1[5];// from search.c 371
 int regex_which_search_c_1;// from search.c 372
-struct _GtkWidget *window_search_c_7;// from search.c 373
-struct _GtkWidget *entry_search_c_3;// from search.c 374
-struct _GtkWidget *clist_search_c_3;// from search.c 375
+GtkWidget *window_search_c_7;// from search.c 373
+GtkWidget *entry_search_c_3;// from search.c 374
+GtkWidget *clist_search_c_3;// from search.c 375
 char *searchbox_text_search_c_1;// from search.c 377
 char bundle_direction_search_c_2;// from search.c 378
 void (*cleanup_search_c_5)();// from search.c 379
@@ -569,17 +570,17 @@ int selected_rows_search_c_2;// from search.c 381
 /*
  * showchange.c
  */
-struct _GtkWidget *button1_showchange_c_1;// from showchange.c 382
-struct _GtkWidget *button2_showchange_c_1;// from showchange.c 383
-struct _GtkWidget *button3_showchange_c_1;// from showchange.c 384
-struct _GtkWidget *button4_showchange_c_1;// from showchange.c 385
-struct _GtkWidget *button5_showchange_c_1;// from showchange.c 386
-struct _GtkWidget *button6_showchange_c_1;// from showchange.c 387
-struct _GtkWidget *toggle1_showchange_c_1;// from showchange.c 388
-struct _GtkWidget *toggle2_showchange_c_1;// from showchange.c 389
-struct _GtkWidget *toggle3_showchange_c_1;// from showchange.c 390
-struct _GtkWidget *toggle4_showchange_c_1;// from showchange.c 391
-struct _GtkWidget *window_showchange_c_8;// from showchange.c 392
+GtkWidget *button1_showchange_c_1;// from showchange.c 382
+GtkWidget *button2_showchange_c_1;// from showchange.c 383
+GtkWidget *button3_showchange_c_1;// from showchange.c 384
+GtkWidget *button4_showchange_c_1;// from showchange.c 385
+GtkWidget *button5_showchange_c_1;// from showchange.c 386
+GtkWidget *button6_showchange_c_1;// from showchange.c 387
+GtkWidget *toggle1_showchange_c_1;// from showchange.c 388
+GtkWidget *toggle2_showchange_c_1;// from showchange.c 389
+GtkWidget *toggle3_showchange_c_1;// from showchange.c 390
+GtkWidget *toggle4_showchange_c_1;// from showchange.c 391
+GtkWidget *window_showchange_c_8;// from showchange.c 392
 void (*cleanup_showchange_c_6)();// from showchange.c 393
 struct TraceEnt *tcache_showchange_c_1;// from showchange.c 394
 unsigned int flags_showchange_c_1;// from showchange.c 395
@@ -588,9 +589,9 @@ unsigned int flags_showchange_c_1;// from showchange.c 395
 /*
  * signalwindow.c
  */
-struct _GtkWidget *signalarea;//from signalwindow.c 396
-struct _GdkFont *signalfont;//from signalwindow.c 397
-struct _GdkDrawable *signalpixmap;//from signalwindow.c 398
+GtkWidget *signalarea;//from signalwindow.c 396
+GdkFont *signalfont;//from signalwindow.c 397
+GdkDrawable *signalpixmap;//from signalwindow.c 398
 int max_signal_name_pixel_width;//from signalwindow.c 399
 int signal_pixmap_width;//from signalwindow.c 400
 int signal_fill_width;//from signalwindow.c 401
@@ -598,8 +599,8 @@ int old_signal_fill_width;//from signalwindow.c 402
 int old_signal_fill_height;//from signalwindow.c 403
 int fontheight;//from signalwindow.c 404
 char dnd_state;//from signalwindow.c 405
-struct _GtkWidget *hscroll_signalwindow_c_1;// from signalwindow.c 406
-struct _GtkObject *signal_hslider;//from signalwindow.c 407
+GtkWidget *hscroll_signalwindow_c_1;// from signalwindow.c 406
+GtkObject *signal_hslider;//from signalwindow.c 407
 unsigned int cachedhiflag_signalwindow_c_1;// from signalwindow.c 408
 int cachedwhich_signalwindow_c_1;// from signalwindow.c 409
 struct TraceEnt *cachedtrace;//from signalwindow.c 410
@@ -610,19 +611,19 @@ int trtarget_signalwindow_c_1;// from signalwindow.c 412
 /*
  * simplereq.c
  */
-struct _GtkWidget *window_simplereq_c_9;// from simplereq.c 413
-void (*cleanup)(struct _GtkWidget *, void *);//from simplereq.c 414
+GtkWidget *window_simplereq_c_9;// from simplereq.c 413
+void (*cleanup)(GtkWidget *, void *);//from simplereq.c 414
 
 
 /*
  * splash.c
  */
 int splash_disable;//from splash.c 415
-struct _GdkDrawable *wave_splash_pixmap;//from splash.c 417
-struct _GdkDrawable *wave_splash_mask;//from splash.c 418
-struct _GtkWidget *splash_splash_c_1;// from splash.c 419
-struct _GtkWidget *darea_splash_c_1;// from splash.c 420
-struct _GTimer *gt_splash_c_1;// from splash.c 421
+GdkDrawable *wave_splash_pixmap;//from splash.c 417
+GdkDrawable *wave_splash_mask;//from splash.c 418
+GtkWidget *splash_splash_c_1;// from splash.c 419
+GtkWidget *darea_splash_c_1;// from splash.c 420
+GTimer *gt_splash_c_1;// from splash.c 421
 int timeout_tag;//from splash.c 422
 int load_complete_splash_c_1;// from splash.c 423
 int cnt_splash_c_1;// from splash.c 424
@@ -632,24 +633,24 @@ int prev_bar_x_splash_c_1;// from splash.c 425
 /*
  * status.c
  */
-struct _GtkWidget *text_status_c_2;// from status.c 426
-struct _GtkWidget *vscrollbar_status_c_2;// from status.c 427
+GtkWidget *text_status_c_2;// from status.c 426
+GtkWidget *vscrollbar_status_c_2;// from status.c 427
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-struct _GtkTextIter iter_status_c_3;// from status.c 428
+GtkTextIter iter_status_c_3;// from status.c 428
 #endif
-struct _GtkTextTag *bold_tag_status_c_3;// from status.c 429
+GtkTextTag *bold_tag_status_c_3;// from status.c 429
 
 
 /*
  * strace.c
  */
-long long *timearray;//from strace.c 430
+TimeType *timearray;//from strace.c 430
 int timearray_size;//from strace.c 431
-struct _GtkWidget *ptr_mark_count_label_strace_c_1;// from strace.c 432
+GtkWidget *ptr_mark_count_label_strace_c_1;// from strace.c 432
 struct strace *straces;//from strace.c 433
 struct strace *shadow_straces;//from strace.c 434
 struct strace_defer_free *strace_defer_free_head;//from strace.c 435
-struct _GtkWidget *window_strace_c_10;// from strace.c 436
+GtkWidget *window_strace_c_10;// from strace.c 436
 void (*cleanup_strace_c_7)();// from strace.c 437
 char logical_mutex[6];//from strace.c 440
 char shadow_logical_mutex[6];//from strace.c 441
@@ -681,8 +682,8 @@ int hashcache;//from symbol.c 461
 /*
  * timeentry.c
  */
-struct _GtkWidget *from_entry;//from timeentry.c 462
-struct _GtkWidget *to_entry;//from timeentry.c 463
+GtkWidget *from_entry;//from timeentry.c 462
+GtkWidget *to_entry;//from timeentry.c 463
 
 
 /*
@@ -695,8 +696,8 @@ char **filesel_filter;//from translate.c 467
 struct xl_tree_node **xl_file_filter;//from translate.c 468
 int is_active_translate_c_5;// from translate.c 469
 char *fcurr_translate_c_2;// from translate.c 470
-struct _GtkWidget *window_translate_c_11;// from translate.c 471
-struct _GtkWidget *clist_translate_c_4;// from translate.c 472
+GtkWidget *window_translate_c_11;// from translate.c 471
+GtkWidget *clist_translate_c_4;// from translate.c 472
 
 
 /*
@@ -717,14 +718,14 @@ int facs2_pos_tree_c_1;// from tree.c 482
 /*
  * treesearch_gtk1.c
  */
-struct _GtkWidget *window1_treesearch_gtk1_c;  // manual adds by ajb...
-struct _GtkWidget *entry_a_treesearch_gtk1_c;  
+GtkWidget *window1_treesearch_gtk1_c;  // manual adds by ajb...
+GtkWidget *entry_a_treesearch_gtk1_c;  
 char *entrybox_text_local_treesearch_gtk1_c;  
 void (*cleanup_e_treesearch_gtk1_c)();
 struct tree *selectedtree_treesearch_gtk1_c;  
 int is_active_treesearch_gtk1_c;  
-struct _GtkWidget *window_treesearch_gtk1_c;  
-struct _GtkWidget *tree_treesearch_gtk1_c;
+GtkWidget *window_treesearch_gtk1_c;  
+GtkWidget *tree_treesearch_gtk1_c;
 char bundle_direction_treesearch_gtk1_c;  
 void (*cleanup_treesearch_gtk1_c)(); // ...end of manual adds
 
@@ -739,19 +740,19 @@ GtkWidget *filter_entry;//from treesearch_gtk2.c
 GtkCTreeNode *any_tree_node;//from treesearch_gtk2.c
 struct xl_tree_node *open_tree_nodes;//from treesearch_gtk2.c
 char autoname_bundles;//from treesearch_gtk2.c 483
-struct _GtkWidget *window1_treesearch_gtk2_c_3;// from treesearch_gtk2.c 484
-struct _GtkWidget *entry_a_treesearch_gtk2_c_2;// from treesearch_gtk2.c 485
+GtkWidget *window1_treesearch_gtk2_c_3;// from treesearch_gtk2.c 484
+GtkWidget *entry_a_treesearch_gtk2_c_2;// from treesearch_gtk2.c 485
 char *entrybox_text_local_treesearch_gtk2_c_3;// from treesearch_gtk2.c 486
 void (*cleanup_e_treesearch_gtk2_c_3)();// from treesearch_gtk2.c 487
 struct tree *sig_root_treesearch_gtk2_c_1;// from treesearch_gtk2.c 488
 char *filter_str_treesearch_gtk2_c_1;// from treesearch_gtk2.c 489
-struct _GtkListStore *sig_store_treesearch_gtk2_c_1;// from treesearch_gtk2.c 490
-struct _GtkTreeSelection *sig_selection_treesearch_gtk2_c_1;// from treesearch_gtk2.c 491
+GtkListStore *sig_store_treesearch_gtk2_c_1;// from treesearch_gtk2.c 490
+GtkTreeSelection *sig_selection_treesearch_gtk2_c_1;// from treesearch_gtk2.c 491
 int is_active_treesearch_gtk2_c_6;// from treesearch_gtk2.c 492
-struct _GtkCTree *ctree_main;//from treesearch_gtk2.c 493
+GtkCTree *ctree_main;//from treesearch_gtk2.c 493
 struct autocoalesce_free_list *afl_treesearch_gtk2_c_1;// from treesearch_gtk2.c 494
-struct _GtkWidget *window_treesearch_gtk2_c_12;// from treesearch_gtk2.c 495
-struct _GtkWidget *tree_treesearch_gtk2_c_1;// from treesearch_gtk2.c 496
+GtkWidget *window_treesearch_gtk2_c_12;// from treesearch_gtk2.c 495
+GtkWidget *tree_treesearch_gtk2_c_1;// from treesearch_gtk2.c 496
 char bundle_direction_treesearch_gtk2_c_3;// from treesearch_gtk2.c 497
 void (*cleanup_treesearch_gtk2_c_8)();// from treesearch_gtk2.c 498
 int pre_import_treesearch_gtk2_c_1;// from treesearch_gtk2.c 499
@@ -777,9 +778,9 @@ int vcdbyteno_vcd_c_1;// from vcd.c 513
 int error_count_vcd_c_1;// from vcd.c 514
 int header_over_vcd_c_1;// from vcd.c 515
 int dumping_off_vcd_c_1;// from vcd.c 516
-long long start_time_vcd_c_1;// from vcd.c 517
-long long end_time_vcd_c_1;// from vcd.c 518
-long long current_time_vcd_c_1;// from vcd.c 519
+TimeType start_time_vcd_c_1;// from vcd.c 517
+TimeType end_time_vcd_c_1;// from vcd.c 518
+TimeType current_time_vcd_c_1;// from vcd.c 519
 int num_glitches_vcd_c_2;// from vcd.c 520
 int num_glitch_regions_vcd_c_2;// from vcd.c 521
 char vcd_hier_delimeter[2];//from vcd.c 522
@@ -821,9 +822,9 @@ int vcdbyteno_vcd_partial_c_2;// from vcd_partial.c 555
 int error_count_vcd_partial_c_2;// from vcd_partial.c 556
 int header_over_vcd_partial_c_2;// from vcd_partial.c 557
 int dumping_off_vcd_partial_c_2;// from vcd_partial.c 558
-long long start_time_vcd_partial_c_2;// from vcd_partial.c 559
-long long end_time_vcd_partial_c_2;// from vcd_partial.c 560
-long long current_time_vcd_partial_c_2;// from vcd_partial.c 561
+TimeType start_time_vcd_partial_c_2;// from vcd_partial.c 559
+TimeType end_time_vcd_partial_c_2;// from vcd_partial.c 560
+TimeType current_time_vcd_partial_c_2;// from vcd_partial.c 561
 int num_glitches_vcd_partial_c_3;// from vcd_partial.c 562
 int num_glitch_regions_vcd_partial_c_3;// from vcd_partial.c 563
 struct vcdsymbol *pv_vcd_partial_c_2;// from vcd_partial.c 564
@@ -864,9 +865,9 @@ int vcdbyteno_vcd_recoder_c_3;// from vcd_recoder.c 597
 int error_count_vcd_recoder_c_3;// from vcd_recoder.c 598
 int header_over_vcd_recoder_c_3;// from vcd_recoder.c 599
 int dumping_off_vcd_recoder_c_3;// from vcd_recoder.c 600
-long long start_time_vcd_recoder_c_3;// from vcd_recoder.c 601
-long long end_time_vcd_recoder_c_3;// from vcd_recoder.c 602
-long long current_time_vcd_recoder_c_3;// from vcd_recoder.c 603
+TimeType start_time_vcd_recoder_c_3;// from vcd_recoder.c 601
+TimeType end_time_vcd_recoder_c_3;// from vcd_recoder.c 602
+TimeType current_time_vcd_recoder_c_3;// from vcd_recoder.c 603
 int num_glitches_vcd_recoder_c_4;// from vcd_recoder.c 604
 int num_glitch_regions_vcd_recoder_c_4;// from vcd_recoder.c 605
 struct vcdsymbol *pv_vcd_recoder_c_3;// from vcd_recoder.c 606
@@ -911,9 +912,9 @@ int vlist_compression_depth;//from vlist.c 634
  * vzt.c
  */
 struct vzt_rd_trace *vzt_vzt_c_1;// from vzt.c 635
-long long first_cycle_vzt_c_3;// from vzt.c 636
-long long last_cycle_vzt_c_3;// from vzt.c 637
-long long total_cycles_vzt_c_3;// from vzt.c 638
+TimeType first_cycle_vzt_c_3;// from vzt.c 636
+TimeType last_cycle_vzt_c_3;// from vzt.c 637
+TimeType total_cycles_vzt_c_3;// from vzt.c 638
 struct lx2_entry *vzt_table_vzt_c_1;// from vzt.c 639
 struct fac *mvlfacs_vzt_c_3;// from vzt.c 640
 int busycnt_vzt_c_2;// from vzt.c 641
@@ -942,12 +943,12 @@ char zoom_pow10_snap;//from wavewindow.c 658
 int cursor_snap;//from wavewindow.c 659
 float old_wvalue;//from wavewindow.c 660
 struct blackout_region_t *blackout_regions;//from wavewindow.c 661
-long long zoom;//from wavewindow.c 662
-long long scale;//from wavewindow.c 663
-long long nsperframe;//from wavewindow.c 664
+TimeType zoom;//from wavewindow.c 662
+TimeType scale;//from wavewindow.c 663
+TimeType nsperframe;//from wavewindow.c 664
 double pixelsperframe;//from wavewindow.c 665
 double hashstep;//from wavewindow.c 666
-long long prevtim_wavewindow_c_1;// from wavewindow.c 667
+TimeType prevtim_wavewindow_c_1;// from wavewindow.c 667
 double pxns;//from wavewindow.c 668
 double nspx;//from wavewindow.c 669
 double zoombase;//from wavewindow.c 670
@@ -955,48 +956,48 @@ struct TraceEnt *topmost_trace;//from wavewindow.c 671
 int waveheight;//from wavewindow.c 672
 int wavecrosspiece;//from wavewindow.c 673
 int wavewidth;//from wavewindow.c 674
-struct _GdkFont *wavefont;//from wavewindow.c 675
-struct _GdkFont *wavefont_smaller;//from wavewindow.c 676
-struct _GtkWidget *wavearea;//from wavewindow.c 677
-struct _GtkWidget *vscroll_wavewindow_c_1;// from wavewindow.c 678
-struct _GtkWidget *hscroll_wavewindow_c_2;// from wavewindow.c 679
-struct _GdkDrawable *wavepixmap_wavewindow_c_1;// from wavewindow.c 680
-struct _GtkObject *wave_vslider;//from wavewindow.c 681
-struct _GtkObject *wave_hslider;//from wavewindow.c 682
-long long named_markers[26];//from wavewindow.c 683
+GdkFont *wavefont;//from wavewindow.c 675
+GdkFont *wavefont_smaller;//from wavewindow.c 676
+GtkWidget *wavearea;//from wavewindow.c 677
+GtkWidget *vscroll_wavewindow_c_1;// from wavewindow.c 678
+GtkWidget *hscroll_wavewindow_c_2;// from wavewindow.c 679
+GdkDrawable *wavepixmap_wavewindow_c_1;// from wavewindow.c 680
+GtkObject *wave_vslider;//from wavewindow.c 681
+GtkObject *wave_hslider;//from wavewindow.c 682
+TimeType named_markers[26];//from wavewindow.c 683
 char made_gc_contexts_wavewindow_c_1;// from wavewindow.c 684
-struct _GdkGC *gc_back_wavewindow_c_1;// from wavewindow.c 685
-struct _GdkGC *gc_baseline_wavewindow_c_1;// from wavewindow.c 686
-struct _GdkGC *gc_grid_wavewindow_c_1;// from wavewindow.c 687
-struct _GdkGC *gc_time_wavewindow_c_1;// from wavewindow.c 688
-struct _GdkGC *gc_timeb_wavewindow_c_1;// from wavewindow.c 689
-struct _GdkGC *gc_value_wavewindow_c_1;// from wavewindow.c 690
-struct _GdkGC *gc_low_wavewindow_c_1;// from wavewindow.c 691
-struct _GdkGC *gc_high_wavewindow_c_1;// from wavewindow.c 692
-struct _GdkGC *gc_trans_wavewindow_c_1;// from wavewindow.c 693
-struct _GdkGC *gc_mid_wavewindow_c_1;// from wavewindow.c 694
-struct _GdkGC *gc_xfill_wavewindow_c_1;// f
-struct _GdkGC *gc_x_wavewindow_c_1;// from wavewindow.c 696
-struct _GdkGC *gc_vbox_wavewindow_c_1;// from wavewindow.c 697
-struct _GdkGC *gc_vtrans_wavewindow_c_1;// from wavewindow.c 698
-struct _GdkGC *gc_mark_wavewindow_c_1;// from wavewindow.c 699
-struct _GdkGC *gc_umark_wavewindow_c_1;// from wavewindow.c 700
-struct _GdkGC *gc_0_wavewindow_c_1;// from wavewindow.c 701
-struct _GdkGC *gc_1_wavewindow_c_1;// from wavewindow.c 702
-struct _GdkGC *gc_ufill_wavewindow_c_1;// from wavewindow.c 703
-struct _GdkGC *gc_u_wavewindow_c_1;// from wavewindow.c 704
-struct _GdkGC *gc_wfill_wavewindow_c_1;// from wavewindow.c 705
-struct _GdkGC *gc_w_wavewindow_c_1;// from wavewindow.c 706
-struct _GdkGC *gc_dashfill_wavewindow_c_1;// from wavewindow.c 707
-struct _GdkGC *gc_dash_wavewindow_c_1;// from wavewindow.c 708
+GdkGC *gc_back_wavewindow_c_1;// from wavewindow.c 685
+GdkGC *gc_baseline_wavewindow_c_1;// from wavewindow.c 686
+GdkGC *gc_grid_wavewindow_c_1;// from wavewindow.c 687
+GdkGC *gc_time_wavewindow_c_1;// from wavewindow.c 688
+GdkGC *gc_timeb_wavewindow_c_1;// from wavewindow.c 689
+GdkGC *gc_value_wavewindow_c_1;// from wavewindow.c 690
+GdkGC *gc_low_wavewindow_c_1;// from wavewindow.c 691
+GdkGC *gc_high_wavewindow_c_1;// from wavewindow.c 692
+GdkGC *gc_trans_wavewindow_c_1;// from wavewindow.c 693
+GdkGC *gc_mid_wavewindow_c_1;// from wavewindow.c 694
+GdkGC *gc_xfill_wavewindow_c_1;// f
+GdkGC *gc_x_wavewindow_c_1;// from wavewindow.c 696
+GdkGC *gc_vbox_wavewindow_c_1;// from wavewindow.c 697
+GdkGC *gc_vtrans_wavewindow_c_1;// from wavewindow.c 698
+GdkGC *gc_mark_wavewindow_c_1;// from wavewindow.c 699
+GdkGC *gc_umark_wavewindow_c_1;// from wavewindow.c 700
+GdkGC *gc_0_wavewindow_c_1;// from wavewindow.c 701
+GdkGC *gc_1_wavewindow_c_1;// from wavewindow.c 702
+GdkGC *gc_ufill_wavewindow_c_1;// from wavewindow.c 703
+GdkGC *gc_u_wavewindow_c_1;// from wavewindow.c 704
+GdkGC *gc_wfill_wavewindow_c_1;// from wavewindow.c 705
+GdkGC *gc_w_wavewindow_c_1;// from wavewindow.c 706
+GdkGC *gc_dashfill_wavewindow_c_1;// from wavewindow.c 707
+GdkGC *gc_dash_wavewindow_c_1;// from wavewindow.c 708
 char made_sgc_contexts_wavewindow_c_1;// from wavewindow.c 709
-struct _GdkGC *gc_white;//from wavewindow.c 710
-struct _GdkGC *gc_black;//from wavewindow.c 711
-struct _GdkGC *gc_ltgray;//from wavewindow.c 712
-struct _GdkGC *gc_normal;//from wavewindow.c 713
-struct _GdkGC *gc_mdgray;//from wavewindow.c 714
-struct _GdkGC *gc_dkgray;//from wavewindow.c 715
-struct _GdkGC *gc_dkblue;//from wavewindow.c 716
+GdkGC *gc_white;//from wavewindow.c 710
+GdkGC *gc_black;//from wavewindow.c 711
+GdkGC *gc_ltgray;//from wavewindow.c 712
+GdkGC *gc_normal;//from wavewindow.c 713
+GdkGC *gc_mdgray;//from wavewindow.c 714
+GdkGC *gc_dkgray;//from wavewindow.c 715
+GdkGC *gc_dkblue;//from wavewindow.c 716
 char fill_in_smaller_rgb_areas_wavewindow_c_1;// from wavewindow.c 719
 
 

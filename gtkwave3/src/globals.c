@@ -534,6 +534,7 @@ NULL,//filesel_print_mif_renderopt_c_1 326
 /*
  * search.c
  */
+{NULL,NULL,NULL,NULL,NULL},//menuitem_search
 NULL,//window1_search_c_2 340
 NULL,//entry_a_search_c_1 341
 NULL,//entrybox_text_local_search_c_2 342
@@ -707,14 +708,14 @@ NULL,//facs2_tree_c_1 451
 /*
  * treesearch_gtk1.c
  */
-NULL, //struct _GtkWidget *window1_treesearch_gtk1_c;  
-NULL, //struct _GtkWidget *entry_a_treesearch_gtk1_c;  
+NULL, //GtkWidget *window1_treesearch_gtk1_c;  
+NULL, //GtkWidget *entry_a_treesearch_gtk1_c;  
 NULL, //char *entrybox_text_local_treesearch_gtk1_c;  
 NULL, //void (*cleanup_e_treesearch_gtk1_c)();
 NULL, //struct tree *selectedtree_treesearch_gtk1_c;  
 0, //int is_active_treesearch_gtk1_c;  
-NULL, //struct _GtkWidget *window_treesearch_gtk1_c;  
-NULL, //struct _GtkWidget *tree_treesearch_gtk1_c;
+NULL, //GtkWidget *window_treesearch_gtk1_c;  
+NULL, //GtkWidget *tree_treesearch_gtk1_c;
 0, //char bundle_direction_treesearch_gtk1_c;  
 NULL, //void (*cleanup_treesearch_gtk1_c)();
 
