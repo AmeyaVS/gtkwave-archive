@@ -128,7 +128,7 @@ int i;
  
 for(i=0;i<5;i++) GLOBALS->regex_mutex_search_c_1[i]=0;
 
-GLOBALS->regex_which_search_c_1=(int)which;
+GLOBALS->regex_which_search_c_1=(int)((long)which);
 GLOBALS->regex_mutex_search_c_1[GLOBALS->regex_which_search_c_1] = 1; /* mark our choice */
 
   
@@ -917,7 +917,7 @@ void searchbox(char *title, GtkSignalFunc func)
         gtk_widget_show (GLOBALS->menuitem_search[i]);
         gtk_signal_connect(GTK_OBJECT (GLOBALS->menuitem_search[i]), "activate",
                                  GTK_SIGNAL_FUNC(regex_clicked),
-                                 (void *)i);
+                                 (void *)((long)i));
         GLOBALS->regex_mutex_search_c_1[i]=0;
         }
     
@@ -1025,6 +1025,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.9  2007/08/22 22:11:05  gtkwave
+ * make regex search for signals re-entrant
+ *
  * Revision 1.1.1.1.2.8  2007/08/18 21:51:57  gtkwave
  * widget destroys and teardown of file formats which use external loaders
  * and are outside of malloc_2/free_2 control
