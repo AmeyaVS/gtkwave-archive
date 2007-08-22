@@ -15,7 +15,7 @@
 
 #ifdef WAVE_USE_GTK2
 /* XPM */
-static const char const * wave_splash_xpm[] = {
+static const char * wave_splash_xpm[] = {
 "512 384 257 2",
 "  	c None",
 ". 	c #020202",
@@ -811,6 +811,9 @@ void splash_sync(off_t current, off_t total)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.8  2007/08/21 22:35:39  gtkwave
+ * prelim tree state merge
+ *
  * Revision 1.1.1.1.2.7  2007/08/15 04:08:34  kermin
  * fixed from/to box issue
  *
