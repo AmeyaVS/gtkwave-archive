@@ -2005,6 +2005,9 @@ if(GLOBALS->helpbox_is_active)
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
 
  // treesearch_gtk2.c
+ new_globals->treesearch_gtk2_window_vbox = GLOBALS->treesearch_gtk2_window_vbox;
+ new_globals->window_treesearch_gtk2_c_12 = GLOBALS->window_treesearch_gtk2_c_12;
+
  if(GLOBALS->filter_str_treesearch_gtk2_c_1)
 	{
 	new_globals->filter_str_treesearch_gtk2_c_1 = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->filter_str_treesearch_gtk2_c_1) + 1);
@@ -2159,11 +2162,13 @@ if(GLOBALS->helpbox_is_active)
         GLOBALS->window1_treesearch_gtk2_c_3 = NULL;
         }
 
+#if 0
  if(GLOBALS->window_treesearch_gtk2_c_12)
         {
         gtk_widget_destroy(GLOBALS->window_treesearch_gtk2_c_12);
         GLOBALS->window_treesearch_gtk2_c_12 = NULL;
         }
+#endif
 
  // Free the context 
  free_outstanding();
@@ -2247,13 +2252,20 @@ if(GLOBALS->helpbox_is_active)
    GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
    gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
    gtk_widget_show(GLOBALS->expanderwindow);
+ }
+ #endif
+ #if WAVE_USE_GTK2 
+ if(GLOBALS->window_treesearch_gtk2_c_12)
+	{
+   	gtk_container_remove(GTK_CONTAINER(GLOBALS->window_treesearch_gtk2_c_12), GLOBALS->treesearch_gtk2_window_vbox);
+   	treebox(NULL, GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup), GLOBALS->window_treesearch_gtk2_c_12);
+	}
 
    if((GLOBALS->filter_str_treesearch_gtk2_c_1) && (GLOBALS->filter_entry))
 	{
         gtk_entry_set_text(GTK_ENTRY(GLOBALS->filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1);
 	wave_regex_compile(GLOBALS->filter_str_treesearch_gtk2_c_1, WAVE_REGEX_TREE);
 	}
- }
  #endif
 
  // Reload state from file
@@ -2264,8 +2276,8 @@ if(GLOBALS->helpbox_is_active)
 
 
  // part 2 of SST (which needs to be done after the tree is expanded from loading the savefile...)
- #if GTK_CHECK_VERSION(2,4,0)
- if(!GLOBALS->hide_sst) {
+ #if WAVE_USE_GTK2
+ if((!GLOBALS->hide_sst)||(GLOBALS->window_treesearch_gtk2_c_12)) {
    GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
    char *hiername_cache = NULL;	/* some strange race condition side effect in gtk selecting/deselecting blows this out so cache it */
 
@@ -2532,7 +2544,7 @@ if(GLOBALS->helpbox_is_active)
 
 if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
 
-treebox("Signal Search Tree",GTK_SIGNAL_FUNC(menu_treesearch_cleanup));
+treebox("Signal Search Tree",GTK_SIGNAL_FUNC(menu_treesearch_cleanup), NULL);
 }
 /**/
 void 
@@ -4875,6 +4887,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.21  2007/08/21 23:49:27  gtkwave
+ * set_size_request doesn't allow window shrinkage so commented out for now
+ *
  * Revision 1.1.1.1.2.20  2007/08/21 23:29:17  gtkwave
  * merge in tree select state from old ctx
  *

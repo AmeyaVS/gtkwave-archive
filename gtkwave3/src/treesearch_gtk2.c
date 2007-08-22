@@ -995,7 +995,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 /*
  * mainline..
  */
-void treebox(char *title, GtkSignalFunc func)
+void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 {
     GtkWidget *scrolled_win, *sig_scroll_win;
     GtkWidget *hbox;
@@ -1006,6 +1006,13 @@ void treebox(char *title, GtkSignalFunc func)
     GtkWidget *sig_view;
     GtkTooltips *tooltips;
     GtkCList  *clist;
+
+    if(old_window)
+	{
+	GLOBALS->is_active_treesearch_gtk2_c_6=1;
+    	GLOBALS->cleanup_treesearch_gtk2_c_8=func;
+	goto do_tooltips;
+	}
 
     if(GLOBALS->is_active_treesearch_gtk2_c_6) 
 	{
@@ -1033,9 +1040,10 @@ void treebox(char *title, GtkSignalFunc func)
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_treesearch_gtk2_c_12), title);
     gtk_signal_connect(GTK_OBJECT (GLOBALS->window_treesearch_gtk2_c_12), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
+do_tooltips:
     tooltips=gtk_tooltips_new_2();
 
-    vbox = gtk_vbox_new (FALSE, 1);
+    GLOBALS->treesearch_gtk2_window_vbox = vbox = gtk_vbox_new (FALSE, 1);
     gtk_widget_show (vbox);
 
     vpan = gtk_vpaned_new ();
@@ -1778,6 +1786,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.10  2007/08/21 23:29:17  gtkwave
+ * merge in tree select state from old ctx
+ *
  * Revision 1.1.1.1.2.9  2007/08/21 22:35:40  gtkwave
  * prelim tree state merge
  *

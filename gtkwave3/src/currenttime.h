@@ -80,7 +80,7 @@ void status_text(char *str);
 void searchbox(char *title, GtkSignalFunc func);
 void showchange(char *title, Trptr t, GtkSignalFunc func);
 
-void treebox(char *title, GtkSignalFunc func);
+void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
 GtkWidget* treeboxframe(char *title, GtkSignalFunc func);
 void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data);
 void dump_open_tree_nodes(FILE *wave, xl_Tree *t);
@@ -135,6 +135,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.5  2007/08/21 23:29:16  gtkwave
+ * merge in tree select state from old ctx
+ *
  * Revision 1.2.2.4  2007/08/21 22:35:38  gtkwave
  * prelim tree state merge
  *
