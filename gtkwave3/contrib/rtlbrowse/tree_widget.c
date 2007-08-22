@@ -79,7 +79,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 /*
  * mainline..
  */
-void treebox(char *title, GtkSignalFunc func)
+void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 {
     GtkWidget *scrolled_win;
     GtkWidget *hbox;
@@ -174,6 +174,9 @@ void treebox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:38  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *
