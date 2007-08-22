@@ -610,7 +610,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 /*
  * mainline..
  */
-void treebox(char *title, GtkSignalFunc func)
+void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 {
     GtkWidget *scrolled_win;
     GtkWidget *hbox;
@@ -775,6 +775,10 @@ void treebox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.2  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

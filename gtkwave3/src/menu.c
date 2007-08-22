@@ -2148,27 +2148,25 @@ if(GLOBALS->helpbox_is_active)
         GLOBALS->window_translate_c_11 = NULL;
         }
          
+ if(GLOBALS->window_treesearch_gtk1_c)
+	{
+        gtk_widget_destroy(GLOBALS->window_treesearch_gtk1_c);
+        GLOBALS->window_treesearch_gtk1_c = NULL;
+	}    
+     
  if(GLOBALS->window1_treesearch_gtk1_c)
         {
         gtk_grab_remove(GLOBALS->window1_treesearch_gtk1_c);
         gtk_widget_destroy(GLOBALS->window1_treesearch_gtk1_c);
         GLOBALS->window1_treesearch_gtk1_c = NULL;
         }
-         
+
  if(GLOBALS->window1_treesearch_gtk2_c_3)
         {
         gtk_grab_remove(GLOBALS->window1_treesearch_gtk2_c_3);
         gtk_widget_destroy(GLOBALS->window1_treesearch_gtk2_c_3);
         GLOBALS->window1_treesearch_gtk2_c_3 = NULL;
         }
-
-#if 0
- if(GLOBALS->window_treesearch_gtk2_c_12)
-        {
-        gtk_widget_destroy(GLOBALS->window_treesearch_gtk2_c_12);
-        GLOBALS->window_treesearch_gtk2_c_12 = NULL;
-        }
-#endif
 
  // Free the context 
  free_outstanding();
@@ -4887,6 +4885,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.22  2007/08/22 02:06:39  gtkwave
+ * merge in treebox() similar to treeboxframe()
+ *
  * Revision 1.1.1.1.2.21  2007/08/21 23:49:27  gtkwave
  * set_size_request doesn't allow window shrinkage so commented out for now
  *
