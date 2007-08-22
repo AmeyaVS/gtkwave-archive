@@ -125,13 +125,12 @@ static char *regex_name[]={"WRange", "WStrand", "Range", "Strand", "None"};
 static void regex_clicked(GtkWidget *widget, gpointer which)
 {
 int i;
-char *which_char;
  
 for(i=0;i<5;i++) GLOBALS->regex_mutex_search_c_1[i]=0;
-which_char=(char *)which;
-*which_char=1;                  /* mark our choice */
 
-GLOBALS->regex_which_search_c_1=which_char-GLOBALS->regex_mutex_search_c_1;
+GLOBALS->regex_which_search_c_1=(int)which;
+GLOBALS->regex_mutex_search_c_1[GLOBALS->regex_which_search_c_1] = 1; /* mark our choice */
+
   
 DEBUG(printf("picked: %s\n", regex_name[regex_which]));
 }  
@@ -628,7 +627,7 @@ GLOBALS->selected_rows_search_c_2--;
 }
 
 
-static void enter_callback(GtkWidget *widget, GtkWidget *do_warning)
+void search_enter_callback(GtkWidget *widget, GtkWidget *do_warning)
 {
 GtkCList *cl;
 G_CONST_RETURN gchar *entry_text;
@@ -766,7 +765,7 @@ gtk_clist_unselect_all(GTK_CLIST(GLOBALS->clist_search_c_3));
 void searchbox(char *title, GtkSignalFunc func)
 {
     int i;
-    GtkWidget *menu, *menuitem, *optionmenu;
+    GtkWidget *menu, *optionmenu;
     GSList *group;
     GtkWidget *small_hbox;
 
@@ -819,7 +818,7 @@ void searchbox(char *title, GtkSignalFunc func)
     gtk_box_pack_start (GTK_BOX (vbox1), label, TRUE, TRUE, 0);
 
     GLOBALS->entry_search_c_3 = gtk_entry_new_with_max_length (256);
-    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_search_c_3), "activate", GTK_SIGNAL_FUNC(enter_callback),GLOBALS->entry_search_c_3);
+    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_search_c_3), "activate", GTK_SIGNAL_FUNC(search_enter_callback),GLOBALS->entry_search_c_3);
     gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_search_c_3), GLOBALS->searchbox_text_search_c_1);
     gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_search_c_3),0, GTK_ENTRY(GLOBALS->entry_search_c_3)->text_length);
     gtk_widget_show (GLOBALS->entry_search_c_3);
@@ -912,13 +911,13 @@ void searchbox(char *title, GtkSignalFunc func)
     
     for(i=0;i<5;i++)
         {
-        menuitem = gtk_radio_menu_item_new_with_label (group, regex_name[i]);
-        group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
-        gtk_menu_append (GTK_MENU (menu), menuitem);
-        gtk_widget_show (menuitem);
-        gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
+        GLOBALS->menuitem_search[i] = gtk_radio_menu_item_new_with_label (group, regex_name[i]);
+        group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (GLOBALS->menuitem_search[i]));
+        gtk_menu_append (GTK_MENU (menu), GLOBALS->menuitem_search[i]);
+        gtk_widget_show (GLOBALS->menuitem_search[i]);
+        gtk_signal_connect(GTK_OBJECT (GLOBALS->menuitem_search[i]), "activate",
                                  GTK_SIGNAL_FUNC(regex_clicked),
-                                 &GLOBALS->regex_mutex_search_c_1[i]);
+                                 (void *)i);
         GLOBALS->regex_mutex_search_c_1[i]=0;
         }
     
@@ -1020,12 +1019,16 @@ void searchbox(char *title, GtkSignalFunc func)
 
     gtk_widget_show(GLOBALS->window_search_c_7);
 
-    if(strlen(GLOBALS->searchbox_text_search_c_1)) enter_callback(GLOBALS->entry_search_c_3,NULL);
+    if(strlen(GLOBALS->searchbox_text_search_c_1)) search_enter_callback(GLOBALS->entry_search_c_3,NULL);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.8  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.7  2007/08/07 04:54:59  gtkwave
  * slight modifications to global initialization scheme
  *

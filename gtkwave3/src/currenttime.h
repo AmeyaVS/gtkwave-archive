@@ -78,6 +78,7 @@ void fileselbox_old(char *title, char **filesel_path, GtkSignalFunc ok_func, Gtk
 void fileselbox(char *title, char **filesel_path, GtkSignalFunc ok_func, GtkSignalFunc notok_func, char *pattn, int is_writemode);
 void status_text(char *str);
 void searchbox(char *title, GtkSignalFunc func);
+void search_enter_callback(GtkWidget *widget, GtkWidget *do_warning);
 void showchange(char *title, Trptr t, GtkSignalFunc func);
 
 void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
@@ -135,6 +136,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.6  2007/08/22 02:06:38  gtkwave
+ * merge in treebox() similar to treeboxframe()
+ *
  * Revision 1.2.2.5  2007/08/21 23:29:16  gtkwave
  * merge in tree select state from old ctx
  *
