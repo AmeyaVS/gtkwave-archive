@@ -2000,6 +2000,22 @@ if(GLOBALS->helpbox_is_active)
   	strcpy(new_globals->fontname_waves, GLOBALS->fontname_waves);
 	}
 
+ // lxt2.c / vzt.c / ae2.c
+ if(GLOBALS->skip_start)
+	{
+  	new_globals->skip_start = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->skip_start) + 1);
+  	strcpy(new_globals->skip_start, GLOBALS->skip_start);
+	}
+ if(GLOBALS->skip_end)
+	{
+  	new_globals->skip_end = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->skip_end) + 1);
+  	strcpy(new_globals->skip_end, GLOBALS->skip_end);
+	}
+ if(GLOBALS->indirect_fname)
+	{
+  	new_globals->indirect_fname = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->indirect_fname) + 1);
+  	strcpy(new_globals->indirect_fname, GLOBALS->indirect_fname);
+	}
 
  // main.c 
  new_globals->optimize_vcd = GLOBALS->optimize_vcd;
@@ -2137,8 +2153,27 @@ if(GLOBALS->helpbox_is_active)
         
  if(GLOBALS->window_search_c_7)
         {
-        gtk_widget_destroy(GLOBALS->window_search_c_7);
-        GLOBALS->window_search_c_7 = NULL;
+	int i;
+
+	new_globals->pdata = calloc_2_into_context(new_globals, 1, sizeof(SearchProgressData));
+	memcpy(new_globals->pdata, GLOBALS->pdata, sizeof(SearchProgressData));
+
+	new_globals->is_active_search_c_4 = GLOBALS->is_active_search_c_4;
+	new_globals->regex_which_search_c_1 = GLOBALS->regex_which_search_c_1;
+	new_globals->window_search_c_7 = GLOBALS->window_search_c_7;
+	new_globals->entry_search_c_3 = GLOBALS->entry_search_c_3;
+	new_globals->clist_search_c_3 = GLOBALS->clist_search_c_3;
+	if(GLOBALS->searchbox_text_search_c_1)
+		{
+  		new_globals->searchbox_text_search_c_1 = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->searchbox_text_search_c_1) + 1);
+  		strcpy(new_globals->searchbox_text_search_c_1, GLOBALS->searchbox_text_search_c_1);
+		}
+
+	for(i=0;i<5;i++)
+		{
+		new_globals->menuitem_search[i] = GLOBALS->menuitem_search[i];
+		new_globals->regex_mutex_search_c_1[i] = GLOBALS->regex_mutex_search_c_1[i];
+		}
         }
         
  if(GLOBALS->window_showchange_c_8)
@@ -2370,6 +2405,12 @@ if(GLOBALS->helpbox_is_active)
 
  }
  #endif
+
+ // part 2 of search (which needs to be done after the new dumpfile is loaded)
+ if(GLOBALS->window_search_c_7)
+        {
+	search_enter_callback(GLOBALS->entry_search_c_3, NULL);
+	}
 
  printf("Finished reload waveform\n");
 }
@@ -4924,6 +4965,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.24  2007/08/22 03:02:42  gtkwave
+ * from..to entry widget state merge
+ *
  * Revision 1.1.1.1.2.23  2007/08/22 02:17:13  gtkwave
  * gtk1 treebox fixes for re-entrancy
  *
