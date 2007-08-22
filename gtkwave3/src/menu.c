@@ -1747,6 +1747,9 @@ menu_reload_waveform(GtkWidget *widget, gpointer data)
   gint tree_frame_x = -1, tree_frame_y = -1;
   gdouble tree_vadj_value = 0.0;
   gdouble tree_hadj_value = 0.0;
+  int fix_from_time = 0, fix_to_time = 0;
+  TimeType from_time, to_time;
+  char timestr[32];
 
 if(GLOBALS->helpbox_is_active)
 	{
@@ -2019,6 +2022,22 @@ if(GLOBALS->helpbox_is_active)
 	strcpy(new_globals->selected_hierarchy_name, GLOBALS->selected_hierarchy_name);
 	}
 
+ // timeentry.c
+ new_globals->from_entry = GLOBALS->from_entry;
+ new_globals->to_entry = GLOBALS->to_entry;
+
+ if(GLOBALS->tims.first != GLOBALS->min_time)
+	{
+	fix_from_time = 1;
+	from_time = GLOBALS->tims.first;
+	}
+
+ if(GLOBALS->tims.last != GLOBALS->max_time)
+	{
+	fix_to_time = 1;
+	to_time = GLOBALS->tims.last;
+	}
+
   
  // Times struct
  memcpy(&(new_globals->tims), &(GLOBALS->tims), sizeof(Times));
@@ -2207,6 +2226,22 @@ if(GLOBALS->helpbox_is_active)
 
  GLOBALS->tims.first=GLOBALS->min_time;
 
+ if(fix_from_time)
+	{
+	if((from_time >= GLOBALS->min_time) && (from_time <= GLOBALS->max_time))
+		{
+		GLOBALS->tims.first = from_time;
+		}
+	}
+
+ if(fix_to_time)
+	{
+	if((to_time >= GLOBALS->min_time) && (to_time <= GLOBALS->max_time) && (to_time > GLOBALS->tims.first))
+		{
+		GLOBALS->tims.last = to_time;
+		}
+	}
+
  if(GLOBALS->tims.start < GLOBALS->tims.first) {
    GLOBALS->tims.start = GLOBALS->tims.first;
  }
@@ -2239,6 +2274,10 @@ if(GLOBALS->helpbox_is_active)
    GLOBALS->tims.laststart = GLOBALS->tims.last;
  } 
 
+ reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
+ gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
+ reformat_time(timestr, GLOBALS->tims.last, GLOBALS->time_dimension);
+ gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),timestr);
 
 
  // Change SST - if it exists
@@ -4885,6 +4924,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.23  2007/08/22 02:17:13  gtkwave
+ * gtk1 treebox fixes for re-entrancy
+ *
  * Revision 1.1.1.1.2.22  2007/08/22 02:06:39  gtkwave
  * merge in treebox() similar to treeboxframe()
  *
