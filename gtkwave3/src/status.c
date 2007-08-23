@@ -148,7 +148,7 @@ gtk_widget_show (GLOBALS->vscrollbar_status_c_2);
    
 /* Add a handler to put a message in the text widget when it is realized */
 gtk_signal_connect (GTK_OBJECT (GLOBALS->text_status_c_2), "realize",
-		    GTK_SIGNAL_FUNC (realize_text), NULL); /* XXX */
+		    GTK_SIGNAL_FUNC (realize_text), NULL);
    
 gtk_tooltips_set_tip_2(tooltips, GLOBALS->text_status_c_2, "Status Window", NULL);
 return(table);
@@ -157,6 +157,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/23 02:42:51  gtkwave
+ * convert c++ style comments to c to aid with compiler compatibility
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *
