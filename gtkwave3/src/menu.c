@@ -2024,6 +2024,12 @@ if(GLOBALS->helpbox_is_active)
  /* menu.c */
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
 
+ /* status.c */
+ new_globals->text_status_c_2 = GLOBALS->text_status_c_2;
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+ memcpy(&new_globals->iter_status_c_3, &GLOBALS->iter_status_c_3, sizeof(GtkTextIter));
+#endif
+
  /* treesearch_gtk2.c */
  new_globals->treesearch_gtk2_window_vbox = GLOBALS->treesearch_gtk2_window_vbox;
  new_globals->window_treesearch_gtk2_c_12 = GLOBALS->window_treesearch_gtk2_c_12;
@@ -5051,6 +5057,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.28  2007/08/23 02:47:32  gtkwave
+ * updating of reload debug messages
+ *
  * Revision 1.1.1.1.2.27  2007/08/23 02:42:51  gtkwave
  * convert c++ style comments to c to aid with compiler compatibility
  *
