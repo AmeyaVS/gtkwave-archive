@@ -24,9 +24,12 @@ void **t = (void **)GLOBALS->alloc2_chain;
 void **t2;
 int ctr = 0;
 
+#ifdef DEBUG_PRINTF
 printf("\n*** cleanup ***\n");
 printf("Freeing %d chunks\n", GLOBALS->outstanding);
 system("date");
+#endif
+
 while(t)
 	{
 	t2 = (void **) *(t+1);
@@ -34,8 +37,11 @@ while(t)
 	t = t2;
 	ctr++;
 	}
+
+#ifdef DEBUG_PRINTF
 printf("Freed %d chunks\n", ctr);
 system("date");
+#endif
 }
 
 /*
@@ -329,6 +335,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.4  2007/08/07 04:54:59  gtkwave
+ * slight modifications to global initialization scheme
+ *
  * Revision 1.2.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

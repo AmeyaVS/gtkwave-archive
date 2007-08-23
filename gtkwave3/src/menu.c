@@ -1761,7 +1761,7 @@ if(GLOBALS->helpbox_is_active)
 	);
 	return;
 	}
- printf("Called reload waveform\n");
+ printf("GTKWAVE | Reloading waveform...\n");
 
  /* XXX if there's no file (for some reason), this function shouldn't occur
     we should probably gray it out. */
@@ -2498,7 +2498,7 @@ if(GLOBALS->helpbox_is_active)
 	refresh_hier_tree(GLOBALS->current_tree_hiersearch_c_1);
 	}
 
- printf("Finished reload waveform\n");
+ printf("GTKWAVE | ...waveform reloaded\n");
 }
 
 
@@ -5051,6 +5051,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.27  2007/08/23 02:42:51  gtkwave
+ * convert c++ style comments to c to aid with compiler compatibility
+ *
  * Revision 1.1.1.1.2.26  2007/08/23 02:19:49  gtkwave
  * merge GLOBALS state from old hier_search widget into new one
  *
