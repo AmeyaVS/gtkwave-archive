@@ -231,8 +231,8 @@ NULL, /* asbuf */
 0, /* vscrollbar_help_c_1 112 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 {0}, /* iter_help_c_1 113 */
-#endif
 0, /* bold_tag_help_c_1 114 */
+#endif
 0, /* window_help_c_2 115 */
 
 
@@ -264,10 +264,10 @@ NULL, /* fontname_logfile 133 */
 NULL, /* font_logfile_c_1 134 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 {0}, /* iter_logfile_c_2 135 */
-#endif
 NULL, /* bold_tag_logfile_c_2 136 */
 NULL, /* mono_tag_logfile_c_1 137 */
 NULL, /* size_tag_logfile_c_1 138 */
+#endif
 
 
 /*
@@ -627,8 +627,8 @@ NULL, /* text_status_c_2 398 */
 NULL, /* vscrollbar_status_c_2 399 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 {0}, /* iter_status_c_3 400 */
-#endif
 NULL, /* bold_tag_status_c_3 401 */
+#endif
 
 
 /*
@@ -736,8 +736,10 @@ NULL, /* entrybox_text_local_treesearch_gtk2_c_3 456 */
 NULL, /* cleanup_e_treesearch_gtk2_c_3 457 */
 NULL, /* sig_root_treesearch_gtk2_c_1 458 */
 NULL, /* filter_str_treesearch_gtk2_c_1 459 */
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 NULL, /* sig_store_treesearch_gtk2_c_1 460 */
 NULL, /* sig_selection_treesearch_gtk2_c_1 461 */
+#endif
 0, /* is_active_treesearch_gtk2_c_6 462 */
 NULL, /* ctree_main 463 */
 NULL, /* afl_treesearch_gtk2_c_1 464 */

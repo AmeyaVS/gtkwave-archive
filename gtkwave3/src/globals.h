@@ -241,8 +241,8 @@ GtkWidget *text_help_c_1; /* from help.c 115 */
 GtkWidget *vscrollbar_help_c_1; /* from help.c 116 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GtkTextIter iter_help_c_1; /* from help.c 117 */
-#endif
 GtkTextTag *bold_tag_help_c_1; /* from help.c 118 */
+#endif
 GtkWidget *window_help_c_2; /* from help.c 119 */
 
 
@@ -274,10 +274,10 @@ char *fontname_logfile; /* from logfile.c 137 */
 GdkFont *font_logfile_c_1; /* from logfile.c 138 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GtkTextIter iter_logfile_c_2; /* from logfile.c 139 */
-#endif
 GtkTextTag *bold_tag_logfile_c_2; /* from logfile.c 140 */
 GtkTextTag *mono_tag_logfile_c_1; /* from logfile.c 141 */
 GtkTextTag *size_tag_logfile_c_1; /* from logfile.c 142 */
+#endif
 
 
 /*
@@ -637,8 +637,8 @@ GtkWidget *text_status_c_2; /* from status.c 426 */
 GtkWidget *vscrollbar_status_c_2; /* from status.c 427 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GtkTextIter iter_status_c_3; /* from status.c 428 */
-#endif
 GtkTextTag *bold_tag_status_c_3; /* from status.c 429 */
+#endif
 
 
 /*
@@ -746,8 +746,10 @@ char *entrybox_text_local_treesearch_gtk2_c_3; /* from treesearch_gtk2.c 486 */
 void (*cleanup_e_treesearch_gtk2_c_3)(); /* from treesearch_gtk2.c 487 */
 struct tree *sig_root_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 488 */
 char *filter_str_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 489 */
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GtkListStore *sig_store_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 490 */
 GtkTreeSelection *sig_selection_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 491 */
+#endif
 int is_active_treesearch_gtk2_c_6; /* from treesearch_gtk2.c 492 */
 GtkCTree *ctree_main; /* from treesearch_gtk2.c 493 */
 struct autocoalesce_free_list *afl_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 494 */
