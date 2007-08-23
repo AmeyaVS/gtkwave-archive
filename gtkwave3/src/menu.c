@@ -1763,15 +1763,15 @@ if(GLOBALS->helpbox_is_active)
 	}
  printf("Called reload waveform\n");
 
- // XXX if there's no file (for some reason), this function shouldn't occur
- // we should probably gray it out.
+ /* XXX if there's no file (for some reason), this function shouldn't occur
+    we should probably gray it out. */
  if(GLOBALS->loaded_file_type == NO_FILE) {
    printf("NO_FILE type cannot be reloaded\n");
    return;
  }
 
 
- // Save state to file
+ /* Save state to file */
  statefile = fopen(".temp","wb");
  if(statefile == NULL) {
    fprintf(stderr, "Failed to reload file.\n");
@@ -1781,7 +1781,7 @@ if(GLOBALS->helpbox_is_active)
  write_save_helper(statefile);
  fclose(statefile);
 
- // save off size of tree frame if active
+ /* save off size of tree frame if active */
 #if WAVE_USE_GTK2
  if(GLOBALS->gtk2_tree_frame)
 	{
@@ -1797,20 +1797,20 @@ if(GLOBALS->helpbox_is_active)
 	}
 #endif
 
- // Kill any open processes
+ /* Kill any open processes */
  remove_all_proc_filters();
 
- // Instantiate new global status
+ /* Instantiate new global status */
  new_globals = initialize_globals();
  
- // Time to copy over state
- // Marker positions
+ /* Time to copy over state */
+ /* Marker positions */
  for(i = 0; i < 26; i++) {
    new_globals->named_markers[i] = GLOBALS->named_markers[i];
  }
 
 
- // Default colors, X contexts, pixmaps, drawables, etc
+ /* Default colors, X contexts, pixmaps, drawables, etc */
 
  new_globals->signalarea = GLOBALS->signalarea;
  new_globals->wavearea = GLOBALS->wavearea;
@@ -1877,11 +1877,11 @@ if(GLOBALS->helpbox_is_active)
  new_globals->from_entry = GLOBALS->from_entry;
  new_globals->to_entry = GLOBALS->to_entry;
 
- // busy.c
+ /* busy.c */
  new_globals->busycursor_busy_c_1 = GLOBALS->busycursor_busy_c_1;
  new_globals->busy_busy_c_1 = GLOBALS->busy_busy_c_1;
 
- // pixmaps.c
+ /* pixmaps.c */
  new_globals->larrow_pixmap = GLOBALS->larrow_pixmap;
  new_globals->rarrow_pixmap = GLOBALS->rarrow_pixmap;
  new_globals->zoomout_pixmap = GLOBALS->zoomout_pixmap;
@@ -1895,7 +1895,7 @@ if(GLOBALS->helpbox_is_active)
  new_globals->wave_info_pixmap = GLOBALS->wave_info_pixmap;
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
 
- // rc.c
+ /* rc.c */
  new_globals->ignore_savefile_pos = 1; /* to keep window from resizing/jumping */
  new_globals->ignore_savefile_size = 1; /* to keep window from resizing/jumping */
 
@@ -1981,7 +1981,7 @@ if(GLOBALS->helpbox_is_active)
  new_globals->vector_padding = GLOBALS->vector_padding;
  new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
  new_globals->zoombase = GLOBALS->zoombase;
- new_globals->splash_disable = 1; // to disable splash for reload
+ new_globals->splash_disable = 1; /* to disable splash for reload */
 
  if(GLOBALS->fontname_logfile)
 	{
@@ -2001,7 +2001,7 @@ if(GLOBALS->helpbox_is_active)
   	strcpy(new_globals->fontname_waves, GLOBALS->fontname_waves);
 	}
 
- // lxt2.c / vzt.c / ae2.c
+ /* lxt2.c / vzt.c / ae2.c */
  if(GLOBALS->skip_start)
 	{
   	new_globals->skip_start = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->skip_start) + 1);
@@ -2018,13 +2018,13 @@ if(GLOBALS->helpbox_is_active)
   	strcpy(new_globals->indirect_fname, GLOBALS->indirect_fname);
 	}
 
- // main.c 
+ /* main.c */
  new_globals->optimize_vcd = GLOBALS->optimize_vcd;
 
- // menu.c 
+ /* menu.c */
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
 
- // treesearch_gtk2.c
+ /* treesearch_gtk2.c */
  new_globals->treesearch_gtk2_window_vbox = GLOBALS->treesearch_gtk2_window_vbox;
  new_globals->window_treesearch_gtk2_c_12 = GLOBALS->window_treesearch_gtk2_c_12;
 
@@ -2039,7 +2039,7 @@ if(GLOBALS->helpbox_is_active)
 	strcpy(new_globals->selected_hierarchy_name, GLOBALS->selected_hierarchy_name);
 	}
 
- // timeentry.c
+ /* timeentry.c */
  new_globals->from_entry = GLOBALS->from_entry;
  new_globals->to_entry = GLOBALS->to_entry;
 
@@ -2056,10 +2056,10 @@ if(GLOBALS->helpbox_is_active)
 	}
 
   
- // Times struct
+ /* Times struct */
  memcpy(&(new_globals->tims), &(GLOBALS->tims), sizeof(Times));
 
- // File name and type
+ /* File name and type */
  new_globals->loaded_file_type = GLOBALS->loaded_file_type;
  new_globals->loaded_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->loaded_file_name) + 1);  
  strcpy(new_globals->loaded_file_name, GLOBALS->loaded_file_name);
@@ -2071,7 +2071,7 @@ if(GLOBALS->helpbox_is_active)
  }
 
 
- // deallocate any loader-related stuff
+ /* deallocate any loader-related stuff */
  switch(GLOBALS->loaded_file_type) {
    case LXT_FILE:
                 if(GLOBALS->mm_lxt_mmap_addr)
@@ -2093,7 +2093,7 @@ if(GLOBALS->helpbox_is_active)
    case VCD_RECODER_FILE: /* do nothing */ break;
  }
 
- // window destruction (of windows that aren't the parent window)
+ /* window destruction (of windows that aren't the parent window) */
  if(GLOBALS->window_entry_c_1)
         {
         gtk_grab_remove(GLOBALS->window_entry_c_1);
@@ -2246,30 +2246,30 @@ if(GLOBALS->helpbox_is_active)
         GLOBALS->window1_treesearch_gtk2_c_3 = NULL;
         }
 
- // Free the context 
+ /* Free the context */
  free_outstanding();
 
- // Free the old globals struct, memsetting it to zero in the hope of forcing crashes.
+ /* Free the old globals struct, memsetting it to zero in the hope of forcing crashes. */
  memset(GLOBALS, 0, sizeof(struct Global));
  free(GLOBALS);
 
- // Set the GLOBALS pointer to the newly allocated struct.
+ /* Set the GLOBALS pointer to the newly allocated struct. */
  GLOBALS = new_globals;
 
- // Initialize new variables
+ /* Initialize new variables */
  GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
  init_proctrans_data();
  load_all_fonts();
 
- // Check to see if we need to reload a vcd file
+ /* Check to see if we need to reload a vcd file */
  #if !defined _MSC_VER && !defined __MINGW32__
  if(GLOBALS->optimize_vcd) {
    optimize_vcd_file();
  }
  #endif
  
- // Load new file from disk, no reload on partial vcd.
+ /* Load new file from disk, no reload on partial vcd. */
  switch(GLOBALS->loaded_file_type) {
    case LXT_FILE: lxt_main(GLOBALS->loaded_file_name); break;
    case LX2_FILE: lx2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); break;
@@ -2280,7 +2280,7 @@ if(GLOBALS->helpbox_is_active)
    case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
  } 
 
- // Setup timings we probably need to redraw here
+ /* Setup timings we probably need to redraw here */
  GLOBALS->tims.last=GLOBALS->max_time;
 
  GLOBALS->tims.first=GLOBALS->min_time;
@@ -2339,8 +2339,8 @@ if(GLOBALS->helpbox_is_active)
  gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),timestr);
 
 
- // Change SST - if it exists
- // XXX need to destroy/free the old tree widgets.
+ /* Change SST - if it exists */
+ /* XXX need to destroy/free the old tree widgets. */
  #if GTK_CHECK_VERSION(2,4,0)
  if(!GLOBALS->hide_sst) {
    gtk_widget_hide(GLOBALS->expanderwindow);
@@ -2364,14 +2364,14 @@ if(GLOBALS->helpbox_is_active)
 	}
  #endif
 
- // Reload state from file
+ /* Reload state from file */
  read_save_helper(".temp"); 
 
- // unlink temp
+ /* unlink temp */
  unlink(".temp");
 
 
- // part 2 of SST (which needs to be done after the tree is expanded from loading the savefile...)
+ /* part 2 of SST (which needs to be done after the tree is expanded from loading the savefile...) */
  #if WAVE_USE_GTK2
  if((!GLOBALS->hide_sst)||(GLOBALS->window_treesearch_gtk2_c_12)) {
    GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
@@ -2430,13 +2430,13 @@ if(GLOBALS->helpbox_is_active)
  }
  #endif
 
- // part 2 of search (which needs to be done after the new dumpfile is loaded)
+ /* part 2 of search (which needs to be done after the new dumpfile is loaded) */
  if(GLOBALS->window_search_c_7)
         {
 	search_enter_callback(GLOBALS->entry_search_c_3, NULL);
 	}
 
- // part 2 of hier search (which needs to be done after the new dumpfile is loaded)
+ /* part 2 of hier search (which needs to be done after the new dumpfile is loaded) */
  if(GLOBALS->window_hiersearch_c_3)
         {
 	if(!hier_curr)
@@ -4710,7 +4710,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Write Save File As", "<Shift><Control>W", menu_write_save_file_as, WV_MENU_FWSFAS, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2, "<Separator>"),
     WAVE_GTKIFE("/File/Read Sim Logfile", "<Control>L", menu_read_log_file, WV_MENU_FRLF, "<Item>"),
-    //10
+      /* 10 */
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2LF, "<Separator>"),
 #if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/File/Read Verilog Stemsfile", NULL, menu_read_stems_file, WV_MENU_FRSTMF, "<Item>"),
@@ -4726,7 +4726,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Insert Analog Height Extension", "<Control>A", menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
     WAVE_GTKIFE("/Edit/Alias Highlighted Trace", "<Alt>A", menu_alias, WV_MENU_EAHT, "<Item>"),
     WAVE_GTKIFE("/Edit/Remove Highlighted Aliases", "<Shift><Alt>A", menu_remove_aliases, WV_MENU_ERHA, "<Item>"),
-      //20
+      /* 20 */
     WAVE_GTKIFE("/Edit/Cut", "<Alt>C", menu_cut_traces, WV_MENU_EC, "<Item>"),
     WAVE_GTKIFE("/Edit/Paste", "<Alt>P", menu_paste_traces, WV_MENU_EP, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP4, "<Separator>"),
@@ -4737,7 +4737,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP5, "<Separator>"),
     WAVE_GTKIFE("/Edit/Data Format/Hex", "<Alt>X", menu_dataformat_hex, WV_MENU_EDFH, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Decimal", "<Alt>D", menu_dataformat_dec, WV_MENU_EDFD, "<Item>"),
-      //30
+      /* 30 */
     WAVE_GTKIFE("/Edit/Data Format/Signed Decimal", NULL, menu_dataformat_signed, WV_MENU_EDFSD, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Binary", "<Alt>B", menu_dataformat_bin, WV_MENU_EDFB, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Octal", "<Alt>O", menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
@@ -4748,7 +4748,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Invert/On", "<Alt>I", menu_dataformat_invert_on, WV_MENU_EDFION, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Invert/Off", "<Shift><Alt>I", menu_dataformat_invert_off, WV_MENU_EDFIOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Reverse Bits/On", "<Alt>V", menu_dataformat_reverse_on, WV_MENU_EDFRON, "<Item>"),
-      //40  
+      /* 40 */
     WAVE_GTKIFE("/Edit/Data Format/Reverse Bits/Off", "<Shift><Alt>V", menu_dataformat_reverse_off, WV_MENU_EDFROFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter File/Disable", NULL, menu_dataformat_xlate_file_0, WV_MENU_XLF_0, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter File/Enable and Select", NULL, menu_dataformat_xlate_file_1, WV_MENU_XLF_1, "<Item>"),
@@ -4759,7 +4759,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change All Highlighted", "<Control>S", menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change First Highlighted", "<Control>F", menu_showchange, WV_MENU_ESCFH, "<Item>"),
-      //50
+      /* 50 */
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6, "<Separator>"),
     WAVE_GTKIFE("/Edit/Time Warp/Warp Marked", NULL, menu_warp_traces, WV_MENU_WARP, "<Item>"),
     WAVE_GTKIFE("/Edit/Time Warp/Unwarp Marked", NULL, menu_unwarp_traces, WV_MENU_UNWARP, "<Item>"),
@@ -4770,7 +4770,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6A, "<Separator>"),
     WAVE_GTKIFE("/Edit/Expand All Groups", "F12", menu_expand_all, WV_MENU_EXA, "<Item>"),
     WAVE_GTKIFE("/Edit/Collapse All Groups", "<Shift>F12", menu_collapse_all, WV_MENU_CPA, "<Item>"),
-      //60
+      /* 60 */
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6A1, "<Separator>"),
     WAVE_GTKIFE("/Edit/Highlight Regexp", "<Alt>R", menu_regexp_highlight, WV_MENU_EHR, "<Item>"),
     WAVE_GTKIFE("/Edit/UnHighlight Regexp", "<Shift><Alt>R", menu_regexp_unhighlight, WV_MENU_EUHR, "<Item>"),
@@ -4781,7 +4781,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Sort/Alphabetize All (CaseIns)", NULL, menu_alphabetize2, WV_MENU_ALPHA2, "<Item>"),
     WAVE_GTKIFE("/Edit/Sort/Sigsort All", NULL, menu_lexize, WV_MENU_LEX, "<Item>"),
     WAVE_GTKIFE("/Edit/Sort/Reverse All", NULL, menu_reverse, WV_MENU_RVS, "<Item>"),
-      //70
+      /* 70 */
     WAVE_GTKIFE("/Search/Pattern Search", "<Control>P", menu_tracesearchbox, WV_MENU_SPS, "<Item>"),
     WAVE_GTKIFE("/Search/<separator>", NULL, NULL, WV_MENU_SEP7B, "<Separator>"),
     WAVE_GTKIFE("/Search/Signal Search Regexp", "<Alt>S", menu_signalsearch, WV_MENU_SSR, "<Item>"),
@@ -4792,7 +4792,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Search/Autocoalesce Reversal", NULL, menu_autocoalesce_reversal, WV_MENU_ACOLR, "<ToggleItem>"),
     WAVE_GTKIFE("/Search/Autoname Bundles", NULL, menu_autoname_bundles_on, WV_MENU_ABON, "<ToggleItem>"),
     WAVE_GTKIFE("/Search/Search Hierarchy Grouping", NULL, menu_hgrouping, WV_MENU_HTGP, "<ToggleItem>"),
-      //80
+      /* 80 */
     WAVE_GTKIFE("/Time/Move To Time", "F1", menu_movetotime, WV_MENU_TMTT, "<Item>"),
     WAVE_GTKIFE("/Time/Zoom/Zoom Amount", "F2", menu_zoomsize, WV_MENU_TZZA, "<Item>"),
     WAVE_GTKIFE("/Time/Zoom/Zoom Base", "<Shift>F2", menu_zoombase, WV_MENU_TZZB, "<Item>"),
@@ -4803,7 +4803,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Time/Zoom/Zoom To Start", "Home", service_zoom_left, WV_MENU_TZZTS, "<Item>"),
     WAVE_GTKIFE("/Time/Zoom/Zoom To End", "End", service_zoom_right, WV_MENU_TZZTE, "<Item>"),
     WAVE_GTKIFE("/Time/Zoom/Undo Zoom", "<Alt>U", service_zoom_undo, WV_MENU_TZUZ, "<Item>"),
-      //90
+      /* 90 */
     WAVE_GTKIFE("/Time/Fetch/Fetch Size", "F7", menu_fetchsize, WV_MENU_TFFS, "<Item>"),
     WAVE_GTKIFE("/Time/Fetch/Fetch ->", "<Alt>2", fetch_right, WV_MENU_TFFR, "<Item>"),
     WAVE_GTKIFE("/Time/Fetch/Fetch <-", "<Alt>1", fetch_left, WV_MENU_TFFL, "<Item>"),
@@ -4814,7 +4814,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Time/Page/Page ->", "<Alt>8", service_right_page, WV_MENU_TPPR, "<Item>"),
     WAVE_GTKIFE("/Time/Page/Page <-", "<Alt>7", service_left_page, WV_MENU_TPPL, "<Item>"),
     WAVE_GTKIFE("/Markers/Show-Change Marker Data", "<Alt>M", menu_markerbox, WV_MENU_MSCMD, "<Item>"),
-    //100
+      /* 100 */
     WAVE_GTKIFE("/Markers/Drop Named Marker", "<Alt>N", drop_named_marker, WV_MENU_MDNM, "<Item>"),
     WAVE_GTKIFE("/Markers/Collect Named Marker", "<Shift><Alt>N", collect_named_marker, WV_MENU_MCNM, "<Item>"),
     WAVE_GTKIFE("/Markers/Collect All Named Markers", "<Shift><Control><Alt>N", collect_all_named_markers, WV_MENU_MCANM, "<Item>"),
@@ -4830,7 +4830,7 @@ static GtkItemFactoryEntry menu_items[] =
 #endif
     WAVE_GTKIFE("/View/Show Base Symbols", "<Alt>F1", menu_show_base, WV_MENU_VSBS, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP10, "<Separator>"),
-      //110
+      /* 110 */
     WAVE_GTKIFE("/View/Dynamic Resize", "<Alt>9", menu_enable_dynamic_resize, WV_MENU_VDR, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP11, "<Separator>"),
     WAVE_GTKIFE("/View/Center Zooms", "F8", menu_center_zooms, WV_MENU_VCZ, "<ToggleItem>"),
@@ -4841,7 +4841,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/View/Constant Marker Update", "F11", menu_enable_constant_marker_update, WV_MENU_VCMU, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP14, "<Separator>"),
     WAVE_GTKIFE("/View/Draw Roundcapped Vectors", "<Alt>F2", menu_use_roundcaps, WV_MENU_VDRV, "<ToggleItem>"),
-      //120
+      /* 120 */
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP15, "<Separator>"),
     WAVE_GTKIFE("/View/Left Justified Signals", "<Shift>Home", menu_left_justify, WV_MENU_VLJS, "<Item>"),
     WAVE_GTKIFE("/View/Right Justified Signals", "<Shift>End", menu_right_justify, WV_MENU_VRJS, "<Item>"),
@@ -4852,7 +4852,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/View/Remove Pattern Marks", NULL, menu_remove_marked, WV_MENU_RMRKS, "<Item>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP18, "<Separator>"),
     WAVE_GTKIFE("/View/LXT Clock Compress to Z", NULL, menu_lxt_clk_compress, WV_MENU_LXTCC2Z, "<ToggleItem>"),
-      //130
+      /* 130 */
     WAVE_GTKIFE("/Help/WAVE Help", "<Control>H", menu_help, WV_MENU_HWH, "<Item>"),
     WAVE_GTKIFE("/Help/Wave Version", "<Control>V", menu_version, WV_MENU_HWV, "<Item>"),
 };
@@ -5051,6 +5051,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.26  2007/08/23 02:19:49  gtkwave
+ * merge GLOBALS state from old hier_search widget into new one
+ *
  * Revision 1.1.1.1.2.25  2007/08/22 22:11:37  gtkwave
  * made search re-entrant, additional state for lxt2/vzt/ae2 loaders
  *

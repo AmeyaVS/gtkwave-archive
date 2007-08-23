@@ -495,7 +495,7 @@ while (1)
                         /* unreachable */
                         break;
                 }
-        } // while(1);
+        } /* ...while(1) */
 
 if(opt_errors_encountered)
 	{
@@ -1214,7 +1214,7 @@ if(is_interactive)
 	else
 #endif
 	{
-	  // Jump in to the main program loop
+	/* Jump in to the main program loop */
 	gtk_main();
 	}
 
@@ -1476,6 +1476,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.9  2007/08/19 23:13:53  kermin
+ * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
+ *
  * Revision 1.1.1.1.2.8  2007/08/15 03:26:01  kermin
  * Reload button does not cause a fault, however, state is still somehow incorrect.
  *
