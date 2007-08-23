@@ -1008,13 +1008,11 @@ char fill_in_smaller_rgb_areas_wavewindow_c_1; /* from wavewindow.c 719 */
  */
 char do_zoom_center; /* from zoombuttons.c 720 */
 char do_initial_zoom_fit; /* from zoombuttons.c 721 */
-
-
 };
 
 
 struct Global *initialize_globals(void);
-
+void reload_into_new_context(void);
 
 extern struct Global *GLOBALS;
 #endif
