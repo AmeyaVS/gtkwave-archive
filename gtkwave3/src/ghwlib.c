@@ -271,7 +271,7 @@ ghw_read_range (struct ghw_handler *h)
     case ghdl_rtik_type_b2:
       {
 	struct ghw_range_b2 *r;
-	r = malloc (sizeof (struct ghw_range_b2));
+	r = calloc (1, sizeof (struct ghw_range_b2));
 	r->kind = t & 0x7f;
 	r->dir = (t & 0x80) != 0;
 	if (ghw_read_byte (h, &r->left) != 0)
@@ -283,7 +283,7 @@ ghw_read_range (struct ghw_handler *h)
     case ghdl_rtik_type_e8:
       {
 	struct ghw_range_e8 *r;
-	r = malloc (sizeof (struct ghw_range_e8));
+	r = calloc (1, sizeof (struct ghw_range_e8));
 	r->kind = t & 0x7f;
 	r->dir = (t & 0x80) != 0;
 	if (ghw_read_byte (h, &r->left) != 0)
@@ -296,7 +296,7 @@ ghw_read_range (struct ghw_handler *h)
     case ghdl_rtik_type_p32:
       {
 	struct ghw_range_i32 *r;
-	r = malloc (sizeof (struct ghw_range_i32));
+	r = calloc (1, sizeof (struct ghw_range_i32));
 	r->kind = t & 0x7f;
 	r->dir = (t & 0x80) != 0;
 	if (ghw_read_sleb128 (h, &r->left) != 0)
@@ -309,7 +309,7 @@ ghw_read_range (struct ghw_handler *h)
     case ghdl_rtik_type_p64:
       {
 	struct ghw_range_i64 *r;
-	r = malloc (sizeof (struct ghw_range_i64));
+	r = calloc (1, sizeof (struct ghw_range_i64));
 	r->kind = t & 0x7f;
 	r->dir = (t & 0x80) != 0;
 	if (ghw_read_lsleb128 (h, &r->left) != 0)
@@ -321,7 +321,7 @@ ghw_read_range (struct ghw_handler *h)
     case ghdl_rtik_type_f64:
       {
 	struct ghw_range_f64 *r;
-	r = malloc (sizeof (struct ghw_range_f64));
+	r = calloc (1, sizeof (struct ghw_range_f64));
 	r->kind = t & 0x7f;
 	r->dir = (t & 0x80) != 0;
 	if (ghw_read_f64 (h, &r->left) != 0)
@@ -352,8 +352,8 @@ ghw_read_str (struct ghw_handler *h)
   h->nbr_str = ghw_get_i32 (h, (unsigned char *)&hdr[4]);
   h->nbr_str++;
   h->str_size = ghw_get_i32 (h, (unsigned char *)&hdr[8]);
-  h->str_table = (char **)malloc ((h->nbr_str + 1) * sizeof (char *));
-  h->str_content = (char *)malloc (h->str_size + h->nbr_str + 1);
+  h->str_table = (char **)calloc ((h->nbr_str + 1), sizeof (char *));
+  h->str_content = (char *)calloc (1, h->str_size + h->nbr_str + 1);
 
   if (h->flag_verbose)
     {
@@ -495,7 +495,7 @@ ghw_read_type (struct ghw_handler *h)
     return -1;
   h->nbr_types = ghw_get_i32 (h, (unsigned char *)&hdr[4]);
   h->types = (union ghw_type **)
-    malloc (h->nbr_types * sizeof (union ghw_type *));
+    calloc (h->nbr_types, sizeof (union ghw_type *));
 
   for (i = 0; i < h->nbr_types; i++)
     {
@@ -513,13 +513,13 @@ ghw_read_type (struct ghw_handler *h)
 	    struct ghw_type_enum *e;
 	    int j;
 
-	    e = malloc (sizeof (struct ghw_type_enum));
+	    e = calloc (1, sizeof (struct ghw_type_enum));
 	    e->kind = t;
 	    e->wkt = ghw_wkt_unknown;
 	    e->name = ghw_read_strid (h);
 	    if (ghw_read_uleb128 (h, (uint32_t *)&e->nbr) != 0)
 	      return -1;
-	    e->lits = (const char **) malloc (e->nbr * sizeof (char *));
+	    e->lits = (const char **) calloc (1, e->nbr * sizeof (char *));
 	    if (h->flag_verbose > 1)
 	      printf ("enum %s:", e->name);
 	    for (j = 0; j < e->nbr; j++)
@@ -539,7 +539,7 @@ ghw_read_type (struct ghw_handler *h)
 	  {
 	    struct ghw_type_scalar *sc;
 
-	    sc = malloc (sizeof (struct ghw_type_scalar));
+	    sc = calloc (1, sizeof (struct ghw_type_scalar));
 	    sc->kind = t;
 	    sc->name = ghw_read_strid (h);
 	    if (h->flag_verbose > 1)
@@ -552,7 +552,7 @@ ghw_read_type (struct ghw_handler *h)
 	  {
 	    struct ghw_type_physical *ph;
 
-	    ph = malloc (sizeof (struct ghw_type_physical));
+	    ph = calloc (1, sizeof (struct ghw_type_physical));
 	    ph->kind = t;
 	    ph->name = ghw_read_strid (h);
 	    if (h->version == 0)
@@ -563,7 +563,7 @@ ghw_read_type (struct ghw_handler *h)
 
 		if (ghw_read_uleb128 (h, &ph->nbr_units) != 0)
 		  return -1;
-		ph->units = malloc (ph->nbr_units * sizeof (struct ghw_unit));
+		ph->units = calloc (ph->nbr_units, sizeof (struct ghw_unit));
 		for (i = 0; i < ph->nbr_units; i++)
 		  {
 		    ph->units[i].name = ghw_read_strid (h);
@@ -580,7 +580,7 @@ ghw_read_type (struct ghw_handler *h)
 	  {
 	    struct ghw_subtype_scalar *ss;
 
-	    ss = malloc (sizeof (struct ghw_subtype_scalar));
+	    ss = calloc (1, sizeof (struct ghw_subtype_scalar));
 	    ss->kind = t;
 	    ss->name = ghw_read_strid (h);
 	    ss->base = ghw_read_typeid (h);
@@ -595,14 +595,14 @@ ghw_read_type (struct ghw_handler *h)
 	    struct ghw_type_array *arr;
 	    int j;
 
-	    arr = malloc (sizeof (struct ghw_type_array));
+	    arr = calloc (1, sizeof (struct ghw_type_array));
 	    arr->kind = t;
 	    arr->name = ghw_read_strid (h);
 	    arr->el = ghw_read_typeid (h);
 	    if (ghw_read_uleb128 (h, (uint32_t *)&arr->nbr_dim) != 0)
 	      return -1;
 	    arr->dims = (union ghw_type **)
-	      malloc (arr->nbr_dim * sizeof (union ghw_type *));
+	      calloc (arr->nbr_dim, sizeof (union ghw_type *));
 	    for (j = 0; j < arr->nbr_dim; j++)
 	      arr->dims[j] = ghw_read_typeid (h);
 	    if (h->flag_verbose > 1)
@@ -617,12 +617,12 @@ ghw_read_type (struct ghw_handler *h)
 	    int j;
 	    int nbr_el;
 
-	    sa = malloc (sizeof (struct ghw_subtype_array));
+	    sa = calloc (1, sizeof (struct ghw_subtype_array));
 	    sa->kind = t;
 	    sa->name = ghw_read_strid (h);
 	    sa->base = (struct ghw_type_array *)ghw_read_typeid (h);
 	    nbr_el = get_nbr_elements (sa->base->el);
-	    sa->rngs = malloc (sa->base->nbr_dim * sizeof (union ghw_range *));
+	    sa->rngs = calloc (sa->base->nbr_dim, sizeof (union ghw_range *));
 	    for (j = 0; j < sa->base->nbr_dim; j++)
 	      {
 		sa->rngs[j] = ghw_read_range (h);
@@ -640,13 +640,13 @@ ghw_read_type (struct ghw_handler *h)
 	    int j;
 	    int nbr_el;
 
-	    rec = malloc (sizeof (struct ghw_type_record));
+	    rec = calloc (1, sizeof (struct ghw_type_record));
 	    rec->kind = t;
 	    rec->name = ghw_read_strid (h);
 	    if (ghw_read_uleb128 (h, (uint32_t *)&rec->nbr_fields) != 0)
 	      return -1;
-	    rec->el = malloc
-	      (rec->nbr_fields * sizeof (struct ghw_record_element));
+	    rec->el = calloc
+	      (rec->nbr_fields, sizeof (struct ghw_record_element));
 	    nbr_el = 0;
 	    for (j = 0; j < rec->nbr_fields; j++)
 	      {
@@ -849,7 +849,7 @@ ghw_read_hie (struct ghw_handler *h)
     printf ("%d scopes, %d signals, %d signal elements\n",
 	    nbr_scopes, nbr_sigs, h->nbr_sigs);
 
-  blk = (struct ghw_hie *)malloc (sizeof (struct ghw_hie));
+  blk = (struct ghw_hie *)calloc (1, sizeof (struct ghw_hie));
   blk->kind = ghw_hie_design;
   blk->name = NULL;
   blk->parent = NULL;
@@ -860,7 +860,7 @@ ghw_read_hie (struct ghw_handler *h)
   h->hie = blk;
 
   h->nbr_sigs++;
-  h->sigs = (struct ghw_sig *) malloc (h->nbr_sigs * sizeof (struct ghw_sig));
+  h->sigs = (struct ghw_sig *) calloc (h->nbr_sigs, sizeof (struct ghw_sig));
   memset (h->sigs, 0, h->nbr_sigs * sizeof (struct ghw_sig));
 
   while (1)
@@ -891,7 +891,7 @@ ghw_read_hie (struct ghw_handler *h)
 	  continue;
 	}
 
-      el = (struct ghw_hie *) malloc (sizeof (struct ghw_hie));
+      el = (struct ghw_hie *) calloc (1, sizeof (struct ghw_hie));
       el->kind = t;
       el->parent = blk;
       el->brother = NULL;
@@ -926,7 +926,7 @@ ghw_read_hie (struct ghw_handler *h)
 	  if (t == ghw_hie_generate_for)
 	    {
 	      el->u.blk.iter_type = ghw_read_typeid (h);
-	      el->u.blk.iter_value = malloc (sizeof (union ghw_val));
+	      el->u.blk.iter_value = calloc (1, sizeof (union ghw_val));
 	      if (ghw_read_value (h, el->u.blk.iter_value,
 				  el->u.blk.iter_type) < 0)
 		return -1;
@@ -947,8 +947,8 @@ ghw_read_hie (struct ghw_handler *h)
 
 	    el->u.sig.type = ghw_read_typeid (h);
 	    nbr_el = get_nbr_elements (el->u.sig.type);
-	    sigs = (unsigned int *) malloc
-	      ((nbr_el + 1) * sizeof (unsigned int));
+	    sigs = (unsigned int *) calloc
+	      ((nbr_el + 1), sizeof (unsigned int));
 	    el->u.sig.sigs = sigs;
 	    /* Last element is NULL.  */
 	    sigs[nbr_el] = 0;
@@ -975,7 +975,7 @@ ghw_read_hie (struct ghw_handler *h)
   /* Allocate values.  */
   for (i = 0; i < h->nbr_sigs; i++)
     if (h->sigs[i].type != NULL)
-      h->sigs[i].val = (union ghw_val *) malloc (sizeof (union ghw_val));
+      h->sigs[i].val = (union ghw_val *) calloc (1, sizeof (union ghw_val));
   return 0;
 }
 
@@ -1806,6 +1806,10 @@ ghw_disp_types (struct ghw_handler *h)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:46  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
  * Imported sources
  *

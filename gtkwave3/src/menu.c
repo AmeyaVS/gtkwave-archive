@@ -1751,6 +1751,8 @@ menu_reload_waveform(GtkWidget *widget, gpointer data)
   TimeType from_time, to_time;
   char timestr[32];
   struct stringchain_t *hier_head = NULL, *hier_curr = NULL;
+  int load_was_success = 0;
+  int reload_fail_delay = 1;
 
 if(GLOBALS->helpbox_is_active)
 	{
@@ -1762,12 +1764,24 @@ if(GLOBALS->helpbox_is_active)
 	return;
 	}
 
+ if(GLOBALS->gt_splash_c_1)
+	{
+	return; /* don't attempt reload if splash screen is still active...that's pointless anyway */
+	}
+
  /* XXX if there's no file (for some reason), this function shouldn't occur
     we should probably gray it out. */
  if(GLOBALS->loaded_file_type == NO_FILE) {
    printf("GTKWAVE | NO_FILE type cannot be reloaded\n");
    return;
  }
+
+ if(GLOBALS->text_status_c_2)
+	{
+	gtk_grab_add(GLOBALS->text_status_c_2);
+	while (gtk_events_pending()) gtk_main_iteration();
+	gtk_grab_remove(GLOBALS->text_status_c_2);
+	}
 
  printf("GTKWAVE | Reloading waveform...\n");
 
@@ -1983,6 +1997,7 @@ if(GLOBALS->helpbox_is_active)
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; /* to disable splash for reload */
 
+
  if(GLOBALS->fontname_logfile)
 	{
   	new_globals->fontname_logfile = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_logfile) + 1);
@@ -2073,7 +2088,6 @@ if(GLOBALS->helpbox_is_active)
  if(new_globals->optimize_vcd) {
    new_globals->unoptimized_vcd_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->unoptimized_vcd_file_name) + 1);  
    strcpy(new_globals->unoptimized_vcd_file_name, GLOBALS->unoptimized_vcd_file_name);
-   
  }
 
 
@@ -2268,27 +2282,82 @@ if(GLOBALS->helpbox_is_active)
  init_proctrans_data();
  load_all_fonts();
 
+ for(;;)
+	{
  /* Check to see if we need to reload a vcd file */
- #if !defined _MSC_VER && !defined __MINGW32__
- if(GLOBALS->optimize_vcd) {
-   optimize_vcd_file();
- }
- #endif
- 
- /* Load new file from disk, no reload on partial vcd. */
- switch(GLOBALS->loaded_file_type) {
-   case LXT_FILE: lxt_main(GLOBALS->loaded_file_name); break;
-   case LX2_FILE: lx2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); break;
-   case VZT_FILE: vzt_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); break;
-   case AE2_FILE: ae2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end,GLOBALS->indirect_fname); break;
-   case GHW_FILE: ghw_main(GLOBALS->loaded_file_name); break;
-   case VCD_FILE: vcd_main(GLOBALS->loaded_file_name); break;
-   case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
- } 
+#if !defined _MSC_VER && !defined __MINGW32__
+	if(GLOBALS->optimize_vcd) 
+		{
+	   	optimize_vcd_file();
+	 	}
+#endif
+	/* Load new file from disk, no reload on partial vcd or vcd from stdin. */
+	switch(GLOBALS->loaded_file_type) 
+		{
+   		case LX2_FILE: 
+			lx2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end);
+			load_was_success = (GLOBALS->lx2_lx2_c_1 != NULL);
+			break;
+
+   		case VZT_FILE: 
+			vzt_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); 
+			load_was_success = (GLOBALS->vzt_vzt_c_1 != NULL);
+			break;
+
+   		case AE2_FILE: 
+			ae2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end,GLOBALS->indirect_fname);
+			load_was_success = (GLOBALS->ae2 != NULL);
+			break;
+
+   		case GHW_FILE: 
+			load_was_success = (ghw_main(GLOBALS->loaded_file_name) != 0);
+			break;
+
+
+		/* vvvv these currently exit in the loaders and need to be fixed there vvvv */
+
+   		case VCD_FILE: 
+			vcd_main(GLOBALS->loaded_file_name); 
+			load_was_success = 1;
+			break;
+
+		case VCD_RECODER_FILE: 
+			vcd_recoder_main(GLOBALS->loaded_file_name); 
+			load_was_success = 1;
+			break;
+
+   		case LXT_FILE: 
+			lxt_main(GLOBALS->loaded_file_name); 
+			load_was_success = 1;
+			break;
+
+		/* ^^^^ these currently exit in the loaders and need to be fixed there ^^^^ */
+ 		} 
+
+	if(load_was_success)
+		{
+		break;
+		}
+		else
+		{
+		/* recovery sequence */
+		printf("GTKWAVE | Reload failure, reattempt in %d second%s...\n", reload_fail_delay, (reload_fail_delay==1) ? "" : "s");
+		fflush(stdout);
+		sleep(reload_fail_delay);
+		switch(reload_fail_delay)
+			{
+			case 1: reload_fail_delay = 2; break;
+			case 2: reload_fail_delay = 5; break;
+			case 5: reload_fail_delay = 10; break;
+			case 10: reload_fail_delay = 30; break;
+			case 30: reload_fail_delay = 60; break;
+			default: break;
+			}
+		}
+	}
 
  /* Setup timings we probably need to redraw here */
  GLOBALS->tims.last=GLOBALS->max_time;
-
  GLOBALS->tims.first=GLOBALS->min_time;
 
  if(fix_from_time)
@@ -5057,6 +5126,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.30  2007/08/23 03:16:03  gtkwave
+ * NO_FILE now set on stdin sourced VCDs
+ *
  * Revision 1.1.1.1.2.29  2007/08/23 03:04:45  gtkwave
  * merge status.c widgets across ctx
  *

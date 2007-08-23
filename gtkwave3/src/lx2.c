@@ -29,13 +29,6 @@
 
 
 /*
- * globals
- */
-
-
-
-
-/*
  * mainline
  */
 TimeType lx2_main(char *fname, char *skip_start, char *skip_end)
@@ -51,8 +44,7 @@ struct Node *node_block = NULL;
 GLOBALS->lx2_lx2_c_1 = lxt2_rd_init(fname);
 if(!GLOBALS->lx2_lx2_c_1)
         {
-        fprintf(stderr, "Could not initialize '%s', exiting.\n", fname);
-        exit(0);
+	return(LLDescriptor(0));        /* look at GLOBALS->lx2_lx2_c_1 in caller for success status... */
         }
 
 /* SPLASH */                            splash_create();
@@ -752,6 +744,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:47  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

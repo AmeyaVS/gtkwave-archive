@@ -976,7 +976,7 @@ ghw_main(char *fname)
  if ((rc=ghw_open (&handle, fname)) < 0)
    {
      fprintf (stderr, "Error opening ghw file '%s', rc=%d.\n", fname, rc);
-     exit(1);
+     return(LLDescriptor(0));        /* look at return code in caller for success status... */
    }
 
  GLOBALS->time_scale = 1;
@@ -985,8 +985,10 @@ ghw_main(char *fname)
 
  if (ghw_read_base (&handle) < 0)
    {
+     free_2(GLOBALS->asbuf); 
+     GLOBALS->asbuf = NULL;
      fprintf (stderr, "Error in ghw file '%s'.\n", fname);
-     exit(1);
+     return(LLDescriptor(0));        /* look at return code in caller for success status... */
    }
 
  GLOBALS->min_time = 0;
@@ -1059,6 +1061,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.3  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.2.2.2  2007/08/06 03:50:46  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

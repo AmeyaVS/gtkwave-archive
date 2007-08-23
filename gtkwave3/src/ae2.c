@@ -168,8 +168,13 @@ ae2_initialize(error_fn, msg_fn, alloc_fn, free_fn);
 
 if ( (!(GLOBALS->ae2_f=fopen(fname, "rb"))) || (!(GLOBALS->ae2 = ae2_read_initialize(GLOBALS->ae2_f))) )
         {
-        fprintf(stderr, "Could not initialize '%s', exiting.\n", fname);
-        exit(0);
+	if(GLOBALS->ae2_f)
+		{
+		fclose(GLOBALS->ae2_f);
+		GLOBALS->ae2_f = NULL;
+		}
+
+        return(LLDescriptor(0));        /* look at GLOBALS->ae2 in caller for success status... */
         }
 
 /* SPLASH */                            splash_create();
@@ -287,7 +292,7 @@ if(indirect_fname)
 			else
 			{
 			fprintf(stderr, AET2_RDLOAD"Matched %d/%d facilities against indirect file, exiting.\n", GLOBALS->ae2_regex_matches, GLOBALS->numfacs);
-			exit(0);
+			exit(0); /* no need to attempt recovery via return as AE2 is valid and no sigs match */
 			}
 		}
 	}
@@ -1068,6 +1073,10 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.4  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

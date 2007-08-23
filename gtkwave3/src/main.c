@@ -603,6 +603,11 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_nam
 #endif
                 GLOBALS->loaded_file_type = LX2_FILE;
 		lx2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+		if(!GLOBALS->lx2_lx2_c_1)
+			{
+			fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+			exit(255);
+			}
 		}	
 	}
 else
@@ -615,6 +620,11 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name
 #endif
         GLOBALS->loaded_file_type = VZT_FILE;
 	vzt_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+	if(!GLOBALS->vzt_vzt_c_1)
+		{
+		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+		exit(255);
+		}
 	}
 else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".aet"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ae2"))))
 	{
@@ -625,6 +635,11 @@ else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_fi
 #endif
         GLOBALS->loaded_file_type = AE2_FILE;
 	ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
+	if(!GLOBALS->ae2)
+		{
+		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+		exit(255);
+		}
 	}
 else if (
 	((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ghw"))) ||
@@ -633,7 +648,11 @@ else if (
 	)
 	{
           GLOBALS->loaded_file_type = GHW_FILE;
-	  ghw_main(GLOBALS->loaded_file_name);
+	  if(!ghw_main(GLOBALS->loaded_file_name))
+		{
+		/* error message printed in ghw_main() */
+		exit(255);
+		}
 	}
 else if (strlen(GLOBALS->loaded_file_name)>4)	/* case for .aet? type filenames */
 	{
@@ -649,6 +668,11 @@ else if (strlen(GLOBALS->loaded_file_name)>4)	/* case for .aet? type filenames *
 #endif
                 GLOBALS->loaded_file_type = AE2_FILE;
 		ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
+		if(!GLOBALS->ae2)
+			{
+			fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+			exit(255);
+			}
 		}
 		else
 		{
@@ -1476,6 +1500,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.11  2007/08/23 03:16:03  gtkwave
+ * NO_FILE now set on stdin sourced VCDs
+ *
  * Revision 1.1.1.1.2.10  2007/08/23 02:42:51  gtkwave
  * convert c++ style comments to c to aid with compiler compatibility
  *

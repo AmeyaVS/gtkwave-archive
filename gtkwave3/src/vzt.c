@@ -28,11 +28,6 @@
 #include "debug.h"
 #include "busy.h"
 
-/*
- * globals
- */
-
-
 
 /*
  * mainline
@@ -50,8 +45,7 @@ struct Node *node_block = NULL;
 GLOBALS->vzt_vzt_c_1 = vzt_rd_init_smp(fname, GLOBALS->num_cpus);
 if(!GLOBALS->vzt_vzt_c_1)
         {
-        fprintf(stderr, "Could not initialize '%s', exiting.\n", fname);
-        exit(0);
+	return(LLDescriptor(0));	/* look at GLOBALS->vzt_vzt_c_1 in caller for success status... */
         }
 /* SPLASH */                            splash_create();
 
@@ -721,6 +715,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:56  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
