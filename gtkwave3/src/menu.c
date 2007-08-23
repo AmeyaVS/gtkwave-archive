@@ -2076,6 +2076,11 @@ if(GLOBALS->helpbox_is_active)
 	to_time = GLOBALS->tims.last;
 	}
 
+ /* twinwave stuff */
+ new_globals->dual_attach_id_main_c_1 = GLOBALS->dual_attach_id_main_c_1;
+ new_globals->dual_id = GLOBALS->dual_id;
+ new_globals->socket_xid = GLOBALS->socket_xid;
+ new_globals->dual_ctx = GLOBALS->dual_ctx;
   
  /* Times struct */
  memcpy(&(new_globals->tims), &(GLOBALS->tims), sizeof(Times));
@@ -5126,6 +5131,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.31  2007/08/23 23:28:48  gtkwave
+ * reload fail handling and retries
+ *
  * Revision 1.1.1.1.2.30  2007/08/23 03:16:03  gtkwave
  * NO_FILE now set on stdin sourced VCDs
  *
