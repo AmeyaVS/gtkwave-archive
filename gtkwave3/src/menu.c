@@ -1761,15 +1761,15 @@ if(GLOBALS->helpbox_is_active)
 	);
 	return;
 	}
- printf("GTKWAVE | Reloading waveform...\n");
 
  /* XXX if there's no file (for some reason), this function shouldn't occur
     we should probably gray it out. */
  if(GLOBALS->loaded_file_type == NO_FILE) {
-   printf("NO_FILE type cannot be reloaded\n");
+   printf("GTKWAVE | NO_FILE type cannot be reloaded\n");
    return;
  }
 
+ printf("GTKWAVE | Reloading waveform...\n");
 
  /* Save state to file */
  statefile = fopen(".temp","wb");
@@ -5057,6 +5057,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.29  2007/08/23 03:04:45  gtkwave
+ * merge status.c widgets across ctx
+ *
  * Revision 1.1.1.1.2.28  2007/08/23 02:47:32  gtkwave
  * updating of reload debug messages
  *

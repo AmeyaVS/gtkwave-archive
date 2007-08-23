@@ -680,12 +680,12 @@ load_vcd:
 		{
 		if(is_legacy)
 			{
-                          GLOBALS->loaded_file_type = VCD_FILE;
+			  GLOBALS->loaded_file_type = (strcmp(GLOBALS->loaded_file_name, "-vcd")) ? VCD_FILE : NO_FILE;
 			  vcd_main(GLOBALS->loaded_file_name);
 			}
 			else
 			{
-                          GLOBALS->loaded_file_type = VCD_RECODER_FILE;
+			  GLOBALS->loaded_file_type = (strcmp(GLOBALS->loaded_file_name, "-vcd")) ? VCD_RECODER_FILE : NO_FILE;
 			  vcd_recoder_main(GLOBALS->loaded_file_name);
 			}
 		}
@@ -1476,6 +1476,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.10  2007/08/23 02:42:51  gtkwave
+ * convert c++ style comments to c to aid with compiler compatibility
+ *
  * Revision 1.1.1.1.2.9  2007/08/19 23:13:53  kermin
  * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
  *
