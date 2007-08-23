@@ -1750,6 +1750,7 @@ menu_reload_waveform(GtkWidget *widget, gpointer data)
   int fix_from_time = 0, fix_to_time = 0;
   TimeType from_time, to_time;
   char timestr[32];
+  struct stringchain_t *hier_head = NULL, *hier_curr = NULL;
 
 if(GLOBALS->helpbox_is_active)
 	{
@@ -2115,8 +2116,31 @@ if(GLOBALS->helpbox_is_active)
  
  if(GLOBALS->window_hiersearch_c_3)
         {
-        gtk_widget_destroy(GLOBALS->window_hiersearch_c_3);
-        GLOBALS->window_hiersearch_c_3 = NULL;   
+	struct treechain *tc = GLOBALS->treechain_hiersearch_c_1;
+	while(tc)
+		{
+		if(!hier_curr)
+			{
+			hier_head = hier_curr = calloc_2_into_context(new_globals,1,sizeof(struct stringchain_t));
+			}
+			else
+			{
+			hier_curr->next = calloc_2_into_context(new_globals,1,sizeof(struct stringchain_t));
+			hier_curr = hier_curr->next;
+			}
+
+		hier_curr->name = calloc_2_into_context(new_globals,1,strlen(tc->label->name) + 1);
+		strcpy(hier_curr->name, tc->label->name);
+
+		tc = tc->next;
+		}
+
+	new_globals->window_hiersearch_c_3 = GLOBALS->window_hiersearch_c_3;
+	new_globals->entry_main_hiersearch_c_1 = GLOBALS->entry_main_hiersearch_c_1;
+	new_globals->clist_hiersearch_c_1 = GLOBALS->clist_hiersearch_c_1;
+	new_globals->bundle_direction_hiersearch_c_1 = GLOBALS->bundle_direction_hiersearch_c_1;
+	new_globals->cleanup_hiersearch_c_3 = GLOBALS->cleanup_hiersearch_c_3;
+	new_globals->is_active_hiersearch_c_1 = GLOBALS->is_active_hiersearch_c_1;
         }
  
  if(GLOBALS->window_markerbox_c_4)
@@ -2410,6 +2434,68 @@ if(GLOBALS->helpbox_is_active)
  if(GLOBALS->window_search_c_7)
         {
 	search_enter_callback(GLOBALS->entry_search_c_3, NULL);
+	}
+
+ // part 2 of hier search (which needs to be done after the new dumpfile is loaded)
+ if(GLOBALS->window_hiersearch_c_3)
+        {
+	if(!hier_curr)
+        	{
+        	GLOBALS->current_tree_hiersearch_c_1=GLOBALS->treeroot;
+        	GLOBALS->h_selectedtree_hiersearch_c_1=NULL;
+        	}
+		else
+		{
+		struct tree *t = GLOBALS->treeroot;
+		hier_curr = hier_head;
+
+		while((hier_curr)&&(t))
+			{
+			if(!strcmp(hier_curr->name, t->name))
+				{
+			        if(t->child)
+			                {
+			                struct treechain *tc, *tc2;
+
+			                tc=GLOBALS->treechain_hiersearch_c_1;
+			                if(tc)
+			                        {
+			                        while(tc->next) tc=tc->next;
+
+			                        tc2=calloc_2(1,sizeof(struct treechain));
+			                        tc2->label=t;
+			                        tc2->tree=GLOBALS->current_tree_hiersearch_c_1;
+			                        tc->next=tc2;
+			                        }
+			                        else
+			                        {
+			                        GLOBALS->treechain_hiersearch_c_1=calloc_2(1,sizeof(struct treechain));
+			                        GLOBALS->treechain_hiersearch_c_1->tree=GLOBALS->current_tree_hiersearch_c_1;
+			                        GLOBALS->treechain_hiersearch_c_1->label=t;
+			                        }
+			
+			                GLOBALS->current_tree_hiersearch_c_1=t->child;
+			                }
+
+				t = t->child;
+				hier_curr = hier_curr->next;
+				continue;
+				}
+			t = t->next;
+			}
+
+		hier_curr = hier_head;
+
+		while(hier_head)
+			{
+			hier_head = hier_curr->next;
+			free_2(hier_curr->name);
+			free_2(hier_curr);
+			hier_curr = hier_head;			
+			}		
+		}
+
+	refresh_hier_tree(GLOBALS->current_tree_hiersearch_c_1);
 	}
 
  printf("Finished reload waveform\n");
@@ -4965,6 +5051,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.25  2007/08/22 22:11:37  gtkwave
+ * made search re-entrant, additional state for lxt2/vzt/ae2 loaders
+ *
  * Revision 1.1.1.1.2.24  2007/08/22 03:02:42  gtkwave
  * from..to entry widget state merge
  *

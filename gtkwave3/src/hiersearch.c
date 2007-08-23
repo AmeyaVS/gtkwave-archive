@@ -31,7 +31,7 @@ return(GLOBALS->is_active_hiersearch_c_1);
 }
 
 
-static void refresh_tree(struct tree *t) 
+void refresh_hier_tree(struct tree *t) 
 {
 struct tree *t2;
 GtkCList *cl;
@@ -744,7 +744,7 @@ if(t)
 			}
 
 		GLOBALS->current_tree_hiersearch_c_1=t->child;
-		refresh_tree(GLOBALS->current_tree_hiersearch_c_1);
+		refresh_hier_tree(GLOBALS->current_tree_hiersearch_c_1);
 		}
 	}
 	else
@@ -781,7 +781,7 @@ if(t)
 				}
 					
 			}
-		refresh_tree(GLOBALS->current_tree_hiersearch_c_1);
+		refresh_hier_tree(GLOBALS->current_tree_hiersearch_c_1);
 		}
 	}
 
@@ -977,12 +977,16 @@ void hier_searchbox(char *title, GtkSignalFunc func)
     	GLOBALS->h_selectedtree_hiersearch_c_1=NULL;
 	}
 
-    refresh_tree(GLOBALS->current_tree_hiersearch_c_1);
+    refresh_hier_tree(GLOBALS->current_tree_hiersearch_c_1);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

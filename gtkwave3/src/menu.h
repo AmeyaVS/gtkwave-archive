@@ -32,6 +32,13 @@ int file_quit_cmd_callback (GtkWidget *widget, gpointer data);
 int set_wave_menu_accelerator(char *str);
 int execute_script(char *name);
 
+struct stringchain_t
+{
+struct stringchain_t *next;
+char *name;
+};
+
+
 enum WV_MenuItems {
 #if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_FONV,
@@ -282,6 +289,9 @@ void menu_version(GtkWidget *widget, gpointer data);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/15 03:26:01  kermin
+ * Reload button does not cause a fault, however, state is still somehow incorrect.
+ *
  * Revision 1.1.1.1.2.3  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

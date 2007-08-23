@@ -96,6 +96,7 @@ void renderbox(char *title);
 struct tree *fetchlow(struct tree *t);
 struct tree *fetchhigh(struct tree *t);
 void fetchvex(struct tree *t, char direction);
+void refresh_hier_tree(struct tree *t);
 
 void markerbox(char *title, GtkSignalFunc func);
 
@@ -136,6 +137,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.7  2007/08/22 22:11:05  gtkwave
+ * make regex search for signals re-entrant
+ *
  * Revision 1.2.2.6  2007/08/22 02:06:38  gtkwave
  * merge in treebox() similar to treeboxframe()
  *
