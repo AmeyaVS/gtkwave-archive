@@ -1602,6 +1602,7 @@ void reload_into_new_context(void)
 			setjmp_globals =  calloc(1,sizeof(struct Global));      /* allocate yet another copy of viewer context */
 			memcpy(setjmp_globals, GLOBALS, sizeof(struct Global));	/* clone */
 			GLOBALS->alloc2_chain = NULL;				/* will merge this in after load if successful */
+			GLOBALS->outstanding = 0;				/* zero out count of chunks in this ctx */
 
 			if(!setjmp(*(GLOBALS->vcd_jmp_buf)))			/* loader exception handling */
 				{
@@ -1630,6 +1631,7 @@ void reload_into_new_context(void)
 							*(t2+0) = t;
 							}
 						GLOBALS->alloc2_chain = setjmp_globals->alloc2_chain;
+						GLOBALS->outstanding += setjmp_globals->outstanding;
 						break;					
 						}
 					}
