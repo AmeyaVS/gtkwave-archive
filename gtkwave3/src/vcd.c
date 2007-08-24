@@ -1133,7 +1133,7 @@ for(;;)
 			{
 			fprintf(stderr,"$VAR encountered after $ENDDEFINITIONS near byte %d.  VCD is malformed, exiting.\n",
 				(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)));
-			exit(0);
+			vcd_exit(255);
 			}
 			else
 			{
@@ -1545,12 +1545,12 @@ for(;;)
 			if((!GLOBALS->sorted_vcd_c_1)&&(!GLOBALS->indexed_vcd_c_1))
 				{
 				fprintf(stderr, "No symbols in VCD file..nothing to do!\n");
-				exit(1);
+				vcd_exit(255);
 				}
 			if(GLOBALS->error_count_vcd_c_1)
 				{
 				fprintf(stderr, "\n%d VCD parse errors encountered, exiting.\n", GLOBALS->error_count_vcd_c_1);
-				exit(1);
+				vcd_exit(255);
 				}
 			break;
 		case T_STRING:
@@ -2360,7 +2360,7 @@ if(!GLOBALS->vcd_handle_vcd_c_1)
 	{
 	fprintf(stderr, "Error opening %s .vcd file '%s'.\n",
 		GLOBALS->vcd_is_compressed_vcd_c_1?"compressed":"", fname);
-	exit(1);
+	vcd_exit(255);
 	}
 
 /* SPLASH */				splash_create(); 
@@ -2379,11 +2379,11 @@ if(GLOBALS->varsplit_vcd_c_1)
 if((!GLOBALS->sorted_vcd_c_1)&&(!GLOBALS->indexed_vcd_c_1))
 	{
 	fprintf(stderr, "No symbols in VCD file..is it malformed?  Exiting!\n");
-	exit(1);
+	vcd_exit(255);
 	}
 add_tail_histents();
 
-if(GLOBALS->vcd_save_handle) fclose(GLOBALS->vcd_save_handle);
+if(GLOBALS->vcd_save_handle) { fclose(GLOBALS->vcd_save_handle); GLOBALS->vcd_save_handle = NULL; }
 
 fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS->start_time_vcd_c_1*GLOBALS->time_scale, GLOBALS->end_time_vcd_c_1*GLOBALS->time_scale);
 if(GLOBALS->num_glitches_vcd_c_2) fprintf(stderr, "Warning: encountered %d glitch%s across %d glitch region%s.\n", 
@@ -2414,7 +2414,7 @@ GLOBALS->max_time=GLOBALS->end_time_vcd_c_1*GLOBALS->time_scale;
 if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
         {
         fprintf(stderr, "VCD times range is equal to zero.  Exiting.\n");
-        exit(1);
+        vcd_exit(255);
         }
 
 GLOBALS->is_vcd=~0;
@@ -2427,6 +2427,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

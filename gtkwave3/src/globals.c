@@ -755,6 +755,7 @@ NULL, /* cleanup_treesearch_gtk2_c_8 468 */
 /*
  * vcd.c
  */
+NULL, /* vcd_jmp_buf */
 -1, /* vcd_warning_filesize 472 */
 1, /* autocoalesce 473 */
 0, /* autocoalesce_reversal */
@@ -1031,7 +1032,7 @@ return(g);						/* what to do with ctx is at discretion of caller */
 void reload_into_new_context(void)
 {
   FILE *statefile;
-  struct Global *new_globals;
+  struct Global *new_globals, *setjmp_globals;
   int i;
   gint tree_frame_x = -1, tree_frame_y = -1;
   gdouble tree_vadj_value = 0.0;
@@ -1567,6 +1568,15 @@ void reload_into_new_context(void)
 	/* Load new file from disk, no reload on partial vcd or vcd from stdin. */
 	switch(GLOBALS->loaded_file_type) 
 		{
+		/* vvvv XXX : lxt currently exits in the loader and needs to be fixed there vvvv */
+
+   		case LXT_FILE: 
+			lxt_main(GLOBALS->loaded_file_name); 
+			load_was_success = 1;
+			break;
+
+		/* ^^^^ XXX : lxt currently exits in the loader and needs to be fixed there ^^^^ */
+
    		case LX2_FILE: 
 			lx2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end);
 			load_was_success = (GLOBALS->lx2_lx2_c_1 != NULL);
@@ -1586,25 +1596,60 @@ void reload_into_new_context(void)
 			load_was_success = (ghw_main(GLOBALS->loaded_file_name) != 0);
 			break;
 
-
-		/* vvvv these currently exit in the loaders and need to be fixed there vvvv */
-
    		case VCD_FILE: 
-			vcd_main(GLOBALS->loaded_file_name); 
-			load_was_success = 1;
-			break;
-
 		case VCD_RECODER_FILE: 
-			vcd_recoder_main(GLOBALS->loaded_file_name); 
-			load_was_success = 1;
-			break;
+			GLOBALS->vcd_jmp_buf = calloc(1, sizeof(jmp_buf));
+			setjmp_globals =  calloc(1,sizeof(struct Global));      /* allocate yet another copy of viewer context */
+			memcpy(setjmp_globals, GLOBALS, sizeof(struct Global));	/* clone */
+			GLOBALS->alloc2_chain = NULL;				/* will merge this in after load if successful */
 
-   		case LXT_FILE: 
-			lxt_main(GLOBALS->loaded_file_name); 
-			load_was_success = 1;
-			break;
+			if(!setjmp(*(GLOBALS->vcd_jmp_buf)))			/* loader exception handling */
+				{
+				void **t, **t2;
 
-		/* ^^^^ these currently exit in the loaders and need to be fixed there ^^^^ */
+				switch(GLOBALS->loaded_file_type)		/* on fail, longjmp called in these loaders */
+					{			
+			   		case VCD_FILE: vcd_main(GLOBALS->loaded_file_name); break;
+					case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
+					}
+				
+				t = (void **)setjmp_globals->alloc2_chain;
+				while(t)
+					{
+					t2 = (void **) *(t+1);
+					if(t2)
+						{
+						t = t2;
+						}
+						else
+						{
+						*(t+1) = GLOBALS->alloc2_chain;
+						if(GLOBALS->alloc2_chain)
+							{
+							t2 = (void **)GLOBALS->alloc2_chain;
+							*(t2+0) = t;
+							}
+						GLOBALS->alloc2_chain = setjmp_globals->alloc2_chain;
+						break;					
+						}
+					}
+				free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
+				free(setjmp_globals); setjmp_globals = NULL;
+
+				load_was_success = 1;
+				}
+				else
+				{
+				free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
+				if(GLOBALS->vcd_handle_vcd_c_1) { fclose(GLOBALS->vcd_handle_vcd_c_1); GLOBALS->vcd_handle_vcd_c_1 = NULL; }
+				if(GLOBALS->vcd_handle_vcd_recoder_c_2) { fclose(GLOBALS->vcd_handle_vcd_recoder_c_2); GLOBALS->vcd_handle_vcd_recoder_c_2 =NULL; }
+				free_outstanding(); /* free anything allocated in loader ctx */
+
+				memcpy(GLOBALS, setjmp_globals, sizeof(struct Global)); /* copy over old ctx */
+				free(setjmp_globals);					/* remove cached old ctx */
+				/* now try again, jump through recovery sequence below */
+				}
+			break;
  		} 
 
 	if(load_was_success)

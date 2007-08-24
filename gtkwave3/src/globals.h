@@ -765,6 +765,7 @@ int dnd_tgt_on_signalarea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 501 */
 /*
  * vcd.c
  */
+jmp_buf *vcd_jmp_buf; /* from vcd.c */
 int vcd_warning_filesize; /* from vcd.c 502 */
 char autocoalesce; /* from vcd.c 503 */
 char autocoalesce_reversal; /* from vcd.c 504 */

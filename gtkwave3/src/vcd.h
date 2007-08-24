@@ -22,6 +22,7 @@
 #define ftello ftell
 #endif
 
+#include <setjmp.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -34,6 +35,16 @@
 #define VCD_SIZE_WARN (256)	/* number of MB size where converter warning message appears */
 #define VCD_BSIZ 32768	/* size of getch() emulation buffer--this val should be ok */
 #define VCD_INDEXSIZ  (8 * 1024 * 1024)
+
+#define vcd_exit(x) \
+	if(GLOBALS->vcd_jmp_buf) \
+		{ \
+		longjmp(*(GLOBALS->vcd_jmp_buf), x); \
+		} \
+		else \
+		{ \
+		exit(x); \
+		}
 
 enum VCDName_ByteSubstitutions { VCDNAM_NULL=0, VCDNAM_HIERSORT, VCDNAM_ESCAPE };
 
@@ -117,6 +128,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
  * Imported sources
  *

@@ -1031,7 +1031,7 @@ for(;;)
 			{
 			fprintf(stderr,"$VAR encountered after $ENDDEFINITIONS near byte %d.  VCD is malformed, exiting.\n",
 				(int)(GLOBALS->vcdbyteno_vcd_recoder_c_3+(GLOBALS->vst_vcd_recoder_c_3-GLOBALS->vcdbuf_vcd_recoder_c_3)));
-			exit(0);
+			vcd_exit(255);
 			}
 			else
 			{
@@ -1379,12 +1379,12 @@ for(;;)
 			if((!GLOBALS->sorted_vcd_recoder_c_3)&&(!GLOBALS->indexed_vcd_recoder_c_3))
 				{
 				fprintf(stderr, "No symbols in VCD file..nothing to do!\n");
-				exit(1);
+				vcd_exit(255);
 				}
 			if(GLOBALS->error_count_vcd_recoder_c_3)
 				{
 				fprintf(stderr, "\n%d VCD parse errors encountered, exiting.\n", GLOBALS->error_count_vcd_recoder_c_3);
-				exit(1);
+				vcd_exit(255);
 				}
 			break;
 		case T_STRING:
@@ -2072,7 +2072,7 @@ if(!GLOBALS->vcd_handle_vcd_recoder_c_2)
 	{
 	fprintf(stderr, "Error opening %s .vcd file '%s'.\n",
 		GLOBALS->vcd_is_compressed_vcd_recoder_c_2?"compressed":"", fname);
-	exit(1);
+	vcd_exit(255);
 	}
 
 /* SPLASH */				splash_create(); 
@@ -2096,10 +2096,10 @@ vlist_emit_finalize();
 if((!GLOBALS->sorted_vcd_recoder_c_3)&&(!GLOBALS->indexed_vcd_recoder_c_3))
 	{
 	fprintf(stderr, "No symbols in VCD file..is it malformed?  Exiting!\n");
-	exit(1);
+	vcd_exit(255);
 	}
 
-if(GLOBALS->vcd_save_handle) fclose(GLOBALS->vcd_save_handle);
+if(GLOBALS->vcd_save_handle) { fclose(GLOBALS->vcd_save_handle); GLOBALS->vcd_save_handle = NULL; }
 
 fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS->start_time_vcd_recoder_c_3*GLOBALS->time_scale, GLOBALS->end_time_vcd_recoder_c_3*GLOBALS->time_scale);
 
@@ -2127,7 +2127,7 @@ GLOBALS->max_time=GLOBALS->end_time_vcd_recoder_c_3*GLOBALS->time_scale;
 if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
         {
         fprintf(stderr, "VCD times range is equal to zero.  Exiting.\n");
-        exit(1);
+        vcd_exit(255);
         }
 
 /* is_vcd=~0; */
@@ -2218,7 +2218,7 @@ if(!(list_size=vlist_size(v)))
 
 			default:
 				fprintf(stderr, "Unsupported vlist type '%c', exiting.", vlist_type);
-				exit(255);
+				vcd_exit(255);
 				break;
 			}
 		}		
@@ -2499,7 +2499,7 @@ else if(vlist_type == '!') /* error in loading */
 		}
 
 	fprintf(stderr, "Error in decompressing vlist for '%s', exiting.\n", np->nname);
-	exit(255);
+	vcd_exit(255);
 	}
 
 vlist_destroy(v);
@@ -2509,6 +2509,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:56  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.5  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
