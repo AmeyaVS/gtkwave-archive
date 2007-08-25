@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.0_soc (w)1999-2007 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.0_rc1 (w)1999-2007 BSI"
 
 struct blackout_region_t
 {
@@ -139,6 +139,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.9  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
  * Revision 1.2.2.8  2007/08/23 02:19:48  gtkwave
  * merge GLOBALS state from old hier_search widget into new one
  *
