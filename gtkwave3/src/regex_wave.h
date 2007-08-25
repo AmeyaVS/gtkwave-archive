@@ -1,4 +1,4 @@
-#include"globals.h"/*
+/*
  * Copyright (c) Tony Bybell 1999-2004.
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef REGEX_WAVE_H
 #define REGEX_WAVE_H
@@ -24,6 +26,9 @@ void wave_regex_alloc_free(void *pnt);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
  * Imported sources
  *

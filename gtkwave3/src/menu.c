@@ -701,7 +701,10 @@ if(GLOBALS->helpbox_is_active)
 		}
 	}
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path))->active=(GLOBALS->lxt_clock_compress_to_z)?TRUE:FALSE;
+if(GLOBALS->loaded_file_type == LXT_FILE)
+	{
+	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path))->active=(GLOBALS->lxt_clock_compress_to_z)?TRUE:FALSE;
+	}
 }
 /**/
 void menu_use_full_precision(GtkWidget *widget, gpointer data)
@@ -4155,7 +4158,10 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_ACOLR].path))->active=(GLOBALS->autocoalesce_reversal)?TRUE:FALSE;
 
-GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path))->active=(GLOBALS->lxt_clock_compress_to_z)?TRUE:FALSE;
+if(GLOBALS->loaded_file_type == LXT_FILE)
+	{
+	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path))->active=(GLOBALS->lxt_clock_compress_to_z)?TRUE:FALSE;
+	}
 }
 
 
@@ -4172,6 +4178,18 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
     global_accel = gtk_accel_group_new();
     GLOBALS->item_factory_menu_c_1 = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", global_accel);
     gtk_item_factory_create_items(GLOBALS->item_factory_menu_c_1, nmenu_items, menu_items, NULL);
+
+    if(GLOBALS->loaded_file_type == NO_FILE)
+	{
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/File/Reload Waveform");
+	}
+
+    if(GLOBALS->loaded_file_type != LXT_FILE)
+	{
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/View/<separator>");
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/View/LXT Clock Compress to Z");
+	}
+
     gtk_window_add_accel_group(GTK_WINDOW(window), global_accel);
     if(menubar)
 	{
@@ -4313,6 +4331,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.33  2007/08/23 23:51:50  gtkwave
+ * moved reload function to globals.c
+ *
  * Revision 1.1.1.1.2.32  2007/08/23 23:40:11  gtkwave
  * merged in twinwave support
  *

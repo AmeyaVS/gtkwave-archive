@@ -27,7 +27,6 @@ static gdouble px[]={11.00, 11.68, 14.00, 8.50, 8.26};
 static gdouble py[]={ 8.50,  8.26,  8.50, 6.57, 5.84};
 
 
-
 /*
  * button/menu/entry activations..
  */
@@ -329,6 +328,10 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

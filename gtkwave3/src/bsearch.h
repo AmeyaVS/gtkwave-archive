@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef BSEARCH_NODES_VECTORS_H
 #define BSEARCH_NODES_VECTORS_H
@@ -16,13 +18,14 @@ vptr bsearch_vector(bvptr b, TimeType key);
 char *bsearch_trunc(char *ascii, int maxlen);
 struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return);
 
-
-
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:18  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
  * Imported sources
  *

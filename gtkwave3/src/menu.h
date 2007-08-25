@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2005.
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 /* example-start menu menufactory.h */
 
@@ -289,6 +291,9 @@ void menu_version(GtkWidget *widget, gpointer data);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/23 02:19:49  gtkwave
+ * merge GLOBALS state from old hier_search widget into new one
+ *
  * Revision 1.1.1.1.2.4  2007/08/15 03:26:01  kermin
  * Reload button does not cause a fault, however, state is still somehow incorrect.
  *

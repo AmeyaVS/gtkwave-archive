@@ -20,7 +20,6 @@
 #include <windows.h>
 #endif
 
-
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,10 +29,6 @@
 #include "vcd.h"
 #include "lxt.h"
 #include "bsearch.h"
-
-
-
-
 
 /*
  * Generic hash function for symbol names...
@@ -124,6 +119,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:49  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

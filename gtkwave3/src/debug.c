@@ -11,6 +11,7 @@
 /*
  * debug.c 01feb99ajb
  * malloc debugs added on 13jul99ajb
+ * malloc tracking added on 05aug07ajb for 3.1 series
  */
 #include <config.h>
 #include "globals.h"
@@ -335,6 +336,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.5  2007/08/23 02:47:32  gtkwave
+ * updating of reload debug messages
+ *
  * Revision 1.2.2.4  2007/08/07 04:54:59  gtkwave
  * slight modifications to global initialization scheme
  *

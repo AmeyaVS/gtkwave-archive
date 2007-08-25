@@ -28,7 +28,6 @@
 #endif
 
 
-
 /*
  * convert trptr+vptr into an ascii string
  */
@@ -1358,6 +1357,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.3  2007/08/06 03:50:45  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

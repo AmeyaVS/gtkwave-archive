@@ -28,9 +28,12 @@
  * a GHW tree's "which" is not the same as a gtkwave "which"
  * in that gtkwave's points to the facs[] array and
  * GHW's functions as an alias handle.  The following
- * vars are used to resolve those differences...
+ * (now global) vars are used to resolve those differences...
+ *
+ * static struct Node **nxp;
+ * static struct symbol *sym_head = NULL, *sym_curr = NULL;
+ * static int sym_which = 0;
  */
-
 
 /*
  * pointer splay
@@ -1061,6 +1064,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.4  2007/08/23 23:29:30  gtkwave
+ * reload fail handling and retries
+ *
  * Revision 1.2.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

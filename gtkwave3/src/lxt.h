@@ -1,4 +1,4 @@
-#include"globals.h"/*
+/*
  * Copyright (c) Tony Bybell 2001-2004.
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef WAVE_LXT_H
 #define WAVE_LXT_H
@@ -64,6 +66,10 @@ int munmap(void *start, size_t length);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
  * Semi working global struct
  *

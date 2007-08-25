@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef WAVE_SYMBOL_H
 #define WAVE_SYMBOL_H
@@ -110,6 +112,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:24  kermin
  * Semi working global struct
  *

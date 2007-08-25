@@ -26,8 +26,6 @@
    * The (filtered) list of signals contained in the hierarchy [signal area].
 */
 
-
-
 /* SIG_ROOT is the branch currently selected.
    Signals of SIG_ROOT are displayed in the signals window.  */
 
@@ -1786,6 +1784,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.11  2007/08/22 02:06:39  gtkwave
+ * merge in treebox() similar to treeboxframe()
+ *
  * Revision 1.1.1.1.2.10  2007/08/21 23:29:17  gtkwave
  * merge in tree select state from old ctx
  *

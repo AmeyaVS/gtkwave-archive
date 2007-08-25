@@ -32,7 +32,6 @@ static void draw_vptr_trace(Trptr t, vptr v, int which);
 static void rendertraces(void);
 static void rendertimes(void);
 
-
 static const GdkModifierType   bmask[4]= {0, GDK_BUTTON1_MASK, 0, GDK_BUTTON3_MASK };                   /* button 1, 3 press/rel encodings */
 static const GdkModifierType m_bmask[4]= {0, GDK_BUTTON1_MOTION_MASK, 0, GDK_BUTTON3_MOTION_MASK };     /* button 1, 3 motion encodings */
 
@@ -3105,6 +3104,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/07 03:18:56  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.6  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

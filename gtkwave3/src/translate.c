@@ -22,7 +22,6 @@
 
 /************************ splay ************************/
 
-
 xl_Tree * xl_splay (char *i, xl_Tree * t) {
 /* Simple top down splay, not requiring i to be in the tree t.  */
 /* What it does is described above.                             */
@@ -514,6 +513,9 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/21 22:35:40  gtkwave
+ * prelim tree state merge
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef WAVE_RC_H
 #define WAVE_RC_H
@@ -115,6 +117,9 @@ int  f_zoom_pow10_snap (char *str);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1.2.1  2007/07/28 19:50:40  kermin
  * Merged in the main line
  *

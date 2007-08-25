@@ -44,8 +44,6 @@ GLOBALS->selectedtree_treesearch_gtk1_c=NULL;
 }
 
 
-
-
 int treebox_is_active(void)
 {
 return(GLOBALS->is_active_treesearch_gtk1_c);
@@ -775,6 +773,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/22 02:17:13  gtkwave
+ * gtk1 treebox fixes for re-entrancy
+ *
  * Revision 1.1.1.1.2.3  2007/08/18 21:51:57  gtkwave
  * widget destroys and teardown of file formats which use external loaders
  * and are outside of malloc_2/free_2 control

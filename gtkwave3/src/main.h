@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999.
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef __MFMAIN_H__
 #define __MFMAIN_H__
@@ -65,6 +67,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/19 23:13:53  kermin
+ * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
+ *
  * Revision 1.1.1.1.2.2  2007/08/15 03:26:01  kermin
  * Reload button does not cause a fault, however, state is still somehow incorrect.
  *

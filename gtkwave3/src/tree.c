@@ -19,12 +19,6 @@
 #include "vcd.h"
 
 
-
-
-
-
-
-
 enum TreeBuildTypes { MAKETREE_FLATTEN, MAKETREE_LEAF, MAKETREE_NODE };
 
 
@@ -605,6 +599,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/21 22:35:40  gtkwave
+ * prelim tree state merge
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

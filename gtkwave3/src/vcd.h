@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2006.
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef VCD_H
 #define VCD_H
@@ -128,6 +130,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/24 21:23:55  gtkwave
+ * use setjump + potential backout ctx to "harden" vcd reload error recovery
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
  * Semi working global struct
  *

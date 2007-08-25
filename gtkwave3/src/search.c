@@ -26,9 +26,6 @@
 #include "busy.h"
 
 
-
-
-
 int searchbox_is_active(void)
 {
 return(GLOBALS->is_active_search_c_4);
@@ -1025,6 +1022,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.10  2007/08/22 22:17:55  gtkwave
+ * sizing fix for int<->long<->void* conversion on 64-bit machines
+ *
  * Revision 1.1.1.1.2.9  2007/08/22 22:11:05  gtkwave
  * make regex search for signals re-entrant
  *

@@ -1,4 +1,4 @@
-#include"globals.h"/* 
+/* 
  * Copyright (c) Tony Bybell 1999-2007
  *
  * This program is free software; you can redistribute it and/or
@@ -6,6 +6,8 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 
 #ifndef CURRENTTIME_H
 #define CURRENTTIME_H
@@ -137,6 +139,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.8  2007/08/23 02:19:48  gtkwave
+ * merge GLOBALS state from old hier_search widget into new one
+ *
  * Revision 1.2.2.7  2007/08/22 22:11:05  gtkwave
  * make regex search for signals re-entrant
  *

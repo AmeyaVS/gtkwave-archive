@@ -34,7 +34,6 @@ if(hadj->value+hadj->page_size>hadj->upper)
 	if(hadj->value<hadj->lower)
 		hadj->value=hadj->lower;
 	}
-
 }
 
 void service_zoom_left(GtkWidget *text, gpointer data)
@@ -480,6 +479,9 @@ return table;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:56  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

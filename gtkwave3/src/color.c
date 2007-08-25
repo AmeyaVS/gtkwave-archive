@@ -12,10 +12,6 @@
 #include "color.h"
 #include "debug.h"
 
-
-
-
-
 /* 
  * return graphics context with tuple's color or
  * a fallback context.  Note that if tuple<0,
@@ -49,6 +45,10 @@ return(fallback);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
  * Semi working global struct
  *

@@ -17,14 +17,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 #ifdef __linux__
 extern char *canonicalize_file_name (__const char *__name);
 #endif
-
-
-
-
 
 static void enter_callback(GtkWidget *widget, GtkFileSelection *fw)
 {
@@ -273,6 +268,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
  * Revision 1.1.1.1.2.4  2007/08/05 02:27:19  kermin
  * Semi working global struct
  *

@@ -1,4 +1,4 @@
-#include"globals.h"/* Declarations for getopt.
+/* Declarations for getopt.
    Copyright (C) 1989-1994, 1996-1999, 2001 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -179,6 +179,9 @@ extern int _getopt_internal ();
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:20  kermin
+ * Semi working global struct
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:57  gtkwave
  * Imported sources
  *

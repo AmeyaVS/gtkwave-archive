@@ -41,20 +41,11 @@
 
 #undef VCD_BSEARCH_IS_PERFECT		/* bsearch is imperfect under linux, but OK under AIX */
 
-
-
-
 static void add_histent(TimeType time, struct Node *n, char ch, int regadd, char *vector);
 static void add_tail_histents(void);
 static void vcd_build_symbols(void);
 static void vcd_cleanup(void);
 static void evcd_strcpy(char *dst, char *src);
-
-
-
-
-
-
 
 /******************************************************************/
 
@@ -2427,6 +2418,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/24 21:23:54  gtkwave
+ * use setjump + potential backout ctx to "harden" vcd reload error recovery
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *
