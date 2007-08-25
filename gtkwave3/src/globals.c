@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) Kermin Elliott Fleming 2007.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ */
+
 #include "globals.h"
 #include "analyzer.h"
 #include "bsearch.h"
@@ -1568,15 +1577,6 @@ void reload_into_new_context(void)
 	/* Load new file from disk, no reload on partial vcd or vcd from stdin. */
 	switch(GLOBALS->loaded_file_type) 
 		{
-		/* vvvv XXX : lxt currently exits in the loader and needs to be fixed there vvvv */
-
-   		case LXT_FILE: 
-			lxt_main(GLOBALS->loaded_file_name); 
-			load_was_success = 1;
-			break;
-
-		/* ^^^^ XXX : lxt currently exits in the loader and needs to be fixed there ^^^^ */
-
    		case LX2_FILE: 
 			lx2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end);
 			load_was_success = (GLOBALS->lx2_lx2_c_1 != NULL);
@@ -1596,6 +1596,7 @@ void reload_into_new_context(void)
 			load_was_success = (ghw_main(GLOBALS->loaded_file_name) != 0);
 			break;
 
+		case LXT_FILE:
    		case VCD_FILE: 
 		case VCD_RECODER_FILE: 
 			GLOBALS->vcd_jmp_buf = calloc(1, sizeof(jmp_buf));
@@ -1610,6 +1611,7 @@ void reload_into_new_context(void)
 
 				switch(GLOBALS->loaded_file_type)		/* on fail, longjmp called in these loaders */
 					{			
+			   		case LXT_FILE: lxt_main(GLOBALS->loaded_file_name); break;
 			   		case VCD_FILE: vcd_main(GLOBALS->loaded_file_name); break;
 					case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
 					}
@@ -1645,6 +1647,11 @@ void reload_into_new_context(void)
 				free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
 				if(GLOBALS->vcd_handle_vcd_c_1) { fclose(GLOBALS->vcd_handle_vcd_c_1); GLOBALS->vcd_handle_vcd_c_1 = NULL; }
 				if(GLOBALS->vcd_handle_vcd_recoder_c_2) { fclose(GLOBALS->vcd_handle_vcd_recoder_c_2); GLOBALS->vcd_handle_vcd_recoder_c_2 =NULL; }
+				if(GLOBALS->mm_lxt_mmap_addr)
+					{                        
+					munmap(GLOBALS->mm_lxt_mmap_addr, GLOBALS->mm_lxt_mmap_len); 
+					GLOBALS->mm_lxt_mmap_addr = NULL;
+					}                        
 				free_outstanding(); /* free anything allocated in loader ctx */
 
 				memcpy(GLOBALS, setjmp_globals, sizeof(struct Global)); /* copy over old ctx */

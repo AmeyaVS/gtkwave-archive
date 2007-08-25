@@ -1406,7 +1406,7 @@ GLOBALS->fd_lxt_c_1=open(fname, O_RDONLY);
 if(GLOBALS->fd_lxt_c_1<0)
         {
         fprintf(stderr, "Could not open '%s', exiting.\n", fname);
-        exit(0);
+        vcd_exit(255);
         }
 
 GLOBALS->f_len_lxt_c_1=lseek(GLOBALS->fd_lxt_c_1, (off_t)0, SEEK_END);
@@ -1420,19 +1420,19 @@ GLOBALS->mm_lxt_mmap_len = GLOBALS->f_len_lxt_c_1;
 if((i=get_16((off_t)0))!=LT_HDRID)
 	{
 	fprintf(stderr, "Not an LXT format AET, exiting.\n");
-	exit(255);
+	vcd_exit(255);
 	}
 
 if((GLOBALS->version_lxt_c_1=get_16((off_t)2))>LT_VERSION)
 	{
 	fprintf(stderr, "Version %d of LXT format AETs not supported, exiting.\n", GLOBALS->version_lxt_c_1);
-	exit(255);
+	vcd_exit(255);
 	}	
 
 if(get_byte(GLOBALS->f_len_lxt_c_1-1)!=LT_TRLID)
 	{
 	fprintf(stderr, "LXT '%s' is truncated, exiting.\n", fname);
-	exit(255);
+	vcd_exit(255);
 	}
 
 DEBUG(printf(LXTHDR"Loading LXT '%s'...\n", fname));
@@ -1518,7 +1518,7 @@ if(GLOBALS->timescale_offset_lxt_c_1)
 if(!GLOBALS->facname_offset_lxt_c_1)
 	{
 	fprintf(stderr, "LXT '%s' is missing a facility name section, exiting.\n", fname);
-	exit(255);
+	vcd_exit(255);
 	}
 
 GLOBALS->numfacs=get_32(GLOBALS->facname_offset_lxt_c_1);
@@ -1552,7 +1552,7 @@ if(GLOBALS->zdictionary_offset_lxt_c_1)
 		else
 		{
 		fprintf(stderr, "LXT '%s' is missing a zdictionary_predec_size chunk, exiting.\n", fname);
-		exit(255);
+		vcd_exit(255);
 		}
 	}
 
@@ -2319,6 +2319,10 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.7  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *
