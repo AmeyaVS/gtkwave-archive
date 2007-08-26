@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef WAVE_TRANSLATE_H
 #define WAVE_TRANSLATE_H
 
@@ -29,13 +31,13 @@ struct xl_tree_node {
 
 #define FILE_FILTER_MAX 1024
 
-extern int current_translate_file;
-extern int num_file_filters;
-extern char *filesel_filter[FILE_FILTER_MAX+1];
-extern xl_Tree *xl_file_filter[FILE_FILTER_MAX+1];
 
 
 xl_Tree * xl_splay (char *i, xl_Tree * t);
+xl_Tree * xl_insert(char *i, xl_Tree * t, char *trans);
+xl_Tree * xl_delete(char *i, xl_Tree * t);
+
+
 void trans_searchbox(char *title);
 void init_filetrans_data(void);
 void install_file_filter(int which);
@@ -46,6 +48,18 @@ void set_current_translate_file(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.2  2007/08/21 22:35:40  gtkwave
+ * prelim tree state merge
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:24  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:21  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

@@ -89,7 +89,7 @@ if(split_point < 0)
 
 mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 gtk_window_set_title(GTK_WINDOW(mainwindow), "TwinWave Initializing");
-gtk_widget_set_usize(GTK_WIDGET(mainwindow), 800, 640);
+gtk_widget_set_usize(GTK_WIDGET(mainwindow), 820, 800);
 gtk_widget_show(mainwindow);
 
 gtk_signal_connect(GTK_OBJECT(mainwindow), "destroy",
@@ -262,6 +262,12 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/26 19:05:35  gtkwave
+ * usize update to handle SST in GTK >= 2.4 in dual mode
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

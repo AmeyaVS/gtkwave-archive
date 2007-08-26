@@ -16,10 +16,10 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include "vlist.h"
 #include <zlib.h>
 
-int vlist_compression_depth = 4; /* corresponds to zlib 0-9, -1 = disabled */
 
 /* create / destroy
  */
@@ -71,7 +71,7 @@ if(v->siz > 32)
 	unsigned long destlen = v->siz;
 	int rc;
 	
-	rc = compress2((unsigned char *)dmem, &destlen, (unsigned char *)(v+1), v->siz, vlist_compression_depth);
+	rc = compress2((unsigned char *)dmem, &destlen, (unsigned char *)(v+1), v->siz, GLOBALS->vlist_compression_depth);
 	if((rc == Z_OK)&&(destlen < (v->siz - sizeof(long))))
 		{
 		/* printf("siz: %d, dest: %d rc: %d\n", v->siz, (int)destlen, rc); */
@@ -180,7 +180,7 @@ if(vl->offs == vl->siz)
 
 	if((compressable)&&(vl->elem_siz == 1))
 		{
-		if(vlist_compression_depth>=0)
+		if(GLOBALS->vlist_compression_depth>=0)
 			{
 			vl = vlist_compress_block(vl);
 			}
@@ -253,6 +253,19 @@ if(siz != vl->siz)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:56  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:50  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:52  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

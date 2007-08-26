@@ -15,7 +15,7 @@ bin_PROGRAMS=	gtkwave twinwave
 AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS)
 
 gtkwave_SOURCES= \
-	ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
+	globals.c globals.h ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
 	bsearch.c bsearch.h busy.c busy.h \
 	clipping.c clipping.h color.c color.h currenttime.c currenttime.h \
 	debug.c debug.h discardbuttons.c \

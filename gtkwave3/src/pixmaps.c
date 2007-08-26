@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2007.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -7,9 +7,163 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include "pixmaps.h"
 
+/* XPM */
+static char * icon_redo[] = {
+"24 24 126 2",
+"  	c None",
+". 	c #000000",
+"+ 	c #F0FFEE",
+"@ 	c #CAE3C6",
+"# 	c #F5FFF4",
+"$ 	c #0D110C",
+"% 	c #729C6C",
+"& 	c #A6CAA1",
+"* 	c #CBE4C7",
+"= 	c #EFFDEE",
+"- 	c #172116",
+"; 	c #88B583",
+"> 	c #CCE5C8",
+", 	c #CDE6C9",
+"' 	c #CFE7CB",
+") 	c #F3FFF2",
+"! 	c #7FA879",
+"~ 	c #689063",
+"{ 	c #CDE5C9",
+"] 	c #CFE7CA",
+"^ 	c #D0E9CC",
+"/ 	c #D4EAD0",
+"( 	c #D5ECD1",
+"_ 	c #AED5A9",
+": 	c #9ABC95",
+"< 	c #63865F",
+"[ 	c #2B3A29",
+"} 	c #8CB887",
+"| 	c #70986A",
+"1 	c #71986B",
+"2 	c #729A6B",
+"3 	c #759C6D",
+"4 	c #759F6F",
+"5 	c #76A170",
+"6 	c #567453",
+"7 	c #AFCBAC",
+"8 	c #7EAB77",
+"9 	c #78A472",
+"0 	c #6F9669",
+"a 	c #70976A",
+"b 	c #71996B",
+"c 	c #739B6D",
+"d 	c #759F6E",
+"e 	c #77A170",
+"f 	c #526F4C",
+"g 	c #B7D2B2",
+"h 	c #60835B",
+"i 	c #A5C9A0",
+"j 	c #9AC195",
+"k 	c #4F6B4C",
+"l 	c #769F70",
+"m 	c #516D4C",
+"n 	c #B9D5B4",
+"o 	c #7BA574",
+"p 	c #C7E0C3",
+"q 	c #6D9568",
+"r 	c #51714E",
+"s 	c #B6D3B2",
+"t 	c #81AB7C",
+"u 	c #C3DBBF",
+"v 	c #6B9265",
+"w 	c #C8EFC3",
+"x 	c #A7CCA2",
+"y 	c #B5D2B1",
+"z 	c #80A87A",
+"A 	c #90B68B",
+"B 	c #79A674",
+"C 	c #C6EAC1",
+"D 	c #DEF7D9",
+"E 	c #B3D7AE",
+"F 	c #BBD9B8",
+"G 	c #AFCCAB",
+"H 	c #749E6D",
+"I 	c #5B7B57",
+"J 	c #8CB087",
+"K 	c #BBE1B6",
+"L 	c #DAF5D6",
+"M 	c #E1F7DD",
+"N 	c #DCF4D6",
+"O 	c #D7F0D3",
+"P 	c #CFECCB",
+"Q 	c #C6E3C3",
+"R 	c #BCD6B9",
+"S 	c #7EA778",
+"T 	c #64885F",
+"U 	c #A6C1A3",
+"V 	c #B3D5AE",
+"W 	c #CDEAC9",
+"X 	c #D0EBCB",
+"Y 	c #CAE9C5",
+"Z 	c #C7E6C3",
+"` 	c #C3E3BF",
+" .	c #BDDCBA",
+"..	c #B5D2B2",
+"+.	c #96B991",
+"@.	c #76A071",
+"#.	c #3A4E37",
+"$.	c #5E7F5A",
+"%.	c #8FAF8B",
+"&.	c #9CBE97",
+"*.	c #C7E0C4",
+"=.	c #CBE3C6",
+"-.	c #CDE4C9",
+";.	c #CBE4C8",
+">.	c #C7E1C4",
+",.	c #C2DBBF",
+"'.	c #88AF82",
+").	c #6B9266",
+"!.	c #557451",
+"~.	c #63885E",
+"{.	c #759C70",
+"].	c #749E6F",
+"^.	c #72996B",
+"/.	c #739A6D",
+"(.	c #71996C",
+"_.	c #6E9668",
+":.	c #6C9367",
+"<.	c #5F815A",
+"[.	c #70996B",
+"}.	c #6E9467",
+"|.	c #698F63",
+"1.	c #6B9166",
+"2.	c #5D8059",
+"3.	c #4D6A49",
+"4.	c #6A8F64",
+"5.	c #283926",
+"              .                                 ",
+"              . .                               ",
+"              . + .                             ",
+"        . . . . @ # .                           ",
+"      $ % & @ @ * * = .           . .           ",
+"    - ; @ @ * * > , ' ) .       . ! ~ .         ",
+"  . % @ * * > { ] ^ / ( _ .       . : < .       ",
+"  [ & @ } | 1 2 3 4 5 6 .           . 7 .       ",
+". 8 @ 9 0 a b c d e f .             . g h .     ",
+". i j 0 k . . . l m .       .       . n o .     ",
+". p q h .     . r .       . .       . s t .     ",
+". u v .       . .       . w .     . x y z .     ",
+". A B .       .       . C D . . . E F G H .     ",
+". I J .             . K L M N O P Q R S T .     ",
+"  . U .           . V W X Y Z `  ...+.@.#..     ",
+"  . $.%..       . &.*.=., -.;.>.,.'.).!..       ",
+"    . ~.{..       . ].^.c /.(.| _.:.<.. .       ",
+"      . .           . [.}.|.~ 1.2.3.. .         ",
+"                      . q 4.. . . .             ",
+"                        5.)..                   ",
+"                          . .                   ",
+"                            .                   ",
+"                                                ",
+"                                                "};
 
 /* XPM */
 static char * icon_larrow[] = {
@@ -82,10 +236,6 @@ static char * icon_larrow[] = {
 "                        ",
 "                        "};
 
-GdkPixmap *larrow_pixmap;
-GdkBitmap *larrow_mask;
-
-
 /* XPM */
 static char * icon_rarrow[] = {
 "24 24 41 1",
@@ -154,10 +304,6 @@ static char * icon_rarrow[] = {
 "                        ",
 "                        ",
 "                        "};
-
-
-GdkPixmap *rarrow_pixmap;
-GdkBitmap *rarrow_mask;
 
 
 /* XPM */
@@ -319,10 +465,6 @@ static char * icon_zoomin[] = {
 "                                        >.>.    ",
 "                                                "};
 
-GdkPixmap *zoomin_pixmap;
-GdkBitmap *zoomin_mask;
-
-
 /* XPM */
 static char * icon_zoomout[] = {
 "24 24 132 2",
@@ -482,10 +624,6 @@ static char * icon_zoomout[] = {
 "                                      >.9.n >.  ",
 "                                        >.>.    ",
 "                                                "};
-
-GdkPixmap *zoomout_pixmap;
-GdkBitmap *zoomout_mask;
-
 
 /* XPM */
 static char * icon_zoomfit[] = {
@@ -655,10 +793,6 @@ static char * icon_zoomfit[] = {
 "                                        ].].    ",
 "                                                "};
 
-GdkPixmap *zoomfit_pixmap;
-GdkBitmap *zoomfit_mask;
-
-
 /* XPM */
 static char * icon_zoomundo[] = {
 "24 24 31 1",
@@ -717,10 +851,6 @@ static char * icon_zoomundo[] = {
 "                        ",
 "                        ",
 "                        "};
-
-GdkPixmap *zoomundo_pixmap;
-GdkBitmap *zoomundo_mask;
-
 
 /* XPM */
 static char * zoom_larrow[] = {
@@ -807,10 +937,6 @@ static char * zoom_larrow[] = {
 "                        ",
 "                        "};
 
-GdkPixmap *zoom_larrow_pixmap;
-GdkBitmap *zoom_larrow_mask;
-
-
 /* XPM */
 static char * zoom_rarrow[] = {
 "24 24 52 1",
@@ -890,10 +1016,6 @@ static char * zoom_rarrow[] = {
 "                        ",
 "                        ",
 "                        "};
-
-GdkPixmap *zoom_rarrow_pixmap;
-GdkBitmap *zoom_rarrow_mask;
-
 
 /* XPM */
 static char * prev_page_xpm[] = {
@@ -1092,10 +1214,6 @@ static char * prev_page_xpm[] = {
 "        . B..                                   ",
 "          . .                                   ",
 "            .                                   "};
-
-GdkPixmap *prev_page_pixmap;
-GdkBitmap *prev_page_mask;
-
 
 /* XPM */
 static char * next_page_xpm[] = {
@@ -1296,10 +1414,6 @@ static char * next_page_xpm[] = {
 "                                  . L..         ",
 "                                  . .           ",
 "                                  .             "};
-
-GdkPixmap *next_page_pixmap;
-GdkBitmap *next_page_mask;
-
 
 /* XPM */
 static char * wave_info[] = {
@@ -2034,10 +2148,6 @@ static char * wave_info[] = {
 "                                                                                                ",
 "                                                                                                "};
 
-GdkPixmap *wave_info_pixmap;
-GdkBitmap *wave_info_mask;
-
-
 /* XPM */
 static char * wave_alert[] = {
 "48 52 677 2",
@@ -2771,9 +2881,6 @@ static char * wave_alert[] = {
 "                                                                                                ",
 "                                                                                                "};
 
-GdkPixmap *wave_alert_pixmap;
-GdkBitmap *wave_alert_mask;
-
 
 void make_pixmaps(GtkWidget *window)
 {
@@ -2781,39 +2888,58 @@ GtkStyle *style;
 
 style=gtk_widget_get_style(window);
 
-larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &larrow_mask,
+GLOBALS->redo_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->redo_mask,
+	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_redo);
+
+GLOBALS->larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->larrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_larrow);
-rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &rarrow_mask,
+GLOBALS->rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->rarrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_rarrow);
 
-zoomout_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &zoomout_mask,
+GLOBALS->zoomout_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomout_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomout);
-zoomin_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &zoomin_mask,
+GLOBALS->zoomin_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomin_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomin);
-zoomfit_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &zoomfit_mask,
+GLOBALS->zoomfit_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomfit_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomfit);
-zoomundo_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &zoomundo_mask,
+GLOBALS->zoomundo_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoomundo_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_zoomundo);
 
-zoom_larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &zoom_larrow_mask,
+GLOBALS->zoom_larrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoom_larrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)zoom_larrow);
-zoom_rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &zoom_rarrow_mask,
+GLOBALS->zoom_rarrow_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->zoom_rarrow_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)zoom_rarrow);
 
-prev_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &prev_page_mask,
+GLOBALS->prev_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->prev_page_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)prev_page_xpm);
-next_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &next_page_mask,
+GLOBALS->next_page_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->next_page_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)next_page_xpm);
 
-wave_info_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &wave_info_mask,
+GLOBALS->wave_info_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->wave_info_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)wave_info);
-wave_alert_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &wave_alert_mask,
+GLOBALS->wave_alert_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->wave_alert_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)wave_alert);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/26 19:05:55  gtkwave
+ * added reload button in main window
+ *
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:53  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

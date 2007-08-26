@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef WAVE_SYMBOL_H
 #define WAVE_SYMBOL_H
 
@@ -74,8 +76,8 @@ int hash(char *s);
 /* typically use zero for hashval as it doesn't matter if facs are sorted as symfind will bsearch... */
 #define symadd_name_exists_sym_exists(s, nam, hv) \
 (s)->name = (nam); \
-(s)->next=sym[(hv)]; \
-sym[(hv)]=(s);
+(s)->next=GLOBALS->sym[(hv)]; \
+GLOBALS->sym[(hv)]=(s);
 
 void facsplit(char *, int *, int *);
 int sigcmp(char *, char *);
@@ -90,14 +92,6 @@ int maketraces(char *, int);
 int parsewavline(char *, int);
 int parsewavline_lx2(char *, int);
 
-extern struct symbol **sym, **facs;
-extern char facs_are_sorted;
-extern int numfacs;
-extern int regions;
-extern struct symbol *firstnode;
-extern struct symbol *curnode;
-extern int longestname;
-extern int hashcache;
 
 /* additions to bitvec.c because of search.c/menu.c ==> formerly in analyzer.h */
 bvptr bits2vector(struct Bits *b);
@@ -118,6 +112,18 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.2  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:24  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:55  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

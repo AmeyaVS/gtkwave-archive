@@ -96,6 +96,8 @@ void free_2(void *ptr);
 #endif
 
 
+void free_outstanding(void);
+
 void *malloc_2(size_t size);
 void *realloc_2(void *ptr, size_t size);
 void *calloc_2(size_t nmemb, size_t size);
@@ -104,14 +106,12 @@ char *strdup_2(const char *s);
 char *tmpnam_2(char *s, int *fd);  /* mimic functionality of tmpnam() */
 
 TimeType atoi_64(const char *str);
-extern const char *atoi_cont_ptr;  /* for unformat_time()'s parse continue for the time unit */
 
 void gtk_tooltips_set_tip_2(GtkTooltips *tooltips, GtkWidget *widget,
         const gchar *tip_text, const gchar *tip_private);
 void gtk_tooltips_set_delay_2(GtkTooltips *tooltips, guint delay);
 GtkTooltips* gtk_tooltips_new_2(void);
 
-extern char disable_tooltips;
 
 
 #undef WAVE_USE_SIGCMP_INFINITE_PRECISION  /* define this for slow sigcmp with infinite digit accuracy */
@@ -176,16 +176,25 @@ unsigned viewer_is_initialized : 1;
 };
 
 
-extern struct gtkwave_annotate_ipc_t *anno_ctx;
-extern struct gtkwave_dual_ipc_t *dual_ctx;
-extern int dual_id;
-extern int dual_race_lock;
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.3  2007/08/07 04:54:59  gtkwave
+ * slight modifications to global initialization scheme
+ *
+ * Revision 1.2.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.2.2.1  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
+ * Revision 1.2  2007/06/01 21:13:41  gtkwave
+ * regenerate configure for cygwin with proper flags, add missing files
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
  * Imported sources
  *

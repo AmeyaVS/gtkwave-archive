@@ -11,66 +11,39 @@
 /*
  * debug.c 01feb99ajb
  * malloc debugs added on 13jul99ajb
+ * malloc tracking added on 05aug07ajb for 3.1 series
  */
 #include <config.h>
+#include "globals.h"
 #include "debug.h"
 
 #undef free_2
 
-#ifdef DEBUG_MALLOC	/* normally this should be undefined..this is *only* for finding stray allocations/frees */
-	static struct memchunk *mem=NULL;
-	static size_t mem_total=0;
-	static int mem_chunks=0;
+void free_outstanding(void)
+{
+void **t = (void **)GLOBALS->alloc2_chain;
+void **t2;
+int ctr = 0;
 
-	static void mem_addnode(void *ptr, size_t size)
-	{
-	struct memchunk *m;
-	
-	m=(struct memchunk *)malloc(sizeof(struct memchunk));
-	m->ptr=ptr;
-	m->size=size;
-	m->next=mem;
-	
-	mem=m;
-	mem_total+=size;
-	mem_chunks++;
-	
-	fprintf(stderr,"mem_addnode:  TC:%05d TOT:%010d PNT:%010p LEN:+%d\n",mem_chunks,mem_total,ptr,size);
-	}
-	
-	static void mem_freenode(void *ptr)
-	{
-	struct memchunk *m, *mprev=NULL;
-	m=mem;
-	
-	while(m)
-		{
-		if(m->ptr==ptr)
-			{
-			if(mprev)
-				{
-				mprev->next=m->next;
-				}
-				else
-				{
-				mem=m->next;
-				}
-	
-			mem_total=mem_total-m->size;
-			mem_chunks--;
-			fprintf(stderr,"mem_freenode: TC:%05d TOT:%010d PNT:%010p LEN:-%d\n",mem_chunks,mem_total,ptr,m->size);
-			free(m);
-			return;
-			}
-		mprev=m;
-		m=m->next;
-		}
-	
-	fprintf(stderr,"mem_freenode: PNT:%010p *INVALID*\n",ptr);
-	sleep(1);
-	}
+#ifdef DEBUG_PRINTF
+printf("\n*** cleanup ***\n");
+printf("Freeing %d chunks\n", GLOBALS->outstanding);
+system("date");
 #endif
 
+while(t)
+	{
+	t2 = (void **) *(t+1);
+	free(t);
+	t = t2;
+	ctr++;
+	}
+
+#ifdef DEBUG_PRINTF
+printf("Freed %d chunks\n", ctr);
+system("date");
+#endif
+}
 
 /*
  * wrapped malloc family...
@@ -78,11 +51,21 @@
 void *malloc_2(size_t size)
 {
 void *ret;
-ret=malloc(size);
+ret=malloc(size + 2*sizeof(void *));
 if(ret)
 	{
-	DEBUG_M(mem_addnode(ret,size));
-	return(ret);
+	void **ret2 = (void **)ret;
+	*(ret2+0) = NULL;
+	*(ret2+1) = GLOBALS->alloc2_chain;
+	if(GLOBALS->alloc2_chain)
+		{
+		*(GLOBALS->alloc2_chain+0) = ret2;
+		}
+	GLOBALS->alloc2_chain = ret2;
+
+	GLOBALS->outstanding++;
+
+	return(ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -94,12 +77,39 @@ if(ret)
 void *realloc_2(void *ptr, size_t size)
 {
 void *ret;
-ret=realloc(ptr, size);
+
+void **ret2 = ((void **)ptr) - 2;
+void **prv = (void **)*(ret2+0);
+void **nxt = (void **)*(ret2+1);
+                 
+if(prv)
+	{
+        *(prv+1) = nxt;
+        }
+        else
+        {
+        GLOBALS->alloc2_chain = nxt;
+        }
+        
+if(nxt)
+	{
+        *(nxt+0) = prv;
+        }
+
+ret=realloc(ptr - 2*sizeof(void *), size + 2*sizeof(void *));
+
+ret2 = (void **)ret;
+*(ret2+0) = NULL;
+*(ret2+1) = GLOBALS->alloc2_chain;
+if(GLOBALS->alloc2_chain)
+	{
+	*(GLOBALS->alloc2_chain+0) = ret2;
+	}
+GLOBALS->alloc2_chain = ret2;
+
 if(ret)
 	{
-	DEBUG_M(mem_freenode(ptr));
-	DEBUG_M(mem_addnode(ret,size));
-	return(ret);
+	return(ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -108,14 +118,25 @@ if(ret)
 	}
 }
 
-void *calloc_2(size_t nmemb, size_t size)
+
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size)
 {
 void *ret;
-ret=calloc(nmemb, size);
+ret=calloc(1, (nmemb * size) + 2*sizeof(void *));
 if(ret)
 	{
-	DEBUG_M(mem_addnode(ret, nmemb*size));
-	return(ret);
+	void **ret2 = (void **)ret;
+	*(ret2+0) = NULL;
+	*(ret2+1) = g->alloc2_chain;
+	if(g->alloc2_chain)
+		{
+		*(g->alloc2_chain+0) = ret2;
+		}
+	g->alloc2_chain = ret2;
+
+	g->outstanding++;
+
+	return(ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -125,33 +146,45 @@ if(ret)
 }
 
 
-#ifdef DEBUG_MALLOC_LINES
-void free_2(void *ptr, char *filename, int lineno)
+void *calloc_2(size_t nmemb, size_t size)
 {
-if(ptr)
-	{
-	DEBUG_M(mem_freenode(ptr));
-	free(ptr);
-	}
-	else
-	{
-	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught: \"%s\", line %d.\n", filename, lineno);
-	}
+return(calloc_2_into_context(GLOBALS, nmemb, size));
 }
-#else
+
+
+
 void free_2(void *ptr)
 {
 if(ptr)
 	{
-	DEBUG_M(mem_freenode(ptr));
-	free(ptr);
+	void **ret2 = ((void **)ptr) - 2;
+	void **prv = (void **)*(ret2+0);
+	void **nxt = (void **)*(ret2+1);
+
+	if(prv)
+		{
+		*(prv+1) = nxt;
+		}	
+		else
+		{
+		GLOBALS->alloc2_chain = nxt;
+		}
+
+	if(nxt)
+		{
+		*(nxt+0) = prv;
+		}
+
+	GLOBALS->outstanding--;
+
+	DEBUG_M(mem_freenode(ptr - 2*sizeof(void *)));
+	free(ptr - 2*sizeof(void *));
 	}
 	else
 	{
 	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught.\n");
 	}
 }
-#endif
 
 
 char *strdup_2(const char *s)
@@ -174,14 +207,12 @@ return(s2);
  * y/on     default to '1'
  * n/nonnum default to '0'
  */
-const char *atoi_cont_ptr=NULL;
-
 TimeType atoi_64(const char *str)
 {
 TimeType val=0;
 unsigned char ch, nflag=0;
 
-atoi_cont_ptr=NULL;
+GLOBALS->atoi_cont_ptr=NULL;
 
 switch(*str)
 	{
@@ -220,7 +251,7 @@ while((ch=*(str++)))
 	else
 	if(val)
 		{
-		atoi_cont_ptr=str-1;
+		GLOBALS->atoi_cont_ptr=str-1;
 		break;
 		}
 	}
@@ -231,12 +262,10 @@ return(nflag?(-val):val);
 /*
  * wrapped tooltips
  */
-char disable_tooltips=0;
-
 void gtk_tooltips_set_tip_2(GtkTooltips *tooltips, GtkWidget *widget, 
 	const gchar *tip_text, const gchar *tip_private)
 {
-if(!disable_tooltips)
+if(!GLOBALS->disable_tooltips)
 	{
 	gtk_tooltips_set_tip(tooltips, widget, tip_text, tip_private);
 	}
@@ -245,7 +274,7 @@ if(!disable_tooltips)
 
 void gtk_tooltips_set_delay_2(GtkTooltips *tooltips, guint delay)
 {
-if(!disable_tooltips)
+if(!GLOBALS->disable_tooltips)
 	{
 	gtk_tooltips_set_delay(tooltips, delay);
 	}
@@ -254,7 +283,7 @@ if(!disable_tooltips)
 
 GtkTooltips* gtk_tooltips_new_2(void)
 {
-if(!disable_tooltips)
+if(!GLOBALS->disable_tooltips)
 	{
 	return(gtk_tooltips_new());
 	}
@@ -307,6 +336,22 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.6  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
+ * Revision 1.2.2.5  2007/08/23 02:47:32  gtkwave
+ * updating of reload debug messages
+ *
+ * Revision 1.2.2.4  2007/08/07 04:54:59  gtkwave
+ * slight modifications to global initialization scheme
+ *
+ * Revision 1.2.2.3  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.2.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:23  gtkwave
  * Imported sources
  *

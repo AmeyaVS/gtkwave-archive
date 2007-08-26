@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef WAVE_PTRANSLATE_H
 #define WAVE_PTRANSLATE_H
 
@@ -18,10 +20,6 @@
 
 #define PROC_FILTER_MAX 20
 
-extern int current_translate_proc;
-extern int num_proc_filters;
-extern char *procsel_filter[PROC_FILTER_MAX+1];
-extern struct pipe_ctx *proc_filter[PROC_FILTER_MAX+1];
 
 void ptrans_searchbox(char *title);
 void init_proctrans_data(void);
@@ -34,6 +32,15 @@ void remove_all_proc_filters(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:20  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

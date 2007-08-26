@@ -13,6 +13,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -64,62 +65,18 @@
 #include "translate.h"
 #include "ptranslate.h"
 
-char *whoami=NULL;
-struct logfile_chain *logfile=NULL;
-
-char *stems_name = NULL;
-int stems_type = WAVE_ANNO_NONE;
-char *aet_name = NULL;
-struct gtkwave_annotate_ipc_t *anno_ctx = NULL;
-
-struct gtkwave_dual_ipc_t *dual_ctx = NULL;
-int dual_id = 0;
-static int dual_attach_id = 0;
-int dual_race_lock = 0;
-
-GtkWidget *mainwindow = NULL;
-GtkWidget *signalwindow = NULL;
-GtkWidget *wavewindow = NULL;
-GtkWidget* toppanedwindow = NULL;    
-GtkWidget* sstpane = NULL;
-GtkWidget* expanderwindow = NULL;
-
-char disable_window_manager=0;	/* for scripting...some windowmanagers would expect user to nail down window */
-char paned_pack_semantics=1;	/* 1 for paned_pack, 0 for paned_add */
-char zoom_was_explicitly_set=0; /* set on '*' encountered in .sav file read  */
-int initial_window_x=800, initial_window_y=400; /* initial window sizes : RHEL5 seems to require 800 for this */
-int initial_window_width = -1, initial_window_height = -1;
-
-static int xy_ignore = 0; /* keeps window position from changing after initial load */
-
-int optimize_vcd = 0; /* convert VCD to LXT2? */
-
-int num_cpus=1;
-int initial_window_xpos=-1, initial_window_ypos=-1; /* initial window position (-1 == WM choice) */
-
-int initial_window_set_valid = 0;
-int initial_window_xpos_set=-1, initial_window_ypos_set=-1; /* initial window position as set */
-
-int initial_window_get_valid = 0;
-int initial_window_xpos_get=-1, initial_window_ypos_get=-1; /* initial window position as set */
-
-int xpos_delta = 0, ypos_delta = 0;
-
-char use_scrollbar_only=0;
-char force_toolbars=0;		/* 1 sez use toolbar rendering */
-
-int hide_sst = 0;
-int sst_expanded = 1;
 
 #if !defined _MSC_VER && !defined __MINGW32__
-static void kill_browser(void)
+void kill_stems_browser(void)
 {
-if(anno_ctx)
+if(GLOBALS->anno_ctx)
 	{
-	if(anno_ctx->browser_process)
+	if(GLOBALS->anno_ctx->browser_process)
 		{
-		kill(anno_ctx->browser_process, SIGKILL);
+		kill(GLOBALS->anno_ctx->browser_process, SIGKILL);
+		GLOBALS->anno_ctx->browser_process = (pid_t)0;
 		}
+	GLOBALS->anno_ctx = NULL;
 	}
 }
 #endif
@@ -127,11 +84,9 @@ if(anno_ctx)
 
 /* for XID plug handling... */
 #ifdef WAVE_USE_XID
-GdkNativeWindow socket_xid = 0;
 #else
 unsigned int socket_xid = 0;
 #endif
-int disable_menus = 0;	/* older versions of GTK can't handle menus in a GtkPlug properly */
 
 static int plug_destroy (GtkWidget *widget, gpointer data)
 {
@@ -210,7 +165,6 @@ exit(0);
 /*
  * file selection for -n/--nocli flag 
  */
-static char *ftext_main = NULL;
 
 static void wave_get_filename_cleanup(GtkWidget *widget, gpointer data) { gtk_main_quit(); /* do nothing but exit gtk loop */ }
 
@@ -219,29 +173,33 @@ static char *wave_get_filename(char *dfile)
 if(dfile) 
 	{
 	int len = strlen(dfile);
-	ftext_main = malloc_2(strlen(dfile)+2);
-	strcpy(ftext_main, dfile);
+	GLOBALS->ftext_main_main_c_1 = malloc_2(strlen(dfile)+2);
+	strcpy(GLOBALS->ftext_main_main_c_1, dfile);
 #if !defined _MSC_VER && !defined __MINGW32__
 	if((len)&&(dfile[len-1]!='/'))
 		{
-		strcpy(ftext_main + len, "/");
+		strcpy(GLOBALS->ftext_main_main_c_1 + len, "/");
 		}
 #else
 	if((len)&&(dfile[len-1]!='\\'))
 		{
-		strcpy(ftext_main + len, "\\");
+		strcpy(GLOBALS->ftext_main_main_c_1 + len, "\\");
 		}
 #endif
 	}
-fileselbox_old("GTKWave: Select a dumpfile...",&ftext_main,GTK_SIGNAL_FUNC(wave_get_filename_cleanup), GTK_SIGNAL_FUNC(wave_get_filename_cleanup), NULL);
+fileselbox_old("GTKWave: Select a dumpfile...",&GLOBALS->ftext_main_main_c_1,GTK_SIGNAL_FUNC(wave_get_filename_cleanup), GTK_SIGNAL_FUNC(wave_get_filename_cleanup), NULL);
 gtk_main();
 
-return(ftext_main);
+return(GLOBALS->ftext_main_main_c_1);
 }
 
 
 int main(int argc, char *argv[])
 {
+static char *winprefix="GTKWave - ";
+static char *winstd="GTKWave (stdio) ";
+static char *vcd_autosave_name="vcd_autosave.sav";
+
 int i;
 int c;
 char is_vcd=0;
@@ -251,16 +209,11 @@ char is_legacy = 0;
 char fast_exit=0;
 char opt_errors_encountered=0;
 
-char *fname=NULL;
 char *wname=NULL;
 char *override_rc=NULL;
 char *winname=NULL;
 char *scriptfile=NULL;
-static char *winprefix="GTKWave - ";
-static char *winstd="GTKWave (stdio) ";
-static char *vcd_autosave_name="vcd_autosave.sav";
 FILE *wave;
-char *indirect_fname=NULL;
 
 GtkWidget *main_vbox, *top_table, *whole_table;
 GtkWidget *menubar;
@@ -278,12 +231,13 @@ GtkWidget *toolhandle=NULL;
 
 int splash_disable_rc_override = 0;
 
-char *skip_start=NULL, *skip_end=NULL;
-
 WAVE_LOCALE_FIX
 
-whoami=malloc_2(strlen(argv[0])+1);	/* cache name in case we fork later */
-strcpy(whoami, argv[0]);
+/* Initialize the GLOBALS structure for the first time... */ 
+GLOBALS = initialize_globals();
+
+GLOBALS->whoami=malloc_2(strlen(argv[0])+1);	/* cache name in case we fork later */
+strcpy(GLOBALS->whoami, argv[0]);
 
 if(!gtk_init_check(&argc, &argv))
 	{
@@ -306,25 +260,25 @@ while (1)
                 {"nocli", 1, 0, 'n'},
                 {"save", 1, 0, 'a'},
                 {"autosavename", 0, 0, 'A'},
-		{"rcfile", 1, 0, 'r'},
-		{"defaultskip", 0, 0, 'd'},
-		{"indirect", 1, 0, 'i'},
-		{"logfile", 1, 0, 'l'},
+                {"rcfile", 1, 0, 'r'},
+                {"defaultskip", 0, 0, 'd'},
+                {"indirect", 1, 0, 'i'},
+                {"logfile", 1, 0, 'l'},
                 {"start", 1, 0, 's'},
                 {"end", 1, 0, 'e'},
                 {"cpus", 1, 0, 'c'},
-		{"stems", 1, 0, 't'},
-		{"nowm", 0, 0, 'N'},
-		{"script", 1, 0, 'S'},
+                {"stems", 1, 0, 't'},
+                {"nowm", 0, 0, 'N'},
+                {"script", 1, 0, 'S'},
                 {"vcd", 0, 0, 'v'},
                 {"version", 0, 0, 'V'},
                 {"help", 0, 0, 'h'},
                 {"exit", 0, 0, 'x'},
                 {"xid", 1, 0, 'X'},
-		{"nomenus", 0, 0, 'M'},
-		{"dualid", 1, 0, 'D'},
-		{"interactive", 0, 0, 'I'},
-		{"legacy", 0, 0, 'L'},
+                {"nomenus", 0, 0, 'M'},
+                {"dualid", 1, 0, 'D'},
+                {"interactive", 0, 0, 'I'},
+                {"legacy", 0, 0, 'L'},  
                 {0, 0, 0, 0}
                 };
 
@@ -359,20 +313,20 @@ while (1)
 			char *plus = strchr(s, '+');
 			if((plus)&&(*(plus+1)))
 				{
-				sscanf(plus+1, "%x", &dual_attach_id);
+				sscanf(plus+1, "%x", &GLOBALS->dual_attach_id_main_c_1);
 				if(plus != s)
 					{
 					char p = *(plus-1);
 
 					if(p=='0')
 						{
-						dual_id = 0;
+						GLOBALS->dual_id = 0;
 						break;
 						}
 					else
 					if(p=='1')
 						{
-						dual_id = 1;
+						GLOBALS->dual_id = 1;
 						break;
 						}
 					}
@@ -396,22 +350,22 @@ while (1)
 
                 case 'v':
 			is_vcd = 1;
-			if(fname) free_2(fname);
-			fname = malloc_2(4+1);
-			strcpy(fname, "-vcd");
+			if(GLOBALS->loaded_file_name) free_2(GLOBALS->loaded_file_name);
+			GLOBALS->loaded_file_name = malloc_2(4+1);
+			strcpy(GLOBALS->loaded_file_name, "-vcd");
                         break;
 
 		case 'o':
-			optimize_vcd = 1;
+			GLOBALS->optimize_vcd = 1;
 			break;
 
 		case 'n':
 			wave_get_filename(optarg);
-			if(filesel_ok)
+			if(GLOBALS->filesel_ok)
 				{
-				if(fname) free_2(fname);
-				fname = ftext_main;
-				ftext_main = NULL;
+				if(GLOBALS->loaded_file_name) free_2(GLOBALS->loaded_file_name);
+				GLOBALS->loaded_file_name = GLOBALS->ftext_main_main_c_1;
+				GLOBALS->ftext_main_main_c_1 = NULL;
 				}
 			break;
 
@@ -421,13 +375,13 @@ while (1)
 
 #ifdef WAVE_USE_XID
                 case 'X': 
-                        sscanf(optarg, "%x", &socket_xid);
+                        sscanf(optarg, "%x", &GLOBALS->socket_xid);
 			splash_disable_rc_override = 1;
                         break;
 #endif
 
 		case 'M':
-			disable_menus = 1;
+			GLOBALS->disable_menus = 1;
 			break;
 
                 case 'x':
@@ -436,14 +390,14 @@ while (1)
                         break;
 
 		case 'd':
-			possibly_use_rc_defaults = 0;
+			GLOBALS->possibly_use_rc_defaults = 0;
 			break;
 
                 case 'f':
 			is_vcd = 0;
-			if(fname) free_2(fname);
-			fname = malloc_2(strlen(optarg)+1);
-			strcpy(fname, optarg);
+			if(GLOBALS->loaded_file_name) free_2(GLOBALS->loaded_file_name);
+			GLOBALS->loaded_file_name = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->loaded_file_name, optarg);
 			break;
 
                 case 'a':
@@ -459,41 +413,41 @@ while (1)
 			break;
 
                 case 'i':
-			if(indirect_fname) free_2(indirect_fname);
-			indirect_fname = malloc_2(strlen(optarg)+1);
-			strcpy(indirect_fname, optarg);
+			if(GLOBALS->indirect_fname) free_2(GLOBALS->indirect_fname);
+			GLOBALS->indirect_fname = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->indirect_fname, optarg);
 			break;
 
                 case 's':
-			if(skip_start) free_2(skip_start);
-			skip_start = malloc_2(strlen(optarg)+1);
-			strcpy(skip_start, optarg);
+			if(GLOBALS->skip_start) free_2(GLOBALS->skip_start);
+			GLOBALS->skip_start = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->skip_start, optarg);
 			break;			
 
                 case 'e':
-			if(skip_end) free_2(skip_end);
-			skip_end = malloc_2(strlen(optarg)+1);
-			strcpy(skip_end, optarg);
+			if(GLOBALS->skip_end) free_2(GLOBALS->skip_end);
+			GLOBALS->skip_end = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->skip_end, optarg);
                         break;
 
 		case 't':
 #if !defined _MSC_VER && !defined __MINGW32__
-			if(stems_name) free_2(stems_name);
-			stems_name = malloc_2(strlen(optarg)+1);
-			strcpy(stems_name, optarg);
+			if(GLOBALS->stems_name) free_2(GLOBALS->stems_name);
+			GLOBALS->stems_name = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->stems_name, optarg);
 #endif
 			break;
 
                 case 'c':
 #if !defined _MSC_VER && !defined __MINGW32__ && !defined __FreeBSD__ && !defined __CYGWIN__
-			num_cpus = atoi(optarg);
-			if(num_cpus<1) num_cpus = 1;
-			if(num_cpus>8) num_cpus = 8;
+			GLOBALS->num_cpus = atoi(optarg);
+			if(GLOBALS->num_cpus<1) GLOBALS->num_cpus = 1;
+			if(GLOBALS->num_cpus>8) GLOBALS->num_cpus = 8;
 #endif
                         break;
 
 		case 'N':
-			disable_window_manager = 1;
+			GLOBALS->disable_window_manager = 1;
 			break;
 
 		case 'S':
@@ -510,15 +464,15 @@ while (1)
 			l->name = malloc_2(strlen(optarg)+1);
 			strcpy(l->name, optarg);
 
-			if(logfile)
+			if(GLOBALS->logfile)
 				{
-				ltraverse = logfile;
+				ltraverse = GLOBALS->logfile;
 				while(ltraverse->next) ltraverse = ltraverse->next;
 				ltraverse->next = l;
 				}
 				else
 				{
-				logfile = l;
+				GLOBALS->logfile = l;
 				}
 			}
 			break;
@@ -531,7 +485,7 @@ while (1)
                         /* unreachable */
                         break;
                 }
-        }
+        } /* ...while(1) */
 
 if(opt_errors_encountered)
 	{
@@ -542,11 +496,11 @@ if (optind < argc)
         {
         while (optind < argc)
 		{
-		if(!fname)
+		if(!GLOBALS->loaded_file_name)
 			{
 			is_vcd = 0;
-			fname = malloc_2(strlen(argv[optind])+1);
-			strcpy(fname, argv[optind++]);
+			GLOBALS->loaded_file_name = malloc_2(strlen(argv[optind])+1);
+			strcpy(GLOBALS->loaded_file_name, argv[optind++]);
 			}
 		else if(!wname)
 			{
@@ -562,25 +516,24 @@ if (optind < argc)
 		}
         }
 
-if(!fname)
+if(!GLOBALS->loaded_file_name)
 	{
 	print_help(argv[0]);
 	}
-
 read_rc_file(override_rc);
-splash_disable |= splash_disable_rc_override;
+GLOBALS->splash_disable |= splash_disable_rc_override;
 
 
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
 
-if((!wname)&&(make_vcd_save_file))
+if((!wname)&&(GLOBALS->make_vcd_save_file))
 	{
-	vcd_save_handle=fopen(vcd_autosave_name,"wb");
+	GLOBALS->vcd_save_handle=fopen(vcd_autosave_name,"wb");
 	errno=0;	/* just in case */
-	is_smartsave = (vcd_save_handle != NULL); /* use smartsave if for some reason can't open auto savefile */
+	is_smartsave = (GLOBALS->vcd_save_handle != NULL); /* use smartsave if for some reason can't open auto savefile */
 	}
 
-sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
+GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
 /* load either the vcd or aet file depending on suffix then mode setting */
 if(is_vcd)
@@ -592,24 +545,24 @@ if(is_vcd)
 	{
 	if(!is_interactive)
 		{
-		winname=malloc_2(strlen(fname)+strlen(winprefix)+1);
+		winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(winprefix)+1);
 		strcpy(winname,winprefix);
 		}
 		else
 		{
 		char *iact = "GTKWave - Interactive Shared Memory ID ";
-		winname=malloc_2(strlen(fname)+strlen(iact)+1);
+		winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(iact)+1);
 		strcpy(winname,iact);
 		}
 	}
 
-strcat(winname,fname);
+strcat(winname,GLOBALS->loaded_file_name);
 
 loader_check_head:
 
-if((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".lxt"))||(!strcasecmp(fname+strlen(fname)-4,".lx2"))))
+if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lxt"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lx2"))))
 	{
-	FILE *f = fopen(fname, "rb");
+	FILE *f = fopen(GLOBALS->loaded_file_name, "rb");
 	int typ = 0;
 
 	if(f)
@@ -628,61 +581,88 @@ if((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".lxt"))||(!strcasecmp
 
 	if(typ)
 		{
-		lxt_main(fname);
+	          GLOBALS->loaded_file_type = LXT_FILE;
+		  lxt_main(GLOBALS->loaded_file_name);
 		}
 		else
 		{
 #if !defined _MSC_VER && !defined __MINGW32__
-		stems_type = WAVE_ANNO_LXT2;
-		aet_name = malloc_2(strlen(fname)+1);
-		strcpy(aet_name, fname);
+		GLOBALS->stems_type = WAVE_ANNO_LXT2;
+		GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+		strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-		lx2_main(fname, skip_start, skip_end);
+                GLOBALS->loaded_file_type = LX2_FILE;
+		lx2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+		if(!GLOBALS->lx2_lx2_c_1)
+			{
+			fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+			exit(255);
+			}
 		}	
 	}
 else
-if((strlen(fname)>3)&&(!strcasecmp(fname+strlen(fname)-4,".vzt")))
+if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".vzt")))
 	{
 #if !defined _MSC_VER && !defined __MINGW32__
-	stems_type = WAVE_ANNO_VZT;
-	aet_name = malloc_2(strlen(fname)+1);
-	strcpy(aet_name, fname);
+	GLOBALS->stems_type = WAVE_ANNO_VZT;
+	GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+	strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-
-	vzt_main(fname, skip_start, skip_end);
+        GLOBALS->loaded_file_type = VZT_FILE;
+	vzt_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+	if(!GLOBALS->vzt_vzt_c_1)
+		{
+		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+		exit(255);
+		}
 	}
-else if ((strlen(fname)>3)&&((!strcasecmp(fname+strlen(fname)-4,".aet"))||(!strcasecmp(fname+strlen(fname)-4,".ae2"))))
+else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".aet"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ae2"))))
 	{
 #if !defined _MSC_VER && !defined __MINGW32__
-	stems_type = WAVE_ANNO_AE2;
-	aet_name = malloc_2(strlen(fname)+1);
-	strcpy(aet_name, fname);
+	GLOBALS->stems_type = WAVE_ANNO_AE2;
+	GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+	strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-
-	ae2_main(fname, skip_start, skip_end, indirect_fname);
+        GLOBALS->loaded_file_type = AE2_FILE;
+	ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
+	if(!GLOBALS->ae2)
+		{
+		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+		exit(255);
+		}
 	}
 else if (
-	((strlen(fname)>3)&&(!strcasecmp(fname+strlen(fname)-4,".ghw"))) ||
-	((strlen(fname)>6)&&(!strcasecmp(fname+strlen(fname)-7,".ghw.gz"))) ||
-	((strlen(fname)>7)&&(!strcasecmp(fname+strlen(fname)-8,".ghw.bz2")))
+	((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ghw"))) ||
+	((strlen(GLOBALS->loaded_file_name)>6)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-7,".ghw.gz"))) ||
+	((strlen(GLOBALS->loaded_file_name)>7)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-8,".ghw.bz2")))
 	)
 	{
-	ghw_main(fname);
+          GLOBALS->loaded_file_type = GHW_FILE;
+	  if(!ghw_main(GLOBALS->loaded_file_name))
+		{
+		/* error message printed in ghw_main() */
+		exit(255);
+		}
 	}
-else if (strlen(fname)>4)	/* case for .aet? type filenames */
+else if (strlen(GLOBALS->loaded_file_name)>4)	/* case for .aet? type filenames */
 	{
 	char sufbuf[5];
-	memcpy(sufbuf, fname+strlen(fname)-5, 4);
+	memcpy(sufbuf, GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-5, 4);
 	sufbuf[4] = 0;
 	if(!strcasecmp(sufbuf, ".aet"))	/* strncasecmp() in windows? */
 		{
 #if !defined _MSC_VER && !defined __MINGW32__
-		stems_type = WAVE_ANNO_AE2;
-		aet_name = malloc_2(strlen(fname)+1);
-		strcpy(aet_name, fname);
+		GLOBALS->stems_type = WAVE_ANNO_AE2;
+		GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+		strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
 #endif
-
-		ae2_main(fname, skip_start, skip_end, indirect_fname);
+                GLOBALS->loaded_file_type = AE2_FILE;
+		ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
+		if(!GLOBALS->ae2)
+			{
+			fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+			exit(255);
+			}
 		}
 		else
 		{
@@ -693,137 +673,64 @@ else	/* nothing else left so default to "something" */
 	{
 load_vcd:
 #if !defined _MSC_VER && !defined __MINGW32__
-	if(optimize_vcd)
-		{
-		optimize_vcd = 0;
+	if(GLOBALS->optimize_vcd) {
+                  GLOBALS->unoptimized_vcd_file_name = calloc_2(1,strlen(GLOBALS->loaded_file_name) + 1);
+                  strcpy(GLOBALS->unoptimized_vcd_file_name, GLOBALS->loaded_file_name);  
+                  optimize_vcd_file();
+                  is_vcd = 0;
+                  goto loader_check_head;
+        }
 
-		if(!strcmp("-vcd", fname))
-			{
-			pid_t pid;
-			char *buf = malloc_2(strlen("vcd") + 4 + 1);
-			sprintf(buf, "%s.lx2", "vcd");
-			pid = fork();
-        
-                        if(((int)pid) < 0)
-                                {
-                                /* can't do anything about this */
-                                }
-                                else
-				{
-				if(pid)
-					{
-					int stat;
-					int rc = waitpid(pid, &stat, 0);
-
-					if(rc > 0)
-						{
-						free_2(fname);
-						fname = buf;
-						is_vcd = 0;
-						goto loader_check_head;						
-						}					
-					}
-					else
-					{
-				        execlp("vcd2lxt2", "vcd2lxt2", "--", "-", buf, NULL);
-					exit(255);
-					}
-				}
-			}
-			else
-			{
-			pid_t pid;
-			char *buf = malloc_2(strlen(fname) + 4 + 1);
-			sprintf(buf, "%s.lx2", fname);
-			pid = fork();
-        
-                        if(((int)pid) < 0)
-                                {
-                                /* can't do anything about this */
-                                }
-                                else
-				{
-				if(pid)
-					{
-					int stat;
-					int rc = waitpid(pid, &stat, 0);
-
-					if(rc > 0)
-						{
-						free_2(fname);
-						fname = buf;
-						is_vcd = 0;
-						goto loader_check_head;						
-						}					
-					}
-					else
-					{
-				        execlp("vcd2lxt2", "vcd2lxt2", fname, buf, NULL);
-					exit(255);
-					}
-				}
-			}
-		}
 #endif
 
 #if !defined _MSC_VER && !defined __MINGW32__
 	if(is_interactive)
 		{
-		vcd_partial_main(fname);
+		GLOBALS->loaded_file_type = NO_FILE;
+		vcd_partial_main(GLOBALS->loaded_file_name);
 		}
 		else
 #endif
 		{
 		if(is_legacy)
 			{
-			vcd_main(fname);
+			  GLOBALS->loaded_file_type = (strcmp(GLOBALS->loaded_file_name, "-vcd")) ? VCD_FILE : NO_FILE;
+			  vcd_main(GLOBALS->loaded_file_name);
 			}
 			else
 			{
-			vcd_recoder_main(fname);
+			  GLOBALS->loaded_file_type = (strcmp(GLOBALS->loaded_file_name, "-vcd")) ? VCD_RECODER_FILE : NO_FILE;
+			  vcd_recoder_main(GLOBALS->loaded_file_name);
 			}
 		}
 	}
 
-if(indirect_fname)
-	{
-	free_2(indirect_fname);
-	indirect_fname=NULL;
-	}
-if(skip_start)
-	{
-	free_2(skip_start); skip_start=NULL;
-	}
-if(skip_end)
-	{
-	free_2(skip_end); skip_end=NULL;
-	}
 
-for(i=0;i<26;i++) named_markers[i]=-1;	/* reset all named markers */
+for(i=0;i<26;i++) GLOBALS->named_markers[i]=-1;	/* reset all named markers */
 
-tims.last=max_time;
-tims.end=tims.last;		/* until the configure_event of wavearea */
-tims.first=tims.start=tims.laststart=min_time;
-tims.zoom=tims.prevzoom=0;	/* 1 pixel/ns default */
-tims.marker=tims.lmbcache=-1;	/* uninitialized at first */
-tims.baseline=-1;		/* middle button toggle marker */
+GLOBALS->tims.last=GLOBALS->max_time;
+GLOBALS->tims.end=GLOBALS->tims.last;		/* until the configure_event of wavearea */
+GLOBALS->tims.first=GLOBALS->tims.start=GLOBALS->tims.laststart=GLOBALS->min_time;
+GLOBALS->tims.zoom=GLOBALS->tims.prevzoom=0;	/* 1 pixel/ns default */
+GLOBALS->tims.marker=GLOBALS->tims.lmbcache=-1;	/* uninitialized at first */
+GLOBALS->tims.baseline=-1;		/* middle button toggle marker */
 
-if((wname)||(vcd_save_handle)||(is_smartsave))
+if((wname)||(GLOBALS->vcd_save_handle)||(is_smartsave))
 	{
 	int wave_is_compressed;
         char *str = NULL;
 
-	if(vcd_save_handle)
+	if(GLOBALS->vcd_save_handle)
 		{
 		wname=vcd_autosave_name;
-		do_initial_zoom_fit=1;
+		GLOBALS->do_initial_zoom_fit=1;
 		}
 	else
 	if((!wname) /* && (is_smartsave) */)
 		{
-		char *pnt = wave_alloca(strlen(fname) + 1);
+		char *pnt = wave_alloca(strlen(GLOBALS->loaded_file_name) + 1);
 		char *pnt2;
-		strcpy(pnt, fname);
+		strcpy(pnt, GLOBALS->loaded_file_name);
 
 	        if((strlen(pnt)>2)&&(!strcasecmp(pnt+strlen(pnt)-3,".gz")))
 			{
@@ -868,8 +775,8 @@ if((wname)||(vcd_save_handle)||(is_smartsave))
 	        wave=fopen(wname,"rb");
 	        wave_is_compressed=0;
 
-		filesel_writesave = malloc_2(strlen(wname)+1); /* don't handle compressed files */
-		strcpy(filesel_writesave, wname);
+		GLOBALS->filesel_writesave = malloc_2(strlen(wname)+1); /* don't handle compressed files */
+		strcpy(GLOBALS->filesel_writesave, wname);
 	        }
 
 	if(!wave)
@@ -881,7 +788,7 @@ if((wname)||(vcd_save_handle)||(is_smartsave))
 	        char *iline;
 		char any_shadow = 0;
 
-		if(is_lx2)
+		if(GLOBALS->is_lx2)
 			{
 		        while((iline=fgetmalloc(wave)))
 		                {
@@ -889,7 +796,7 @@ if((wname)||(vcd_save_handle)||(is_smartsave))
 				free_2(iline);
 		                }
 
-			switch(is_lx2)
+			switch(GLOBALS->is_lx2)
 				{
 				case LXT2_IS_LXT2: lx2_import_masked(); break;
 				case LXT2_IS_AET2: ae2_import_masked(); break;
@@ -915,37 +822,37 @@ if((wname)||(vcd_save_handle)||(is_smartsave))
 			        }	
 			}
 
-		default_flags=TR_RJUSTIFY;
-		shift_timebase_default_for_add=LLDescriptor(0);
+		GLOBALS->default_flags=TR_RJUSTIFY;
+		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
 	        while((iline=fgetmalloc(wave)))
 	                {
 	                parsewavline(iline, 0);
-			any_shadow |= shadow_active;
+			any_shadow |= GLOBALS->shadow_active;
 			free_2(iline);
 	                }
-		default_flags=TR_RJUSTIFY;
-		shift_timebase_default_for_add=LLDescriptor(0);
+		GLOBALS->default_flags=TR_RJUSTIFY;
+		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
 
 		if(wave_is_compressed) pclose(wave); else fclose(wave);
 
                 if(any_shadow)
                         {
-                        if(shadow_straces)
+                        if(GLOBALS->shadow_straces)
                                 {
-                                shadow_active = 1;
+                                GLOBALS->shadow_active = 1;
 
                                 swap_strace_contexts();
                                 strace_maketimetrace(1);
                                 swap_strace_contexts();
 
-				shadow_active = 0;
+				GLOBALS->shadow_active = 0;
                                 }
                         }
 	        }
 	}
 
 savefile_bail:
-current_translate_file = 0;
+GLOBALS->current_translate_file = 0;
 
 if(fast_exit)
 	{
@@ -953,55 +860,51 @@ if(fast_exit)
 	exit(0);
 	}
 
-if ((!zoom_was_explicitly_set)&&
-	((tims.last-tims.first)<=400)) do_initial_zoom_fit=1;  /* force zoom on small traces */
+if ((!GLOBALS->zoom_was_explicitly_set)&&
+	((GLOBALS->tims.last-GLOBALS->tims.first)<=400)) GLOBALS->do_initial_zoom_fit=1;  /* force zoom on small traces */
 
-calczoom(tims.zoom);
+calczoom(GLOBALS->tims.zoom);
 
 #ifdef WAVE_USE_XID
-if(!socket_xid)
+if(!GLOBALS->socket_xid)
 #endif
         {
-	mainwindow = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(mainwindow), winname);
-	gtk_widget_set_usize(GTK_WIDGET(mainwindow), initial_window_x, initial_window_y);
+	GLOBALS->mainwindow = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), winname);
+	gtk_widget_set_usize(GTK_WIDGET(GLOBALS->mainwindow), GLOBALS->initial_window_x, GLOBALS->initial_window_y);
 
-	if((initial_window_width>0)&&(initial_window_height>0))
+	if((GLOBALS->initial_window_width>0)&&(GLOBALS->initial_window_height>0))
 		{
-		gtk_window_set_default_size(GTK_WINDOW (mainwindow), initial_window_width, initial_window_height);
+		gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mainwindow), GLOBALS->initial_window_width, GLOBALS->initial_window_height);
 		}
 
-	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event", 	/* formerly was "destroy" */
-				GTK_SIGNAL_FUNC(file_quit_cmd_callback), 
-			       	"WM destroy");
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "delete_event", 	/* formerly was "destroy" */GTK_SIGNAL_FUNC(file_quit_cmd_callback), "WM destroy");
 
-	gtk_widget_show(mainwindow);
+	gtk_widget_show(GLOBALS->mainwindow);
 	}
 #ifdef WAVE_USE_XID
 	else
 	{
-        mainwindow = gtk_plug_new(socket_xid);
-        gtk_widget_show(mainwindow);
+        GLOBALS->mainwindow = gtk_plug_new(GLOBALS->socket_xid);
+        gtk_widget_show(GLOBALS->mainwindow);
                                 
-        gtk_signal_connect(GTK_OBJECT(mainwindow), "destroy",   /* formerly was "destroy" */
-                                GTK_SIGNAL_FUNC(plug_destroy),
-                                "Plug destroy");
+        gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "destroy",   /* formerly was "destroy" */GTK_SIGNAL_FUNC(plug_destroy),"Plug destroy");
 	}
 #endif
 
-make_pixmaps(mainwindow);
+make_pixmaps(GLOBALS->mainwindow);
 
 main_vbox = gtk_vbox_new(FALSE, 5);
 gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
-gtk_container_add(GTK_CONTAINER(mainwindow), main_vbox);
+gtk_container_add(GTK_CONTAINER(GLOBALS->mainwindow), main_vbox);
 gtk_widget_show(main_vbox);
 
-if(!disable_menus)
+if(!GLOBALS->disable_menus)
 	{
-	get_main_menu(mainwindow, &menubar);
+	get_main_menu(GLOBALS->mainwindow, &menubar);
 	gtk_widget_show(menubar);
 
-	if(force_toolbars)
+	if(GLOBALS->force_toolbars)
 		{
 		toolhandle=gtk_handle_box_new();
 		gtk_widget_show(toolhandle);
@@ -1016,7 +919,7 @@ if(!disable_menus)
 
 top_table = gtk_table_new (1, 284, FALSE);
 
-if(force_toolbars)
+if(GLOBALS->force_toolbars)
 	{
 	toolhandle=gtk_handle_box_new();
 	gtk_widget_show(toolhandle);
@@ -1044,7 +947,7 @@ gtk_table_attach (GTK_TABLE (top_table), zoombuttons, 171, 173, 0, 1,
                       	GTK_SHRINK, 0, 0);
 gtk_widget_show (zoombuttons);
 
-if(!use_scrollbar_only)
+if(!GLOBALS->use_scrollbar_only)
 	{
 	pagebuttons = create_page_buttons ();
 	gtk_table_attach (GTK_TABLE (top_table), pagebuttons, 173, 174, 0, 1,
@@ -1087,95 +990,141 @@ gtk_table_attach (GTK_TABLE (top_table), timebox, 216, 284, 0, 1,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 20, 0);
 gtk_widget_show (timebox);
 
-wavewindow = create_wavewindow();
-load_all_fonts(); /* must be done before create_signalwindow() */
-gtk_widget_show(wavewindow);
-signalwindow = create_signalwindow();
+if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
+	{
+	GtkWidget *r_pixmap = gtk_pixmap_new(GLOBALS->redo_pixmap, GLOBALS->redo_mask);
+	GtkWidget *main_vbox;
+	GtkWidget *table, *table2;
+	GtkWidget *b1, *frame;
+	GtkTooltips *tooltips;
 
-if(do_resize_signals) 
+	gtk_widget_show(r_pixmap);
+
+	tooltips=gtk_tooltips_new_2();
+	gtk_tooltips_set_delay_2(tooltips,1500);
+
+	table = gtk_table_new (1, 1, FALSE);
+
+	main_vbox = gtk_vbox_new (FALSE, 1);
+	gtk_container_border_width (GTK_CONTAINER (main_vbox), 1);
+	gtk_container_add (GTK_CONTAINER (table), main_vbox);
+	
+	frame = gtk_frame_new ("Reload ");
+	gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
+	
+	gtk_widget_show (frame);
+	gtk_widget_show (main_vbox);
+
+	table2 = gtk_table_new (2, 1, FALSE);
+	
+	b1 = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(b1), r_pixmap);
+	gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
+	                        GTK_FILL | GTK_EXPAND,
+	                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
+	gtk_signal_connect_object (GTK_OBJECT (b1), "clicked",
+	                        GTK_SIGNAL_FUNC(menu_reload_waveform), GTK_OBJECT (table2));
+	gtk_tooltips_set_tip_2(tooltips, b1, "Reload waveform", NULL);
+	gtk_widget_show(b1);
+	gtk_container_add (GTK_CONTAINER (frame), table2);
+	gtk_widget_show(table2);
+
+	gtk_table_attach (GTK_TABLE (top_table), table, 284, 285, 0, 1,
+                      	0, 
+                      	0, 2, 0);
+
+	gtk_widget_show (table);
+	}
+
+GLOBALS->wavewindow = create_wavewindow();
+load_all_fonts(); /* must be done before create_signalwindow() */
+gtk_widget_show(GLOBALS->wavewindow);
+GLOBALS->signalwindow = create_signalwindow();
+
+if(GLOBALS->do_resize_signals) 
                 {
                 int os;
-                os=max_signal_name_pixel_width;
+                os=GLOBALS->max_signal_name_pixel_width;
                 os=(os<48)?48:os;
-                gtk_widget_set_usize(GTK_WIDGET(signalwindow),
+                gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow),
                                 os+30, -1);
                 }
 
-gtk_widget_show(signalwindow);
+gtk_widget_show(GLOBALS->signalwindow);
 
 #if GTK_CHECK_VERSION(2,4,0)
-if(!hide_sst)
+if(!GLOBALS->hide_sst)
 	{
-	toppanedwindow = gtk_hpaned_new();
-	sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
+	GLOBALS->toppanedwindow = gtk_hpaned_new();
+	GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
  
-	expanderwindow = gtk_expander_new_with_mnemonic("_SST");
-	gtk_expander_set_expanded(GTK_EXPANDER(expanderwindow), (sst_expanded==TRUE));
-	gtk_container_add(GTK_CONTAINER(expanderwindow), sstpane);
-	gtk_widget_show(expanderwindow);
+	GLOBALS->expanderwindow = gtk_expander_new_with_mnemonic("_SST");
+	gtk_expander_set_expanded(GTK_EXPANDER(GLOBALS->expanderwindow), (GLOBALS->sst_expanded==TRUE));
+	gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
+	gtk_widget_show(GLOBALS->expanderwindow);
 	}
 #endif
 
 panedwindow=gtk_hpaned_new();
 
 #ifdef HAVE_PANED_PACK
-if(paned_pack_semantics)
+if(GLOBALS->paned_pack_semantics)
 	{
-	gtk_paned_pack1(GTK_PANED(panedwindow), signalwindow, 0, 0); 
-	gtk_paned_pack2(GTK_PANED(panedwindow), wavewindow, ~0, 0);
+	gtk_paned_pack1(GTK_PANED(panedwindow), GLOBALS->signalwindow, 0, 0); 
+	gtk_paned_pack2(GTK_PANED(panedwindow), GLOBALS->wavewindow, ~0, 0);
 	}
 	else
 #endif
 	{
-	gtk_paned_add1(GTK_PANED(panedwindow), signalwindow);
-	gtk_paned_add2(GTK_PANED(panedwindow), wavewindow);
+	gtk_paned_add1(GTK_PANED(panedwindow), GLOBALS->signalwindow);
+	gtk_paned_add2(GTK_PANED(panedwindow), GLOBALS->wavewindow);
 	}
 
 gtk_widget_show(panedwindow);
 
 #if GTK_CHECK_VERSION(2,4,0)
-if(!hide_sst)
+if(!GLOBALS->hide_sst)
 	{
-	gtk_paned_pack1(GTK_PANED(toppanedwindow), expanderwindow, 0, 0);
-	gtk_paned_pack2(GTK_PANED(toppanedwindow), panedwindow, ~0, 0);
-	gtk_widget_show(toppanedwindow);
+	gtk_paned_pack1(GTK_PANED(GLOBALS->toppanedwindow), GLOBALS->expanderwindow, 0, 0);
+	gtk_paned_pack2(GTK_PANED(GLOBALS->toppanedwindow), panedwindow, ~0, 0);
+	gtk_widget_show(GLOBALS->toppanedwindow);
 	}
 #endif
 
 gtk_widget_show(top_table);
 
-gtk_table_attach (GTK_TABLE (whole_table), force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
+gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
                       	GTK_FILL | GTK_EXPAND,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 
-gtk_table_attach (GTK_TABLE (whole_table), toppanedwindow ? toppanedwindow : panedwindow, 0, 16, 1, 256,
+gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->toppanedwindow ? GLOBALS->toppanedwindow : panedwindow, 0, 16, 1, 256,
                       	GTK_FILL | GTK_EXPAND,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 gtk_widget_show(whole_table);
 gtk_container_add (GTK_CONTAINER (main_vbox), whole_table);
 
-update_markertime(time_trunc(tims.marker));
+update_markertime(time_trunc(GLOBALS->tims.marker));
 
-set_window_xypos(initial_window_xpos, initial_window_ypos);
-xy_ignore = 1;
+set_window_xypos(GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
+GLOBALS->xy_ignore_main_c_1 = 1;
 
-if(logfile) 
+if(GLOBALS->logfile) 
 	{
 	struct logfile_chain *lprev;
 	char buf[50];
 	int which = 1;
-	while(logfile)
+	while(GLOBALS->logfile)
 		{
 		sprintf(buf, "Logfile viewer [%d]", which++);
-		logbox(buf, 480, logfile->name);
-		lprev = logfile;
-		logfile = logfile->next;
+		logbox(buf, 480, GLOBALS->logfile->name);
+		lprev = GLOBALS->logfile;
+		GLOBALS->logfile = GLOBALS->logfile->next;
 		free_2(lprev->name);
 		free_2(lprev);
 		}
 	}
 
-activate_stems_reader(stems_name);
+activate_stems_reader(GLOBALS->stems_name);
 
 while (gtk_events_pending()) gtk_main_iteration();
 
@@ -1194,102 +1143,102 @@ if(scriptfile)
 	}
 
 #if !defined _MSC_VER && !defined __MINGW32__
-if(dual_attach_id)
+if(GLOBALS->dual_attach_id_main_c_1)
 	{
-	fprintf(stderr, "GTKWAVE | Attaching %08X as dual head session %d\n", dual_attach_id, dual_id);
+	fprintf(stderr, "GTKWAVE | Attaching %08X as dual head session %d\n", GLOBALS->dual_attach_id_main_c_1, GLOBALS->dual_id);
 
-	dual_ctx = shmat(dual_attach_id, NULL, 0);
-	if(dual_ctx)
+	GLOBALS->dual_ctx = shmat(GLOBALS->dual_attach_id_main_c_1, NULL, 0);
+	if(GLOBALS->dual_ctx)
 		{
-		if(memcmp(dual_ctx[dual_id].matchword, DUAL_MATCHWORD, 4))
+		if(memcmp(GLOBALS->dual_ctx[GLOBALS->dual_id].matchword, DUAL_MATCHWORD, 4))
 			{
 			fprintf(stderr, "Not a valid shared memory ID for dual head operation, exiting.\n");
 			exit(255);
 			}
 
-		dual_ctx[dual_id].viewer_is_initialized = 1;
+		GLOBALS->dual_ctx[GLOBALS->dual_id].viewer_is_initialized = 1;
 		for(;;)
 			{
 		        GtkAdjustment *hadj;
 		        TimeType pageinc, gt;
 			struct timeval tv;
 
-			if(dual_ctx[1-dual_id].use_new_times)
+			if(GLOBALS->dual_ctx[1-GLOBALS->dual_id].use_new_times)
 				{
-				dual_race_lock = 1;
+				GLOBALS->dual_race_lock = 1;
 
-			        gt = dual_ctx[dual_id].left_margin_time = dual_ctx[1-dual_id].left_margin_time;
+			        gt = GLOBALS->dual_ctx[GLOBALS->dual_id].left_margin_time = GLOBALS->dual_ctx[1-GLOBALS->dual_id].left_margin_time;
 
-				dual_ctx[dual_id].marker = dual_ctx[1-dual_id].marker;
-				dual_ctx[dual_id].baseline = dual_ctx[1-dual_id].baseline;
-				dual_ctx[dual_id].zoom = dual_ctx[1-dual_id].zoom;
-				dual_ctx[1-dual_id].use_new_times = 0;
-				dual_ctx[dual_id].use_new_times = 0;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].marker = GLOBALS->dual_ctx[1-GLOBALS->dual_id].marker;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].baseline = GLOBALS->dual_ctx[1-GLOBALS->dual_id].baseline;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].zoom = GLOBALS->dual_ctx[1-GLOBALS->dual_id].zoom;
+				GLOBALS->dual_ctx[1-GLOBALS->dual_id].use_new_times = 0;
+				GLOBALS->dual_ctx[GLOBALS->dual_id].use_new_times = 0;
 
-				if(dual_ctx[dual_id].baseline != tims.baseline)
+				if(GLOBALS->dual_ctx[GLOBALS->dual_id].baseline != GLOBALS->tims.baseline)
 					{
-					if((tims.marker != -1) && (dual_ctx[dual_id].marker == -1))
+					if((GLOBALS->tims.marker != -1) && (GLOBALS->dual_ctx[GLOBALS->dual_id].marker == -1))
 						{
 				        	Trptr t;
   
-        					for(t=traces.first;t;t=t->t_next)
+        					for(t=GLOBALS->traces.first;t;t=t->t_next)
                 					{
                 					if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
                 					}
 
-	        				for(t=traces.buffer;t;t=t->t_next)
+	        				for(t=GLOBALS->traces.buffer;t;t=t->t_next)
 	                				{
 	                				if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
 	                				}
 						}
 
-					tims.marker = dual_ctx[dual_id].marker;
-					tims.baseline = dual_ctx[dual_id].baseline;
-					update_basetime(tims.baseline);
-					update_markertime(tims.marker);
-					signalwindow_width_dirty = 1;
+					GLOBALS->tims.marker = GLOBALS->dual_ctx[GLOBALS->dual_id].marker;
+					GLOBALS->tims.baseline = GLOBALS->dual_ctx[GLOBALS->dual_id].baseline;
+					update_basetime(GLOBALS->tims.baseline);
+					update_markertime(GLOBALS->tims.marker);
+					GLOBALS->signalwindow_width_dirty = 1;
 					button_press_release_common();
 					}
 				else
-				if(dual_ctx[dual_id].marker != tims.marker)
+				if(GLOBALS->dual_ctx[GLOBALS->dual_id].marker != GLOBALS->tims.marker)
 					{
-					if((tims.marker != -1) && (dual_ctx[dual_id].marker == -1))
+					if((GLOBALS->tims.marker != -1) && (GLOBALS->dual_ctx[GLOBALS->dual_id].marker == -1))
 						{
 				        	Trptr t;
   
-        					for(t=traces.first;t;t=t->t_next)
+        					for(t=GLOBALS->traces.first;t;t=t->t_next)
                 					{
                 					if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
                 					}
 
-	        				for(t=traces.buffer;t;t=t->t_next)
+	        				for(t=GLOBALS->traces.buffer;t;t=t->t_next)
 	                				{
 	                				if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
 	                				}
 						}
 
-					tims.marker = dual_ctx[dual_id].marker;
-					update_markertime(tims.marker);
-					signalwindow_width_dirty = 1;
+					GLOBALS->tims.marker = GLOBALS->dual_ctx[GLOBALS->dual_id].marker;
+					update_markertime(GLOBALS->tims.marker);
+					GLOBALS->signalwindow_width_dirty = 1;
 					button_press_release_common();
 					}
 
-				tims.prevzoom=tims.zoom;
-				tims.zoom=dual_ctx[dual_id].zoom;
+				GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
+				GLOBALS->tims.zoom=GLOBALS->dual_ctx[GLOBALS->dual_id].zoom;
 
-			        if(gt<tims.first) gt=tims.first;
-			        else if(gt>tims.last) gt=tims.last;
+			        if(gt<GLOBALS->tims.first) gt=GLOBALS->tims.first;
+			        else if(gt>GLOBALS->tims.last) gt=GLOBALS->tims.last;
 
-			        hadj=GTK_ADJUSTMENT(wave_hslider);
+			        hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 			        hadj->value=gt;
         
-			        pageinc=(TimeType)(((gdouble)wavewidth)*nspx);
-			        if(gt<(tims.last-pageinc+1))
-			                tims.timecache=gt;
+			        pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+			        if(gt<(GLOBALS->tims.last-pageinc+1))
+			                GLOBALS->tims.timecache=gt;
 			                else
 			                {
-			                tims.timecache=tims.last-pageinc+1;
-			                if(tims.timecache<tims.first) tims.timecache=tims.first;
+			                GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
+			                if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
 			                }
 
 			        time_update();
@@ -1304,7 +1253,7 @@ if(dual_attach_id)
 				while (gtk_events_pending()) gtk_main_iteration();
 				}
 
-			dual_race_lock = 0;
+			GLOBALS->dual_race_lock = 0;
 
 			tv.tv_sec = 0;
        			tv.tv_usec = 1000000 / 25;
@@ -1313,7 +1262,7 @@ if(dual_attach_id)
 		}
 		else
 		{
-		fprintf(stderr, "Could not attach to %08X, exiting.\n", dual_attach_id);
+		fprintf(stderr, "Could not attach to %08X, exiting.\n", GLOBALS->dual_attach_id_main_c_1);
 		exit(255);
 		}
 	}
@@ -1325,6 +1274,7 @@ if(is_interactive)
 	else
 #endif
 	{
+	/* Jump in to the main program loop */
 	gtk_main();
 	}
 
@@ -1335,26 +1285,26 @@ void
 get_window_size (int *x, int *y)
 {
 #ifdef WAVE_USE_GTK2
-  gtk_window_get_size (GTK_WINDOW (mainwindow), x, y);
+  gtk_window_get_size (GTK_WINDOW (GLOBALS->mainwindow), x, y);
 #else
-  *x = initial_window_x;
-  *y = initial_window_y;
+  *x = GLOBALS->initial_window_x;
+  *y = GLOBALS->initial_window_y;
 #endif
 }
 
 void
 set_window_size (int x, int y)
 {
-  if (mainwindow == NULL)
+  if (GLOBALS->mainwindow == NULL)
     {
-      initial_window_width = x;
-      initial_window_height = y;
+      GLOBALS->initial_window_width = x;
+      GLOBALS->initial_window_height = y;
     }
   else
     {
-      if(!socket_xid)
+      if(!GLOBALS->socket_xid)
 	{
-      	gtk_window_set_default_size(GTK_WINDOW (mainwindow), x, y);
+      	gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mainwindow), x, y);
 	}
     }
 }
@@ -1363,21 +1313,21 @@ set_window_size (int x, int y)
 void 
 get_window_xypos(int *root_x, int *root_y)
 {
-if(!mainwindow) return;
+if(!GLOBALS->mainwindow) return;
 
 #ifdef WAVE_USE_GTK2
-gtk_window_get_position(GTK_WINDOW(mainwindow), root_x, root_y);
+gtk_window_get_position(GTK_WINDOW(GLOBALS->mainwindow), root_x, root_y);
 
-if(!initial_window_get_valid)
+if(!GLOBALS->initial_window_get_valid)
 	{
-	if((mainwindow->window))
+	if((GLOBALS->mainwindow->window))
 		{
-		initial_window_get_valid = 1;
-		initial_window_xpos_get = *root_x;
-		initial_window_ypos_get = *root_y;
+		GLOBALS->initial_window_get_valid = 1;
+		GLOBALS->initial_window_xpos_get = *root_x;
+		GLOBALS->initial_window_ypos_get = *root_y;
 
-		xpos_delta = initial_window_xpos_set - initial_window_xpos_get;
-		ypos_delta = initial_window_ypos_set - initial_window_ypos_get;
+		GLOBALS->xpos_delta = GLOBALS->initial_window_xpos_set - GLOBALS->initial_window_xpos_get;
+		GLOBALS->ypos_delta = GLOBALS->initial_window_ypos_set - GLOBALS->initial_window_ypos_get;
 		}
 	}
 #else
@@ -1388,28 +1338,28 @@ if(!initial_window_get_valid)
 void 
 set_window_xypos(int root_x, int root_y)
 {
-if(xy_ignore) return;
+if(GLOBALS->xy_ignore_main_c_1) return;
 
 #if !defined __MINGW32__ && !defined _MSC_VER
-initial_window_xpos = root_x;
-initial_window_ypos = root_y;
+GLOBALS->initial_window_xpos = root_x;
+GLOBALS->initial_window_ypos = root_y;
 
-if(!mainwindow) return;
-if((initial_window_xpos>=0)||(initial_window_ypos>=0))
+if(!GLOBALS->mainwindow) return;
+if((GLOBALS->initial_window_xpos>=0)||(GLOBALS->initial_window_ypos>=0))
 	{
-	if (initial_window_xpos<0) { initial_window_xpos = 0; }
-	if (initial_window_ypos<0) { initial_window_ypos = 0; }
+	if (GLOBALS->initial_window_xpos<0) { GLOBALS->initial_window_xpos = 0; }
+	if (GLOBALS->initial_window_ypos<0) { GLOBALS->initial_window_ypos = 0; }
 #ifdef WAVE_USE_GTK2
-	gtk_window_move(GTK_WINDOW(mainwindow), initial_window_xpos, initial_window_ypos);
+	gtk_window_move(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
 #else
-	gtk_window_reposition(GTK_WINDOW(mainwindow), initial_window_xpos, initial_window_ypos);
+	gtk_window_reposition(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
 #endif
 
-	if(!initial_window_set_valid)
+	if(!GLOBALS->initial_window_set_valid)
 		{
-		initial_window_set_valid = 1;
-		initial_window_xpos_set = initial_window_xpos;
-		initial_window_ypos_set = initial_window_ypos;
+		GLOBALS->initial_window_set_valid = 1;
+		GLOBALS->initial_window_xpos_set = GLOBALS->initial_window_xpos;
+		GLOBALS->initial_window_ypos_set = GLOBALS->initial_window_ypos;
 		}
 	}
 #endif
@@ -1422,10 +1372,10 @@ if((initial_window_xpos>=0)||(initial_window_ypos>=0))
 #if !defined _MSC_VER && !defined __MINGW32__
 int stems_are_active(void)
 {
-if(anno_ctx && anno_ctx->browser_process)
+if(GLOBALS->anno_ctx && GLOBALS->anno_ctx->browser_process)
 	{
 	int stat =0;
-	pid_t pid = waitpid(anno_ctx->browser_process, &stat, WNOHANG);
+	pid_t pid = waitpid(GLOBALS->anno_ctx->browser_process, &stat, WNOHANG);
 	if(!pid)
 		{
 		status_text("Stems reader already active.\n");
@@ -1433,8 +1383,8 @@ if(anno_ctx && anno_ctx->browser_process)
 		}
 		else
 		{
-		shmdt(anno_ctx);
-		anno_ctx = NULL;
+		shmdt(GLOBALS->anno_ctx);
+		GLOBALS->anno_ctx = NULL;
 		}
 	}
 
@@ -1447,13 +1397,14 @@ void activate_stems_reader(char *stems_name)
 #if !defined _MSC_VER && !defined __MINGW32__
 
 #ifdef __CYGWIN__
+/* ajb : ok static as this is a one-time warning message... */
 static int cyg_called = 0;
 #endif
 
 if(!stems_name) return;
 
 #ifdef __CYGWIN__
-if(stems_type != WAVE_ANNO_NONE)
+if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 	{
 	if(!cyg_called)
 		{
@@ -1464,27 +1415,27 @@ if(stems_type != WAVE_ANNO_NONE)
 	}
 #endif
 
-if(stems_type != WAVE_ANNO_NONE)
+if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 	{
 	int shmid = shmget(0, sizeof(struct gtkwave_annotate_ipc_t), IPC_CREAT | 0600 );
 	if(shmid >=0)
 		{
 		struct shmid_ds ds;
 
-		anno_ctx = shmat(shmid, NULL, 0);
-		if(anno_ctx)
+		GLOBALS->anno_ctx = shmat(shmid, NULL, 0);
+		if(GLOBALS->anno_ctx)
 			{
 			pid_t pid;
 
-			memset(anno_ctx, 0, sizeof(struct gtkwave_annotate_ipc_t));
+			memset(GLOBALS->anno_ctx, 0, sizeof(struct gtkwave_annotate_ipc_t));
 
-			memcpy(anno_ctx->matchword, WAVE_MATCHWORD, 4);
-			anno_ctx->aet_type = stems_type;			
-			strcpy(anno_ctx->aet_name, aet_name);
-			strcpy(anno_ctx->stems_name, stems_name);
+			memcpy(GLOBALS->anno_ctx->matchword, WAVE_MATCHWORD, 4);
+			GLOBALS->anno_ctx->aet_type = GLOBALS->stems_type;			
+			strcpy(GLOBALS->anno_ctx->aet_name, GLOBALS->aet_name);
+			strcpy(GLOBALS->anno_ctx->stems_name, stems_name);
 
-			anno_ctx->gtkwave_process = getpid();			
-			update_markertime(tims.marker);
+			GLOBALS->anno_ctx->gtkwave_process = getpid();			
+			update_markertime(GLOBALS->tims.marker);
 
 #ifdef __linux__
 			shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
@@ -1500,8 +1451,8 @@ if(stems_type != WAVE_ANNO_NONE)
 				{
 			        if(pid) /* parent==original server_pid */
 			                {
-					anno_ctx->browser_process = pid;
-					atexit(kill_browser);
+					GLOBALS->anno_ctx->browser_process = pid;
+					atexit(kill_stems_browser);
 #ifndef __linux__
 					sleep(2);
 					shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
@@ -1519,7 +1470,7 @@ if(stems_type != WAVE_ANNO_NONE)
 			else
 			{
 			shmctl(shmid, IPC_RMID, &ds); /* actually destroy */
-			stems_type = WAVE_ANNO_NONE;
+			GLOBALS->stems_type = WAVE_ANNO_NONE;
 			}
 		}
 	}
@@ -1530,9 +1481,104 @@ if(stems_type != WAVE_ANNO_NONE)
 #endif
 }
 
+
+#if !defined _MSC_VER && !defined __MINGW32__
+void optimize_vcd_file(void) {
+  if(!strcmp("-vcd", GLOBALS->unoptimized_vcd_file_name)) {        
+    pid_t pid;
+    char *buf = malloc_2(strlen("vcd") + 4 + 1);
+    sprintf(buf, "%s.lx2", "vcd");
+    pid = fork();
+    if(((int)pid) < 0) {
+      /* can't do anything about this */
+    }
+    else {
+      if(pid) {
+        int stat;
+        int rc = waitpid(pid, &stat, 0);
+	if(rc > 0) {
+	  free_2(GLOBALS->loaded_file_name);
+	  GLOBALS->loaded_file_name = buf;
+	}					
+      }
+      else {
+        execlp("vcd2lxt2", "vcd2lxt2", "--", "-", buf, NULL);
+	exit(255);
+      }
+    }
+  }
+  else {
+    pid_t pid;
+    char *buf = malloc_2(strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1);
+    sprintf(buf, "%s.lx2", GLOBALS->unoptimized_vcd_file_name);
+    pid = fork(); 
+    if(((int)pid) < 0) {
+      /* can't do anything about this */
+    }
+    else {
+      if(pid) {
+	int stat;
+	int rc = waitpid(pid, &stat, 0);
+        if(rc > 0) {
+          free_2(GLOBALS->loaded_file_name);
+	  GLOBALS->loaded_file_name = buf;
+        }					
+      }
+      else {
+        execlp("vcd2lxt2", "vcd2lxt2", GLOBALS->unoptimized_vcd_file_name, buf, NULL);
+	exit(255);
+      }
+    }
+  }	
+}
+#endif
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.14  2007/08/26 19:13:30  gtkwave
+ * datatype fix
+ *
+ * Revision 1.1.1.1.2.13  2007/08/26 19:05:55  gtkwave
+ * added reload button in main window
+ *
+ * Revision 1.1.1.1.2.12  2007/08/23 23:28:48  gtkwave
+ * reload fail handling and retries
+ *
+ * Revision 1.1.1.1.2.11  2007/08/23 03:16:03  gtkwave
+ * NO_FILE now set on stdin sourced VCDs
+ *
+ * Revision 1.1.1.1.2.10  2007/08/23 02:42:51  gtkwave
+ * convert c++ style comments to c to aid with compiler compatibility
+ *
+ * Revision 1.1.1.1.2.9  2007/08/19 23:13:53  kermin
+ * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
+ *
+ * Revision 1.1.1.1.2.8  2007/08/15 03:26:01  kermin
+ * Reload button does not cause a fault, however, state is still somehow incorrect.
+ *
+ * Revision 1.1.1.1.2.7  2007/08/07 04:54:59  gtkwave
+ * slight modifications to global initialization scheme
+ *
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:47  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:56  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

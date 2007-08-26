@@ -18,6 +18,7 @@
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
 
 extern ds_Tree *flattened_mod_list_root;
+extern struct gtkwave_annotate_ipc_t *anno_ctx;
 
 /* only for use locally */
 struct wave_logfile_lines_t
@@ -1316,6 +1317,13 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/06 03:50:44  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1  2007/05/30 04:25:41  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *

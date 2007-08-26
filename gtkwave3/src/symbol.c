@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include <stdio.h>
 
 #ifndef _MSC_VER
@@ -19,7 +20,6 @@
 #include <windows.h>
 #endif
 
-
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,22 +30,9 @@
 #include "lxt.h"
 #include "bsearch.h"
 
-struct symbol **sym=NULL;
-struct symbol **facs=NULL;
-char facs_are_sorted=0;
-
-int numfacs=0;
-int regions=0;
-int longestname=0;
-
-struct symbol *firstnode=NULL;	/* 1st sym in aet */
-struct symbol *curnode=NULL;	/* current loaded sym in aet loader */
-
-
 /*
  * Generic hash function for symbol names...
  */
-int hashcache;
 int hash(char *s)
 {
 char *p;
@@ -66,8 +53,8 @@ for(p=s;*p;p++)
         }
 
 h^=h2;						/* combine the two hashes */
-hashcache=h%SYMPRIME;
-return(hashcache);
+GLOBALS->hashcache=h%SYMPRIME;
+return(GLOBALS->hashcache);
 }
 
 
@@ -81,8 +68,8 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 strcpy(s->name=(char *)malloc_2(strlen(name)+1),name);
-s->next=sym[hv];
-sym[hv]=s;
+s->next=GLOBALS->sym[hv];
+GLOBALS->sym[hv]=s;
 return(s);
 }
 
@@ -92,8 +79,8 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 s->name = name;
-s->next=sym[hv];
-sym[hv]=s;
+s->next=GLOBALS->sym[hv];
+GLOBALS->sym[hv]=s;
 return(s);
 }
 
@@ -105,10 +92,10 @@ struct symbol *symfind(char *s, unsigned int *rows_return)
 int hv;
 struct symbol *temp;
 
-if(!facs_are_sorted)
+if(!GLOBALS->facs_are_sorted)
 	{
 	hv=hash(s);
-	if(!(temp=sym[hv])) return(NULL); /* no hash entry, add here wanted to add */
+	if(!(temp=GLOBALS->sym[hv])) return(NULL); /* no hash entry, add here wanted to add */
 	
 	while(temp)
 	        {
@@ -132,6 +119,22 @@ if(!facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:49  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *

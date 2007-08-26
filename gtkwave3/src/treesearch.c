@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include "gtk12compat.h"
 
 /*
@@ -28,6 +29,16 @@ void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:50  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:27  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

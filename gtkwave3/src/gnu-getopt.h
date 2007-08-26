@@ -44,7 +44,6 @@ extern "C" {
    Also, when `ordering' is RETURN_IN_ORDER,
    each non-option ARGV-element is returned here.  */
 
-extern char *optarg;
 
 /* Index in ARGV of the next element to be scanned.
    This is used for communication to and from the caller
@@ -58,16 +57,13 @@ extern char *optarg;
    Otherwise, `optind' communicates from one call to the next
    how much of ARGV has been scanned so far.  */
 
-extern int optind;
 
 /* Callers store zero here to inhibit the error message `getopt' prints
    for unrecognized options.  */
 
-extern int opterr;
 
 /* Set to an option character which was unrecognized.  */
 
-extern int optopt;
 
 #ifndef __need_getopt
 /* Describe the long-named options requested by the application.
@@ -183,6 +179,15 @@ extern int _getopt_internal ();
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:20  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:57  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:12  gtkwave
  * initial release
  *

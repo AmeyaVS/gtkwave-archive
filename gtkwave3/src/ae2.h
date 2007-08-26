@@ -84,6 +84,12 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
+ * Revision 1.2  2007/06/23 02:37:27  gtkwave
+ * static section size is now dynamic
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:30  gtkwave
  * Imported sources
  *

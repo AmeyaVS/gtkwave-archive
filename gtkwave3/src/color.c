@@ -7,44 +7,10 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include "color.h"
 #include "debug.h"
-
-int color_back=-1;
-int color_baseline=-1;
-int color_grid=-1;
-int color_high=-1;
-int color_low=-1;
-int color_mark=-1;
-int color_mid=-1;
-int color_time=-1;
-int color_timeb=-1;
-int color_trans=-1;
-int color_umark=-1;
-int color_value=-1;
-int color_vbox=-1;
-int color_vtrans=-1;
-int color_x=-1;
-int color_xfill=-1;
-
-int color_0=-1;
-int color_1=-1;
-int color_ufill=-1;
-int color_u=-1;
-int color_wfill=-1;
-int color_w=-1;
-int color_dashfill=-1;
-int color_dash=-1;
-
-int color_white = -1;
-int color_black = -1;
-int color_ltgray = -1;
-int color_normal = -1;
-int color_mdgray = -1;
-int color_dkgray = -1;
-int color_dkblue = -1;
-
 
 /* 
  * return graphics context with tuple's color or
@@ -79,6 +45,19 @@ return(fallback);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

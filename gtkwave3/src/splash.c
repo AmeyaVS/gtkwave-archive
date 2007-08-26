@@ -7,15 +7,15 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include "symbol.h"
 #include "pixmaps.h"
 
-int splash_disable=1;	/* easter egg */
 
 #ifdef WAVE_USE_GTK2
 /* XPM */
-static char * wave_splash_xpm[] = {
+static const char * wave_splash_xpm[] = {
 "512 384 257 2",
 "  	c None",
 ". 	c #020202",
@@ -658,10 +658,7 @@ static char * wave_splash_xpm[] = {
 "J.A+++++A+8.A+A+b+G.D G.G.D G.o+D o+5.5.o+o+o+o+5.5.D < b+A+A+J.8.A+A+C+k+B.i.B.B.C+++++++8.A+8.b+b+8.b+b+8.8.8.8.j+8.8.c.8.8.b+8.b+8.b+8.c.8.b+8.c.8.8.b+8.8.8.8.8.8.k+k+k+k+k+k+k+k+k+k+k+k+6 B.6 i.i.Z X.i.X.G+X.X..+.+1 P..+P.P.P.P.P.P.P.b P.b P.b P.P.b H.P.P.H.H.P.P.P.H.P.H.H.H.H.H.P.H.B P.H+.+X.)+^.)+B.C+C+++b+G.*+:+u.z = E E E E E N N u.:+*+;+7.r+^.q.R.4+R.R.4+q.'+4+q.4+4+4+4+4+4+4+4+4+4+4+^.^..+^.^.^.2.B.++J.b+G.o+u.z `.-+E 4.4.{ { -.{ -.-.4.4.`.&.&.( c c < W W W =+W W =+< W W W W =+W V.W W W =+W ; ; G ; ; ; ; ; W W c.5.i+9 &.&.4.E 4.-+E E E z >.f+:+*+n 3+C+^.)+a+4+2.i b...= s+A A A A s+A A A A s+s+s+s+s+s+s+s+s+s+s+E.% % F + + :.:.;+Y ..*+u.u.N = = = E N >.f+G.J.C+)+B n+t.0 <+].g+|.Q . . . . . . . . . . . . . Q |.m+<+y+e+p.N.N.4+C+7.;+:+N x.A 8 !.9.9.9.9.9.9.9.9.9.9.9.9.9.9.!.A A s+= a.% + + + /.+ + + % F F n n < < < 8.W W G (.c+n.1 P.5 1 P.H+H.H.N.w #+#+9+L.p.Y.C.9+H H w w s.H.'+H s.N.H E+H H #+m.m.9+C.,+C.C.C.9+p.9+m.C.9+9+p.9+[+C.C.p.,+p./+p./+/+t.p.}.p.t.t.p.t.p.t.p.p.p.p.p.p.p.p.N.p.N.p.N.p.N.N.p.N.",
 "8.b+b+b+b+b+b+b+b+b+b+G.G.G.D 5.o+>+( ( ( 5.( o+5.*+5.G.n G.b+J.b+A+J.A+8.A+8.8.A+8.++A+A+A+b+++A+8.8.8.8.8.8.8.++8.8.8.8.8.8.8.8.8.8.8.8.++8.++8.++8.8.8.++8.++k+8.k+8.8.k+k+k+k+k+6 k+k+i.i.6 B.i.i.i.i.X.Z Z X.G+G+X.G+X.1 .+H+1 P.H+P.P.P.P.H.H.P.H.H.H.E+H.H.P.H.H.H.H.H.H.H.H.E+H.w H.b H.E+H.H+.+4+^.)+)+)+C+++J.G.*+f+u.E E x.A { ~.~.{ x.E = >.f+*+J.i 2.4+` '+'+'+4+'+4+'+'+'+4+4+'+4+4+'+4+4+4+4+'+4+4+4+^.X.2.B.C+A+b+G.o+f+u.u.z `.E -+-+) 4.4.4.4.-+) &.9 ( c < W W =+W W W W W =+W =+W W W W W W =+W W ; W W ; W ; ; ; W W W c c i+9 &.) 4.{ { { { { x.E E E u.E.*+G.J.++o ^.a+^.2.;+*+= s+A A A A A A A 8 A 8 8 8 A A s+s+s+s+s+a.a.a.E.Y F F F F :.;+b.....:+p+u.>.>.>.>.u.f+*+G.J.C+4+N.p.Q.o.<+r.l.} Q . . . . . . . . . . . . 0.B+l.r.<+y+t.p.p.4+q.C+7.J.*+:+N s+~.8 !.9.9.9.9.9.9.9.9.9.9.9.9.9.!.8 A s+a.a.% % + /.+ + + + + n % n n < < 8.W W G G 6 (.n.n.1 5 1 P.1 H+H+E+w w #+m.9+9+L.p.9+L.9+#+#+H #+H w H s.H #+m.p.L.p.9+[+p.C.,+p.,.C.9+9+9+9+p.C.9+p.9+[+,+/+,+w+/+/+t./+/+/+/+t.[+t.t.p.p.p.t.p.p.p.p.p.p.p.p.p.N.p.N.N.p.!+p.N.",
 ";+b+G.b+G.b+b+b+G.G.D D D D 5.5.E.( o+o+( E.o+E.*+5.*+5.G.n ;+b+J.J.A+A+A+A+++++++++++++8.++8.A+8.A+++k+8.++8.++8.8.8.++8.++8.++++++++k+++++k+8.C+8.k+++k+8.k+8.k+W k+k+k+k+k+6 k+6 i.i.i.i.i.i.i.X.X.X.X.X.G+X.G+X.1 1 H+1 P.P.P.P.H.P.P.P.P.H.H.b b b z+z+z+b z+b b b b b w b b b b b b z+H.w H.H.P.H..+X..+)+B.C+++J.G.f+u.N E ~.{ 8 8 8 8 8 A A E = p+:+;+7.2.q.4+4+` '+'+'+'+4+'+'+'+'+'+'+'+'+'+'+'+'+'+a+'+R.4+^.)+B.C+++J.b+D o+f+f+9 z z z &.`.) -+-+) `.&.9 9 i+(+j+W W W W W ; W W ; W W W =+W =+W W W W W =+W ; W ; W W ; W =+W (+c i+&.`.-+{ -.1.8 8 { { ~.E E z u.E.*+J.i B.^.^.)+C+G.a.s+A 8 8 8 8 !.8 !.!.u u u u 8 8 A s+s+s+s+s+a.a.E.E.b.F 4 4 :.:.;+b.Y ..:+p+p+u.u.>.f+:+G.J.C+^.4+#+[+t.o.L r.: B+0.. . . . . . . . . . . . Q |.l.U.<+y+t.p.N.4+4+C+C+7.;+*+:+>.E ~.A !.9.9.9.9.9.9.9.9.9.9.9.8 A A s+s+a.% % + + /.+ /.+ F + F 3+n n < < < < W W ; ; ~ n.n.^ n.1 1 P.1 P.B }+N.#+#+#+9+p.C.C.p.L.p.p.#+m.#+L.#+n+p.m.L.9+p.C.p.C.w+,+w+w+p.,+,+C.p.C.9+p.9+[+p.,+p.w+p./+/+/+/+/+/+t./+t.p.t.p.}.p.p.p.p.p.p.p.N.p.p.p.N.p.p.p.p.p.N.N.m."};
-
-
-GdkPixmap *wave_splash_pixmap;
-GdkBitmap *wave_splash_mask;
+  
 
 void make_splash_pixmaps(GtkWidget *window)
 {
@@ -669,24 +666,16 @@ GtkStyle *style;
 
 style=gtk_widget_get_style(window);
 
-wave_splash_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &wave_splash_mask,
+GLOBALS->wave_splash_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->wave_splash_mask,
         &style->bg[GTK_STATE_NORMAL], (gchar **)wave_splash_xpm);
-
 }
 
 
-static GtkWidget *splash = NULL; 
-static GtkWidget *darea = NULL;
-static GTimer *gt = NULL;
-gint timeout_tag = 0;
-static int load_complete=0;
-static int cnt = 2;
-static int prev_bar_x = 0;
 
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
 gdk_draw_pixmap(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)],
-                wave_splash_pixmap,
+                GLOBALS->wave_splash_pixmap,
                 event->area.x, event->area.y,
                 event->area.x, event->area.y,
                 event->area.width, event->area.height);
@@ -697,21 +686,21 @@ return(FALSE);
 
 static gint button_press_event(GtkWidget *widget, GdkEventExpose *event)
 {
-gtk_timeout_remove(timeout_tag);
+gtk_timeout_remove(GLOBALS->timeout_tag);
 
-if(wave_splash_pixmap)
+if(GLOBALS->wave_splash_pixmap)
       	{
-        gdk_pixmap_unref(wave_splash_pixmap); wave_splash_pixmap = NULL;
+        gdk_pixmap_unref(GLOBALS->wave_splash_pixmap); GLOBALS->wave_splash_pixmap = NULL;
         }
 
-if(splash)
+if(GLOBALS->splash_splash_c_1)
 	{
-        gtk_widget_destroy(GTK_WIDGET(splash)); splash = NULL;
+        gtk_widget_destroy(GTK_WIDGET(GLOBALS->splash_splash_c_1)); GLOBALS->splash_splash_c_1 = NULL;
         }
 
-if(gt)
+if(GLOBALS->gt_splash_c_1)
 	{
-	g_timer_destroy(gt); gt = NULL;
+	g_timer_destroy(GLOBALS->gt_splash_c_1); GLOBALS->gt_splash_c_1 = NULL;
 	}
 
 return(FALSE);
@@ -721,18 +710,18 @@ return(FALSE);
 gint splash_kill(gpointer dummy)
 {
 gulong usec;
-gint sec = (gint) g_timer_elapsed(gt, &usec);
+gint sec = (gint) g_timer_elapsed(GLOBALS->gt_splash_c_1, &usec);
 int kill = (sec>=2);
 
-if(cnt) cnt -= load_complete;
+if(GLOBALS->cnt_splash_c_1) GLOBALS->cnt_splash_c_1 -= GLOBALS->load_complete_splash_c_1;
 
-if((!cnt)&&(kill))
+if((!GLOBALS->cnt_splash_c_1)&&(kill))
 	{
 	return(button_press_event(NULL,NULL));
 	}
 	else
 	{
-	if(!load_complete) gdk_window_raise(GTK_WIDGET(splash)->window);
+	if(!GLOBALS->load_complete_splash_c_1) gdk_window_raise(GTK_WIDGET(GLOBALS->splash_splash_c_1)->window);
 	}
 
 return(1);
@@ -741,51 +730,44 @@ return(1);
 
 void splash_create(void)
 {
-if(!splash_disable)
+if(!GLOBALS->splash_disable)
         {
         GtkWidget *splash_table;
 	gint dx, dy;
 
-	gt = g_timer_new();
+	GLOBALS->gt_splash_c_1 = g_timer_new();
                 
-        splash = gtk_window_new(GTK_WINDOW_POPUP);
+        GLOBALS->splash_splash_c_1 = gtk_window_new(GTK_WINDOW_POPUP);
 #if !defined _MSC_VER && !defined __MINGW32__
 	dx = 8; dy = 8;
 #else
 	dx = 8; dy = 26;
 #endif
-        gtk_widget_set_usize(GTK_WIDGET(splash), WAVE_SPLASH_X + dx, WAVE_SPLASH_Y + dy);
-        gtk_window_set_type_hint(GTK_WINDOW(splash), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
-        gtk_window_set_position(GTK_WINDOW(splash), GTK_WIN_POS_CENTER);
-        gtk_widget_show(splash);
+        gtk_widget_set_usize(GTK_WIDGET(GLOBALS->splash_splash_c_1), WAVE_SPLASH_X + dx, WAVE_SPLASH_Y + dy);
+        gtk_window_set_type_hint(GTK_WINDOW(GLOBALS->splash_splash_c_1), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
+        gtk_window_set_position(GTK_WINDOW(GLOBALS->splash_splash_c_1), GTK_WIN_POS_CENTER);
+        gtk_widget_show(GLOBALS->splash_splash_c_1);
                         
-        make_splash_pixmaps(splash);
+        make_splash_pixmaps(GLOBALS->splash_splash_c_1);
                         
         splash_table = gtk_table_new(10, 10, FALSE);
-        darea = gtk_drawing_area_new();
-        gtk_widget_show(darea);
-	gtk_widget_set_events(darea, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
+        GLOBALS->darea_splash_c_1 = gtk_drawing_area_new();
+        gtk_widget_show(GLOBALS->darea_splash_c_1);
+	gtk_widget_set_events(GLOBALS->darea_splash_c_1, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
          
-        gtk_table_attach (GTK_TABLE (splash_table), darea, 0, 9, 0, 9,
-                        GTK_FILL | GTK_EXPAND,
-                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 3, 3);
+        gtk_table_attach (GTK_TABLE (splash_table), GLOBALS->darea_splash_c_1, 0, 9, 0, 9,GTK_FILL | GTK_EXPAND,GTK_FILL | GTK_EXPAND | GTK_SHRINK, 3, 3);
 
         gtk_widget_show(splash_table);
-        gtk_container_add(GTK_CONTAINER(splash), splash_table);
-	gtk_signal_connect(GTK_OBJECT(darea), "expose_event",
-                        GTK_SIGNAL_FUNC(expose_event), NULL);
-	gtk_signal_connect(GTK_OBJECT(darea), "button_press_event",
-                        GTK_SIGNAL_FUNC(button_press_event), NULL);
+        gtk_container_add(GTK_CONTAINER(GLOBALS->splash_splash_c_1), splash_table);
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->darea_splash_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->darea_splash_c_1), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
                  
         while (gtk_events_pending()) gtk_main_iteration();
                          
-        gdk_draw_drawable(darea->window,
-                    darea->style->fg_gc[GTK_WIDGET_STATE (darea)],
-                    wave_splash_pixmap,
-                    0,0,0,0,WAVE_SPLASH_X,WAVE_SPLASH_Y);
+        gdk_draw_drawable(GLOBALS->darea_splash_c_1->window,GLOBALS->darea_splash_c_1->style->fg_gc[GTK_WIDGET_STATE (GLOBALS->darea_splash_c_1)],GLOBALS->wave_splash_pixmap,0,0,0,0,WAVE_SPLASH_X,WAVE_SPLASH_Y);
         while (gtk_events_pending()) gtk_main_iteration();
                          
-        timeout_tag = gtk_timeout_add(100, splash_kill, splash);
+        GLOBALS->timeout_tag = gtk_timeout_add(100, splash_kill, GLOBALS->splash_splash_c_1);
         }
 }
 
@@ -793,20 +775,18 @@ void splash_sync(off_t current, off_t total)
 {
 int cur_bar_x;
 
-if(splash) 
+if(GLOBALS->splash_splash_c_1) 
 	{
 	if((current)&&(total))
 		{
 		cur_bar_x = WAVE_SPLASH_X * ((float)current / (float)total);
 
-		if(cur_bar_x != prev_bar_x)
+		if(cur_bar_x != GLOBALS->prev_bar_x_splash_c_1)
 			{
-			if((current==total)||(cur_bar_x>=WAVE_SPLASH_X-4)) load_complete=1;
+			if((current==total)||(cur_bar_x>=WAVE_SPLASH_X-4)) GLOBALS->load_complete_splash_c_1=1;
 			if(current>total) current = total; /* just in case... */
 	
-			gdk_draw_rectangle(darea->window, 
-				splash->style->black_gc, TRUE,
-				0,WAVE_SPLASH_Y-4, (prev_bar_x = cur_bar_x), 4);
+			gdk_draw_rectangle(GLOBALS->darea_splash_c_1->window, GLOBALS->splash_splash_c_1->style->black_gc, TRUE,0,WAVE_SPLASH_Y-4, (GLOBALS->prev_bar_x_splash_c_1 = cur_bar_x), 4);
 			}
 		}
 
@@ -831,6 +811,34 @@ void splash_sync(off_t current, off_t total)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.9  2007/08/22 22:09:35  gtkwave
+ * removed double const in a pixmap def
+ *
+ * Revision 1.1.1.1.2.8  2007/08/21 22:35:39  gtkwave
+ * prelim tree state merge
+ *
+ * Revision 1.1.1.1.2.7  2007/08/15 04:08:34  kermin
+ * fixed from/to box issue
+ *
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:50  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

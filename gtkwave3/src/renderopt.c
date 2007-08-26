@@ -7,31 +7,22 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include "currenttime.h"
 #include "print.h"
 #include "menu.h"
 #include <errno.h>
 
-static char is_active=0;
-static GtkWidget *window;
-
-static char *filesel_print_ps=NULL;
-static char *filesel_print_mif=NULL;
-
 static char *render_targets[]=
-	{"PS", "MIF"};
-static char target_mutex[2]={0,0};
+        {"PS", "MIF"};
 
 static char *page_size[]=
-	{"Letter (8.5\" x 11\")", "A4 (11.68\" x 8.26\")", "Legal (14\" x 8.5\")", "Letter Prop (6.57\" x 8.5\")", "A4 Prop (8.26\" x 5.84\")"};
-static char page_mutex[5]={0,0,0,0,0};
+        {"Letter (8.5\" x 11\")", "A4 (11.68\" x 8.26\")", "Legal (14\" x 8.5\")", "Letter Prop (6.57\" x 8.5\")", "A4 Prop (8.26\" x 5.84\")"};
 
 static char *render_type[]=
-	{"Full", "Minimal"};
-static char render_mutex[2]={0,0};
+        {"Full", "Minimal"};
 
-static int page_size_type=0;
 static gdouble px[]={11.00, 11.68, 14.00, 8.50, 8.26};
 static gdouble py[]={ 8.50,  8.26,  8.50, 6.57, 5.84};
 
@@ -44,7 +35,7 @@ static void render_clicked(GtkWidget *widget, gpointer which)
 int i;
 char *which_char;
 
-for(i=0;i<2;i++) target_mutex[i]=0;
+for(i=0;i<2;i++) GLOBALS->target_mutex_renderopt_c_1[i]=0;
 which_char=(char *)which;
 *which_char=1;                  /* mark our choice */
 
@@ -56,11 +47,11 @@ static void pagesize_clicked(GtkWidget *widget, gpointer which)
 int i;
 char *which_char;
 
-for(i=0;i<5;i++) page_mutex[i]=0;
+for(i=0;i<5;i++) GLOBALS->page_mutex_renderopt_c_1[i]=0;
 which_char=(char *)which;
 *which_char=1;                  /* mark our choice */
 
-page_size_type=which_char-page_mutex;
+GLOBALS->page_size_type_renderopt_c_1=which_char-GLOBALS->page_mutex_renderopt_c_1;
 
 DEBUG(printf("picked: %s\n", page_size[which_char-page_mutex]));
 }
@@ -70,7 +61,7 @@ static void rendertype_clicked(GtkWidget *widget, gpointer which)
 int i;
 char *which_char;
 
-for(i=0;i<2;i++) render_mutex[i]=0;
+for(i=0;i<2;i++) GLOBALS->render_mutex_renderopt_c_1[i]=0;
 which_char=(char *)which;
 *which_char=1;                  /* mark our choice */
 
@@ -83,19 +74,19 @@ ps_print_cleanup(GtkWidget *widget, gpointer data)
 {
 FILE *wave;
 
-if(filesel_ok)
+if(GLOBALS->filesel_ok)
         {
         DEBUG(printf("PS Print Fini: %s\n", *fileselbox_text));
                 
-        if(!(wave=fopen(*fileselbox_text,"wb")))
+        if(!(wave=fopen(*GLOBALS->fileselbox_text,"wb")))
                 {
-                fprintf(stderr, "Error opening PS output file '%s' for writing.\n",*fileselbox_text);
+                fprintf(stderr, "Error opening PS output file '%s' for writing.\n",*GLOBALS->fileselbox_text);
                 perror("Why");
                 errno=0;
                 }
                 else
                 {
-                print_ps_image(wave,px[page_size_type],py[page_size_type]);
+                print_ps_image(wave,px[GLOBALS->page_size_type_renderopt_c_1],py[GLOBALS->page_size_type_renderopt_c_1]);
                 fclose(wave);
                 }
         }  
@@ -106,19 +97,19 @@ mif_print_cleanup(GtkWidget *widget, gpointer data)
 {
 FILE *wave;
 
-if(filesel_ok)
+if(GLOBALS->filesel_ok)
         {
         DEBUG(printf("MIF Print Fini: %s\n", *fileselbox_text));
                 
-        if(!(wave=fopen(*fileselbox_text,"wb")))
+        if(!(wave=fopen(*GLOBALS->fileselbox_text,"wb")))
                 {
-                fprintf(stderr, "Error opening MIF output file '%s' for writing.\n",*fileselbox_text);
+                fprintf(stderr, "Error opening MIF output file '%s' for writing.\n",*GLOBALS->fileselbox_text);
                 perror("Why");
                 errno=0;
                 }
                 else
                 {
-		print_mif_image(wave,px[page_size_type],py[page_size_type]);
+		print_mif_image(wave,px[GLOBALS->page_size_type_renderopt_c_1],py[GLOBALS->page_size_type_renderopt_c_1]);
                 fclose(wave);
                 }
         }  
@@ -127,21 +118,22 @@ if(filesel_ok)
 
 static void ok_callback(void)
 {
-ps_fullpage=render_mutex[0];
-if(target_mutex[0])
+GLOBALS->ps_fullpage=GLOBALS->render_mutex_renderopt_c_1[0];
+if(GLOBALS->target_mutex_renderopt_c_1[0])
 	{
-	fileselbox("Print To PS File",&filesel_print_ps,GTK_SIGNAL_FUNC(ps_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.ps", 1);
+	fileselbox("Print To PS File",&GLOBALS->filesel_print_ps_renderopt_c_1,GTK_SIGNAL_FUNC(ps_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.ps", 1);
 	}
 	else
 	{
-	fileselbox("Print To MIF File (experimental)",&filesel_print_mif,GTK_SIGNAL_FUNC(mif_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.fm", 1);
+	fileselbox("Print To MIF File (experimental)",&GLOBALS->filesel_print_mif_renderopt_c_1,GTK_SIGNAL_FUNC(mif_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.fm", 1);
 	}
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-  is_active=0;
-  gtk_widget_destroy(window);
+  GLOBALS->is_active_renderopt_c_3=0;
+  gtk_widget_destroy(GLOBALS->window_renderopt_c_6);
+  GLOBALS->window_renderopt_c_6 = NULL;
 }
 
 
@@ -153,48 +145,48 @@ void renderbox(char *title)
     GtkWidget *button1, *button2;
     int i;
 
-    if(script_handle)
+    if(GLOBALS->script_handle)
         {
         char *s1 = NULL;
         char *s2 = NULL;
         char *s3 = NULL;
 
-        while((!s1)&&(!feof(script_handle))) s1 = fgetmalloc_stripspaces(script_handle);
-        while((!s2)&&(!feof(script_handle))) s2 = fgetmalloc_stripspaces(script_handle);
-        while((!s3)&&(!feof(script_handle))) s3 = fgetmalloc_stripspaces(script_handle);
+        while((!s1)&&(!feof(GLOBALS->script_handle))) s1 = fgetmalloc_stripspaces(GLOBALS->script_handle);
+        while((!s2)&&(!feof(GLOBALS->script_handle))) s2 = fgetmalloc_stripspaces(GLOBALS->script_handle);
+        while((!s3)&&(!feof(GLOBALS->script_handle))) s3 = fgetmalloc_stripspaces(GLOBALS->script_handle);
 
         if(s1 && s2 && s3)
                 {
-		memset(target_mutex, 0, 2); target_mutex[0] = 1; /* PS */
+		memset(GLOBALS->target_mutex_renderopt_c_1, 0, 2); GLOBALS->target_mutex_renderopt_c_1[0] = 1; /* PS */
 		for(i=0;i<2;i++)
 			{
 			if(!strcmp(s1, render_targets[i]))
 				{
 				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  render_targets[i]);
-				memset(target_mutex, 0, 2); target_mutex[i] = 1; break;
+				memset(GLOBALS->target_mutex_renderopt_c_1, 0, 2); GLOBALS->target_mutex_renderopt_c_1[i] = 1; break;
 				}
 			}
 
-		memset(page_mutex, 0, 5); page_mutex[0] = 1; /* 8.5 x 11 */
-		page_size_type = 0;
+		memset(GLOBALS->page_mutex_renderopt_c_1, 0, 5); GLOBALS->page_mutex_renderopt_c_1[0] = 1; /* 8.5 x 11 */
+		GLOBALS->page_size_type_renderopt_c_1 = 0;
 		for(i=0;i<5;i++)
 			{
 			if(!strcmp(s2, page_size[i]))
 				{
 				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  page_size[i]);
-				memset(page_mutex, 0, 5); page_mutex[i] = 1; 
-				page_size_type = i;
+				memset(GLOBALS->page_mutex_renderopt_c_1, 0, 5); GLOBALS->page_mutex_renderopt_c_1[i] = 1; 
+				GLOBALS->page_size_type_renderopt_c_1 = i;
 				break;
 				}
 			}
 
-		memset(render_mutex, 0, 2); render_mutex[0] = 1; /* Full */
+		memset(GLOBALS->render_mutex_renderopt_c_1, 0, 2); GLOBALS->render_mutex_renderopt_c_1[0] = 1; /* Full */
 		for(i=0;i<2;i++)
 			{
 			if(!strcmp(s3, render_type[i]))
 				{
 				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  render_type[i]);
-				memset(render_mutex, 0, 2); render_mutex[i] = 1; break;
+				memset(GLOBALS->render_mutex_renderopt_c_1, 0, 2); GLOBALS->render_mutex_renderopt_c_1[i] = 1; break;
 				}
 			}
 
@@ -212,23 +204,22 @@ void renderbox(char *title)
 
 
 
-    if(is_active) 
+    if(GLOBALS->is_active_renderopt_c_3) 
 	{
-	gdk_window_raise(window->window);
+	gdk_window_raise(GLOBALS->window_renderopt_c_6->window);
 	return;
 	}
-    is_active=1;
+    GLOBALS->is_active_renderopt_c_3=1;
 
     /* create a new window */
-    window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_widget_set_usize( GTK_WIDGET (window), 420, -1); 
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) destroy_callback, NULL);
-    gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
+    GLOBALS->window_renderopt_c_6 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_renderopt_c_6), title);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_renderopt_c_6), 420, -1); 
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_renderopt_c_6), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtk_window_set_policy(GTK_WINDOW(GLOBALS->window_renderopt_c_6), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (window), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_renderopt_c_6), vbox);
     gtk_widget_show (vbox);
 
     small_hbox = gtk_hbox_new (TRUE, 0);
@@ -245,11 +236,11 @@ void renderbox(char *title)
     	gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(render_clicked),
-                                 &target_mutex[i]);
-	target_mutex[i]=0;
+                                 &GLOBALS->target_mutex_renderopt_c_1[i]);
+	GLOBALS->target_mutex_renderopt_c_1[i]=0;
 	}
 
-	target_mutex[0]=1;	/* "ps" */
+	GLOBALS->target_mutex_renderopt_c_1[0]=1;	/* "ps" */
 
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), menu);
@@ -267,11 +258,11 @@ void renderbox(char *title)
     	gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(pagesize_clicked),
-                                 &page_mutex[i]);
-	page_mutex[i]=0;
+                                 &GLOBALS->page_mutex_renderopt_c_1[i]);
+	GLOBALS->page_mutex_renderopt_c_1[i]=0;
 	}
 
-	page_mutex[0]=1;	/* "letter" */
+	GLOBALS->page_mutex_renderopt_c_1[0]=1;	/* "letter" */
 
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), menu);
@@ -292,11 +283,11 @@ void renderbox(char *title)
     	gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(rendertype_clicked),
-                                 &render_mutex[i]);
-	render_mutex[i]=0;
+                                 &GLOBALS->render_mutex_renderopt_c_1[i]);
+	GLOBALS->render_mutex_renderopt_c_1[i]=0;
 	}
 
-	render_mutex[0]=1;	/* "full" */
+	GLOBALS->render_mutex_renderopt_c_1[0]=1;	/* "full" */
 
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), menu);
@@ -331,12 +322,38 @@ void renderbox(char *title)
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_widget_show(window);
+    gtk_widget_show(GLOBALS->window_renderopt_c_6);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.8  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.7  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

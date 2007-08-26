@@ -7,45 +7,28 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "currenttime.h"
 #include "symbol.h"
 
-char is_vcd=0, partial_vcd=0;
-
-char use_maxtime_display=1;
-char use_frequency_delta=0;
-static GtkWidget *max_or_marker_label=NULL;
-static GtkWidget *base_or_curtime_label=NULL;
-   
-static TimeType cached_currenttimeval=0;
-TimeType currenttime=0;
-TimeType max_time=0;
-TimeType min_time=-1;
-char display_grid=~0;       /* default to displaying grid */
-TimeType time_scale=1;      /* multiplier is 1, 10, 100   */
-char time_dimension='n';    /* nsec, psec, etc...         */
 static char *time_prefix=" munpf";
-static GtkWidget *maxtimewid;
-static GtkWidget *curtimewid;
-static char *maxtext;
-static char *curtext;
 static char *maxtime_label_text="Maximum Time";
 static char *marker_label_text ="Marker Time";
 
 
 void update_maxmarker_labels(void)
 {
-if(use_maxtime_display) 
+if(GLOBALS->use_maxtime_display) 
 	{
-	gtk_label_set(GTK_LABEL(max_or_marker_label),maxtime_label_text);
-	update_maxtime(max_time);
+	gtk_label_set(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1),maxtime_label_text);
+	update_maxtime(GLOBALS->max_time);
 	}
 	else
 	{
-	gtk_label_set(GTK_LABEL(max_or_marker_label),marker_label_text);
-	update_markertime(tims.marker);
+	gtk_label_set(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1),marker_label_text);
+	update_markertime(GLOBALS->tims.marker);
 	}
 }
 
@@ -58,7 +41,7 @@ char ch;
 int i, ich, delta;
 
 rval=atoi_64(buf);
-if((pnt=atoi_cont_ptr))
+if((pnt=GLOBALS->atoi_cont_ptr))
 	{
 	while((ch=*(pnt++)))
 		{
@@ -125,6 +108,7 @@ void reformat_time_as_frequency(char *buf, TimeType val, char dim)
 char *pnt;
 int offset;
 double k;
+
 static const double negpow[] = { 1.0, 1.0e-3, 1.0e-6, 1.0e-9, 1.0e-12, 1.0e-15 };
 
 pnt=strchr(time_prefix, (int)dim);
@@ -148,7 +132,7 @@ void reformat_time_blackout(char *buf, TimeType val, char dim)
 {
 char *pnt;
 int i, offset;
-struct blackout_region_t *bt = blackout_regions;
+struct blackout_region_t *bt = GLOBALS->blackout_regions;
 char blackout = ' ';
 
 while(bt)
@@ -185,87 +169,87 @@ if(i)
 void update_markertime(TimeType val)
 {
 #if !defined _MSC_VER && !defined __MINGW32__ 
-if(anno_ctx)
+if(GLOBALS->anno_ctx)
 	{
 	if(val >= 0)
 		{
-		anno_ctx->marker_set = 0;	/* avoid race on update */
-		anno_ctx->marker = val / time_scale;
-		reformat_time(anno_ctx->time_string, val, time_dimension);
+		GLOBALS->anno_ctx->marker_set = 0;	/* avoid race on update */
+		GLOBALS->anno_ctx->marker = val / GLOBALS->time_scale;
+		reformat_time(GLOBALS->anno_ctx->time_string, val, GLOBALS->time_dimension);
 
-		anno_ctx->marker_set = 1;
+		GLOBALS->anno_ctx->marker_set = 1;
 		}
 		else
 		{
-		anno_ctx->marker_set = 0;
+		GLOBALS->anno_ctx->marker_set = 0;
 		}
 	}
 #endif
 
-if(!use_maxtime_display)
+if(!GLOBALS->use_maxtime_display)
 	{
 	if(val>=0)
 		{
-		if(tims.baseline>=0)
+		if(GLOBALS->tims.baseline>=0)
 			{
-			val-=tims.baseline; /* do delta instead */
-			*maxtext='B';
+			val-=GLOBALS->tims.baseline; /* do delta instead */
+			*GLOBALS->maxtext_currenttime_c_1='B';
 			if(val>=0)
 				{
-				*(maxtext+1)='+';
-				if(use_frequency_delta)
+				*(GLOBALS->maxtext_currenttime_c_1+1)='+';
+				if(GLOBALS->use_frequency_delta)
 					{
-					reformat_time_as_frequency(maxtext+2, val, time_dimension);
+					reformat_time_as_frequency(GLOBALS->maxtext_currenttime_c_1+2, val, GLOBALS->time_dimension);
 					}
 					else
 					{
-					reformat_time(maxtext+2, val, time_dimension);
+					reformat_time(GLOBALS->maxtext_currenttime_c_1+2, val, GLOBALS->time_dimension);
 					}
 				}
 				else
 				{
-				if(use_frequency_delta)
+				if(GLOBALS->use_frequency_delta)
 					{
-					reformat_time_as_frequency(maxtext+1, val, time_dimension);
+					reformat_time_as_frequency(GLOBALS->maxtext_currenttime_c_1+1, val, GLOBALS->time_dimension);
 					}
 					else
 					{
-					reformat_time(maxtext+1, val, time_dimension);
+					reformat_time(GLOBALS->maxtext_currenttime_c_1+1, val, GLOBALS->time_dimension);
 					}
 				}
 			}
-		else if(tims.lmbcache>=0) 
+		else if(GLOBALS->tims.lmbcache>=0) 
 			{
-			val-=tims.lmbcache; /* do delta instead */
+			val-=GLOBALS->tims.lmbcache; /* do delta instead */
 
-			if(use_frequency_delta)
+			if(GLOBALS->use_frequency_delta)
 				{
-				reformat_time_as_frequency(maxtext, val, time_dimension);
+				reformat_time_as_frequency(GLOBALS->maxtext_currenttime_c_1, val, GLOBALS->time_dimension);
 				}
 			else
 				{
 				if(val>=0)
 					{
-					*maxtext='+';
-					reformat_time(maxtext+1, val, time_dimension);
+					*GLOBALS->maxtext_currenttime_c_1='+';
+					reformat_time(GLOBALS->maxtext_currenttime_c_1+1, val, GLOBALS->time_dimension);
 					}
 					else
 					{
-					reformat_time(maxtext, val, time_dimension);
+					reformat_time(GLOBALS->maxtext_currenttime_c_1, val, GLOBALS->time_dimension);
 					}
 				}
 			}
 		else
 			{
-			reformat_time(maxtext, val, time_dimension);
+			reformat_time(GLOBALS->maxtext_currenttime_c_1, val, GLOBALS->time_dimension);
 			}
 		}
 		else
 		{
-		sprintf(maxtext, "--");
+		sprintf(GLOBALS->maxtext_currenttime_c_1, "--");
 		}
 
-	gtk_label_set(GTK_LABEL(maxtimewid), maxtext);
+	gtk_label_set(GTK_LABEL(GLOBALS->maxtimewid_currenttime_c_1), GLOBALS->maxtext_currenttime_c_1);
 	}
 }
 
@@ -274,40 +258,40 @@ void update_basetime(TimeType val)
 {
 if(val>=0)
 	{
-	gtk_label_set(GTK_LABEL(base_or_curtime_label), "Base Marker");
-	reformat_time(curtext, val, time_dimension);
+	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), "Base Marker");
+	reformat_time(GLOBALS->curtext_currenttime_c_1, val, GLOBALS->time_dimension);
 	}
 	else
 	{
-	gtk_label_set(GTK_LABEL(base_or_curtime_label), "Current Time");
-	reformat_time_blackout(curtext, cached_currenttimeval, time_dimension);
+	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), "Current Time");
+	reformat_time_blackout(GLOBALS->curtext_currenttime_c_1, GLOBALS->cached_currenttimeval_currenttime_c_1, GLOBALS->time_dimension);
 	}
 
-gtk_label_set(GTK_LABEL(curtimewid), curtext);
+gtk_label_set(GTK_LABEL(GLOBALS->curtimewid_currenttime_c_1), GLOBALS->curtext_currenttime_c_1);
 }
 
 
 void update_maxtime(TimeType val)
 {
-max_time=val;
+GLOBALS->max_time=val;
 
-if(use_maxtime_display)
+if(GLOBALS->use_maxtime_display)
 	{
-	reformat_time(maxtext, val, time_dimension);
-	gtk_label_set(GTK_LABEL(maxtimewid), maxtext);
+	reformat_time(GLOBALS->maxtext_currenttime_c_1, val, GLOBALS->time_dimension);
+	gtk_label_set(GTK_LABEL(GLOBALS->maxtimewid_currenttime_c_1), GLOBALS->maxtext_currenttime_c_1);
 	}
 }
 
 
 void update_currenttime(TimeType val)
 {
-cached_currenttimeval = val;
+GLOBALS->cached_currenttimeval_currenttime_c_1 = val;
 
-if(tims.baseline<0)
+if(GLOBALS->tims.baseline<0)
 	{
-	currenttime=val;
-	reformat_time_blackout(curtext, val, time_dimension);
-	gtk_label_set(GTK_LABEL(curtimewid), curtext);
+	GLOBALS->currenttime=val;
+	reformat_time_blackout(GLOBALS->curtext_currenttime_c_1, val, GLOBALS->time_dimension);
+	gtk_label_set(GTK_LABEL(GLOBALS->curtimewid_currenttime_c_1), GLOBALS->curtext_currenttime_c_1);
 	}
 }
 
@@ -319,67 +303,65 @@ create_time_box(void)
 GtkWidget *mainbox;
 GtkWidget *eventbox;
 
-max_or_marker_label=(use_maxtime_display)
+GLOBALS->max_or_marker_label_currenttime_c_1=(GLOBALS->use_maxtime_display)
 	? gtk_label_new(maxtime_label_text)
 	: gtk_label_new(marker_label_text);
 
-maxtext=(char *)malloc_2(40);
-if(use_maxtime_display)
+GLOBALS->maxtext_currenttime_c_1=(char *)malloc_2(40);
+if(GLOBALS->use_maxtime_display)
 	{
-	reformat_time(maxtext, max_time, time_dimension);
+	reformat_time(GLOBALS->maxtext_currenttime_c_1, GLOBALS->max_time, GLOBALS->time_dimension);
 	}
 	else
 	{
-	sprintf(maxtext,"--");
+	sprintf(GLOBALS->maxtext_currenttime_c_1,"--");
 	}
 
-maxtimewid=gtk_label_new(maxtext);
+GLOBALS->maxtimewid_currenttime_c_1=gtk_label_new(GLOBALS->maxtext_currenttime_c_1);
 
-curtext=(char *)malloc_2(40);
-if(tims.baseline<0)
+GLOBALS->curtext_currenttime_c_1=(char *)malloc_2(40);
+if(GLOBALS->tims.baseline<0)
 	{
-	base_or_curtime_label=gtk_label_new("Current Time");
-	reformat_time(curtext, (currenttime=min_time), time_dimension);
-	curtimewid=gtk_label_new(curtext);
+	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new("Current Time");
+	reformat_time(GLOBALS->curtext_currenttime_c_1, (GLOBALS->currenttime=GLOBALS->min_time), GLOBALS->time_dimension);
+	GLOBALS->curtimewid_currenttime_c_1=gtk_label_new(GLOBALS->curtext_currenttime_c_1);
 	}
 	else
 	{
-	base_or_curtime_label=gtk_label_new("Base Marker");
-	reformat_time(curtext, tims.baseline, time_dimension);
-	curtimewid=gtk_label_new(curtext);
+	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new("Base Marker");
+	reformat_time(GLOBALS->curtext_currenttime_c_1, GLOBALS->tims.baseline, GLOBALS->time_dimension);
+	GLOBALS->curtimewid_currenttime_c_1=gtk_label_new(GLOBALS->curtext_currenttime_c_1);
 	}
 
 mainbox=gtk_vbox_new(FALSE, 0);
 eventbox=gtk_event_box_new();
 gtk_container_add(GTK_CONTAINER(eventbox), mainbox);
 
-gtk_box_pack_start(GTK_BOX(mainbox), max_or_marker_label, TRUE, FALSE, 0);
-gtk_widget_show(max_or_marker_label);
-gtk_box_pack_start(GTK_BOX(mainbox), maxtimewid, TRUE, FALSE, 0);
-gtk_widget_show(maxtimewid);
+gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->max_or_marker_label_currenttime_c_1, TRUE, FALSE, 0);
+gtk_widget_show(GLOBALS->max_or_marker_label_currenttime_c_1);
+gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->maxtimewid_currenttime_c_1, TRUE, FALSE, 0);
+gtk_widget_show(GLOBALS->maxtimewid_currenttime_c_1);
 
-gtk_box_pack_start(GTK_BOX(mainbox), base_or_curtime_label, TRUE, FALSE, 0);
-gtk_widget_show(base_or_curtime_label);
-gtk_box_pack_start(GTK_BOX(mainbox), curtimewid, TRUE, FALSE, 0);
-gtk_widget_show(curtimewid);
+gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->base_or_curtime_label_currenttime_c_1, TRUE, FALSE, 0);
+gtk_widget_show(GLOBALS->base_or_curtime_label_currenttime_c_1);
+gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->curtimewid_currenttime_c_1, TRUE, FALSE, 0);
+gtk_widget_show(GLOBALS->curtimewid_currenttime_c_1);
 gtk_widget_show(mainbox);   
 
 return(eventbox);
 }
    
 
-static TimeType time_trunc_val=1;
-char use_full_precision=0;
 
 
 TimeType time_trunc(TimeType t)
 {
-if(!use_full_precision)
-if(time_trunc_val!=1)
+if(!GLOBALS->use_full_precision)
+if(GLOBALS->time_trunc_val_currenttime_c_1!=1)
 	{
-	t=t/time_trunc_val;
-	t=t*time_trunc_val;
-	if(t<tims.first) t=tims.first;
+	t=t/GLOBALS->time_trunc_val_currenttime_c_1;
+	t=t*GLOBALS->time_trunc_val_currenttime_c_1;
+	if(t<GLOBALS->tims.first) t=GLOBALS->tims.first;
 	}
  
 return(t);
@@ -392,14 +374,14 @@ TimeType compar=LLDescriptor(1000000000000000);
 
 for(;compar!=1;compar=compar/10,gcompar=gcompar/((gdouble)10.0))
 	{
-	if(nspx>=gcompar)
+	if(GLOBALS->nspx>=gcompar)
 		{
-		time_trunc_val=compar;
+		GLOBALS->time_trunc_val_currenttime_c_1=compar;
 		return;
 		}
         }
  
-time_trunc_val=1;
+GLOBALS->time_trunc_val_currenttime_c_1=1;
 }
 
 
@@ -410,34 +392,47 @@ void exponent_to_time_scale(signed char scale)
 {
 switch(scale)
         {
-        case 0:         time_dimension = 's'; break;
+        case 0:         GLOBALS->time_dimension = 's'; break;
 
-        case -1:        time_scale = LLDescriptor(100); time_dimension = 'm'; break;
-        case -2:        time_scale = LLDescriptor(10);
-        case -3:                                        time_dimension = 'm'; break;
+        case -1:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'm'; break;
+        case -2:        GLOBALS->time_scale = LLDescriptor(10);
+        case -3:                                        GLOBALS->time_dimension = 'm'; break;
 
-        case -4:        time_scale = LLDescriptor(100); time_dimension = 'u'; break;
-        case -5:        time_scale = LLDescriptor(10);
-        case -6:                                        time_dimension = 'u'; break;
+        case -4:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'u'; break;
+        case -5:        GLOBALS->time_scale = LLDescriptor(10);
+        case -6:                                        GLOBALS->time_dimension = 'u'; break;
 
-        case -10:       time_scale = LLDescriptor(100); time_dimension = 'p'; break;
-        case -11:       time_scale = LLDescriptor(10);
-        case -12:                                       time_dimension = 'p'; break;
+        case -10:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'p'; break;
+        case -11:       GLOBALS->time_scale = LLDescriptor(10);
+        case -12:                                       GLOBALS->time_dimension = 'p'; break;
 
-        case -13:       time_scale = LLDescriptor(100); time_dimension = 'f'; break;
-        case -14:       time_scale = LLDescriptor(10);
-        case -15:                                       time_dimension = 'f'; break;
+        case -13:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'f'; break;
+        case -14:       GLOBALS->time_scale = LLDescriptor(10);
+        case -15:                                       GLOBALS->time_dimension = 'f'; break;
 
-        case -7:        time_scale = LLDescriptor(100); time_dimension = 'n'; break;
-        case -8:        time_scale = LLDescriptor(10);
+        case -7:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'n'; break;
+        case -8:        GLOBALS->time_scale = LLDescriptor(10);
         case -9:
-        default:                                        time_dimension = 'n'; break;
+        default:                                        GLOBALS->time_dimension = 'n'; break;
         }
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:21  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

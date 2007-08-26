@@ -13,6 +13,7 @@
   #pragma alloca
 #endif
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -35,26 +36,24 @@
 #include "vlist.h"
 #include "rc.h"
 
-#ifndef _MSC_VER
-#ifndef __MINGW32__
-	#include <unistd.h>
-	#include <pwd.h>
-	static char *rcname=".gtkwaverc";	/* name of environment file--POSIX */
+#ifndef _MSC_VER   
+#ifndef __MINGW32__ 
+        #include <unistd.h>
+        #include <pwd.h>
+        static char *rcname=".gtkwaverc";       /* name of environment file--POSIX */
 #else
-	static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
+        static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
 #endif
 #else
-	static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
-	#define strcasecmp _stricmp
+        static char *rcname="gtkwave.ini";      /* name of environment file--WIN32 */
+        #define strcasecmp _stricmp
 #endif
 
-int rc_line_no;
-int possibly_use_rc_defaults = 1;		/* if not -d option, use white screen, etc on no .gtkwaverc */
 
 /*
  * functions that set the individual rc variables..
  */
-static int f_accel(char *str)
+int f_accel(char *str)
 {
 DEBUG(printf("f_accel(\"%s\")\n",str));
 
@@ -63,470 +62,472 @@ if(strlen(str)) { set_wave_menu_accelerator(str); }
 return(0);
 }
 
-static int f_alt_hier_delimeter(char *str)
+int f_alt_hier_delimeter(char *str)
 {
 DEBUG(printf("f_alt_hier_delimeter(\"%s\")\n",str));
 
-if(strlen(str)) { alt_hier_delimeter=str[0]; }
+if(strlen(str)) { GLOBALS->alt_hier_delimeter=str[0]; }
 return(0);
 }
 
-static int f_append_vcd_hier(char *str)
+int f_append_vcd_hier(char *str)
 {
 DEBUG(printf("f_append_vcd_hier(\"%s\")\n",str));
 append_vcd_slisthier(str);
 return(0);
 }
 
-static int f_atomic_vectors(char *str)
+int f_atomic_vectors(char *str)
 {
 DEBUG(printf("f_atomic_vectors(\"%s\")\n",str));
-atomic_vectors=atoi_64(str)?1:0;
+GLOBALS->atomic_vectors=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_autoname_bundles(char *str)
+int f_autoname_bundles(char *str)
 {
 DEBUG(printf("f_autoname_bundles(\"%s\")\n",str));
-autoname_bundles=atoi_64(str)?1:0;
+GLOBALS->autoname_bundles=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_autocoalesce(char *str)
+int f_autocoalesce(char *str)
 {
 DEBUG(printf("f_autocoalesce(\"%s\")\n",str));
-autocoalesce=atoi_64(str)?1:0;
+GLOBALS->autocoalesce=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_autocoalesce_reversal(char *str)
+int f_autocoalesce_reversal(char *str)
 {
 DEBUG(printf("f_autocoalesce_reversal(\"%s\")\n",str));
-autocoalesce_reversal=atoi_64(str)?1:0;
+GLOBALS->autocoalesce_reversal=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_constant_marker_update(char *str)
+int f_constant_marker_update(char *str)
 {
 DEBUG(printf("f_constant_marker_update(\"%s\")\n",str));
-constant_marker_update=atoi_64(str)?1:0;
+GLOBALS->constant_marker_update=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_convert_to_reals(char *str)
+int f_convert_to_reals(char *str)
 {
 DEBUG(printf("f_convert_to_reals(\"%s\")\n",str));
-convert_to_reals=atoi_64(str)?1:0;
+GLOBALS->convert_to_reals=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_cursor_snap(char *str)
+int f_cursor_snap(char *str)
 {
 int val;
 DEBUG(printf("f_cursor_snap(\"%s\")\n",str));
 val=atoi_64(str);
-cursor_snap=(val<=0)?0:val;
+GLOBALS->cursor_snap=(val<=0)?0:val;
 return(0);
 }
 
-static int f_disable_mouseover(char *str)
+int f_disable_mouseover(char *str)
 {
 DEBUG(printf("f_disable_mouseover(\"%s\")\n",str));
-disable_mouseover=atoi_64(str)?1:0;
+GLOBALS->disable_mouseover=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_disable_tooltips(char *str)
+int f_disable_tooltips(char *str)
 {
 DEBUG(printf("f_disable_tooltips(\"%s\")\n",str));
-disable_tooltips=atoi_64(str)?1:0;
+GLOBALS->disable_tooltips=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_do_initial_zoom_fit(char *str)
+int f_do_initial_zoom_fit(char *str)
 {
 DEBUG(printf("f_do_initial_zoom_fit(\"%s\")\n",str));
-do_initial_zoom_fit=atoi_64(str)?1:0;
+GLOBALS->do_initial_zoom_fit=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_dynamic_resizing(char *str)
+int f_dynamic_resizing(char *str)
 {
 DEBUG(printf("f_dynamic_resizing(\"%s\")\n",str));
-do_resize_signals=atoi_64(str)?1:0;
+GLOBALS->do_resize_signals=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_enable_fast_exit(char *str)
+int f_enable_fast_exit(char *str)
 {
 DEBUG(printf("f_enable_fast_exit(\"%s\")\n",str));
-enable_fast_exit=atoi_64(str)?1:0;
+GLOBALS->enable_fast_exit=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_enable_ghost_marker(char *str)
+int f_enable_ghost_marker(char *str)
 {
 DEBUG(printf("f_enable_ghost_marker(\"%s\")\n",str));
-enable_ghost_marker=atoi_64(str)?1:0;
+GLOBALS->enable_ghost_marker=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_enable_horiz_grid(char *str)
+int f_enable_horiz_grid(char *str)
 {
 DEBUG(printf("f_enable_horiz_grid(\"%s\")\n",str));
-enable_horiz_grid=atoi_64(str)?1:0;
+GLOBALS->enable_horiz_grid=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_enable_vcd_autosave(char *str)
+int f_enable_vcd_autosave(char *str)
 {
 DEBUG(printf("f_enable_vcd_autosave(\"%s\")\n",str));
-make_vcd_save_file=atoi_64(str)?1:0;
+GLOBALS->make_vcd_save_file=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_enable_vert_grid(char *str)
+int f_enable_vert_grid(char *str)
 {
 DEBUG(printf("f_enable_vert_grid(\"%s\")\n",str));
-enable_vert_grid=atoi_64(str)?1:0;
+GLOBALS->enable_vert_grid=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_fontname_logfile(char *str)
+int f_fontname_logfile(char *str)
 {
 DEBUG(printf("f_fontname_logfile(\"%s\")\n",str));
-if(fontname_logfile) free_2(fontname_logfile);
-fontname_logfile=(char *)malloc_2(strlen(str)+1);
-strcpy(fontname_logfile,str);
+if(GLOBALS->fontname_logfile) free_2(GLOBALS->fontname_logfile);
+GLOBALS->fontname_logfile=(char *)malloc_2(strlen(str)+1);
+strcpy(GLOBALS->fontname_logfile,str);
 return(0);
 }
 
-static int f_fontname_signals(char *str)
+int f_fontname_signals(char *str)
 {
 DEBUG(printf("f_fontname_signals(\"%s\")\n",str));
-if(fontname_signals) free_2(fontname_signals);
-fontname_signals=(char *)malloc_2(strlen(str)+1);
-strcpy(fontname_signals,str);
+if(GLOBALS->fontname_signals) free_2(GLOBALS->fontname_signals);
+GLOBALS->fontname_signals=(char *)malloc_2(strlen(str)+1);
+strcpy(GLOBALS->fontname_signals,str);
 return(0);
 }
 
-static int f_fontname_waves(char *str)
+int f_fontname_waves(char *str)
 {
 DEBUG(printf("f_fontname_signals(\"%s\")\n",str));
-if(fontname_waves) free_2(fontname_waves);
-fontname_waves=(char *)malloc_2(strlen(str)+1);
-strcpy(fontname_waves,str);
+if(GLOBALS->fontname_waves) free_2(GLOBALS->fontname_waves);
+GLOBALS->fontname_waves=(char *)malloc_2(strlen(str)+1);
+strcpy(GLOBALS->fontname_waves,str);
 return(0);
 }
 
-static int f_force_toolbars(char *str)
+int f_force_toolbars(char *str)
 {
 DEBUG(printf("f_force_toolbars(\"%s\")\n",str));
-force_toolbars=atoi_64(str)?1:0;
+GLOBALS->force_toolbars=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_hide_sst(char *str)
+int f_hide_sst(char *str)
 {
 DEBUG(printf("f_hide_sst(\"%s\")\n",str));
-hide_sst=atoi_64(str)?1:0;
+GLOBALS->hide_sst=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_sst_expanded(char *str)
+int f_sst_expanded(char *str)
 {
 DEBUG(printf("f_sst_expanded(\"%s\")\n",str));
-sst_expanded=atoi_64(str)?1:0;
+GLOBALS->sst_expanded=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_hier_delimeter(char *str)
+int f_hier_delimeter(char *str)
 {
 DEBUG(printf("f_hier_delimeter(\"%s\")\n",str));
 
-if(strlen(str)) { hier_delimeter=str[0]; hier_was_explicitly_set=1; }
+if(strlen(str)) { GLOBALS->hier_delimeter=str[0]; GLOBALS->hier_was_explicitly_set=1; }
 return(0);
 }
 
-static int f_hier_grouping(char *str)
+int f_hier_grouping(char *str)
 {
 DEBUG(printf("f_hier_grouping(\"%s\")\n",str));
-hier_grouping=atoi_64(str)?1:0;
+GLOBALS->hier_grouping=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_hier_max_level(char *str)
+int f_hier_max_level(char *str)
 {
 DEBUG(printf("f_hier_max_level(\"%s\")\n",str));
-hier_max_level=atoi_64(str);
+GLOBALS->hier_max_level=atoi_64(str);
 return(0);
 }
 
-static int f_hpane_pack(char *str)
+int f_hpane_pack(char *str)
 {
 DEBUG(printf("f_hpane_pack(\"%s\")\n",str));
-paned_pack_semantics=atoi_64(str)?1:0;
+GLOBALS->paned_pack_semantics=atoi_64(str)?1:0;
 return(0);
 }
 
-static f_ignore_savefile_pos(char *str)
+int f_ignore_savefile_pos(char *str)
 {
 DEBUG(printf("f_ignore_savefile_pos(\"%s\")\n",str));
-ignore_savefile_pos=atoi_64(str)?1:0;
+GLOBALS->ignore_savefile_pos=atoi_64(str)?1:0;
 return(0);
 }
 
-static f_ignore_savefile_size(char *str)
+int f_ignore_savefile_size(char *str)
 {
 DEBUG(printf("f_ignore_savefile_size(\"%s\")\n",str));
-ignore_savefile_size=atoi_64(str)?1:0;
+GLOBALS->ignore_savefile_size=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_initial_window_x(char *str)
+int f_initial_window_x(char *str)
 {
 int val;
 DEBUG(printf("f_initial_window_x(\"%s\")\n",str));
 val=atoi_64(str);
-initial_window_x=(val<=0)?-1:val;
+GLOBALS->initial_window_x=(val<=0)?-1:val;
 return(0);
 }
 
-static int f_initial_window_xpos(char *str)
+int f_initial_window_xpos(char *str)
 {
 int val;
 DEBUG(printf("f_initial_window_xpos(\"%s\")\n",str));
 val=atoi_64(str);
-initial_window_xpos=(val<=0)?-1:val;
+GLOBALS->initial_window_xpos=(val<=0)?-1:val;
 return(0);
 }
 
-static int f_initial_window_y(char *str)
+int f_initial_window_y(char *str)
 {
 int val;
 DEBUG(printf("f_initial_window_y(\"%s\")\n",str));
 val=atoi_64(str);
-initial_window_y=(val<=0)?-1:val;
+GLOBALS->initial_window_y=(val<=0)?-1:val;
 return(0);
 }
 
-static int f_initial_window_ypos(char *str)
+int f_initial_window_ypos(char *str)
 {
 int val;
 DEBUG(printf("f_initial_window_ypos(\"%s\")\n",str));
 val=atoi_64(str);
-initial_window_ypos=(val<=0)?-1:val;
+GLOBALS->initial_window_ypos=(val<=0)?-1:val;
 return(0);
 }
 
-static int f_left_justify_sigs(char *str)
+int f_left_justify_sigs(char *str)
 {
 DEBUG(printf("f_left_justify_sigs(\"%s\")\n",str));
-left_justify_sigs=atoi_64(str)?1:0;
+GLOBALS->left_justify_sigs=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_lxt_clock_compress_to_z(char *str)
+int f_lxt_clock_compress_to_z(char *str)
 {
 DEBUG(printf("f_lxt_clock_compress_to_z(\"%s\")\n",str));
-lxt_clock_compress_to_z=atoi_64(str)?1:0;
+GLOBALS->lxt_clock_compress_to_z=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_page_divisor(char *str)
+int f_page_divisor(char *str)
 {
 DEBUG(printf("f_page_divisor(\"%s\")\n",str));
-sscanf(str,"%lg",&page_divisor);
+sscanf(str,"%lg",&GLOBALS->page_divisor);
 
-if(page_divisor<0.01)
+if(GLOBALS->page_divisor<0.01)
 	{
-	page_divisor=0.01;
+	GLOBALS->page_divisor=0.01;
 	}
 else
-if(page_divisor>100.0)
+if(GLOBALS->page_divisor>100.0)
 	{
-	page_divisor=100.0;
+	GLOBALS->page_divisor=100.0;
 	}
 
-if(page_divisor>1.0) page_divisor=1.0/page_divisor;
+if(GLOBALS->page_divisor>1.0) GLOBALS->page_divisor=1.0/GLOBALS->page_divisor;
 
 return(0);
 }
 
-static int f_ps_maxveclen(char *str)
+int f_ps_maxveclen(char *str)
 {
 DEBUG(printf("f_ps_maxveclen(\"%s\")\n",str));
-ps_maxveclen=atoi_64(str);
-if(ps_maxveclen<4)
+GLOBALS->ps_maxveclen=atoi_64(str);
+if(GLOBALS->ps_maxveclen<4)
 	{
-	ps_maxveclen=4;
+	GLOBALS->ps_maxveclen=4;
 	}
 else
-if(ps_maxveclen>66)
+if(GLOBALS->ps_maxveclen>66)
 	{
-	ps_maxveclen=66;
+	GLOBALS->ps_maxveclen=66;
 	}
 
 return(0);
 }
 
-static int f_show_base_symbols(char *str)
+int f_show_base_symbols(char *str)
 {
 DEBUG(printf("f_show_base_symbols(\"%s\")\n",str));
-show_base=atoi_64(str)?1:0;
+GLOBALS->show_base=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_show_grid(char *str)
+int f_show_grid(char *str)
 {
 DEBUG(printf("f_show_grid(\"%s\")\n",str));
-display_grid=atoi_64(str)?1:0;
+GLOBALS->display_grid=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_splash_disable(char *str)
+int f_splash_disable(char *str)
 {
 DEBUG(printf("f_splash_disable(\"%s\")\n",str));
-splash_disable=atoi_64(str)?1:0;
+GLOBALS->splash_disable=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_use_big_fonts(char *str)
+int f_use_big_fonts(char *str)
 {
 DEBUG(printf("f_use_big_fonts(\"%s\")\n",str));
-use_big_fonts=atoi_64(str)?1:0;
+GLOBALS->use_big_fonts=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_use_full_precision(char *str)
+int f_use_full_precision(char *str)
 {
 DEBUG(printf("f_use_full_precision(\"%s\")\n",str));
-use_full_precision=atoi_64(str)?1:0;
+GLOBALS->use_full_precision=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_use_frequency_display(char *str)
+int f_use_frequency_display(char *str)
 {
 DEBUG(printf("f_use_frequency_display(\"%s\")\n",str));
-use_frequency_delta=atoi_64(str)?1:0;
+GLOBALS->use_frequency_delta=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_use_maxtime_display(char *str)
+int f_use_maxtime_display(char *str)
 {
 DEBUG(printf("f_use_maxtime_display(\"%s\")\n",str));
-use_maxtime_display=atoi_64(str)?1:0;
+GLOBALS->use_maxtime_display=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_use_nonprop_fonts(char *str)
+int f_use_nonprop_fonts(char *str)
 {
 DEBUG(printf("f_use_nonprop_fonts(\"%s\")\n",str));
-use_nonprop_fonts=atoi_64(str)?1:0;
+GLOBALS->use_nonprop_fonts=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_use_roundcaps(char *str)
+int f_use_roundcaps(char *str)
 {
 DEBUG(printf("f_use_roundcaps(\"%s\")\n",str));
-use_roundcaps=atoi_64(str)?1:0;
+GLOBALS->use_roundcaps=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_use_scrollbar_only(char *str)
+int f_use_scrollbar_only(char *str)
 {
 DEBUG(printf("f_use_scrollbar_only(\"%s\")\n",str));
-use_scrollbar_only=atoi_64(str)?1:0;
+GLOBALS->use_scrollbar_only=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_vcd_explicit_zero_subscripts(char *str)
+int f_vcd_explicit_zero_subscripts(char *str)
 {
 DEBUG(printf("f_vcd_explicit_zero_subscripts(\"%s\")\n",str));
-vcd_explicit_zero_subscripts=atoi_64(str)?0:-1;	/* 0==yes, -1==no */
+GLOBALS->vcd_explicit_zero_subscripts=atoi_64(str)?0:-1;	/* 0==yes, -1==no */
 return(0);
 }
 
-static int f_vcd_preserve_glitches(char *str)
+int f_vcd_preserve_glitches(char *str)
 {
 DEBUG(printf("f_vcd_preserve_glitches(\"%s\")\n",str));
-vcd_preserve_glitches=atoi_64(str)?0:-1;	/* 0==yes, -1==no */
+GLOBALS->vcd_preserve_glitches=atoi_64(str)?0:-1;	/* 0==yes, -1==no */
 return(0);
 }
 
-static int f_vcd_warning_filesize(char *str)
+int f_vcd_warning_filesize(char *str)
 {
 DEBUG(printf("f_vcd_preserve_glitches(\"%s\")\n",str));
-vcd_warning_filesize=atoi_64(str);
+GLOBALS->vcd_warning_filesize=atoi_64(str);
 return(0);
 }
 
-static int f_vector_padding(char *str)
+int f_vector_padding(char *str)
 {
 DEBUG(printf("f_vector_padding(\"%s\")\n",str));
-vector_padding=atoi_64(str);
-if(vector_padding<4) vector_padding=4;
-else if(vector_padding>16) vector_padding=16;
+GLOBALS->vector_padding=atoi_64(str);
+if(GLOBALS->vector_padding<4) GLOBALS->vector_padding=4;
+else if(GLOBALS->vector_padding>16) GLOBALS->vector_padding=16;
 return(0);
 }
 
-static int f_vlist_compression(char *str)
+int f_vlist_compression(char *str)
 {
 DEBUG(printf("f_vlist_compression(\"%s\")\n",str));
-vlist_compression_depth=atoi_64(str);
-if(vlist_compression_depth<0) vlist_compression_depth = -1;
-if(vlist_compression_depth>9) vlist_compression_depth = 9;
+GLOBALS->vlist_compression_depth=atoi_64(str);
+if(GLOBALS->vlist_compression_depth<0) GLOBALS->vlist_compression_depth = -1;
+if(GLOBALS->vlist_compression_depth>9) GLOBALS->vlist_compression_depth = 9;
 return(0);
 }
 
-static int f_wave_scrolling(char *str)
+int f_wave_scrolling(char *str)
 {
 DEBUG(printf("f_wave_scrolling(\"%s\")\n",str));
-wave_scrolling=atoi_64(str)?1:0;
+GLOBALS->wave_scrolling=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_zoom_base(char *str)
+int f_zoom_base(char *str)
 {
 float f;
 DEBUG(printf("f_zoom_base(\"%s\")\n",str));
 sscanf(str,"%f",&f);
 if(f<1.5) f=1.5; else if(f>10.0) f=10.0;
-zoombase=(gdouble)f;
+GLOBALS->zoombase=(gdouble)f;
 return(0);
 }
 
-static int f_zoom_center(char *str)
+int f_zoom_center(char *str)
 {
 DEBUG(printf("f_zoom_center(\"%s\")\n",str));
-do_zoom_center=atoi_64(str)?1:0;
+GLOBALS->do_zoom_center=atoi_64(str)?1:0;
 return(0);
 }
 
-static int f_zoom_pow10_snap(char *str)
+int f_zoom_pow10_snap(char *str)
 {
 DEBUG(printf("f_zoom_pow10_snap(\"%s\")\n",str));
-zoom_pow10_snap=atoi_64(str)?1:0;
+GLOBALS->zoom_pow10_snap=atoi_64(str)?1:0;
 return(0);
 }
 
 
-static int rc_compare(const void *v1, const void *v2)
+int rc_compare(const void *v1, const void *v2)
 {
 return(strcasecmp((char *)v1, ((struct rc_entry *)v2)->name));
 }
 
 
 /* make the color functions */
-#define color_make(Z) static int f_color_##Z (char *str) \
+#define color_make(Z) int f_color_##Z (char *str) \
 { \
 int rgb; \
 if((rgb=get_rgb_from_name(str))!=~0) \
 	{ \
-	color_##Z=rgb; \
+	GLOBALS->color_##Z=rgb; \
 	} \
 return(0); \
 }
+
+
 
 color_make(back)
 color_make(baseline)
@@ -720,7 +721,7 @@ for(i=0;i<(num_rcitems-1);i++)
 	}
 
 /* move defaults first and only go whitescreen if instructed to do so */
-if(possibly_use_rc_defaults) vanilla_rc();
+if(GLOBALS->possibly_use_rc_defaults) vanilla_rc();
 
 if((override_rc)&&((handle=fopen(override_rc,"rb"))))
 	{
@@ -749,17 +750,17 @@ if(!(handle=fopen(rcname,"rb")))
 if(!(handle=fopen(rcname,"rb")))		/* no concept of ~ in win32 */
 	{
 	errno=0;
-	if(possibly_use_rc_defaults) vanilla_rc();
+	if(GLOBALS->possibly_use_rc_defaults) vanilla_rc();
 	return; /* no .rc file */
 	} 
 #endif
 
-rc_line_no=0;
+GLOBALS->rc_line_no=0;
 while(!feof(handle))
 	{
 	char *str;
 
-	rc_line_no++;
+	GLOBALS->rc_line_no++;
 	if((str=fgetmalloc(handle)))
 		{
 		int i, len;
@@ -823,6 +824,25 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
+ * Revision 1.2  2007/07/23 23:13:08  gtkwave
+ * adds for color tags in filtered trace data
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:37  gtkwave
  * Imported sources
  *

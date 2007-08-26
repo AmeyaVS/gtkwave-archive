@@ -8,25 +8,24 @@
  */
 
 #include <config.h>
+#include "globals.h"
 #include "pixmaps.h"
 #include "currenttime.h"
 #include "debug.h"
 
-char do_zoom_center=1;
-char do_initial_zoom_fit=0;
 
 void fix_wavehadj(void)
 {
 GtkAdjustment *hadj;
 gfloat pageinc;
 
-hadj=GTK_ADJUSTMENT(wave_hslider);
-hadj->lower=tims.first;
-hadj->upper=tims.last+2.0;
+hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+hadj->lower=GLOBALS->tims.first;
+hadj->upper=GLOBALS->tims.last+2.0;
 
-pageinc=(gfloat)(((gdouble)wavewidth)*nspx);
+pageinc=(gfloat)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
 hadj->page_size=hadj->page_increment=(pageinc>=1.0)?pageinc:1.0;
-hadj->step_increment=(nspx>=1.0)?nspx:1.0;
+hadj->step_increment=(GLOBALS->nspx>=1.0)?GLOBALS->nspx:1.0;
 
 if(hadj->page_size >= (hadj->upper-hadj->lower)) hadj->value=hadj->lower;
 if(hadj->value+hadj->page_size>hadj->upper)
@@ -35,14 +34,13 @@ if(hadj->value+hadj->page_size>hadj->upper)
 	if(hadj->value<hadj->lower)
 		hadj->value=hadj->lower;
 	}
-
 }
 
 void service_zoom_left(GtkWidget *text, gpointer data)
 {
 GtkAdjustment *hadj;
 
-if(helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nZoom To Start");
         help_text(
@@ -51,8 +49,8 @@ if(helpbox_is_active)
         return;
         }
 
-hadj=GTK_ADJUSTMENT(wave_hslider);
-hadj->value=tims.timecache=tims.first;
+hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+hadj->value=GLOBALS->tims.timecache=GLOBALS->tims.first;
 time_update();
 }
 
@@ -61,7 +59,7 @@ void service_zoom_right(GtkWidget *text, gpointer data)
 GtkAdjustment *hadj;
 TimeType ntinc;
 
-if(helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nZoom To End");
         help_text(
@@ -70,13 +68,13 @@ if(helpbox_is_active)
         return;
         }
 
-ntinc=(TimeType)(((gdouble)wavewidth)*nspx);
+ntinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
 
-tims.timecache=tims.last-ntinc+1;
-        if(tims.timecache<tims.first) tims.timecache=tims.first;
+GLOBALS->tims.timecache=GLOBALS->tims.last-ntinc+1;
+        if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
 
-hadj=GTK_ADJUSTMENT(wave_hslider);
-hadj->value=tims.timecache;
+hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+hadj->value=GLOBALS->tims.timecache;
 time_update();
 }
 
@@ -84,7 +82,7 @@ void service_zoom_out(GtkWidget *text, gpointer data)
 {
 TimeType middle=0, width;
 
-if(helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nZoom Out");
         help_text(
@@ -96,49 +94,49 @@ if(helpbox_is_active)
         return;
         }
 
-if(do_zoom_center)
+if(GLOBALS->do_zoom_center)
 	{
-	if((tims.marker<0)||(tims.marker<tims.first)||(tims.marker>tims.last))
+	if((GLOBALS->tims.marker<0)||(GLOBALS->tims.marker<GLOBALS->tims.first)||(GLOBALS->tims.marker>GLOBALS->tims.last))
 		{
-		if(tims.end>tims.last) tims.end=tims.last;
-		middle=(tims.start/2)+(tims.end/2);
-		if((tims.start&1)&&(tims.end&1)) middle++;
+		if(GLOBALS->tims.end>GLOBALS->tims.last) GLOBALS->tims.end=GLOBALS->tims.last;
+		middle=(GLOBALS->tims.start/2)+(GLOBALS->tims.end/2);
+		if((GLOBALS->tims.start&1)&&(GLOBALS->tims.end&1)) middle++;
 		}
 		else
 		{
-		middle=tims.marker;
+		middle=GLOBALS->tims.marker;
 		}
 	}
 
-tims.prevzoom=tims.zoom;
+GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
 
-tims.zoom--;
-calczoom(tims.zoom);
+GLOBALS->tims.zoom--;
+calczoom(GLOBALS->tims.zoom);
 
-if(do_zoom_center)
+if(GLOBALS->do_zoom_center)
 	{
-	width=(TimeType)(((gdouble)wavewidth)*nspx);
-	tims.start=time_trunc(middle-(width/2));
-        if(tims.start+width>tims.last) tims.start=time_trunc(tims.last-width);
-	if(tims.start<tims.first) tims.start=tims.first;
-	GTK_ADJUSTMENT(wave_hslider)->value=tims.timecache=tims.start;
+	width=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+	GLOBALS->tims.start=time_trunc(middle-(width/2));
+        if(GLOBALS->tims.start+width>GLOBALS->tims.last) GLOBALS->tims.start=time_trunc(GLOBALS->tims.last-width);
+	if(GLOBALS->tims.start<GLOBALS->tims.first) GLOBALS->tims.start=GLOBALS->tims.first;
+	GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache=GLOBALS->tims.start;
 	}
 	else
 	{
-	tims.timecache=0;
+	GLOBALS->tims.timecache=0;
 	}	
 
 fix_wavehadj();
 
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed"); /* force zoom update */
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
 
 DEBUG(printf("Zoombuttons out\n"));
 }
 
 void service_zoom_in(GtkWidget *text, gpointer data)
 {
-if(helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nZoom In");
         help_text(
@@ -150,46 +148,46 @@ if(helpbox_is_active)
         return;
         }
 
-if(tims.zoom<0)		/* otherwise it's ridiculous and can cause */
+if(GLOBALS->tims.zoom<0)		/* otherwise it's ridiculous and can cause */
 	{		/* overflow problems in the scope          */
 	TimeType middle=0, width;
 
-	if(do_zoom_center)
+	if(GLOBALS->do_zoom_center)
 		{
-		if((tims.marker<0)||(tims.marker<tims.first)||(tims.marker>tims.last))
+		if((GLOBALS->tims.marker<0)||(GLOBALS->tims.marker<GLOBALS->tims.first)||(GLOBALS->tims.marker>GLOBALS->tims.last))
 			{
-			if(tims.end>tims.last) tims.end=tims.last;
-			middle=(tims.start/2)+(tims.end/2);
-			if((tims.start&1)&&(tims.end&1)) middle++;
+			if(GLOBALS->tims.end>GLOBALS->tims.last) GLOBALS->tims.end=GLOBALS->tims.last;
+			middle=(GLOBALS->tims.start/2)+(GLOBALS->tims.end/2);
+			if((GLOBALS->tims.start&1)&&(GLOBALS->tims.end&1)) middle++;
 			}
 			else
 			{
-			middle=tims.marker;
+			middle=GLOBALS->tims.marker;
 			}
 		}
 
-	tims.prevzoom=tims.zoom;
+	GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
 
-	tims.zoom++;
-	calczoom(tims.zoom);
+	GLOBALS->tims.zoom++;
+	calczoom(GLOBALS->tims.zoom);
 
-	if(do_zoom_center)
+	if(GLOBALS->do_zoom_center)
 		{
-		width=(TimeType)(((gdouble)wavewidth)*nspx);
-		tims.start=time_trunc(middle-(width/2));
-	        if(tims.start+width>tims.last) tims.start=time_trunc(tims.last-width);
-		if(tims.start<tims.first) tims.start=tims.first;
-		GTK_ADJUSTMENT(wave_hslider)->value=tims.timecache=tims.start;
+		width=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+		GLOBALS->tims.start=time_trunc(middle-(width/2));
+	        if(GLOBALS->tims.start+width>GLOBALS->tims.last) GLOBALS->tims.start=time_trunc(GLOBALS->tims.last-width);
+		if(GLOBALS->tims.start<GLOBALS->tims.first) GLOBALS->tims.start=GLOBALS->tims.first;
+		GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache=GLOBALS->tims.start;
 		}
 		else
 		{
-		tims.timecache=0;
+		GLOBALS->tims.timecache=0;
 		}	
 
 	fix_wavehadj();
 	
-	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed"); /* force zoom update */
-	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
 	
 	DEBUG(printf("Zoombuttons in\n"));
 	}
@@ -199,7 +197,7 @@ void service_zoom_undo(GtkWidget *text, gpointer data)
 {
 gdouble temp;
 
-if(helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nZoom Undo");
         help_text(
@@ -210,15 +208,15 @@ if(helpbox_is_active)
         }
 
 
-temp=tims.zoom;
-tims.zoom=tims.prevzoom;
-tims.prevzoom=temp;
-tims.timecache=0;
-calczoom(tims.zoom);
+temp=GLOBALS->tims.zoom;
+GLOBALS->tims.zoom=GLOBALS->tims.prevzoom;
+GLOBALS->tims.prevzoom=temp;
+GLOBALS->tims.timecache=0;
+calczoom(GLOBALS->tims.zoom);
 fix_wavehadj();
 
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed"); /* force zoom update */
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
 
 DEBUG(printf("Zoombuttons Undo\n"));
 }
@@ -228,7 +226,7 @@ void service_zoom_fit(GtkWidget *text, gpointer data)
 gdouble estimated;
 int fixedwidth;
 
-if(helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nZoom Best Fit");
         help_text(
@@ -242,26 +240,26 @@ if(helpbox_is_active)
         return;
         }
 
-if((tims.baseline>=0)&&(tims.marker>=0))
+if((GLOBALS->tims.baseline>=0)&&(GLOBALS->tims.marker>=0))
 	{
-	service_dragzoom(tims.baseline, tims.marker); /* new semantics added to zoom between the two */
+	service_dragzoom(GLOBALS->tims.baseline, GLOBALS->tims.marker); /* new semantics added to zoom between the two */
 	}
 	else
 	{
-	if(wavewidth>4) { fixedwidth=wavewidth-4; } else { fixedwidth=wavewidth; }
-	estimated=-log(((gdouble)(tims.last-tims.first+1))/((gdouble)fixedwidth)*((gdouble)200.0))/log(zoombase);
+	if(GLOBALS->wavewidth>4) { fixedwidth=GLOBALS->wavewidth-4; } else { fixedwidth=GLOBALS->wavewidth; }
+	estimated=-log(((gdouble)(GLOBALS->tims.last-GLOBALS->tims.first+1))/((gdouble)fixedwidth)*((gdouble)200.0))/log(GLOBALS->zoombase);
 	if(estimated>((gdouble)(0.0))) estimated=((gdouble)(0.0));
 	
-	tims.prevzoom=tims.zoom;
-	tims.timecache=0;
+	GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
+	GLOBALS->tims.timecache=0;
 	
 	calczoom(estimated);
-	tims.zoom=estimated;
+	GLOBALS->tims.zoom=estimated;
 
 	fix_wavehadj();
 	
-	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed"); /* force zoom update */
-	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
 	}
 	
 DEBUG(printf("Zoombuttons Fit\n"));
@@ -272,7 +270,7 @@ void service_zoom_full(GtkWidget *text, gpointer data)
 gdouble estimated;
 int fixedwidth;
 
-if(helpbox_is_active)
+if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nZoom Full");
         help_text(
@@ -283,20 +281,20 @@ if(helpbox_is_active)
         return;
         }
 
-if(wavewidth>4) { fixedwidth=wavewidth-4; } else { fixedwidth=wavewidth; }
-estimated=-log(((gdouble)(tims.last-tims.first+1))/((gdouble)fixedwidth)*((gdouble)200.0))/log(zoombase);
+if(GLOBALS->wavewidth>4) { fixedwidth=GLOBALS->wavewidth-4; } else { fixedwidth=GLOBALS->wavewidth; }
+estimated=-log(((gdouble)(GLOBALS->tims.last-GLOBALS->tims.first+1))/((gdouble)fixedwidth)*((gdouble)200.0))/log(GLOBALS->zoombase);
 if(estimated>((gdouble)(0.0))) estimated=((gdouble)(0.0));
 	
-tims.prevzoom=tims.zoom;
-tims.timecache=0;
+GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
+GLOBALS->tims.timecache=0;
 	
 calczoom(estimated);
-tims.zoom=estimated;
+GLOBALS->tims.zoom=estimated;
 
 fix_wavehadj();
 	
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed"); /* force zoom update */
-gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
 	
 DEBUG(printf("Zoombuttons Full\n"));
 }
@@ -319,41 +317,41 @@ if(time2<time1)
 
 if(time2>time1)	/* ensure at least 1 tick */
 	{
-	if(wavewidth>4) { fixedwidth=wavewidth-4; } else { fixedwidth=wavewidth; }
-	estimated=-log(((gdouble)(time2-time1+1))/((gdouble)fixedwidth)*((gdouble)200.0))/log(zoombase);
+	if(GLOBALS->wavewidth>4) { fixedwidth=GLOBALS->wavewidth-4; } else { fixedwidth=GLOBALS->wavewidth; }
+	estimated=-log(((gdouble)(time2-time1+1))/((gdouble)fixedwidth)*((gdouble)200.0))/log(GLOBALS->zoombase);
 	if(estimated>((gdouble)(0.0))) estimated=((gdouble)(0.0));
 
-	tims.prevzoom=tims.zoom;
-	tims.timecache=tims.laststart=tims.start=time_trunc(time1);
+	GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
+	GLOBALS->tims.timecache=GLOBALS->tims.laststart=GLOBALS->tims.start=time_trunc(time1);
 
-        for(t=traces.first;t;t=t->t_next) /* have to nuke string refs so printout is ok! */
+        for(t=GLOBALS->traces.first;t;t=t->t_next) /* have to nuke string refs so printout is ok! */
                 {
                 if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
                 }
 
-        for(t=traces.buffer;t;t=t->t_next)
+        for(t=GLOBALS->traces.buffer;t;t=t->t_next)
                 {
                 if(t->asciivalue) { free_2(t->asciivalue); t->asciivalue=NULL; }
                 }
 
-	if(!((tims.baseline>=0)&&(tims.marker>=0)))
+	if(!((GLOBALS->tims.baseline>=0)&&(GLOBALS->tims.marker>=0)))
 		{
-	        update_markertime(tims.marker=-1);
+	        update_markertime(GLOBALS->tims.marker=-1);
 		}
-        signalwindow_width_dirty=1;
+        GLOBALS->signalwindow_width_dirty=1;
         MaxSignalLength();
 
 
-        hadj=GTK_ADJUSTMENT(wave_hslider);
+        hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
         hadj->value=time1;
 
 	calczoom(estimated);
-	tims.zoom=estimated;
+	GLOBALS->tims.zoom=estimated;
 
 	fix_wavehadj();
 
-	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "changed"); /* force zoom update */
-	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(wave_hslider)), "value_changed"); /* force zoom update */
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
 
 	DEBUG(printf("Drag Zoom\n"));
 	}
@@ -381,18 +379,18 @@ GtkTooltips *tooltips;
 tooltips=gtk_tooltips_new_2();
 gtk_tooltips_set_delay_2(tooltips,1500);
 
-pixmapzin=gtk_pixmap_new(zoomin_pixmap, zoomin_mask);
+pixmapzin=gtk_pixmap_new(GLOBALS->zoomin_pixmap, GLOBALS->zoomin_mask);
 gtk_widget_show(pixmapzin);
-pixmapzout=gtk_pixmap_new(zoomout_pixmap, zoomout_mask);
+pixmapzout=gtk_pixmap_new(GLOBALS->zoomout_pixmap, GLOBALS->zoomout_mask);
 gtk_widget_show(pixmapzout);
-pixmapzfit=gtk_pixmap_new(zoomfit_pixmap, zoomfit_mask);
+pixmapzfit=gtk_pixmap_new(GLOBALS->zoomfit_pixmap, GLOBALS->zoomfit_mask);
 gtk_widget_show(pixmapzfit);
-pixmapzundo=gtk_pixmap_new(zoomundo_pixmap, zoomundo_mask);
+pixmapzundo=gtk_pixmap_new(GLOBALS->zoomundo_pixmap, GLOBALS->zoomundo_mask);
 gtk_widget_show(pixmapzundo);
 
-pixmapzleft=gtk_pixmap_new(zoom_larrow_pixmap, zoom_larrow_mask);
+pixmapzleft=gtk_pixmap_new(GLOBALS->zoom_larrow_pixmap, GLOBALS->zoom_larrow_mask);
 gtk_widget_show(pixmapzleft);
-pixmapzright=gtk_pixmap_new(zoom_rarrow_pixmap, zoom_rarrow_mask);
+pixmapzright=gtk_pixmap_new(GLOBALS->zoom_rarrow_pixmap, GLOBALS->zoom_rarrow_mask);
 gtk_widget_show(pixmapzright);
 
 
@@ -481,6 +479,22 @@ return table;
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:56  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:50  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:28  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:20  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 
 #ifdef _AIX
@@ -49,8 +50,6 @@
 #include "regex_wave.h"
 #include "debug.h"
 
-static regex_t preg[WAVE_REGEX_TOTAL];
-static int regex_ok[WAVE_REGEX_TOTAL]; /* automatically zeroed as static */
 
 /*
  * compile a regular expression into a regex_t and
@@ -60,9 +59,10 @@ int wave_regex_compile(char *regex, int which)
 {
 int comp_rc;
 
-if(regex_ok[which]) { regfree(&preg[which]); } /* free previous regex_t ancillary data if valid */
-comp_rc=regcomp(&preg[which], regex, REG_ICASE|REG_NOSUB);
-return(regex_ok[which]=(comp_rc)?0:1);
+
+if(GLOBALS->regex_ok_regex_c_1[which]) { regfree(&GLOBALS->preg_regex_c_1[which]); } /* free previous regex_t ancillary data if valid */
+comp_rc=regcomp(&GLOBALS->preg_regex_c_1[which], regex, REG_ICASE|REG_NOSUB);
+return(GLOBALS->regex_ok_regex_c_1[which]=(comp_rc)?0:1);
 }
 
 
@@ -73,9 +73,10 @@ int wave_regex_match(char *str, int which)
 {
 int rc;
 
-if(regex_ok[which])
+
+if(GLOBALS->regex_ok_regex_c_1[which])
 	{
-	rc = regexec(&preg[which], str, 0, NULL, 0);
+	rc = regexec(&GLOBALS->preg_regex_c_1[which], str, 0, NULL, 0);
 	}
 	else
 	{
@@ -133,6 +134,19 @@ if(mreg)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:20  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

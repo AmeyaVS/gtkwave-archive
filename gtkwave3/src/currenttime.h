@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef CURRENTTIME_H
 #define CURRENTTIME_H
 
@@ -16,8 +18,9 @@
 #include <math.h>
 #include "analyzer.h"
 #include "regex_wave.h"
+#include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.0.30_pre3 (w)1999-2007 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.0_rc1 (w)1999-2007 BSI"
 
 struct blackout_region_t
 {
@@ -25,85 +28,6 @@ struct blackout_region_t *next;
 TimeType bstart, bend;
 };
 
-extern struct blackout_region_t *blackout_regions;
-
-extern int  num_cpus;		     /* specify number of CPUs for parallelizable ops */
-extern char is_vcd, partial_vcd;
-extern char is_lxt;
-extern char is_ghw;
-extern char lxt_clock_compress_to_z;
-
-extern char signalwindow_width_dirty;/* indicates that nonblank traces were added/removed */
-
-extern char disable_mouseover;	     /* to disable mouseover tooltips by default from rc */
-extern char disable_window_manager;  /* for scripting...some windowmanagers would expect user to nail down window */
-extern char autoname_bundles;	     /* to dispense with having to hit ok on bundles (let gtkwave name them) */
-extern char use_maxtime_display;     /* 1=maxtime, 0=markertime  */
-extern char use_frequency_delta;     /* 1=frequency display, 0=time delta */
-extern char constant_marker_update;  /* 1 if you want hold downs to const update at expense of speed */
-extern char use_roundcaps;           /* for draw_vptr_trace */
-extern char use_scrollbar_only;      /* 1 removes the rendering of page/shift/fetch/discard buttons */
-extern char show_base;		     /* if zero, omits leading base info */
-extern int  vector_padding;	     /* amount of mandatory white space per vector */
-extern char use_big_fonts;	     /* use fonts with size 4 larger than normal */
-extern char use_nonprop_fonts;	     /* use misc-fixed which allows pane resizing acceleration */
-extern char enable_fast_exit;        /* disables exit requester on menu_quit */
-extern char enable_ghost_marker;     /* sez whether to draw ghost markers */   
-extern char enable_horiz_grid;	     /* sez whether to draw horiz rulers on traces */
-extern char enable_vert_grid;	     /* sez whether to draw vert rulers on traces */
-extern char wave_scrolling;	     /* sez whether to allow <-> scrolling in wave window */
-extern char left_justify_sigs;	     /* when enabled, signals are left, rather than right flushed */
-extern int  ps_maxveclen;	     /* maximum vector length that is printable in signal window (includes = and base symbol) */
-extern char zoom_pow10_snap;	     /* forces divisible by 10 timescale no matter what the zoom is */
-extern char force_toolbars;          /* forces menu+top buttons to be rendered as toolbars */
-extern int  cursor_snap;	     /* makes marker jump to nearest transition (default = 0 pixels) */
-extern int  hide_sst;		     /* hide sst expander, use regular window */
-extern int  sst_expanded;	     /* initial state of sst expander (open/closed) */
-
-extern gdouble page_divisor;	     /* allows fractional page scrolls */
-
-extern char do_initial_zoom_fit;     /* when set forces an initial zoom fit */
-extern char zoom_was_explicitly_set; /* set on '*' .sav file read           */
-
-extern char use_full_precision;
-extern TimeType time_scale;
-extern char time_dimension;
-extern char do_resize_signals;
-extern char do_zoom_center;
-extern int oldusize;
-extern TimeType currenttime;
-extern TimeType max_time;
-extern TimeType min_time;
-extern int max_signal_name_pixel_width;
-extern int signal_pixmap_width;
-extern int signal_fill_width;
-extern int fontheight;		/* font height for signals */
-extern char display_grid;	/* default to displaying grid */
-extern TimeType named_markers[26];
-extern TimeType zoom, scale, nsperframe;
-extern gdouble pixelsperframe;
-extern gdouble hashstep;
-extern gdouble pxns, nspx;
-extern gdouble zoombase;
-extern GtkObject *wave_vslider, *wave_hslider;
-extern GtkObject *signal_hslider;
-extern GtkWidget *signalarea;
-extern GdkPixmap *signalpixmap;
-extern GtkWidget *wavearea;  
-extern GtkWidget *signalwindow;
-extern GtkWidget* expanderwindow;
-extern TimeType fetchwindow;
-extern GtkWidget *from_entry, *to_entry;
-extern char *entrybox_text;
-extern char **fileselbox_text;
-extern char filesel_ok;
-extern Trptr topmost_trace;
-extern int waveheight, wavecrosspiece;
-extern int wavewidth;
-extern GdkFont *wavefont, *wavefont_smaller;
-extern GdkFont *signalfont;
-
-extern char *fontname_signals, *fontname_waves, *fontname_logfile;
 
 char *convert_ascii(Trptr t, vptr v);
 char *convert_ascii_vec(Trptr t, char *vec);
@@ -112,7 +36,6 @@ char *convert_ascii_string(char *s);
 double convert_real_vec(Trptr t, char *vec);
 double convert_real(Trptr t, vptr v);
 
-extern char color_active_in_filter;	/* only ever turned on in wavewindow.h */
 
 int vtype(Trptr t, char *vec);
 int vtype2(Trptr t, vptr v);
@@ -148,13 +71,6 @@ void service_right_shift(GtkWidget *text, gpointer data);
 void service_left_page(GtkWidget *text, gpointer data);
 void service_right_page(GtkWidget *text, gpointer data);
 
-extern GdkGC   *gc_white;                  
-extern GdkGC   *gc_black;        
-extern GdkGC   *gc_ltgray;        
-extern GdkGC   *gc_normal;        
-extern GdkGC   *gc_mdgray;        
-extern GdkGC   *gc_dkgray;        
-extern GdkGC   *gc_dkblue;        
 void make_sigarea_gcs(GtkWidget *widget);
 
 gint signalarea_configure_event(GtkWidget *widget, GdkEventConfigure *event);
@@ -164,10 +80,15 @@ void fileselbox_old(char *title, char **filesel_path, GtkSignalFunc ok_func, Gtk
 void fileselbox(char *title, char **filesel_path, GtkSignalFunc ok_func, GtkSignalFunc notok_func, char *pattn, int is_writemode);
 void status_text(char *str);
 void searchbox(char *title, GtkSignalFunc func);
+void search_enter_callback(GtkWidget *widget, GtkWidget *do_warning);
 void showchange(char *title, Trptr t, GtkSignalFunc func);
-void treebox(char *title, GtkSignalFunc func);
+
+void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
 GtkWidget* treeboxframe(char *title, GtkSignalFunc func);
 void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data);
+void dump_open_tree_nodes(FILE *wave, xl_Tree *t);
+void force_open_tree_node(char *name);
+void select_tree_node(char *name);
 
 void dnd_setup(GtkWidget *widget); /* dnd from gtk2 tree to signalwindow */
 
@@ -177,6 +98,7 @@ void renderbox(char *title);
 struct tree *fetchlow(struct tree *t);
 struct tree *fetchhigh(struct tree *t);
 void fetchvex(struct tree *t, char direction);
+void refresh_hier_tree(struct tree *t);
 
 void markerbox(char *title, GtkSignalFunc func);
 
@@ -192,9 +114,7 @@ void simplereqbox(char *title, int width, char *default_text,
 void helpbox(char *title, int width, char *default_text);
 void help_text(char *str);
 void help_text_bold(char *str);
-extern int helpbox_is_active;
 
-extern char dnd_state;
 void dnd_error(void);
 
 void reformat_time(char *buf, TimeType val, char dim);
@@ -219,6 +139,39 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.10  2007/08/25 19:45:24  gtkwave
+ * update version number to 3.1.0 release candidate 1
+ *
+ * Revision 1.2.2.9  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
+ * Revision 1.2.2.8  2007/08/23 02:19:48  gtkwave
+ * merge GLOBALS state from old hier_search widget into new one
+ *
+ * Revision 1.2.2.7  2007/08/22 22:11:05  gtkwave
+ * make regex search for signals re-entrant
+ *
+ * Revision 1.2.2.6  2007/08/22 02:06:38  gtkwave
+ * merge in treebox() similar to treeboxframe()
+ *
+ * Revision 1.2.2.5  2007/08/21 23:29:16  gtkwave
+ * merge in tree select state from old ctx
+ *
+ * Revision 1.2.2.4  2007/08/21 22:35:38  gtkwave
+ * prelim tree state merge
+ *
+ * Revision 1.2.2.3  2007/08/07 04:54:58  gtkwave
+ * slight modifications to global initialization scheme
+ *
+ * Revision 1.2.2.2  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
+ * Revision 1.2.2.1  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
+ * Revision 1.5  2007/07/23 23:13:08  gtkwave
+ * adds for color tags in filtered trace data
+ *
  * Revision 1.4  2007/06/22 03:07:18  gtkwave
  * added AC_SYS_LARGEFILE to configure.ac for largefile support on systems
  * that don't natively compile it in

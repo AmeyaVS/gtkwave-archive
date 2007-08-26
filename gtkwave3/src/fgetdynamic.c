@@ -7,13 +7,13 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <string.h>
 #include <ctype.h>
 #include "fgetdynamic.h"
 #include "debug.h"
 
-int fgetmalloc_len;
 
 char *fgetmalloc(FILE *handle)
 {
@@ -32,16 +32,16 @@ for(;;)
 	*pnt = (char)ch;
 	}
 
-fgetmalloc_len = vlist_size(v);
+GLOBALS->fgetmalloc_len = vlist_size(v);
 
-if(!fgetmalloc_len) 
+if(!GLOBALS->fgetmalloc_len) 
 	{
 	pnt = NULL;
 	}
 	else
 	{
-	pnt=malloc_2(fgetmalloc_len+1);
-	for(i=0;i<fgetmalloc_len;i++)
+	pnt=malloc_2(GLOBALS->fgetmalloc_len+1);
+	for(i=0;i<GLOBALS->fgetmalloc_len;i++)
 		{
 		pnt[i] = *((char *)vlist_locate(v, i));
 		}
@@ -76,12 +76,12 @@ if(s)
 		free_2(s);
 		s = s3;
 
-		fgetmalloc_len = len;
+		GLOBALS->fgetmalloc_len = len;
 		}
 		else
 		{
 		free_2(s); s = NULL;
-		fgetmalloc_len = 0;
+		GLOBALS->fgetmalloc_len = 0;
 		}
 	}
 
@@ -91,6 +91,19 @@ return(s);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:46  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:23  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

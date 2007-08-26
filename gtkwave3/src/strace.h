@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef GTKWAVE_STRACE_H
 #define GTKWAVE_STRACE_H
 
@@ -68,17 +70,10 @@ struct mprintf_buff_t *next;
 char *str;
 };
 
-
-extern struct strace *straces, *shadow_straces;
-extern struct strace_defer_free *strace_defer_free_head;
-extern TimeType *timearray;
-extern int timearray_size;
-extern char logical_mutex[6], shadow_logical_mutex[6];
-extern char shadow_active, shadow_type;
-extern char *shadow_string;
-extern signed char mark_idx_start, mark_idx_end;
-extern signed char shadow_mark_idx_start, shadow_mark_idx_end;
-extern struct mprintf_buff_t *mprintf_buff_head, *mprintf_buff_current;
+struct item_mark_string {
+   char *str;
+   unsigned char idx;
+};
 
 void strace_search(int direction);
 void strace_maketimetrace(int mode); /* 1=create, zero=delete */
@@ -95,6 +90,15 @@ void delete_mprintf(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:20  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

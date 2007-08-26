@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 /*
  * This module has been re-implemented by Udi Finkelstein.
  * Since it is no longer a PostScript-only module, it had been
@@ -59,17 +61,47 @@ struct _gtk_print_device {
 };
 typedef struct _gtk_print_device gtk_print_device;
 
-extern char ps_fullpage;
 
 void print_image(pr_context *prc);
 void print_mif_image(FILE *wave, gdouble px, gdouble py);
 void print_ps_image(FILE *wave, gdouble px, gdouble py);
 
+void ps_header(pr_context * prc);
+void ps_trailer(pr_context * prc);
+void ps_signal_init(pr_context * prc);
+void ps_setgray(pr_context * prc, gdouble gray);
+void ps_draw_line(pr_context * prc, gdouble x1, gdouble y1,
+	     gdouble x2, gdouble y2);
+void ps_draw_box(pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
+	    gdouble y2);
+void ps_draw_string(pr_context * prc, int x, int y, char *str,
+	       int xsize, int ysize);
+
+void mif_header(pr_context * prc);
+void mif_trailer(pr_context * prc);
+void mif_signal_init(pr_context * prc);
+void mif_setgray(pr_context * prc, gdouble gray);
+void mif_translate(pr_context * prc, gdouble x, gdouble y);
+void mif_draw_line(pr_context * prc, gdouble x1, gdouble y1,
+	      gdouble x2, gdouble y2);
+void mif_draw_box(pr_context * prc, gdouble x1, gdouble y1,
+	     gdouble x2, gdouble y2);
+void mif_draw_string(pr_context * prc, int x, int y, char *str,
+		int xsize, int ysize);
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:22  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:55  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef __MFMAIN_H__
 #define __MFMAIN_H__
 
@@ -20,8 +22,6 @@ struct logfile_chain *next;
 char *name;
 };
 
-extern char *whoami;
-extern char *stems_name, *aet_name;
 
 GtkWidget *create_text(void);
 GtkWidget *create_zoom_buttons(void);
@@ -45,26 +45,53 @@ void set_window_xypos(int root_x, int root_y);
 /* stems helper activation */
 int stems_are_active(void);
 void activate_stems_reader(char *stems_name);
+#if !defined _MSC_VER && !defined __MINGW32__
+void kill_stems_browser(void);
+#endif
+
+/* prototype only used in main.c */
+void menu_reload_waveform(GtkWidget *widget, gpointer data);
 
 
-extern GtkWidget *mainwindow;
-extern GtkWidget *signalwindow;
-extern GtkWidget *wavewindow;
-extern char paned_pack_semantics;    /* 1 for paned_pack, 0 for paned_add */
-extern int initial_window_x, initial_window_y; /* inital window sizes */
-extern int initial_window_xpos, initial_window_ypos; /* inital window position */
-extern int xpos_delta, ypos_delta;
+/* function for spawning vcd conversions */
+void optimize_vcd_file(void);
 
-extern int splash_disable;
-extern int possibly_use_rc_defaults;
+enum FileType {
+  LXT_FILE,
+  LX2_FILE,
+  VZT_FILE,
+  AE2_FILE,
+  GHW_FILE,
+  VCD_FILE,
+  VCD_RECODER_FILE,
+  NO_FILE
+};
 
-extern int stems_type;
+
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/26 19:05:55  gtkwave
+ * added reload button in main window
+ *
+ * Revision 1.1.1.1.2.4  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.3  2007/08/19 23:13:53  kermin
+ * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
+ *
+ * Revision 1.1.1.1.2.2  2007/08/15 03:26:01  kermin
+ * Reload button does not cause a fault, however, state is still somehow incorrect.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:28  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

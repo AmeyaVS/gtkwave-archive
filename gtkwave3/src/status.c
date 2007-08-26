@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "symbol.h"
@@ -18,23 +19,15 @@ when our window is realized. We could also force our window to be
 realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
 
-static GtkWidget *text=NULL;
-static GtkWidget *vscrollbar;
-
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-static GtkTextIter iter;
-static GtkTextTag *bold_tag;
-#endif
-
 
 void status_text(char *str)
 {
-if(text)
+if(GLOBALS->text_status_c_2)
 	{
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-        gtk_text_buffer_insert (GTK_TEXT_VIEW (text)->buffer, &iter, str, -1);
+        gtk_text_buffer_insert (GTK_TEXT_VIEW (GLOBALS->text_status_c_2)->buffer, &GLOBALS->iter_status_c_3, str, -1);
 #else
-        gtk_text_insert (GTK_TEXT (text), NULL, &text->style->black, NULL, str, -1);
+        gtk_text_insert (GTK_TEXT (GLOBALS->text_status_c_2), NULL, &GLOBALS->text_status_c_2->style->black, NULL, str, -1);
 #endif
 	}
 	else
@@ -50,9 +43,9 @@ realize_text (GtkWidget *text, gpointer data)
 {
 char buf[128];
 
-if(is_vcd)
+if(GLOBALS->is_vcd)
 	{
-	if(partial_vcd)
+	if(GLOBALS->partial_vcd)
 		{
 		status_text("VCD loading interactively.\n");
 		}
@@ -62,19 +55,19 @@ if(is_vcd)
 		}
 	}
 else
-if(is_lxt)
+if(GLOBALS->is_lxt)
 	{
 	status_text("LXT loaded successfully.\n");
 	}
 else
-if(is_ghw)
+if(GLOBALS->is_ghw)
 	{
 	status_text("GHW loaded successfully.\n");
 	}
 else
-if(is_lx2)
+if(GLOBALS->is_lx2)
 	{
-	switch(is_lx2)
+	switch(GLOBALS->is_lx2)
 		{
 		case LXT2_IS_LXT2: status_text("LXT2 loaded successfully.\n"); break;
 		case LXT2_IS_AET2: status_text("AET2 loaded successfully.\n"); break;
@@ -83,20 +76,20 @@ if(is_lx2)
 		}
 	}
 
-sprintf(buf,"[%d] facilities found.\n",numfacs);
+sprintf(buf,"[%d] facilities found.\n",GLOBALS->numfacs);
 status_text(buf);
 
-if((is_vcd)||(is_ghw))
+if((GLOBALS->is_vcd)||(GLOBALS->is_ghw))
 	{
-	if(!partial_vcd)
+	if(!GLOBALS->partial_vcd)
 		{
-		sprintf(buf,"[%d] regions found.\n",regions);
+		sprintf(buf,"[%d] regions found.\n",GLOBALS->regions);
 		status_text(buf);
 		}
 	}
 else
 	{
-	if(is_lx2 == LXT2_IS_VLIST)
+	if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
 		{
 		sprintf(buf,"Regions formed on demand.\n");
 		}
@@ -125,45 +118,64 @@ table = gtk_table_new (1, 16, FALSE);
 /* Put a text widget in the upper left hand corner. Note the use of
 * GTK_SHRINK in the y direction */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-text = gtk_text_view_new ();
-gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (text)), &iter);
-bold_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "bold",
+GLOBALS->text_status_c_2 = gtk_text_view_new ();
+gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &GLOBALS->iter_status_c_3);
+GLOBALS->bold_tag_status_c_3 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (GLOBALS->text_status_c_2)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
 #else
-text = gtk_text_new (NULL, NULL);
+GLOBALS->text_status_c_2 = gtk_text_new (NULL, NULL);
 #endif
-gtk_table_attach (GTK_TABLE (table), text, 0, 14, 0, 1,
+gtk_table_attach (GTK_TABLE (table), GLOBALS->text_status_c_2, 0, 14, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
-gtk_widget_set_usize(GTK_WIDGET(text), 100, 50); 
-gtk_widget_show (text);
+gtk_widget_set_usize(GTK_WIDGET(GLOBALS->text_status_c_2), 100, 50); 
+gtk_widget_show (GLOBALS->text_status_c_2);
 
 /* And a VScrollbar in the upper right */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 {
-GtkTextViewClass *tc = (GtkTextViewClass*)GTK_OBJECT_GET_CLASS(GTK_OBJECT(text));
+GtkTextViewClass *tc = (GtkTextViewClass*)GTK_OBJECT_GET_CLASS(GTK_OBJECT(GLOBALS->text_status_c_2));
  
-tc->set_scroll_adjustments(GTK_TEXT_VIEW (text), NULL, NULL);
-vscrollbar = gtk_vscrollbar_new (GTK_TEXT_VIEW (text)->vadjustment);  
+tc->set_scroll_adjustments(GTK_TEXT_VIEW (GLOBALS->text_status_c_2), NULL, NULL);
+GLOBALS->vscrollbar_status_c_2 = gtk_vscrollbar_new (GTK_TEXT_VIEW (GLOBALS->text_status_c_2)->vadjustment);  
 }
 #else 
-vscrollbar = gtk_vscrollbar_new ((GTK_TEXT (text))->vadj);
+GLOBALS->vscrollbar_status_c_2 = gtk_vscrollbar_new ((GTK_TEXT (GLOBALS->text_status_c_2))->vadj);
 #endif
-gtk_table_attach (GTK_TABLE (table), vscrollbar, 15, 16, 0, 1,
+gtk_table_attach (GTK_TABLE (table), GLOBALS->vscrollbar_status_c_2, 15, 16, 0, 1,
 			GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
-gtk_widget_show (vscrollbar);
+gtk_widget_show (GLOBALS->vscrollbar_status_c_2);
    
 /* Add a handler to put a message in the text widget when it is realized */
-gtk_signal_connect (GTK_OBJECT (text), "realize",
-			GTK_SIGNAL_FUNC (realize_text), NULL);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->text_status_c_2), "realize",
+		    GTK_SIGNAL_FUNC (realize_text), NULL);
    
-gtk_tooltips_set_tip_2(tooltips, text, "Status Window", NULL);
+gtk_tooltips_set_tip_2(tooltips, GLOBALS->text_status_c_2, "Status Window", NULL);
 return(table);
 }
    
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.5  2007/08/23 03:04:03  gtkwave
+ * merge status.c widget info to new ctx
+ *
+ * Revision 1.1.1.1.2.4  2007/08/23 02:42:51  gtkwave
+ * convert c++ style comments to c to aid with compiler compatibility
+ *
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:49  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:29  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

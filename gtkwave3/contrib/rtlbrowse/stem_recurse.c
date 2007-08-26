@@ -12,7 +12,7 @@
 #include "wave_locale.h"
 
 extern GtkCTree *ctree_main;
-void treebox(char *title, GtkSignalFunc func);
+void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
 
 
 int mod_cnt;
@@ -476,7 +476,7 @@ if(anno_ctx)
 		}
 	}
 
-treebox("RTL Design Hierarchy", NULL);
+treebox("RTL Design Hierarchy", NULL, NULL);
 
 gtk_main();
 
@@ -486,6 +486,12 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.1  2007/08/22 02:26:19  gtkwave
+ * treebox fixes to match revised gtkwave headers
+ *
+ * Revision 1.1.1.1  2007/05/30 04:25:38  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *

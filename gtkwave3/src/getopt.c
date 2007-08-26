@@ -1287,6 +1287,13 @@ main (argc, argv)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2.2.2  2007/08/06 03:50:46  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.2  2007/06/01 00:05:35  gtkwave
+ * regenerated configure
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:54  gtkwave
  * Imported sources
  *

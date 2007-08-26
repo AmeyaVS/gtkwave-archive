@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef WAVE_LXT_H
 #define WAVE_LXT_H
 
@@ -54,11 +56,29 @@ void import_lxt_trace(nptr np);
 
 #define LXT_MMAP_MALLOC_BOUNDARY		(128*1024*1024)
 
+#if defined __MINGW32__ || defined _MSC_VER
+void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
+int munmap(void *start, size_t length);
+#endif
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.2  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:21  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:40  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

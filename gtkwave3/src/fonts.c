@@ -6,127 +6,140 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  */
+
+#include "globals.h"
 #include <config.h>
 #include "gtk12compat.h"
 #include "currenttime.h"
 
-char *fontname_signals=NULL;
-char *fontname_waves=NULL;
 
 void load_all_fonts(void)
 {
-if((fontname_signals)&&(strlen(fontname_signals)))
+if((GLOBALS->fontname_signals)&&(strlen(GLOBALS->fontname_signals)))
 	{
-        signalfont=gdk_font_load(fontname_signals);
+        GLOBALS->signalfont=gdk_font_load(GLOBALS->fontname_signals);
 	}
 	else
 	{
-	if(use_big_fonts)
+	if(GLOBALS->use_big_fonts)
 	        {
-	        if(!use_nonprop_fonts) 
+	        if(!GLOBALS->use_nonprop_fonts) 
 	                {
-	                signalfont=gdk_font_load("-*-times-*-r-*-*-15-*-*-*-*-*-*-*");
+	                GLOBALS->signalfont=gdk_font_load("-*-times-*-r-*-*-15-*-*-*-*-*-*-*");
 	                }
 	                else
 	                {
 #ifdef __CYGWIN__
-	                signalfont=gdk_font_load("-misc-fixed-*-*-*-*-15-*-*-*-*-*-*-*");
+	                GLOBALS->signalfont=gdk_font_load("-misc-fixed-*-*-*-*-15-*-*-*-*-*-*-*");
 #else
-	                signalfont=gdk_font_load("-*-courier-*-r-*-*-15-*-*-*-*-*-*-*");
-			if(!signalfont) signalfont=gdk_font_load("-misc-fixed-*-*-*-*-15-*-*-*-*-*-*-*");
+	                GLOBALS->signalfont=gdk_font_load("-*-courier-*-r-*-*-15-*-*-*-*-*-*-*");
+			if(!GLOBALS->signalfont) GLOBALS->signalfont=gdk_font_load("-misc-fixed-*-*-*-*-15-*-*-*-*-*-*-*");
 #endif
 	                }
 	        }
 	        else
 	        {
-	        if(use_nonprop_fonts)
+	        if(GLOBALS->use_nonprop_fonts)
 	                {   
 #ifdef __CYGWIN__
-	                signalfont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
+	                GLOBALS->signalfont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
 #else
-	                signalfont=gdk_font_load("-*-courier-*-r-*-*-14-*-*-*-*-*-*-*");
-			if(!signalfont) signalfont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
+	                GLOBALS->signalfont=gdk_font_load("-*-courier-*-r-*-*-14-*-*-*-*-*-*-*");
+			if(!GLOBALS->signalfont) GLOBALS->signalfont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
 #endif
 	                }
 	        }
 	}
 
-if(!signalfont)
+if(!GLOBALS->signalfont)
         {  
 #if WAVE_USE_GTK2
-        signalfont=gdk_font_load("-*-courier-*-r-*-*-14-*-*-*-*-*-*-*");
-	if(!signalfont) signalfont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
-	if(!signalfont) { fprintf(stderr, "Could not load signalfont courier 14 or misc-fixed 14, exiting!\n"); exit(255); }
+        GLOBALS->signalfont=gdk_font_load("-*-courier-*-r-*-*-14-*-*-*-*-*-*-*");
+	if(!GLOBALS->signalfont) GLOBALS->signalfont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
+	if(!GLOBALS->signalfont) { fprintf(stderr, "Could not load signalfont courier 14 or misc-fixed 14, exiting!\n"); exit(255); }
 #else
-	signalfont=wavearea->style->font;
+	GLOBALS->signalfont=GLOBALS->wavearea->style->font;
 #endif
         }
 
-fontheight=(signalfont->ascent+signalfont->descent)+4;
+GLOBALS->fontheight=(GLOBALS->signalfont->ascent+GLOBALS->signalfont->descent)+4;
 
-if((fontname_waves)&&(strlen(fontname_waves)))
+if((GLOBALS->fontname_waves)&&(strlen(GLOBALS->fontname_waves)))
 	{
-        wavefont=wavefont_smaller=gdk_font_load(fontname_waves);
+        GLOBALS->wavefont=GLOBALS->wavefont_smaller=gdk_font_load(GLOBALS->fontname_waves);
 	}
 	else
 	{
 #ifndef __CYGWIN__
-	if(use_big_fonts)
+	if(GLOBALS->use_big_fonts)
 	        {
-	        wavefont=gdk_font_load("-*-courier-*-r-*-*-14-*-*-*-*-*-*-*");
-		if(!wavefont) wavefont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
+	        GLOBALS->wavefont=gdk_font_load("-*-courier-*-r-*-*-14-*-*-*-*-*-*-*");
+		if(!GLOBALS->wavefont) GLOBALS->wavefont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
 
-	        wavefont_smaller=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
-		if(!wavefont_smaller) wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
+	        GLOBALS->wavefont_smaller=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
+		if(!GLOBALS->wavefont_smaller) GLOBALS->wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
 	        }
 	        else
 	        {
-	        wavefont=wavefont_smaller=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
-		if(!wavefont) wavefont=wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
+	        GLOBALS->wavefont=GLOBALS->wavefont_smaller=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
+		if(!GLOBALS->wavefont) GLOBALS->wavefont=GLOBALS->wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
 	        }
 #else
-	if(use_big_fonts)
+	if(GLOBALS->use_big_fonts)
 	        {
-                wavefont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
-                wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
+                GLOBALS->wavefont=gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
+                GLOBALS->wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
 	        }
 	        else
 	        {
-                wavefont=wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
+                GLOBALS->wavefont=GLOBALS->wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
 	        }
 #endif
 	}
 
-if(!wavefont)
+if(!GLOBALS->wavefont)
         {  
 #if WAVE_USE_GTK2
-        wavefont=wavefont_smaller=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
-	if(!wavefont) wavefont=wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
-	if(!wavefont) { fprintf(stderr, "Could not load wavefont courier 10 or misc-fixed 10, exiting!\n"); exit(255); }
+        GLOBALS->wavefont=GLOBALS->wavefont_smaller=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
+	if(!GLOBALS->wavefont) GLOBALS->wavefont=GLOBALS->wavefont_smaller=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
+	if(!GLOBALS->wavefont) { fprintf(stderr, "Could not load wavefont courier 10 or misc-fixed 10, exiting!\n"); exit(255); }
 #else
-	wavefont=wavefont_smaller=wavearea->style->font;
+	GLOBALS->wavefont=GLOBALS->wavefont_smaller=GLOBALS->wavearea->style->font;
 #endif
         }
 
 
-if(signalfont->ascent<wavefont->ascent)
+if(GLOBALS->signalfont->ascent<GLOBALS->wavefont->ascent)
 	{
 	fprintf(stderr, "Signalfont is smaller than wavefont.  Exiting!\n");
 	exit(1);
 	}
 
-if(signalfont->ascent>100)
+if(GLOBALS->signalfont->ascent>100)
 	{
 	fprintf(stderr, "Fonts are too big!  Try fonts with a smaller size.  Exiting!\n");
 	exit(1);
 	}
 
-wavecrosspiece=wavefont->ascent+1;
+GLOBALS->wavecrosspiece=GLOBALS->wavefont->ascent+1;
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.2  2007/08/06 03:50:46  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:19  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:28  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

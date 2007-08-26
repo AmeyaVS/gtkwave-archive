@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include "gtk12compat.h"
 #include <gtk/gtk.h>
@@ -14,25 +15,23 @@
 #include "debug.h"
 #include "pixmaps.h"
 
-static GtkWidget *window = NULL;
-static void (*cleanup)(GtkWidget *, gpointer);
 
 static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   DEBUG(printf("OK\n"));
-  gtk_grab_remove(window);
-  gtk_widget_destroy(window);
-  window = NULL;
-  if(cleanup)cleanup(NULL,(gpointer)1);
+  gtk_grab_remove(GLOBALS->window_simplereq_c_9);
+  gtk_widget_destroy(GLOBALS->window_simplereq_c_9);
+  GLOBALS->window_simplereq_c_9 = NULL;
+  if(GLOBALS->cleanup)GLOBALS->cleanup(NULL,(gpointer)1);
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
   DEBUG(printf("Cancel\n"));
-  gtk_grab_remove(window);
-  gtk_widget_destroy(window);
-  window = NULL;
-  if(cleanup)cleanup(NULL,NULL);
+  gtk_grab_remove(GLOBALS->window_simplereq_c_9);
+  gtk_widget_destroy(GLOBALS->window_simplereq_c_9);
+  GLOBALS->window_simplereq_c_9 = NULL;
+  if(GLOBALS->cleanup)GLOBALS->cleanup(NULL,NULL);
 }
 
 void simplereqbox(char *title, int width, char *default_text,
@@ -43,27 +42,26 @@ void simplereqbox(char *title, int width, char *default_text,
     GtkWidget *label, *separator;
     GtkWidget *pixmapwid1;
 
-    if(window) return; /* only should happen with GtkPlug */
+    if(GLOBALS->window_simplereq_c_9) return; /* only should happen with GtkPlug */
 
-    cleanup=WAVE_GTK_SFUNCAST(func);
+    GLOBALS->cleanup=WAVE_GTK_SFUNCAST(func);
 
-    if(script_handle)
+    if(GLOBALS->script_handle)
 	{
-	if(cleanup)cleanup(NULL,(gpointer)1);
+	if(GLOBALS->cleanup)GLOBALS->cleanup(NULL,(gpointer)1);
 	return;
 	}
 
     /* create a new modal window */
-    window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_grab_add(window);
-    gtk_widget_set_usize( GTK_WIDGET (window), width, 55 + 52);
-    gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) destroy_callback, NULL);
-    gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
+    GLOBALS->window_simplereq_c_9 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_grab_add(GLOBALS->window_simplereq_c_9);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_simplereq_c_9), width, 55 + 52);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_simplereq_c_9), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_simplereq_c_9), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtk_window_set_policy(GTK_WINDOW(GLOBALS->window_simplereq_c_9), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (window), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_simplereq_c_9), vbox);
     gtk_widget_show (vbox);
 
     label=gtk_label_new(default_text);
@@ -72,11 +70,11 @@ void simplereqbox(char *title, int width, char *default_text,
 
     if(is_alert)
 	{
-	pixmapwid1=gtk_pixmap_new(wave_alert_pixmap, wave_alert_mask);
+	pixmapwid1=gtk_pixmap_new(GLOBALS->wave_alert_pixmap, GLOBALS->wave_alert_mask);
 	}
 	else
 	{
-	pixmapwid1=gtk_pixmap_new(wave_info_pixmap, wave_info_mask);
+	pixmapwid1=gtk_pixmap_new(GLOBALS->wave_info_pixmap, GLOBALS->wave_info_mask);
 	}
     gtk_widget_show(pixmapwid1);
     gtk_container_add (GTK_CONTAINER (vbox), pixmapwid1);
@@ -114,12 +112,31 @@ void simplereqbox(char *title, int width, char *default_text,
     	gtk_container_add (GTK_CONTAINER (hbox), button2);
 	}
 
-    gtk_widget_show(window);
+    gtk_widget_show(GLOBALS->window_simplereq_c_9);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.4  2007/08/05 02:27:23  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
+ * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
+ * Merged in the main line
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

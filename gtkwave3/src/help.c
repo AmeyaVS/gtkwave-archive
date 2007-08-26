@@ -7,44 +7,36 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include "debug.h"
 #include "symbol.h"
 #include "currenttime.h"
 
-int helpbox_is_active=0;
    
 /* Add some text to our text widget - this is a callback that is invoked
 when our window is realized. We could also force our window to be
 realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
 
-static GtkWidget *text;
-static GtkWidget *vscrollbar;
-
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-static GtkTextIter iter;
-static GtkTextTag *bold_tag;
-#endif
-
 
 void help_text(char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert (GTK_TEXT_VIEW (text)->buffer, &iter, str, -1);
+gtk_text_buffer_insert (GTK_TEXT_VIEW (GLOBALS->text_help_c_1)->buffer, &GLOBALS->iter_help_c_1, str, -1);
 #else
-gtk_text_insert (GTK_TEXT (text), NULL, &text->style->black, NULL, str, -1);
+gtk_text_insert (GTK_TEXT (GLOBALS->text_help_c_1), NULL, &GLOBALS->text_help_c_1->style->black, NULL, str, -1);
 #endif
 }
 
 void help_text_bold(char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iter,
-                                 str, -1, bold_tag, NULL);
+gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (GLOBALS->text_help_c_1)->buffer, &GLOBALS->iter_help_c_1,
+                                 str, -1, GLOBALS->bold_tag_help_c_1, NULL);
 #else
-gtk_text_insert (GTK_TEXT (text), NULL, &text->style->fg[GTK_STATE_SELECTED], &text->style->bg[GTK_STATE_SELECTED], str, -1);
+gtk_text_insert (GTK_TEXT (GLOBALS->text_help_c_1), NULL, &GLOBALS->text_help_c_1->style->fg[GTK_STATE_SELECTED], &GLOBALS->text_help_c_1->style->bg[GTK_STATE_SELECTED], str, -1);
 #endif
 }
 
@@ -67,55 +59,55 @@ table = gtk_table_new (1, 16, FALSE);
 /* Put a text widget in the upper left hand corner. Note the use of
 * GTK_SHRINK in the y direction */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-text = gtk_text_view_new ();
-gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (text)), &iter);
-bold_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "bold",
+GLOBALS->text_help_c_1 = gtk_text_view_new ();
+gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), &GLOBALS->iter_help_c_1);
+GLOBALS->bold_tag_help_c_1 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (GLOBALS->text_help_c_1)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
 #else
-text = gtk_text_new (NULL, NULL);
+GLOBALS->text_help_c_1 = gtk_text_new (NULL, NULL);
 #endif
-gtk_table_attach (GTK_TABLE (table), text, 0, 14, 0, 1,
+gtk_table_attach (GTK_TABLE (table), GLOBALS->text_help_c_1, 0, 14, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
-gtk_widget_set_usize(GTK_WIDGET(text), 100, 50); 
-gtk_widget_show (text);
+gtk_widget_set_usize(GTK_WIDGET(GLOBALS->text_help_c_1), 100, 50); 
+gtk_widget_show (GLOBALS->text_help_c_1);
 
 /* And a VScrollbar in the upper right */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 {
-GtkTextViewClass *tc = (GtkTextViewClass*)GTK_OBJECT_GET_CLASS(GTK_OBJECT(text));
+GtkTextViewClass *tc = (GtkTextViewClass*)GTK_OBJECT_GET_CLASS(GTK_OBJECT(GLOBALS->text_help_c_1));
 
-tc->set_scroll_adjustments(GTK_TEXT_VIEW (text), NULL, NULL);
-vscrollbar = gtk_vscrollbar_new (GTK_TEXT_VIEW (text)->vadjustment);
+tc->set_scroll_adjustments(GTK_TEXT_VIEW (GLOBALS->text_help_c_1), NULL, NULL);
+GLOBALS->vscrollbar_help_c_1 = gtk_vscrollbar_new (GTK_TEXT_VIEW (GLOBALS->text_help_c_1)->vadjustment);
 }
 #else 
-vscrollbar = gtk_vscrollbar_new (GTK_TEXT (text)->vadj);
+GLOBALS->vscrollbar_help_c_1 = gtk_vscrollbar_new (GTK_TEXT (GLOBALS->text_help_c_1)->vadj);
 #endif
-gtk_table_attach (GTK_TABLE (table), vscrollbar, 15, 16, 0, 1,
-			GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
-gtk_widget_show (vscrollbar);
+gtk_table_attach (GTK_TABLE (table), GLOBALS->vscrollbar_help_c_1, 15, 16, 0, 1,GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
+gtk_widget_show (GLOBALS->vscrollbar_help_c_1);
    
 /* Add a handler to put a message in the text widget when it is realized */
-gtk_signal_connect (GTK_OBJECT (text), "realize",
+gtk_signal_connect (GTK_OBJECT (GLOBALS->text_help_c_1), "realize",
 			GTK_SIGNAL_FUNC (help_realize_text), NULL);
+
    
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_WORD);
+gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(GLOBALS->text_help_c_1), GTK_WRAP_WORD);
 #else
-gtk_text_set_word_wrap(GTK_TEXT(text), TRUE);
+gtk_text_set_word_wrap(GTK_TEXT(GLOBALS->text_help_c_1), TRUE);
 #endif
 return(table);
 }
    
 /***********************************************************************************/
 
-static GtkWidget *window;
 
 static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 {
-  helpbox_is_active=0;
+  GLOBALS->helpbox_is_active=0;
   DEBUG(printf("OK\n"));
-  gtk_widget_destroy(window);
+  gtk_widget_destroy(GLOBALS->window_help_c_2);
+  GLOBALS->window_help_c_2 = NULL;
 }
 
 void helpbox(char *title, int width, char *default_text)
@@ -125,18 +117,17 @@ void helpbox(char *title, int width, char *default_text)
     GtkWidget *label, *separator;
     GtkWidget *ctext;
 
-    if(helpbox_is_active) return;
-    helpbox_is_active=1;
+    if(GLOBALS->helpbox_is_active) return;
+    GLOBALS->helpbox_is_active=1;
 
     /* create a new nonmodal window */
-    window = gtk_window_new(disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_usize( GTK_WIDGET (window), width, 400);
-    gtk_window_set_title(GTK_WINDOW (window), title);
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) ok_callback, NULL);
+    GLOBALS->window_help_c_2 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_help_c_2), width, 400);
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_help_c_2), title);
+    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_help_c_2), "delete_event",(GtkSignalFunc) ok_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (window), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->window_help_c_2), vbox);
     gtk_widget_show (vbox);
 
     label=gtk_label_new(default_text);
@@ -172,12 +163,38 @@ void helpbox(char *title, int width, char *default_text)
                              (GtkSignalFunc) gtk_widget_grab_default,
                              GTK_OBJECT (button1));
 
-    gtk_widget_show(window);
+    gtk_widget_show(GLOBALS->window_help_c_2);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.9  2007/08/18 21:51:57  gtkwave
+ * widget destroys and teardown of file formats which use external loaders
+ * and are outside of malloc_2/free_2 control
+ *
+ * Revision 1.1.1.1.2.8  2007/08/07 03:18:54  kermin
+ * Changed to pointer based GLOBAL structure and added initialization function
+ *
+ * Revision 1.1.1.1.2.7  2007/08/06 03:50:47  gtkwave
+ * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
+ * generated structs, etc.
+ *
+ * Revision 1.1.1.1.2.6  2007/08/05 02:27:20  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1.2.5  2007/08/01 01:13:56  kermin
+ * Fix compile issue related to line bug
+ *
+ * Revision 1.1.1.1.2.4  2007/07/31 03:18:01  kermin
+ * Merge Complete - I hope
+ *
+ * Revision 1.1.1.1.2.3  2007/07/28 19:50:39  kermin
+ * Merged in the main line
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

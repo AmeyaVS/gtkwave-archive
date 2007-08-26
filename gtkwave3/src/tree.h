@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
 
 /*
  * tree.h 12/05/98ajb
@@ -22,8 +23,6 @@
 #include "symbol.h"
 #include "vcd.h"
 
-extern char hier_delimeter, hier_was_explicitly_set, alt_hier_delimeter;
-extern char hier_grouping;
 
 /* Kind of the tree.  */
 enum tree_kind
@@ -79,8 +78,6 @@ char *name;				/* free up next time filtering is performed */
 };
 
 
-extern struct tree *treeroot;
-extern int fast_tree_sort; /* won't work with lxt2 because of how aliasing stacks */
 			   /* names at the end of the main hierarchy 010104ajb    */
 
 void init_tree(void);
@@ -100,6 +97,15 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:24  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:28:00  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

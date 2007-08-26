@@ -7,6 +7,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include "globals.h"
+
 #ifndef BSEARCH_NODES_VECTORS_H
 #define BSEARCH_NODES_VECTORS_H
 
@@ -16,17 +18,20 @@ vptr bsearch_vector(bvptr b, TimeType key);
 char *bsearch_trunc(char *ascii, int maxlen);
 struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return);
 
-extern int maxlen_trunc;
-extern TimeType shift_timebase, shift_timebase_default_for_add;
-
-extern hptr *max_compare_index;
-extern vptr *vmax_compare_index;
-
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
+ * Revision 1.1.1.1.2.1  2007/08/05 02:27:18  kermin
+ * Semi working global struct
+ *
+ * Revision 1.1.1.1  2007/05/30 04:27:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.3  2007/05/28 00:55:06  gtkwave
  * added support for arrays as a first class dumpfile datatype
  *
