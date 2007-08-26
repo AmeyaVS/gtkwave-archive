@@ -470,6 +470,8 @@ double page_divisor; /* from pagebuttons.c 279 */
 /*
  * pixmaps.c
  */ 
+GdkDrawable *redo_pixmap; /* from pixmaps.c */
+GdkDrawable *redo_mask; /* from pixmaps.c */
 GdkDrawable *larrow_pixmap; /* from pixmaps.c 281 */
 GdkDrawable *larrow_mask; /* from pixmaps.c 282 */
 GdkDrawable *rarrow_pixmap; /* from pixmaps.c 284 */

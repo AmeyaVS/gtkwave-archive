@@ -66,27 +66,17 @@
 #include "ptranslate.h"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 #if !defined _MSC_VER && !defined __MINGW32__
-static void kill_browser(void)
+void kill_stems_browser(void)
 {
 if(GLOBALS->anno_ctx)
 	{
 	if(GLOBALS->anno_ctx->browser_process)
 		{
 		kill(GLOBALS->anno_ctx->browser_process, SIGKILL);
+		GLOBALS->anno_ctx->browser_process = NULL;
 		}
+	GLOBALS->anno_ctx = NULL;
 	}
 }
 #endif
@@ -1000,6 +990,52 @@ gtk_table_attach (GTK_TABLE (top_table), timebox, 216, 284, 0, 1,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 20, 0);
 gtk_widget_show (timebox);
 
+if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
+	{
+	GtkWidget *r_pixmap = gtk_pixmap_new(GLOBALS->redo_pixmap, GLOBALS->redo_mask);
+	GtkWidget *main_vbox;
+	GtkWidget *table, *table2;
+	GtkWidget *b1, *frame;
+	GtkTooltips *tooltips;
+
+	gtk_widget_show(r_pixmap);
+
+	tooltips=gtk_tooltips_new_2();
+	gtk_tooltips_set_delay_2(tooltips,1500);
+
+	table = gtk_table_new (1, 1, FALSE);
+
+	main_vbox = gtk_vbox_new (FALSE, 1);
+	gtk_container_border_width (GTK_CONTAINER (main_vbox), 1);
+	gtk_container_add (GTK_CONTAINER (table), main_vbox);
+	
+	frame = gtk_frame_new ("Reload ");
+	gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
+	
+	gtk_widget_show (frame);
+	gtk_widget_show (main_vbox);
+
+	table2 = gtk_table_new (2, 1, FALSE);
+	
+	b1 = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(b1), r_pixmap);
+	gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
+	                        GTK_FILL | GTK_EXPAND,
+	                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
+	gtk_signal_connect_object (GTK_OBJECT (b1), "clicked",
+	                        GTK_SIGNAL_FUNC(menu_reload_waveform), GTK_OBJECT (table2));
+	gtk_tooltips_set_tip_2(tooltips, b1, "Reload waveform", NULL);
+	gtk_widget_show(b1);
+	gtk_container_add (GTK_CONTAINER (frame), table2);
+	gtk_widget_show(table2);
+
+	gtk_table_attach (GTK_TABLE (top_table), table, 284, 285, 0, 1,
+                      	0, 
+                      	0, 2, 0);
+
+	gtk_widget_show (table);
+	}
+
 GLOBALS->wavewindow = create_wavewindow();
 load_all_fonts(); /* must be done before create_signalwindow() */
 gtk_widget_show(GLOBALS->wavewindow);
@@ -1416,7 +1452,7 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 			        if(pid) /* parent==original server_pid */
 			                {
 					GLOBALS->anno_ctx->browser_process = pid;
-					atexit(kill_browser);
+					atexit(kill_stems_browser);
 #ifndef __linux__
 					sleep(2);
 					shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
@@ -1500,6 +1536,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.12  2007/08/23 23:28:48  gtkwave
+ * reload fail handling and retries
+ *
  * Revision 1.1.1.1.2.11  2007/08/23 03:16:03  gtkwave
  * NO_FILE now set on stdin sourced VCDs
  *

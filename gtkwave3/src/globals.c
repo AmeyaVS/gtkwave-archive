@@ -381,7 +381,7 @@ NULL, /* expanderwindow 205 */
 0, /* disable_window_manager 206 */
 1, /* paned_pack_semantics 207 */
 0, /* zoom_was_explicitly_set 208 */
-800, /* initial_window_x 209 */
+820, /* initial_window_x 209 */
 400, /* initial_window_y */
 -1, /* initial_window_width */
 -1, /* initial_window_height 210 */
@@ -460,6 +460,8 @@ NULL, /* mo_black_mouseover_c_1 259 */
 /*
  * pixmaps.c
  */
+NULL, /* redo_pixmap */
+NULL, /* redo_mask */
 NULL, /* larrow_pixmap 263 */
 NULL, /* larrow_mask 264 */
 NULL, /* rarrow_pixmap 266 */
@@ -1174,6 +1176,7 @@ void reload_into_new_context(void)
  new_globals->busy_busy_c_1 = GLOBALS->busy_busy_c_1;
 
  /* pixmaps.c */
+ new_globals->redo_pixmap = GLOBALS->redo_pixmap;
  new_globals->larrow_pixmap = GLOBALS->larrow_pixmap;
  new_globals->rarrow_pixmap = GLOBALS->rarrow_pixmap;
  new_globals->zoomout_pixmap = GLOBALS->zoomout_pixmap;
@@ -1397,6 +1400,10 @@ void reload_into_new_context(void)
  }
 
  /* window destruction (of windows that aren't the parent window) */
+#if !defined _MSC_VER && !defined __MINGW32__
+ kill_stems_browser();
+#endif
+
  if(GLOBALS->window_entry_c_1)
         {
         gtk_grab_remove(GLOBALS->window_entry_c_1);

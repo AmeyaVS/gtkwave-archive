@@ -45,6 +45,13 @@ void set_window_xypos(int root_x, int root_y);
 /* stems helper activation */
 int stems_are_active(void);
 void activate_stems_reader(char *stems_name);
+#if !defined _MSC_VER && !defined __MINGW32__
+void kill_stems_browser(void);
+#endif
+
+/* prototype only used in main.c */
+void menu_reload_waveform(GtkWidget *widget, gpointer data);
+
 
 /* function for spawning vcd conversions */
 void optimize_vcd_file(void);
@@ -67,6 +74,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.4  2007/08/25 19:43:45  gtkwave
+ * header cleanups
+ *
  * Revision 1.1.1.1.2.3  2007/08/19 23:13:53  kermin
  * -o flag will now target the original file (in theory reloaded), compress it to lxt2, and then reload the new compressed file.
  *
