@@ -1574,6 +1574,8 @@ void reload_into_new_context(void)
 
  for(;;)
 	{
+	set_window_busy(NULL);
+
  /* Check to see if we need to reload a vcd file */
 #if !defined _MSC_VER && !defined __MINGW32__
 	if(GLOBALS->optimize_vcd) 
@@ -1667,6 +1669,8 @@ void reload_into_new_context(void)
 				}
 			break;
  		} 
+
+	set_window_idle(NULL);
 
 	if(load_was_success)
 		{
