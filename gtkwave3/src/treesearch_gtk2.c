@@ -213,6 +213,7 @@ if(ctree)
 	char *zap = name;
 	GtkCTreeNode *node = GLOBALS->any_tree_node;
 	GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
+	int depth = 1;
 
 	strcpy(namecache, name);
 
@@ -243,13 +244,50 @@ if(ctree)
 			{
 			if(zap == name_end)
 				{
-				gtk_ctree_expand(ctree, node);
+				GtkCTreeNode *node2 = node;
+				GtkCTreeNode **nodehist = wave_alloca(depth * sizeof(GtkCTreeNode *));
+				int *exp = wave_alloca(depth * sizeof(int));
+				int i = depth-1;
+
+				nodehist[i] = node;
+				exp[i--] = 1;
+				/* now work backwards up to parent getting the node open/close history*/
+				gctr = GTK_CTREE_ROW(node);
+				while(gctr->parent)
+					{        
+					node = gctr->parent;
+				        gctr = GTK_CTREE_ROW(node);
+					nodehist[i] = node;
+					exp[i--] = gctr->expanded;
+				        }        
+
+				/* fully expand down */
+				for(i=0;i<depth;i++)
+					{
+					gtk_ctree_expand(ctree, nodehist[i]);
+					}
+
+				/* work backwards and close up nodes that were originally closed */
+				for(i=depth-1;i>=0;i--)
+					{
+					if(exp[i])
+						{
+						gtk_ctree_expand(ctree, nodehist[i]);
+						}
+						else
+						{
+						gtk_ctree_collapse(ctree, nodehist[i]);
+						}
+					}
+
 				/* printf("[treeopennode] '%s' ok\n", name); */
 				GLOBALS->open_tree_nodes = xl_insert(namecache, GLOBALS->open_tree_nodes, NULL);
 				return;
 				}
 				else
 				{
+				depth++;
+
 				node = gctr->children;
 				gctr = GTK_CTREE_ROW(node);
 				if(!gctr) break;
@@ -1784,6 +1822,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.12  2007/08/25 19:43:46  gtkwave
+ * header cleanups
+ *
  * Revision 1.1.1.1.2.11  2007/08/22 02:06:39  gtkwave
  * merge in treebox() similar to treeboxframe()
  *
