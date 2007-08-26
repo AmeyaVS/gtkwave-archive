@@ -261,6 +261,8 @@ if(ctree)
 					exp[i--] = gctr->expanded;
 				        }        
 
+				gtk_clist_freeze(GTK_CLIST(ctree));
+
 				/* fully expand down */
 				for(i=0;i<depth;i++)
 					{
@@ -279,6 +281,8 @@ if(ctree)
 						gtk_ctree_collapse(ctree, nodehist[i]);
 						}
 					}
+
+				gtk_clist_thaw(GTK_CLIST(ctree));
 
 				/* printf("[treeopennode] '%s' ok\n", name); */
 				GLOBALS->open_tree_nodes = xl_insert(namecache, GLOBALS->open_tree_nodes, NULL);
@@ -1822,6 +1826,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.13  2007/08/26 04:42:59  gtkwave
+ * mangled tree fix
+ *
  * Revision 1.1.1.1.2.12  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *
