@@ -244,7 +244,6 @@ if(ctree)
 			{
 			if(zap == name_end)
 				{
-				GtkCTreeNode *node2 = node;
 				GtkCTreeNode **nodehist = wave_alloca(depth * sizeof(GtkCTreeNode *));
 				int *exp = wave_alloca(depth * sizeof(int));
 				int i = depth-1;
@@ -1826,6 +1825,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.14  2007/08/26 04:50:04  gtkwave
+ * tree clist freeze to remove visual noise
+ *
  * Revision 1.1.1.1.2.13  2007/08/26 04:42:59  gtkwave
  * mangled tree fix
  *
