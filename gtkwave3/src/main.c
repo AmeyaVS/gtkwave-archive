@@ -74,7 +74,7 @@ if(GLOBALS->anno_ctx)
 	if(GLOBALS->anno_ctx->browser_process)
 		{
 		kill(GLOBALS->anno_ctx->browser_process, SIGKILL);
-		GLOBALS->anno_ctx->browser_process = NULL;
+		GLOBALS->anno_ctx->browser_process = (pid_t)0;
 		}
 	GLOBALS->anno_ctx = NULL;
 	}
@@ -1536,6 +1536,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1.2.13  2007/08/26 19:05:55  gtkwave
+ * added reload button in main window
+ *
  * Revision 1.1.1.1.2.12  2007/08/23 23:28:48  gtkwave
  * reload fail handling and retries
  *
