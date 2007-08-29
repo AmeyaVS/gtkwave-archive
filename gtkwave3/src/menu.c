@@ -1746,7 +1746,7 @@ menu_reload_waveform(GtkWidget *widget, gpointer data)
 	{
 	help_text_bold("\n\nReload Current Waveform");
 	help_text(
-		" Reload the currently displayed waveform "
+		" will reload the currently displayed waveform"
 		" from a potentially updated file."
 	);
 	return;
@@ -4331,6 +4331,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/08/26 21:35:43  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.34  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

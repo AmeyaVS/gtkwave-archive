@@ -213,7 +213,8 @@ char *wname=NULL;
 char *override_rc=NULL;
 char *winname=NULL;
 char *scriptfile=NULL;
-FILE *wave;
+FILE *wave = NULL;
+FILE *vcd_save_handle_cached = NULL;
 
 GtkWidget *main_vbox, *top_table, *whole_table;
 GtkWidget *menubar;
@@ -528,7 +529,7 @@ fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
 
 if((!wname)&&(GLOBALS->make_vcd_save_file))
 	{
-	GLOBALS->vcd_save_handle=fopen(vcd_autosave_name,"wb");
+	vcd_save_handle_cached = GLOBALS->vcd_save_handle=fopen(vcd_autosave_name,"wb");
 	errno=0;	/* just in case */
 	is_smartsave = (GLOBALS->vcd_save_handle != NULL); /* use smartsave if for some reason can't open auto savefile */
 	}
@@ -715,12 +716,12 @@ GLOBALS->tims.zoom=GLOBALS->tims.prevzoom=0;	/* 1 pixel/ns default */
 GLOBALS->tims.marker=GLOBALS->tims.lmbcache=-1;	/* uninitialized at first */
 GLOBALS->tims.baseline=-1;		/* middle button toggle marker */
 
-if((wname)||(GLOBALS->vcd_save_handle)||(is_smartsave))
+if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 	{
 	int wave_is_compressed;
         char *str = NULL;
 
-	if(GLOBALS->vcd_save_handle)
+	if(vcd_save_handle_cached)
 		{
 		wname=vcd_autosave_name;
 		GLOBALS->do_initial_zoom_fit=1;
@@ -1536,6 +1537,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:42  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.14  2007/08/26 19:13:30  gtkwave
  * datatype fix
  *

@@ -629,7 +629,7 @@ void (*cleanup)(GtkWidget *, void *); /* from simplereq.c 414 */
 /*
  * splash.c
  */
-int splash_disable; /* from splash.c 415 */
+char splash_disable; /* from splash.c 415 */
 GdkDrawable *wave_splash_pixmap; /* from splash.c 417 */
 GdkDrawable *wave_splash_mask; /* from splash.c 418 */
 GtkWidget *splash_splash_c_1; /* from splash.c 419 */
@@ -757,7 +757,7 @@ char *entrybox_text_local_treesearch_gtk2_c_3; /* from treesearch_gtk2.c 486 */
 void (*cleanup_e_treesearch_gtk2_c_3)(); /* from treesearch_gtk2.c 487 */
 struct tree *sig_root_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 488 */
 char *filter_str_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 489 */
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) 
 GtkListStore *sig_store_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 490 */
 GtkTreeSelection *sig_selection_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 491 */
 #endif

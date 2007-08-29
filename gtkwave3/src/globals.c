@@ -41,6 +41,11 @@
 #include "vzt.h"
 #include "wavealloca.h"
 
+#ifdef __MINGW32__
+#define sleep(x) Sleep(x)
+#endif
+
+
 struct Global *GLOBALS = NULL;
 
 /* make this const so if we try to write to it we coredump */
@@ -747,7 +752,7 @@ NULL, /* entrybox_text_local_treesearch_gtk2_c_3 456 */
 NULL, /* cleanup_e_treesearch_gtk2_c_3 457 */
 NULL, /* sig_root_treesearch_gtk2_c_1 458 */
 NULL, /* filter_str_treesearch_gtk2_c_1 459 */
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2)
 NULL, /* sig_store_treesearch_gtk2_c_1 460 */
 NULL, /* sig_selection_treesearch_gtk2_c_1 461 */
 #endif
@@ -1054,9 +1059,17 @@ void reload_into_new_context(void)
   struct stringchain_t *hier_head = NULL, *hier_curr = NULL;
   int load_was_success = 0;
   int reload_fail_delay = 1;
+  char *save_tmpfilename = NULL;
+  char *reload_tmpfilename = NULL;
+  int fd_dummy = -1;
+
+  /* save these in case we decide to write out the rc file later as a user option */
+  char cached_ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
+  char cached_ignore_savefile_size = GLOBALS->ignore_savefile_size;
+  char cached_splash_disable = GLOBALS->splash_disable;
 
 
- if(GLOBALS->text_status_c_2)
+ if(GLOBALS->text_status_c_2)	/* let all GTK/X events spin through in order to keep menus from freezing open during reload */
 	{
 	gtk_grab_add(GLOBALS->text_status_c_2);
 	while (gtk_events_pending()) gtk_main_iteration();
@@ -1066,14 +1079,20 @@ void reload_into_new_context(void)
  printf("GTKWAVE | Reloading waveform...\n");
 
  /* Save state to file */
- statefile = fopen(".temp","wb");
+ save_tmpfilename = tmpnam_2(NULL, &fd_dummy);
+ statefile = fopen(save_tmpfilename,"wb");
  if(statefile == NULL) {
    fprintf(stderr, "Failed to reload file.\n");
+   free_2(save_tmpfilename);
    return;
  }
-
+ if(fd_dummy >=0) close(fd_dummy);
  write_save_helper(statefile);
  fclose(statefile);
+
+ reload_tmpfilename = strdup(save_tmpfilename);
+ free_2(save_tmpfilename);
+ 
 
  /* save off size of tree frame if active */
 #if WAVE_USE_GTK2
@@ -1099,13 +1118,9 @@ void reload_into_new_context(void)
  
  /* Time to copy over state */
  /* Marker positions */
- for(i = 0; i < 26; i++) {
-   new_globals->named_markers[i] = GLOBALS->named_markers[i];
- }
+ memcpy(new_globals->named_markers, GLOBALS->named_markers, sizeof(GLOBALS->named_markers));
 
-
- /* Default colors, X contexts, pixmaps, drawables, etc */
-
+ /* Default colors, X contexts, pixmaps, drawables, etc from signalwindow.c and wavewindow.c */
  new_globals->signalarea = GLOBALS->signalarea;
  new_globals->wavearea = GLOBALS->wavearea;
  new_globals->wavepixmap_wavewindow_c_1 = GLOBALS->wavepixmap_wavewindow_c_1;
@@ -1147,7 +1162,6 @@ void reload_into_new_context(void)
  new_globals->gc_dashfill_wavewindow_c_1 = GLOBALS->gc_dashfill_wavewindow_c_1;
  new_globals->gc_dash_wavewindow_c_1 = GLOBALS->gc_dash_wavewindow_c_1;
  new_globals->made_gc_contexts_wavewindow_c_1 = GLOBALS->made_gc_contexts_wavewindow_c_1;
-
 
  new_globals->mainwindow = GLOBALS->mainwindow;
  new_globals->signalwindow = GLOBALS->signalwindow; 
@@ -1278,19 +1292,16 @@ void reload_into_new_context(void)
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; /* to disable splash for reload */
 
-
  if(GLOBALS->fontname_logfile)
 	{
   	new_globals->fontname_logfile = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_logfile) + 1);
   	strcpy(new_globals->fontname_logfile, GLOBALS->fontname_logfile);
 	}
-
  if(GLOBALS->fontname_signals)
 	{
   	new_globals->fontname_signals = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_signals) + 1);
   	strcpy(new_globals->fontname_signals, GLOBALS->fontname_signals);
 	}
-
  if(GLOBALS->fontname_waves)
 	{
   	new_globals->fontname_waves = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_waves) + 1);
@@ -1399,7 +1410,9 @@ void reload_into_new_context(void)
    case VCD_RECODER_FILE: /* do nothing */ break;
  }
 
- /* window destruction (of windows that aren't the parent window) */
+
+ /* window destruction (of windows that aren't the parent window) and/or state merge of those windows */
+
 #if !defined _MSC_VER && !defined __MINGW32__
  kill_stems_browser();
 #endif
@@ -1778,11 +1791,11 @@ void reload_into_new_context(void)
  #endif
 
  /* Reload state from file */
- read_save_helper(".temp"); 
+ read_save_helper(reload_tmpfilename); 
 
  /* unlink temp */
- unlink(".temp");
-
+ unlink(reload_tmpfilename);
+ free(reload_tmpfilename); /* intentional, of strdup'd string from earlier */
 
  /* part 2 of SST (which needs to be done after the tree is expanded from loading the savefile...) */
  #if WAVE_USE_GTK2
@@ -1910,6 +1923,11 @@ void reload_into_new_context(void)
 
 	refresh_hier_tree(GLOBALS->current_tree_hiersearch_c_1);
 	}
+
+ /* restore these in case we decide to write out the rc file later as a user option */
+ GLOBALS->ignore_savefile_pos = cached_ignore_savefile_pos;
+ GLOBALS->ignore_savefile_size = cached_ignore_savefile_size;
+ GLOBALS->splash_disable = cached_splash_disable;
 
  printf("GTKWAVE | ...waveform reloaded\n");
 }
