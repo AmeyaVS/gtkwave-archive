@@ -26,9 +26,7 @@
 
 #include "../gnu_regex.h"
 
-#ifndef __MINGW32__
 #include <zlib.h>
-#endif
 
 /* function pointers */
 FILE         *( *oopen ) ( const char *path, const char *mode );
@@ -424,9 +422,7 @@ usage( char *progname )
       "\t-s signal_list\tselect signals from regular expression list\n" );
   fprintf( stderr, "\t-a\t\tall channels\n" );
   fprintf( stderr, "\t-m\t\tappend MagniVu info (only in listing mode)\n" );
-#ifndef __MINGW32__
   fprintf( stderr, "\t-z\t\tcompress output\n" );
-#endif
   fprintf( stderr, "\t-v\t\tverbose\n" );
   fprintf( stderr, "\t-V\t\tprint version banner than exit\n" );
   exit( 0 );
@@ -517,7 +513,6 @@ main( int argc, char *argv[] )
     oopen = fopen;
     oclose = fclose;
     oprintf = fprintf;
-#ifndef __MINGW32__
     if ( sw.compress )
     {
       strcat( p, ".gz" );
@@ -525,7 +520,6 @@ main( int argc, char *argv[] )
       oclose = ( int ( * )( FILE * ) ) gzclose;
       oprintf = ( int ( * )( FILE *, const char *,... ) ) gzprintf;
     }
-#endif
     if ( sw.onlylist )
       outfile = stdout;
     else
@@ -561,6 +555,9 @@ main( int argc, char *argv[] )
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:15  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

@@ -33,13 +33,13 @@ static gdouble py[]={ 8.50,  8.26,  8.50, 6.57, 5.84};
 static void render_clicked(GtkWidget *widget, gpointer which)
 {
 int i;
-char *which_char;
 
 for(i=0;i<2;i++) GLOBALS->target_mutex_renderopt_c_1[i]=0;
-which_char=(char *)which;
-*which_char=1;                  /* mark our choice */
 
-DEBUG(printf("picked: %s\n", render_targets[which_char-target_mutex]));
+i = (int)((long)which);
+GLOBALS->target_mutex_renderopt_c_1[i] = 1; /* mark our choice */
+
+DEBUG(printf("picked: %s\n", render_targets[i]));
 }
 
 static void pagesize_clicked(GtkWidget *widget, gpointer which)
@@ -48,12 +48,11 @@ int i;
 char *which_char;
 
 for(i=0;i<5;i++) GLOBALS->page_mutex_renderopt_c_1[i]=0;
-which_char=(char *)which;
-*which_char=1;                  /* mark our choice */
 
-GLOBALS->page_size_type_renderopt_c_1=which_char-GLOBALS->page_mutex_renderopt_c_1;
+GLOBALS->page_size_type_renderopt_c_1 = (int)((long)which);
+GLOBALS->page_mutex_renderopt_c_1[GLOBALS->page_size_type_renderopt_c_1] = 1; /* mark our choice */
 
-DEBUG(printf("picked: %s\n", page_size[which_char-page_mutex]));
+DEBUG(printf("picked: %s\n", page_size[GLOBALS->page_size_type_renderopt_c_1]));
 }
 
 static void rendertype_clicked(GtkWidget *widget, gpointer which)
@@ -62,10 +61,11 @@ int i;
 char *which_char;
 
 for(i=0;i<2;i++) GLOBALS->render_mutex_renderopt_c_1[i]=0;
-which_char=(char *)which;
-*which_char=1;                  /* mark our choice */
 
-DEBUG(printf("picked: %s\n", render_type[which_char-render_mutex]));
+i = (int)((long)which);
+GLOBALS->render_mutex_renderopt_c_1[i] = 1; /* mark our choice */
+
+DEBUG(printf("picked: %s\n", render_type[i]));
 }
 
 
@@ -236,7 +236,7 @@ void renderbox(char *title)
     	gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(render_clicked),
-                                 &GLOBALS->target_mutex_renderopt_c_1[i]);
+                                 (void *)((long)i));
 	GLOBALS->target_mutex_renderopt_c_1[i]=0;
 	}
 
@@ -258,7 +258,7 @@ void renderbox(char *title)
     	gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(pagesize_clicked),
-                                 &GLOBALS->page_mutex_renderopt_c_1[i]);
+                                 (void *)((long)i));
 	GLOBALS->page_mutex_renderopt_c_1[i]=0;
 	}
 
@@ -283,7 +283,7 @@ void renderbox(char *title)
     	gtk_widget_show (menuitem);
         gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
                                  GTK_SIGNAL_FUNC(rendertype_clicked),
-                                 &GLOBALS->render_mutex_renderopt_c_1[i]);
+                                 (void *)((long)i));
 	GLOBALS->render_mutex_renderopt_c_1[i]=0;
 	}
 
@@ -328,6 +328,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.8  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

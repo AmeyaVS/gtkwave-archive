@@ -28,7 +28,11 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#if !defined __MINGW32__ && !defined _MSC_VER 
 #include <sys/mman.h>
+#else
+#include <windows.h>
+#endif
 #include "lxt_write.h"
 
 #include "wave_locale.h"
@@ -63,7 +67,10 @@ char not_final;
 /*
  * globals
  */
-static void *mm;
+#if defined __MINGW32__ || defined _MSC_VER 
+static HANDLE mm_handle=INVALID_HANDLE_VALUE;
+#endif
+static void *mm=NULL;
 static int numfacs;
 static struct fac *facs=NULL;
 static int first_cycle, last_cycle, total_cycles;
@@ -855,7 +862,18 @@ if(fd<0)
         }
 
 f_len=lseek(fd, 0, SEEK_END);
-mm=mmap(NULL, f_len, PROT_READ, MAP_SHARED, fd, 0);
+
+#if !defined __MINGW32__ && !defined _MSC_VER 
+    mm = mmap(NULL, f_len, PROT_READ, MAP_SHARED, fd, 0);
+#else
+    mm_handle = CreateFileMapping((HANDLE) _get_osfhandle(fd), NULL, PAGE_READONLY, 0, f_len, NULL);
+    if(mm_handle == INVALID_HANDLE_VALUE)
+    {
+      fprintf(stderr, "Failed to create file mapping '%s': %s\n", argv[1], strerror(errno));
+      exit(0);
+    }
+    mm = MapViewOfFile(mm_handle, FILE_MAP_READ, 0, 0, f_len);
+#endif
 
 if(get_byte(0)!=0xd0)
 	{
@@ -889,7 +907,14 @@ sync_timetable();
 iter_backwards();
 output_lxt(argv[2], doclock, dochg);
 
-munmap(mm, f_len); mm=NULL;
+#if !defined __MINGW32__ && !defined _MSC_VER 
+    munmap(mm, f_len); mm=NULL;
+#else
+    UnmapViewOfFile(mm); mm=NULL;
+    CloseHandle(mm_handle);
+    mm_handle=INVALID_HANDLE_VALUE;
+#endif
+
 fprintf(stderr, MVLHDR"Finished, exiting.\n");
 exit(0);
 }
@@ -897,6 +922,9 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:15  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

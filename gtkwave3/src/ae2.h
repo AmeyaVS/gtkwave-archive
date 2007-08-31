@@ -72,7 +72,7 @@ unsigned long	ae2_read_symbol_rows(AE2_HANDLE handle, unsigned long symbol_idx);
 unsigned long	ae2_read_symbol_length(AE2_HANDLE handle, unsigned long symbol_idx);
 unsigned long 	ae2_read_value(AE2_HANDLE handle, FACREF* fr, uint64_t cycle, char* value);
 uint64_t 	ae2_read_next_value(AE2_HANDLE handle, FACREF* fr, uint64_t cycle, char* value);
-void 		ae2_read_close(AE2_HANDLE handle);
+void 		ae2_read_end(AE2_HANDLE handle);
 
 unsigned long	ae2_read_num_sparse_rows(AE2_HANDLE handle, unsigned long symbol_idx, uint64_t cycle);
 uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, uint64_t cycle, unsigned long idx);
@@ -84,6 +84,9 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.1  2007/07/28 19:50:39  kermin
  * Merged in the main line
  *

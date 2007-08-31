@@ -24,7 +24,15 @@ if [ "$1" == "--cflags" ]
 <<snip>>
 
 [Note2: for mingw with gtk+-2, you don't need to do anything except have
-pkg-config in your PATH.]
+pkg-config in your PATH however the following note is from Thomas Uhle.]
+
+Important to know is to compile with CFLAGS=-mms-bitfields in Windows in order to link correctly
+to the GTK+ dlls. This is how I did configure GTKWave with additional optimisation switches:
+
+./configure CFLAGS='-Wall -O3 -mcpu=i686 -mms-bitfields -ffast-math -fstrict-aliasing'
+
+After that you may just call make the usual way.
+
 
 
 Note that Ver Structural Verilog Compiler AET files are no longer supported. 

@@ -300,4 +300,5 @@
 		be LIBBZ2_CFLAGS.
 3.1.0	25aug07	Moved to a global context variable management scheme
 		for future code expansion.  Reload waveform function
-		added which uses context management.
+		added which uses context management.  Update user
+		manual to include references to reload capability.

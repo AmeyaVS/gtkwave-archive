@@ -1041,6 +1041,38 @@ g->preg_regex_c_1 = calloc_2_into_context(g, WAVE_REGEX_TOTAL, sizeof(regex_t));
 return(g);						/* what to do with ctx is at discretion of caller */
 }
 
+static void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrref)
+{
+char *o = *oldstrref;
+char *n;
+
+if(o)	/* only allocate + copy string if nonnull pointer */
+	{
+	n = calloc_2_into_context(g, 1, strlen(o) + 1);
+	strcpy(n, o);
+	*newstrref = n;
+	}
+}
+
+static void widget_ungrab_destroy(GtkWidget **wp)
+{
+if(*wp)
+	{
+	gtk_grab_remove(*wp);
+	gtk_widget_destroy(*wp);
+	*wp = NULL;
+	}
+}
+
+static void widget_only_destroy(GtkWidget **wp)
+{
+if(*wp)
+	{
+	gtk_widget_destroy(*wp);
+	*wp = NULL;
+	}
+}
+
 
 /*
  * reload from old into the new context
@@ -1292,44 +1324,22 @@ void reload_into_new_context(void)
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; /* to disable splash for reload */
 
- if(GLOBALS->fontname_logfile)
-	{
-  	new_globals->fontname_logfile = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_logfile) + 1);
-  	strcpy(new_globals->fontname_logfile, GLOBALS->fontname_logfile);
-	}
- if(GLOBALS->fontname_signals)
-	{
-  	new_globals->fontname_signals = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_signals) + 1);
-  	strcpy(new_globals->fontname_signals, GLOBALS->fontname_signals);
-	}
- if(GLOBALS->fontname_waves)
-	{
-  	new_globals->fontname_waves = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->fontname_waves) + 1);
-  	strcpy(new_globals->fontname_waves, GLOBALS->fontname_waves);
-	}
+ strcpy2_into_new_context(new_globals, &new_globals->fontname_logfile, &GLOBALS->fontname_logfile);
+ strcpy2_into_new_context(new_globals, &new_globals->fontname_signals, &GLOBALS->fontname_signals); 
+ strcpy2_into_new_context(new_globals, &new_globals->fontname_waves, &GLOBALS->fontname_waves);
 
  /* lxt2.c / vzt.c / ae2.c */
- if(GLOBALS->skip_start)
-	{
-  	new_globals->skip_start = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->skip_start) + 1);
-  	strcpy(new_globals->skip_start, GLOBALS->skip_start);
-	}
- if(GLOBALS->skip_end)
-	{
-  	new_globals->skip_end = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->skip_end) + 1);
-  	strcpy(new_globals->skip_end, GLOBALS->skip_end);
-	}
- if(GLOBALS->indirect_fname)
-	{
-  	new_globals->indirect_fname = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->indirect_fname) + 1);
-  	strcpy(new_globals->indirect_fname, GLOBALS->indirect_fname);
-	}
+ strcpy2_into_new_context(new_globals, &new_globals->skip_start, &GLOBALS->skip_start);
+ strcpy2_into_new_context(new_globals, &new_globals->skip_end, &GLOBALS->skip_end);
+ strcpy2_into_new_context(new_globals, &new_globals->indirect_fname, &GLOBALS->indirect_fname);
 
  /* main.c */
  new_globals->optimize_vcd = GLOBALS->optimize_vcd;
 
  /* menu.c */
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
+ strcpy2_into_new_context(new_globals, &new_globals->filesel_writesave, &GLOBALS->filesel_writesave);
+ new_globals->save_success_menu_c_1 = GLOBALS->save_success_menu_c_1; 
 
  /* status.c */
  new_globals->text_status_c_2 = GLOBALS->text_status_c_2;
@@ -1341,16 +1351,8 @@ void reload_into_new_context(void)
  new_globals->treesearch_gtk2_window_vbox = GLOBALS->treesearch_gtk2_window_vbox;
  new_globals->window_treesearch_gtk2_c_12 = GLOBALS->window_treesearch_gtk2_c_12;
 
- if(GLOBALS->filter_str_treesearch_gtk2_c_1)
-	{
-	new_globals->filter_str_treesearch_gtk2_c_1 = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->filter_str_treesearch_gtk2_c_1) + 1);
-	strcpy(new_globals->filter_str_treesearch_gtk2_c_1, GLOBALS->filter_str_treesearch_gtk2_c_1);
-	}
-  if(GLOBALS->selected_hierarchy_name)
-	{
-	new_globals->selected_hierarchy_name = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->selected_hierarchy_name) + 1);
-	strcpy(new_globals->selected_hierarchy_name, GLOBALS->selected_hierarchy_name);
-	}
+ strcpy2_into_new_context(new_globals, &new_globals->filter_str_treesearch_gtk2_c_1, &GLOBALS->filter_str_treesearch_gtk2_c_1);
+ strcpy2_into_new_context(new_globals, &new_globals->selected_hierarchy_name, &GLOBALS->selected_hierarchy_name);
 
  /* timeentry.c */
  new_globals->from_entry = GLOBALS->from_entry;
@@ -1379,12 +1381,11 @@ void reload_into_new_context(void)
 
  /* File name and type */
  new_globals->loaded_file_type = GLOBALS->loaded_file_type;
- new_globals->loaded_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->loaded_file_name) + 1);  
- strcpy(new_globals->loaded_file_name, GLOBALS->loaded_file_name);
+
+ strcpy2_into_new_context(new_globals, &new_globals->loaded_file_name, &GLOBALS->loaded_file_name);
 
  if(new_globals->optimize_vcd) {
-   new_globals->unoptimized_vcd_file_name = calloc_2_into_context(new_globals,1,strlen(GLOBALS->unoptimized_vcd_file_name) + 1);  
-   strcpy(new_globals->unoptimized_vcd_file_name, GLOBALS->unoptimized_vcd_file_name);
+   strcpy2_into_new_context(new_globals, &new_globals->unoptimized_vcd_file_name, &GLOBALS->unoptimized_vcd_file_name);
  }
 
 
@@ -1401,7 +1402,7 @@ void reload_into_new_context(void)
    case VZT_FILE: vzt_rd_close(GLOBALS->vzt_vzt_c_1); break;
    case AE2_FILE: 
 #ifdef AET2_IS_PRESENT
-	ae2_read_close(GLOBALS->ae2); fclose(GLOBALS->ae2_f); 
+	ae2_read_end(GLOBALS->ae2); fclose(GLOBALS->ae2_f); 
 #endif
 	break;
   
@@ -1414,29 +1415,27 @@ void reload_into_new_context(void)
  /* window destruction (of windows that aren't the parent window) and/or state merge of those windows */
 
 #if !defined _MSC_VER && !defined __MINGW32__
- kill_stems_browser();
+ kill_stems_browser();	/* for now, need to rework the stems browser to support this properly */
 #endif
 
- if(GLOBALS->window_entry_c_1)
-        {
-        gtk_grab_remove(GLOBALS->window_entry_c_1);
-        gtk_widget_destroy(GLOBALS->window_entry_c_1);
-        GLOBALS->window_entry_c_1 = NULL;
-        }
+ /* remaining windows which are completely destroyed and haven't migrated over */
+ widget_only_destroy(&GLOBALS->window_ptranslate_c_5);
+ widget_only_destroy(&GLOBALS->window_strace_c_10);
+ widget_only_destroy(&GLOBALS->window_translate_c_11);
+ widget_only_destroy(&GLOBALS->window_treesearch_gtk1_c);
+ widget_only_destroy(&GLOBALS->window_help_c_2); /* reload is gated off during help so this should never execute */
 
- if(GLOBALS->window_help_c_2)
-        {
-        gtk_widget_destroy(GLOBALS->window_help_c_2);
-        GLOBALS->window_help_c_2 = NULL;
-        }
-                         
- if(GLOBALS->window1_hiersearch_c_1)
-        {
-        gtk_grab_remove(GLOBALS->window1_hiersearch_c_1);
-        gtk_widget_destroy(GLOBALS->window1_hiersearch_c_1);
-        GLOBALS->window1_hiersearch_c_1 = NULL;
-        }
+ /* windows which in theory should never destroy as they will have grab focus which means reload will not be called */
+ widget_ungrab_destroy(&GLOBALS->window_entry_c_1);
+ widget_ungrab_destroy(&GLOBALS->window1_hiersearch_c_1);
+ widget_ungrab_destroy(&GLOBALS->window_markerbox_c_4);
+ widget_ungrab_destroy(&GLOBALS->window1_search_c_2);
+ widget_ungrab_destroy(&GLOBALS->window_showchange_c_8);
+ widget_ungrab_destroy(&GLOBALS->window_simplereq_c_9);
+ widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk1_c);
+ widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk2_c_3);
  
+ /* supported migration of window contexts... */
  if(GLOBALS->window_hiersearch_c_3)
         {
 	struct treechain *tc = GLOBALS->treechain_hiersearch_c_1;
@@ -1452,8 +1451,7 @@ void reload_into_new_context(void)
 			hier_curr = hier_curr->next;
 			}
 
-		hier_curr->name = calloc_2_into_context(new_globals,1,strlen(tc->label->name) + 1);
-		strcpy(hier_curr->name, tc->label->name);
+		strcpy2_into_new_context(new_globals, &hier_curr->name, &tc->label->name);
 
 		tc = tc->next;
 		}
@@ -1466,38 +1464,27 @@ void reload_into_new_context(void)
 	new_globals->is_active_hiersearch_c_1 = GLOBALS->is_active_hiersearch_c_1;
         }
  
- if(GLOBALS->window_markerbox_c_4)
-        {
-        gtk_grab_remove(GLOBALS->window_markerbox_c_4);
-        gtk_widget_destroy(GLOBALS->window_markerbox_c_4);
-        GLOBALS->window_markerbox_c_4 = NULL;
-        }
-         
- if(GLOBALS->mouseover_mouseover_c_1)
+ if(GLOBALS->mouseover_mouseover_c_1) /* mouseover regenerates as the pointer moves so no real context lost */
         {
         gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
         gdk_pixmap_unref(GLOBALS->mo_pixmap_mouseover_c_1);   GLOBALS->mo_pixmap_mouseover_c_1 = NULL;
         }
          
- if(GLOBALS->window_ptranslate_c_5)
-        {
-        gtk_widget_destroy(GLOBALS->window_ptranslate_c_5);
-        GLOBALS->window_ptranslate_c_5 = NULL;
-        }
-        
  if(GLOBALS->window_renderopt_c_6)
         {
-        gtk_widget_destroy(GLOBALS->window_renderopt_c_6);
-        GLOBALS->window_ptranslate_c_5 = NULL;
+	new_globals->is_active_renderopt_c_3 = GLOBALS->is_active_renderopt_c_3;
+	new_globals->window_renderopt_c_6 = GLOBALS->window_renderopt_c_6;
+
+	memcpy(new_globals->target_mutex_renderopt_c_1, GLOBALS->target_mutex_renderopt_c_1, sizeof(GLOBALS->target_mutex_renderopt_c_1));
+	memcpy(new_globals->page_mutex_renderopt_c_1, GLOBALS->page_mutex_renderopt_c_1, sizeof(GLOBALS->page_mutex_renderopt_c_1));
+	memcpy(new_globals->render_mutex_renderopt_c_1, GLOBALS->render_mutex_renderopt_c_1, sizeof(GLOBALS->render_mutex_renderopt_c_1));
+
+	strcpy2_into_new_context(new_globals, &new_globals->filesel_print_ps_renderopt_c_1, &GLOBALS->filesel_print_ps_renderopt_c_1);
+	strcpy2_into_new_context(new_globals, &new_globals->filesel_print_mif_renderopt_c_1, &GLOBALS->filesel_print_mif_renderopt_c_1);
+
+	new_globals->page_size_type_renderopt_c_1 = GLOBALS->page_size_type_renderopt_c_1;
         }
 
- if(GLOBALS->window1_search_c_2)
-        {
-        gtk_grab_remove(GLOBALS->window1_search_c_2);
-        gtk_widget_destroy(GLOBALS->window1_search_c_2);
-        GLOBALS->window1_search_c_2 = NULL;
-        }
-        
  if(GLOBALS->window_search_c_7)
         {
 	int i;
@@ -1510,11 +1497,8 @@ void reload_into_new_context(void)
 	new_globals->window_search_c_7 = GLOBALS->window_search_c_7;
 	new_globals->entry_search_c_3 = GLOBALS->entry_search_c_3;
 	new_globals->clist_search_c_3 = GLOBALS->clist_search_c_3;
-	if(GLOBALS->searchbox_text_search_c_1)
-		{
-  		new_globals->searchbox_text_search_c_1 = calloc_2_into_context(new_globals, 1, strlen(GLOBALS->searchbox_text_search_c_1) + 1);
-  		strcpy(new_globals->searchbox_text_search_c_1, GLOBALS->searchbox_text_search_c_1);
-		}
+
+	strcpy2_into_new_context(new_globals, &new_globals->searchbox_text_search_c_1, &GLOBALS->searchbox_text_search_c_1);	
 
 	for(i=0;i<5;i++)
 		{
@@ -1523,51 +1507,6 @@ void reload_into_new_context(void)
 		}
         }
         
- if(GLOBALS->window_showchange_c_8)
-        {
-        gtk_grab_remove(GLOBALS->window_showchange_c_8);
-        gtk_widget_destroy(GLOBALS->window_showchange_c_8);
-        GLOBALS->window_showchange_c_8 = NULL;
-        }
-         
- if(GLOBALS->window_simplereq_c_9)
-        {
-        gtk_grab_remove(GLOBALS->window_simplereq_c_9);
-        gtk_widget_destroy(GLOBALS->window_simplereq_c_9);
-        GLOBALS->window_simplereq_c_9 = NULL; 
-        }
-
- if(GLOBALS->window_strace_c_10)
-        {
-        gtk_widget_destroy(GLOBALS->window_strace_c_10);
-        GLOBALS->window_strace_c_10 = NULL;
-        }
-         
- if(GLOBALS->window_translate_c_11)
-        {
-        gtk_widget_destroy(GLOBALS->window_translate_c_11);
-        GLOBALS->window_translate_c_11 = NULL;
-        }
-         
- if(GLOBALS->window_treesearch_gtk1_c)
-	{
-        gtk_widget_destroy(GLOBALS->window_treesearch_gtk1_c);
-        GLOBALS->window_treesearch_gtk1_c = NULL;
-	}    
-     
- if(GLOBALS->window1_treesearch_gtk1_c)
-        {
-        gtk_grab_remove(GLOBALS->window1_treesearch_gtk1_c);
-        gtk_widget_destroy(GLOBALS->window1_treesearch_gtk1_c);
-        GLOBALS->window1_treesearch_gtk1_c = NULL;
-        }
-
- if(GLOBALS->window1_treesearch_gtk2_c_3)
-        {
-        gtk_grab_remove(GLOBALS->window1_treesearch_gtk2_c_3);
-        gtk_widget_destroy(GLOBALS->window1_treesearch_gtk2_c_3);
-        GLOBALS->window1_treesearch_gtk2_c_3 = NULL;
-        }
 
  /* Free the context */
  free_outstanding();

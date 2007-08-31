@@ -148,7 +148,10 @@ return(pnt);
         
 static void free_fn(void* ptr, size_t size)
 {
-free_2(ptr);
+if(ptr)
+	{
+	free_2(ptr);
+	}
 }
 
 
@@ -1073,6 +1076,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/23 23:28:48  gtkwave
  * reload fail handling and retries
  *
