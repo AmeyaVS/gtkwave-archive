@@ -32,6 +32,8 @@
 
 #include "wave_locale.h"
 
+#if !defined _MSC_VER && !defined __MINGW32__
+
 /* size *must* match in gtkwave */
 #define WAVE_PARTIAL_VCD_RING_BUFFER_SIZE (1024*1024)
 
@@ -258,9 +260,28 @@ if(shmid >= 0)
 return(0);
 }
 
+#else
+
+int main(int argc, char **argv)
+{
+#if defined _MSC_VER || defined __MINGW32__
+fprintf(stderr, "Sorry, this doesn't run under Win32!\n");
+#endif
+
+fprintf(stderr, "If you find that this program works on your platform, please report this to the maintainers.\n");
+
+return(255);
+}
+
+#endif
+
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *
