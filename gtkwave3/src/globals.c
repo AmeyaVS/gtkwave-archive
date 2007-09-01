@@ -1054,6 +1054,10 @@ if(o)	/* only allocate + copy string if nonnull pointer */
 	}
 }
 
+
+/*
+ * widget destruction functions
+ */
 static void widget_ungrab_destroy(GtkWidget **wp)
 {
 if(*wp)
@@ -1079,33 +1083,33 @@ if(*wp)
  */
 void reload_into_new_context(void)
 {
-  FILE *statefile;
-  struct Global *new_globals, *setjmp_globals;
-  int i;
-  gint tree_frame_x = -1, tree_frame_y = -1;
-  gdouble tree_vadj_value = 0.0;
-  gdouble tree_hadj_value = 0.0;
-  int fix_from_time = 0, fix_to_time = 0;
-  TimeType from_time, to_time;
-  char timestr[32];
-  struct stringchain_t *hier_head = NULL, *hier_curr = NULL;
-  int load_was_success = 0;
-  int reload_fail_delay = 1;
-  char *save_tmpfilename = NULL;
-  char *reload_tmpfilename = NULL;
-  int fd_dummy = -1;
+ FILE *statefile;
+ struct Global *new_globals, *setjmp_globals;
+ int i;
+ gint tree_frame_x = -1, tree_frame_y = -1;
+ gdouble tree_vadj_value = 0.0;
+ gdouble tree_hadj_value = 0.0;
+ int fix_from_time = 0, fix_to_time = 0;
+ TimeType from_time, to_time;
+ char timestr[32];
+ struct stringchain_t *hier_head = NULL, *hier_curr = NULL;
+ int load_was_success = 0;
+ int reload_fail_delay = 1;
+ char *save_tmpfilename = NULL;
+ char *reload_tmpfilename = NULL;
+ int fd_dummy = -1;
 
-  /* save these in case we decide to write out the rc file later as a user option */
-  char cached_ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
-  char cached_ignore_savefile_size = GLOBALS->ignore_savefile_size;
-  char cached_splash_disable = GLOBALS->splash_disable;
+ /* save these in case we decide to write out the rc file later as a user option */
+ char cached_ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
+ char cached_ignore_savefile_size = GLOBALS->ignore_savefile_size;
+ char cached_splash_disable = GLOBALS->splash_disable;
 
-
- if(GLOBALS->text_status_c_2)	/* let all GTK/X events spin through in order to keep menus from freezing open during reload */
+ /* let all GTK/X events spin through in order to keep menus from freezing open during reload */
+ if(GLOBALS->text_status_c_2)
 	{
-	gtk_grab_add(GLOBALS->text_status_c_2);
-	while (gtk_events_pending()) gtk_main_iteration();
-	gtk_grab_remove(GLOBALS->text_status_c_2);
+	gtk_grab_add(GLOBALS->text_status_c_2);			/* grab focus to a known widget with no real side effects */
+	while (gtk_events_pending()) gtk_main_iteration();	/* spin on GTK event loop */
+	gtk_grab_remove(GLOBALS->text_status_c_2);		/* ungrab focus */
 	}
 
  printf("GTKWAVE | Reloading waveform...\n");
@@ -1125,7 +1129,6 @@ void reload_into_new_context(void)
  reload_tmpfilename = strdup(save_tmpfilename);
  free_2(save_tmpfilename);
  
-
  /* save off size of tree frame if active */
 #if WAVE_USE_GTK2
  if(GLOBALS->gtk2_tree_frame)
@@ -1148,7 +1151,6 @@ void reload_into_new_context(void)
  /* Instantiate new global status */
  new_globals = initialize_globals();
  
- /* Time to copy over state */
  /* Marker positions */
  memcpy(new_globals->named_markers, GLOBALS->named_markers, sizeof(GLOBALS->named_markers));
 
@@ -1412,28 +1414,28 @@ void reload_into_new_context(void)
  }
 
 
- /* window destruction (of windows that aren't the parent window) and/or state merge of those windows */
+ /* window destruction (of windows that aren't the parent window) */
 
 #if !defined _MSC_VER && !defined __MINGW32__
- kill_stems_browser();	/* for now, need to rework the stems browser to support this properly */
+ kill_stems_browser();	/* for now, need to rework the stems browser dumpfile access routines to support this properly */
 #endif
 
  /* remaining windows which are completely destroyed and haven't migrated over */
- widget_only_destroy(&GLOBALS->window_ptranslate_c_5);
- widget_only_destroy(&GLOBALS->window_strace_c_10);
- widget_only_destroy(&GLOBALS->window_translate_c_11);
- widget_only_destroy(&GLOBALS->window_treesearch_gtk1_c);
- widget_only_destroy(&GLOBALS->window_help_c_2); /* reload is gated off during help so this should never execute */
+ widget_only_destroy(&GLOBALS->window_ptranslate_c_5);		/* ptranslate.c */
+ widget_only_destroy(&GLOBALS->window_strace_c_10);		/* strace.c */
+ widget_only_destroy(&GLOBALS->window_translate_c_11);		/* translate.c */
+ widget_only_destroy(&GLOBALS->window_treesearch_gtk1_c);	/* treesearch_gtk1.c */
+ widget_only_destroy(&GLOBALS->window_help_c_2); 		/* help.c : reload is gated off during help so this should never execute */
 
  /* windows which in theory should never destroy as they will have grab focus which means reload will not be called */
- widget_ungrab_destroy(&GLOBALS->window_entry_c_1);
- widget_ungrab_destroy(&GLOBALS->window1_hiersearch_c_1);
- widget_ungrab_destroy(&GLOBALS->window_markerbox_c_4);
- widget_ungrab_destroy(&GLOBALS->window1_search_c_2);
- widget_ungrab_destroy(&GLOBALS->window_showchange_c_8);
- widget_ungrab_destroy(&GLOBALS->window_simplereq_c_9);
- widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk1_c);
- widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk2_c_3);
+ widget_ungrab_destroy(&GLOBALS->window_entry_c_1);		/* entry.c */
+ widget_ungrab_destroy(&GLOBALS->window1_hiersearch_c_1);	/* hiersearch.c */
+ widget_ungrab_destroy(&GLOBALS->window_markerbox_c_4);		/* markerbox.c */
+ widget_ungrab_destroy(&GLOBALS->window1_search_c_2);		/* search.c */
+ widget_ungrab_destroy(&GLOBALS->window_showchange_c_8);	/* showchange.c */
+ widget_ungrab_destroy(&GLOBALS->window_simplereq_c_9);		/* simplereq.c */
+ widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk1_c);	/* treesearch_gtk1.c */
+ widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk2_c_3);	/* treesearch_gtk2.c */
  
  /* supported migration of window contexts... */
  if(GLOBALS->window_hiersearch_c_3)
@@ -1524,6 +1526,7 @@ void reload_into_new_context(void)
  init_proctrans_data();
  load_all_fonts();
 
+ /* attempt to reload file and recover on loader errors until successful */
  for(;;)
 	{
 	set_window_busy(NULL);
@@ -1666,37 +1669,14 @@ void reload_into_new_context(void)
 		}
 	}
 
- if(GLOBALS->tims.start < GLOBALS->tims.first) {
-   GLOBALS->tims.start = GLOBALS->tims.first;
- }
-
- if(GLOBALS->tims.end > GLOBALS->tims.last) {
-   GLOBALS->tims.end = GLOBALS->tims.last;
- }
-
- if(GLOBALS->tims.marker < GLOBALS->tims.first) {
-   GLOBALS->tims.marker = GLOBALS->tims.first;
- }
-
- if(GLOBALS->tims.marker > GLOBALS->tims.last) {
-   GLOBALS->tims.marker = GLOBALS->tims.last;
- }
-
- if(GLOBALS->tims.prevmarker < GLOBALS->tims.first) {
-   GLOBALS->tims.prevmarker = GLOBALS->tims.first;
- }
-
- if(GLOBALS->tims.prevmarker > GLOBALS->tims.last) {
-   GLOBALS->tims.prevmarker = GLOBALS->tims.last;
- }
-
- if(GLOBALS->tims.laststart < GLOBALS->tims.first) {
-   GLOBALS->tims.laststart = GLOBALS->tims.first;
- }
-
- if(GLOBALS->tims.laststart > GLOBALS->tims.last) {
-   GLOBALS->tims.laststart = GLOBALS->tims.last;
- } 
+ if(GLOBALS->tims.start < GLOBALS->tims.first) 	    { GLOBALS->tims.start = GLOBALS->tims.first; }
+ if(GLOBALS->tims.end > GLOBALS->tims.last) 	    { GLOBALS->tims.end = GLOBALS->tims.last; }
+ if(GLOBALS->tims.marker < GLOBALS->tims.first)     { GLOBALS->tims.marker = GLOBALS->tims.first; }
+ if(GLOBALS->tims.marker > GLOBALS->tims.last)      { GLOBALS->tims.marker = GLOBALS->tims.last; }
+ if(GLOBALS->tims.prevmarker < GLOBALS->tims.first) { GLOBALS->tims.prevmarker = GLOBALS->tims.first; }
+ if(GLOBALS->tims.prevmarker > GLOBALS->tims.last)  { GLOBALS->tims.prevmarker = GLOBALS->tims.last; }
+ if(GLOBALS->tims.laststart < GLOBALS->tims.first)  { GLOBALS->tims.laststart = GLOBALS->tims.first; }
+ if(GLOBALS->tims.laststart > GLOBALS->tims.last)   { GLOBALS->tims.laststart = GLOBALS->tims.last; } 
 
  reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
  gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
@@ -1734,7 +1714,7 @@ void reload_into_new_context(void)
 
  /* unlink temp */
  unlink(reload_tmpfilename);
- free(reload_tmpfilename); /* intentional, of strdup'd string from earlier */
+ free(reload_tmpfilename); /* intentional use of free(), of strdup'd string from earlier */
 
  /* part 2 of SST (which needs to be done after the tree is expanded from loading the savefile...) */
  #if WAVE_USE_GTK2
