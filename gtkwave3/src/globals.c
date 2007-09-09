@@ -1443,6 +1443,8 @@ void reload_into_new_context(void)
 	struct treechain *tc = GLOBALS->treechain_hiersearch_c_1;
 	while(tc)
 		{
+		char *tclname;
+
 		if(!hier_curr)
 			{
 			hier_head = hier_curr = calloc_2_into_context(new_globals,1,sizeof(struct stringchain_t));
@@ -1453,7 +1455,8 @@ void reload_into_new_context(void)
 			hier_curr = hier_curr->next;
 			}
 
-		strcpy2_into_new_context(new_globals, &hier_curr->name, &tc->label->name);
+		tclname = &tc->label->name[0];
+		strcpy2_into_new_context(new_globals, &hier_curr->name, &tclname);
 
 		tc = tc->next;
 		}

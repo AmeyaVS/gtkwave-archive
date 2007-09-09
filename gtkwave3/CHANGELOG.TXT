@@ -302,3 +302,6 @@
 		for future code expansion.  Reload waveform function
 		added which uses context management.  Update user
 		manual to include references to reload capability.
+3.1.1	09sep07	Fixed crash in hierarchy search reload.  (Wrong
+		pointer type introduced from code cleanup.)
+
