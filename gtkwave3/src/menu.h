@@ -45,9 +45,11 @@ enum WV_MenuItems {
 #if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_FONV,
 #endif
+WV_MENU_FONVT,
 WV_MENU_FRW,
 WV_MENU_WRVCD,
 WV_MENU_WRLXT,
+WV_MENU_WCLOSE,
 WV_MENU_SEP2VCD,
 WV_MENU_FPTF,
 WV_MENU_SEP1,
@@ -291,6 +293,9 @@ void menu_version(GtkWidget *widget, gpointer data);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/08/26 21:35:43  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

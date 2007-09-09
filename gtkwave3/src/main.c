@@ -65,6 +65,51 @@
 #include "translate.h"
 #include "ptranslate.h"
 
+static void switch_page(GtkNotebook     *notebook,
+			GtkNotebookPage *page,
+			guint            page_num,
+			gpointer         user_data) 
+{
+char timestr[32];
+struct Global *g_old = GLOBALS;
+
+GLOBALS = (*GLOBALS->contexts)[page_num];
+
+GLOBALS->lxt_clock_compress_to_z = g_old->lxt_clock_compress_to_z;
+GLOBALS->autoname_bundles = g_old->autoname_bundles;
+GLOBALS->autocoalesce_reversal = g_old->autocoalesce_reversal;
+GLOBALS->autocoalesce = g_old->autocoalesce;
+GLOBALS->hier_grouping = g_old->hier_grouping;
+GLOBALS->wave_scrolling = g_old->wave_scrolling;
+GLOBALS->constant_marker_update = g_old->constant_marker_update;
+GLOBALS->do_zoom_center = g_old->do_zoom_center;
+GLOBALS->use_roundcaps = g_old->use_roundcaps;
+GLOBALS->do_resize_signals = g_old->do_resize_signals;
+GLOBALS->use_full_precision = g_old->use_full_precision;
+GLOBALS->show_base = g_old->show_base;
+GLOBALS->display_grid = g_old->display_grid;
+GLOBALS->disable_mouseover = g_old->disable_mouseover;
+GLOBALS->zoom_pow10_snap = g_old->zoom_pow10_snap;
+GLOBALS->disable_mouseover = g_old->disable_mouseover;
+
+reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
+reformat_time(timestr, GLOBALS->tims.last, GLOBALS->time_dimension);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),timestr);
+
+update_maxmarker_labels();
+update_basetime(GLOBALS->tims.baseline);
+
+if(GLOBALS->second_page_created)
+	{
+	gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->winname);
+
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
 
 #if !defined _MSC_VER && !defined __MINGW32__
 void kill_stems_browser(void)
@@ -211,7 +256,6 @@ char opt_errors_encountered=0;
 
 char *wname=NULL;
 char *override_rc=NULL;
-char *winname=NULL;
 char *scriptfile=NULL;
 FILE *wave = NULL;
 FILE *vcd_save_handle_cached = NULL;
@@ -231,25 +275,170 @@ GtkWidget *dummy1, *dummy2;
 GtkWidget *toolhandle=NULL;
 
 int splash_disable_rc_override = 0;
+int mainwindow_already_built;
 
 WAVE_LOCALE_FIX
 
 /* Initialize the GLOBALS structure for the first time... */ 
-GLOBALS = initialize_globals();
+if(!GLOBALS)
+	{
+	GLOBALS = initialize_globals();
+	mainwindow_already_built = 0;
+	}
+	else
+	{
+	struct Global *old_g = GLOBALS;
+
+	GLOBALS = initialize_globals();
+
+	GLOBALS->second_page_created = old_g->second_page_created = 1;
+
+	GLOBALS->notebook = old_g->notebook;
+	GLOBALS->num_notebook_pages = old_g->num_notebook_pages;
+	GLOBALS->contexts = old_g->contexts;
+
+	GLOBALS->mainwindow = old_g->mainwindow;
+	splash_disable_rc_override = 1;
+
+	/* menu.c */
+	GLOBALS->item_factory_menu_c_1 = old_g->item_factory_menu_c_1;
+
+	/* currenttime.c */
+	GLOBALS->max_or_marker_label_currenttime_c_1 = old_g->max_or_marker_label_currenttime_c_1;
+	GLOBALS->maxtext_currenttime_c_1=(char *)malloc_2(40);
+	GLOBALS->maxtimewid_currenttime_c_1 = old_g->maxtimewid_currenttime_c_1;
+	GLOBALS->curtext_currenttime_c_1 = old_g->curtext_currenttime_c_1;
+	GLOBALS->base_or_curtime_label_currenttime_c_1 = old_g->base_or_curtime_label_currenttime_c_1;
+	GLOBALS->curtimewid_currenttime_c_1 = old_g->curtimewid_currenttime_c_1;
+
+	/* status.c */
+	GLOBALS->text_status_c_2 = old_g->text_status_c_2;
+	GLOBALS->vscrollbar_status_c_2 = old_g->vscrollbar_status_c_2;
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+	GLOBALS->iter_status_c_3 = old_g->iter_status_c_3;
+	GLOBALS->bold_tag_status_c_3 = old_g->bold_tag_status_c_3;
+#endif
+
+	/* timeentry.c */
+	GLOBALS->from_entry = old_g->from_entry;
+	GLOBALS->to_entry = old_g->to_entry;
+	
+	/* rc.c */
+	GLOBALS->ignore_savefile_pos = old_g->ignore_savefile_pos;
+	GLOBALS->ignore_savefile_size = old_g->ignore_savefile_size;
+	
+	GLOBALS->color_back = old_g->color_back;
+	GLOBALS->color_baseline = old_g->color_baseline;
+	GLOBALS->color_grid = old_g->color_grid;
+	GLOBALS->color_high = old_g->color_high;
+	GLOBALS->color_low = old_g->color_low;
+	GLOBALS->color_1 = old_g->color_1;
+	GLOBALS->color_0 = old_g->color_0;
+	GLOBALS->color_mark = old_g->color_mark;
+	GLOBALS->color_mid = old_g->color_mid;
+	GLOBALS->color_time = old_g->color_time;
+	GLOBALS->color_timeb = old_g->color_timeb;
+	GLOBALS->color_trans = old_g->color_trans;
+	GLOBALS->color_umark = old_g->color_umark;
+	GLOBALS->color_value = old_g->color_value;
+	GLOBALS->color_vbox = old_g->color_vbox;
+	GLOBALS->color_vtrans = old_g->color_vtrans;
+	GLOBALS->color_x = old_g->color_x;
+	GLOBALS->color_xfill = old_g->color_xfill;
+	GLOBALS->color_u = old_g->color_u;
+	GLOBALS->color_ufill = old_g->color_ufill;
+	GLOBALS->color_w = old_g->color_w;
+	GLOBALS->color_wfill = old_g->color_wfill;
+	GLOBALS->color_dash = old_g->color_dash;
+	GLOBALS->color_dashfill = old_g->color_dashfill;
+	GLOBALS->color_white = old_g->color_white;
+	GLOBALS->color_black = old_g->color_black;
+	GLOBALS->color_ltgray = old_g->color_ltgray;
+	GLOBALS->color_normal = old_g->color_normal;
+	GLOBALS->color_mdgray = old_g->color_mdgray;
+	GLOBALS->color_dkgray = old_g->color_dkgray;
+	GLOBALS->color_dkblue = old_g->color_dkblue;
+	
+	GLOBALS->atomic_vectors = old_g->atomic_vectors;
+	GLOBALS->autoname_bundles = old_g->autoname_bundles;
+	GLOBALS->autocoalesce = old_g->autocoalesce;
+	GLOBALS->autocoalesce_reversal = old_g->autocoalesce_reversal;
+	GLOBALS->constant_marker_update = old_g->constant_marker_update;
+	GLOBALS->convert_to_reals = old_g->convert_to_reals;
+	GLOBALS->disable_mouseover = old_g->disable_mouseover;
+	GLOBALS->disable_tooltips = old_g->disable_tooltips;
+	GLOBALS->do_initial_zoom_fit = old_g->do_initial_zoom_fit;
+	GLOBALS->do_resize_signals = old_g->do_resize_signals;
+	GLOBALS->enable_fast_exit = old_g->enable_fast_exit;
+	GLOBALS->enable_ghost_marker = old_g->enable_ghost_marker;
+	GLOBALS->enable_horiz_grid = old_g->enable_horiz_grid;
+	GLOBALS->make_vcd_save_file = old_g->make_vcd_save_file;
+	GLOBALS->enable_vert_grid = old_g->enable_vert_grid;
+	GLOBALS->force_toolbars = old_g->force_toolbars;
+	GLOBALS->hide_sst = old_g->hide_sst;
+	GLOBALS->sst_expanded = old_g->sst_expanded;
+	GLOBALS->hier_grouping = old_g->hier_grouping;
+	GLOBALS->hier_max_level = old_g->hier_max_level;
+	GLOBALS->paned_pack_semantics = old_g->paned_pack_semantics;
+	GLOBALS->left_justify_sigs = old_g->left_justify_sigs;
+	GLOBALS->lxt_clock_compress_to_z = old_g->lxt_clock_compress_to_z;
+	GLOBALS->ps_maxveclen = old_g->ps_maxveclen;
+	GLOBALS->show_base = old_g->show_base;
+	GLOBALS->display_grid = old_g->display_grid;
+	GLOBALS->use_big_fonts = old_g->use_big_fonts;
+	GLOBALS->use_full_precision = old_g->use_full_precision;
+	GLOBALS->use_frequency_delta = old_g->use_frequency_delta;
+	GLOBALS->use_maxtime_display = old_g->use_maxtime_display;
+	GLOBALS->use_nonprop_fonts = old_g->use_nonprop_fonts;
+	GLOBALS->use_roundcaps = old_g->use_roundcaps;
+	GLOBALS->use_scrollbar_only = old_g->use_scrollbar_only;
+	GLOBALS->vcd_explicit_zero_subscripts = old_g->vcd_explicit_zero_subscripts;
+	GLOBALS->vcd_preserve_glitches = old_g->vcd_preserve_glitches;
+	GLOBALS->vcd_warning_filesize = old_g->vcd_warning_filesize;
+	GLOBALS->vector_padding = old_g->vector_padding;
+	GLOBALS->vlist_compression_depth = old_g->vlist_compression_depth;
+	GLOBALS->wave_scrolling = old_g->wave_scrolling;
+	GLOBALS->do_zoom_center = old_g->do_zoom_center;
+	GLOBALS->zoom_pow10_snap = old_g->zoom_pow10_snap;
+	GLOBALS->alt_hier_delimeter = old_g->alt_hier_delimeter;
+	GLOBALS->cursor_snap = old_g->cursor_snap;
+	GLOBALS->hier_delimeter = old_g->hier_delimeter;
+	GLOBALS->hier_was_explicitly_set = old_g->hier_was_explicitly_set;
+	GLOBALS->page_divisor = old_g->page_divisor;
+	GLOBALS->ps_maxveclen = old_g->ps_maxveclen;
+	GLOBALS->vector_padding = old_g->vector_padding;
+	GLOBALS->vlist_compression_depth = old_g->vlist_compression_depth;
+	GLOBALS->zoombase = old_g->zoombase;
+	GLOBALS->splash_disable = old_g->splash_disable;
+	
+	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_logfile, &old_g->fontname_logfile);
+	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_signals, &old_g->fontname_signals); 
+	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_waves, &old_g->fontname_waves);
+
+	mainwindow_already_built = 1;
+	}
 
 GLOBALS->whoami=malloc_2(strlen(argv[0])+1);	/* cache name in case we fork later */
 strcpy(GLOBALS->whoami, argv[0]);
 
-if(!gtk_init_check(&argc, &argv))
+if(!mainwindow_already_built)
 	{
-	printf("Could not initialize GTK!  Is DISPLAY env var/xhost set?\n\n");
-	print_help(argv[0]);
+	if(!gtk_init_check(&argc, &argv))
+		{
+		printf("Could not initialize GTK!  Is DISPLAY env var/xhost set?\n\n");
+		print_help(argv[0]);
+		}
 	}
 
 init_filetrans_data(); /* for file translation splay trees */
 init_proctrans_data(); /* for proc translation structs */
-atexit(remove_all_proc_filters);
+if(!mainwindow_already_built) atexit(remove_all_proc_filters);
 
+if(mainwindow_already_built)
+	{
+	optind = 1;
+	}
+else
 while (1)
         {
         int option_index = 0;
@@ -539,25 +728,25 @@ GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 /* load either the vcd or aet file depending on suffix then mode setting */
 if(is_vcd)
 	{
-	winname=malloc_2(strlen(winstd)+4+1);
-	strcpy(winname,winstd);
+	GLOBALS->winname=malloc_2(strlen(winstd)+4+1);
+	strcpy(GLOBALS->winname,winstd);
 	}
 	else
 	{
 	if(!is_interactive)
 		{
-		winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(winprefix)+1);
-		strcpy(winname,winprefix);
+		GLOBALS->winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(winprefix)+1);
+		strcpy(GLOBALS->winname,winprefix);
 		}
 		else
 		{
 		char *iact = "GTKWave - Interactive Shared Memory ID ";
-		winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(iact)+1);
-		strcpy(winname,iact);
+		GLOBALS->winname=malloc_2(strlen(GLOBALS->loaded_file_name)+strlen(iact)+1);
+		strcpy(GLOBALS->winname,iact);
 		}
 	}
 
-strcat(winname,GLOBALS->loaded_file_name);
+strcat(GLOBALS->winname,GLOBALS->loaded_file_name);
 
 loader_check_head:
 
@@ -866,12 +1055,14 @@ if ((!GLOBALS->zoom_was_explicitly_set)&&
 
 calczoom(GLOBALS->tims.zoom);
 
+if(!mainwindow_already_built)
+{
 #ifdef WAVE_USE_XID
 if(!GLOBALS->socket_xid)
 #endif
         {
 	GLOBALS->mainwindow = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), winname);
+	gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->winname);
 	gtk_widget_set_usize(GTK_WIDGET(GLOBALS->mainwindow), GLOBALS->initial_window_x, GLOBALS->initial_window_y);
 
 	if((GLOBALS->initial_window_width>0)&&(GLOBALS->initial_window_height>0))
@@ -892,9 +1083,14 @@ if(!GLOBALS->socket_xid)
         gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "destroy",   /* formerly was "destroy" */GTK_SIGNAL_FUNC(plug_destroy),"Plug destroy");
 	}
 #endif
+}
+
 
 make_pixmaps(GLOBALS->mainwindow);
 
+
+if(!mainwindow_already_built)
+{
 main_vbox = gtk_vbox_new(FALSE, 5);
 gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
 gtk_container_add(GTK_CONTAINER(GLOBALS->mainwindow), main_vbox);
@@ -1036,6 +1232,7 @@ if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
 
 	gtk_widget_show (table);
 	}
+} /* of ...if(mainwindow_already_built) */
 
 GLOBALS->wavewindow = create_wavewindow();
 load_all_fonts(); /* must be done before create_signalwindow() */
@@ -1092,13 +1289,57 @@ if(!GLOBALS->hide_sst)
 	}
 #endif
 
-gtk_widget_show(top_table);
+if(!mainwindow_already_built)
+	{
+	gtk_widget_show(top_table);
 
-gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
-                      	GTK_FILL | GTK_EXPAND,
-                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
+	gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
+	                      	GTK_FILL | GTK_EXPAND,
+	                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
+	}
 
-gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->toppanedwindow ? GLOBALS->toppanedwindow : panedwindow, 0, 16, 1, 256,
+if(!GLOBALS->notebook)
+	{
+	GLOBALS->num_notebook_pages = 1;
+	GLOBALS->this_context_page = 0;
+	GLOBALS->contexts = calloc(1, sizeof(struct Globals ***)); /* calloc is deliberate! */
+	*GLOBALS->contexts = calloc(1, sizeof(struct Globals **)); /* calloc is deliberate! */
+	(*GLOBALS->contexts)[0] = GLOBALS;
+
+	GLOBALS->notebook = gtk_notebook_new();
+	gtk_widget_show(GLOBALS->notebook);
+	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), 0); /* hide for first time until next tabs */
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(GLOBALS->notebook), 0); /* hide for first time until next tabs */
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->notebook), "switch-page", 	
+		GTK_SIGNAL_FUNC(switch_page), NULL);
+	}
+	else
+	{
+	unsigned int i;
+
+	GLOBALS->this_context_page = GLOBALS->num_notebook_pages;
+	GLOBALS->num_notebook_pages++;
+	*GLOBALS->contexts = realloc(*GLOBALS->contexts, GLOBALS->num_notebook_pages * sizeof(struct Globals *)); /* realloc is deliberate! */
+	(*GLOBALS->contexts)[GLOBALS->this_context_page] = GLOBALS;
+
+	for(i=0;i<GLOBALS->num_notebook_pages;i++)
+		{
+		(*GLOBALS->contexts)[i]->num_notebook_pages = GLOBALS->num_notebook_pages;
+		}
+
+	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), ~0); /* then appear */
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(GLOBALS->notebook), ~0); /* then appear */
+	gtk_notebook_set_scrollable(GTK_NOTEBOOK(GLOBALS->notebook), ~0);
+	}
+
+gtk_notebook_append_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->toppanedwindow ? GLOBALS->toppanedwindow : panedwindow, gtk_label_new(GLOBALS->loaded_file_name));
+if(mainwindow_already_built)
+	{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
+	return(0);
+	}
+
+gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->notebook, 0, 16, 1, 256,
                       	GTK_FILL | GTK_EXPAND,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 gtk_widget_show(whole_table);
@@ -1537,6 +1778,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/29 23:38:47  gtkwave
+ * 3.1.0 RC2 minor compatibility/bugfixes
+ *
  * Revision 1.2  2007/08/26 21:35:42  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

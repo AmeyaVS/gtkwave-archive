@@ -361,6 +361,12 @@ NULL, /* lt_buf_lxt_c_1 183 */
 /* 
  * main.c
  */
+NULL, /* winname */
+0, /* num_notebook_pages */
+0, /* this_context_page */
+0, /* second_page_created */
+NULL, /* contexts */
+NULL, /* notebook */
 NULL, /* loaded_file_name */
 NULL, /* unoptimized_vcd_file_name  */
 NULL, /* skip_start */
@@ -1041,7 +1047,7 @@ g->preg_regex_c_1 = calloc_2_into_context(g, WAVE_REGEX_TOTAL, sizeof(regex_t));
 return(g);						/* what to do with ctx is at discretion of caller */
 }
 
-static void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrref)
+void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrref)
 {
 char *o = *oldstrref;
 char *n;
@@ -1153,6 +1159,14 @@ void reload_into_new_context(void)
  
  /* Marker positions */
  memcpy(new_globals->named_markers, GLOBALS->named_markers, sizeof(GLOBALS->named_markers));
+
+ /* notebook page flipping */
+ new_globals->num_notebook_pages = GLOBALS->num_notebook_pages;
+ new_globals->this_context_page = GLOBALS->this_context_page;
+ new_globals->contexts = GLOBALS->contexts; /* this value is a *** chameleon!  malloc'd region is outside debug.c control! */
+ new_globals->notebook = GLOBALS->notebook;
+ new_globals->second_page_created = GLOBALS->second_page_created;
+ (*new_globals->contexts)[new_globals->this_context_page] = new_globals;
 
  /* Default colors, X contexts, pixmaps, drawables, etc from signalwindow.c and wavewindow.c */
  new_globals->signalarea = GLOBALS->signalarea;
@@ -1337,6 +1351,7 @@ void reload_into_new_context(void)
 
  /* main.c */
  new_globals->optimize_vcd = GLOBALS->optimize_vcd;
+ strcpy2_into_new_context(new_globals, &new_globals->winname, &GLOBALS->winname); /* for page swapping */
 
  /* menu.c */
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
@@ -1853,3 +1868,71 @@ void reload_into_new_context(void)
 
  printf("GTKWAVE | ...waveform reloaded\n");
 }
+
+
+/*
+ * for notebook page closing
+ */
+void free_and_destroy_page_context(void)
+{
+ /* deallocate any loader-related stuff */
+ switch(GLOBALS->loaded_file_type) {
+   case LXT_FILE:
+                if(GLOBALS->mm_lxt_mmap_addr)
+                        {
+                        munmap(GLOBALS->mm_lxt_mmap_addr, GLOBALS->mm_lxt_mmap_len);
+                        }
+                break;
+ 
+   case LX2_FILE: lxt2_rd_close(GLOBALS->lx2_lx2_c_1); break;
+   case VZT_FILE: vzt_rd_close(GLOBALS->vzt_vzt_c_1); break;
+   case AE2_FILE:
+#ifdef AET2_IS_PRESENT
+        ae2_read_end(GLOBALS->ae2); fclose(GLOBALS->ae2_f);
+#endif
+        break;
+ 
+   case GHW_FILE:
+   case VCD_FILE:
+   case VCD_RECODER_FILE: /* do nothing */ break;
+ }
+
+ /* window destruction (of windows that aren't the parent window) */
+
+ widget_only_destroy(&GLOBALS->window_ptranslate_c_5);		/* ptranslate.c */
+ widget_only_destroy(&GLOBALS->window_strace_c_10);		/* strace.c */
+ widget_only_destroy(&GLOBALS->window_translate_c_11);		/* translate.c */
+ widget_only_destroy(&GLOBALS->window_treesearch_gtk1_c);	/* treesearch_gtk1.c */
+ widget_only_destroy(&GLOBALS->window_treesearch_gtk2_c_12);	/* treesearch_gtk2.c */
+ widget_only_destroy(&GLOBALS->window_help_c_2); 		/* help.c : reload is gated off during help so this should never execute */
+
+ /* windows which in theory should never destroy as they will have grab focus which means reload will not be called */
+ widget_ungrab_destroy(&GLOBALS->window_entry_c_1);		/* entry.c */
+ widget_ungrab_destroy(&GLOBALS->window1_hiersearch_c_1);	/* hiersearch.c */
+ widget_ungrab_destroy(&GLOBALS->window_markerbox_c_4);		/* markerbox.c */
+ widget_ungrab_destroy(&GLOBALS->window1_search_c_2);		/* search.c */
+ widget_ungrab_destroy(&GLOBALS->window_showchange_c_8);	/* showchange.c */
+ widget_ungrab_destroy(&GLOBALS->window_simplereq_c_9);		/* simplereq.c */
+ widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk1_c);	/* treesearch_gtk1.c */
+ widget_ungrab_destroy(&GLOBALS->window1_treesearch_gtk2_c_3);	/* treesearch_gtk2.c */
+ 
+ /* supported migration of window contexts... */
+ widget_only_destroy(&GLOBALS->window_hiersearch_c_3);
+ 
+ if(GLOBALS->mouseover_mouseover_c_1) /* mouseover regenerates as the pointer moves so no real context lost */
+        {
+        gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
+        gdk_pixmap_unref(GLOBALS->mo_pixmap_mouseover_c_1);   GLOBALS->mo_pixmap_mouseover_c_1 = NULL;
+        }
+         
+ widget_only_destroy(&GLOBALS->window_renderopt_c_6);
+ widget_only_destroy(&GLOBALS->window_search_c_7);
+
+ /* Free the context */
+ free_outstanding();
+
+ /* Free the old globals struct, memsetting it to zero in the hope of forcing crashes. */
+ memset(GLOBALS, 0, sizeof(struct Global));
+ free(GLOBALS);
+}
+

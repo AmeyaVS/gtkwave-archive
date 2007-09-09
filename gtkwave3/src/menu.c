@@ -1002,6 +1002,81 @@ if(!GLOBALS->enable_fast_exit)
 	menu_quit_callback(NULL, (gpointer)menu_quit_callback); /* dummy arg */
 	}
 }
+
+/**/
+
+void menu_quit_close_callback(GtkWidget *widget, gpointer data)
+{
+unsigned int i, j=0;
+unsigned int this_page = GLOBALS->this_context_page;
+unsigned np = GLOBALS->num_notebook_pages;
+unsigned int new_page = (this_page != np-1) ? this_page : (this_page-1);
+GtkWidget *n = GLOBALS->notebook;
+struct Global *old_g, *saved_g;
+
+for(i=0;i<np;i++)
+	{
+	if(i!=this_page)
+		{
+		(*GLOBALS->contexts)[j] = (*GLOBALS->contexts)[i];
+		(*GLOBALS->contexts)[j]->this_context_page = j;
+		(*GLOBALS->contexts)[j]->num_notebook_pages--;
+
+		j++;
+		}
+		else
+		{
+		old_g = (*GLOBALS->contexts)[j];
+		}
+	}
+(*GLOBALS->contexts)[j] = old_g;
+	
+gtk_notebook_set_show_tabs(GTK_NOTEBOOK(n), (np>2)); 
+gtk_notebook_set_show_border(GTK_NOTEBOOK(n), (np>2)); 
+
+gtk_notebook_remove_page(GTK_NOTEBOOK(n), this_page);
+gtk_notebook_set_current_page(GTK_NOTEBOOK(n), new_page);
+
+GLOBALS = (*GLOBALS->contexts)[new_page];
+
+while (gtk_events_pending()) gtk_main_iteration();
+
+saved_g = GLOBALS;
+GLOBALS = old_g;
+free_and_destroy_page_context();
+GLOBALS = saved_g;
+}
+
+void menu_quit_close(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nClose");
+        help_text(
+		" immediately closes the current tab if multiple tabs exist or"
+                " exits GTKWave after an additional confirmation"
+                " requester is given the OK to quit."
+        );
+        return;
+        } 
+
+if((GLOBALS->num_notebook_pages < 2) && (!GLOBALS->enable_fast_exit))
+	{
+	simplereqbox("Quit Program",300,"Do you really want to quit?","Yes", "No", GTK_SIGNAL_FUNC(menu_quit_callback), 1);
+	}
+	else
+	{
+	if(GLOBALS->num_notebook_pages < 2)
+		{
+		menu_quit_callback(NULL, (gpointer)menu_quit_callback); /* dummy arg */
+		}
+		else
+		{
+		menu_quit_close_callback(NULL, (gpointer)menu_quit_close_callback); /* dummy arg */
+		}
+	}
+}
+
 /**/
 void must_sel(void)
 {
@@ -1724,7 +1799,7 @@ menu_new_viewer(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
 	{
-	help_text_bold("\n\nOpen New Viewer");
+	help_text_bold("\n\nOpen New Window");
 	help_text(
 		" will open a file requester that will ask for the name"
 		" of a VCD or AET file to view.  This will fork off a"
@@ -1738,6 +1813,40 @@ fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_
 #endif
 
 /**/
+
+void
+menu_new_viewer_tab_cleanup(GtkWidget *widget, gpointer data)
+{
+pid_t pid;
+
+if(GLOBALS->filesel_ok)
+        { 
+	char **argv[2] = {"gtkwave", NULL};
+
+	argv[1] = *GLOBALS->fileselbox_text;
+	main(2, argv);
+
+	return;
+	}
+}
+
+void
+menu_new_viewer_tab(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+	{
+	help_text_bold("\n\nOpen New Tab");
+	help_text(
+		" will open a file requester that will ask for the name"
+		" of a VCD or AET file to view.  This will create a tabbed page."
+	);
+	return;
+	}
+
+fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_SIGNAL_FUNC(menu_new_viewer_tab_cleanup), GTK_SIGNAL_FUNC(NULL), NULL, 0);
+}
+
+/**/ 
 
 void
 menu_reload_waveform(GtkWidget *widget, gpointer data)
@@ -3962,11 +4071,13 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 static GtkItemFactoryEntry menu_items[] =
 {
 #if !defined __MINGW32__ && !defined _MSC_VER 
-    WAVE_GTKIFE("/File/Open New Viewer", "Pause", menu_new_viewer, WV_MENU_FONV, "<Item>"),
+    WAVE_GTKIFE("/File/Open New Window", "<Shift>Pause", menu_new_viewer, WV_MENU_FONV, "<Item>"),
 #endif
+    WAVE_GTKIFE("/File/Open New Tab", "Pause", menu_new_viewer_tab, WV_MENU_FONVT, "<Item>"),
     WAVE_GTKIFE("/File/Reload Waveform", "<Shift><Control>R", menu_reload_waveform, WV_MENU_FRW, "<Item>"),    
     WAVE_GTKIFE("/File/Export/Write VCD File As", NULL, menu_write_vcd_file, WV_MENU_WRVCD, "<Item>"),
     WAVE_GTKIFE("/File/Export/Write LXT File As", NULL, menu_write_lxt_file, WV_MENU_WRLXT, "<Item>"),
+    WAVE_GTKIFE("/File/Close", NULL, menu_quit_close, WV_MENU_WCLOSE, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2VCD, "<Separator>"),
     WAVE_GTKIFE("/File/Print To File", "Print", menu_print, WV_MENU_FPTF, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP1, "<Separator>"),
@@ -4331,6 +4442,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/08/29 23:38:47  gtkwave
+ * 3.1.0 RC2 minor compatibility/bugfixes
+ *
  * Revision 1.4  2007/08/26 21:35:43  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

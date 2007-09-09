@@ -365,6 +365,12 @@ int max_compare_pos_tc_lxt_c_2; /* from lxt.c 200 */
 /*
  * main.c
  */
+char *winname;
+unsigned int num_notebook_pages;
+unsigned int this_context_page;
+unsigned char second_page_created;
+struct Global ***contexts;
+GtkWidget *notebook;
 char *loaded_file_name;
 char *unoptimized_vcd_file_name;
 char *skip_start;
@@ -1025,6 +1031,8 @@ char do_initial_zoom_fit; /* from zoombuttons.c 721 */
 
 struct Global *initialize_globals(void);
 void reload_into_new_context(void);
+void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrref);
+void free_and_destroy_page_context(void);
 
 extern struct Global *GLOBALS;
 #endif

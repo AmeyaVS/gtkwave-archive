@@ -45,6 +45,7 @@ system("date");
 #endif
 }
 
+
 /*
  * wrapped malloc family...
  */
@@ -335,6 +336,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/08/31 22:42:43  gtkwave
+ * 3.1.0 RC3 updates
+ *
  * Revision 1.3  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
