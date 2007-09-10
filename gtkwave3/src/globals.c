@@ -1940,39 +1940,51 @@ void free_and_destroy_page_context(void)
 /* 
  * focus directed context switching of GLOBALS in multiple tabs mode
  */
-static int context_swapper(GtkWindow *w, GdkEvent *e, void *data)
+static int context_swapper(GtkWindow *w, GdkEvent *event, void *data)
 {
-/* printf("Window: %08x GtkEvent: %08x gpointer: %08x\n", w, e, data); */
+GdkEventType type;
 
-if(GLOBALS->num_notebook_pages >= 2)
+type = event->type;
+
+/* printf("Window: %08x GtkEvent: %08x gpointer: %08x, type: %d\n", w, event, data, type); */
+
+switch(type)
 	{
-	unsigned int i;
-	void **vp;
-	GtkWidget *wcmp;	
-	
-	for(i=0;i<GLOBALS->num_notebook_pages;i++)
-		{
-		struct Global *test_g = (*GLOBALS->contexts)[i];
-
-		vp = (void **)(((char *)test_g) + (long)data);
-		wcmp = (GtkWidget *)(*vp);
-
-		if(wcmp != NULL)
+	case GDK_ENTER_NOTIFY:
+		if(GLOBALS->num_notebook_pages >= 2)
 			{
-			if(wcmp == w)
+			unsigned int i;
+			void **vp;
+			GtkWidget *wcmp;	
+	
+			for(i=0;i<GLOBALS->num_notebook_pages;i++)
 				{
-				if(i!=GLOBALS->this_context_page)
+				struct Global *test_g = (*GLOBALS->contexts)[i];
+
+				vp = (void **)(((char *)test_g) + (long)data);
+				wcmp = (GtkWidget *)(*vp);
+
+				if(wcmp != NULL)
 					{
-					/* printf("Switching to: %d %08x\n", i, GTK_WINDOW(wcmp)); */
+					if(wcmp == w)
+						{
+						if(i!=GLOBALS->this_context_page)
+							{
+							/* printf("Switching to: %d %08x\n", i, GTK_WINDOW(wcmp)); */
+		
+							GLOBALS = (*GLOBALS->contexts)[i];
+							gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
+							}
 
-					GLOBALS = (*GLOBALS->contexts)[i];
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
+						return(FALSE);
+						}
 					}
-
-				return(FALSE);
 				}
 			}
-		}
+		break;
+
+	default:
+		break;
 	}
 
 return(FALSE);
@@ -1981,13 +1993,5 @@ return(FALSE);
 
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset)
 {
-#if WAVE_USE_GTK2
-
-gtk_window_set_has_frame(GTK_WINDOW(w), TRUE);
-gtk_signal_connect(GTK_OBJECT(w), "frame-event",(GtkSignalFunc)context_swapper, (void *)ptr_offset);
-/* printf("CB installed: %08x %08x\n", w, ptr_offset); */
-
-#else
-
-#endif
+gtk_signal_connect (GTK_OBJECT(w), "enter_notify_event", GTK_SIGNAL_FUNC(context_swapper), (void *)ptr_offset);
 }
