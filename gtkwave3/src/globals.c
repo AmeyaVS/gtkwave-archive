@@ -1951,6 +1951,7 @@ type = event->type;
 switch(type)
 	{
 	case GDK_ENTER_NOTIFY:
+	case GDK_FOCUS_CHANGE:
 		if(GLOBALS->num_notebook_pages >= 2)
 			{
 			unsigned int i;
@@ -1990,8 +1991,8 @@ switch(type)
 return(FALSE);
 }
 
-
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset)
 {
 gtk_signal_connect (GTK_OBJECT(w), "enter_notify_event", GTK_SIGNAL_FUNC(context_swapper), (void *)ptr_offset);
+gtk_signal_connect (GTK_OBJECT(w), "focus_in_event", GTK_SIGNAL_FUNC(context_swapper), (void *)ptr_offset);
 }
