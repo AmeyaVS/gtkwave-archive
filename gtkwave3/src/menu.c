@@ -1822,8 +1822,9 @@ pid_t pid;
 
 if(GLOBALS->filesel_ok)
         { 
-	char **argv[2] = {"gtkwave", NULL};
+	char *argv[2];
 
+	argv[0] = "gtkwave";
 	argv[1] = *GLOBALS->fileselbox_text;
 	main(2, argv);
 
@@ -4443,6 +4444,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/09/10 19:43:20  gtkwave
+ * gtk1.2 compile fixes
+ *
  * Revision 1.6  2007/09/09 20:10:30  gtkwave
  * preliminary support for tabbed viewing of multiple waveforms
  *
