@@ -65,7 +65,8 @@ color_timeb  000000
 #
 # menu accelerators
 #
-accel "/File/Open New Viewer" Pause
+accel "/File/Open New Window" <Shift>Pause
+accel "/File/Open New Tab" Pause
 accel "/File/Reload Waveform" <Shift><Control>R
 accel "/File/Export/Write VCD File As" (null)
 accel "/File/Export/Write LXT File As" (null)
