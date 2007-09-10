@@ -24,6 +24,9 @@
 #define WAVE_GTK_WAVEFONT wavearea->style->font
 #define WAVE_GTK_SFUNCAST(x) ((GtkSignalFunc)(x))
 
+#define gtk_notebook_set_current_page(n,p) gtk_notebook_set_page((n),(p))
+
+
 #endif
 
 #endif
@@ -31,6 +34,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:58  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:13  gtkwave
  * initial release
  *

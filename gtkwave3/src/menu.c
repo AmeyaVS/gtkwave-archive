@@ -978,6 +978,7 @@ void menu_quit_callback(GtkWidget *widget, gpointer data)
 if(data)
 	{
 	g_print("Exiting.\n");	
+
 	gtk_exit(0);
 	}
 }
@@ -4442,6 +4443,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/09/09 20:10:30  gtkwave
+ * preliminary support for tabbed viewing of multiple waveforms
+ *
  * Revision 1.5  2007/08/29 23:38:47  gtkwave
  * 3.1.0 RC2 minor compatibility/bugfixes
  *

@@ -441,6 +441,8 @@ GtkAdjustment *wadj, *hadj;
 int num_traces_displayable;
 int width;
 
+if((!widget)||(!widget->window)) return(TRUE);
+
 make_sigarea_gcs(widget);
 UpdateTracesVisible();
 
@@ -578,6 +580,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

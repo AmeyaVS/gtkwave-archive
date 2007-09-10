@@ -1981,7 +1981,13 @@ return(FALSE);
 
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset)
 {
+#if WAVE_USE_GTK2
+
 gtk_window_set_has_frame(GTK_WINDOW(w), TRUE);
 gtk_signal_connect(GTK_OBJECT(w), "frame-event",(GtkSignalFunc)context_swapper, (void *)ptr_offset);
 /* printf("CB installed: %08x %08x\n", w, ptr_offset); */
+
+#else
+
+#endif
 }

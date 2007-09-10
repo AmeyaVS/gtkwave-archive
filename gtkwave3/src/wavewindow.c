@@ -1002,6 +1002,8 @@ if(!GLOBALS->made_sgc_contexts_wavewindow_c_1)
 
 gint wavearea_configure_event(GtkWidget *widget, GdkEventConfigure *event)
 {
+if((!widget)||(!widget->window)) return(TRUE);
+
 DEBUG(printf("WaveWin Configure Event h: %d, w: %d\n",widget->allocation.height,
 		widget->allocation.width));
 
@@ -3104,6 +3106,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/08/26 21:35:50  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.8  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *
