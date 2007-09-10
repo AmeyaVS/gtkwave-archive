@@ -588,6 +588,8 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 
     /* create a new modal window */
     GLOBALS->window1_treesearch_gtk2_c_3 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window1_treesearch_gtk2_c_3, ((char *)&GLOBALS->window1_treesearch_gtk2_c_3) - ((char *)GLOBALS));
+
     gtk_grab_add(GLOBALS->window1_treesearch_gtk2_c_3);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_treesearch_gtk2_c_3), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_treesearch_gtk2_c_3), title);
@@ -1076,6 +1078,8 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 
     /* create a new modal window */
     GLOBALS->window_treesearch_gtk2_c_12 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window_treesearch_gtk2_c_12, ((char *)&GLOBALS->window_treesearch_gtk2_c_12) - ((char *)GLOBALS));
+
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_treesearch_gtk2_c_12), title);
     gtk_signal_connect(GTK_OBJECT (GLOBALS->window_treesearch_gtk2_c_12), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
@@ -1825,6 +1829,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.15  2007/08/26 04:56:10  gtkwave
  * remove unused var in expand/collapse
  *

@@ -54,6 +54,8 @@ void simplereqbox(char *title, int width, char *default_text,
 
     /* create a new modal window */
     GLOBALS->window_simplereq_c_9 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window_simplereq_c_9, ((char *)&GLOBALS->window_simplereq_c_9) - ((char *)GLOBALS));
+
     gtk_grab_add(GLOBALS->window_simplereq_c_9);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_simplereq_c_9), width, 55 + 52);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_simplereq_c_9), title);
@@ -118,6 +120,9 @@ void simplereqbox(char *title, int width, char *default_text,
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

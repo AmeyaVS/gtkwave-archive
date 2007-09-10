@@ -373,6 +373,8 @@ void trans_searchbox(char *title)
 
     /* create a new modal window */
     GLOBALS->window_translate_c_11 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window_translate_c_11, ((char *)&GLOBALS->window_translate_c_11) - ((char *)GLOBALS));
+
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_translate_c_11), title);
     gtk_signal_connect(GTK_OBJECT (GLOBALS->window_translate_c_11), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
@@ -513,6 +515,9 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.8  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

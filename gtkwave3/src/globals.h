@@ -1034,5 +1034,7 @@ void reload_into_new_context(void);
 void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrref);
 void free_and_destroy_page_context(void);
 
+void install_focus_cb(GtkWidget *w, unsigned long ptr_offset);
+
 extern struct Global *GLOBALS;
 #endif

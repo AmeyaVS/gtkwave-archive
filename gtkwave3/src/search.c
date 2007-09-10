@@ -67,6 +67,8 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 
     /* create a new modal window */
     GLOBALS->window1_search_c_2 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window1_search_c_2, ((char *)&GLOBALS->window1_search_c_2) - ((char *)GLOBALS));
+
     gtk_grab_add(GLOBALS->window1_search_c_2);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_search_c_2), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_search_c_2), title);
@@ -791,6 +793,8 @@ void searchbox(char *title, GtkSignalFunc func)
 
     /* create a new modal window */
     GLOBALS->window_search_c_7 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window_search_c_7, ((char *)&GLOBALS->window_search_c_7) - ((char *)GLOBALS));
+
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_search_c_7), title);
     gtk_signal_connect(GTK_OBJECT (GLOBALS->window_search_c_7), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
@@ -1022,6 +1026,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.11  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

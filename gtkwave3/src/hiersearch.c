@@ -260,6 +260,8 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 
     /* create a new modal window */
     GLOBALS->window1_hiersearch_c_1 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window1_hiersearch_c_1, ((char *)&GLOBALS->window1_hiersearch_c_1) - ((char *)GLOBALS));
+
     gtk_grab_add(GLOBALS->window1_hiersearch_c_1);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_hiersearch_c_1), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_hiersearch_c_1), title);
@@ -840,6 +842,8 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 
     /* create a new modal window */
     GLOBALS->window_hiersearch_c_3 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window_hiersearch_c_3, ((char *)&GLOBALS->window_hiersearch_c_3) - ((char *)GLOBALS));
+
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_hiersearch_c_3), title);
     gtk_signal_connect(GTK_OBJECT (GLOBALS->window_hiersearch_c_3), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
@@ -983,6 +987,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:41  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.8  2007/08/23 02:19:49  gtkwave
  * merge GLOBALS state from old hier_search widget into new one
  *

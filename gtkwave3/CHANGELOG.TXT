@@ -302,7 +302,8 @@
 		for future code expansion.  Reload waveform function
 		added which uses context management.  Update user
 		manual to include references to reload capability.
-3.1.1	09sep07	Fixed crash in hierarchy search reload.  (Wrong
+3.1.1	10sep07	Fixed crash in hierarchy search reload.  (Wrong
 		pointer type introduced from code cleanup.)  Adding
-		start of tabbed browsing support.
-
+		start of tabbed browsing support.  Put in window
+		select focus switching between tabs (e.g., on 
+		search windows).

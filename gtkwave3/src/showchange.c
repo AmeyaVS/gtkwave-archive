@@ -118,6 +118,8 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   GLOBALS->flags_showchange_c_1=t->flags;
   
   GLOBALS->window_showchange_c_8 = gtk_window_new (GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+  install_focus_cb(GLOBALS->window_showchange_c_8, ((char *)&GLOBALS->window_showchange_c_8) - ((char *)GLOBALS));
+
   gtk_grab_add(GLOBALS->window_showchange_c_8);  
 
   gtk_signal_connect (GTK_OBJECT (GLOBALS->window_showchange_c_8), "delete_event",GTK_SIGNAL_FUNC(destroy_callback),NULL);
@@ -267,6 +269,9 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.7  2007/08/18 21:51:57  gtkwave
  * widget destroys and teardown of file formats which use external loaders
  * and are outside of malloc_2/free_2 control

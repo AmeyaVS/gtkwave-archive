@@ -213,6 +213,8 @@ void renderbox(char *title)
 
     /* create a new window */
     GLOBALS->window_renderopt_c_6 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window_renderopt_c_6, ((char *)&GLOBALS->window_renderopt_c_6) - ((char *)GLOBALS));
+
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_renderopt_c_6), title);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_renderopt_c_6), 420, -1); 
     gtk_signal_connect(GTK_OBJECT (GLOBALS->window_renderopt_c_6), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
@@ -328,6 +330,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/31 22:42:44  gtkwave
+ * 3.1.0 RC3 updates
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

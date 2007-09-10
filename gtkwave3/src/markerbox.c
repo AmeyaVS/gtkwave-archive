@@ -106,6 +106,8 @@ void markerbox(char *title, GtkSignalFunc func)
 
     /* create a new modal window */
     GLOBALS->window_markerbox_c_4 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->window_markerbox_c_4, ((char *)&GLOBALS->window_markerbox_c_4) - ((char *)GLOBALS));
+
     gtk_grab_add(GLOBALS->window_markerbox_c_4);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_markerbox_c_4), title);
     gtk_signal_connect(GTK_OBJECT (GLOBALS->window_markerbox_c_4), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
@@ -209,6 +211,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:42  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.7  2007/08/18 21:51:57  gtkwave
  * widget destroys and teardown of file formats which use external loaders
  * and are outside of malloc_2/free_2 control

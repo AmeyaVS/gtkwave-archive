@@ -1936,3 +1936,52 @@ void free_and_destroy_page_context(void)
  free(GLOBALS);
 }
 
+
+/* 
+ * focus directed context switching of GLOBALS in multiple tabs mode
+ */
+static int context_swapper(GtkWindow *w, GdkEvent *e, void *data)
+{
+/* printf("Window: %08x GtkEvent: %08x gpointer: %08x\n", w, e, data); */
+
+if(GLOBALS->num_notebook_pages >= 2)
+	{
+	unsigned int i;
+	void **vp;
+	GtkWidget *wcmp;	
+	
+	for(i=0;i<GLOBALS->num_notebook_pages;i++)
+		{
+		struct Global *test_g = (*GLOBALS->contexts)[i];
+
+		vp = (void **)(((char *)test_g) + (long)data);
+		wcmp = (GtkWidget *)(*vp);
+
+		if(wcmp != NULL)
+			{
+			if(wcmp == w)
+				{
+				if(i!=GLOBALS->this_context_page)
+					{
+					/* printf("Switching to: %d %08x\n", i, GTK_WINDOW(wcmp)); */
+
+					GLOBALS = (*GLOBALS->contexts)[i];
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
+					}
+
+				return(FALSE);
+				}
+			}
+		}
+	}
+
+return(FALSE);
+}
+
+
+void install_focus_cb(GtkWidget *w, unsigned long ptr_offset)
+{
+gtk_window_set_has_frame(GTK_WINDOW(w), TRUE);
+gtk_signal_connect(GTK_OBJECT(w), "frame-event",(GtkSignalFunc)context_swapper, (void *)ptr_offset);
+/* printf("CB installed: %08x %08x\n", w, ptr_offset); */
+}
