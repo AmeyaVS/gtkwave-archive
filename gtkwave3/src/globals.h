@@ -367,6 +367,8 @@ int max_compare_pos_tc_lxt_c_2; /* from lxt.c 200 */
  */
 char *winname;
 unsigned int num_notebook_pages;
+unsigned int num_notebook_pages_cumulative;
+unsigned char context_tabposition;
 unsigned int this_context_page;
 unsigned char second_page_created;
 struct Global ***contexts;

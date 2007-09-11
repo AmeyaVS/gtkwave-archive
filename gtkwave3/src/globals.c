@@ -363,6 +363,8 @@ NULL, /* lt_buf_lxt_c_1 183 */
  */
 NULL, /* winname */
 0, /* num_notebook_pages */
+1, /* num_notebook_pages_cumulative */
+0, /* context_tabposition */
 0, /* this_context_page */
 0, /* second_page_created */
 NULL, /* contexts */
@@ -1162,6 +1164,7 @@ void reload_into_new_context(void)
 
  /* notebook page flipping */
  new_globals->num_notebook_pages = GLOBALS->num_notebook_pages;
+ new_globals->num_notebook_pages_cumulative = GLOBALS->num_notebook_pages_cumulative;
  new_globals->this_context_page = GLOBALS->this_context_page;
  new_globals->contexts = GLOBALS->contexts; /* this value is a *** chameleon!  malloc'd region is outside debug.c control! */
  new_globals->notebook = GLOBALS->notebook;
@@ -1253,6 +1256,8 @@ void reload_into_new_context(void)
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
 
  /* rc.c */
+ new_globals->context_tabposition = GLOBALS->context_tabposition;
+
  new_globals->ignore_savefile_pos = 1; /* to keep window from resizing/jumping */
  new_globals->ignore_savefile_size = 1; /* to keep window from resizing/jumping */
 

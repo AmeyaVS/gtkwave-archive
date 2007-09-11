@@ -294,6 +294,7 @@ if(!GLOBALS)
 
 	GLOBALS->notebook = old_g->notebook;
 	GLOBALS->num_notebook_pages = old_g->num_notebook_pages;
+	GLOBALS->num_notebook_pages_cumulative = old_g->num_notebook_pages_cumulative;
 	GLOBALS->contexts = old_g->contexts;
 
 	GLOBALS->mainwindow = old_g->mainwindow;
@@ -1310,6 +1311,8 @@ if(!GLOBALS->notebook)
 	(*GLOBALS->contexts)[0] = GLOBALS;
 
 	GLOBALS->notebook = gtk_notebook_new();
+	gtk_notebook_set_tab_pos(GLOBALS->notebook, GLOBALS->context_tabposition ? GTK_POS_LEFT : GTK_POS_TOP);
+
 	gtk_widget_show(GLOBALS->notebook);
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), 0); /* hide for first time until next tabs */
 	gtk_notebook_set_show_border(GTK_NOTEBOOK(GLOBALS->notebook), 0); /* hide for first time until next tabs */
@@ -1322,12 +1325,14 @@ if(!GLOBALS->notebook)
 
 	GLOBALS->this_context_page = GLOBALS->num_notebook_pages;
 	GLOBALS->num_notebook_pages++;
+	GLOBALS->num_notebook_pages_cumulative++; /* this never decreases, acts as an incrementing flipper id for side tabs */
 	*GLOBALS->contexts = realloc(*GLOBALS->contexts, GLOBALS->num_notebook_pages * sizeof(struct Globals *)); /* realloc is deliberate! */
 	(*GLOBALS->contexts)[GLOBALS->this_context_page] = GLOBALS;
 
 	for(i=0;i<GLOBALS->num_notebook_pages;i++)
 		{
 		(*GLOBALS->contexts)[i]->num_notebook_pages = GLOBALS->num_notebook_pages;
+		(*GLOBALS->contexts)[i]->num_notebook_pages_cumulative = GLOBALS->num_notebook_pages_cumulative;
 		}
 
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), ~0); /* then appear */
@@ -1335,7 +1340,21 @@ if(!GLOBALS->notebook)
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(GLOBALS->notebook), ~0);
 	}
 
-gtk_notebook_append_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->toppanedwindow ? GLOBALS->toppanedwindow : panedwindow, gtk_label_new(GLOBALS->loaded_file_name));
+if(!GLOBALS->context_tabposition)
+	{
+	gtk_notebook_append_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->toppanedwindow ? GLOBALS->toppanedwindow : panedwindow, 
+		gtk_label_new(GLOBALS->loaded_file_name));
+	}
+	else
+	{
+	char buf[40];
+	
+	sprintf(buf, "%d", GLOBALS->num_notebook_pages_cumulative);
+
+	gtk_notebook_append_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->toppanedwindow ? GLOBALS->toppanedwindow : panedwindow, 
+		gtk_label_new(buf));
+	}
+
 if(mainwindow_already_built)
 	{
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
@@ -1781,6 +1800,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/09/11 04:27:44  gtkwave
+ * duplicate disable_mouseover copy on ctx switch
+ *
  * Revision 1.6  2007/09/11 04:13:25  gtkwave
  * loader hardening for tabbed loads
  *

@@ -112,6 +112,13 @@ GLOBALS->constant_marker_update=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_context_tabposition(char *str)
+{
+DEBUG(printf("f_convert_to_reals(\"%s\")\n",str));
+GLOBALS->context_tabposition=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_convert_to_reals(char *str)
 {
 DEBUG(printf("f_convert_to_reals(\"%s\")\n",str));
@@ -606,6 +613,7 @@ static struct rc_entry rcitems[]=
 { "color_x", f_color_x },
 { "color_xfill", f_color_xfill },
 { "constant_marker_update", f_constant_marker_update },
+{ "context_tabposition", f_context_tabposition },
 { "convert_to_reals", f_convert_to_reals },
 { "cursor_snap", f_cursor_snap },
 { "disable_mouseover", f_disable_mouseover },
@@ -824,6 +832,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *
