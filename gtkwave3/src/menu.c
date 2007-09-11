@@ -1883,7 +1883,7 @@ if(GLOBALS->helpbox_is_active)
 	return;
 	}
 
-if(!GLOBALS->socket_xid)
+if((!GLOBALS->socket_xid)&&(!GLOBALS->partial_vcd))
 	{
 	fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_SIGNAL_FUNC(menu_new_viewer_tab_cleanup), GTK_SIGNAL_FUNC(NULL), NULL, 0);
 	}
@@ -4333,7 +4333,7 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
     GLOBALS->item_factory_menu_c_1 = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", global_accel);
     gtk_item_factory_create_items(GLOBALS->item_factory_menu_c_1, nmenu_items, menu_items, NULL);
 
-    if(GLOBALS->socket_xid)
+    if((GLOBALS->socket_xid)||(GLOBALS->partial_vcd))
 	{
 	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/File/Open New Tab");
 	}
@@ -4490,6 +4490,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2007/09/11 04:13:25  gtkwave
+ * loader hardening for tabbed loads
+ *
  * Revision 1.9  2007/09/11 02:12:50  gtkwave
  * context locking in busy spinloops (gtk_main_iteration() calls)
  *

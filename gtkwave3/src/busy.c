@@ -34,29 +34,36 @@ if(!GLOBALS->busy_busy_c_1)
 
 void gtkwave_gtk_main_iteration(void)
 {
-struct Global *g_old = GLOBALS;
-struct Global *gcache = NULL;
-
-set_window_busy(NULL);
-
-while (gtk_events_pending()) 
+if(GLOBALS->partial_vcd)
 	{
-	gtk_main_iteration();
-	if(GLOBALS != g_old)
-		{	
-		/* this should never happen! */
-		/* if it does, the program state is probably screwed */
-		printf("GTKWAVE | WARNING: globals changed during gtkwave_gtk_main_iteration()!\n");
-		gcache = GLOBALS;
-		}
+	while (gtk_events_pending()) gtk_main_iteration();
 	}
-
-GLOBALS = g_old;
-set_window_idle(NULL);
-
-if(gcache)
+	else
 	{
-	GLOBALS = gcache;
+	struct Global *g_old = GLOBALS;
+	struct Global *gcache = NULL;
+
+	set_window_busy(NULL);
+
+	while (gtk_events_pending()) 
+		{
+		gtk_main_iteration();
+		if(GLOBALS != g_old)
+			{	
+			/* this should never happen! */
+			/* if it does, the program state is probably screwed */
+			printf("GTKWAVE | WARNING: globals changed during gtkwave_gtk_main_iteration()!\n");
+			gcache = GLOBALS;
+			}
+		}
+	
+	GLOBALS = g_old;
+	set_window_idle(NULL);
+	
+	if(gcache)
+		{
+		GLOBALS = gcache;
+		}
 	}
 }
 
@@ -103,6 +110,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/11 02:12:47  gtkwave
+ * context locking in busy spinloops (gtk_main_iteration() calls)
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
