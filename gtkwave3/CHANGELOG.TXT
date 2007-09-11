@@ -306,4 +306,6 @@
 		pointer type introduced from code cleanup.)  Adding
 		start of tabbed browsing support.  Put in window
 		select focus switching between tabs (e.g., on 
-		search windows).
+		search windows).  Added locking in main iteration
+		loop to detect unexpected context switches and
+		report them (wrong operation if it occurs).

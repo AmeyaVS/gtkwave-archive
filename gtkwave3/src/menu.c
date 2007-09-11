@@ -117,7 +117,7 @@ if(GLOBALS->lock_menu_c_1 == 1) return; /* avoid recursion */
 GLOBALS->lock_menu_c_1 = 1;
 
 status_text("Saving LXT...\n");
-while (gtk_events_pending()) gtk_main_iteration(); /* make requester disappear requester */
+gtkwave_gtk_main_iteration(); /* make requester disappear requester */
 
 rc = save_nodes_to_export(*GLOBALS->fileselbox_text, WAVE_EXPORT_LXT);
 
@@ -188,7 +188,7 @@ if(GLOBALS->lock_menu_c_2 == 1) return; /* avoid recursion */
 GLOBALS->lock_menu_c_2 = 1;
 
 status_text("Saving VCD...\n");
-while (gtk_events_pending()) gtk_main_iteration(); /* make requester disappear requester */
+gtkwave_gtk_main_iteration(); /* make requester disappear requester */
 
 rc = save_nodes_to_export(*GLOBALS->fileselbox_text, WAVE_EXPORT_VCD);
 
@@ -1040,7 +1040,7 @@ gtk_notebook_set_current_page(GTK_NOTEBOOK(n), new_page);
 
 GLOBALS = (*GLOBALS->contexts)[new_page];
 
-while (gtk_events_pending()) gtk_main_iteration();
+gtkwave_gtk_main_iteration();
 
 saved_g = GLOBALS;
 GLOBALS = old_g;
@@ -1823,10 +1823,20 @@ pid_t pid;
 if(GLOBALS->filesel_ok)
         { 
 	char *argv[2];
+	struct Global *g_old = GLOBALS;
+	struct Global *g_now;
 
 	argv[0] = "gtkwave";
 	argv[1] = *GLOBALS->fileselbox_text;
+
+	set_window_busy(NULL);
+	gtkwave_gtk_main_iteration();
 	main(2, argv);
+
+	g_now = GLOBALS;
+	GLOBALS = g_old;
+	set_window_idle(NULL);
+	GLOBALS = g_now;
 
 	return;
 	}
@@ -4292,6 +4302,11 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
     GLOBALS->item_factory_menu_c_1 = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", global_accel);
     gtk_item_factory_create_items(GLOBALS->item_factory_menu_c_1, nmenu_items, menu_items, NULL);
 
+    if(GLOBALS->socket_xid)
+	{
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/File/Open New Tab");
+	}
+
     if(GLOBALS->loaded_file_type == NO_FILE)
 	{
 	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/File/Reload Waveform");
@@ -4364,7 +4379,7 @@ while(!feof(f))
 			if(menu_items[i].callback)
 				{
 				menu_items[i].callback();
-				while (gtk_events_pending()) gtk_main_iteration();
+				gtkwave_gtk_main_iteration();
 				}
 			}
 		}
@@ -4444,6 +4459,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2007/09/10 19:46:36  gtkwave
+ * datatype warning fix
+ *
  * Revision 1.7  2007/09/10 19:43:20  gtkwave
  * gtk1.2 compile fixes
  *

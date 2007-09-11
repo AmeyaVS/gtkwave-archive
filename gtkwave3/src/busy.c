@@ -32,6 +32,35 @@ if(!GLOBALS->busy_busy_c_1)
 }
 
 
+void gtkwave_gtk_main_iteration(void)
+{
+struct Global *g_old = GLOBALS;
+struct Global *gcache = NULL;
+
+set_window_busy(NULL);
+
+while (gtk_events_pending()) 
+	{
+	gtk_main_iteration();
+	if(GLOBALS != g_old)
+		{	
+		/* this should never happen! */
+		/* if it does, the program state is probably screwed */
+		printf("GTKWAVE | WARNING: globals changed during gtkwave_gtk_main_iteration()!\n");
+		gcache = GLOBALS;
+		}
+	}
+
+GLOBALS = g_old;
+set_window_idle(NULL);
+
+if(gcache)
+	{
+	GLOBALS = gcache;
+	}
+}
+
+
 void init_busy(void)
 {
 GLOBALS->busycursor_busy_c_1 = gdk_cursor_new(GDK_WATCH);
@@ -74,6 +103,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

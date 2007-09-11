@@ -38,7 +38,7 @@ if((alloclen=strlen(allocbuf)))
 DEBUG(printf("Filesel OK %s\n",allocbuf));
 gtk_grab_remove(GLOBALS->fs_file_c_1);
 gtk_widget_destroy(GLOBALS->fs_file_c_1);
-while (gtk_events_pending()) gtk_main_iteration();
+gtkwave_gtk_main_iteration();
 GLOBALS->cleanup_file_c_2();
 }
 
@@ -47,14 +47,14 @@ static void cancel_callback(GtkWidget *widget, GtkWidget *nothing)
 DEBUG(printf("Filesel Entry Cancel\n"));
 gtk_grab_remove(GLOBALS->fs_file_c_1);
 gtk_widget_destroy(GLOBALS->fs_file_c_1);
-while (gtk_events_pending()) gtk_main_iteration();
+gtkwave_gtk_main_iteration();
 if(GLOBALS->bad_cleanup_file_c_1) GLOBALS->bad_cleanup_file_c_1();
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 DEBUG(printf("Filesel Destroy\n"));
-while (gtk_events_pending()) gtk_main_iteration();
+gtkwave_gtk_main_iteration();
 if(GLOBALS->bad_cleanup_file_c_1) GLOBALS->bad_cleanup_file_c_1();
 }
 
@@ -250,7 +250,7 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 	gtk_grab_remove(pFileChoose);
 	gtk_widget_destroy(pFileChoose);
 
-	while (gtk_events_pending()) gtk_main_iteration();
+	gtkwave_gtk_main_iteration();
 	ok_func();
 	}
 	else
@@ -259,7 +259,7 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 	gtk_grab_remove(pFileChoose);
 	gtk_widget_destroy(pFileChoose);
 
-	while (gtk_events_pending()) gtk_main_iteration();
+	gtkwave_gtk_main_iteration();
 	if(GLOBALS->bad_cleanup_file_c_1) notok_func();
 	}
 #endif
@@ -268,6 +268,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.7  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

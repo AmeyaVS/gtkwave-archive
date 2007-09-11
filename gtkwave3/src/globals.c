@@ -1114,7 +1114,7 @@ void reload_into_new_context(void)
  if(GLOBALS->text_status_c_2)
 	{
 	gtk_grab_add(GLOBALS->text_status_c_2);			/* grab focus to a known widget with no real side effects */
-	while (gtk_events_pending()) gtk_main_iteration();	/* spin on GTK event loop */
+	gtkwave_gtk_main_iteration();				/* spin on GTK event loop */
 	gtk_grab_remove(GLOBALS->text_status_c_2);		/* ungrab focus */
 	}
 
@@ -1956,14 +1956,14 @@ switch(type)
 			{
 			unsigned int i;
 			void **vp;
-			GtkWidget *wcmp;	
+			GtkWindow *wcmp;	
 	
 			for(i=0;i<GLOBALS->num_notebook_pages;i++)
 				{
 				struct Global *test_g = (*GLOBALS->contexts)[i];
 
 				vp = (void **)(((char *)test_g) + (long)data);
-				wcmp = (GtkWidget *)(*vp);
+				wcmp = (GtkWindow *)(*vp);
 
 				if(wcmp != NULL)
 					{

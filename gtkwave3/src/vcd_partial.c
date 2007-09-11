@@ -2355,18 +2355,21 @@ if(GLOBALS->partial_vcd)
 	
 	        signalarea_configure_event(GLOBALS->signalarea, NULL);
 	        wavearea_configure_event(GLOBALS->wavearea, NULL);
-		while (gtk_events_pending()) gtk_main_iteration();
+		gtkwave_gtk_main_iteration();
 		}
 	}
 
 #endif
 
-while (gtk_events_pending()) gtk_main_iteration();
+gtkwave_gtk_main_iteration();
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

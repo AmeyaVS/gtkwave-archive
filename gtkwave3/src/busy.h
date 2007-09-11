@@ -25,11 +25,16 @@ void set_window_busy(GtkWidget *w);
 void set_window_idle(GtkWidget *w);
 void busy_window_refresh(void);
 
+void gtkwave_gtk_main_iteration(void);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

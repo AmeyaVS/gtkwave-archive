@@ -266,7 +266,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 		if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))		
 			{
 			gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-			while (gtk_events_pending()) gtk_main_iteration();
+			gtkwave_gtk_main_iteration();
 			}
 		GLOBALS->pdata->oldvalue = i;
 
@@ -407,7 +407,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))
                         {
                         gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-                        while (gtk_events_pending()) gtk_main_iteration();
+                        gtkwave_gtk_main_iteration();
                         }
                 GLOBALS->pdata->oldvalue = i;
 
@@ -552,7 +552,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))
                         {
                         gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-                        while (gtk_events_pending()) gtk_main_iteration();
+                        gtkwave_gtk_main_iteration();
                         }
                 GLOBALS->pdata->oldvalue = i;
 
@@ -679,7 +679,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))		
 		{
 		gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-		while (gtk_events_pending()) gtk_main_iteration();
+		gtkwave_gtk_main_iteration();
 		}
 	GLOBALS->pdata->oldvalue = i;
 
@@ -1026,6 +1026,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
