@@ -1971,9 +1971,28 @@ switch(type)
 						{
 						if(i!=GLOBALS->this_context_page)
 							{
+							struct Global *g_old = GLOBALS;
+
 							/* printf("Switching to: %d %08x\n", i, GTK_WINDOW(wcmp)); */
-		
+
 							GLOBALS = (*GLOBALS->contexts)[i];
+
+							GLOBALS->lxt_clock_compress_to_z = g_old->lxt_clock_compress_to_z;
+							GLOBALS->autoname_bundles = g_old->autoname_bundles;
+							GLOBALS->autocoalesce_reversal = g_old->autocoalesce_reversal;
+							GLOBALS->autocoalesce = g_old->autocoalesce; 
+							GLOBALS->hier_grouping = g_old->hier_grouping;
+							GLOBALS->wave_scrolling = g_old->wave_scrolling;
+							GLOBALS->constant_marker_update = g_old->constant_marker_update;
+							GLOBALS->do_zoom_center = g_old->do_zoom_center;
+							GLOBALS->use_roundcaps = g_old->use_roundcaps;
+							GLOBALS->do_resize_signals = g_old->do_resize_signals;
+							GLOBALS->use_full_precision = g_old->use_full_precision;
+							GLOBALS->show_base = g_old->show_base;
+							GLOBALS->display_grid = g_old->display_grid;
+							GLOBALS->disable_mouseover = g_old->disable_mouseover;
+							GLOBALS->zoom_pow10_snap = g_old->zoom_pow10_snap;
+
 							gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
 							}
 
