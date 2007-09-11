@@ -1829,14 +1829,42 @@ if(GLOBALS->filesel_ok)
 	argv[0] = "gtkwave";
 	argv[1] = *GLOBALS->fileselbox_text;
 
+	GLOBALS->vcd_jmp_buf = calloc(1, sizeof(jmp_buf));
+
 	set_window_busy(NULL);
 	gtkwave_gtk_main_iteration();
-	main(2, argv);
 
-	g_now = GLOBALS;
-	GLOBALS = g_old;
-	set_window_idle(NULL);
-	GLOBALS = g_now;
+	if(!setjmp(*(GLOBALS->vcd_jmp_buf)))
+		{
+		main(2, argv);
+
+		g_now = GLOBALS;
+		GLOBALS = g_old;
+
+		free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
+		set_window_idle(NULL);
+		GLOBALS = g_now;
+		g_now->vcd_jmp_buf = NULL;
+		}
+                else
+                {
+                if(GLOBALS->vcd_handle_vcd_c_1) { fclose(GLOBALS->vcd_handle_vcd_c_1); GLOBALS->vcd_handle_vcd_c_1 = NULL; }
+                if(GLOBALS->vcd_handle_vcd_recoder_c_2) { fclose(GLOBALS->vcd_handle_vcd_recoder_c_2); GLOBALS->vcd_handle_vcd_recoder_c_2 =NULL; }
+                if(GLOBALS->mm_lxt_mmap_addr)
+                	{
+                        munmap(GLOBALS->mm_lxt_mmap_addr, GLOBALS->mm_lxt_mmap_len);
+                        GLOBALS->mm_lxt_mmap_addr = NULL;
+                        }
+                free_outstanding(); /* free anything allocated in loader ctx */
+		free(GLOBALS);
+	
+		GLOBALS = g_old;
+                free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
+		set_window_idle(NULL);
+
+		/* load failed */
+		printf("GTKWAVE | File load failure, new tab not created.\n");
+                }
 
 	return;
 	}
@@ -1855,7 +1883,10 @@ if(GLOBALS->helpbox_is_active)
 	return;
 	}
 
-fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_SIGNAL_FUNC(menu_new_viewer_tab_cleanup), GTK_SIGNAL_FUNC(NULL), NULL, 0);
+if(!GLOBALS->socket_xid)
+	{
+	fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_SIGNAL_FUNC(menu_new_viewer_tab_cleanup), GTK_SIGNAL_FUNC(NULL), NULL, 0);
+	}
 }
 
 /**/ 
@@ -4459,6 +4490,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2007/09/11 02:12:50  gtkwave
+ * context locking in busy spinloops (gtk_main_iteration() calls)
+ *
  * Revision 1.8  2007/09/10 19:46:36  gtkwave
  * datatype warning fix
  *

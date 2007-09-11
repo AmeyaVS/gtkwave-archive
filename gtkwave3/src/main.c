@@ -305,6 +305,7 @@ if(!GLOBALS)
 
 	/* menu.c */
 	GLOBALS->item_factory_menu_c_1 = old_g->item_factory_menu_c_1;
+	GLOBALS->vcd_jmp_buf = old_g->vcd_jmp_buf;
 
 	/* currenttime.c */
 	GLOBALS->max_or_marker_label_currenttime_c_1 = old_g->max_or_marker_label_currenttime_c_1;
@@ -1781,6 +1782,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/09/11 02:20:21  gtkwave
+ * migrate busy cursor to new tabbed context
+ *
  * Revision 1.4  2007/09/09 20:10:30  gtkwave
  * preliminary support for tabbed viewing of multiple waveforms
  *
