@@ -300,6 +300,9 @@ if(!GLOBALS)
 	GLOBALS->mainwindow = old_g->mainwindow;
 	splash_disable_rc_override = 1;
 
+	/* busy.c */
+	GLOBALS->busycursor_busy_c_1 = old_g->busycursor_busy_c_1;
+
 	/* menu.c */
 	GLOBALS->item_factory_menu_c_1 = old_g->item_factory_menu_c_1;
 
@@ -1778,6 +1781,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/09 20:10:30  gtkwave
+ * preliminary support for tabbed viewing of multiple waveforms
+ *
  * Revision 1.3  2007/08/29 23:38:47  gtkwave
  * 3.1.0 RC2 minor compatibility/bugfixes
  *
