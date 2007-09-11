@@ -1311,7 +1311,7 @@ if(!GLOBALS->notebook)
 	(*GLOBALS->contexts)[0] = GLOBALS;
 
 	GLOBALS->notebook = gtk_notebook_new();
-	gtk_notebook_set_tab_pos(GLOBALS->notebook, GLOBALS->context_tabposition ? GTK_POS_LEFT : GTK_POS_TOP);
+	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->context_tabposition ? GTK_POS_LEFT : GTK_POS_TOP);
 
 	gtk_widget_show(GLOBALS->notebook);
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), 0); /* hide for first time until next tabs */
@@ -1800,6 +1800,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2007/09/11 17:17:32  gtkwave
+ * allow tab movement with context_tabposition rc variable
+ *
  * Revision 1.7  2007/09/11 04:27:44  gtkwave
  * duplicate disable_mouseover copy on ctx switch
  *
