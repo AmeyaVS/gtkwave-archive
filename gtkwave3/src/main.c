@@ -90,7 +90,6 @@ GLOBALS->show_base = g_old->show_base;
 GLOBALS->display_grid = g_old->display_grid;
 GLOBALS->disable_mouseover = g_old->disable_mouseover;
 GLOBALS->zoom_pow10_snap = g_old->zoom_pow10_snap;
-GLOBALS->disable_mouseover = g_old->disable_mouseover;
 
 reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
@@ -1782,6 +1781,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/09/11 04:13:25  gtkwave
+ * loader hardening for tabbed loads
+ *
  * Revision 1.5  2007/09/11 02:20:21  gtkwave
  * migrate busy cursor to new tabbed context
  *
