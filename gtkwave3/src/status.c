@@ -147,7 +147,7 @@ gtk_table_attach (GTK_TABLE (table), GLOBALS->vscrollbar_status_c_2, 15, 16, 0, 
 gtk_widget_show (GLOBALS->vscrollbar_status_c_2);
    
 /* Add a handler to put a message in the text widget when it is realized */
-gtkwave_signal_connect (GTK_OBJECT (GLOBALS->text_status_c_2), "realize", GTK_SIGNAL_FUNC (realize_text), NULL);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->text_status_c_2), "realize", GTK_SIGNAL_FUNC (realize_text), NULL);
    
 gtk_tooltips_set_tip_2(tooltips, GLOBALS->text_status_c_2, "Status Window", NULL);
 return(table);
@@ -156,6 +156,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

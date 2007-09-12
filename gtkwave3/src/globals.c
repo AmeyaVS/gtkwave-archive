@@ -1544,9 +1544,6 @@ void reload_into_new_context(void)
  /* let any destructors finalize on GLOBALS dereferences... */
  gtkwave_gtk_main_iteration();
 
- /* swap over bridge pointer to point to new context */
- *(new_globals->gtk_context_bridge_ptr) = new_globals;
-
  /* Free the old context */
  free_outstanding();
 
@@ -1556,6 +1553,8 @@ void reload_into_new_context(void)
 
  /* Set the GLOBALS pointer to the newly allocated struct. */
  GLOBALS = new_globals;
+ *(GLOBALS->gtk_context_bridge_ptr) = GLOBALS;
+
 
  /* Initialize new variables */
  GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
@@ -2047,11 +2046,13 @@ gtk_signal_connect (GTK_OBJECT(w), "focus_in_event", GTK_SIGNAL_FUNC(context_swa
  */
 static gint ctx_swap_watchdog(GtkWidget *w)
 {
-struct Globals *watch = *((struct Global **)w);
+struct Global *watch = *((struct Global **)w);
 
-if(GLOBALS != watch)
+if(GLOBALS->gtk_context_bridge_ptr != w)
 	{
-	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p\n", watch, GLOBALS);
+	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p\n", GLOBALS->gtk_context_bridge_ptr,w);
+	printf("GTKWAVE | session %d vs %d\n", (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
+
 	GLOBALS = watch;
 	}
 
