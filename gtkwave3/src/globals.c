@@ -236,6 +236,10 @@ NULL, /* asbuf */
 0, /* last_fac_ghw_c_1 107 */
 0, /* warned_ghw_c_1 108 */
 
+/*
+ * globals.c
+ */
+NULL, /* gtk_context_bridge_ptr */
 
 /*
  * help.c
@@ -1041,6 +1045,9 @@ struct Global *g = calloc(1,sizeof(struct Global));	/* allocate viewer context *
 
 memcpy(g, &globals_base_values, sizeof(struct Global));	/* fill in the blanks */
 
+g->gtk_context_bridge_ptr = calloc(1, sizeof(struct Global *));
+*(g->gtk_context_bridge_ptr) = g;
+
 g->buf_menu_c_1 = calloc_2_into_context(g, 1, 65537);	/* do remaining mallocs into new ctx */
 g->regexp_string_menu_c_1 = calloc_2_into_context(g, 1, 129);
 g->regex_ok_regex_c_1 = calloc_2_into_context(g, WAVE_REGEX_TOTAL, sizeof(int));
@@ -1158,6 +1165,8 @@ void reload_into_new_context(void)
 
  /* Instantiate new global status */
  new_globals = initialize_globals();
+ free(new_globals->gtk_context_bridge_ptr); /* don't need this one as we're copying over the old one... */
+ new_globals->gtk_context_bridge_ptr = GLOBALS->gtk_context_bridge_ptr;
  
  /* Marker positions */
  memcpy(new_globals->named_markers, GLOBALS->named_markers, sizeof(GLOBALS->named_markers));
@@ -1532,8 +1541,13 @@ void reload_into_new_context(void)
 		}
         }
         
+ /* let any destructors finalize on GLOBALS dereferences... */
+ gtkwave_gtk_main_iteration();
 
- /* Free the context */
+ /* swap over bridge pointer to point to new context */
+ *(new_globals->gtk_context_bridge_ptr) = new_globals;
+
+ /* Free the old context */
  free_outstanding();
 
  /* Free the old globals struct, memsetting it to zero in the hope of forcing crashes. */
@@ -1933,6 +1947,12 @@ void free_and_destroy_page_context(void)
  widget_only_destroy(&GLOBALS->window_renderopt_c_6);
  widget_only_destroy(&GLOBALS->window_search_c_7);
 
+ /* let any destructors finalize on GLOBALS dereferences... */
+ gtkwave_gtk_main_iteration();
+
+ /* remove the bridge pointer */
+ if(GLOBALS->gtk_context_bridge_ptr) { free(GLOBALS->gtk_context_bridge_ptr); GLOBALS->gtk_context_bridge_ptr = NULL; }
+
  /* Free the context */
  free_outstanding();
 
@@ -2019,4 +2039,44 @@ void install_focus_cb(GtkWidget *w, unsigned long ptr_offset)
 {
 gtk_signal_connect (GTK_OBJECT(w), "enter_notify_event", GTK_SIGNAL_FUNC(context_swapper), (void *)ptr_offset);
 gtk_signal_connect (GTK_OBJECT(w), "focus_in_event", GTK_SIGNAL_FUNC(context_swapper), (void *)ptr_offset);
+}
+
+
+/*
+ * wrapped gtk_signal_connect/gtk_signal_connect_object functions for context watchdog monitoring...
+ */
+static gint ctx_swap_watchdog(GtkWidget *w)
+{
+struct Globals *watch = *((struct Global **)w);
+
+if(GLOBALS != watch)
+	{
+	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p\n", watch, GLOBALS);
+	GLOBALS = watch;
+	}
+
+return(0);
+}
+
+
+gulong gtkwave_signal_connect(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data)
+{
+gulong rc;
+
+gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_swap_watchdog, (GtkObject *)GLOBALS->gtk_context_bridge_ptr);
+rc = gtk_signal_connect(object, name, func, data);
+
+return(rc);
+}
+
+
+gulong gtkwave_signal_connect_object(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data)
+{
+gulong rc;
+
+gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_swap_watchdog, (GtkObject *)GLOBALS->gtk_context_bridge_ptr);
+rc = gtk_signal_connect_object(object, name, func, data);
+
+return(rc);
+
 }

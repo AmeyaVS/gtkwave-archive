@@ -87,8 +87,7 @@ gtk_table_attach (GTK_TABLE (table), GLOBALS->vscrollbar_help_c_1, 15, 16, 0, 1,
 gtk_widget_show (GLOBALS->vscrollbar_help_c_1);
    
 /* Add a handler to put a message in the text widget when it is realized */
-gtk_signal_connect (GTK_OBJECT (GLOBALS->text_help_c_1), "realize",
-			GTK_SIGNAL_FUNC (help_realize_text), NULL);
+gtkwave_signal_connect (GTK_OBJECT (GLOBALS->text_help_c_1), "realize", GTK_SIGNAL_FUNC (help_realize_text), NULL);
 
    
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
@@ -126,7 +125,7 @@ void helpbox(char *title, int width, char *default_text)
 
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_help_c_2), width, 400);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_help_c_2), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_help_c_2), "delete_event",(GtkSignalFunc) ok_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_help_c_2), "delete_event",(GtkSignalFunc) ok_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (GLOBALS->window_help_c_2), vbox);
@@ -154,16 +153,11 @@ void helpbox(char *title, int width, char *default_text)
 
     button1 = gtk_button_new_with_label ("Close Help");
     gtk_widget_set_usize(button1, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(ok_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(ok_callback), NULL);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
     gtk_widget_show(GLOBALS->window_help_c_2);
 }
@@ -171,6 +165,9 @@ void helpbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:41  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

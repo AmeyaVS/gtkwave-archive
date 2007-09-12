@@ -759,8 +759,8 @@ if(!GLOBALS->splash_disable)
 
         gtk_widget_show(splash_table);
         gtk_container_add(GTK_CONTAINER(GLOBALS->splash_splash_c_1), splash_table);
-	gtk_signal_connect(GTK_OBJECT(GLOBALS->darea_splash_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
-	gtk_signal_connect(GTK_OBJECT(GLOBALS->darea_splash_c_1), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->darea_splash_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->darea_splash_c_1), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
                  
         while (gtk_events_pending()) gtk_main_iteration();
                          
@@ -811,6 +811,9 @@ void splash_sync(off_t current, off_t total)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.9  2007/08/22 22:09:35  gtkwave
  * removed double const in a pixmap def
  *

@@ -122,7 +122,7 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 
   gtk_grab_add(GLOBALS->window_showchange_c_8);  
 
-  gtk_signal_connect (GTK_OBJECT (GLOBALS->window_showchange_c_8), "delete_event",GTK_SIGNAL_FUNC(destroy_callback),NULL);
+  gtkwave_signal_connect (GTK_OBJECT (GLOBALS->window_showchange_c_8), "delete_event",GTK_SIGNAL_FUNC(destroy_callback),NULL);
 
   gtk_window_set_title (GTK_WINDOW (GLOBALS->window_showchange_c_8), title);
   gtk_container_border_width (GTK_CONTAINER (GLOBALS->window_showchange_c_8), 0);
@@ -208,25 +208,25 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   gtk_box_pack_start (GTK_BOX (box1), GLOBALS->toggle1_showchange_c_1, TRUE, TRUE, 0);
   if(GLOBALS->flags_showchange_c_1&TR_RJUSTIFY)gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(GLOBALS->toggle1_showchange_c_1), TRUE);
   gtk_widget_show (GLOBALS->toggle1_showchange_c_1);
-  gtk_signal_connect (GTK_OBJECT (GLOBALS->toggle1_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle1_callback), NULL);
+  gtkwave_signal_connect (GTK_OBJECT (GLOBALS->toggle1_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle1_callback), NULL);
 
   GLOBALS->toggle2_showchange_c_1=gtk_check_button_new_with_label("Invert");
   gtk_box_pack_start (GTK_BOX (box1), GLOBALS->toggle2_showchange_c_1, TRUE, TRUE, 0);
   if(GLOBALS->flags_showchange_c_1&TR_INVERT)gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(GLOBALS->toggle2_showchange_c_1), TRUE);
   gtk_widget_show (GLOBALS->toggle2_showchange_c_1);
-  gtk_signal_connect (GTK_OBJECT (GLOBALS->toggle2_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle2_callback), NULL);
+  gtkwave_signal_connect (GTK_OBJECT (GLOBALS->toggle2_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle2_callback), NULL);
 
   GLOBALS->toggle3_showchange_c_1=gtk_check_button_new_with_label("Reverse");
   gtk_box_pack_start (GTK_BOX (box1), GLOBALS->toggle3_showchange_c_1, TRUE, TRUE, 0);
   if(GLOBALS->flags_showchange_c_1&TR_REVERSE)gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(GLOBALS->toggle3_showchange_c_1), TRUE);
   gtk_widget_show (GLOBALS->toggle3_showchange_c_1);
-  gtk_signal_connect (GTK_OBJECT (GLOBALS->toggle3_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle3_callback), NULL);
+  gtkwave_signal_connect (GTK_OBJECT (GLOBALS->toggle3_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle3_callback), NULL);
 
   GLOBALS->toggle4_showchange_c_1=gtk_check_button_new_with_label("Exclude");
   gtk_box_pack_start (GTK_BOX (box1), GLOBALS->toggle4_showchange_c_1, TRUE, TRUE, 0);
   if(GLOBALS->flags_showchange_c_1&TR_EXCLUDE)gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(GLOBALS->toggle4_showchange_c_1), TRUE);
   gtk_widget_show (GLOBALS->toggle4_showchange_c_1);
-  gtk_signal_connect (GTK_OBJECT (GLOBALS->toggle4_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle4_callback), NULL);
+  gtkwave_signal_connect (GTK_OBJECT (GLOBALS->toggle4_showchange_c_1), "toggled", GTK_SIGNAL_FUNC(toggle4_callback), NULL);
 
   gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
 
@@ -241,7 +241,7 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   gtk_widget_show (ok_hbox);
 
   button = gtk_button_new_with_label ("Cancel");
-  gtk_signal_connect_object (GTK_OBJECT (button), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_showchange_c_8));
+  gtkwave_signal_connect_object (GTK_OBJECT (button), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_showchange_c_8));
   gtk_box_pack_end (GTK_BOX (ok_hbox), button, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
   gtk_widget_show (button);
@@ -249,12 +249,9 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   gtk_container_add (GTK_CONTAINER (main_vbox), ok_hbox);
 
   button = gtk_button_new_with_label ("  OK  ");
-  gtk_signal_connect_object (GTK_OBJECT (button), "clicked",GTK_SIGNAL_FUNC(enter_callback),GTK_OBJECT (GLOBALS->window_showchange_c_8));
+  gtkwave_signal_connect_object (GTK_OBJECT (button), "clicked",GTK_SIGNAL_FUNC(enter_callback),GTK_OBJECT (GLOBALS->window_showchange_c_8));
 
-  gtk_signal_connect_object (GTK_OBJECT (button), 
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button));
+  gtkwave_signal_connect_object (GTK_OBJECT (button), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button));
 
   gtk_box_pack_end (GTK_BOX (ok_hbox), button, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
@@ -269,6 +266,9 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

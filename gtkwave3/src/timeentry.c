@@ -133,7 +133,7 @@ GLOBALS->from_entry=gtk_entry_new_with_max_length(40);
 reformat_time(fromstr, GLOBALS->min_time, GLOBALS->time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),fromstr);
-gtk_signal_connect (GTK_OBJECT (GLOBALS->from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS->from_entry);
+gtkwave_signal_connect (GTK_OBJECT (GLOBALS->from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS->from_entry);
 box=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0); 
 gtk_widget_show(label);
@@ -149,7 +149,7 @@ GLOBALS->to_entry=gtk_entry_new_with_max_length(40);
 reformat_time(tostr, GLOBALS->max_time, GLOBALS->time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),tostr);
-gtk_signal_connect (GTK_OBJECT (GLOBALS->to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS->to_entry);
+gtkwave_signal_connect (GTK_OBJECT (GLOBALS->to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS->to_entry);
 box2=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box2), label2, TRUE, TRUE, 0); 
 gtk_widget_show(label2);
@@ -170,6 +170,9 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:45  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

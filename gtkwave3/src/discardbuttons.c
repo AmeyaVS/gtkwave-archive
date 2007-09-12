@@ -55,8 +55,7 @@ gtk_container_add(GTK_CONTAINER(b1), pixmapwid1);
 gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
 			GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b1), "clicked",
-              		GTK_SIGNAL_FUNC(discard_left), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b1), "clicked", GTK_SIGNAL_FUNC(discard_left), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b1, "Increase 'From' Time", NULL);
 gtk_widget_show(b1);
 
@@ -65,8 +64,7 @@ gtk_container_add(GTK_CONTAINER(b2), pixmapwid2);
 gtk_table_attach (GTK_TABLE (table2), b2, 0, 1, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b2), "clicked",
-               		GTK_SIGNAL_FUNC(discard_right), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b2), "clicked", GTK_SIGNAL_FUNC(discard_right), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b2, "Decrease 'To' Time", NULL);
 gtk_widget_show(b2);
 
@@ -78,6 +76,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

@@ -170,7 +170,7 @@ gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_black_mouseover
 		1,1, 
 		GLOBALS->mo_width_mouseover_c_1-2, GLOBALS->mo_height_mouseover_c_1-2);
 
-gtk_signal_connect(GTK_OBJECT(GLOBALS->mo_area_mouseover_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mo_area_mouseover_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
 }
 
 #define MOUSEOVER_BREAKSIZE (32)
@@ -322,6 +322,9 @@ if(alternate_name) { free_2(alternate_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:43  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

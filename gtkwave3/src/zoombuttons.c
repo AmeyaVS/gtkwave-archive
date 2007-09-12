@@ -413,8 +413,7 @@ gtk_container_add(GTK_CONTAINER(b1), pixmapzin);
 gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b1), "clicked",
-			GTK_SIGNAL_FUNC(service_zoom_out), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b1), "clicked", GTK_SIGNAL_FUNC(service_zoom_out), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b1, "Zoom Out", NULL);
 gtk_widget_show(b1);
 
@@ -423,8 +422,7 @@ gtk_container_add(GTK_CONTAINER(b2), pixmapzout);
 gtk_table_attach (GTK_TABLE (table2), b2, 0, 1, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b2), "clicked",
-			GTK_SIGNAL_FUNC(service_zoom_in), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b2), "clicked", GTK_SIGNAL_FUNC(service_zoom_in), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b2, "Zoom In", NULL);
 gtk_widget_show(b2);
 
@@ -433,8 +431,7 @@ gtk_container_add(GTK_CONTAINER(b3), pixmapzfit);
 gtk_table_attach (GTK_TABLE (table2), b3, 1, 2, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b3), "clicked",
-			GTK_SIGNAL_FUNC(service_zoom_fit), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b3), "clicked", GTK_SIGNAL_FUNC(service_zoom_fit), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b3, "Zoom Best Fit", NULL);
 gtk_widget_show(b3);
 
@@ -443,8 +440,7 @@ gtk_container_add(GTK_CONTAINER(b4), pixmapzundo);
 gtk_table_attach (GTK_TABLE (table2), b4, 1, 2, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b4), "clicked",
-			GTK_SIGNAL_FUNC(service_zoom_undo), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b4), "clicked", GTK_SIGNAL_FUNC(service_zoom_undo), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b4, "Undo Last Zoom", NULL);
 gtk_widget_show(b4);
 
@@ -453,8 +449,7 @@ gtk_container_add(GTK_CONTAINER(b5), pixmapzleft);
 gtk_table_attach (GTK_TABLE (table2), b5, 2, 3, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b5), "clicked",
-			GTK_SIGNAL_FUNC(service_zoom_left), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b5), "clicked", GTK_SIGNAL_FUNC(service_zoom_left), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b5, "Zoom To Start", NULL);
 gtk_widget_show(b5);
 
@@ -463,8 +458,7 @@ gtk_container_add(GTK_CONTAINER(b6), pixmapzright);
 gtk_table_attach (GTK_TABLE (table2), b6, 2, 3, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-gtk_signal_connect_object (GTK_OBJECT (b6), "clicked",
-			GTK_SIGNAL_FUNC(service_zoom_right), GTK_OBJECT (table2));
+gtkwave_signal_connect_object (GTK_OBJECT (b6), "clicked", GTK_SIGNAL_FUNC(service_zoom_right), GTK_OBJECT (table2));
 gtk_tooltips_set_tip_2(tooltips, b6, "Zoom To End", NULL);
 gtk_widget_show(b6);
 
@@ -479,6 +473,9 @@ return table;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:50  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.4  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

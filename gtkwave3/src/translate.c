@@ -376,7 +376,7 @@ void trans_searchbox(char *title)
     install_focus_cb(GLOBALS->window_translate_c_11, ((char *)&GLOBALS->window_translate_c_11) - ((char *)GLOBALS));
 
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_translate_c_11), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_translate_c_11), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_translate_c_11), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
 
@@ -400,8 +400,8 @@ void trans_searchbox(char *title)
     gtk_clist_column_titles_passive(GTK_CLIST(GLOBALS->clist_translate_c_4)); 
 
     gtk_clist_set_selection_mode(GTK_CLIST(GLOBALS->clist_translate_c_4), GTK_SELECTION_EXTENDED);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_translate_c_4), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_translate_c_4), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
+    gtkwave_signal_connect_object (GTK_OBJECT (GLOBALS->clist_translate_c_4), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
+    gtkwave_signal_connect_object (GTK_OBJECT (GLOBALS->clist_translate_c_4), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
 
     for(i=0;i<GLOBALS->num_file_filters;i++)
 	{
@@ -437,7 +437,7 @@ void trans_searchbox(char *title)
 
     button6 = gtk_button_new_with_label (" Add Filter to List ");
     gtk_container_border_width (GTK_CONTAINER (button6), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(add_filter_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
+    gtkwave_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(add_filter_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
     gtk_widget_show (button6);
     gtk_tooltips_set_tip_2(tooltips, button6, 
 		"Bring up a file requester to add a filter to the filter select window.",NULL);
@@ -458,7 +458,7 @@ void trans_searchbox(char *title)
 
     button1 = gtk_button_new_with_label (" OK ");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signals to end of the display on the main window.",NULL);
@@ -467,7 +467,7 @@ void trans_searchbox(char *title)
 
     button5 = gtk_button_new_with_label (" Cancel ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
+    gtkwave_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_translate_c_11));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
@@ -515,6 +515,9 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

@@ -59,7 +59,7 @@ void simplereqbox(char *title, int width, char *default_text,
     gtk_grab_add(GLOBALS->window_simplereq_c_9);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_simplereq_c_9), width, 55 + 52);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_simplereq_c_9), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_simplereq_c_9), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_simplereq_c_9), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
     gtk_window_set_policy(GTK_WINDOW(GLOBALS->window_simplereq_c_9), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 0);
@@ -91,24 +91,17 @@ void simplereqbox(char *title, int width, char *default_text,
 
     button1 = gtk_button_new_with_label (oktext);
     gtk_widget_set_usize(button1, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(ok_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(ok_callback), NULL);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
     if(canceltext)
 	{
     	button2 = gtk_button_new_with_label (canceltext);
     	gtk_widget_set_usize(button2, 100, -1);
-    	gtk_signal_connect(GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback),
-			       NULL);
+    	gtkwave_signal_connect(GTK_OBJECT (button2), "clicked", GTK_SIGNAL_FUNC(destroy_callback), NULL);
     	GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
     	gtk_widget_show (button2);
     	gtk_container_add (GTK_CONTAINER (hbox), button2);
@@ -120,6 +113,9 @@ void simplereqbox(char *title, int width, char *default_text,
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

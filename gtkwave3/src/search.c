@@ -72,14 +72,14 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_grab_add(GLOBALS->window1_search_c_2);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_search_c_2), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_search_c_2), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window1_search_c_2), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window1_search_c_2), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (GLOBALS->window1_search_c_2), vbox);
     gtk_widget_show (vbox);
 
     GLOBALS->entry_a_search_c_1 = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_a_search_c_1), "activate",GTK_SIGNAL_FUNC(enter_callback_e),GLOBALS->entry_a_search_c_1);
+    gtkwave_signal_connect(GTK_OBJECT(GLOBALS->entry_a_search_c_1), "activate",GTK_SIGNAL_FUNC(enter_callback_e),GLOBALS->entry_a_search_c_1);
     gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_a_search_c_1), default_text);
     gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_a_search_c_1),0, GTK_ENTRY(GLOBALS->entry_a_search_c_1)->text_length);
     gtk_box_pack_start (GTK_BOX (vbox), GLOBALS->entry_a_search_c_1, TRUE, TRUE, 0);
@@ -91,22 +91,15 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 
     button1 = gtk_button_new_with_label ("OK");
     gtk_widget_set_usize(button1, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(enter_callback_e),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(enter_callback_e), NULL);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
     button2 = gtk_button_new_with_label ("Cancel");
     gtk_widget_set_usize(button2, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback_e),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button2), "clicked", GTK_SIGNAL_FUNC(destroy_callback_e), NULL);
     GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
@@ -796,7 +789,7 @@ void searchbox(char *title, GtkSignalFunc func)
     install_focus_cb(GLOBALS->window_search_c_7, ((char *)&GLOBALS->window_search_c_7) - ((char *)GLOBALS));
 
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_search_c_7), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_search_c_7), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_search_c_7), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     tooltips=gtk_tooltips_new_2();
 
@@ -819,7 +812,7 @@ void searchbox(char *title, GtkSignalFunc func)
     gtk_box_pack_start (GTK_BOX (vbox1), label, TRUE, TRUE, 0);
 
     GLOBALS->entry_search_c_3 = gtk_entry_new_with_max_length (256);
-    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_search_c_3), "activate", GTK_SIGNAL_FUNC(search_enter_callback),GLOBALS->entry_search_c_3);
+    gtkwave_signal_connect(GTK_OBJECT(GLOBALS->entry_search_c_3), "activate", GTK_SIGNAL_FUNC(search_enter_callback),GLOBALS->entry_search_c_3);
     gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_search_c_3), GLOBALS->searchbox_text_search_c_1);
     gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_search_c_3),0, GTK_ENTRY(GLOBALS->entry_search_c_3)->text_length);
     gtk_widget_show (GLOBALS->entry_search_c_3);
@@ -865,8 +858,8 @@ void searchbox(char *title, GtkSignalFunc func)
     gtk_clist_column_titles_passive(GTK_CLIST(GLOBALS->clist_search_c_3)); 
 
     gtk_clist_set_selection_mode(GTK_CLIST(GLOBALS->clist_search_c_3), GTK_SELECTION_EXTENDED);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_search_c_3), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
-    gtk_signal_connect_object (GTK_OBJECT (GLOBALS->clist_search_c_3), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
+    gtkwave_signal_connect_object (GTK_OBJECT (GLOBALS->clist_search_c_3), "select_row",GTK_SIGNAL_FUNC(select_row_callback),NULL);
+    gtkwave_signal_connect_object (GTK_OBJECT (GLOBALS->clist_search_c_3), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
     gtk_widget_show (GLOBALS->clist_search_c_3);
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
@@ -895,7 +888,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button6 = gtk_button_new_with_label (" Select All ");
     gtk_container_border_width (GTK_CONTAINER (button6), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(select_all_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
+    gtkwave_signal_connect_object (GTK_OBJECT (button6), "clicked",GTK_SIGNAL_FUNC(select_all_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
     gtk_widget_show (button6);
     gtk_tooltips_set_tip_2(tooltips, button6, 
 		"Highlight all signals listed in the match window.",NULL);
@@ -916,9 +909,7 @@ void searchbox(char *title, GtkSignalFunc func)
         group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (GLOBALS->menuitem_search[i]));
         gtk_menu_append (GTK_MENU (menu), GLOBALS->menuitem_search[i]);
         gtk_widget_show (GLOBALS->menuitem_search[i]);
-        gtk_signal_connect(GTK_OBJECT (GLOBALS->menuitem_search[i]), "activate",
-                                 GTK_SIGNAL_FUNC(regex_clicked),
-                                 (void *)((long)i));
+        gtkwave_signal_connect(GTK_OBJECT (GLOBALS->menuitem_search[i]), "activate", GTK_SIGNAL_FUNC(regex_clicked), (void *)((long)i));
         GLOBALS->regex_mutex_search_c_1[i]=0;
         }
     
@@ -943,7 +934,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button7 = gtk_button_new_with_label (" Unselect All ");
     gtk_container_border_width (GTK_CONTAINER (button7), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button7), "clicked",GTK_SIGNAL_FUNC(unselect_all_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
+    gtkwave_signal_connect_object (GTK_OBJECT (button7), "clicked",GTK_SIGNAL_FUNC(unselect_all_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
     gtk_widget_show (button7);
     gtk_tooltips_set_tip_2(tooltips, button7, 
 		"Unhighlight all signals listed in the match window.",NULL);
@@ -965,7 +956,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button1 = gtk_button_new_with_label ("Append");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "clicked",GTK_SIGNAL_FUNC(ok_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signals to end of the display on the main window.",NULL);
@@ -974,7 +965,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button2 = gtk_button_new_with_label (" Insert ");
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
+    gtkwave_signal_connect_object (GTK_OBJECT (button2), "clicked",GTK_SIGNAL_FUNC(insert_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add selected signals after last highlighted signal on the main window.",NULL);
@@ -984,7 +975,7 @@ void searchbox(char *title, GtkSignalFunc func)
 	{
 	button3 = gtk_button_new_with_label (" Bundle Up ");
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (GLOBALS->window_search_c_7));
+    	gtkwave_signal_connect_object (GTK_OBJECT (button3), "clicked",GTK_SIGNAL_FUNC(bundle_callback_up),GTK_OBJECT (GLOBALS->window_search_c_7));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle selected signals into a single bit vector with the topmost selected signal as the LSB and the lowest as the MSB.",NULL);
@@ -992,7 +983,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     	button3a = gtk_button_new_with_label (" Bundle Down ");
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (GLOBALS->window_search_c_7));
+    	gtkwave_signal_connect_object (GTK_OBJECT (button3a), "clicked",GTK_SIGNAL_FUNC(bundle_callback_down),GTK_OBJECT (GLOBALS->window_search_c_7));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle selected signals into a single bit vector with the topmost selected signal as the MSB and the lowest as the LSB.",NULL);
@@ -1001,7 +992,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button4 = gtk_button_new_with_label (" Replace ");
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
+    gtkwave_signal_connect_object (GTK_OBJECT (button4), "clicked",GTK_SIGNAL_FUNC(replace_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with signals selected above.",NULL);
@@ -1009,7 +1000,7 @@ void searchbox(char *title, GtkSignalFunc func)
 
     button5 = gtk_button_new_with_label (" Exit ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
+    gtkwave_signal_connect_object (GTK_OBJECT (button5), "clicked",GTK_SIGNAL_FUNC(destroy_callback),GTK_OBJECT (GLOBALS->window_search_c_7));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
@@ -1026,6 +1017,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/11 02:12:50  gtkwave
+ * context locking in busy spinloops (gtk_main_iteration() calls)
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

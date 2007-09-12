@@ -243,6 +243,12 @@ int warned_ghw_c_1; /* from ghw.c 112 */
 
 
 /*
+ * globals.c
+ */
+struct Global **gtk_context_bridge_ptr; /* from globals.c, migrates to reloaded contexts to link buttons to ctx */
+
+
+/*
  * help.c
  */
 int helpbox_is_active; /* from help.c 114 */
@@ -1037,6 +1043,10 @@ void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrr
 void free_and_destroy_page_context(void);
 
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset);
+
+gulong gtkwave_signal_connect(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data);
+gulong gtkwave_signal_connect_object(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data);
+
 
 extern struct Global *GLOBALS;
 #endif

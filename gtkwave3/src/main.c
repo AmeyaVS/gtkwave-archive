@@ -1074,7 +1074,7 @@ if(!GLOBALS->socket_xid)
 		gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mainwindow), GLOBALS->initial_window_width, GLOBALS->initial_window_height);
 		}
 
-	gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "delete_event", 	/* formerly was "destroy" */GTK_SIGNAL_FUNC(file_quit_cmd_callback), "WM destroy");
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "delete_event", 	/* formerly was "destroy" */GTK_SIGNAL_FUNC(file_quit_cmd_callback), "WM destroy");
 
 	gtk_widget_show(GLOBALS->mainwindow);
 	}
@@ -1084,7 +1084,7 @@ if(!GLOBALS->socket_xid)
         GLOBALS->mainwindow = gtk_plug_new(GLOBALS->socket_xid);
         gtk_widget_show(GLOBALS->mainwindow);
                                 
-        gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "destroy",   /* formerly was "destroy" */GTK_SIGNAL_FUNC(plug_destroy),"Plug destroy");
+        gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "destroy",   /* formerly was "destroy" */GTK_SIGNAL_FUNC(plug_destroy),"Plug destroy");
 	}
 #endif
 }
@@ -1223,8 +1223,7 @@ if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
 	gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
 	                        GTK_FILL | GTK_EXPAND,
 	                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-	gtk_signal_connect_object (GTK_OBJECT (b1), "clicked",
-	                        GTK_SIGNAL_FUNC(menu_reload_waveform), GTK_OBJECT (table2));
+	gtkwave_signal_connect_object (GTK_OBJECT (b1), "clicked", GTK_SIGNAL_FUNC(menu_reload_waveform), GTK_OBJECT (table2));
 	gtk_tooltips_set_tip_2(tooltips, b1, "Reload waveform", NULL);
 	gtk_widget_show(b1);
 	gtk_container_add (GTK_CONTAINER (frame), table2);
@@ -1316,8 +1315,7 @@ if(!GLOBALS->notebook)
 	gtk_widget_show(GLOBALS->notebook);
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), 0); /* hide for first time until next tabs */
 	gtk_notebook_set_show_border(GTK_NOTEBOOK(GLOBALS->notebook), 0); /* hide for first time until next tabs */
-	gtk_signal_connect(GTK_OBJECT(GLOBALS->notebook), "switch-page", 	
-		GTK_SIGNAL_FUNC(switch_page), NULL);
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->notebook), "switch-page", GTK_SIGNAL_FUNC(switch_page), NULL);
 	}
 	else
 	{
@@ -1800,6 +1798,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2007/09/11 19:56:39  gtkwave
+ * missing dynamic cast added
+ *
  * Revision 1.8  2007/09/11 17:17:32  gtkwave
  * allow tab movement with context_tabposition rc variable
  *

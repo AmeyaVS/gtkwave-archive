@@ -1102,14 +1102,14 @@ gtk_widget_set_events(GLOBALS->wavearea,
                 GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
                 );
 
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "configure_event",GTK_SIGNAL_FUNC(wavearea_configure_event), NULL);
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "button_release_event",GTK_SIGNAL_FUNC(button_release_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "configure_event",GTK_SIGNAL_FUNC(wavearea_configure_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "button_release_event",GTK_SIGNAL_FUNC(button_release_event), NULL);
 
 #ifdef WAVE_USE_GTK2
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "scroll_event",GTK_SIGNAL_FUNC(scroll_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "scroll_event",GTK_SIGNAL_FUNC(scroll_event), NULL);
 GTK_WIDGET_SET_FLAGS( GLOBALS->wavearea, GTK_CAN_FOCUS );
 #endif
 
@@ -1117,7 +1117,7 @@ gtk_table_attach (GTK_TABLE (table), GLOBALS->wavearea, 0, 9, 0, 9,GTK_FILL | GT
 
 GLOBALS->wave_vslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 vadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wave_vslider), "value_changed",GTK_SIGNAL_FUNC(service_vslider), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wave_vslider), "value_changed",GTK_SIGNAL_FUNC(service_vslider), NULL);
 GLOBALS->vscroll_wavewindow_c_1=gtk_vscrollbar_new(vadj);
 /* GTK_WIDGET_SET_FLAGS(vscroll, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->vscroll_wavewindow_c_1);
@@ -1127,7 +1127,7 @@ gtk_table_attach (GTK_TABLE (table), GLOBALS->vscroll_wavewindow_c_1, 9, 10, 0, 
 
 GLOBALS->wave_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wave_hslider), "value_changed",GTK_SIGNAL_FUNC(service_hslider), NULL);
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wave_hslider), "value_changed",GTK_SIGNAL_FUNC(service_hslider), NULL);
 GLOBALS->hscroll_wavewindow_c_2=gtk_hscrollbar_new(hadj);
 /* GTK_WIDGET_SET_FLAGS(hscroll, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->hscroll_wavewindow_c_2);
@@ -3106,6 +3106,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/09/10 19:43:20  gtkwave
+ * gtk1.2 compile fixes
+ *
  * Revision 1.4  2007/08/26 21:35:50  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

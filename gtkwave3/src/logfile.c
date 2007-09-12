@@ -218,11 +218,9 @@ gtk_table_attach (GTK_TABLE (table), vscrollbar, 15, 16, 0, 1,
 gtk_widget_show (vscrollbar);
 
 /* Add a handler to put a message in the text widget when it is realized */
-gtk_signal_connect (GTK_OBJECT (text), "realize",
-                        GTK_SIGNAL_FUNC (log_realize_text), NULL);
+gtkwave_signal_connect (GTK_OBJECT (text), "realize", GTK_SIGNAL_FUNC (log_realize_text), NULL);
 
-gtk_signal_connect(GTK_OBJECT(text), "button_release_event",
-                       GTK_SIGNAL_FUNC(button_release_event), NULL);
+gtkwave_signal_connect(GTK_OBJECT(text), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_CHAR);
@@ -307,8 +305,7 @@ void logbox(char *title, int width, char *default_text)
 	}
     gtk_window_set_title(GTK_WINDOW (window), title);
 
-    gtk_signal_connect(GTK_OBJECT (window), "delete_event",
-                       (GtkSignalFunc) destroy_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (window), "delete_event", (GtkSignalFunc) destroy_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (window), vbox);
@@ -336,16 +333,11 @@ void logbox(char *title, int width, char *default_text)
 
     button1 = gtk_button_new_with_label ("Close Logfile");
     gtk_widget_set_usize(button1, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-                               GTK_SIGNAL_FUNC(ok_callback),
-                               window);
+    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(ok_callback), window);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);  
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
     gtk_widget_show(window);
 
@@ -398,6 +390,9 @@ void logbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:41  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

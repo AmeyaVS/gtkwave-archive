@@ -92,9 +92,7 @@ gtk_window_set_title(GTK_WINDOW(mainwindow), "TwinWave Initializing");
 gtk_widget_set_usize(GTK_WIDGET(mainwindow), 820, 800);
 gtk_widget_show(mainwindow);
 
-gtk_signal_connect(GTK_OBJECT(mainwindow), "destroy",
-	GTK_SIGNAL_FUNC(quit_callback),
-        "WM destroy");
+gtk_signal_connect(GTK_OBJECT(mainwindow), "destroy", GTK_SIGNAL_FUNC(quit_callback), "WM destroy");
 
 
 xsocket[0] = gtk_socket_new ();
@@ -102,9 +100,7 @@ xsocket[1] = gtk_socket_new ();
 gtk_widget_show (xsocket[0]);
 gtk_widget_show (xsocket[1]);
 
-gtk_signal_connect(GTK_OBJECT(xsocket[0]), "plug-removed",
-	GTK_SIGNAL_FUNC(plug_removed),
-        NULL);
+gtk_signal_connect(GTK_OBJECT(xsocket[0]), "plug-removed", GTK_SIGNAL_FUNC(plug_removed), NULL);
 
 main_vbox = gtk_vbox_new(FALSE, 5);
 gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
@@ -117,9 +113,7 @@ gtk_box_pack_start (GTK_BOX (main_vbox), vpan, TRUE, TRUE, 1);
 
 gtk_paned_pack1 (GTK_PANED (vpan), xsocket[0], TRUE, FALSE);
 
-gtk_signal_connect(GTK_OBJECT(xsocket[1]), "plug-removed",
-	GTK_SIGNAL_FUNC(plug_removed),
-        NULL);
+gtk_signal_connect(GTK_OBJECT(xsocket[1]), "plug-removed", GTK_SIGNAL_FUNC(plug_removed), NULL);
 
 gtk_paned_pack2 (GTK_PANED (vpan), xsocket[1], TRUE, FALSE);
 
@@ -262,6 +256,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.1  2007/08/26 19:05:35  gtkwave
  * usize update to handle SST in GTK >= 2.4 in dual mode
  *

@@ -328,7 +328,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_strace_c_10), title);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_strace_c_10), 420, -1); 
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_strace_c_10), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_strace_c_10), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (GLOBALS->window_strace_c_10), vbox);
@@ -358,9 +358,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
-        gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
-                                 GTK_SIGNAL_FUNC(logical_clicked),
-                                 &GLOBALS->logical_mutex[i]);
+        gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(logical_clicked), &GLOBALS->logical_mutex[i]);
 	GLOBALS->logical_mutex[i]=0;
 	}
 
@@ -429,9 +427,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
-        gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
-                                 GTK_SIGNAL_FUNC(stype_clicked),
-                                 b);
+        gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(stype_clicked), b);
 	}
 
 	optionmenu = gtk_option_menu_new ();
@@ -440,9 +436,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	gtk_widget_show (optionmenu);
 
     entry = gtk_entry_new_with_max_length (257); /* %+256ch */
-    gtk_signal_connect(GTK_OBJECT(entry), "activate",
-		       GTK_SIGNAL_FUNC(enter_callback),
-		       s);
+    gtkwave_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(enter_callback), s);
 
     gtk_box_pack_start (GTK_BOX (small_hbox), entry, TRUE, FALSE, 0);
     gtk_widget_show (entry);
@@ -490,9 +484,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     		group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     		gtk_menu_append (GTK_MENU (ptr_mark_count_start), menuitem);
     		gtk_widget_show (menuitem);
-        	gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
-                                 GTK_SIGNAL_FUNC(start_clicked),
-                                 &item_mark_start_strings[idx]);
+        	gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(start_clicked), &item_mark_start_strings[idx]);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_start);
@@ -516,9 +508,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     		group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     		gtk_menu_append (GTK_MENU (ptr_mark_count_end), menuitem);
     		gtk_widget_show (menuitem);
-        	gtk_signal_connect(GTK_OBJECT (menuitem), "activate",
-                                 GTK_SIGNAL_FUNC(end_clicked),
-                                 &item_mark_end_strings[idx]);
+        	gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(end_clicked), &item_mark_end_strings[idx]);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_end);
@@ -539,50 +529,37 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 
     button1 = gtk_button_new_with_label ("Fwd");
     gtk_widget_set_usize(button1, 75, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(forwards_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(forwards_callback), NULL);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
 
     button1a = gtk_button_new_with_label ("Bkwd");
     gtk_widget_set_usize(button1a, 75, -1);
-    gtk_signal_connect(GTK_OBJECT (button1a), "clicked",
-			       GTK_SIGNAL_FUNC(backwards_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1a), "clicked", GTK_SIGNAL_FUNC(backwards_callback), NULL);
     gtk_widget_show (button1a);
     gtk_container_add (GTK_CONTAINER (hbox), button1a);
     GTK_WIDGET_SET_FLAGS (button1a, GTK_CAN_DEFAULT);
 
     button1b = gtk_button_new_with_label ("Mark");
     gtk_widget_set_usize(button1b, 75, -1);
-    gtk_signal_connect(GTK_OBJECT (button1b), "clicked",
-			       GTK_SIGNAL_FUNC(mark_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1b), "clicked", GTK_SIGNAL_FUNC(mark_callback), NULL);
     gtk_widget_show (button1b);
     gtk_container_add (GTK_CONTAINER (hbox), button1b);
     GTK_WIDGET_SET_FLAGS (button1b, GTK_CAN_DEFAULT);
 
     button1c = gtk_button_new_with_label ("Clear");
     gtk_widget_set_usize(button1c, 75, -1);
-    gtk_signal_connect(GTK_OBJECT (button1c), "clicked",
-			       GTK_SIGNAL_FUNC(clear_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1c), "clicked", GTK_SIGNAL_FUNC(clear_callback), NULL);
     gtk_widget_show (button1c);
     gtk_container_add (GTK_CONTAINER (hbox), button1c);
     GTK_WIDGET_SET_FLAGS (button1c, GTK_CAN_DEFAULT);
 
     button2 = gtk_button_new_with_label ("Exit");
     gtk_widget_set_usize(button2, 75, -1);
-    gtk_signal_connect(GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button2), "clicked", GTK_SIGNAL_FUNC(destroy_callback), NULL);
     GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
@@ -1663,6 +1640,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:45  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

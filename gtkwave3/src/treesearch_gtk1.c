@@ -88,17 +88,14 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_grab_add(GLOBALS->window1_treesearch_gtk1_c);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_treesearch_gtk1_c), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_treesearch_gtk1_c), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window1_treesearch_gtk1_c), "delete_event",
-                       (GtkSignalFunc) destroy_callback_e, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window1_treesearch_gtk1_c), "delete_event", (GtkSignalFunc) destroy_callback_e, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (GLOBALS->window1_treesearch_gtk1_c), vbox);
     gtk_widget_show (vbox);
 
     GLOBALS->entry_a_treesearch_gtk1_c = gtk_entry_new_with_max_length (maxch);
-    gtk_signal_connect(GTK_OBJECT(GLOBALS->entry_a_treesearch_gtk1_c), "activate",
-		       GTK_SIGNAL_FUNC(enter_callback_e),
-		       GLOBALS->entry_a_treesearch_gtk1_c);
+    gtkwave_signal_connect(GTK_OBJECT(GLOBALS->entry_a_treesearch_gtk1_c), "activate", GTK_SIGNAL_FUNC(enter_callback_e), GLOBALS->entry_a_treesearch_gtk1_c);
     gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_a_treesearch_gtk1_c), default_text);
     gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_a_treesearch_gtk1_c),
 			     0, GTK_ENTRY(GLOBALS->entry_a_treesearch_gtk1_c)->text_length);
@@ -111,22 +108,15 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 
     button1 = gtk_button_new_with_label ("OK");
     gtk_widget_set_usize(button1, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(enter_callback_e),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(enter_callback_e), NULL);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
     button2 = gtk_button_new_with_label ("Cancel");
     gtk_widget_set_usize(button2, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback_e),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button2), "clicked", GTK_SIGNAL_FUNC(destroy_callback_e), NULL);
     GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
@@ -634,8 +624,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     install_focus_cb(GLOBALS->window_treesearch_gtk1_c, ((char *)&GLOBALS->window_treesearch_gtk1_c) - ((char *)GLOBALS));
 
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_treesearch_gtk1_c), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c), "delete_event",
-                       (GtkSignalFunc) destroy_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c), "delete_event", (GtkSignalFunc) destroy_callback, NULL); 
 
     tooltips=gtk_tooltips_new_2();
 
@@ -657,12 +646,8 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     gtk_widget_show(GLOBALS->tree_treesearch_gtk1_c);
 
     clist=GTK_CLIST(GLOBALS->tree_treesearch_gtk1_c);
-    gtk_signal_connect_object (GTK_OBJECT (clist), "select_row",
-                               GTK_SIGNAL_FUNC(select_row_callback),
-                               NULL);
-    gtk_signal_connect_object (GTK_OBJECT (clist), "unselect_row",
-                               GTK_SIGNAL_FUNC(unselect_row_callback),
-                               NULL);
+    gtkwave_signal_connect_object (GTK_OBJECT (clist), "select_row", GTK_SIGNAL_FUNC(select_row_callback), NULL);
+    gtkwave_signal_connect_object (GTK_OBJECT (clist), "unselect_row", GTK_SIGNAL_FUNC(unselect_row_callback), NULL);
 
     gtk_clist_freeze(clist);
     gtk_clist_clear(clist);
@@ -694,9 +679,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 
     button1 = gtk_button_new_with_label ("Append");
     gtk_container_border_width (GTK_CONTAINER (button1), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(ok_callback),
-			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "clicked",  GTK_SIGNAL_FUNC(ok_callback), GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_widget_show (button1);
     gtk_tooltips_set_tip_2(tooltips, button1, 
 		"Add selected signal hierarchy to end of the display on the main window.",NULL);
@@ -705,9 +688,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 
     button2 = gtk_button_new_with_label (" Insert ");
     gtk_container_border_width (GTK_CONTAINER (button2), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(insert_callback),
-			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
+    gtkwave_signal_connect_object (GTK_OBJECT (button2), "clicked", GTK_SIGNAL_FUNC(insert_callback), GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_widget_show (button2);
     gtk_tooltips_set_tip_2(tooltips, button2, 
 		"Add selected signal hierarchy after last highlighted signal on the main window.",NULL);
@@ -717,9 +698,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 	{
     	button3 = gtk_button_new_with_label (" Bundle Up ");
     	gtk_container_border_width (GTK_CONTAINER (button3), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3), "clicked",
-			       GTK_SIGNAL_FUNC(bundle_callback_up),
-			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
+    	gtkwave_signal_connect_object (GTK_OBJECT (button3), "clicked", GTK_SIGNAL_FUNC(bundle_callback_up), GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     	gtk_widget_show (button3);
     	gtk_tooltips_set_tip_2(tooltips, button3, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -733,9 +712,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 
     	button3a = gtk_button_new_with_label (" Bundle Down ");
     	gtk_container_border_width (GTK_CONTAINER (button3a), 3);
-    	gtk_signal_connect_object (GTK_OBJECT (button3a), "clicked",
-			       GTK_SIGNAL_FUNC(bundle_callback_down),
-			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
+    	gtkwave_signal_connect_object (GTK_OBJECT (button3a), "clicked", GTK_SIGNAL_FUNC(bundle_callback_down), GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     	gtk_widget_show (button3a);
     	gtk_tooltips_set_tip_2(tooltips, button3a, 
 		"Bundle selected signal hierarchy into a single bit "
@@ -750,9 +727,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 
     button4 = gtk_button_new_with_label (" Replace ");
     gtk_container_border_width (GTK_CONTAINER (button4), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button4), "clicked",
-			       GTK_SIGNAL_FUNC(replace_callback),
-			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
+    gtkwave_signal_connect_object (GTK_OBJECT (button4), "clicked", GTK_SIGNAL_FUNC(replace_callback), GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_widget_show (button4);
     gtk_tooltips_set_tip_2(tooltips, button4, 
 		"Replace highlighted signals on the main window with signals selected above.",NULL);
@@ -760,9 +735,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 
     button5 = gtk_button_new_with_label (" Exit ");
     gtk_container_border_width (GTK_CONTAINER (button5), 3);
-    gtk_signal_connect_object (GTK_OBJECT (button5), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback),
-			       GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
+    gtkwave_signal_connect_object (GTK_OBJECT (button5), "clicked", GTK_SIGNAL_FUNC(destroy_callback), GTK_OBJECT (GLOBALS->window_treesearch_gtk1_c));
     gtk_tooltips_set_tip_2(tooltips, button5, 
 		"Do nothing and return to the main window.",NULL);
     gtk_widget_show (button5);
@@ -777,6 +750,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

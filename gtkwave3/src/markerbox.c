@@ -110,7 +110,7 @@ void markerbox(char *title, GtkSignalFunc func)
 
     gtk_grab_add(GLOBALS->window_markerbox_c_4);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_markerbox_c_4), title);
-    gtk_signal_connect(GTK_OBJECT (GLOBALS->window_markerbox_c_4), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_markerbox_c_4), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
@@ -155,9 +155,7 @@ void markerbox(char *title, GtkSignalFunc func)
     gtk_box_pack_start (GTK_BOX (vbox_g), label, TRUE, TRUE, 0);
 
     GLOBALS->entries_markerbox_c_1[i]=entry = gtk_entry_new_with_max_length (48);
-    gtk_signal_connect(GTK_OBJECT(entry), "activate",
-		       GTK_SIGNAL_FUNC(enter_callback),
-		       (void *)((long) i));
+    gtkwave_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(enter_callback), (void *)((long) i));
     if(GLOBALS->shadow_markers_markerbox_c_1[i]==-1)
 	{
 	sprintf(buf,"<None>");
@@ -183,23 +181,16 @@ void markerbox(char *title, GtkSignalFunc func)
 
     button1 = gtk_button_new_with_label ("OK");
     gtk_widget_set_usize(button1, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button1), "clicked",
-			       GTK_SIGNAL_FUNC(ok_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(ok_callback), NULL);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtk_signal_connect_object (GTK_OBJECT (button1),
-                                "realize",
-                             (GtkSignalFunc) gtk_widget_grab_default,
-                             GTK_OBJECT (button1));
+    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
 
     button2 = gtk_button_new_with_label ("Cancel");
     gtk_widget_set_usize(button2, 100, -1);
-    gtk_signal_connect(GTK_OBJECT (button2), "clicked",
-			       GTK_SIGNAL_FUNC(destroy_callback),
-			       NULL);
+    gtkwave_signal_connect(GTK_OBJECT (button2), "clicked", GTK_SIGNAL_FUNC(destroy_callback), NULL);
     GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
@@ -211,6 +202,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/10 18:08:49  gtkwave
+ * tabs selection can swap dynamically based on external window focus
+ *
  * Revision 1.2  2007/08/26 21:35:42  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
