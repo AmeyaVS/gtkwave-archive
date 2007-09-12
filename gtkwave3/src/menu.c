@@ -1039,10 +1039,10 @@ gtk_notebook_remove_page(GTK_NOTEBOOK(n), this_page);
 gtk_notebook_set_current_page(GTK_NOTEBOOK(n), new_page);
 
 GLOBALS = (*GLOBALS->contexts)[new_page];
+saved_g = GLOBALS;
 
 gtkwave_gtk_main_iteration();
 
-saved_g = GLOBALS;
 GLOBALS = old_g;
 free_and_destroy_page_context();
 GLOBALS = saved_g;
@@ -4490,6 +4490,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2007/09/11 11:43:01  gtkwave
+ * freeze-out tabs on partial vcd due to context swapping conflicts
+ *
  * Revision 1.10  2007/09/11 04:13:25  gtkwave
  * loader hardening for tabbed loads
  *
