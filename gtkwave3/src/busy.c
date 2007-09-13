@@ -77,11 +77,15 @@ gdk_event_handler_set((GdkEventFunc)GuiDoEvent, 0, 0);
 
 void set_window_busy(GtkWidget *w)
 {
-if(w) gdk_window_set_cursor (w->window, GLOBALS->busycursor_busy_c_1);
-else
-if(GLOBALS->mainwindow) gdk_window_set_cursor (GLOBALS->mainwindow->window, GLOBALS->busycursor_busy_c_1);
+if(!GLOBALS->busy_busy_c_1)
+	{
+	if(w) gdk_window_set_cursor (w->window, GLOBALS->busycursor_busy_c_1);
+	else
+	if(GLOBALS->mainwindow) gdk_window_set_cursor (GLOBALS->mainwindow->window, GLOBALS->busycursor_busy_c_1);
+	}
 
 GLOBALS->busy_busy_c_1++;
+
 busy_window_refresh();
 }
 
@@ -90,9 +94,12 @@ void set_window_idle(GtkWidget *w)
 {
 if(GLOBALS->busy_busy_c_1)
 	{
-	if(w) gdk_window_set_cursor (w->window, NULL);
-	else
-	if(GLOBALS->mainwindow) gdk_window_set_cursor (GLOBALS->mainwindow->window, NULL);
+	if(GLOBALS->busy_busy_c_1 == 1)
+		{
+		if(w) gdk_window_set_cursor (w->window, NULL);
+		else
+		if(GLOBALS->mainwindow) gdk_window_set_cursor (GLOBALS->mainwindow->window, NULL);
+		}
 
 	GLOBALS->busy_busy_c_1--;
 	}
@@ -110,6 +117,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/11 11:43:01  gtkwave
+ * freeze-out tabs on partial vcd due to context swapping conflicts
+ *
  * Revision 1.3  2007/09/11 02:12:47  gtkwave
  * context locking in busy spinloops (gtk_main_iteration() calls)
  *

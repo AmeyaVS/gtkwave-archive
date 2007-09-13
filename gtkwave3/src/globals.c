@@ -2043,6 +2043,8 @@ gtk_signal_connect (GTK_OBJECT(w), "focus_in_event", GTK_SIGNAL_FUNC(context_swa
 
 /*
  * wrapped gtk_signal_connect/gtk_signal_connect_object functions for context watchdog monitoring...
+ * note that this false triggers on configure_event as gtk sends events to multiple tabs and not
+ * just the visible one!
  */
 static gint ctx_swap_watchdog(GtkWidget *w)
 {
@@ -2050,8 +2052,8 @@ struct Global *watch = *((struct Global **)w);
 
 if(GLOBALS->gtk_context_bridge_ptr != w)
 	{
-	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p\n", GLOBALS->gtk_context_bridge_ptr,w);
-	printf("GTKWAVE | session %d vs %d\n", (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
+	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p, session %d vs %d\n", 
+		GLOBALS->gtk_context_bridge_ptr,w, (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
 
 	GLOBALS = watch;
 	}
@@ -2079,5 +2081,4 @@ gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_swap_watchdog, (GtkOb
 rc = gtk_signal_connect_object(object, name, func, data);
 
 return(rc);
-
 }
