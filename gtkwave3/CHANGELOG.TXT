@@ -308,4 +308,6 @@
 		select focus switching between tabs (e.g., on 
 		search windows).  Added locking in main iteration
 		loop to detect unexpected context switches and
-		report them (wrong operation if it occurs).
+		report them (wrong operation if it occurs), however
+		this doesn't work with configure_events due to how
+		one is sent out per-tab with GTK.

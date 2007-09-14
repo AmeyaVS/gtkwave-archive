@@ -70,6 +70,7 @@ static void switch_page(GtkNotebook     *notebook,
 			guint            page_num,
 			gpointer         user_data) 
 {
+int i;
 char timestr[32];
 struct Global *g_old = GLOBALS;
 
@@ -1798,6 +1799,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2007/09/12 19:24:45  gtkwave
+ * more ctx_swap_watchdog updates
+ *
  * Revision 1.10  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
