@@ -1044,8 +1044,21 @@ void free_and_destroy_page_context(void);
 
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset);
 
-gulong gtkwave_signal_connect(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data);
-gulong gtkwave_signal_connect_object(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data);
+
+gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line);
+gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line);
+
+#ifdef GTKWAVE_SIGNAL_CONNECT_DEBUG
+
+#define gtkwave_signal_connect(a,b,c,d) gtkwave_signal_connect_x(a,b,c,d,__FILE__,__LINE__)
+#define gtkwave_signal_connect_object(a,b,c,d) gtkwave_signal_connect_object_x(a,b,c,d,__FILE__,__LINE__)
+
+#else
+
+#define gtkwave_signal_connect(a,b,c,d) gtkwave_signal_connect_x(a,b,c,d,NULL,0)
+#define gtkwave_signal_connect_object(a,b,c,d) gtkwave_signal_connect_object_x(a,b,c,d,NULL,0)
+
+#endif
 
 
 extern struct Global *GLOBALS;

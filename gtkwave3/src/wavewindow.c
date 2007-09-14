@@ -1103,8 +1103,8 @@ gtk_widget_set_events(GLOBALS->wavearea,
                 );
 
 gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "configure_event",GTK_SIGNAL_FUNC(wavearea_configure_event), NULL);
+gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
 
-gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "button_release_event",GTK_SIGNAL_FUNC(button_release_event), NULL);
@@ -3107,6 +3107,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/09/13 21:24:45  gtkwave
+ * configure_events must be beyond watchdog monitoring due to how gtk generates one per tab
+ *
  * Revision 1.6  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

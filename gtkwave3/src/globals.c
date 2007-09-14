@@ -2046,9 +2046,9 @@ gtk_signal_connect (GTK_OBJECT(w), "focus_in_event", GTK_SIGNAL_FUNC(context_swa
  * note that this false triggers on configure_event as gtk sends events to multiple tabs and not
  * just the visible one!
  */
-static gint ctx_swap_watchdog(GtkWidget *w)
+static gint ctx_swap_watchdog(struct Global **w)
 {
-struct Global *watch = *((struct Global **)w);
+struct Global *watch = *w;
 
 if(GLOBALS->gtk_context_bridge_ptr != w)
 	{
@@ -2061,10 +2061,26 @@ if(GLOBALS->gtk_context_bridge_ptr != w)
 return(0);
 }
 
+static gint ctx_prints(char *s)
+{
+printf(">>> %s\n", s);
+return(0);
+}
+static gint ctx_printd(int d)
+{
+printf(">>>\t%d\n", d);
+return(0);
+}
 
-gulong gtkwave_signal_connect(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data)
+gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line)
 {
 gulong rc;
+
+if(f)
+	{
+	gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_prints, (GtkObject *)f);
+	gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_printd, (GtkObject *)line);
+	}
 
 gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_swap_watchdog, (GtkObject *)GLOBALS->gtk_context_bridge_ptr);
 rc = gtk_signal_connect(object, name, func, data);
@@ -2073,9 +2089,15 @@ return(rc);
 }
 
 
-gulong gtkwave_signal_connect_object(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data)
+gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line)
 {
 gulong rc;
+
+if(f)
+	{
+	gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_prints, (GtkObject *)f);
+	gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_printd, (GtkObject *)line);
+	}
 
 gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_swap_watchdog, (GtkObject *)GLOBALS->gtk_context_bridge_ptr);
 rc = gtk_signal_connect_object(object, name, func, data);
