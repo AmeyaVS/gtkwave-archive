@@ -239,6 +239,7 @@ NULL, /* asbuf */
 /*
  * globals.c
  */
+NULL, /* dead_context */
 NULL, /* gtk_context_bridge_ptr */
 
 /*
@@ -1179,6 +1180,7 @@ void reload_into_new_context(void)
  new_globals->notebook = GLOBALS->notebook;
  new_globals->second_page_created = GLOBALS->second_page_created;
  (*new_globals->contexts)[new_globals->this_context_page] = new_globals;
+ new_globals->dead_context = GLOBALS->dead_context; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
 
  /* Default colors, X contexts, pixmaps, drawables, etc from signalwindow.c and wavewindow.c */
  new_globals->signalarea = GLOBALS->signalarea;
@@ -1541,6 +1543,10 @@ void reload_into_new_context(void)
 		}
         }
         
+
+ /* erase any old tabbed contexts if they exist... */
+ dead_context_sweep();
+
  /* let any destructors finalize on GLOBALS dereferences... */
  gtkwave_gtk_main_iteration();
 
@@ -1893,8 +1899,6 @@ void reload_into_new_context(void)
  */
 void free_and_destroy_page_context(void)
 {
- struct Global *g_copy, *g_current;
-
  /* deallocate any loader-related stuff */
  switch(GLOBALS->loaded_file_type) {
    case LXT_FILE:
@@ -1948,26 +1952,45 @@ void free_and_destroy_page_context(void)
  widget_only_destroy(&GLOBALS->window_renderopt_c_6);
  widget_only_destroy(&GLOBALS->window_search_c_7);
 
- g_copy = GLOBALS;
+ (*GLOBALS->dead_context)[0] = GLOBALS;
 
  /* let any destructors finalize on GLOBALS dereferences... */
  gtkwave_gtk_main_iteration();
-
- g_current = GLOBALS;
- GLOBALS = g_copy;
-
- /* remove the bridge pointer */
- if(GLOBALS->gtk_context_bridge_ptr) { free(GLOBALS->gtk_context_bridge_ptr); GLOBALS->gtk_context_bridge_ptr = NULL; }
-
- /* Free the context */
- free_outstanding();
-
- /* Free the old globals struct, memsetting it to zero in the hope of forcing crashes. */
- memset(GLOBALS, 0, sizeof(struct Global));
- free(GLOBALS);
-
- GLOBALS = g_current;
 }
+
+
+/*
+ * part 2 of free_and_destroy_page_context() as some context data seems to be used later by
+ * gtk (i.e., the destroys might be deferred slightly causing corruption)
+ */
+void dead_context_sweep(void)
+{
+struct Global *gp = (*GLOBALS->dead_context)[0];
+struct Global *g_curr;
+
+if(gp)
+	{
+	g_curr = GLOBALS;
+
+	GLOBALS = gp;
+	(*GLOBALS->dead_context)[0] = NULL;
+
+	fprintf(stderr, "CTX: %08x\n", GLOBALS);
+
+	/* remove the bridge pointer */
+	if(GLOBALS->gtk_context_bridge_ptr) { free(GLOBALS->gtk_context_bridge_ptr); GLOBALS->gtk_context_bridge_ptr = NULL; }
+
+	/* Free the context */
+	free_outstanding();
+
+	/* Free the old globals struct, memsetting it to zero in the hope of forcing crashes. */
+	memset(GLOBALS, 0, sizeof(struct Global));
+	free(GLOBALS);
+
+	GLOBALS = g_curr;
+	}
+}
+
 
 
 /* 
@@ -2113,3 +2136,5 @@ rc = gtk_signal_connect_object(object, name, func, data);
 
 return(rc);
 }
+
+

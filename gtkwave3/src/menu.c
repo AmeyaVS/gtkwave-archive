@@ -1015,6 +1015,8 @@ unsigned int new_page = (this_page != np-1) ? this_page : (this_page-1);
 GtkWidget *n = GLOBALS->notebook;
 struct Global *old_g, *saved_g;
 
+dead_context_sweep();
+
 for(i=0;i<np;i++)
 	{
 	if(i!=this_page)
@@ -4490,6 +4492,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2007/09/12 17:32:04  gtkwave
+ * cache globals on tab destroy (moved earlier)
+ *
  * Revision 1.11  2007/09/11 11:43:01  gtkwave
  * freeze-out tabs on partial vcd due to context swapping conflicts
  *

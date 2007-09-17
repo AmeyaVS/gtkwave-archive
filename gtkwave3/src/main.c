@@ -1310,6 +1310,10 @@ if(!GLOBALS->notebook)
 	*GLOBALS->contexts = calloc(1, sizeof(struct Globals **)); /* calloc is deliberate! */
 	(*GLOBALS->contexts)[0] = GLOBALS;
 
+	GLOBALS->dead_context = calloc(1, sizeof(struct Globals ***)); /* calloc is deliberate! */
+	*GLOBALS->dead_context = calloc(1, sizeof(struct Globals **)); /* calloc is deliberate! */
+	*(GLOBALS->dead_context)[0] = NULL;
+
 	GLOBALS->notebook = gtk_notebook_new();
 	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->context_tabposition ? GTK_POS_LEFT : GTK_POS_TOP);
 
@@ -1332,6 +1336,7 @@ if(!GLOBALS->notebook)
 		{
 		(*GLOBALS->contexts)[i]->num_notebook_pages = GLOBALS->num_notebook_pages;
 		(*GLOBALS->contexts)[i]->num_notebook_pages_cumulative = GLOBALS->num_notebook_pages_cumulative;
+		(*GLOBALS->contexts)[i]->dead_context = (*GLOBALS->contexts)[0]->dead_context;	/* mirroring this is OK as page 0 always has value! */
 		}
 
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), ~0); /* then appear */
@@ -1799,6 +1804,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2007/09/14 14:08:56  gtkwave
+ * updating busy handling
+ *
  * Revision 1.11  2007/09/12 19:24:45  gtkwave
  * more ctx_swap_watchdog updates
  *

@@ -245,6 +245,7 @@ int warned_ghw_c_1; /* from ghw.c 112 */
 /*
  * globals.c
  */
+struct Global ***dead_context;		/* for deallocating tabbed contexts later (when no race conditions exist) */
 struct Global **gtk_context_bridge_ptr; /* from globals.c, migrates to reloaded contexts to link buttons to ctx */
 
 
@@ -1041,6 +1042,7 @@ struct Global *initialize_globals(void);
 void reload_into_new_context(void);
 void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrref);
 void free_and_destroy_page_context(void);
+void dead_context_sweep(void);
 
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset);
 
