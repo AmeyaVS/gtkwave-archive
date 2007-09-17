@@ -4386,6 +4386,7 @@ int execute_script(char *name)
 {
 FILE *f = fopen(name, "rb");
 int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
+int i;
 
 if(!f)
 	{
@@ -4394,12 +4395,9 @@ if(!f)
 	gtk_exit(255);
 	}
 
-GLOBALS->script_handle = f;
-
 while(!feof(f))
 	{
 	char *s = fgetmalloc_stripspaces(f);
-	int i;
 
 	if(!s) continue;
 
@@ -4409,19 +4407,28 @@ while(!feof(f))
 		if(!strcmp(s, menu_items[i].path))
 			{
 			fprintf(stderr, "GTKWAVE | Executing: '%s'\n", s);
+			free_2(s); s = NULL;
+
 			if(menu_items[i].callback)
 				{
+				GLOBALS->script_handle = f;
 				menu_items[i].callback();
 				gtkwave_gtk_main_iteration();
+				GLOBALS->script_handle = NULL;
 				}
+			break;
 			}
 		}
 
-	free_2(s);
+	if(s) free_2(s);
 	}
 
 fclose(f);
-GLOBALS->script_handle = NULL;
+
+for(i=0;i<GLOBALS->num_notebook_pages;i++)
+	{
+        (*GLOBALS->contexts)[i]->script_handle = NULL;	/* just in case there was a CTX swap */
+	}
 
 return(0);
 }
@@ -4492,6 +4499,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2007/09/17 19:26:46  gtkwave
+ * added dead context sweep code (deferred cleanup of multi-tab destroy)
+ *
  * Revision 1.12  2007/09/12 17:32:04  gtkwave
  * cache globals on tab destroy (moved earlier)
  *

@@ -1370,6 +1370,7 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->winname, &GLOBALS->winname); /* for page swapping */
 
  /* menu.c */
+ new_globals->script_handle = GLOBALS->script_handle;
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
  strcpy2_into_new_context(new_globals, &new_globals->filesel_writesave, &GLOBALS->filesel_writesave);
  new_globals->save_success_menu_c_1 = GLOBALS->save_success_menu_c_1; 
@@ -1996,7 +1997,7 @@ if(gp)
 /* 
  * focus directed context switching of GLOBALS in multiple tabs mode
  */
-static int context_swapper(GtkWindow *w, GdkEvent *event, void *data)
+static gint context_swapper(GtkWindow *w, GdkEvent *event, void *data)
 {
 GdkEventType type;
 
@@ -2136,5 +2137,3 @@ rc = gtk_signal_connect_object(object, name, func, data);
 
 return(rc);
 }
-
-
