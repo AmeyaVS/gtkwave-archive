@@ -1893,6 +1893,8 @@ void reload_into_new_context(void)
  */
 void free_and_destroy_page_context(void)
 {
+ struct Global *g_copy, *g_current;
+
  /* deallocate any loader-related stuff */
  switch(GLOBALS->loaded_file_type) {
    case LXT_FILE:
@@ -1946,8 +1948,13 @@ void free_and_destroy_page_context(void)
  widget_only_destroy(&GLOBALS->window_renderopt_c_6);
  widget_only_destroy(&GLOBALS->window_search_c_7);
 
+ g_copy = GLOBALS;
+
  /* let any destructors finalize on GLOBALS dereferences... */
  gtkwave_gtk_main_iteration();
+
+ g_current = GLOBALS;
+ GLOBALS = g_copy;
 
  /* remove the bridge pointer */
  if(GLOBALS->gtk_context_bridge_ptr) { free(GLOBALS->gtk_context_bridge_ptr); GLOBALS->gtk_context_bridge_ptr = NULL; }
@@ -1958,6 +1965,8 @@ void free_and_destroy_page_context(void)
  /* Free the old globals struct, memsetting it to zero in the hope of forcing crashes. */
  memset(GLOBALS, 0, sizeof(struct Global));
  free(GLOBALS);
+
+ GLOBALS = g_current;
 }
 
 

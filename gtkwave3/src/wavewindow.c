@@ -1074,6 +1074,22 @@ if(GLOBALS->wavewidth>1)
 return(TRUE);
 }
 
+static gint wavearea_configure_event_local(GtkWidget *widget, GdkEventConfigure *event)
+{
+gint rc;
+gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
+struct Global *g_old = GLOBALS;
+
+GLOBALS = (*GLOBALS->contexts)[page_num];
+
+rc = wavearea_configure_event(widget, event);
+
+GLOBALS = g_old;
+
+return(rc);
+}
+
+
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
 gdk_draw_pixmap(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)],GLOBALS->wavepixmap_wavewindow_c_1, event->area.x, event->area.y,event->area.x, event->area.y,event->area.width, event->area.height);
@@ -1081,6 +1097,23 @@ draw_marker();
 
 return(FALSE);
 }
+
+
+static gint expose_event_local(GtkWidget *widget, GdkEventExpose *event)
+{
+gint rc;
+gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
+struct Global *g_old = GLOBALS;
+
+GLOBALS = (*GLOBALS->contexts)[page_num];
+
+rc = expose_event(widget, event);
+
+GLOBALS = g_old;
+
+return(rc);
+}
+
 
 GtkWidget *
 create_wavewindow(void)
@@ -1102,8 +1135,8 @@ gtk_widget_set_events(GLOBALS->wavearea,
                 GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
                 );
 
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "configure_event",GTK_SIGNAL_FUNC(wavearea_configure_event), NULL);
-gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
+gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "configure_event",GTK_SIGNAL_FUNC(wavearea_configure_event_local), NULL);
+gtk_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "expose_event",GTK_SIGNAL_FUNC(expose_event_local), NULL);
 
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
@@ -3107,6 +3140,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2007/09/14 16:23:17  gtkwave
+ * remove expose events from ctx management
+ *
  * Revision 1.7  2007/09/13 21:24:45  gtkwave
  * configure_events must be beyond watchdog monitoring due to how gtk generates one per tab
  *
