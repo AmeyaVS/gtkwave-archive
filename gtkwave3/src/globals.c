@@ -1976,8 +1976,6 @@ if(gp)
 	GLOBALS = gp;
 	(*GLOBALS->dead_context)[0] = NULL;
 
-	fprintf(stderr, "CTX: %08x\n", GLOBALS);
-
 	/* remove the bridge pointer */
 	if(GLOBALS->gtk_context_bridge_ptr) { free(GLOBALS->gtk_context_bridge_ptr); GLOBALS->gtk_context_bridge_ptr = NULL; }
 
@@ -2085,8 +2083,10 @@ struct Global *watch = *w;
 
 if(GLOBALS->gtk_context_bridge_ptr != w)
 	{
+#ifdef GTKWAVE_SIGNAL_CONNECT_DEBUG
 	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p, session %d vs %d\n", 
 		GLOBALS->gtk_context_bridge_ptr,w, (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
+#endif
 
 	GLOBALS = watch;
 	}

@@ -52,6 +52,7 @@ system("date");
 void *malloc_2(size_t size)
 {
 void *ret;
+
 ret=malloc(size + 2*sizeof(void *));
 if(ret)
 	{
@@ -123,6 +124,7 @@ if(ret)
 void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size)
 {
 void *ret;
+
 ret=calloc(1, (nmemb * size) + 2*sizeof(void *));
 if(ret)
 	{
@@ -336,6 +338,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/09/09 20:10:30  gtkwave
+ * preliminary support for tabbed viewing of multiple waveforms
+ *
  * Revision 1.4  2007/08/31 22:42:43  gtkwave
  * 3.1.0 RC3 updates
  *
