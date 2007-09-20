@@ -1,6 +1,6 @@
 ##########################################################################
 
-GTKWave 3.1.0 Wave Viewer is Copyright (C) 1999-2007 Tony Bybell.  
+GTKWave 3.1.1 Wave Viewer is Copyright (C) 1999-2007 Tony Bybell.  
 Portions of GTKWave are Copyright (C) 1999-2007 Udi Finkelstein. 
 Context support is Copyright (C) 2007 Kermin Elliott Fleming.
 GHW and additional GUI support is Copyright (C) 2005-2007 Tristan Gingold.
