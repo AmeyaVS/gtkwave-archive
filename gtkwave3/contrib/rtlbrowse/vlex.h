@@ -1,6 +1,8 @@
 #ifndef VLEX_DEFINES_H
 #define VLEX_DEFINES_H
 
+#include <stdlib.h>
+
 #define V_IGNORE (1)
 #define V_ID (2)
 #define V_PORT (3)
@@ -29,6 +31,9 @@ const char *is_builtin_define (register const char *str, register unsigned int l
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:38  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *

@@ -392,11 +392,9 @@ if(!wild_active)	/* short circuit wildcard evaluation with bsearch */
 		for(i=1;;i++)
 			{
 			if(str[i]==0) return(0);
-			if((str[i]==')')&&(str[i+1])) {i++; goto maketracespt2; }
+			if((str[i]==')')&&(str[i+1])) {i++; break; }
 			}
-		return(0);
 
-maketracespt2:
 		s=symfind(str+i, &rows);
 		if(s)
 			{
@@ -2160,11 +2158,9 @@ if(*w2=='+')
 		for(i=1;;i++)
 			{
 			if(suffix[i]==0) return(0);
-			if((suffix[i]==')')&&(suffix[i+1])) {i++; goto aliaspt2; }
+			if((suffix[i]==')')&&(suffix[i+1])) {i++; break; }
 			}
-		return(0);
 
-aliaspt2:
 		s=symfind(suffix+i, &rows);
 		nexp = ExtractNodeSingleBit(&s->n[rows], atoi(suffix+1));
 		if(nexp)
@@ -2501,11 +2497,9 @@ if(!wild_active)	/* short circuit wildcard evaluation with bsearch */
 		for(i=1;;i++)
 			{
 			if(str[i]==0) return(0);
-			if((str[i]==')')&&(str[i+1])) {i++; goto maketracespt2; }
+			if((str[i]==')')&&(str[i+1])) {i++; break; }
 			}
-		return(made);
 
-maketracespt2:
 		if((s=symfind(str+i, NULL)))
 			{
 			lx2_set_fac_process_mask(s->n);
@@ -2716,11 +2710,9 @@ if(*w2=='+')
 		for(i=1;;i++)
 			{
 			if(suffix[i]==0) return(0);
-			if((suffix[i]==')')&&(suffix[i+1])) {i++; goto aliaspt2; }
+			if((suffix[i]==')')&&(suffix[i+1])) {i++; break; }
 			}
-		return(0);
 
-aliaspt2:
 		s=symfind(suffix+i, NULL);
 		if(s)
 			{
@@ -2835,6 +2827,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.5  2007/08/21 22:35:38  gtkwave
  * prelim tree state merge
  *

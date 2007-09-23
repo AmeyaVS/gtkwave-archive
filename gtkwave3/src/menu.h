@@ -288,11 +288,18 @@ void menu_lxt_clk_compress(GtkWidget *widget, gpointer data);
 void menu_help(GtkWidget *widget, gpointer data);
 void menu_version(GtkWidget *widget, gpointer data);
 
+/* These should eventually have error values */
+void write_save_helper(FILE *file);
+void read_save_helper(char *wname);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/09/09 20:10:30  gtkwave
+ * preliminary support for tabbed viewing of multiple waveforms
+ *
  * Revision 1.4  2007/08/26 21:35:43  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

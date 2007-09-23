@@ -25,16 +25,16 @@
 #include "ptranslate.h"
 #include "lx2.h"
 
-#ifndef _MSC_VER
+#if !defined __MINGW32__ && !defined _MSC_VER
 #include <unistd.h>
+#include <sys/mman.h>
+#else
+#include <windows.h>
+#include <io.h>
 #endif
 
 
 static GtkItemFactoryEntry menu_items[WV_MENU_NUMITEMS];
-
-/* These should eventually have error values */
-void write_save_helper(FILE *file);
-void read_save_helper(char *wname);
 
 
 /********** procsel filter install ********/
@@ -4499,6 +4499,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2007/09/17 23:02:54  gtkwave
+ * allow scripting with tabs
+ *
  * Revision 1.13  2007/09/17 19:26:46  gtkwave
  * added dead context sweep code (deferred cleanup of multi-tab destroy)
  *

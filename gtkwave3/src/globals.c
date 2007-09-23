@@ -41,8 +41,19 @@
 #include "vzt.h"
 #include "wavealloca.h"
 
+#include "lxt2_read.h"
+#include "vzt_read.h"
+
 #ifdef __MINGW32__
 #define sleep(x) Sleep(x)
+#endif
+
+#if !defined __MINGW32__ && !defined _MSC_VER
+#include <unistd.h>
+#include <sys/mman.h>
+#else
+#include <windows.h>
+#include <io.h>
 #endif
 
 
@@ -2105,7 +2116,7 @@ printf(">>>\t%d\n", d);
 return(0);
 }
 
-gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line)
+gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line)
 {
 gulong rc;
 
@@ -2122,7 +2133,7 @@ return(rc);
 }
 
 
-gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line)
+gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line)
 {
 gulong rc;
 

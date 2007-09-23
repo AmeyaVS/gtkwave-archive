@@ -1047,8 +1047,8 @@ void dead_context_sweep(void);
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset);
 
 
-gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line);
-gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, int line);
+gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line);
+gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line);
 
 #ifdef GTKWAVE_SIGNAL_CONNECT_DEBUG
 

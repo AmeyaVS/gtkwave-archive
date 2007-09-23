@@ -67,7 +67,7 @@ if(ret)
 
 	GLOBALS->outstanding++;
 
-	return(ret + 2*sizeof(void *));
+	return((char *)ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -98,7 +98,7 @@ if(nxt)
         *(nxt+0) = prv;
         }
 
-ret=realloc(ptr - 2*sizeof(void *), size + 2*sizeof(void *));
+ret=realloc((char *)ptr - 2*sizeof(void *), size + 2*sizeof(void *));
 
 ret2 = (void **)ret;
 *(ret2+0) = NULL;
@@ -111,7 +111,7 @@ GLOBALS->alloc2_chain = ret2;
 
 if(ret)
 	{
-	return(ret + 2*sizeof(void *));
+	return((char *)ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -139,7 +139,7 @@ if(ret)
 
 	g->outstanding++;
 
-	return(ret + 2*sizeof(void *));
+	return((char *)ret + 2*sizeof(void *));
 	}
 	else
 	{
@@ -180,7 +180,7 @@ if(ptr)
 
 	GLOBALS->outstanding--;
 
-	free(ptr - 2*sizeof(void *));
+	free((char *)ptr - 2*sizeof(void *));
 	}
 	else
 	{
@@ -338,6 +338,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/09/18 16:17:06  gtkwave
+ * hiding of debug messages
+ *
  * Revision 1.5  2007/09/09 20:10:30  gtkwave
  * preliminary support for tabbed viewing of multiple waveforms
  *

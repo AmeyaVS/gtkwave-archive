@@ -116,8 +116,11 @@ static char *tokens[]={ "var", "end", "scope", "upscope",
 
 /*
  * histent structs are NEVER freed so this is OK..
+ * (we are allocating as many entries that fit in 64k minus the size of the two
+ * bookkeeping void* pointers found in the malloc_2/free_2 routines in
+ * debug.c)
  */
-#define VCD_HISTENT_GRANULARITY 100
+#define VCD_HISTENT_GRANULARITY ( ( (64*1024)-(2*sizeof(void *)) ) / sizeof(HistEnt) )
 
 struct HistEnt *histent_calloc(void)
 {
@@ -2418,6 +2421,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.8  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

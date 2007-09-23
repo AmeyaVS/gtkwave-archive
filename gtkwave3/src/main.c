@@ -1651,7 +1651,7 @@ if(GLOBALS->anno_ctx && GLOBALS->anno_ctx->browser_process)
 		}
 		else
 		{
-		shmdt(GLOBALS->anno_ctx);
+		shmdt((void *)GLOBALS->anno_ctx);
 		GLOBALS->anno_ctx = NULL;
 		}
 	}
@@ -1804,6 +1804,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2007/09/17 19:26:46  gtkwave
+ * added dead context sweep code (deferred cleanup of multi-tab destroy)
+ *
  * Revision 1.12  2007/09/14 14:08:56  gtkwave
  * updating busy handling
  *

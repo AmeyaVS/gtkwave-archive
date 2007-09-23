@@ -252,7 +252,7 @@ if(i==len)
 			}
 			else
 			{
-			shmdt(anno_ctx);
+			shmdt((void *)anno_ctx);
 			fprintf(stderr, "Not a valid shared memory ID from gtkwave, exiting.\n");
 			exit(255);
 			}
@@ -486,6 +486,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.1  2007/08/22 02:26:19  gtkwave
  * treebox fixes to match revised gtkwave headers
  *
