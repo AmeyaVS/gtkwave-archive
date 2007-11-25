@@ -88,7 +88,8 @@ int i_bogus;
 
 
 enum PrimValues { PRIM_NUMBER, PRIM_SYMBOL, PRIM_SYMBIT, PRIM_SYMRANGE,
-			PRIM_CONCAT, PRIM_FUNC, PRIM_MINTYPMAX, PRIM_EXP 
+			PRIM_CONCAT, PRIM_FUNC, PRIM_MINTYPMAX, PRIM_EXP,
+			PRIM_NAMEDPARAM 
 		};
 
 struct i_primary
@@ -141,6 +142,12 @@ union
 		struct i_explist *args;
 		} funcall;
 
+	struct					/* named parameter */
+		{
+		struct i_symbol *sym;
+		struct i_primary *exp;		
+		} named_param;
+
 	} primval;
 };
 
@@ -168,6 +175,9 @@ void print_concat(struct i_primary *c, struct i_explist *e);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:52  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *

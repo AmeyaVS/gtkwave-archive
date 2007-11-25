@@ -3,6 +3,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:47  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *
@@ -1632,7 +1635,8 @@ v_module_instantiation: v_name_of_module
 v_name_of_module: v_identifier_nodot << $$.symbol = $1.symbol; >>
 		;
 
-v_parameter_value_assignment: V_POUND V_LP v_explist V_RP
+v_parameter_value_assignment: 
+		V_POUND V_LP v_mexplist V_RP
 		| V_POUND v_number
 		|
 		;
@@ -1963,6 +1967,34 @@ v_explist:	<< struct i_explist *lroot=NULL, *lcurrent=NULL; >>
 
 v_fn_expression:
 		v_expression << $$.prim = $1.prim; >>
+		| << $$.prim = NULL; >>
+		;
+
+// these are the special versions for named parameters ... which are present in verilog 2001
+v_mexplist:	<< struct i_explist *lroot=NULL, *lcurrent=NULL; >>
+		v_mfn_expression
+			<< lroot=lcurrent=(struct i_explist *)calloc(1,sizeof(struct i_explist));
+				lcurrent->item=$1.prim; 
+			>>
+		(V_COMMA v_mfn_expression
+			<< lcurrent->next=(struct i_explist *)calloc(1,sizeof(struct i_explist));
+			lcurrent=lcurrent->next;
+			lcurrent->item=$2.prim; 
+			>>
+		)*
+		<< $$.explist=i_explist_make(lroot); >>
+		;
+
+v_mfn_expression:
+		V_DOT v_identifier_nodot V_LP v_expression V_RP 
+			<< 
+			struct i_primary *ip = i_primary_make(PRIM_NAMEDPARAM,NULL);
+			ip->primval.named_param.sym = $2.symbol;
+			ip->primval.named_param.exp = $4.prim;			
+
+			$$.prim = ip;
+			>>
+		| v_expression << $$.prim = $1.prim; >>
 		| << $$.prim = NULL; >>
 		;
 

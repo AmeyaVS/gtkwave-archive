@@ -14,7 +14,7 @@
 /*
  * then, some globally accessible defines...
  */
-#define VERNAME "Vermin: Verilog Parser v0.2.0 (w)1999-2007 BSI"
+#define VERNAME "Vermin: Verilog Parser v0.3.0 (w)1999-2007 BSI"
 
 
 /*
@@ -128,6 +128,9 @@ void parsecomment(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:51  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/21 21:23:55  gtkwave
  * updating stray string names to vermin
  *
