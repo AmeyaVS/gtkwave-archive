@@ -77,13 +77,13 @@ AC_PROG_RANLIB
 # gperf only needed if the user updates the gperf data
 # files which only developers will be doing...
 #
-# AC_PATH_PROG(GPERF, [gperf], [notfound])
-# if test "$GPERF" = "notfound" ; then
-#	AC_MSG_ERROR([Couldn't find a usable gperf program.
-# Please install gperf which is available from
-# ftp://ftp.gnu.org/pub/gnu/gperf/
-# ])
-# fi
+AC_PATH_PROG(GPERF, [gperf], [notfound])
+if test "$GPERF" = "notfound" ; then
+	AC_MSG_ERROR([Couldn't find a usable gperf program.
+Please install gperf which is available from
+ftp://ftp.gnu.org/pub/gnu/gperf/
+])
+fi
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [sqrt])
