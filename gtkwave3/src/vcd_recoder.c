@@ -2083,6 +2083,11 @@ build_slisthier();
 
 GLOBALS->time_vlist_vcd_recoder_c_1 = vlist_create(sizeof(TimeType), 0);
 
+if(GLOBALS->vlist_spill_to_disk)
+	{
+	vlist_init_spillfile();
+	}
+
 vcd_parse();
 if(GLOBALS->varsplit_vcd_recoder_c_3)
 	{
@@ -2090,7 +2095,18 @@ if(GLOBALS->varsplit_vcd_recoder_c_3)
         GLOBALS->varsplit_vcd_recoder_c_3=NULL;
         }
 
-vlist_freeze(&GLOBALS->time_vlist_vcd_recoder_c_1);
+if(GLOBALS->vlist_handle)
+	{
+	FILE *vh = GLOBALS->vlist_handle;
+	GLOBALS->vlist_handle = NULL;
+	vlist_freeze(&GLOBALS->time_vlist_vcd_recoder_c_1);
+	GLOBALS->vlist_handle = vh;	
+	}
+	else
+	{
+	vlist_freeze(&GLOBALS->time_vlist_vcd_recoder_c_1);
+	}
+
 vlist_emit_finalize();
 
 if((!GLOBALS->sorted_vcd_recoder_c_3)&&(!GLOBALS->indexed_vcd_recoder_c_3))
@@ -2509,6 +2525,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.7  2007/08/24 21:23:55  gtkwave
  * use setjump + potential backout ctx to "harden" vcd reload error recovery
  *

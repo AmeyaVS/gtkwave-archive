@@ -938,6 +938,9 @@ NULL, /* nhold_vcd_saver_c_1 582 */
 /*
  * vlist.c
  */
+0, /* vlist_spill_to_disk */
+NULL, /* vlist_handle */
+0, /* vlist_bytes_written */
 4, /* vlist_compression_depth 583 */
 
 
@@ -1352,6 +1355,7 @@ void reload_into_new_context(void)
  new_globals->vcd_preserve_glitches = GLOBALS->vcd_preserve_glitches;
  new_globals->vcd_warning_filesize = GLOBALS->vcd_warning_filesize;
  new_globals->vector_padding = GLOBALS->vector_padding;
+ new_globals->vlist_spill_to_disk = GLOBALS->vlist_spill_to_disk;
  new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
  new_globals->wave_scrolling = GLOBALS->wave_scrolling;
  new_globals->do_zoom_center = GLOBALS->do_zoom_center;
@@ -1363,13 +1367,21 @@ void reload_into_new_context(void)
  new_globals->page_divisor = GLOBALS->page_divisor;
  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
  new_globals->vector_padding = GLOBALS->vector_padding;
- new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; /* to disable splash for reload */
 
  strcpy2_into_new_context(new_globals, &new_globals->fontname_logfile, &GLOBALS->fontname_logfile);
  strcpy2_into_new_context(new_globals, &new_globals->fontname_signals, &GLOBALS->fontname_signals); 
  strcpy2_into_new_context(new_globals, &new_globals->fontname_waves, &GLOBALS->fontname_waves);
+
+ /* vlist.c */
+ if(GLOBALS->vlist_handle)
+	{
+	vlist_kill_spillfile();
+	vlist_init_spillfile();
+	new_globals->vlist_handle = GLOBALS->vlist_handle;
+	new_globals->vlist_bytes_written = GLOBALS->vlist_bytes_written;
+	}
 
  /* lxt2.c / vzt.c / ae2.c */
  strcpy2_into_new_context(new_globals, &new_globals->skip_start, &GLOBALS->skip_start);

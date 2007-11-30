@@ -1,4 +1,4 @@
-.TH "GTKWAVERC" "5" "3.1.1" "Anthony Bybell" "GTKWave Configuration File"
+.TH "GTKWAVERC" "5" "3.1.2" "Anthony Bybell" "GTKWave Configuration File"
 .SH "NAME"
 .LP 
 gtkwaverc \- GTKWave Configuration File
@@ -271,9 +271,13 @@ produces a warning message if the VCD filesize is greater than the argument's si
 \fBvector_padding\fR <\fIvalue\fP>
 indicates the number of pixels of extra whitespace that should be added to any strings for the purpose of calculating text in vectors. Permissible values are 0 to 16 with the default being 4.
 .TP 
+
 \fBvlist_compression\fR <\fIvalue\fP>
 indicates the value to pass to zlib during vlist processing (which is used in the VCD recoder).  -1 disables compression,
 0-9 correspond to the value zlib expects.  4 is default.
+.TP 
+\fBvlist_spill\fR <\fIvalue\fP>
+indicates that the VCD recoder should spill all generated vlists to a tempfile on disk in order to reduce memory usage. Default is off.
 .TP 
 \fBwave_scrolling\fR <\fIvalue\fP>
 a nonzero value enables scrolling by dragging the marker off the left or right sides of the wave window. A zero value disables it.

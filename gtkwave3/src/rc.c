@@ -485,6 +485,13 @@ if(GLOBALS->vlist_compression_depth>9) GLOBALS->vlist_compression_depth = 9;
 return(0);
 }
 
+int f_vlist_spill(char *str)
+{
+DEBUG(printf("f_vlist_spill(\"%s\")\n",str));
+GLOBALS->vlist_spill_to_disk=atoi_64(str);
+return(0);
+}
+
 int f_wave_scrolling(char *str)
 {
 DEBUG(printf("f_wave_scrolling(\"%s\")\n",str));
@@ -660,6 +667,7 @@ static struct rc_entry rcitems[]=
 { "vcd_warning_filesize", f_vcd_warning_filesize },
 { "vector_padding", f_vector_padding },
 { "vlist_compression", f_vlist_compression },
+{ "vlist_spill", f_vlist_spill },
 { "wave_scrolling", f_wave_scrolling },
 { "zoom_base", f_zoom_base },
 { "zoom_center", f_zoom_center },
@@ -832,6 +840,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/11 17:17:32  gtkwave
+ * allow tab movement with context_tabposition rc variable
+ *
  * Revision 1.3  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

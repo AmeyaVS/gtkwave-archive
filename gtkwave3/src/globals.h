@@ -803,7 +803,7 @@ char vcd_preserve_glitches; /* from vcd.c 509 */
 FILE *vcd_save_handle; /* from vcd.c 510 */
 FILE *vcd_handle_vcd_c_1; /* from vcd.c 511 */
 char vcd_is_compressed_vcd_c_1; /* from vcd.c 512 */
-int vcdbyteno_vcd_c_1; /* from vcd.c 513 */
+off_t vcdbyteno_vcd_c_1; /* from vcd.c 513 */
 int error_count_vcd_c_1; /* from vcd.c 514 */
 int header_over_vcd_c_1; /* from vcd.c 515 */
 int dumping_off_vcd_c_1; /* from vcd.c 516 */
@@ -838,7 +838,7 @@ struct queuedevent *queuedevents_vcd_c_1; /* from vcd.c 545 */
 unsigned int vcd_minid_vcd_c_1; /* from vcd.c 546 */
 unsigned int vcd_maxid_vcd_c_1; /* from vcd.c 547 */
 int err_vcd_c_1; /* from vcd.c 548 */
-int vcd_fsiz_vcd_c_1; /* from vcd.c 549 */
+off_t vcd_fsiz_vcd_c_1; /* from vcd.c 549 */
 char *varsplit_vcd_c_1; /* from vcd.c 550 */
 char *vsplitcurr_vcd_c_1; /* from vcd.c 551 */
 int var_prevch_vcd_c_1; /* from vcd.c 552 */
@@ -847,7 +847,7 @@ int var_prevch_vcd_c_1; /* from vcd.c 552 */
 /*
  * vcd_partial.c
  */
-int vcdbyteno_vcd_partial_c_2; /* from vcd_partial.c 555 */
+off_t vcdbyteno_vcd_partial_c_2; /* from vcd_partial.c 555 */
 int error_count_vcd_partial_c_2; /* from vcd_partial.c 556 */
 int header_over_vcd_partial_c_2; /* from vcd_partial.c 557 */
 int dumping_off_vcd_partial_c_2; /* from vcd_partial.c 558 */
@@ -890,7 +890,7 @@ struct vlist_t *time_vlist_vcd_recoder_c_1; /* from vcd_recoder.c 593 */
 unsigned int time_vlist_count_vcd_recoder_c_1; /* from vcd_recoder.c 594 */
 FILE *vcd_handle_vcd_recoder_c_2; /* from vcd_recoder.c 595 */
 char vcd_is_compressed_vcd_recoder_c_2; /* from vcd_recoder.c 596 */
-int vcdbyteno_vcd_recoder_c_3; /* from vcd_recoder.c 597 */
+off_t vcdbyteno_vcd_recoder_c_3; /* from vcd_recoder.c 597 */
 int error_count_vcd_recoder_c_3; /* from vcd_recoder.c 598 */
 int header_over_vcd_recoder_c_3; /* from vcd_recoder.c 599 */
 int dumping_off_vcd_recoder_c_3; /* from vcd_recoder.c 600 */
@@ -916,7 +916,7 @@ int numsyms_vcd_recoder_c_3; /* from vcd_recoder.c 620 */
 unsigned int vcd_minid_vcd_recoder_c_3; /* from vcd_recoder.c 621 */
 unsigned int vcd_maxid_vcd_recoder_c_3; /* from vcd_recoder.c 622 */
 int err_vcd_recoder_c_3; /* from vcd_recoder.c 623 */
-int vcd_fsiz_vcd_recoder_c_2; /* from vcd_recoder.c 624 */
+off_t vcd_fsiz_vcd_recoder_c_2; /* from vcd_recoder.c 624 */
 char *varsplit_vcd_recoder_c_3; /* from vcd_recoder.c 625 */
 char *vsplitcurr_vcd_recoder_c_3; /* from vcd_recoder.c 626 */
 int var_prevch_vcd_recoder_c_3; /* from vcd_recoder.c 627 */
@@ -934,6 +934,9 @@ struct namehier *nhold_vcd_saver_c_1; /* from vcd_saver.c 633 */
 /*
  * vlist.c
  */
+char vlist_spill_to_disk;
+FILE *vlist_handle;
+off_t vlist_bytes_written;
 int vlist_compression_depth; /* from vlist.c 634 */
 
 

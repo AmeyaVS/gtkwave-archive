@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2006.
+ * Copyright (c) Tony Bybell 2006-7.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +19,32 @@
 #include "globals.h"
 #include "vlist.h"
 #include <zlib.h>
+
+void vlist_init_spillfile(void)
+{
+int fd_dummy;
+char *nam = tmpnam_2(NULL, &fd_dummy);
+
+if(nam)
+	{
+	GLOBALS->vlist_handle = fopen(nam, "w+b");
+	
+	unlink(nam);
+	if(fd_dummy >=0) close(fd_dummy);
+
+	fputc('!', GLOBALS->vlist_handle);
+	GLOBALS->vlist_bytes_written = 1;
+	}
+}
+
+void vlist_kill_spillfile(void)
+{
+if(GLOBALS->vlist_handle)
+	{
+	fclose(GLOBALS->vlist_handle); 
+	GLOBALS->vlist_handle = NULL;
+	}
+}
 
 
 /* create / destroy
@@ -61,7 +87,7 @@ while(v)
  * this can obviously be extended if elem_siz > 1, but
  * the viewer doesn't need that feature
  */
-struct vlist_t *vlist_compress_block(struct vlist_t *v)
+struct vlist_t *vlist_compress_block(struct vlist_t *v, unsigned int *rsiz)
 {
 if(v->siz > 32)
 	{
@@ -76,7 +102,7 @@ if(v->siz > 32)
 		{
 		/* printf("siz: %d, dest: %d rc: %d\n", v->siz, (int)destlen, rc); */
 
-		vz = malloc_2(sizeof(struct vlist_t) + sizeof(int) + destlen);
+		vz = malloc_2(*rsiz = sizeof(struct vlist_t) + sizeof(int) + destlen);
 		memcpy(vz, v, sizeof(struct vlist_t));
 	
 		ipnt = (unsigned int *)(vz + 1);
@@ -98,6 +124,40 @@ void vlist_uncompress(struct vlist_t **v)
 {
 struct vlist_t *vl = *v;
 struct vlist_t *vprev = NULL;
+
+if(GLOBALS->vlist_handle)
+	{
+	while(vl)
+		{
+		struct vlist_t vhdr;
+		struct vlist_t *vrebuild;
+		long vl_offs = (long)vl;
+
+		off_t seekpos = (off_t) vl_offs;	/* possible overflow conflicts were already handled in the writer */
+
+		fseek(GLOBALS->vlist_handle, seekpos, SEEK_SET);
+		fread(&vhdr, sizeof(struct vlist_t), 1, GLOBALS->vlist_handle);
+
+		vrebuild = malloc_2(sizeof(struct vlist_t) + vhdr.siz);
+		memcpy(vrebuild, &vhdr, sizeof(struct vlist_t));
+		fread(vrebuild+1, vrebuild->siz, 1, GLOBALS->vlist_handle);
+
+		if(vprev) 
+			{
+			vprev->next = vrebuild;
+			}
+			else
+			{
+			*v = vrebuild; 
+			}
+
+		vprev = vrebuild;
+		vl = vhdr.next;
+		}
+
+	vl = *v;
+	vprev = NULL;
+	}
 
 while(vl)
 	{
@@ -152,9 +212,14 @@ char *px;
 if(vl->offs == vl->siz)
 	{
 	struct vlist_t *v2;
-	unsigned int siz;
+	unsigned int siz, rsiz;
 
 	/* 2 times versions are the growable, indexable vlists */
+	if(GLOBALS->vlist_handle)
+		{
+		siz = 2 * vl->siz;
+		}
+	else
 	if(vl->next)
 		{
 		if(vl->siz == vl->next->siz)
@@ -168,6 +233,7 @@ if(vl->offs == vl->siz)
 		}
 		else
 		{
+
 		if(vl->siz != 1)
 			{
 			siz = vl->siz;
@@ -178,20 +244,59 @@ if(vl->offs == vl->siz)
 			}
 		}
 
+	rsiz = sizeof(struct vlist_t) + vl->siz;
 	if((compressable)&&(vl->elem_siz == 1))
 		{
 		if(GLOBALS->vlist_compression_depth>=0)
 			{
-			vl = vlist_compress_block(vl);
+			vl = vlist_compress_block(vl, &rsiz);
 			}
 		}
 
-	v2 = calloc_2(1, sizeof(struct vlist_t) + (siz * vl->elem_siz));
-	v2->siz = siz;
-	v2->elem_siz = vl->elem_siz;
-	v2->next = vl;
-	*v = v2;
-	vl = *v;
+	if(compressable && GLOBALS->vlist_handle)
+		{
+		size_t rc;
+		long write_cnt;
+		fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
+		rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
+		if(!rc)
+			{
+			fprintf(stderr, "Error in writing to VList spill file!\n");
+			perror("Why");
+			exit(255);
+			}
+
+		v2 = calloc_2(1, sizeof(struct vlist_t) + (siz * vl->elem_siz));
+		v2->siz = siz;
+		v2->elem_siz = vl->elem_siz;
+		free_2(vl);
+
+		write_cnt = GLOBALS->vlist_bytes_written;
+		if(sizeof(long) != sizeof(off_t))	/* optimizes in or out at compile time */
+			{
+			if(write_cnt != GLOBALS->vlist_bytes_written)
+				{
+				fprintf(stderr, "VList spill file pointer-file overflow!\n");
+				exit(255);
+				}
+			}
+
+		v2->next = (struct vlist_t *)write_cnt;
+
+		GLOBALS->vlist_bytes_written += rsiz;
+
+		*v = v2;
+		vl = *v;
+		}
+		else
+		{
+		v2 = calloc_2(1, sizeof(struct vlist_t) + (siz * vl->elem_siz));
+		v2->siz = siz;
+		v2->elem_siz = vl->elem_siz;
+		v2->next = vl;
+		*v = v2;
+		vl = *v;
+		}
 	}
 
 px =(((char *)(vl)) + sizeof(struct vlist_t) + ((vl->offs++) * vl->elem_siz));
@@ -234,25 +339,61 @@ void vlist_freeze(struct vlist_t **v)
 {
 struct vlist_t *vl = *v;
 int siz = vl->offs;
+unsigned int rsiz = sizeof(struct vlist_t) + vl->siz;
 
 if((vl->elem_siz == 1)&&(siz))
 	{
-	struct vlist_t *w = vlist_compress_block(vl);
+	struct vlist_t *w = vlist_compress_block(vl, &rsiz);
 	*v = w;
 	}
 else
 if(siz != vl->siz)
 	{
-	struct vlist_t *w = malloc_2(sizeof(struct vlist_t) + (siz * vl->elem_siz));
+	struct vlist_t *w = malloc_2(rsiz = sizeof(struct vlist_t) + (siz * vl->elem_siz));
 	memcpy(w, vl, sizeof(struct vlist_t) + (siz * vl->elem_siz));
 	free_2(vl);
 	*v = w;
+	}
+
+
+if(GLOBALS->vlist_handle)
+	{
+	size_t rc;
+	long write_cnt;
+
+	vl = *v;
+	fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
+	rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
+	if(!rc)
+		{
+		fprintf(stderr, "Error in writing to VList spill file!\n");
+		perror("Why");
+		exit(255);
+		}
+
+	write_cnt = GLOBALS->vlist_bytes_written;
+	if(sizeof(long) != sizeof(off_t))	/* optimizes in or out at compile time */
+		{
+		if(write_cnt != GLOBALS->vlist_bytes_written)
+			{
+			fprintf(stderr, "VList spill file pointer-file overflow!\n");
+			exit(255);
+			}
+		}
+
+	*v = (struct vlist_t *)write_cnt;
+	GLOBALS->vlist_bytes_written += rsiz;
+
+	free_2(vl);
 	}
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:56  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *
