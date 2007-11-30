@@ -3,6 +3,9 @@
 #
 splash_disable on
 
+vlist_spill off
+vlist_compression 4
+
 hier_max_level 1
 force_toolbars 0
 #cursor_snap 8
