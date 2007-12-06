@@ -336,7 +336,7 @@ while(v)
 		}
 		else
 		{
-		n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
+		n->mv.mvlfac_vlist = vlist_create(sizeof(char));
 
 		if((vprime=bsearch_vcd(v->id, strlen(v->id)))==v) /* hash mish means dup net */
 			{
@@ -737,7 +737,7 @@ switch((typ = GLOBALS->yytext_vcd_recoder_c_3[0]))
 
 				if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 					{
-					n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
+					n->mv.mvlfac_vlist = vlist_create(sizeof(char));
 					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)'0'); /* represents single bit routine for decompression */
 					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
 					}
@@ -797,7 +797,7 @@ process_binary:
 			if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 				{
 				unsigned char typ2 = toupper(typ);
-				n->mv.mvlfac_vlist = vlist_create(sizeof(char), 0);
+				n->mv.mvlfac_vlist = vlist_create(sizeof(char));
 
 				if(v->vartype!=V_REAL) 
 					{
@@ -2083,7 +2083,7 @@ getch_alloc();		/* alloc membuff for vcd getch buffer */
 
 build_slisthier();
 
-GLOBALS->time_vlist_vcd_recoder_c_1 = vlist_create(sizeof(TimeType), 0);
+GLOBALS->time_vlist_vcd_recoder_c_1 = vlist_create(sizeof(TimeType));
 
 if(GLOBALS->vlist_spill_to_disk)
 	{
@@ -2527,6 +2527,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/12/06 04:08:43  gtkwave
+ * alias handling for freeze added (because of spill)
+ *
  * Revision 1.3  2007/11/30 01:31:23  gtkwave
  * added vlist memory spill to disk code + fixed vcdload status bar on > 2GB
  *

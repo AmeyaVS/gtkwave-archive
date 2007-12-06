@@ -21,7 +21,7 @@ struct vlist_t *v;
 char *pnt;
 int i, ch;
 
-v = vlist_create(sizeof(char), 0);
+v = vlist_create(sizeof(char));
 
 for(;;)
 	{
@@ -91,6 +91,9 @@ return(s);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

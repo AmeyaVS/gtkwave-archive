@@ -49,22 +49,13 @@ if(GLOBALS->vlist_handle)
 
 /* create / destroy
  */
-struct vlist_t *vlist_create(unsigned int elem_siz, unsigned int elem_start_cnt)
+struct vlist_t *vlist_create(unsigned int elem_siz)
 {
 struct vlist_t *v;
 
-if(elem_start_cnt < 2)
-	{
-	v = calloc_2(1, sizeof(struct vlist_t) + elem_siz);
-	v->siz = 1;
-	v->elem_siz = elem_siz;
-	}
-	else /* non-growable, non-indexable list.  elem_start_cnt is constant size */
-	{
-	v = calloc_2(1, sizeof(struct vlist_t) + (elem_siz * elem_start_cnt));
-	v->siz = elem_start_cnt;
-	v->elem_siz = elem_siz;
-	}
+v = calloc_2(1, sizeof(struct vlist_t) + elem_siz);
+v->siz = 1;
+v->elem_siz = elem_siz;
 
 return(v);
 }
@@ -140,7 +131,8 @@ if(GLOBALS->vlist_handle)
 		rc = fread(&vhdr, sizeof(struct vlist_t), 1, GLOBALS->vlist_handle);
 		if(!rc)
 			{
-			printf("read error on len %d at offset %d!\n", sizeof(struct vlist_t), (int)seekpos);
+			printf("Error in reading from VList spill file!\n");
+			exit(255);
 			}
 
 		vrebuild = malloc_2(sizeof(struct vlist_t) + vhdr.siz);
@@ -220,34 +212,7 @@ if(vl->offs == vl->siz)
 	unsigned int siz, rsiz;
 
 	/* 2 times versions are the growable, indexable vlists */
-	if(GLOBALS->vlist_handle)
-		{
-		siz = 2 * vl->siz;
-		}
-	else
-	if(vl->next)
-		{
-		if(vl->siz == vl->next->siz)
-			{
-			siz = vl->siz;
-			}
-			else
-			{
-			siz = 2 * vl->siz;
-			}
-		}
-		else
-		{
-
-		if(vl->siz != 1)
-			{
-			siz = vl->siz;
-			}
-			else
-			{
-			siz = 2 * vl->siz;
-			}
-		}
+	siz = 2 * vl->siz;
 
 	rsiz = sizeof(struct vlist_t) + (vl->siz * vl->elem_siz);
 	if((compressable)&&(vl->elem_siz == 1))
@@ -395,6 +360,9 @@ if(GLOBALS->vlist_handle)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/12/06 04:08:43  gtkwave
+ * alias handling for freeze added (because of spill)
+ *
  * Revision 1.4  2007/12/04 16:42:34  gtkwave
  * fseek replaces with fseeko
  *

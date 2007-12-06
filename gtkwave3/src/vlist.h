@@ -29,7 +29,7 @@ unsigned int elem_siz;
 void vlist_init_spillfile(void);
 void vlist_kill_spillfile(void);
 
-struct vlist_t *vlist_create(unsigned int elem_siz, unsigned int elem_start_cnt);
+struct vlist_t *vlist_create(unsigned int elem_siz);
 void vlist_destroy(struct vlist_t *v);
 void *vlist_alloc(struct vlist_t **v, int compressable);
 unsigned int vlist_size(struct vlist_t *v);
@@ -42,6 +42,9 @@ void vlist_uncompress(struct vlist_t **v);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/11/30 01:31:23  gtkwave
+ * added vlist memory spill to disk code + fixed vcdload status bar on > 2GB
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
