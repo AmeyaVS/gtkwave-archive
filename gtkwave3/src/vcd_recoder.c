@@ -376,6 +376,8 @@ while(v)
 					break;
 				}
 			}
+
+		vlist_freeze(&n->mv.mvlfac_vlist);
 		}
 	v=v->next;
 	}
@@ -2525,6 +2527,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/11/30 01:31:23  gtkwave
+ * added vlist memory spill to disk code + fixed vcdload status bar on > 2GB
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

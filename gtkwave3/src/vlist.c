@@ -132,11 +132,16 @@ if(GLOBALS->vlist_handle)
 		struct vlist_t vhdr;
 		struct vlist_t *vrebuild;
 		long vl_offs = (long)vl;
+		int rc;
 
 		off_t seekpos = (off_t) vl_offs;	/* possible overflow conflicts were already handled in the writer */
 
 		fseeko(GLOBALS->vlist_handle, seekpos, SEEK_SET);
-		fread(&vhdr, sizeof(struct vlist_t), 1, GLOBALS->vlist_handle);
+		rc = fread(&vhdr, sizeof(struct vlist_t), 1, GLOBALS->vlist_handle);
+		if(!rc)
+			{
+			printf("read error on len %d at offset %d!\n", sizeof(struct vlist_t), (int)seekpos);
+			}
 
 		vrebuild = malloc_2(sizeof(struct vlist_t) + vhdr.siz);
 		memcpy(vrebuild, &vhdr, sizeof(struct vlist_t));
@@ -244,7 +249,7 @@ if(vl->offs == vl->siz)
 			}
 		}
 
-	rsiz = sizeof(struct vlist_t) + vl->siz;
+	rsiz = sizeof(struct vlist_t) + (vl->siz * vl->elem_siz);
 	if((compressable)&&(vl->elem_siz == 1))
 		{
 		if(GLOBALS->vlist_compression_depth>=0)
@@ -339,7 +344,7 @@ void vlist_freeze(struct vlist_t **v)
 {
 struct vlist_t *vl = *v;
 int siz = vl->offs;
-unsigned int rsiz = sizeof(struct vlist_t) + vl->siz;
+unsigned int rsiz = sizeof(struct vlist_t) + (vl->siz * vl->elem_siz);
 
 if((vl->elem_siz == 1)&&(siz))
 	{
@@ -350,11 +355,10 @@ else
 if(siz != vl->siz)
 	{
 	struct vlist_t *w = malloc_2(rsiz = sizeof(struct vlist_t) + (siz * vl->elem_siz));
-	memcpy(w, vl, sizeof(struct vlist_t) + (siz * vl->elem_siz));
+	memcpy(w, vl, rsiz);
 	free_2(vl);
 	*v = w;
 	}
-
 
 if(GLOBALS->vlist_handle)
 	{
@@ -391,6 +395,9 @@ if(GLOBALS->vlist_handle)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/12/04 16:42:34  gtkwave
+ * fseek replaces with fseeko
+ *
  * Revision 1.3  2007/11/30 01:31:23  gtkwave
  * added vlist memory spill to disk code + fixed vcdload status bar on > 2GB
  *
