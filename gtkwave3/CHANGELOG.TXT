@@ -309,9 +309,11 @@
 		search windows).  Added locking in main iteration
 		loop to detect unexpected context switches and
 		fix/report them (wrong operation if it occurs).
-3.1.2	29nov07	Compiler warning cleanups from Sun compile logs.
+3.1.2	05dec07	Compiler warning cleanups from Sun compile logs.
 		Added named parameter support to vermin parser.
 		Added check for gperf back into configure.ac.
 		Added vlist_spill rc variable to control new 
 		feature of spilling vlists to a tempfile on disk.
 		Fixed vcd loader status bar on files > 2GB.
+		Removed non-growable vlists and also finalize
+		aliases in order to be compatible with spill.
