@@ -13,6 +13,13 @@
    array that doesn't require next pointers per-element, however
    that doesn't seem necessary given the space savings that
    gzipped dormant vlist entries buys you.  
+
+   the vlists have been modified since the original version in
+   two ways: (1) only half as many bytes are allocated as needed
+   and when vlist_alloc() reaches the halfway point the struct
+   is finally reallocated with the rest, (2) if vlist_spill is
+   set to "on" in the rc file, vlist entries spill to a tempfile
+   which can reduce memory usage dramatically.
  */
 
 #include <config.h>
@@ -360,6 +367,9 @@ if(GLOBALS->vlist_handle)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/12/06 04:16:20  gtkwave
+ * removed non-growable vlists
+ *
  * Revision 1.5  2007/12/06 04:08:43  gtkwave
  * alias handling for freeze added (because of spill)
  *
