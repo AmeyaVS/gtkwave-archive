@@ -26,6 +26,7 @@
 #include "globals.h"
 #include "vlist.h"
 #include <zlib.h>
+#include <string.h>
 
 void vlist_init_spillfile(void)
 {
@@ -212,16 +213,17 @@ void *vlist_alloc(struct vlist_t **v, int compressable)
 {
 struct vlist_t *vl = *v;
 char *px;
+struct vlist_t *v2;
 
 if(vl->offs == vl->siz)
 	{
-	struct vlist_t *v2;
 	unsigned int siz, rsiz;
 
 	/* 2 times versions are the growable, indexable vlists */
 	siz = 2 * vl->siz;
 
 	rsiz = sizeof(struct vlist_t) + (vl->siz * vl->elem_siz);
+
 	if((compressable)&&(vl->elem_siz == 1))
 		{
 		if(GLOBALS->vlist_compression_depth>=0)
@@ -234,6 +236,7 @@ if(vl->offs == vl->siz)
 		{
 		size_t rc;
 		long write_cnt;
+
 		fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
 		rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
 		if(!rc)
@@ -242,11 +245,6 @@ if(vl->offs == vl->siz)
 			perror("Why");
 			exit(255);
 			}
-
-		v2 = calloc_2(1, sizeof(struct vlist_t) + (siz * vl->elem_siz));
-		v2->siz = siz;
-		v2->elem_siz = vl->elem_siz;
-		free_2(vl);
 
 		write_cnt = GLOBALS->vlist_bytes_written;
 		if(sizeof(long) != sizeof(off_t))	/* optimizes in or out at compile time */
@@ -258,22 +256,36 @@ if(vl->offs == vl->siz)
 				}
 			}
 
+		v2 = calloc_2(1, sizeof(struct vlist_t) + (vl->siz * vl->elem_siz));
+		v2->siz = siz;
+		v2->elem_siz = vl->elem_siz;
 		v2->next = (struct vlist_t *)write_cnt;
-
-		GLOBALS->vlist_bytes_written += rsiz;
+		free_2(vl);
 
 		*v = v2;
 		vl = *v;
+
+		GLOBALS->vlist_bytes_written += rsiz;
 		}
 		else
 		{
-		v2 = calloc_2(1, sizeof(struct vlist_t) + (siz * vl->elem_siz));
+		v2 = calloc_2(1, sizeof(struct vlist_t) + (vl->siz * vl->elem_siz));
 		v2->siz = siz;
 		v2->elem_siz = vl->elem_siz;
 		v2->next = vl;
 		*v = v2;
 		vl = *v;
 		}
+	}
+else
+if(vl->offs*2 == vl->siz)
+	{
+	v2 = calloc_2(1, sizeof(struct vlist_t) + (vl->siz * vl->elem_siz));
+	memcpy(v2, vl, sizeof(struct vlist_t) + (vl->siz/2 * vl->elem_siz));
+	free_2(vl);
+
+	*v = v2;
+	vl = *v;
 	}
 
 px =(((char *)(vl)) + sizeof(struct vlist_t) + ((vl->offs++) * vl->elem_siz));
@@ -315,18 +327,30 @@ return((void *)(((char *)(v)) + sizeof(struct vlist_t) + (idx * v->elem_siz)));
 void vlist_freeze(struct vlist_t **v)
 {
 struct vlist_t *vl = *v;
-int siz = vl->offs;
-unsigned int rsiz = sizeof(struct vlist_t) + (vl->siz * vl->elem_siz);
+unsigned int siz = vl->offs;
+unsigned int rsiz = sizeof(struct vlist_t) + (siz * vl->elem_siz);
 
 if((vl->elem_siz == 1)&&(siz))
 	{
-	struct vlist_t *w = vlist_compress_block(vl, &rsiz);
+	struct vlist_t *w, *v2;
+
+	if(vl->offs*2 < vl->siz)
+		{
+		v2 = calloc_2(1, sizeof(struct vlist_t) + (vl->siz * vl->elem_siz));
+		memcpy(v2, vl, sizeof(struct vlist_t) + (vl->siz/2 * vl->elem_siz));
+		free_2(vl);
+	
+		*v = v2;
+		vl = *v;
+		}
+
+	w = vlist_compress_block(vl, &rsiz);
 	*v = w;
 	}
 else
-if(siz != vl->siz)
+if((siz != vl->siz)&&(!GLOBALS->vlist_handle))
 	{
-	struct vlist_t *w = malloc_2(rsiz = sizeof(struct vlist_t) + (siz * vl->elem_siz));
+	struct vlist_t *w = malloc_2(rsiz);
 	memcpy(w, vl, rsiz);
 	free_2(vl);
 	*v = w;
@@ -364,9 +388,13 @@ if(GLOBALS->vlist_handle)
 	}
 }
 
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/12/07 01:59:56  gtkwave
+ * now employ realloc on half-fill algorithm for vlist allocation
+ *
  * Revision 1.6  2007/12/06 04:16:20  gtkwave
  * removed non-growable vlists
  *
@@ -399,4 +427,3 @@ if(GLOBALS->vlist_handle)
  * initial release
  *
  */
-
