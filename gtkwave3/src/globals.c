@@ -939,6 +939,7 @@ NULL, /* nhold_vcd_saver_c_1 582 */
  * vlist.c
  */
 0, /* vlist_spill_to_disk */
+0, /* vlist_prepack */
 NULL, /* vlist_handle */
 0, /* vlist_bytes_written */
 4, /* vlist_compression_depth 583 */
@@ -1355,6 +1356,7 @@ void reload_into_new_context(void)
  new_globals->vcd_preserve_glitches = GLOBALS->vcd_preserve_glitches;
  new_globals->vcd_warning_filesize = GLOBALS->vcd_warning_filesize;
  new_globals->vector_padding = GLOBALS->vector_padding;
+ new_globals->vlist_prepack = GLOBALS->vlist_prepack;
  new_globals->vlist_spill_to_disk = GLOBALS->vlist_spill_to_disk;
  new_globals->vlist_compression_depth = GLOBALS->vlist_compression_depth;
  new_globals->wave_scrolling = GLOBALS->wave_scrolling;
@@ -1676,7 +1678,8 @@ void reload_into_new_context(void)
 				{
 				free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
 				if(GLOBALS->vcd_handle_vcd_c_1) { fclose(GLOBALS->vcd_handle_vcd_c_1); GLOBALS->vcd_handle_vcd_c_1 = NULL; }
-				if(GLOBALS->vcd_handle_vcd_recoder_c_2) { fclose(GLOBALS->vcd_handle_vcd_recoder_c_2); GLOBALS->vcd_handle_vcd_recoder_c_2 =NULL; }
+				if(GLOBALS->vcd_handle_vcd_recoder_c_2) { fclose(GLOBALS->vcd_handle_vcd_recoder_c_2); GLOBALS->vcd_handle_vcd_recoder_c_2 = NULL; }
+				if(GLOBALS->vlist_handle) { fclose(GLOBALS->vlist_handle); GLOBALS->vlist_handle = NULL; }
 				if(GLOBALS->mm_lxt_mmap_addr)
 					{                        
 					munmap(GLOBALS->mm_lxt_mmap_addr, GLOBALS->mm_lxt_mmap_len); 

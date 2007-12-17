@@ -485,6 +485,13 @@ if(GLOBALS->vlist_compression_depth>9) GLOBALS->vlist_compression_depth = 9;
 return(0);
 }
 
+int f_vlist_prepack(char *str)
+{
+DEBUG(printf("f_vlist_prepack(\"%s\")\n",str));
+GLOBALS->vlist_prepack=atoi_64(str);
+return(0);
+}
+
 int f_vlist_spill(char *str)
 {
 DEBUG(printf("f_vlist_spill(\"%s\")\n",str));
@@ -667,6 +674,7 @@ static struct rc_entry rcitems[]=
 { "vcd_warning_filesize", f_vcd_warning_filesize },
 { "vector_padding", f_vector_padding },
 { "vlist_compression", f_vlist_compression },
+{ "vlist_prepack", f_vlist_prepack },
 { "vlist_spill", f_vlist_spill },
 { "wave_scrolling", f_wave_scrolling },
 { "zoom_base", f_zoom_base },
@@ -840,6 +848,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/11/30 01:31:23  gtkwave
+ * added vlist memory spill to disk code + fixed vcdload status bar on > 2GB
+ *
  * Revision 1.4  2007/09/11 17:17:32  gtkwave
  * allow tab movement with context_tabposition rc variable
  *

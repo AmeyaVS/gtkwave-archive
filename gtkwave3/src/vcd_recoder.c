@@ -37,10 +37,88 @@
 #include "vlist.h"
 #include "lx2.h"
 
+/**/
+
+static void vlist_packer_emit_uv32(struct vlist_packer_t **vl, unsigned int v)
+{
+unsigned int nxt;
+         
+while((nxt = v>>7))
+        {
+	vlist_packer_alloc(*vl, v&0x7f);
+        v = nxt;
+        }
+
+vlist_packer_alloc(*vl, (v&0x7f) | 0x80);
+} 
+
+
+static void vlist_packer_emit_string(struct vlist_packer_t **vl, char *s)
+{
+while(*s)
+	{
+	vlist_packer_alloc(*vl, *s);
+	s++;
+	}
+vlist_packer_alloc(*vl, 0);
+}
+
+static void vlist_packer_emit_mvl9_string(struct vlist_packer_t **vl, char *s)
+{
+unsigned int recoded_bit;
+unsigned char which = 0;
+unsigned char accum = 0;
+
+while(*s)
+	{
+	switch(*s)
+	        {
+	        case '0':		recoded_bit = AN_0; break;
+	        case '1':		recoded_bit = AN_1; break;
+	        case 'x': case 'X':	recoded_bit = AN_X; break;
+	        case 'z': case 'Z':	recoded_bit = AN_Z; break;
+	        case 'h': case 'H':	recoded_bit = AN_H; break;
+	        case 'u': case 'U':	recoded_bit = AN_U; break;
+	        case 'w': case 'W':     recoded_bit = AN_W; break;
+	        case 'l': case 'L':	recoded_bit = AN_L; break;
+		default:		recoded_bit = AN_DASH; break;
+		}
+
+	if(!which)
+		{
+		accum = (recoded_bit << 4);
+		which = 1;
+		}
+		else
+		{
+		accum |= recoded_bit;
+		vlist_packer_alloc(*vl, accum);
+		which = accum = 0;
+		}	
+	s++;
+	}
+
+recoded_bit = AN_MSK; /* XXX : this is assumed it is going to remain a 4 bit max quantity! */
+if(!which)
+	{
+        accum = (recoded_bit << 4);
+        }
+        else
+        {
+        accum |= recoded_bit;
+        }
+
+vlist_packer_alloc(*vl, accum);
+}
+
+/**/
+
 static void vlist_emit_uv32(struct vlist_t **vl, unsigned int v)
 {
 unsigned int nxt;
 char *pnt;
+
+if(GLOBALS->vlist_prepack) { return(vlist_packer_emit_uv32((struct vlist_packer_t **)vl, v)); }
          
 while((nxt = v>>7))
         {
@@ -58,6 +136,8 @@ static void vlist_emit_string(struct vlist_t **vl, char *s)
 {
 char *pnt;
 
+if(GLOBALS->vlist_prepack) { return(vlist_packer_emit_string((struct vlist_packer_t **)vl, s)); }
+
 while(*s)
 	{
 	pnt = vlist_alloc(vl, 1);
@@ -72,8 +152,12 @@ static void vlist_emit_mvl9_string(struct vlist_t **vl, char *s)
 {
 char *pnt;
 unsigned int recoded_bit;
-unsigned char which = 0;
-unsigned char accum = 0;
+unsigned char which;
+unsigned char accum;
+
+if(GLOBALS->vlist_prepack) { return(vlist_packer_emit_mvl9_string((struct vlist_packer_t **)vl, s)); }
+
+which = accum = 0;
 
 while(*s)
 	{
@@ -324,6 +408,8 @@ if(GLOBALS->numsyms_vcd_recoder_c_3)
 static void vlist_emit_finalize(void)
 {
 struct vcdsymbol *v, *vprime;
+struct vlist_t *vlist;
+char vlist_prepack = GLOBALS->vlist_prepack;
 
 v=GLOBALS->vcdsymroot_vcd_recoder_c_3;
 while(v)
@@ -332,11 +418,22 @@ while(v)
 
 	if(n->mv.mvlfac_vlist) 
 		{
-		vlist_freeze(&n->mv.mvlfac_vlist);
+		if(vlist_prepack)
+			{
+	                vlist_packer_finalize(n->mv.mvlfac_packer_vlist);
+	                vlist = n->mv.mvlfac_packer_vlist->v;
+	                free_2(n->mv.mvlfac_packer_vlist);
+	                n->mv.mvlfac_vlist = vlist;
+	                vlist_freeze(&n->mv.mvlfac_vlist);
+			}
+			else
+			{
+			vlist_freeze(&n->mv.mvlfac_vlist);
+			}
 		}
 		else
 		{
-		n->mv.mvlfac_vlist = vlist_create(sizeof(char));
+		n->mv.mvlfac_vlist = vlist_prepack ? ((struct vlist_t *)vlist_packer_create()) : vlist_create(sizeof(char));
 
 		if((vprime=bsearch_vcd(v->id, strlen(v->id)))==v) /* hash mish means dup net */
 			{
@@ -377,7 +474,18 @@ while(v)
 				}
 			}
 
-		vlist_freeze(&n->mv.mvlfac_vlist);
+		if(vlist_prepack)
+			{
+	                vlist_packer_finalize(n->mv.mvlfac_packer_vlist);
+	                vlist = n->mv.mvlfac_packer_vlist->v;
+	                free_2(n->mv.mvlfac_packer_vlist);
+	                n->mv.mvlfac_vlist = vlist;
+	                vlist_freeze(&n->mv.mvlfac_vlist);
+			}
+			else
+			{
+			vlist_freeze(&n->mv.mvlfac_vlist);
+			}
 		}
 	v=v->next;
 	}
@@ -737,7 +845,7 @@ switch((typ = GLOBALS->yytext_vcd_recoder_c_3[0]))
 
 				if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 					{
-					n->mv.mvlfac_vlist = vlist_create(sizeof(char));
+					n->mv.mvlfac_vlist = (GLOBALS->vlist_prepack) ? ((struct vlist_t *)vlist_packer_create()) : vlist_create(sizeof(char));
 					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)'0'); /* represents single bit routine for decompression */
 					vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
 					}
@@ -797,7 +905,7 @@ process_binary:
 			if(!n->mv.mvlfac_vlist) /* overloaded for vlist, numhist = last position used */
 				{
 				unsigned char typ2 = toupper(typ);
-				n->mv.mvlfac_vlist = vlist_create(sizeof(char));
+				n->mv.mvlfac_vlist = (GLOBALS->vlist_prepack) ? ((struct vlist_t *)vlist_packer_create()) : vlist_create(sizeof(char));
 
 				if(v->vartype!=V_REAL) 
 					{
@@ -2054,12 +2162,21 @@ if (((flen>2)&&(!strcmp(fname+flen-3,".gz")))||
 		if(GLOBALS->vcd_warning_filesize)
 		if(GLOBALS->vcd_fsiz_vcd_recoder_c_2 > (GLOBALS->vcd_warning_filesize * (1024 * 1024)))
 			{
-			fprintf(stderr, "Warning! File size is %d MB.  This might fail in recoding.\n"
+			if(!GLOBALS->vlist_prepack)
+				{
+				fprintf(stderr, "Warning! File size is %d MB.  This might fail in recoding.\n"
 					"Consider converting it to lxt, lxt2, or vzt database formats instead.  (See\n"
 					"the vcd2lxt(1), vcd2lxt2(1), and vzt2vzt(1) manpages for more information.)\n"
 					"To disable this warning, set rc variable vcd_warning_filesize to zero.\n"
 					"Alternatively, use the -o, --optimize command line option to convert to LXT2.\n\n",
 						(int)(GLOBALS->vcd_fsiz_vcd_recoder_c_2/(1024*1024)));
+				}
+				else
+				{
+				fprintf(stderr, "VCDLOAD | File size is %d MB, using vlist prepacking%s.\n\n",
+						(int)(GLOBALS->vcd_fsiz_vcd_recoder_c_2/(1024*1024)),
+						GLOBALS->vlist_spill_to_disk ? " and spill file" : "");
+				}
 			}
 		}
 		else
@@ -2169,6 +2286,9 @@ if(np && np->mv.mvlfac_vlist)
 	}
 }
 
+
+#define vlist_locate_import(x,y) ((GLOBALS->vlist_prepack) ? ((depacked) + (y)) : vlist_locate((x),(y)))
+
 void import_vcd_trace(nptr np)
 {
 struct vlist_t *v = np->mv.mvlfac_vlist;
@@ -2185,25 +2305,36 @@ int arr_pos;
 unsigned int accum;
 unsigned char ch;
 double *d;
+unsigned char *depacked;
 
 if(!v) return;
 vlist_uncompress(&v);
 
-if(!(list_size=vlist_size(v)))
+if(GLOBALS->vlist_prepack)
+	{
+	depacked = vlist_packer_decompress(v, &list_size);
+	vlist_destroy(v);
+	}
+	else
+	{
+	list_size=vlist_size(v);
+	}
+
+if(!list_size)
 	{
 	len = 1;
 	vlist_type = '!'; /* possible alias */
 	}
 	else
 	{
-	chp = vlist_locate(v, vlist_pos++);
+	chp = vlist_locate_import(v, vlist_pos++);
 	if(chp)
 		{
 		switch((vlist_type = (*chp & 0x7f)))
 			{
 			case '0':
 				len = 1;
-				chp = vlist_locate(v, vlist_pos++);
+				chp = vlist_locate_import(v, vlist_pos++);
 				vartype = (unsigned int)(*chp & 0x7f);
 
 				break;
@@ -2211,13 +2342,13 @@ if(!(list_size=vlist_size(v)))
 			case 'B':
 			case 'R':
 			case 'S':
-				chp = vlist_locate(v, vlist_pos++);
+				chp = vlist_locate_import(v, vlist_pos++);
 				vartype = (unsigned int)(*chp & 0x7f);
 
 				arr_pos = accum = 0;
 	
 		                do      {
-		                	chp = vlist_locate(v, vlist_pos++);
+		                	chp = vlist_locate_import(v, vlist_pos++);
 		                        if(!chp) break;
 		                        ch = *chp;  
 					arr[arr_pos++] = ch;				
@@ -2258,7 +2389,7 @@ if(vlist_type == '0') /* single bit */
 		arr_pos = accum = 0;
 
                 do      {
-                	chp = vlist_locate(v, vlist_pos++);
+                	chp = vlist_locate_import(v, vlist_pos++);
                         if(!chp) break;
                         ch = *chp;  
 			arr[arr_pos++] = ch;				
@@ -2322,7 +2453,7 @@ else if(vlist_type == 'B') /* bit vector, port type was converted to bit vector 
 		arr_pos = accum = 0;
 
                 do      {
-                	chp = vlist_locate(v, vlist_pos++);
+                	chp = vlist_locate_import(v, vlist_pos++);
                         if(!chp) break;
                         ch = *chp;  
 			arr[arr_pos++] = ch;				
@@ -2343,7 +2474,7 @@ else if(vlist_type == 'B') /* bit vector, port type was converted to bit vector 
 		dst_len = 0;
 		for(;;)
 			{
-			chp = vlist_locate(v, vlist_pos++);
+			chp = vlist_locate_import(v, vlist_pos++);
 			if(!chp) break;
 			ch = *chp;
 			if((ch >> 4) == AN_MSK) break;
@@ -2403,7 +2534,7 @@ else if(vlist_type == 'R') /* real */
 		arr_pos = accum = 0;
 
                 do      {
-                	chp = vlist_locate(v, vlist_pos++);
+                	chp = vlist_locate_import(v, vlist_pos++);
                         if(!chp) break;
                         ch = *chp;  
 			arr[arr_pos++] = ch;				
@@ -2424,7 +2555,7 @@ else if(vlist_type == 'R') /* real */
 		dst_len = 0;
 		do
 			{
-			chp = vlist_locate(v, vlist_pos++);
+			chp = vlist_locate_import(v, vlist_pos++);
 			if(!chp) break;
 			ch = *chp;
 			sbuf[dst_len++] = ch;
@@ -2458,7 +2589,7 @@ else if(vlist_type == 'S') /* string */
 		arr_pos = accum = 0;
 
                 do      {
-                	chp = vlist_locate(v, vlist_pos++);
+                	chp = vlist_locate_import(v, vlist_pos++);
                         if(!chp) break;
                         ch = *chp;  
 			arr[arr_pos++] = ch;				
@@ -2479,7 +2610,7 @@ else if(vlist_type == 'S') /* string */
 		dst_len = 0;
 		do
 			{
-			chp = vlist_locate(v, vlist_pos++);
+			chp = vlist_locate_import(v, vlist_pos++);
 			if(!chp) break;
 			ch = *chp;
 			sbuf[dst_len++] = ch;
@@ -2508,7 +2639,14 @@ else if(vlist_type == '!') /* error in loading */
 		{
 		import_vcd_trace(n2);
 
-		vlist_destroy(v);
+		if(GLOBALS->vlist_prepack)
+			{
+			vlist_packer_decompress_destroy(depacked);
+			}
+			else
+			{
+			vlist_destroy(v);
+			}
 		np->mv.mvlfac_vlist = NULL;
 
 		np->head = n2->head;
@@ -2520,13 +2658,23 @@ else if(vlist_type == '!') /* error in loading */
 	vcd_exit(255);
 	}
 
-vlist_destroy(v);
+if(GLOBALS->vlist_prepack)
+	{
+	vlist_packer_decompress_destroy(depacked);
+	}
+	else
+	{
+	vlist_destroy(v);
+	}
 np->mv.mvlfac_vlist = NULL;
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/12/06 04:16:20  gtkwave
+ * removed non-growable vlists
+ *
  * Revision 1.4  2007/12/06 04:08:43  gtkwave
  * alias handling for freeze added (because of spill)
  *

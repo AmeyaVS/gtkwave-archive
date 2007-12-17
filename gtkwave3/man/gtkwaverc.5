@@ -276,6 +276,9 @@ indicates the number of pixels of extra whitespace that should be added to any s
 indicates the value to pass to zlib during vlist processing (which is used in the VCD recoder).  -1 disables compression,
 0-9 correspond to the value zlib expects.  4 is default.
 .TP 
+\fBvlist_prepack\fR <\fIvalue\fP>
+indicates that the VCD recoder should pre-compress data going into the value change vlists in order to reduce memory usage. This is done before potential zlib packing.  Default is off.
+.TP 
 \fBvlist_spill\fR <\fIvalue\fP>
 indicates that the VCD recoder should spill all generated vlists to a tempfile on disk in order to reduce memory usage. Default is off.
 .TP 

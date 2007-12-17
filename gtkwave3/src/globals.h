@@ -935,6 +935,7 @@ struct namehier *nhold_vcd_saver_c_1; /* from vcd_saver.c 633 */
  * vlist.c
  */
 char vlist_spill_to_disk;
+char vlist_prepack;
 FILE *vlist_handle;
 off_t vlist_bytes_written;
 int vlist_compression_depth; /* from vlist.c 634 */
