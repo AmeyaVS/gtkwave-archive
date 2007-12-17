@@ -141,6 +141,7 @@ struct Node
 			/*  a ptr to an array of histents for bsearching */
     union {
       struct fac *mvlfac; /* for use with mvlsim aets */
+      struct vlist_packer_t *mvlfac_packer_vlist;
       struct vlist_t *mvlfac_vlist;
       char *value;	/* for use when unrolling ae2 values */
     } mv; 		/* anon union is a gcc extension so use mv instead.  using this union avoids crazy casting warnings */
@@ -320,6 +321,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

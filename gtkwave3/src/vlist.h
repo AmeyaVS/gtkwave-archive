@@ -26,6 +26,32 @@ unsigned int elem_siz;
 };
 
 
+/* experimentation shows that 255 is one of the least common 
+   bytes found in recoded value change streams */
+#define WAVE_ZIVFLAG (0xff) 
+
+#define WAVE_ZIVWRAP (1<<7) 		  /* must be power of two because of AND mask */
+#define WAVE_ZIVSRCH (WAVE_ZIVWRAP)	  /* search depth in bytes */
+#define WAVE_ZIVSKIP (1)		  /* number of bytes to skip for alternate rollover searches */
+#define WAVE_ZIVMASK ((WAVE_ZIVWRAP) - 1) /* then this becomes an AND mask for wrapping */
+
+struct vlist_packer_t
+{
+struct vlist_t *v;
+
+unsigned char buf[WAVE_ZIVWRAP];
+
+#ifdef WAVE_VLIST_PACKER_STATS
+unsigned int packed_bytes, 
+#endif
+unsigned int unpacked_bytes;
+unsigned int repcnt, repcnt2, repcnt3, repcnt4;
+
+unsigned char bufpnt;
+unsigned char repdist, repdist2, repdist3, repdist4;
+};
+
+
 void vlist_init_spillfile(void);
 void vlist_kill_spillfile(void);
 
@@ -37,11 +63,20 @@ void *vlist_locate(struct vlist_t *v, unsigned int idx);
 void vlist_freeze(struct vlist_t **v);
 void vlist_uncompress(struct vlist_t **v);
 
+struct vlist_packer_t *vlist_packer_create(void);
+void vlist_packer_alloc(struct vlist_packer_t *v, unsigned char ch);
+void vlist_packer_finalize(struct vlist_packer_t *v);
+unsigned char *vlist_packer_decompress(struct vlist_t *vl, unsigned int *declen);
+void vlist_packer_decompress_destroy(char *mem);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/12/06 04:16:20  gtkwave
+ * removed non-growable vlists
+ *
  * Revision 1.3  2007/11/30 01:31:23  gtkwave
  * added vlist memory spill to disk code + fixed vcdload status bar on > 2GB
  *

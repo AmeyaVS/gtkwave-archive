@@ -309,7 +309,7 @@
 		search windows).  Added locking in main iteration
 		loop to detect unexpected context switches and
 		fix/report them (wrong operation if it occurs).
-3.1.2	06dec07	Compiler warning cleanups from Sun compile logs.
+3.1.2	16dec07	Compiler warning cleanups from Sun compile logs.
 		Added named parameter support to vermin parser.
 		Added check for gperf back into configure.ac.
 		Added vlist_spill rc variable to control new 
@@ -317,8 +317,11 @@
 		Fixed vcd loader status bar on files > 2GB.
 		Removed non-growable vlists and also finalize
 		aliases in order to be compatible with spill.
-		Changed vlist alloation scheme to allocate only
+		Changed vlist allocation scheme to allocate only
 		half as much per-block, then the rest when the
 		half-way point is reached.  This reduces memory
 		wastage to an average of 12.5% rather than 25%
 		on uncompressed blocks.
+		Added code to pre-process data in vlists through
+		an LZ-based compressor.  The can cut down on
+		memory usage ever further.
