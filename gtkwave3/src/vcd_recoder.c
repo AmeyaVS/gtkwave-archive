@@ -2168,7 +2168,8 @@ if (((flen>2)&&(!strcmp(fname+flen-3,".gz")))||
 					"Consider converting it to lxt, lxt2, or vzt database formats instead.  (See\n"
 					"the vcd2lxt(1), vcd2lxt2(1), and vzt2vzt(1) manpages for more information.)\n"
 					"To disable this warning, set rc variable vcd_warning_filesize to zero.\n"
-					"Alternatively, use the -o, --optimize command line option to convert to LXT2.\n\n",
+					"Alternatively, use the -o, --optimize command line option to convert to LXT2\n"
+					"or the -g, --giga command line option to use dynamically compressed memory.\n\n",
 						(int)(GLOBALS->vcd_fsiz_vcd_recoder_c_2/(1024*1024)));
 				}
 				else
@@ -2672,6 +2673,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/12/17 18:49:32  gtkwave
+ * added vlist_prepack rc variable which enables vlist_packer code
+ *
  * Revision 1.5  2007/12/06 04:16:20  gtkwave
  * removed non-growable vlists
  *

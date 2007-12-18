@@ -309,7 +309,7 @@
 		search windows).  Added locking in main iteration
 		loop to detect unexpected context switches and
 		fix/report them (wrong operation if it occurs).
-3.1.2	17dec07	Compiler warning cleanups from Sun compile logs.
+3.1.2	18dec07	Compiler warning cleanups from Sun compile logs.
 		Added named parameter support to vermin parser.
 		Added check for gperf back into configure.ac.
 		Added vlist_spill rc variable to control new 
@@ -326,3 +326,5 @@
 		an LZ-based compressor.  The can cut down on
 		memory usage ever further.  This can be enabled
 		with the vlist_prepack rc variable.
+		Added --giga option to turn on vlist_spill and
+		vlist_prepack from the command line.

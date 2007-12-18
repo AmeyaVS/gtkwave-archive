@@ -189,6 +189,7 @@ WAVE_GETOPT_CPUS
 "  -S, --script=FILE          specify GUI command script file for execution\n"
 XID_GETOPT
 INTR_GETOPT
+"  -g, --giga                 use gigabyte mempacking when recoding (slower)\n"
 "  -L, --legacy               use legacy VCD mode rather than the VCD recoder\n" 
 "  -v, --vcd                  use stdin as a VCD dumpfile\n"
 "  -V, --version              display version banner then exit\n"
@@ -251,6 +252,7 @@ char is_vcd=0;
 char is_interactive=0;
 char is_smartsave = 0;
 char is_legacy = 0;
+char is_giga = 0;
 char fast_exit=0;
 char opt_errors_encountered=0;
 
@@ -473,11 +475,12 @@ while (1)
                 {"nomenus", 0, 0, 'M'},
                 {"dualid", 1, 0, 'D'},
                 {"interactive", 0, 0, 'I'},
+		{"giga", 0, 0, 'g'},
                 {"legacy", 0, 0, 'L'},  
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IL", long_options, &option_index);
+        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgL", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -672,6 +675,10 @@ while (1)
 			}
 			break;
 
+		case 'g':
+			is_giga = 1;
+			break;
+
                 case '?':
 			opt_errors_encountered=1;
                         break;
@@ -718,6 +725,11 @@ if(!GLOBALS->loaded_file_name)
 read_rc_file(override_rc);
 GLOBALS->splash_disable |= splash_disable_rc_override;
 
+if(is_giga)
+	{
+	GLOBALS->vlist_spill_to_disk = 1;
+	GLOBALS->vlist_prepack = 1;
+	}
 
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
 
@@ -1804,6 +1816,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2007/09/23 18:33:54  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.13  2007/09/17 19:26:46  gtkwave
  * added dead context sweep code (deferred cleanup of multi-tab destroy)
  *
