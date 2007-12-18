@@ -42,7 +42,7 @@ struct vlist_t *v;
 unsigned char buf[WAVE_ZIVWRAP];
 
 #ifdef WAVE_VLIST_PACKER_STATS
-unsigned int packed_bytes, 
+unsigned int packed_bytes;
 #endif
 unsigned int unpacked_bytes;
 unsigned int repcnt, repcnt2, repcnt3, repcnt4;
@@ -74,6 +74,9 @@ void vlist_packer_decompress_destroy(char *mem);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/12/17 03:22:44  gtkwave
+ * integration of (currently unused) vlist_packer routines
+ *
  * Revision 1.4  2007/12/06 04:16:20  gtkwave
  * removed non-growable vlists
  *
