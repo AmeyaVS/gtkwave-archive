@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2006.
+ * Copyright (c) Tony Bybell 2006-8.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,6 +74,9 @@ void vlist_packer_decompress_destroy(char *mem);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/12/18 03:49:51  gtkwave
+ * fixed header typo (ifdef'd out so missed)
+ *
  * Revision 1.5  2007/12/17 03:22:44  gtkwave
  * integration of (currently unused) vlist_packer routines
  *

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -206,16 +206,10 @@ pnt = vlist_alloc(vl, 1);
 
 #undef VCD_BSEARCH_IS_PERFECT		/* bsearch is imperfect under linux, but OK under AIX */
 
-
-
 static void add_histent(TimeType time, struct Node *n, char ch, int regadd, char *vector);
 static void vcd_build_symbols(void);
 static void vcd_cleanup(void);
 static void evcd_strcpy(char *dst, char *src);
-
-
-
-
 
 /******************************************************************/
 
@@ -239,11 +233,6 @@ static char *tokens[]={ "var", "end", "scope", "upscope",
 #define T_GET tok=get_token();if((tok==T_END)||(tok==T_EOF))break;
 
 /******************************************************************/
-
-
-
-/******************************************************************/
-
 
 static unsigned int vcdid_hash(char *s, int len)
 {  
@@ -2673,6 +2662,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/12/18 17:28:54  gtkwave
+ * added --giga command line option to gtkwave
+ *
  * Revision 1.6  2007/12/17 18:49:32  gtkwave
  * added vlist_prepack rc variable which enables vlist_packer code
  *
@@ -2729,4 +2721,3 @@ np->mv.mvlfac_vlist = NULL;
  * initial release
  *
  */
-

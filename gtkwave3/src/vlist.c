@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2006-7.
+ * Copyright (c) Tony Bybell 2006-8.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -769,6 +769,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2007/12/17 03:22:44  gtkwave
+ * integration of (currently unused) vlist_packer routines
+ *
  * Revision 1.8  2007/12/09 00:51:12  gtkwave
  * checked in actual half-block fill routine...somehow it escaped CVS
  *

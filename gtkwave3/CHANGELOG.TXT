@@ -309,7 +309,7 @@
 		search windows).  Added locking in main iteration
 		loop to detect unexpected context switches and
 		fix/report them (wrong operation if it occurs).
-3.1.2	18dec07	Compiler warning cleanups from Sun compile logs.
+3.1.2	24dec07	Compiler warning cleanups from Sun compile logs.
 		Added named parameter support to vermin parser.
 		Added check for gperf back into configure.ac.
 		Added vlist_spill rc variable to control new 
