@@ -336,3 +336,4 @@
 		the GTK2 signal search tree.
 		Fixed bug where filtered signal names did not
 		reappear on reload.
+		Updated user manual as necessary.
