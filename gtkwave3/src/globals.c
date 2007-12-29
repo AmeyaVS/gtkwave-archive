@@ -763,6 +763,7 @@ NULL, /* void (*cleanup_treesearch_gtk1_c)(); */
 /*
  * treesearch_gtk2.c
  */
+1, /* do_dynamic_treefilter */
 NULL, /* treesearch_gtk2_window_vbox */
 NULL, /* selected_hierarchy_name */
 NULL, /* gtk2_tree_frame */
@@ -1407,6 +1408,7 @@ void reload_into_new_context(void)
 #endif
 
  /* treesearch_gtk2.c */
+ new_globals->do_dynamic_treefilter = GLOBALS->do_dynamic_treefilter;
  new_globals->treesearch_gtk2_window_vbox = GLOBALS->treesearch_gtk2_window_vbox;
  new_globals->window_treesearch_gtk2_c_12 = GLOBALS->window_treesearch_gtk2_c_12;
 
@@ -1841,6 +1843,7 @@ void reload_into_new_context(void)
 	/* gtk_widget_set_size_request(GLOBALS->gtk2_tree_frame, -1, tree_frame_y); */
 	}
 
+ if(GLOBALS->filter_entry) { gtk_signal_emit_by_name (GTK_OBJECT (GLOBALS->filter_entry), "activate"); }
  }
  #endif
 

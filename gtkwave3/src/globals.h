@@ -759,6 +759,7 @@ void (*cleanup_treesearch_gtk1_c)(); /* ...end of manual adds */
 /*
  * treesearch_gtk2.c
  */
+char do_dynamic_treefilter; /* from treesearch_gtk2.c */
 GtkWidget *treesearch_gtk2_window_vbox; /* from treesearch_gtk2.c */
 char *selected_hierarchy_name; /* from treesearch_gtk2.c */
 GtkWidget *gtk2_tree_frame; /* from treesearch_gtk2.c */

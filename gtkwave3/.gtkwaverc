@@ -2,6 +2,7 @@
 # sample rc file
 #
 splash_disable on
+sst_dynamic_filter on
 
 vlist_spill off
 vlist_prepack off

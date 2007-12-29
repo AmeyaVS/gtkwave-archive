@@ -239,6 +239,13 @@ GLOBALS->hide_sst=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_sst_dynamic_filter(char *str)
+{
+DEBUG(printf("f_sst_dynamic_filter(\"%s\")\n",str));
+GLOBALS->do_dynamic_treefilter=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_sst_expanded(char *str)
 {
 DEBUG(printf("f_sst_expanded(\"%s\")\n",str));
@@ -661,6 +668,7 @@ static struct rc_entry rcitems[]=
 { "show_base_symbols", f_show_base_symbols },
 { "show_grid", f_show_grid },
 { "splash_disable", f_splash_disable },
+{ "sst_dynamic_filter", f_sst_dynamic_filter },  
 { "sst_expanded", f_sst_expanded },
 { "use_big_fonts", f_use_big_fonts },
 { "use_frequency_display", f_use_frequency_display },
@@ -848,6 +856,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/12/17 18:49:32  gtkwave
+ * added vlist_prepack rc variable which enables vlist_packer code
+ *
  * Revision 1.5  2007/11/30 01:31:23  gtkwave
  * added vlist memory spill to disk code + fixed vcdload status bar on > 2GB
  *

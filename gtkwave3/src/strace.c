@@ -437,6 +437,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 
     entry = gtk_entry_new_with_max_length (257); /* %+256ch */
     gtkwave_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(enter_callback), s);
+    gtkwave_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(enter_callback), s);
 
     gtk_box_pack_start (GTK_BOX (small_hbox), entry, TRUE, FALSE, 0);
     gtk_widget_show (entry);
@@ -1640,6 +1641,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

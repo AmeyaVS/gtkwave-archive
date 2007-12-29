@@ -548,6 +548,20 @@ gboolean filter_edit_cb (GtkWidget *widget, GdkEventKey *ev, gpointer *data)
 }
 
 
+/*
+ * for dynamic updates, simply fake the return key to the function above
+ */
+static
+void press_callback (GtkWidget *widget, gpointer *data)
+{
+GdkEventKey ev;
+
+ev.keyval = GDK_Return;
+
+filter_edit_cb (widget, &ev, data);
+}
+
+
 
 int treebox_is_active(void)
 {
@@ -1184,12 +1198,26 @@ do_tooltips:
 
     gtk_widget_show (GLOBALS->filter_entry);
 
-    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->filter_entry), "key_press_event", (GtkSignalFunc) filter_edit_cb, NULL); 
-    gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
+    gtkwave_signal_connect(GTK_OBJECT(GLOBALS->filter_entry), "activate", GTK_SIGNAL_FUNC(press_callback), NULL);
+    if(!GLOBALS->do_dynamic_treefilter)
+	{
+    	gtkwave_signal_connect(GTK_OBJECT (GLOBALS->filter_entry), "key_press_event", (GtkSignalFunc) filter_edit_cb, NULL);
+	gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
 			   "Add a POSIX filter. "
 			   "'.*' matches any number of characters,"
-			   " '.' matches any character.  Hit Return to apply",
+			   " '.' matches any character.  Hit Return to apply.",
 			   NULL);
+	}
+	else
+	{
+    	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->filter_entry), "changed", GTK_SIGNAL_FUNC(press_callback), NULL);
+	gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
+			   "Add a POSIX filter. "
+			   "'.*' matches any number of characters,"
+			   " '.' matches any character.",
+			   NULL);
+	}
+
 
     gtk_box_pack_start (GTK_BOX (filter_hbox), GLOBALS->filter_entry, FALSE, FALSE, 1);
 
@@ -1398,12 +1426,25 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     if(GLOBALS->filter_str_treesearch_gtk2_c_1) { gtk_entry_set_text(GTK_ENTRY(GLOBALS->filter_entry), GLOBALS->filter_str_treesearch_gtk2_c_1); }
     gtk_widget_show (GLOBALS->filter_entry);
 
-    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->filter_entry), "key_press_event", (GtkSignalFunc) filter_edit_cb, NULL);
-    gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
+    gtkwave_signal_connect(GTK_OBJECT(GLOBALS->filter_entry), "activate", GTK_SIGNAL_FUNC(press_callback), NULL);
+    if(!GLOBALS->do_dynamic_treefilter)
+	{
+    	gtkwave_signal_connect(GTK_OBJECT (GLOBALS->filter_entry), "key_press_event", (GtkSignalFunc) filter_edit_cb, NULL);
+	gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
 			   "Add a POSIX filter. "
 			   "'.*' matches any number of characters,"
-			   " '.' matches any character.  Hit Return to apply",
+			   " '.' matches any character.  Hit Return to apply.",
 			   NULL);
+	}
+	else
+	{
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->filter_entry), "changed", GTK_SIGNAL_FUNC(press_callback), NULL);
+	gtk_tooltips_set_tip_2(tooltips, GLOBALS->filter_entry,
+			   "Add a POSIX filter. "
+			   "'.*' matches any number of characters,"
+			   " '.' matches any character.",
+			   NULL);
+	}
 
     gtk_box_pack_start (GTK_BOX (filter_hbox), GLOBALS->filter_entry, FALSE, FALSE, 1);
 
@@ -1775,6 +1816,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *
