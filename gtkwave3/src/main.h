@@ -28,6 +28,7 @@ GtkWidget *create_zoom_buttons(void);
 GtkWidget *create_page_buttons(void);
 GtkWidget *create_fetch_buttons(void);
 GtkWidget *create_discard_buttons(void);
+GtkWidget *create_edge_buttons(void);
 GtkWidget *create_shift_buttons(void);
 GtkWidget *create_entry_box(void);
 GtkWidget *create_time_box(void);
@@ -74,6 +75,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:42  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.5  2007/08/26 19:05:55  gtkwave
  * added reload button in main window
  *

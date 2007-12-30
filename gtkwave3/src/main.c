@@ -270,6 +270,7 @@ GtkWidget *pagebuttons;
 GtkWidget *fetchbuttons;
 GtkWidget *discardbuttons;
 GtkWidget *shiftbuttons;
+GtkWidget *edgebuttons;
 GtkWidget *entry;
 GtkWidget *timebox;
 GtkWidget *panedwindow;
@@ -1184,10 +1185,16 @@ if(!GLOBALS->use_scrollbar_only)
 	                      	GTK_FILL,
 	                      	GTK_SHRINK, 0, 0);
 	gtk_widget_show (shiftbuttons);
+
+	edgebuttons = create_edge_buttons ();
+	gtk_table_attach (GTK_TABLE (top_table), edgebuttons, 177, 178, 0, 1,
+	                      	GTK_FILL,
+	                      	GTK_SHRINK, 0, 0);
+	gtk_widget_show (edgebuttons);
 	}
 
 dummy2=gtk_label_new("");
-gtk_table_attach (GTK_TABLE (top_table), dummy2, 177, 215, 0, 1,
+gtk_table_attach (GTK_TABLE (top_table), dummy2, 178, 215, 0, 1,
                       	GTK_FILL,
                       	GTK_SHRINK, 0, 0);
 gtk_widget_show (dummy2);
@@ -1816,6 +1823,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2007/12/18 17:28:54  gtkwave
+ * added --giga command line option to gtkwave
+ *
  * Revision 1.14  2007/09/23 18:33:54  gtkwave
  * warnings cleanups from sun compile
  *

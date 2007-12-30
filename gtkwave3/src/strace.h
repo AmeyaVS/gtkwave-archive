@@ -77,6 +77,7 @@ struct item_mark_string {
 
 void strace_search(int direction);
 void strace_maketimetrace(int mode); /* 1=create, zero=delete */
+TimeType strace_adjust(TimeType a, TimeType b);
 
 void swap_strace_contexts(void);
 void delete_strace_context(void);
@@ -90,6 +91,9 @@ void delete_mprintf(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:45  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

@@ -410,8 +410,8 @@ NULL, /* expanderwindow 205 */
 0, /* disable_window_manager 206 */
 1, /* paned_pack_semantics 207 */
 0, /* zoom_was_explicitly_set 208 */
-820, /* initial_window_x 209 */
-400, /* initial_window_y */
+900, /* initial_window_x 209 */
+600, /* initial_window_y */
 -1, /* initial_window_width */
 -1, /* initial_window_height 210 */
 0, /* xy_ignore_main_c_1 211 */

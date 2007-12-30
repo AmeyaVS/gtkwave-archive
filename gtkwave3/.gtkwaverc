@@ -15,8 +15,8 @@ zoom_pow10_snap on
 
 dynamic_resizing 1
 hpane_pack 1
-#initial_window_x 820
-#initial_window_y 400
+#initial_window_x 900
+#initial_window_y 600
 #initial_window_xpos 50
 #initial_window_ypos 50
 

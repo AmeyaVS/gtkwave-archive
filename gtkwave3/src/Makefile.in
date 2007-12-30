@@ -62,14 +62,14 @@ am_gtkwave_OBJECTS = globals.$(OBJEXT) ae2.$(OBJEXT) \
 	pipeio.$(OBJEXT) pixmaps.$(OBJEXT) print.$(OBJEXT) \
 	ptranslate.$(OBJEXT) rc.$(OBJEXT) regex.$(OBJEXT) \
 	renderopt.$(OBJEXT) rgb.$(OBJEXT) search.$(OBJEXT) \
-	shiftbuttons.$(OBJEXT) showchange.$(OBJEXT) \
-	signalwindow.$(OBJEXT) simplereq.$(OBJEXT) splash.$(OBJEXT) \
-	status.$(OBJEXT) strace.$(OBJEXT) symbol.$(OBJEXT) \
-	timeentry.$(OBJEXT) translate.$(OBJEXT) tree.$(OBJEXT) \
-	treesearch.$(OBJEXT) vcd.$(OBJEXT) vcd_keywords.$(OBJEXT) \
-	vcd_partial.$(OBJEXT) vcd_recoder.$(OBJEXT) \
-	vcd_saver.$(OBJEXT) vlist.$(OBJEXT) vzt.$(OBJEXT) \
-	wavewindow.$(OBJEXT) zoombuttons.$(OBJEXT)
+	edgebuttons.$(OBJEXT) shiftbuttons.$(OBJEXT) \
+	showchange.$(OBJEXT) signalwindow.$(OBJEXT) \
+	simplereq.$(OBJEXT) splash.$(OBJEXT) status.$(OBJEXT) \
+	strace.$(OBJEXT) symbol.$(OBJEXT) timeentry.$(OBJEXT) \
+	translate.$(OBJEXT) tree.$(OBJEXT) treesearch.$(OBJEXT) \
+	vcd.$(OBJEXT) vcd_keywords.$(OBJEXT) vcd_partial.$(OBJEXT) \
+	vcd_recoder.$(OBJEXT) vcd_saver.$(OBJEXT) vlist.$(OBJEXT) \
+	vzt.$(OBJEXT) wavewindow.$(OBJEXT) zoombuttons.$(OBJEXT)
 gtkwave_OBJECTS = $(am_gtkwave_OBJECTS)
 am__DEPENDENCIES_1 =
 gtkwave_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -207,7 +207,7 @@ gtkwave_SOURCES = \
 	logfile.c lx2.c lx2.h lxt.c lxt.h main.c main.h markerbox.c menu.c menu.h mouseover.c \
 	pagebuttons.c pipeio.c pipeio.h pixmaps.c pixmaps.h print.c print.h \
 	ptranslate.c ptranslate.h rc.c rc.h \
-	regex.c regex_wave.h renderopt.c rgb.c search.c shiftbuttons.c showchange.c \
+	regex.c regex_wave.h renderopt.c rgb.c search.c edgebuttons.c shiftbuttons.c showchange.c \
 	signalwindow.c simplereq.c splash.c status.c strace.c strace.h symbol.c symbol.h \
 	timeentry.c translate.c translate.h tree.c tree.h treesearch.c vcd.c vcd.h vcd_keywords.c \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
@@ -302,6 +302,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/currenttime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/discardbuttons.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/edgebuttons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/entry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fetchbuttons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fgetdynamic.Po@am__quote@

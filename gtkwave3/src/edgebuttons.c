@@ -550,8 +550,8 @@ return(table);
 /*
  * $Id$
  * $Log$
- * Revision 1.0  2007/04/20 02:08:17  gtkwave
- * initial release
+ * Revision 1.1  2007/12/30 04:23:03  gtkwave
+ * new feature add
  *
  */
 

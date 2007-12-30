@@ -112,7 +112,7 @@ return(*hay ? hay : NULL);
 /*
  * trap timescale overflows
  */
-static TimeType adjust(TimeType a, TimeType b)
+TimeType strace_adjust(TimeType a, TimeType b)
 {
 TimeType res=a+b;
 
@@ -632,7 +632,7 @@ while(s)
 		hp--;
 		h=*hp;
 		s->his.h=h;
-		utt=adjust(h->time,GLOBALS->shift_timebase); tt=utt;
+		utt=strace_adjust(h->time,GLOBALS->shift_timebase); tt=utt;
 		if(tt > maxbase) maxbase=tt;
 		}
 		else
@@ -648,7 +648,7 @@ while(s)
 		vp--;
 		v=*vp;
 		s->his.v=v;
-		utt=adjust(v->time,GLOBALS->shift_timebase); tt=utt;
+		utt=strace_adjust(v->time,GLOBALS->shift_timebase); tt=utt;
 		if(tt > maxbase) maxbase=tt;
 		}
 
@@ -674,7 +674,7 @@ while(s)
 		if((whichpass)||(GLOBALS->tims.marker>=0)) h=h->next;
 		if(!h) return;
 		s->his.h=h;
-		utt=adjust(h->time,GLOBALS->shift_timebase); tt=utt;		
+		utt=strace_adjust(h->time,GLOBALS->shift_timebase); tt=utt;		
 		if(tt < maxbase) maxbase=tt;
 		}
 		else
@@ -688,7 +688,7 @@ while(s)
 		if((whichpass)||(GLOBALS->tims.marker>=0)) v=v->next;
 		if(!v) return;
 		s->his.v=v;
-		utt=adjust(v->time,GLOBALS->shift_timebase); tt=utt;
+		utt=strace_adjust(v->time,GLOBALS->shift_timebase); tt=utt;
 		if(tt < maxbase) maxbase=tt;
 		}
 
@@ -707,7 +707,7 @@ while(s)
 	
 	if((!t->vector)&&(!(t->n.nd->ext)))
 		{
-		if(adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
+		if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 			{
 			s->his.h=bsearch_node(t->n.nd, maxbase);
 			while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -783,7 +783,7 @@ while(s)
 
 		if(t->vector)
 			{
-			if(adjust(s->his.v->time,GLOBALS->shift_timebase)!=maxbase) 
+			if(strace_adjust(s->his.v->time,GLOBALS->shift_timebase)!=maxbase) 
 				{
 				s->his.v=bsearch_vector(t->n.vec, maxbase);
 				while(s->his.v->next && s->his.v->time==s->his.v->next->time) s->his.v=s->his.v->next;
@@ -792,7 +792,7 @@ while(s)
 			}
 			else
 			{
-			if(adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
+			if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 				{
 				s->his.h=bsearch_node(t->n.nd, maxbase);
 				while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -1022,7 +1022,7 @@ while(s)
 		while(h->time==h->next->time) h=h->next;
 		if((whichpass)||(notfirst)) h=h->next;
 		if(!h) return(MAX_HISTENT_TIME);
-		utt=adjust(h->time,GLOBALS->shift_timebase); tt=utt;		
+		utt=strace_adjust(h->time,GLOBALS->shift_timebase); tt=utt;		
 		if(tt < maxbase) maxbase=tt;
 		}
 		else
@@ -1035,7 +1035,7 @@ while(s)
 		if((whichpass)||(notfirst)) v=v->next;
 		if(!v) return(MAX_HISTENT_TIME);
 		s->his.v=v;
-		utt=adjust(v->time,GLOBALS->shift_timebase); tt=utt;
+		utt=strace_adjust(v->time,GLOBALS->shift_timebase); tt=utt;
 		if(tt < maxbase) maxbase=tt;
 		}
 
@@ -1053,7 +1053,7 @@ while(s)
 	
 	if((!t->vector)&&(!(t->n.nd->ext)))
 		{
-		if(adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
+		if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 			{
 			s->his.h=bsearch_node(t->n.nd, maxbase);
 			while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -1080,7 +1080,7 @@ while(s)
 
 			case ST_RISE:
 				totaltraces++;
-				if(((str[0]=='1')||(str[0]=='H'))&&(adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase)) 
+				if(((str[0]=='1')||(str[0]=='H'))&&(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase)) 
 					s->search_result=1;	
 				break;
 
@@ -1091,7 +1091,7 @@ while(s)
 
 			case ST_FALL:
 				totaltraces++;
-				if(((str[0]=='0')||(str[0]=='L'))&&(adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase))
+				if(((str[0]=='0')||(str[0]=='L'))&&(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase))
  					s->search_result=1;
 				break;
 
@@ -1108,7 +1108,7 @@ while(s)
 
 			case ST_ANY:
 				totaltraces++;
-				if(adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase)s->search_result=1;
+				if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase)s->search_result=1;
 				break;
 		
 			case ST_STRING:
@@ -1131,7 +1131,7 @@ while(s)
 
 		if(t->vector)
 			{
-			if(adjust(s->his.v->time,GLOBALS->shift_timebase)!=maxbase) 
+			if(strace_adjust(s->his.v->time,GLOBALS->shift_timebase)!=maxbase) 
 				{
 				s->his.v=bsearch_vector(t->n.vec, maxbase);
 				while(s->his.v->next && s->his.v->time==s->his.v->next->time) s->his.v=s->his.v->next;
@@ -1140,7 +1140,7 @@ while(s)
 			}
 			else
 			{
-			if(adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
+			if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 				{
 				s->his.h=bsearch_node(t->n.nd, maxbase);
 				while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
@@ -1241,7 +1241,7 @@ while(s)
 
 			case ST_ANY:
 				totaltraces++;
-				if(adjust(s->his.v->time,GLOBALS->shift_timebase)==maxbase)
+				if(strace_adjust(s->his.v->time,GLOBALS->shift_timebase)==maxbase)
 					s->search_result=1;
 				break;
 		
@@ -1641,6 +1641,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/12/29 20:19:33  gtkwave
+ * added dynamic string updates for entrybox in pattern search and sst
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
