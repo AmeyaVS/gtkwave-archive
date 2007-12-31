@@ -42,6 +42,7 @@ return(t);
  */
 void edge_search(int direction)
 {
+struct strace s_tmp;
 struct strace *s_head, *s;
 TimeType basetime, maxbase, sttim, fintim;
 Trptr t = find_first_highlighted_trace();
@@ -50,7 +51,7 @@ int whichpass;
 TimeType middle=0, width;
 
 if(!t) return;
-s_head = calloc_2(1, sizeof(struct strace));
+memset(s_head = &s_tmp, 0, sizeof(struct strace));
 s_head->trace = t;
 s_head->value = ST_ANY;
 
@@ -100,8 +101,8 @@ while(s)
 
 		h=bsearch_node(t->n.nd, basetime);
 		hp=GLOBALS->max_compare_index;
-		if((hp==&(t->n.nd->harray[1]))||(hp==&(t->n.nd->harray[0]))) goto bot;
-		hp--;
+		if((hp==&(t->n.nd->harray[1]))||(hp==&(t->n.nd->harray[0]))) return;
+		if(basetime == ((*hp)->time+GLOBALS->shift_timebase)) hp--;
 		h=*hp;
 		s->his.h=h;
 		utt=strace_adjust(h->time,GLOBALS->shift_timebase); tt=utt;
@@ -116,7 +117,8 @@ while(s)
 
 		v=bsearch_vector(t->n.vec, basetime);
 		vp=GLOBALS->vmax_compare_index;
-		if((vp==&(t->n.vec->vectors[1]))||(vp==&(t->n.vec->vectors[0]))) goto bot;
+		if((vp==&(t->n.vec->vectors[1]))||(vp==&(t->n.vec->vectors[0]))) return;
+		if(basetime == ((*vp)->time+GLOBALS->shift_timebase)) vp--;
 		vp--;
 		v=*vp;
 		s->his.v=v;
@@ -144,7 +146,7 @@ while(s)
 		h=bsearch_node(t->n.nd, basetime);
 		while(h->next && h->time==h->next->time) h=h->next;
 		if((whichpass)||(GLOBALS->tims.marker>=0)) h=h->next;
-		if(!h) goto bot;
+		if(!h) return;
 		s->his.h=h;
 		utt=strace_adjust(h->time,GLOBALS->shift_timebase); tt=utt;		
 		if(tt < maxbase) maxbase=tt;
@@ -158,7 +160,7 @@ while(s)
 		v=bsearch_vector(t->n.vec, basetime);
 		while(v->next && v->time==v->next->time) v=v->next;
 		if((whichpass)||(GLOBALS->tims.marker>=0)) v=v->next;
-		if(!v) goto bot;
+		if(!v) return;
 		s->his.v=v;
 		utt=strace_adjust(v->time,GLOBALS->shift_timebase); tt=utt;
 		if(tt < maxbase) maxbase=tt;
@@ -392,7 +394,7 @@ while(s)
 	s=s->next;
 	}
 
-if((maxbase<sttim)||(maxbase>fintim)) goto bot;
+if((maxbase<sttim)||(maxbase>fintim)) return;
 
 DEBUG(printf("Maxbase: "TTFormat", total traces: %d\n",maxbase, totaltraces));
 s=s_head;
@@ -437,8 +439,6 @@ if((GLOBALS->tims.marker<GLOBALS->tims.start)||(GLOBALS->tims.marker>=GLOBALS->t
 MaxSignalLength();
 signalarea_configure_event(GLOBALS->signalarea, NULL);
 wavearea_configure_event(GLOBALS->wavearea, NULL);
-
-bot: free_2(s_head);
 }
 
 /************************************************/
@@ -550,6 +550,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/12/30 04:27:39  gtkwave
+ * added edge buttons to main window
+ *
  * Revision 1.1  2007/12/30 04:23:03  gtkwave
  * new feature add
  *

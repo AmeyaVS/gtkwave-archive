@@ -629,7 +629,7 @@ while(s)
 		h=bsearch_node(t->n.nd, basetime);
 		hp=GLOBALS->max_compare_index;
 		if((hp==&(t->n.nd->harray[1]))||(hp==&(t->n.nd->harray[0]))) return;
-		hp--;
+		if(basetime == ((*hp)->time+GLOBALS->shift_timebase)) hp--;
 		h=*hp;
 		s->his.h=h;
 		utt=strace_adjust(h->time,GLOBALS->shift_timebase); tt=utt;
@@ -645,7 +645,7 @@ while(s)
 		v=bsearch_vector(t->n.vec, basetime);
 		vp=GLOBALS->vmax_compare_index;
 		if((vp==&(t->n.vec->vectors[1]))||(vp==&(t->n.vec->vectors[0]))) return;
-		vp--;
+		if(basetime == ((*vp)->time+GLOBALS->shift_timebase)) vp--;
 		v=*vp;
 		s->his.v=v;
 		utt=strace_adjust(v->time,GLOBALS->shift_timebase); tt=utt;
@@ -1641,6 +1641,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/12/30 04:27:39  gtkwave
+ * added edge buttons to main window
+ *
  * Revision 1.5  2007/12/29 20:19:33  gtkwave
  * added dynamic string updates for entrybox in pattern search and sst
  *
