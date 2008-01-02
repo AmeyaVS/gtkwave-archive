@@ -3,6 +3,7 @@
 #
 splash_disable on
 sst_dynamic_filter on
+use_standard_clicking off
 
 vlist_spill off
 vlist_prepack off

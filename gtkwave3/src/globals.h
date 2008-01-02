@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Kermin Elliott Fleming 2007.
+ * Copyright (c) Kermin Elliott Fleming 2007-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -632,6 +632,8 @@ int cachedwhich_signalwindow_c_1; /* from signalwindow.c 409 */
 struct TraceEnt *cachedtrace; /* from signalwindow.c 410 */
 struct TraceEnt *shift_click_trace; /* from signalwindow.c 411 */
 int trtarget_signalwindow_c_1; /* from signalwindow.c 412 */
+Trptr starting_unshifted_trace; /* from signalwindow.c */
+unsigned char use_standard_clicking; /* from signalwindow.c */
 
 
 /*

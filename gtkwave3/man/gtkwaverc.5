@@ -262,6 +262,10 @@ A nonzero value indicates that vector traces should be drawn with rounded caps r
 \fBuse_scrollbar_only\fR <\fIvalue\fP>
 A nonzero value indicates that the page, shift, fetch, and discard buttons should not be drawn (i.e., time manipulations should be through the scrollbar only rather than front panel buttons). The default for this is zero.
 .TP 
+\fBuse_standard_clicking\fR <\fIvalue\fP>
+A nonzero value indicates that normal GTK click semantics should be used in the signalwindow.  Default behavior
+is off: gtkwave semantics are used.
+.TP
 \fBvcd_explicit_zero_subscripts\fR <\fIvalue\fP>
 indicates that signal names should be stored internally as name.bitnumber when enabled. When disabled, a more "normal" ordering of name[bitnumber] is used. Note that when disabled, the Bundle Up and Bundle Down options are disabled in the Signal Search Regexp,  Signal Search Hierarchy, and Signal Search Tree options. This is necessary as the internal data structures for signals are represented with one "less" level of hierarchy than when enabled and those functions would not work properly. This should not be an issue if atomic_vectors are enabled. Default for vcd_explicit_zero_subscripts is disabled.
 .TP 

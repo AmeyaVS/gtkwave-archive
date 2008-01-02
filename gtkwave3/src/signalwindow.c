@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,6 +48,157 @@ if(GLOBALS->signalpixmap)
 	}
 }
 
+
+/**************************************************************************/
+/***  standard click routines turned on with "use_standard_clicking"=1  ***/
+
+static gint motion_notify_event_std(GtkWidget *widget, GdkEventMotion *event)
+{
+gdouble x,y;
+GdkModifierType state;
+
+#ifdef WAVE_USE_GTK2
+gint xi, yi;
+#endif
+
+if(event->is_hint)
+	{
+	WAVE_GDK_GET_POINTER(event->window, &x, &y, &xi, &yi, &state);
+	WAVE_GDK_GET_POINTER_COPY;
+	}
+	else
+	{
+	x = event->x;
+	y = event->y;
+	state = event->state;
+	}
+
+return(TRUE);
+}
+
+
+static gint button_release_event_std(GtkWidget *widget, GdkEventButton *event)
+{
+return(TRUE);
+}
+
+
+static gint button_press_event_std(GtkWidget *widget, GdkEventButton *event)
+{
+int num_traces_displayable;
+int which;
+int trwhich, trtarget;
+GtkAdjustment *wadj;
+Trptr t, t2;
+
+if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
+	{
+	num_traces_displayable=widget->allocation.height/(GLOBALS->fontheight);
+	num_traces_displayable--;   /* for the time trace that is always there */
+
+	which=(int)(event->y);
+	which=(which/GLOBALS->fontheight)-1;
+
+	if((which>=GLOBALS->traces.visible)||(which>=num_traces_displayable)||(which<0))
+		{
+		goto bot; /* off in no man's land */
+		}
+
+	wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+	trtarget=((int)wadj->value)+which;
+
+	t=GLOBALS->traces.first;
+	trwhich=0;
+	while(t)
+	        {
+	        if((trwhich<trtarget)&&(GiveNextTrace(t)))
+	                {
+	                trwhich++;
+	                t=GiveNextTrace(t);
+	                }
+	                else
+	                {
+	                break;
+	                }
+	        }
+
+	if(event->state&GDK_CONTROL_MASK)
+		{
+		t->flags ^= TR_HIGHLIGHT;
+		}
+	else
+	if((event->state&GDK_SHIFT_MASK)&&(GLOBALS->starting_unshifted_trace))
+		{
+		int src = -1, dst = -1;
+		int cnt = 0;
+
+		t2=GLOBALS->traces.first;
+		while(t2)
+			{
+			if(t2 == t) { dst = cnt; }
+			if(t2 == GLOBALS->starting_unshifted_trace) { src = cnt; }
+
+			cnt++;
+
+			t2->flags &= ~TR_HIGHLIGHT;
+			t2 = t2->t_next;
+			}
+
+		if(src != -1)
+			{
+			int cpy;
+
+			if(src > dst) { cpy = src; src = dst; dst = cpy; }
+			cnt = 0;
+			t2=GLOBALS->traces.first;
+			while(t2)
+				{
+				if((cnt >= src) && (cnt <= dst))
+					{
+					t2->flags |= TR_HIGHLIGHT;
+					}
+
+				cnt++;
+				t2=t2->t_next;
+				}
+			}
+			else
+			{
+			GLOBALS->starting_unshifted_trace = t;
+			t->flags |= TR_HIGHLIGHT;
+			}
+		}
+	else
+		{
+		GLOBALS->starting_unshifted_trace = t;
+
+		t2=GLOBALS->traces.first;
+		while(t2)
+			{
+			t2->flags &= ~TR_HIGHLIGHT;
+			t2 = t2->t_next;
+			}
+
+		t->flags |= TR_HIGHLIGHT;
+		}
+
+
+	GLOBALS->signalwindow_width_dirty=1;
+        MaxSignalLength();
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+
+bot:
+return(TRUE);
+}
+
+/***  standard click routines turned on with "use_standard_clicking"=1  ***/
+/**************************************************************************/
+
+
+/**************************************************************************/
+/***  gtkwave click routines turned on with "use_standard_clicking"=0   ***/
 
 static gint motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
@@ -435,6 +586,10 @@ check_button_3:
 return(TRUE);
 }
 
+/***  gtkwave click routines turned on with "use_standard_clicking"=0   ***/
+/**************************************************************************/
+
+
 gint signalarea_configure_event(GtkWidget *widget, GdkEventConfigure *event)
 {
 GtkAdjustment *wadj, *hadj;
@@ -583,9 +738,18 @@ gtk_widget_set_events(GLOBALS->signalarea,
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "configure_event", GTK_SIGNAL_FUNC(signalarea_configure_event_local), NULL);
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "expose_event",GTK_SIGNAL_FUNC(expose_event_local), NULL);
 
-gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
-gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
-gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
+if(GLOBALS->use_standard_clicking)
+	{
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event_std), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event_std), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event_std), NULL);
+	}
+	else
+	{
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
+	}
 
 dnd_setup(GLOBALS->signalarea);
 
@@ -613,6 +777,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/09/17 16:00:51  gtkwave
+ * yet more stability updates for tabbed viewing
+ *
  * Revision 1.6  2007/09/14 16:23:17  gtkwave
  * remove expose events from ctx management
  *

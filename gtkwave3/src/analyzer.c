@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -406,6 +406,11 @@ int AddVector( bvptr vec )
  */
 void FreeTrace(Trptr t)
 {
+if(GLOBALS->starting_unshifted_trace == t)
+	{
+	GLOBALS->starting_unshifted_trace = NULL; /* for new "standard" clicking routines */
+	}
+
 if(GLOBALS->straces)
 	{
 	struct strace_defer_free *sd = calloc_2(1, sizeof(struct strace_defer_free));
@@ -1085,6 +1090,9 @@ UpdateTracesVisible();
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.4  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

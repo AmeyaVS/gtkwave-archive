@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Kermin Elliott Fleming 2007.
+ * Copyright (c) Kermin Elliott Fleming 2007-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -636,7 +636,8 @@ NULL, /* signal_hslider 379 */
 NULL, /* cachedtrace 382 */
 NULL, /* shift_click_trace 383 */
 0, /* trtarget_signalwindow_c_1 384 */
-
+NULL, /* starting_unshifted_trace */
+0, /* use_standard_clicking */
 
 /*
  * simplereq.c
@@ -1284,6 +1285,7 @@ void reload_into_new_context(void)
 
  /* rc.c */
  new_globals->context_tabposition = GLOBALS->context_tabposition;
+ new_globals->use_standard_clicking = GLOBALS->use_standard_clicking;
 
  new_globals->ignore_savefile_pos = 1; /* to keep window from resizing/jumping */
  new_globals->ignore_savefile_size = 1; /* to keep window from resizing/jumping */

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -453,6 +453,13 @@ GLOBALS->use_scrollbar_only=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_use_standard_clicking(char *str)
+{
+DEBUG(printf("f_use_standard_clicking(\"%s\")\n",str));
+GLOBALS->use_standard_clicking=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_vcd_explicit_zero_subscripts(char *str)
 {
 DEBUG(printf("f_vcd_explicit_zero_subscripts(\"%s\")\n",str));
@@ -677,6 +684,7 @@ static struct rc_entry rcitems[]=
 { "use_nonprop_fonts", f_use_nonprop_fonts },
 { "use_roundcaps", f_use_roundcaps },
 { "use_scrollbar_only", f_use_scrollbar_only },
+{ "use_standard_clicking", f_use_standard_clicking },
 { "vcd_explicit_zero_subscripts", f_vcd_explicit_zero_subscripts },
 { "vcd_preserve_glitches", f_vcd_preserve_glitches },
 { "vcd_warning_filesize", f_vcd_warning_filesize },
@@ -856,6 +864,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/12/29 20:19:33  gtkwave
+ * added dynamic string updates for entrybox in pattern search and sst
+ *
  * Revision 1.6  2007/12/17 18:49:32  gtkwave
  * added vlist_prepack rc variable which enables vlist_packer code
  *
