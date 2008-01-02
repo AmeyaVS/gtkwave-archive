@@ -345,3 +345,5 @@
 		Added use_standard_clicking rc variable in order
 		to enable "normal GTK" shift/click semantics in
 		the signalwindow.
+		Collapse/uncollapse is now shift-ctrl when
+		use_standard_clicking is active.

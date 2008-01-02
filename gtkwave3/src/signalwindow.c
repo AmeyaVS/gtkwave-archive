@@ -79,6 +79,11 @@ return(TRUE);
 
 static gint button_release_event_std(GtkWidget *widget, GdkEventButton *event)
 {
+if(GLOBALS->std_collapse_pressed)
+	{
+	GLOBALS->std_collapse_pressed = 0;
+	}
+
 return(TRUE);
 }
 
@@ -101,7 +106,7 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 
 	if((which>=GLOBALS->traces.visible)||(which>=num_traces_displayable)||(which<0))
 		{
-		goto bot; /* off in no man's land */
+		return(TRUE); /* off in no man's land */
 		}
 
 	wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
@@ -121,6 +126,23 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 	                break;
 	                }
 	        }
+
+	if((event->state&(GDK_CONTROL_MASK|GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK|GDK_SHIFT_MASK))
+		{
+		/* frankel add */
+		if(t)
+			{
+			if((!GLOBALS->std_collapse_pressed) && CollapseTrace(t))
+				{
+				GLOBALS->signalwindow_width_dirty=1;
+	        		MaxSignalLength();
+	        		signalarea_configure_event(GLOBALS->signalarea, NULL);
+	        		wavearea_configure_event(GLOBALS->wavearea, NULL);
+				GLOBALS->std_collapse_pressed = 1;
+				}
+			return(TRUE);
+			}
+		}
 
 	if(event->state&GDK_CONTROL_MASK)
 		{
@@ -189,8 +211,6 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
         wavearea_configure_event(GLOBALS->wavearea, NULL);
 	}
 
-bot:
-return(TRUE);
 }
 
 /***  standard click routines turned on with "use_standard_clicking"=1  ***/
@@ -777,6 +797,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/01/02 18:17:26  gtkwave
+ * added standard click semantics with user_standard_clicking rc variable
+ *
  * Revision 1.7  2007/09/17 16:00:51  gtkwave
  * yet more stability updates for tabbed viewing
  *
