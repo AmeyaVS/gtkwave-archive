@@ -194,7 +194,7 @@ INTR_GETOPT
 "  -v, --vcd                  use stdin as a VCD dumpfile\n"
 "  -V, --version              display version banner then exit\n"
 "  -h, --help                 display this help then exit\n"
-"  -x  --exit                 exit after loading trace (for loader benchmarks)\n\n"
+"  -x, --exit                 exit after loading trace (for loader benchmarks)\n\n"
 
 "VCD files and save files may be compressed with zip or gzip.\n"
 "GHW files may be compressed with gzip or bzip2.\n"
@@ -1823,6 +1823,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2007/12/30 04:27:39  gtkwave
+ * added edge buttons to main window
+ *
  * Revision 1.15  2007/12/18 17:28:54  gtkwave
  * added --giga command line option to gtkwave
  *
