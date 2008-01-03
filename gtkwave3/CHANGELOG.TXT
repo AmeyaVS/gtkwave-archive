@@ -347,3 +347,4 @@
 		the signalwindow.
 		Collapse/uncollapse is now shift-ctrl when
 		use_standard_clicking is active.
+		Added prelim dnd for use_standard_clicking mode.

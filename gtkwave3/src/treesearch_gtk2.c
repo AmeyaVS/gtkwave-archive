@@ -1549,6 +1549,10 @@ static void DNDBeginCB(
 		return;
 
 	/* Put any needed drag begin setup code here. */
+	if(!GLOBALS->dnd_state)
+		{
+		GLOBALS->tree_dnd_begin = 1;
+		}
 }
 
 /*
@@ -1569,6 +1573,9 @@ gint xi, yi;
 #endif
 
 if((widget == NULL) || (dc == NULL)) return;
+
+if(!GLOBALS->tree_dnd_begin) return; /* to keep cut and paste in signalwindow from conflicting */
+GLOBALS->tree_dnd_begin = 0;
 
 /* Put any needed drag end cleanup code here. */
 
@@ -1816,6 +1823,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/12/29 20:19:33  gtkwave
+ * added dynamic string updates for entrybox in pattern search and sst
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

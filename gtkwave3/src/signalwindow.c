@@ -15,6 +15,162 @@
 #include "symbol.h"
 #include "debug.h"
 
+/*
+ *      DND "drag_begin" handler, this is called whenever a drag starts.
+ */
+static void DNDBeginCB(
+        GtkWidget *widget, GdkDragContext *dc, gpointer data
+)
+{
+if((widget == NULL) || (dc == NULL))
+	return;
+ 
+/* Put any needed drag begin setup code here. */
+if(GLOBALS->dnd_state==0)
+	{
+        if(CutBuffer())
+        	{
+                /* char buf[32]; */
+                /* sprintf(buf,"Dragging %d trace%s.\n",traces.buffercount,traces.buffercount!=1?"s":"");
+                status_text(buf); */
+                MaxSignalLength();
+                signalarea_configure_event(GLOBALS->signalarea, NULL);
+                wavearea_configure_event(GLOBALS->wavearea, NULL);
+                GLOBALS->dnd_state=1;
+                }
+	}
+}
+ 
+/*
+ *      DND "drag_end" handler, this is called when a drag and drop has
+ *      completed. So this function is the last one to be called in
+ *      any given DND operation.
+ */
+static void DNDEndCB(
+        GtkWidget *widget, GdkDragContext *dc, gpointer data
+)
+{
+int which;
+gdouble x,y;
+GdkModifierType state;
+Trptr t;
+int trwhich, trtarget;
+        
+#ifdef WAVE_USE_GTK2    
+gint xi, yi;
+#endif
+                        
+WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
+WAVE_GDK_GET_POINTER_COPY;
+
+if(GLOBALS->dnd_state==1)
+	{
+	GtkAdjustment *wadj;
+        wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+
+        which=(int)(y);
+        which=(which/GLOBALS->fontheight)-2;
+	trtarget=((int)wadj->value)+which;
+                        
+	GLOBALS->cachedtrace=t=GLOBALS->traces.first;
+	trwhich=0;
+	while(t)
+		{
+	        if((trwhich<trtarget)&&(GiveNextTrace(t)))
+	        	{
+	                trwhich++;
+	                t=GiveNextTrace(t);
+	                }
+	                else
+	                {
+	                break;
+	                }
+	        }       
+        
+        GLOBALS->cachedtrace=t;
+        if(GLOBALS->cachedtrace)
+		{
+                GLOBALS->cachedtrace->flags|=TR_HIGHLIGHT;
+                }
+
+	if( ((which<0) && (GLOBALS->topmost_trace==GLOBALS->traces.first) && PrependBuffer()) || (PasteBuffer()) ) /* short circuit on special which<0 case */
+        	{
+                /* status_text("Drop completed.\n"); */
+
+	        if(GLOBALS->cachedtrace)
+	        	{
+	                GLOBALS->cachedtrace->flags&=~TR_HIGHLIGHT;
+	                }
+   
+		GLOBALS->signalwindow_width_dirty=1;
+                MaxSignalLength();
+                signalarea_configure_event(GLOBALS->signalarea, NULL);
+                wavearea_configure_event(GLOBALS->wavearea, NULL);
+                }
+        GLOBALS->dnd_state=0;
+        }
+}
+
+/*
+ *	DND "drag_motion" handler, this is called whenever the 
+ *	pointer is dragging over the target widget.
+ */
+static gboolean DNDDragMotionCB(
+        GtkWidget *widget, GdkDragContext *dc,
+        gint x, gint y, guint t,
+        gpointer data
+)
+{
+	gboolean same_widget;
+	GdkDragAction suggested_action;
+	GtkWidget *src_widget, *tar_widget;
+
+        if((widget == NULL) || (dc == NULL))
+                return(FALSE);
+
+	/* Get source widget and target widget. */
+	src_widget = gtk_drag_get_source_widget(dc);
+	tar_widget = widget;
+
+	/* Note if source widget is the same as the target. */
+	same_widget = (src_widget == tar_widget) ? TRUE : FALSE;
+
+	GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1 = (tar_widget == GLOBALS->signalarea);
+
+	/* If this is the same widget, our suggested action should be
+	 * move.  For all other case we assume copy.
+	 */
+	if(same_widget)
+		suggested_action = GDK_ACTION_MOVE;
+	else
+		suggested_action = GDK_ACTION_COPY;
+
+	/* Respond with default drag action (status). First we check
+	 * the dc's list of actions. If the list only contains
+	 * move, copy, or link then we select just that, otherwise we
+	 * return with our default suggested action.
+	 * If no valid actions are listed then we respond with 0.
+	 */
+
+        /* Only move? */
+        if(dc->actions == GDK_ACTION_MOVE)
+            gdk_drag_status(dc, GDK_ACTION_MOVE, t);
+        /* Only copy? */
+        else if(dc->actions == GDK_ACTION_COPY)
+            gdk_drag_status(dc, GDK_ACTION_COPY, t);
+        /* Only link? */
+        else if(dc->actions == GDK_ACTION_LINK)
+            gdk_drag_status(dc, GDK_ACTION_LINK, t);
+        /* Other action, check if listed in our actions list? */
+        else if(dc->actions & suggested_action)
+            gdk_drag_status(dc, suggested_action, t);
+        /* All else respond with 0. */
+        else
+            gdk_drag_status(dc, 0, t);
+
+	return(FALSE);
+}
+
 
 /*
  * complain about certain ops conflict with dnd...
@@ -436,6 +592,7 @@ if((event->button==3)&&(GLOBALS->signalpixmap))
 	       		{
 			/* status_text("Drop completed.\n"); */
 
+			GLOBALS->signalwindow_width_dirty=1;
         		MaxSignalLength();
         		signalarea_configure_event(GLOBALS->signalarea, NULL);
         		wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -758,8 +915,49 @@ gtk_widget_set_events(GLOBALS->signalarea,
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "configure_event", GTK_SIGNAL_FUNC(signalarea_configure_event_local), NULL);
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "expose_event",GTK_SIGNAL_FUNC(expose_event_local), NULL);
 
+#define DRAG_TAR_NAME_0         "text/plain"
+#define DRAG_TAR_INFO_0         0
+ 
+#define DRAG_TAR_NAME_1         "text/uri-list"         /* not url-list */
+#define DRAG_TAR_INFO_1         1
+        
+#define DRAG_TAR_NAME_2         "STRING"
+#define DRAG_TAR_INFO_2         2
+
+
 if(GLOBALS->use_standard_clicking)
 	{
+	GtkTargetEntry target_entry[3];
+
+        target_entry[0].target = DRAG_TAR_NAME_0;
+        target_entry[0].flags = 0;
+        target_entry[0].info = DRAG_TAR_INFO_0;
+        target_entry[1].target = DRAG_TAR_NAME_1;
+        target_entry[1].flags = 0;
+        target_entry[1].info = DRAG_TAR_INFO_1;
+        target_entry[2].target = DRAG_TAR_NAME_2;
+        target_entry[2].flags = 0;
+        target_entry[2].info = DRAG_TAR_INFO_2;
+
+        gtk_drag_dest_set(
+        	GTK_WIDGET(GLOBALS->signalarea),
+                GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT |
+                GTK_DEST_DEFAULT_DROP,
+                target_entry,
+                sizeof(target_entry) / sizeof(GtkTargetEntry),
+		GDK_ACTION_MOVE
+                );
+
+        gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_motion", GTK_SIGNAL_FUNC(DNDDragMotionCB), GTK_WIDGET(GLOBALS->signalarea));
+        gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), GTK_WIDGET(GLOBALS->signalarea));
+        gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), GTK_WIDGET(GLOBALS->signalarea));
+
+	gtk_drag_source_set(GTK_WIDGET(GLOBALS->signalarea),
+        	GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
+                target_entry,
+                sizeof(target_entry) / sizeof(GtkTargetEntry),
+                GDK_ACTION_PRIVATE);
+
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event_std), NULL);
@@ -797,6 +995,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/01/02 22:12:25  gtkwave
+ * added collapsible groups to standard click semantics via shift+ctrl
+ *
  * Revision 1.8  2008/01/02 18:17:26  gtkwave
  * added standard click semantics with user_standard_clicking rc variable
  *
