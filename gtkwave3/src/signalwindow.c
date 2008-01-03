@@ -16,6 +16,42 @@
 #include "debug.h"
 
 /*
+ * complain about certain ops conflict with dnd...
+ */
+void dnd_error(void)
+{ 
+status_text("Can't perform that operation when waveform drag and drop is in progress!\n");
+}  
+
+
+static void     
+service_hslider(GtkWidget *text, gpointer data)
+{
+GtkAdjustment *hadj;
+gint xsrc;
+
+if(GLOBALS->signalpixmap)
+	{
+	hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
+	xsrc=(gint)hadj->value;
+	DEBUG(printf("Signal HSlider Moved to %d\n",xsrc));
+
+	gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_dkgray, TRUE,
+	        0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight);
+	gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_white,  
+	        0, GLOBALS->fontheight-1, GLOBALS->signal_fill_width-1, GLOBALS->fontheight-1);
+	gdk_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont,
+	        GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
+
+	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,xsrc, 0,0, 0,GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+	}
+}
+
+
+/**************************************************************************/
+/***  standard click routines turned on with "use_standard_clicking"=1  ***/
+
+/*
  *      DND "drag_begin" handler, this is called whenever a drag starts.
  */
 static void DNDBeginCB(
@@ -37,6 +73,7 @@ static void DNDEndCB(
         GtkWidget *widget, GdkDragContext *dc, gpointer data
 )
 {
+GtkWidget *ddest;
 int which;
 gdouble x,y;
 GdkModifierType state;
@@ -47,18 +84,26 @@ int trwhich, trtarget;
 gint xi, yi;
 #endif
 
-WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
-WAVE_GDK_GET_POINTER_COPY;
-
-if(GLOBALS->std_dnd_tgt_on_signalarea)
+if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 	{
 	GtkAdjustment *wadj;
         wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
 
+	WAVE_GDK_GET_POINTER(GLOBALS->std_dnd_tgt_on_signalarea ? GLOBALS->signalarea->window : GLOBALS->wavearea->window, &x, &y, &xi, &yi, &state);
+	WAVE_GDK_GET_POINTER_COPY;
+
         which=(int)(y);
         which=(which/GLOBALS->fontheight)-2;
+	if(which < -1) which = -1;
+
 	trtarget=((int)wadj->value)+which;
-                        
+
+	ddest = (GLOBALS->std_dnd_tgt_on_signalarea) ? GTK_WIDGET(GLOBALS->signalarea) : GTK_WIDGET(GLOBALS->wavearea);
+	if((x<0)||(x>=ddest->allocation.width)||(y<0)||(y>=ddest->allocation.height))
+		{
+		goto bot;
+		}
+
 	GLOBALS->cachedtrace=t=GLOBALS->traces.first;
 	trwhich=0;
 	while(t)
@@ -84,9 +129,10 @@ if(GLOBALS->std_dnd_tgt_on_signalarea)
 				GLOBALS->cachedtrace = t;
 			        if(CutBuffer())
 			        	{
-			                /* char buf[32]; */
-			                /* sprintf(buf,"Dragging %d trace%s.\n",traces.buffercount,traces.buffercount!=1?"s":"");
+			                /* char buf[32];
+			                sprintf(buf,"Dragging %d trace%s.\n",GLOBALS->traces.buffercount,GLOBALS->traces.buffercount!=1?"s":"");
 			                status_text(buf); */
+
 			                MaxSignalLength();
 			                signalarea_configure_event(GLOBALS->signalarea, NULL);
 			                wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -147,14 +193,12 @@ static gboolean DNDDragMotionCB(
 	same_widget = (src_widget == tar_widget) ? TRUE : FALSE;
 
 	GLOBALS->std_dnd_tgt_on_signalarea = (tar_widget == GLOBALS->signalarea);
+	GLOBALS->std_dnd_tgt_on_wavearea = (tar_widget == GLOBALS->wavearea);
 
 	/* If this is the same widget, our suggested action should be
 	 * move.  For all other case we assume copy.
 	 */
-	if(same_widget)
-		suggested_action = GDK_ACTION_MOVE;
-	else
-		suggested_action = GDK_ACTION_COPY;
+	suggested_action = GDK_ACTION_MOVE;
 
 	/* Respond with default drag action (status). First we check
 	 * the dc's list of actions. If the list only contains
@@ -182,42 +226,6 @@ static gboolean DNDDragMotionCB(
 	return(FALSE);
 }
 
-
-/*
- * complain about certain ops conflict with dnd...
- */
-void dnd_error(void)
-{ 
-status_text("Can't perform that operation when waveform drag and drop is in progress!\n");
-}  
-
-
-static void     
-service_hslider(GtkWidget *text, gpointer data)
-{
-GtkAdjustment *hadj;
-gint xsrc;
-
-if(GLOBALS->signalpixmap)
-	{
-	hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
-	xsrc=(gint)hadj->value;
-	DEBUG(printf("Signal HSlider Moved to %d\n",xsrc));
-
-	gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_dkgray, TRUE,
-	        0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight);
-	gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_white,  
-	        0, GLOBALS->fontheight-1, GLOBALS->signal_fill_width-1, GLOBALS->fontheight-1);
-	gdk_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont,
-	        GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
-
-	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,xsrc, 0,0, 0,GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
-	}
-}
-
-
-/**************************************************************************/
-/***  standard click routines turned on with "use_standard_clicking"=1  ***/
 
 static gint motion_notify_event_std(GtkWidget *widget, GdkEventMotion *event)
 {
@@ -963,6 +971,19 @@ if(GLOBALS->use_standard_clicking)
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), GTK_WIDGET(GLOBALS->signalarea));
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), GTK_WIDGET(GLOBALS->signalarea));
 
+        gtk_drag_dest_set(
+        	GTK_WIDGET(GLOBALS->wavearea),
+                GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT |
+                GTK_DEST_DEFAULT_DROP,
+                target_entry,
+                sizeof(target_entry) / sizeof(GtkTargetEntry),
+		GDK_ACTION_MOVE
+                );
+
+        gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "drag_motion", GTK_SIGNAL_FUNC(DNDDragMotionCB), GTK_WIDGET(GLOBALS->wavearea));
+        gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), GTK_WIDGET(GLOBALS->wavearea));
+        gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), GTK_WIDGET(GLOBALS->wavearea));
+
 	gtk_drag_source_set(GTK_WIDGET(GLOBALS->signalarea),
         	GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
                 target_entry,
@@ -981,6 +1002,7 @@ if(GLOBALS->use_standard_clicking)
 	}
 
 dnd_setup(GLOBALS->signalarea);
+dnd_setup(GLOBALS->wavearea);
 
 gtk_table_attach (GTK_TABLE (table), GLOBALS->signalarea, 0, 10, 0, 9,
                         GTK_FILL | GTK_EXPAND,
@@ -1006,6 +1028,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/01/03 02:04:52  gtkwave
+ * more dnd ergonomics
+ *
  * Revision 1.10  2008/01/03 00:09:17  gtkwave
  * preliminary dnd support for use_standard_clicking mode
  *

@@ -636,6 +636,7 @@ Trptr starting_unshifted_trace; /* from signalwindow.c */
 unsigned char use_standard_clicking; /* from signalwindow.c */
 unsigned char std_collapse_pressed; /* from signalwindow.c */
 unsigned char std_dnd_tgt_on_signalarea; /* from signalwindow.c */
+unsigned char std_dnd_tgt_on_wavearea; /* from signalwindow.c */
 
 
 /*
@@ -791,7 +792,8 @@ char bundle_direction_treesearch_gtk2_c_3; /* from treesearch_gtk2.c 497 */
 void (*cleanup_treesearch_gtk2_c_8)(); /* from treesearch_gtk2.c 498 */
 int pre_import_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 499 */
 Traces tcache_treesearch_gtk2_c_2; /* from treesearch_gtk2.c 500 */
-int dnd_tgt_on_signalarea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 501 */
+unsigned char dnd_tgt_on_signalarea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 501 */
+unsigned char dnd_tgt_on_wavearea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c */
 
 
 /*

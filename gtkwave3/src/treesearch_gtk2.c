@@ -1579,12 +1579,26 @@ GLOBALS->tree_dnd_begin = 0;
 
 /* Put any needed drag end cleanup code here. */
 
-if(!GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1) return;
+if(GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1)
+	{
+	WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
+	WAVE_GDK_GET_POINTER_COPY;
 
-WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
-WAVE_GDK_GET_POINTER_COPY;
+	if((x<0)||(y<0)||(x>=GLOBALS->signalarea->allocation.width)||(y>=GLOBALS->signalarea->allocation.height)) return;
+	}
+else
+if(GLOBALS->dnd_tgt_on_wavearea_treesearch_gtk2_c_1)
+	{
+	WAVE_GDK_GET_POINTER(GLOBALS->wavearea->window, &x, &y, &xi, &yi, &state);
+	WAVE_GDK_GET_POINTER_COPY;
 
-if((x<0)||(y<0)||(x>GLOBALS->signalarea->allocation.width)||(y>GLOBALS->signalarea->allocation.height)) return;
+	if((x<0)||(y<0)||(x>=GLOBALS->wavearea->allocation.width)||(y>=GLOBALS->wavearea->allocation.height)) return;
+	}
+else
+	{
+	return;
+	}
+
 
 if((t=GLOBALS->traces.first))
         {       
@@ -1649,7 +1663,6 @@ dnd_import_fini:
 MaxSignalLength();
 signalarea_configure_event(GLOBALS->signalarea, NULL);
 wavearea_configure_event(GLOBALS->wavearea, NULL);
-
 }
 
 /*
@@ -1676,6 +1689,7 @@ static gboolean DNDDragMotionCB(
 	same_widget = (src_widget == tar_widget) ? TRUE : FALSE;
 
 	GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1 = (tar_widget == GLOBALS->signalarea);
+	GLOBALS->dnd_tgt_on_wavearea_treesearch_gtk2_c_1 = (tar_widget == GLOBALS->wavearea);
 
 	/* If this is the same widget, our suggested action should be
 	 * move.  For all other case we assume copy.
@@ -1823,6 +1837,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/01/03 00:09:17  gtkwave
+ * preliminary dnd support for use_standard_clicking mode
+ *
  * Revision 1.5  2007/12/29 20:19:33  gtkwave
  * added dynamic string updates for entrybox in pattern search and sst
  *

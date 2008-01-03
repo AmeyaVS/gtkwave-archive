@@ -640,6 +640,7 @@ NULL, /* starting_unshifted_trace */
 0, /* use_standard_clicking */
 0, /* std_collapse_pressed */
 0, /* std_dnd_tgt_on_signalarea */
+0, /* std_dnd_tgt_on_wavearea */
 
 /*
  * simplereq.c
@@ -795,6 +796,7 @@ NULL, /* cleanup_treesearch_gtk2_c_8 468 */
 0, /* pre_import_treesearch_gtk2_c_1 469 */
 {0,0,0,NULL,NULL,NULL,0}, /* tcache_treesearch_gtk2_c_2 470 */
 0, /* dnd_tgt_on_signalarea_treesearch_gtk2_c_1 471 */
+0, /* dnd_tgt_on_wavearea_treesearch_gtk2_c_1 */
 
 
 /*
