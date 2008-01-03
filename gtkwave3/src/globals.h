@@ -635,6 +635,7 @@ int trtarget_signalwindow_c_1; /* from signalwindow.c 412 */
 Trptr starting_unshifted_trace; /* from signalwindow.c */
 unsigned char use_standard_clicking; /* from signalwindow.c */
 unsigned char std_collapse_pressed; /* from signalwindow.c */
+unsigned char std_dnd_tgt_on_signalarea; /* from signalwindow.c */
 
 
 /*

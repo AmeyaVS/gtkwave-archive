@@ -639,6 +639,7 @@ NULL, /* shift_click_trace 383 */
 NULL, /* starting_unshifted_trace */
 0, /* use_standard_clicking */
 0, /* std_collapse_pressed */
+0, /* std_dnd_tgt_on_signalarea */
 
 /*
  * simplereq.c

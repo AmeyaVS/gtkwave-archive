@@ -24,21 +24,8 @@ static void DNDBeginCB(
 {
 if((widget == NULL) || (dc == NULL))
 	return;
- 
-/* Put any needed drag begin setup code here. */
-if(GLOBALS->dnd_state==0)
-	{
-        if(CutBuffer())
-        	{
-                /* char buf[32]; */
-                /* sprintf(buf,"Dragging %d trace%s.\n",traces.buffercount,traces.buffercount!=1?"s":"");
-                status_text(buf); */
-                MaxSignalLength();
-                signalarea_configure_event(GLOBALS->signalarea, NULL);
-                wavearea_configure_event(GLOBALS->wavearea, NULL);
-                GLOBALS->dnd_state=1;
-                }
-	}
+
+GLOBALS->dnd_state = 1;
 }
  
 /*
@@ -59,11 +46,11 @@ int trwhich, trtarget;
 #ifdef WAVE_USE_GTK2    
 gint xi, yi;
 #endif
-                        
+
 WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
 WAVE_GDK_GET_POINTER_COPY;
 
-if(GLOBALS->dnd_state==1)
+if(GLOBALS->std_dnd_tgt_on_signalarea)
 	{
 	GtkAdjustment *wadj;
         wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
@@ -90,9 +77,31 @@ if(GLOBALS->dnd_state==1)
         GLOBALS->cachedtrace=t;
         if(GLOBALS->cachedtrace)
 		{
-                GLOBALS->cachedtrace->flags|=TR_HIGHLIGHT;
+		while(t)
+			{
+			if(!(t->flags&TR_HIGHLIGHT))
+				{
+				GLOBALS->cachedtrace = t;
+			        if(CutBuffer())
+			        	{
+			                /* char buf[32]; */
+			                /* sprintf(buf,"Dragging %d trace%s.\n",traces.buffercount,traces.buffercount!=1?"s":"");
+			                status_text(buf); */
+			                MaxSignalLength();
+			                signalarea_configure_event(GLOBALS->signalarea, NULL);
+			                wavearea_configure_event(GLOBALS->wavearea, NULL);
+			                }
+
+		                GLOBALS->cachedtrace->flags|=TR_HIGHLIGHT;
+				goto success;
+				}
+
+			t=GivePrevTrace(t);
+			}
+		goto bot;
                 }
 
+success:
 	if( ((which<0) && (GLOBALS->topmost_trace==GLOBALS->traces.first) && PrependBuffer()) || (PasteBuffer()) ) /* short circuit on special which<0 case */
         	{
                 /* status_text("Drop completed.\n"); */
@@ -107,8 +116,10 @@ if(GLOBALS->dnd_state==1)
                 signalarea_configure_event(GLOBALS->signalarea, NULL);
                 wavearea_configure_event(GLOBALS->wavearea, NULL);
                 }
-        GLOBALS->dnd_state=0;
         }
+
+bot:
+GLOBALS->dnd_state = 0;
 }
 
 /*
@@ -135,7 +146,7 @@ static gboolean DNDDragMotionCB(
 	/* Note if source widget is the same as the target. */
 	same_widget = (src_widget == tar_widget) ? TRUE : FALSE;
 
-	GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1 = (tar_widget == GLOBALS->signalarea);
+	GLOBALS->std_dnd_tgt_on_signalarea = (tar_widget == GLOBALS->signalarea);
 
 	/* If this is the same widget, our suggested action should be
 	 * move.  For all other case we assume copy.
@@ -995,6 +1006,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/01/03 00:09:17  gtkwave
+ * preliminary dnd support for use_standard_clicking mode
+ *
  * Revision 1.9  2008/01/02 22:12:25  gtkwave
  * added collapsible groups to standard click semantics via shift+ctrl
  *
