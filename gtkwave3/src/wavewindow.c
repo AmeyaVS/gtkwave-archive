@@ -1153,7 +1153,7 @@ GLOBALS->wave_vslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 vadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wave_vslider), "value_changed",GTK_SIGNAL_FUNC(service_vslider), NULL);
 GLOBALS->vscroll_wavewindow_c_1=gtk_vscrollbar_new(vadj);
-/* GTK_WIDGET_SET_FLAGS(vscroll, GTK_CAN_FOCUS); */
+/* GTK_WIDGET_SET_FLAGS(GLOBALS->vscroll_wavewindow_c_1, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->vscroll_wavewindow_c_1);
 gtk_table_attach (GTK_TABLE (table), GLOBALS->vscroll_wavewindow_c_1, 9, 10, 0, 9,
                         GTK_FILL,
@@ -1163,7 +1163,7 @@ GLOBALS->wave_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wave_hslider), "value_changed",GTK_SIGNAL_FUNC(service_hslider), NULL);
 GLOBALS->hscroll_wavewindow_c_2=gtk_hscrollbar_new(hadj);
-/* GTK_WIDGET_SET_FLAGS(hscroll, GTK_CAN_FOCUS); */
+/* GTK_WIDGET_SET_FLAGS(GLOBALS->hscroll_wavewindow_c_2, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->hscroll_wavewindow_c_2);
 
 gtk_table_attach (GTK_TABLE (table), GLOBALS->hscroll_wavewindow_c_2, 0, 9, 9, 10,
@@ -3140,6 +3140,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2007/09/17 16:00:51  gtkwave
+ * yet more stability updates for tabbed viewing
+ *
  * Revision 1.8  2007/09/14 16:23:17  gtkwave
  * remove expose events from ctx management
  *

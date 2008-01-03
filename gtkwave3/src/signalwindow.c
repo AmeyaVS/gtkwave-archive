@@ -911,6 +911,11 @@ GLOBALS = g_old;
 return(rc);
 }
 
+static gint keypress_local(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+printf("key\n");
+return(TRUE);
+}
 
 GtkWidget *
 create_signalwindow(void)
@@ -934,29 +939,19 @@ gtk_widget_set_events(GLOBALS->signalarea,
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "configure_event", GTK_SIGNAL_FUNC(signalarea_configure_event_local), NULL);
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "expose_event",GTK_SIGNAL_FUNC(expose_event_local), NULL);
 
-#define DRAG_TAR_NAME_0         "text/plain"
-#define DRAG_TAR_INFO_0         0
- 
-#define DRAG_TAR_NAME_1         "text/uri-list"         /* not url-list */
-#define DRAG_TAR_INFO_1         1
-        
-#define DRAG_TAR_NAME_2         "STRING"
-#define DRAG_TAR_INFO_2         2
-
-
 if(GLOBALS->use_standard_clicking)
 	{
 	GtkTargetEntry target_entry[3];
 
-        target_entry[0].target = DRAG_TAR_NAME_0;
+        target_entry[0].target = WAVE_DRAG_TAR_NAME_0;
         target_entry[0].flags = 0;
-        target_entry[0].info = DRAG_TAR_INFO_0;
-        target_entry[1].target = DRAG_TAR_NAME_1;
+        target_entry[0].info = WAVE_DRAG_TAR_INFO_0;
+        target_entry[1].target = WAVE_DRAG_TAR_NAME_1;
         target_entry[1].flags = 0;
-        target_entry[1].info = DRAG_TAR_INFO_1;
-        target_entry[2].target = DRAG_TAR_NAME_2;
+        target_entry[1].info = WAVE_DRAG_TAR_INFO_1;
+        target_entry[2].target = WAVE_DRAG_TAR_NAME_2;
         target_entry[2].flags = 0;
-        target_entry[2].info = DRAG_TAR_INFO_2;
+        target_entry[2].info = WAVE_DRAG_TAR_INFO_2;
 
         gtk_drag_dest_set(
         	GTK_WIDGET(GLOBALS->signalarea),
@@ -1028,6 +1023,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/01/03 05:02:14  gtkwave
+ * added dnd into wavewindow for both click modes
+ *
  * Revision 1.11  2008/01/03 02:04:52  gtkwave
  * more dnd ergonomics
  *

@@ -22,6 +22,18 @@
 
 #define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.3_pre (w)1999-2008 BSI"
 
+
+/* for dnd */
+#define WAVE_DRAG_TAR_NAME_0         "text/plain"
+#define WAVE_DRAG_TAR_INFO_0         0
+
+#define WAVE_DRAG_TAR_NAME_1         "text/uri-list"         /* not url-list */
+#define WAVE_DRAG_TAR_INFO_1         1
+
+#define WAVE_DRAG_TAR_NAME_2         "STRING"
+#define WAVE_DRAG_TAR_INFO_2         2
+
+
 struct blackout_region_t
 {
 struct blackout_region_t *next;
@@ -139,6 +151,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2007/12/29 20:19:30  gtkwave
+ * added dynamic string updates for entrybox in pattern search and sst
+ *
  * Revision 1.11  2007/12/24 19:56:03  gtkwave
  * preparing for 3.1.2 version bump
  *

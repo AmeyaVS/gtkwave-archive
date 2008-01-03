@@ -36,57 +36,6 @@
 */
 enum { NAME_COLUMN, TREE_COLUMN, N_COLUMNS };
 
-/* Selection in the store model.  */
-
-
-/* Return 0 if the signal is not selected (ie filtered out).
-*/
-static int
-filter_signal (const char *name, const char *filter)
-{
-  while (1)
-    {
-      char f = *filter;
-      char n = *name;
-
-      if (f == '*')
-	{
-	  /* The most complex first!:
-	     '*' matches any number of characters.  */
-	  filter++;
-
-	  /* If '*' is the last char, then ok.  */
-	  if (*filter == 0)
-	    return 1;
-
-	  for (; *name; name++)
-	    if (filter_signal (name, filter))
-	      return 1;
-
-	  return 0;
-	}
-      else if (f == 0)
-	{
-	  /* End of filter.  */
-	  return n == 0;
-	}
-      else if (f == '?')
-	{
-	  if (n == 0)
-	    return 0;
-	}
-      else if (f != n)
-	{
-	  /* This also catch n == 0.  */
-	  return 0;
-	}
-
-      name++;
-      filter++;
-    }
-}
-
-
 /* list of autocoalesced (synthesized) filter names that need to be freed at some point) */
 
 static void free_afl(void)
@@ -1112,6 +1061,8 @@ do_tooltips:
     gtk_clist_set_column_auto_resize (GTK_CLIST (GLOBALS->tree_treesearch_gtk2_c_1), 0, TRUE);
     gtk_widget_show(GLOBALS->tree_treesearch_gtk2_c_1);
 
+    gtk_clist_set_use_drag_icons(GTK_CLIST (GLOBALS->tree_treesearch_gtk2_c_1), FALSE);
+
     clist=GTK_CLIST(GLOBALS->tree_treesearch_gtk2_c_1);
 
     gtkwave_signal_connect_object (GTK_OBJECT (clist), "select_row", GTK_SIGNAL_FUNC(select_row_callback), NULL);
@@ -1528,16 +1479,6 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
  **
  ****************************************************************/
 
-#define DRAG_TAR_NAME_0		"text/plain"
-#define DRAG_TAR_INFO_0		0
-
-#define DRAG_TAR_NAME_1		"text/uri-list"		/* not url-list */
-#define DRAG_TAR_INFO_1		1
-
-#define DRAG_TAR_NAME_2		"STRING"
-#define DRAG_TAR_INFO_2		2
-
-
 /*
  *	DND "drag_begin" handler, this is called whenever a drag starts.
  */
@@ -1792,15 +1733,15 @@ void dnd_setup(GtkWidget *w)
 		/* Set up the list of data format types that our DND
 		 * callbacks will accept.
 		 */
-		target_entry[0].target = DRAG_TAR_NAME_0;
+		target_entry[0].target = WAVE_DRAG_TAR_NAME_0;
 		target_entry[0].flags = 0;
-		target_entry[0].info = DRAG_TAR_INFO_0;
-                target_entry[1].target = DRAG_TAR_NAME_1;
+		target_entry[0].info = WAVE_DRAG_TAR_INFO_0;
+                target_entry[1].target = WAVE_DRAG_TAR_NAME_1;
                 target_entry[1].flags = 0;
-                target_entry[1].info = DRAG_TAR_INFO_1;
-                target_entry[2].target = DRAG_TAR_NAME_2;
+                target_entry[1].info = WAVE_DRAG_TAR_INFO_1;
+                target_entry[2].target = WAVE_DRAG_TAR_NAME_2;
                 target_entry[2].flags = 0;
-                target_entry[2].info = DRAG_TAR_INFO_2;
+                target_entry[2].info = WAVE_DRAG_TAR_INFO_2;
 
 		/* Set the drag destination for this widget, using the
 		 * above target entry types, accept move's and coppies'.
@@ -1837,6 +1778,9 @@ void dnd_setup(GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/01/03 05:02:14  gtkwave
+ * added dnd into wavewindow for both click modes
+ *
  * Revision 1.6  2008/01/03 00:09:17  gtkwave
  * preliminary dnd support for use_standard_clicking mode
  *
