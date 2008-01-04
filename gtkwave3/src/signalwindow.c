@@ -9,6 +9,7 @@
 
 #include "globals.h"
 #include <config.h>
+#include <gdk/gdkkeysyms.h>
 #include "gtk12compat.h"
 #include "currenttime.h"
 #include "pixmaps.h"
@@ -911,10 +912,35 @@ GLOBALS = g_old;
 return(rc);
 }
 
-static gint keypress_local(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+
+/*
+ * keypress processing, return TRUE to block the event from gtk
+ */
+static gint keypress_local(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-printf("key\n");
-return(TRUE);
+switch(event->keyval)
+	{
+	case GDK_Page_Up:
+	case GDK_KP_Page_Up:
+	case GDK_Page_Down:
+	case GDK_KP_Page_Down:
+	case GDK_Up:
+	case GDK_KP_Up:
+	case GDK_Down:
+	case GDK_KP_Down:
+	case GDK_Left:
+	case GDK_KP_Left:
+	case GDK_Right:
+	case GDK_KP_Right:
+		printf("key: %x, widget: %08x +++\n", event->keyval, widget);
+		break;
+
+	default:
+		printf("key %x, widget: %08x\n", event->keyval, widget);
+		break;
+	}
+
+return(FALSE);
 }
 
 GtkWidget *
@@ -1017,12 +1043,19 @@ gtk_container_border_width(GTK_CONTAINER(frame),2);
 
 gtk_container_add(GTK_CONTAINER(frame),table);
 
+/*
+gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "key_press_event",GTK_SIGNAL_FUNC(keypress_local), NULL);
+*/
+
 return(frame);
 }
-   
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/01/03 21:55:45  gtkwave
+ * various cleanups
+ *
  * Revision 1.12  2008/01/03 05:02:14  gtkwave
  * added dnd into wavewindow for both click modes
  *

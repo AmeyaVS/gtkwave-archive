@@ -119,11 +119,13 @@ table = gtk_table_new (1, 16, FALSE);
 * GTK_SHRINK in the y direction */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GLOBALS->text_status_c_2 = gtk_text_view_new ();
+gtk_text_view_set_editable (GTK_TEXT_VIEW(GLOBALS->text_status_c_2), FALSE);
 gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &GLOBALS->iter_status_c_3);
 GLOBALS->bold_tag_status_c_3 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (GLOBALS->text_status_c_2)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
 #else
 GLOBALS->text_status_c_2 = gtk_text_new (NULL, NULL);
+gtk_text_set_editable(GTK_TEXT(GLOBALS->text_status_c_2), FALSE);
 #endif
 gtk_table_attach (GTK_TABLE (table), GLOBALS->text_status_c_2, 0, 14, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
@@ -156,6 +158,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 19:24:45  gtkwave
+ * more ctx_swap_watchdog updates
+ *
  * Revision 1.3  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
