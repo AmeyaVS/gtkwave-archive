@@ -83,6 +83,9 @@ int trwhich, trtarget;
         
 #ifdef WAVE_USE_GTK2    
 gint xi, yi;
+#else
+GdkEventMotion event[1];
+event[0].deviceid = GDK_CORE_POINTER;
 #endif
 
 if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
@@ -965,6 +968,7 @@ gtk_widget_set_events(GLOBALS->signalarea,
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "configure_event", GTK_SIGNAL_FUNC(signalarea_configure_event_local), NULL);
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "expose_event",GTK_SIGNAL_FUNC(expose_event_local), NULL);
 
+#ifdef WAVE_USE_GTK2
 if(GLOBALS->use_standard_clicking)
 	{
 	GtkTargetEntry target_entry[3];
@@ -1016,6 +1020,7 @@ if(GLOBALS->use_standard_clicking)
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event_std), NULL);
 	}
 	else
+#endif
 	{
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
@@ -1053,6 +1058,9 @@ return(frame);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/01/04 03:23:33  gtkwave
+ * have dormant key_press_event handler code.
+ *
  * Revision 1.13  2008/01/03 21:55:45  gtkwave
  * various cleanups
  *

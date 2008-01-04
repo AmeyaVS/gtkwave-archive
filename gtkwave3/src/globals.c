@@ -1790,6 +1790,12 @@ void reload_into_new_context(void)
  /* Reload state from file */
  read_save_helper(reload_tmpfilename); 
 
+ /* again doing this here (read_save_helper does it) seems to be necessary in order to keep display in sync */
+ GLOBALS->signalwindow_width_dirty=1;
+ MaxSignalLength();
+ signalarea_configure_event(GLOBALS->signalarea, NULL);
+ wavearea_configure_event(GLOBALS->wavearea, NULL);
+
  /* unlink temp */
  unlink(reload_tmpfilename);
  free(reload_tmpfilename); /* intentional use of free(), of strdup'd string from earlier */

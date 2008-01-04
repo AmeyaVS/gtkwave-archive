@@ -2993,6 +2993,7 @@ void read_save_helper(char *wname) {
 		update_markertime(time_trunc(GLOBALS->tims.marker));
                 if(wave_is_compressed) pclose(wave); else fclose(wave);
 
+		GLOBALS->signalwindow_width_dirty=1;
 		MaxSignalLength();
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
 		wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -3006,7 +3007,6 @@ void read_save_helper(char *wname) {
                 }
 
 	GLOBALS->current_translate_file = 0;
-	
 }
 
 
@@ -4499,6 +4499,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2007/09/23 18:33:54  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.14  2007/09/17 23:02:54  gtkwave
  * allow scripting with tabs
  *
