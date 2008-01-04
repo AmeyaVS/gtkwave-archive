@@ -637,6 +637,8 @@ unsigned char use_standard_clicking; /* from signalwindow.c */
 unsigned char std_collapse_pressed; /* from signalwindow.c */
 unsigned char std_dnd_tgt_on_signalarea; /* from signalwindow.c */
 unsigned char std_dnd_tgt_on_wavearea; /* from signalwindow.c */
+unsigned char signalarea_has_focus; /* from signalwindow.c */
+GtkWidget *signalarea_event_box; /* from signalwindow.c */
 
 
 /*

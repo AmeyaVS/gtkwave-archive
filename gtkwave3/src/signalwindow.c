@@ -45,6 +45,12 @@ if(GLOBALS->signalpixmap)
 	        GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
 
 	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,xsrc, 0,0, 0,GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+
+	if(GLOBALS->signalarea_has_focus)
+	        {
+	        gdk_draw_rectangle(GLOBALS->signalarea->window, GLOBALS->gc_black, FALSE, 0, 0, 
+			GLOBALS->signalarea->allocation.width-1, GLOBALS->signalarea->allocation.height-1);
+       		}
 	}
 }
 
@@ -274,6 +280,22 @@ int which;
 int trwhich, trtarget;
 GtkAdjustment *wadj;
 Trptr t, t2;
+
+if(GLOBALS->signalarea_event_box)
+	{
+	if((event->x<0)||(event->x>=widget->allocation.width)||(event->y<0)||(event->y>=widget->allocation.height))
+		{
+		/* let gtk take focus from us with focus out event */
+		}
+		else
+		{
+		if(!GLOBALS->signalarea_has_focus)
+			{
+			GLOBALS->signalarea_has_focus = TRUE;
+			gtk_widget_grab_focus(GTK_WIDGET(GLOBALS->signalarea_event_box));
+			}
+		}
+	}
 
 if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 	{
@@ -921,27 +943,107 @@ return(rc);
  */
 static gint keypress_local(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-switch(event->keyval)
-	{
-	case GDK_Page_Up:
-	case GDK_KP_Page_Up:
-	case GDK_Page_Down:
-	case GDK_KP_Page_Down:
-	case GDK_Up:
-	case GDK_KP_Up:
-	case GDK_Down:
-	case GDK_KP_Down:
-	case GDK_Left:
-	case GDK_KP_Left:
-	case GDK_Right:
-	case GDK_KP_Right:
-		printf("key: %x, widget: %08x +++\n", event->keyval, widget);
-		break;
+GtkAdjustment *wadj;
+int num_traces_displayable;
+int target;
+int which;
+gint rc = FALSE;
+int yscroll;
 
-	default:
-		printf("key %x, widget: %08x\n", event->keyval, widget);
-		break;
+printf("focus: %d\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box));
+
+if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
+	{
+	switch(event->keyval)
+		{
+		case GDK_Page_Up:
+		case GDK_KP_Page_Up:
+		case GDK_Page_Down:
+		case GDK_KP_Page_Down:
+		case GDK_Up:
+		case GDK_KP_Up:
+		case GDK_Down:
+		case GDK_KP_Down:
+			wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+			num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
+			num_traces_displayable--;   /* for the time trace that is always there */
+
+			if(num_traces_displayable<GLOBALS->traces.visible)
+				{
+				switch(event->keyval)
+					{
+					case GDK_Down:
+					case GDK_KP_Down:
+					case GDK_Page_Down:
+					case GDK_KP_Page_Down:
+						yscroll = ((event->keyval == GDK_Page_Down) || (event->keyval == GDK_KP_Page_Down)) ? num_traces_displayable : 1;
+			                        target=((int)wadj->value)+yscroll;  
+			                        which=num_traces_displayable-1;
+
+			                        if(target+which>=(GLOBALS->traces.visible-1)) target=GLOBALS->traces.visible-which-1;
+                        			wadj->value=target;
+
+                        			if(GLOBALS->cachedwhich_signalwindow_c_1==which) GLOBALS->cachedwhich_signalwindow_c_1=which-1; /* force update */
+
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
+						break;
+				
+					case GDK_Up:
+					case GDK_KP_Up:
+					case GDK_Page_Up:
+					case GDK_KP_Page_Up:
+						yscroll = ((event->keyval == GDK_Page_Up) || (event->keyval == GDK_KP_Page_Up)) ? num_traces_displayable : 1;
+                        			target=((int)wadj->value)-yscroll;
+                        			if(target<0) target=0;
+                        			wadj->value=target;
+                         
+						which=0;
+                        			if(GLOBALS->cachedwhich_signalwindow_c_1==which) GLOBALS->cachedwhich_signalwindow_c_1=-1; /* force update */
+
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
+						break;
+					}
+				}
+			rc = TRUE;
+			break;
+
+		case GDK_Left:
+		case GDK_KP_Left:
+		case GDK_Right:
+		case GDK_KP_Right:
+
+			/* fill in left/right hscroll here */
+
+			rc = TRUE;
+			break;
+	
+		default:
+			printf("key %x, widget: %08x\n", event->keyval, widget);
+			break;
+		}
 	}
+
+return(rc);
+}
+
+static int focus_in_local(GtkWidget *widget, GdkEventFocus *event)
+{
+printf("Focus in: %08x %08x\n", widget, GLOBALS->signalarea_event_box);
+GLOBALS->signalarea_has_focus = TRUE;
+
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+
+return(FALSE);
+}
+
+static int focus_out_local(GtkWidget *widget, GdkEventFocus *event)
+{
+printf("Focus out: %08x\n", widget);
+GLOBALS->signalarea_has_focus = FALSE;
+
+signalarea_configure_event(GLOBALS->signalarea, NULL);
 
 return(FALSE);
 }
@@ -951,6 +1053,7 @@ create_signalwindow(void)
 {
 GtkWidget *table;
 GtkWidget *frame;
+char do_focusing = 0;
 
 table = gtk_table_new(10, 10, FALSE);
 
@@ -1018,6 +1121,8 @@ if(GLOBALS->use_standard_clicking)
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event_std), NULL);
+
+	do_focusing = 1;
 	}
 	else
 #endif
@@ -1048,16 +1153,31 @@ gtk_container_border_width(GTK_CONTAINER(frame),2);
 
 gtk_container_add(GTK_CONTAINER(frame),table);
 
-/*
-gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "key_press_event",GTK_SIGNAL_FUNC(keypress_local), NULL);
-*/
+if(do_focusing)
+	{
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "key_press_event",GTK_SIGNAL_FUNC(keypress_local), NULL);
 
-return(frame);
+	GLOBALS->signalarea_event_box = gtk_event_box_new();
+	gtk_container_add (GTK_CONTAINER (GLOBALS->signalarea_event_box), frame);
+	gtk_widget_show(frame);
+	GTK_WIDGET_SET_FLAGS (GTK_WIDGET(GLOBALS->signalarea_event_box), GTK_CAN_FOCUS | GTK_RECEIVES_DEFAULT);
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_in_event", GTK_SIGNAL_FUNC(focus_in_local), NULL);
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_out_event", GTK_SIGNAL_FUNC(focus_out_local), NULL);
+	return(GLOBALS->signalarea_event_box);
+	}
+	else
+	{
+	return(frame);
+	}
 }
+
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/01/04 04:03:14  gtkwave
+ * disable dnd for 1.3.
+ *
  * Revision 1.14  2008/01/04 03:23:33  gtkwave
  * have dormant key_press_event handler code.
  *

@@ -575,6 +575,13 @@ if(GLOBALS->signalpixmap)
 			xsrc, 0,
 			0, 0,
 	                GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+
+		if(GLOBALS->signalarea_has_focus)
+                	{
+                	gdk_draw_rectangle(GLOBALS->signalarea->window, GLOBALS->gc_black, FALSE, 0, 0,
+                        	GLOBALS->signalarea->allocation.width-1, GLOBALS->signalarea->allocation.height-1);
+                	}  
+
 		draw_marker();
 	}
 }
@@ -592,6 +599,12 @@ gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[G
 	(gint)(GTK_ADJUSTMENT(GLOBALS->signal_hslider)->value), 0,
 	0, 0,
         GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+
+if(GLOBALS->signalarea_has_focus)
+      	{
+      	gdk_draw_rectangle(GLOBALS->signalarea->window, GLOBALS->gc_black, FALSE, 0, 0,
+               	GLOBALS->signalarea->allocation.width-1, GLOBALS->signalarea->allocation.height-1);
+       	}  
 }
 
 static void button_motion_common(gint xin, gint yin, int pressrel, int is_button_2) 
@@ -1223,6 +1236,11 @@ if(t)
                 t=GiveNextTrace(t);
                 }
         }
+
+if(GLOBALS->signalarea_has_focus)
+	{
+	gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_black, FALSE, 0, 0, GLOBALS->signal_fill_width-1, GLOBALS->signalarea->allocation.height-1); 
+	}
 
 if((GLOBALS->wavepixmap_wavewindow_c_1)&&(update_waves))
 	{
@@ -3140,6 +3158,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/01/03 21:55:45  gtkwave
+ * various cleanups
+ *
  * Revision 1.9  2007/09/17 16:00:51  gtkwave
  * yet more stability updates for tabbed viewing
  *

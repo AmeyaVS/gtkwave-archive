@@ -352,3 +352,4 @@
 		there are dnd issues.
 		Recalculate signal width on reload as sometimes
 		it was missed.
+		Added input focus capability to signalwindow.
