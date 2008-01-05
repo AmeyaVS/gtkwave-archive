@@ -16,6 +16,8 @@
 #include "symbol.h"
 #include "debug.h"
 
+#undef FOCUS_DEBUG_MSGS
+
 /*
  * complain about certain ops conflict with dnd...
  */
@@ -950,7 +952,9 @@ int which;
 gint rc = FALSE;
 int yscroll;
 
+#ifdef FOCUS_DEBUG_MSGS
 printf("focus: %d\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box));
+#endif
 
 if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 	{
@@ -1020,7 +1024,9 @@ if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 			break;
 	
 		default:
+#ifdef FOCUS_DEBUG_MSGS
 			printf("key %x, widget: %08x\n", event->keyval, widget);
+#endif
 			break;
 		}
 	}
@@ -1030,7 +1036,10 @@ return(rc);
 
 static int focus_in_local(GtkWidget *widget, GdkEventFocus *event)
 {
+#ifdef FOCUS_DEBUG_MSGS
 printf("Focus in: %08x %08x\n", widget, GLOBALS->signalarea_event_box);
+#endif
+
 GLOBALS->signalarea_has_focus = TRUE;
 
 signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -1040,7 +1049,10 @@ return(FALSE);
 
 static int focus_out_local(GtkWidget *widget, GdkEventFocus *event)
 {
+#ifdef FOCUS_DEBUG_MSGS
 printf("Focus out: %08x\n", widget);
+#endif
+
 GLOBALS->signalarea_has_focus = FALSE;
 
 signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -1132,9 +1144,6 @@ if(GLOBALS->use_standard_clicking)
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event), NULL);
 	}
 
-dnd_setup(GLOBALS->signalarea);
-dnd_setup(GLOBALS->wavearea);
-
 gtk_table_attach (GTK_TABLE (table), GLOBALS->signalarea, 0, 10, 0, 9,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 3, 2);
@@ -1175,6 +1184,9 @@ if(do_focusing)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/01/04 22:47:56  gtkwave
+ * prelim input focus support for singalwindow
+ *
  * Revision 1.15  2008/01/04 04:03:14  gtkwave
  * disable dnd for 1.3.
  *

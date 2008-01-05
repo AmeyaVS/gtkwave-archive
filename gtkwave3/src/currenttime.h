@@ -102,7 +102,7 @@ void dump_open_tree_nodes(FILE *wave, xl_Tree *t);
 void force_open_tree_node(char *name);
 void select_tree_node(char *name);
 
-void dnd_setup(GtkWidget *widget); /* dnd from gtk2 tree to signalwindow */
+void dnd_setup(GtkWidget *src, GtkWidget *widget); /* dnd from gtk2 tree to signalwindow */
 
 void hier_searchbox(char *title, GtkSignalFunc func);
 void renderbox(char *title);
@@ -151,6 +151,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/01/03 21:55:45  gtkwave
+ * various cleanups
+ *
  * Revision 1.12  2007/12/29 20:19:30  gtkwave
  * added dynamic string updates for entrybox in pattern search and sst
  *

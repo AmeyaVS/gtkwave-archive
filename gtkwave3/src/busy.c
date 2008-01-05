@@ -79,6 +79,8 @@ void set_window_busy(GtkWidget *w)
 {
 int i;
 
+if(GLOBALS->tree_dnd_begin) return;
+
 if(!GLOBALS->busy_busy_c_1)
 	{
 	if(w) gdk_window_set_cursor (w->window, GLOBALS->busycursor_busy_c_1);
@@ -100,6 +102,8 @@ busy_window_refresh();
 void set_window_idle(GtkWidget *w)
 {
 int i;
+
+if(GLOBALS->tree_dnd_begin) return;
 
 if(GLOBALS->busy_busy_c_1)
 	{
@@ -131,6 +135,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/09/14 14:08:56  gtkwave
+ * updating busy handling
+ *
  * Revision 1.5  2007/09/13 21:24:45  gtkwave
  * configure_events must be beyond watchdog monitoring due to how gtk generates one per tab
  *

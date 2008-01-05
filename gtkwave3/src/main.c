@@ -1303,6 +1303,13 @@ if(GLOBALS->paned_pack_semantics)
 
 gtk_widget_show(panedwindow);
 
+if(GLOBALS->dnd_sigview)
+	{
+	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea);
+	}
+dnd_setup(GLOBALS->signalarea, GLOBALS->signalarea);
+dnd_setup(GLOBALS->signalarea, GLOBALS->wavearea);
+
 #if GTK_CHECK_VERSION(2,4,0)
 if(!GLOBALS->hide_sst)
 	{
@@ -1823,6 +1830,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/01/02 18:54:11  gtkwave
+ * cleaned up inconsistent punctuation on --exit option
+ *
  * Revision 1.16  2007/12/30 04:27:39  gtkwave
  * added edge buttons to main window
  *

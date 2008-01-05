@@ -920,7 +920,6 @@ sig_selection_foreach_preload_lx2
 static void
 action_callback(enum cb_action action)
 {
-
   GLOBALS->pre_import_treesearch_gtk2_c_1 = 0;
 
   /* once through to mass gather lx2 traces... */
@@ -977,6 +976,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->is_active_treesearch_gtk2_c_6=0;
   gtk_widget_destroy(GLOBALS->window_treesearch_gtk2_c_12);
   GLOBALS->window_treesearch_gtk2_c_12 = NULL;
+  GLOBALS->dnd_sigview = NULL;
   GLOBALS->gtk2_tree_frame = NULL;
   free_afl();
 
@@ -1114,7 +1114,8 @@ do_tooltips:
 	gtk_tree_selection_set_mode (GLOBALS->sig_selection_treesearch_gtk2_c_1, GTK_SELECTION_MULTIPLE);
       }
 
-    dnd_setup(sig_view);
+    GLOBALS->dnd_sigview = sig_view;
+    dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea);
 
     sig_frame = gtk_frame_new (NULL);
     gtk_container_border_width (GTK_CONTAINER (sig_frame), 3);
@@ -1346,7 +1347,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
 	gtk_tree_selection_set_mode (GLOBALS->sig_selection_treesearch_gtk2_c_1, GTK_SELECTION_MULTIPLE);
       }
 
-    dnd_setup(sig_view);
+    GLOBALS->dnd_sigview = sig_view;
 
     sig_frame = gtk_frame_new (NULL);
     gtk_container_border_width (GTK_CONTAINER (sig_frame), 3);
@@ -1501,7 +1502,7 @@ static void DNDBeginCB(
  *	completed. So this function is the last one to be called in
  *	any given DND operation.
  */
-static void DNDEndCB(
+static void DNDEndCB_2(
 	GtkWidget *widget, GdkDragContext *dc, gpointer data
 )
 {
@@ -1512,11 +1513,6 @@ gdouble x, y;
 #ifdef WAVE_USE_GTK2
 gint xi, yi;
 #endif
-
-if((widget == NULL) || (dc == NULL)) return;
-
-if(!GLOBALS->tree_dnd_begin) return; /* to keep cut and paste in signalwindow from conflicting */
-GLOBALS->tree_dnd_begin = 0;
 
 /* Put any needed drag end cleanup code here. */
 
@@ -1605,6 +1601,20 @@ MaxSignalLength();
 signalarea_configure_event(GLOBALS->signalarea, NULL);
 wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
+
+static void DNDEndCB(
+	GtkWidget *widget, GdkDragContext *dc, gpointer data
+)
+{
+if((widget == NULL) || (dc == NULL)) return;
+
+if(!GLOBALS->tree_dnd_begin) return; /* to keep cut and paste in signalwindow from conflicting */
+
+DNDEndCB_2(widget, dc, data);
+GLOBALS->tree_dnd_begin = 0;
+}
+
+
 
 /*
  *	DND "drag_motion" handler, this is called whenever the 
@@ -1714,7 +1724,7 @@ static void DNDDataDeleteCB(
 /***********************/
 
 
-void dnd_setup(GtkWidget *w)
+void dnd_setup(GtkWidget *src, GtkWidget *w)
 {
 	GtkWidget *win = w;
 	GtkTargetEntry target_entry[3];
@@ -1760,24 +1770,27 @@ void dnd_setup(GtkWidget *w)
 		 * to drag items off of this clist.
 		 */
 		gtk_drag_source_set(
-			w,
+			src,
 			GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
                         target_entry,
                         sizeof(target_entry) / sizeof(GtkTargetEntry),
 			GDK_ACTION_MOVE | GDK_ACTION_COPY
 		);
 		/* Set DND signals on clist. */
-		gtkwave_signal_connect(GTK_OBJECT(w), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(w), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(w), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(w), "drag_data_received", GTK_SIGNAL_FUNC(DNDDataRecievedCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(w), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), win);
+		gtkwave_signal_connect(GTK_OBJECT(src), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), win);
+                gtkwave_signal_connect(GTK_OBJECT(src), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), win);
+                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), win);
+                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_received", GTK_SIGNAL_FUNC(DNDDataRecievedCB), win);
+                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), win);
 	}
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/01/03 21:55:45  gtkwave
+ * various cleanups
+ *
  * Revision 1.7  2008/01/03 05:02:14  gtkwave
  * added dnd into wavewindow for both click modes
  *

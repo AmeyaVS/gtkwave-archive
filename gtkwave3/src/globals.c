@@ -799,7 +799,7 @@ NULL, /* cleanup_treesearch_gtk2_c_8 468 */
 {0,0,0,NULL,NULL,NULL,0}, /* tcache_treesearch_gtk2_c_2 470 */
 0, /* dnd_tgt_on_signalarea_treesearch_gtk2_c_1 471 */
 0, /* dnd_tgt_on_wavearea_treesearch_gtk2_c_1 */
-
+NULL, /* dnd_sigview */
 
 /*
  * vcd.c
@@ -1421,6 +1421,7 @@ void reload_into_new_context(void)
  new_globals->do_dynamic_treefilter = GLOBALS->do_dynamic_treefilter;
  new_globals->treesearch_gtk2_window_vbox = GLOBALS->treesearch_gtk2_window_vbox;
  new_globals->window_treesearch_gtk2_c_12 = GLOBALS->window_treesearch_gtk2_c_12;
+ new_globals->dnd_sigview = GLOBALS->dnd_sigview;
 
  strcpy2_into_new_context(new_globals, &new_globals->filter_str_treesearch_gtk2_c_1, &GLOBALS->filter_str_treesearch_gtk2_c_1);
  strcpy2_into_new_context(new_globals, &new_globals->selected_hierarchy_name, &GLOBALS->selected_hierarchy_name);
