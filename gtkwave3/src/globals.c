@@ -1045,7 +1045,7 @@ NULL, /* gc_mdgray 654 */
 NULL, /* gc_dkgray 655 */
 NULL, /* gc_dkblue 656 */
 0, /* fill_in_smaller_rgb_areas_wavewindow_c_1 659 */
-
+-1, /* prev_markertime */
 
 /*
  * zoombuttons.c

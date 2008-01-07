@@ -1042,7 +1042,7 @@ GdkGC *gc_mdgray; /* from wavewindow.c 714 */
 GdkGC *gc_dkgray; /* from wavewindow.c 715 */
 GdkGC *gc_dkblue; /* from wavewindow.c 716 */
 char fill_in_smaller_rgb_areas_wavewindow_c_1; /* from wavewindow.c 719 */
-
+TimeType prev_markertime; /* from wavewindow.c */
 
 /*
  * zoombuttons.c

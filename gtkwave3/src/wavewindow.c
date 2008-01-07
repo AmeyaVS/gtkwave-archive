@@ -589,6 +589,7 @@ if(GLOBALS->signalpixmap)
 void button_press_release_common(void)
 {
 MaxSignalLength();
+
 gdk_draw_rectangle(GLOBALS->signalpixmap, 
 	GLOBALS->gc_ltgray, TRUE, 0, 0,
         GLOBALS->signal_fill_width, GLOBALS->signalarea->allocation.height);
@@ -877,6 +878,7 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
 	GLOBALS->in_button_press_wavewindow_c_1=event->button;
 	
 	DEBUG(printf("Button Press Event\n"));
+	GLOBALS->prev_markertime = GLOBALS->tims.marker;
 	button_motion_common(event->x,event->y,1,0);
 	GLOBALS->tims.timecache=GLOBALS->tims.start;
 
@@ -993,6 +995,12 @@ if((event->button)&&(event->button==GLOBALS->in_button_press_wavewindow_c_1))
 
 move_mouseover(NULL, 0, 0, LLDescriptor(0));
 GLOBALS->tims.timecache=0;
+
+if(GLOBALS->prev_markertime == LLDescriptor(-1))
+	{
+	signalarea_configure_event( GLOBALS->signalarea, NULL );
+	}
+
 return(TRUE);
 }
 
@@ -3158,6 +3166,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/01/04 22:47:56  gtkwave
+ * prelim input focus support for singalwindow
+ *
  * Revision 1.10  2008/01/03 21:55:45  gtkwave
  * various cleanups
  *
