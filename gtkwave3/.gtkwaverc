@@ -4,6 +4,7 @@
 splash_disable on
 sst_dynamic_filter on
 use_standard_clicking off
+use_toolbutton_interface on
 
 vlist_spill off
 vlist_prepack off
