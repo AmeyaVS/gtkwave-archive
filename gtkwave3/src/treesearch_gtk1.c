@@ -17,7 +17,8 @@
 #include "lx2.h"
 #include "debug.h"
 
-void dnd_setup(GtkWidget *w)
+
+void dnd_setup(GtkWidget *src, GtkWidget *widget)
 {
 /* nothing, no dnd for gtk1 implemented yet */
 }
@@ -760,6 +761,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/01/08 04:01:12  gtkwave
+ * more accelerator key ergonomic updates
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
