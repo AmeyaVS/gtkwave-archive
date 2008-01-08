@@ -46,9 +46,18 @@ if(GLOBALS->signalpixmap)
 	gdk_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont,
 	        GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
 
-	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,xsrc, 0,0, 0,GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
-
-	draw_signalarea_focus();
+	if(GLOBALS->signalarea_has_focus)
+		{
+		gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,
+			xsrc+1, 0+1,
+			0+1, 0+1,
+			GLOBALS->signalarea->allocation.width-2, GLOBALS->signalarea->allocation.height-2);
+		draw_signalarea_focus();
+		}
+		else
+		{
+		gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,xsrc, 0,0, 0,GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+		}
 	}
 }
 
@@ -552,7 +561,6 @@ if((GLOBALS->traces.visible)&&(state&(GDK_BUTTON1_MASK|GDK_BUTTON3_MASK))&&(GLOB
 
 		yval=RenderSig(t, which, 2);
         	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,xsrc, yval,0, yval,GLOBALS->signalarea->allocation.width, GLOBALS->fontheight-1);
-
 		}
 	else
 	if((state&GDK_BUTTON1_MASK)&&(GLOBALS->dnd_state==0))
@@ -926,6 +934,8 @@ gdk_draw_pixmap(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)],
 		event->area.x, event->area.y,
 		event->area.width, event->area.height);
 
+draw_signalarea_focus();
+
 return(FALSE);
 }
 
@@ -1271,6 +1281,9 @@ if(do_focusing)
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/01/08 07:13:08  gtkwave
+ * more limiting of ctrl-a focus (away from tree and filter entry)
+ *
  * Revision 1.18  2008/01/08 04:01:12  gtkwave
  * more accelerator key ergonomic updates
  *

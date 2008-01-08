@@ -570,13 +570,25 @@ if(GLOBALS->signalpixmap)
 	GLOBALS->old_wvalue=sadj->value;
 
 		draw_named_markers();
-		gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],
-	                GLOBALS->signalpixmap,
-			xsrc, 0,
-			0, 0,
-	                GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
 
-		draw_signalarea_focus();
+		if(GLOBALS->signalarea_has_focus)
+			{
+			gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],
+		                GLOBALS->signalpixmap,
+				xsrc+1, 0+1,
+				0+1, 0+1,
+		                GLOBALS->signalarea->allocation.width-2, GLOBALS->signalarea->allocation.height-2);
+			draw_signalarea_focus();
+			}
+			else
+			{
+			gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],
+		                GLOBALS->signalpixmap,
+				xsrc, 0,
+				0, 0,
+		                GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+			}
+
 		draw_marker();
 	}
 }
@@ -590,13 +602,25 @@ gdk_draw_rectangle(GLOBALS->signalpixmap,
         GLOBALS->signal_fill_width, GLOBALS->signalarea->allocation.height);
 sync_marker();
 RenderSigs((int)(GTK_ADJUSTMENT(GLOBALS->wave_vslider)->value),0);
-gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],
-      	GLOBALS->signalpixmap,
-	(gint)(GTK_ADJUSTMENT(GLOBALS->signal_hslider)->value), 0,
-	0, 0,
-        GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
 
-draw_signalarea_focus();
+if(GLOBALS->signalarea_has_focus)
+	{
+	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],
+	      	GLOBALS->signalpixmap,
+		(gint)(GTK_ADJUSTMENT(GLOBALS->signal_hslider)->value)+1, 0+1,
+		0+1, 0+1,
+	        GLOBALS->signalarea->allocation.width-2, GLOBALS->signalarea->allocation.height-2);
+
+	draw_signalarea_focus();
+	}
+	else
+	{
+	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],
+	      	GLOBALS->signalpixmap,
+		(gint)(GTK_ADJUSTMENT(GLOBALS->signal_hslider)->value), 0,
+		0, 0,
+	        GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+	}
 }
 
 static void button_motion_common(gint xin, gint yin, int pressrel, int is_button_2) 
@@ -3157,6 +3181,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/01/08 07:13:08  gtkwave
+ * more limiting of ctrl-a focus (away from tree and filter entry)
+ *
  * Revision 1.12  2008/01/07 16:34:51  gtkwave
  * force hscrollbar update when button release after nailing down marker
  *
