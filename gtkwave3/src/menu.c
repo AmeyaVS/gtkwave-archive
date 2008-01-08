@@ -4116,19 +4116,19 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 static GtkItemFactoryEntry menu_items[] =
 {
 #if !defined __MINGW32__ && !defined _MSC_VER 
-    WAVE_GTKIFE("/File/Open New Window", "<Shift>Pause", menu_new_viewer, WV_MENU_FONV, "<Item>"),
+    WAVE_GTKIFE("/File/Open New Window", "<Control>N", menu_new_viewer, WV_MENU_FONV, "<Item>"),
 #endif
-    WAVE_GTKIFE("/File/Open New Tab", "Pause", menu_new_viewer_tab, WV_MENU_FONVT, "<Item>"),
+    WAVE_GTKIFE("/File/Open New Tab", "<Control>T", menu_new_viewer_tab, WV_MENU_FONVT, "<Item>"),
     WAVE_GTKIFE("/File/Reload Waveform", "<Shift><Control>R", menu_reload_waveform, WV_MENU_FRW, "<Item>"),    
     WAVE_GTKIFE("/File/Export/Write VCD File As", NULL, menu_write_vcd_file, WV_MENU_WRVCD, "<Item>"),
     WAVE_GTKIFE("/File/Export/Write LXT File As", NULL, menu_write_lxt_file, WV_MENU_WRLXT, "<Item>"),
-    WAVE_GTKIFE("/File/Close", NULL, menu_quit_close, WV_MENU_WCLOSE, "<Item>"),
+    WAVE_GTKIFE("/File/Close", "<Control>W", menu_quit_close, WV_MENU_WCLOSE, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2VCD, "<Separator>"),
-    WAVE_GTKIFE("/File/Print To File", "Print", menu_print, WV_MENU_FPTF, "<Item>"),
+    WAVE_GTKIFE("/File/Print To File", "<Control>P", menu_print, WV_MENU_FPTF, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP1, "<Separator>"),
-    WAVE_GTKIFE("/File/Read Save File", "<Control>R", menu_read_save_file, WV_MENU_FRSF, "<Item>"),
-    WAVE_GTKIFE("/File/Write Save File", "<Control>W", menu_write_save_file, WV_MENU_FWSF, "<Item>"),
-    WAVE_GTKIFE("/File/Write Save File As", "<Shift><Control>W", menu_write_save_file_as, WV_MENU_FWSFAS, "<Item>"),
+    WAVE_GTKIFE("/File/Read Save File", "<Control>O", menu_read_save_file, WV_MENU_FRSF, "<Item>"),
+    WAVE_GTKIFE("/File/Write Save File", "<Control>S", menu_write_save_file, WV_MENU_FWSF, "<Item>"),
+    WAVE_GTKIFE("/File/Write Save File As", "<Shift><Control>S", menu_write_save_file_as, WV_MENU_FWSFAS, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2, "<Separator>"),
     WAVE_GTKIFE("/File/Read Sim Logfile", "<Control>L", menu_read_log_file, WV_MENU_FRLF, "<Item>"),
       /* 10 */
@@ -4140,16 +4140,16 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Quit/Yes, Quit", "<Alt>Q", menu_quit, WV_MENU_FQY, "<Item>"),
     WAVE_GTKIFE("/File/Quit/Don't Quit", NULL, NULL, WV_MENU_FQN, "<Item>"),
 
-    WAVE_GTKIFE("/Edit/Set Trace Max Hier", "<Control>T", menu_set_max_hier, WV_MENU_ESTMH, "<Item>"),
+    WAVE_GTKIFE("/Edit/Set Trace Max Hier", NULL, menu_set_max_hier, WV_MENU_ESTMH, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP3, "<Separator>"),
     WAVE_GTKIFE("/Edit/Insert Blank", "<Control>B", menu_insert_blank_traces, WV_MENU_EIB, "<Item>"),
-    WAVE_GTKIFE("/Edit/Insert Comment", "<Control>C", menu_insert_comment_traces, WV_MENU_EIC, "<Item>"),
-    WAVE_GTKIFE("/Edit/Insert Analog Height Extension", "<Control>A", menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
+    WAVE_GTKIFE("/Edit/Insert Comment", NULL, menu_insert_comment_traces, WV_MENU_EIC, "<Item>"),
+    WAVE_GTKIFE("/Edit/Insert Analog Height Extension", NULL, menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
     WAVE_GTKIFE("/Edit/Alias Highlighted Trace", "<Alt>A", menu_alias, WV_MENU_EAHT, "<Item>"),
     WAVE_GTKIFE("/Edit/Remove Highlighted Aliases", "<Shift><Alt>A", menu_remove_aliases, WV_MENU_ERHA, "<Item>"),
       /* 20 */
-    WAVE_GTKIFE("/Edit/Cut", "<Alt>C", menu_cut_traces, WV_MENU_EC, "<Item>"),
-    WAVE_GTKIFE("/Edit/Paste", "<Alt>P", menu_paste_traces, WV_MENU_EP, "<Item>"),
+    WAVE_GTKIFE("/Edit/Cut", "<Control>X", menu_cut_traces, WV_MENU_EC, "<Item>"),
+    WAVE_GTKIFE("/Edit/Paste", "<Control>V", menu_paste_traces, WV_MENU_EP, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP4, "<Separator>"),
     WAVE_GTKIFE("/Edit/Expand", "F3", menu_expand, WV_MENU_EE, "<Item>"),
     WAVE_GTKIFE("/Edit/Combine Down", "F4", menu_combine_down, WV_MENU_ECD, "<Item>"),
@@ -4178,7 +4178,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Analog/Off", NULL, menu_dataformat_analog_off, WV_MENU_EDFAOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
-    WAVE_GTKIFE("/Edit/Show-Change All Highlighted", "<Control>S", menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
+    WAVE_GTKIFE("/Edit/Show-Change All Highlighted", NULL, menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change First Highlighted", "<Control>F", menu_showchange, WV_MENU_ESCFH, "<Item>"),
       /* 50 */
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6, "<Separator>"),
@@ -4195,15 +4195,15 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6A1, "<Separator>"),
     WAVE_GTKIFE("/Edit/Highlight Regexp", "<Alt>R", menu_regexp_highlight, WV_MENU_EHR, "<Item>"),
     WAVE_GTKIFE("/Edit/UnHighlight Regexp", "<Shift><Alt>R", menu_regexp_unhighlight, WV_MENU_EUHR, "<Item>"),
-    WAVE_GTKIFE("/Edit/Highlight All", "<Alt>H", menu_dataformat_highlight_all, WV_MENU_EHA, "<Item>"),
-    WAVE_GTKIFE("/Edit/UnHighlight All", "<Shift><Alt>H", menu_dataformat_unhighlight_all, WV_MENU_EUHA, "<Item>"),
+    WAVE_GTKIFE("/Edit/Highlight All", "<Control>A", menu_dataformat_highlight_all, WV_MENU_EHA, "<Item>"),
+    WAVE_GTKIFE("/Edit/UnHighlight All", "<Shift><Control>A", menu_dataformat_unhighlight_all, WV_MENU_EUHA, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6B, "<Separator>"),
     WAVE_GTKIFE("/Edit/Sort/Alphabetize All", NULL, menu_alphabetize, WV_MENU_ALPHA, "<Item>"),
     WAVE_GTKIFE("/Edit/Sort/Alphabetize All (CaseIns)", NULL, menu_alphabetize2, WV_MENU_ALPHA2, "<Item>"),
     WAVE_GTKIFE("/Edit/Sort/Sigsort All", NULL, menu_lexize, WV_MENU_LEX, "<Item>"),
     WAVE_GTKIFE("/Edit/Sort/Reverse All", NULL, menu_reverse, WV_MENU_RVS, "<Item>"),
       /* 70 */
-    WAVE_GTKIFE("/Search/Pattern Search", "<Control>P", menu_tracesearchbox, WV_MENU_SPS, "<Item>"),
+    WAVE_GTKIFE("/Search/Pattern Search", NULL, menu_tracesearchbox, WV_MENU_SPS, "<Item>"),
     WAVE_GTKIFE("/Search/<separator>", NULL, NULL, WV_MENU_SEP7B, "<Separator>"),
     WAVE_GTKIFE("/Search/Signal Search Regexp", "<Alt>S", menu_signalsearch, WV_MENU_SSR, "<Item>"),
     WAVE_GTKIFE("/Search/Signal Search Hierarchy", "<Alt>T", menu_hiersearch, WV_MENU_SSH, "<Item>"),
@@ -4275,7 +4275,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/View/LXT Clock Compress to Z", NULL, menu_lxt_clk_compress, WV_MENU_LXTCC2Z, "<ToggleItem>"),
       /* 130 */
     WAVE_GTKIFE("/Help/WAVE Help", "<Control>H", menu_help, WV_MENU_HWH, "<Item>"),
-    WAVE_GTKIFE("/Help/Wave Version", "<Control>V", menu_version, WV_MENU_HWV, "<Item>"),
+    WAVE_GTKIFE("/Help/Wave Version", NULL, menu_version, WV_MENU_HWV, "<Item>"),
 };
 
 
@@ -4499,6 +4499,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/01/04 04:03:14  gtkwave
+ * disable dnd for 1.3.
+ *
  * Revision 1.15  2007/09/23 18:33:54  gtkwave
  * warnings cleanups from sun compile
  *

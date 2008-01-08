@@ -71,27 +71,28 @@ color_timeb  000000
 #
 # menu accelerators
 #
-accel "/File/Open New Window" <Shift>Pause
-accel "/File/Open New Tab" Pause
+accel "/File/Open New Window" <Control>N
+accel "/File/Open New Tab" <Control>T
 accel "/File/Reload Waveform" <Shift><Control>R
 accel "/File/Export/Write VCD File As" (null)
 accel "/File/Export/Write LXT File As" (null)
-accel "/File/Print To File" Print
-accel "/File/Read Save File" <Control>R
-accel "/File/Write Save File" <Control>W
-accel "/File/Write Save File As" <Shift><Control>W
+accel "/File/Close" <Control>W
+accel "/File/Print To File" <Control>P
+accel "/File/Read Save File" <Control>O
+accel "/File/Write Save File" <Control>S
+accel "/File/Write Save File As" <Shift><Control>S
 accel "/File/Read Sim Logfile" <Control>L
 accel "/File/Read Verilog Stemsfile" (null)
 accel "/File/Quit/Yes, Quit" <Alt>Q
 accel "/File/Quit/Don't Quit" (null)
-accel "/Edit/Set Trace Max Hier" <Control>T
+accel "/Edit/Set Trace Max Hier" (null)
 accel "/Edit/Insert Blank" <Control>B
-accel "/Edit/Insert Comment" <Control>C
-accel "/Edit/Insert Analog Height Extension" <Control>A
+accel "/Edit/Insert Comment" (null)
+accel "/Edit/Insert Analog Height Extension" (null)
 accel "/Edit/Alias Highlighted Trace" <Alt>A
 accel "/Edit/Remove Highlighted Aliases" <Shift><Alt>A
-accel "/Edit/Cut" <Alt>C
-accel "/Edit/Paste" <Alt>P
+accel "/Edit/Cut" <Control>X
+accel "/Edit/Paste" <Control>V
 accel "/Edit/Expand" F3
 accel "/Edit/Combine Down" F4
 accel "/Edit/Combine Up" F5
@@ -116,7 +117,7 @@ accel "/Edit/Data Format/Translate Filter Process/Enable and Select" (null)
 accel "/Edit/Data Format/Analog/Off" (null)
 accel "/Edit/Data Format/Analog/Step" (null)
 accel "/Edit/Data Format/Analog/Interpolated" (null)
-accel "/Edit/Show-Change All Highlighted" <Control>S
+accel "/Edit/Show-Change All Highlighted" (null)
 accel "/Edit/Show-Change First Highlighted" <Control>F
 accel "/Edit/Time Warp/Warp Marked" (null)
 accel "/Edit/Time Warp/Unwarp Marked" (null)
@@ -127,13 +128,13 @@ accel "/Edit/Expand All Groups" F12
 accel "/Edit/Collapse All Groups" <Shift>F12
 accel "/Edit/Highlight Regexp" <Alt>R
 accel "/Edit/UnHighlight Regexp" <Shift><Alt>R
-accel "/Edit/Highlight All" <Alt>H
-accel "/Edit/UnHighlight All" <Shift><Alt>H
+accel "/Edit/Highlight All" <Control>A
+accel "/Edit/UnHighlight All" <Shift><Control>A
 accel "/Edit/Sort/Alphabetize All" (null)
 accel "/Edit/Sort/Alphabetize All (CaseIns)" (null)
 accel "/Edit/Sort/Sigsort All" (null)
 accel "/Edit/Sort/Reverse All" (null)
-accel "/Search/Pattern Search" <Control>P
+accel "/Search/Pattern Search" (null)
 accel "/Search/Signal Search Regexp" <Alt>S
 accel "/Search/Signal Search Hierarchy" <Alt>T
 accel "/Search/Signal Search Tree" <Shift><Alt>T
@@ -181,4 +182,4 @@ accel "/View/Full Precision" <Alt>Pause
 accel "/View/Remove Pattern Marks" (null)
 accel "/View/LXT Clock Compress to Z" (null)
 accel "/Help/WAVE Help" <Control>H
-accel "/Help/Wave Version" <Control>V
+accel "/Help/Wave Version" (null)

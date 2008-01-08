@@ -945,7 +945,7 @@ return(rc);
  */
 static gint keypress_local(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-GtkAdjustment *wadj;
+GtkAdjustment *wadj, *hadj;
 int num_traces_displayable;
 int target;
 int which;
@@ -956,6 +956,29 @@ int yscroll;
 printf("focus: %d\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box));
 #endif
 
+if((GLOBALS->dnd_sigview) && GTK_WIDGET_HAS_FOCUS(GLOBALS->dnd_sigview))
+	{
+	switch(event->keyval)
+		{
+		case GDK_a:
+			if(event->state & GDK_CONTROL_MASK)
+				{
+				treeview_select_all_callback();
+				rc = TRUE;
+				}
+			break;
+
+		case GDK_A:
+			if(event->state & GDK_CONTROL_MASK)
+				{
+				treeview_unselect_all_callback();
+				rc = TRUE;
+				}
+		default:
+			break;
+		}
+	}
+else
 if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 	{
 	switch(event->keyval)
@@ -1015,10 +1038,43 @@ if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 
 		case GDK_Left:
 		case GDK_KP_Left:
+
+			hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
+  
+			if(hadj->value < hadj->page_increment)
+			        {
+			        hadj->value = (gfloat)0.0;
+			        }
+				else
+				{
+				hadj->value = hadj->value - hadj->page_increment;
+				}
+
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "changed");	/* force bar update */
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "value_changed"); /* force text update */
+			signalarea_configure_event(GLOBALS->signalarea, NULL);
+
+			rc = TRUE;
+			break;
+
 		case GDK_Right:
 		case GDK_KP_Right:
 
 			/* fill in left/right hscroll here */
+			hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
+
+			if( ((int) hadj->value + hadj->page_increment) >= hadj->upper)
+			        {
+			        hadj->value = (gfloat)(hadj->upper)-hadj->page_increment;
+			        }
+				else
+				{
+				hadj->value = hadj->value + hadj->page_increment;
+				}
+
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "changed");	/* force bar update */
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "value_changed"); /* force text update */
+			signalarea_configure_event(GLOBALS->signalarea, NULL);
 
 			rc = TRUE;
 			break;
@@ -1184,6 +1240,9 @@ if(do_focusing)
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/01/05 22:25:46  gtkwave
+ * degate busy during treeview dnd as it disrupts focus; dnd cleanups
+ *
  * Revision 1.16  2008/01/04 22:47:56  gtkwave
  * prelim input focus support for singalwindow
  *

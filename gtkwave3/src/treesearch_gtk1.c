@@ -22,6 +22,16 @@ void dnd_setup(GtkWidget *w)
 /* nothing, no dnd for gtk1 implemented yet */
 }
 
+void treeview_select_all_callback(void)
+{
+/* nothing, no treeview for gtk1 implemented yet */
+}
+
+void treeview_unselect_all_callback(void)
+{
+/* nothing, no treeview for gtk1 implemented yet */
+}
+
 
 static void select_row_callback(GtkWidget *widget, gint row, gint column,
         GdkEventButton *event, gpointer data)
@@ -750,6 +760,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

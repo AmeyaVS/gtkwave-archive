@@ -103,6 +103,8 @@ void force_open_tree_node(char *name);
 void select_tree_node(char *name);
 
 void dnd_setup(GtkWidget *src, GtkWidget *widget); /* dnd from gtk2 tree to signalwindow */
+void treeview_select_all_callback(void); /* gtk2 */
+void treeview_unselect_all_callback(void); /* gtk2 */
 
 void hier_searchbox(char *title, GtkSignalFunc func);
 void renderbox(char *title);
@@ -151,6 +153,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/01/05 22:25:46  gtkwave
+ * degate busy during treeview dnd as it disrupts focus; dnd cleanups
+ *
  * Revision 1.13  2008/01/03 21:55:45  gtkwave
  * various cleanups
  *

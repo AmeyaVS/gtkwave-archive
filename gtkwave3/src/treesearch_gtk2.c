@@ -511,6 +511,21 @@ filter_edit_cb (widget, &ev, data);
 }
 
 
+/*
+ * select/unselect all in treeview
+ */
+void treeview_select_all_callback(void)
+{
+GtkTreeSelection* ts = gtk_tree_view_get_selection(GTK_TREE_VIEW(GLOBALS->dnd_sigview));
+gtk_tree_selection_select_all(ts);
+}
+
+void treeview_unselect_all_callback(void)
+{
+GtkTreeSelection* ts = gtk_tree_view_get_selection(GTK_TREE_VIEW(GLOBALS->dnd_sigview));
+gtk_tree_selection_unselect_all(ts);
+}
+
 
 int treebox_is_active(void)
 {
@@ -1788,6 +1803,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/01/05 22:25:46  gtkwave
+ * degate busy during treeview dnd as it disrupts focus; dnd cleanups
+ *
  * Revision 1.8  2008/01/03 21:55:45  gtkwave
  * various cleanups
  *
