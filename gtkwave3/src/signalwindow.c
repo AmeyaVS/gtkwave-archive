@@ -48,14 +48,19 @@ if(GLOBALS->signalpixmap)
 
 	gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],GLOBALS->signalpixmap,xsrc, 0,0, 0,GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
 
-	if(GLOBALS->signalarea_has_focus)
-	        {
-	        gdk_draw_rectangle(GLOBALS->signalarea->window, GLOBALS->gc_black, FALSE, 0, 0, 
-			GLOBALS->signalarea->allocation.width-1, GLOBALS->signalarea->allocation.height-1);
-       		}
+	draw_signalarea_focus();
 	}
 }
 
+
+void draw_signalarea_focus(void)
+{
+if(GLOBALS->signalarea_has_focus)
+        {
+        gdk_draw_rectangle(GLOBALS->signalarea->window, GLOBALS->gc_black, FALSE, 0, 0, 
+		GLOBALS->signalarea->allocation.width-1, GLOBALS->signalarea->allocation.height-1);
+	}
+}
 
 /**************************************************************************/
 /***  standard click routines turned on with "use_standard_clicking"=1  ***/
@@ -956,29 +961,6 @@ int yscroll;
 printf("focus: %d\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box));
 #endif
 
-if((GLOBALS->dnd_sigview) && GTK_WIDGET_HAS_FOCUS(GLOBALS->dnd_sigview))
-	{
-	switch(event->keyval)
-		{
-		case GDK_a:
-			if(event->state & GDK_CONTROL_MASK)
-				{
-				treeview_select_all_callback();
-				rc = TRUE;
-				}
-			break;
-
-		case GDK_A:
-			if(event->state & GDK_CONTROL_MASK)
-				{
-				treeview_unselect_all_callback();
-				rc = TRUE;
-				}
-		default:
-			break;
-		}
-	}
-else
 if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 	{
 	switch(event->keyval)
@@ -1084,6 +1066,55 @@ if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 			printf("key %x, widget: %08x\n", event->keyval, widget);
 #endif
 			break;
+		}
+	}
+else
+if(GLOBALS->dnd_sigview)
+	{
+	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->dnd_sigview) || GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry))
+		{
+		switch(event->keyval)
+			{
+			case GDK_a:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					treeview_select_all_callback();
+					rc = TRUE;
+					}
+				break;
+
+			case GDK_A:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					treeview_unselect_all_callback();
+					rc = TRUE;
+					}
+			default:
+				break;
+			}
+		}
+	else
+	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->tree_treesearch_gtk2_c_1))
+		{
+		switch(event->keyval)
+			{
+			case GDK_a:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					/* eat keystroke */
+					rc = TRUE;
+					}
+				break;
+
+			case GDK_A:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					/* eat keystroke */
+					rc = TRUE;
+					}
+			default:
+				break;
+			}
 		}
 	}
 
@@ -1240,6 +1271,9 @@ if(do_focusing)
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/01/08 04:01:12  gtkwave
+ * more accelerator key ergonomic updates
+ *
  * Revision 1.17  2008/01/05 22:25:46  gtkwave
  * degate busy during treeview dnd as it disrupts focus; dnd cleanups
  *

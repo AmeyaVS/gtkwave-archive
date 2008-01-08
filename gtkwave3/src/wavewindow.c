@@ -576,12 +576,7 @@ if(GLOBALS->signalpixmap)
 			0, 0,
 	                GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
 
-		if(GLOBALS->signalarea_has_focus)
-                	{
-                	gdk_draw_rectangle(GLOBALS->signalarea->window, GLOBALS->gc_black, FALSE, 0, 0,
-                        	GLOBALS->signalarea->allocation.width-1, GLOBALS->signalarea->allocation.height-1);
-                	}  
-
+		draw_signalarea_focus();
 		draw_marker();
 	}
 }
@@ -601,11 +596,7 @@ gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[G
 	0, 0,
         GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
 
-if(GLOBALS->signalarea_has_focus)
-      	{
-      	gdk_draw_rectangle(GLOBALS->signalarea->window, GLOBALS->gc_black, FALSE, 0, 0,
-               	GLOBALS->signalarea->allocation.width-1, GLOBALS->signalarea->allocation.height-1);
-       	}  
+draw_signalarea_focus();
 }
 
 static void button_motion_common(gint xin, gint yin, int pressrel, int is_button_2) 
@@ -3166,6 +3157,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/01/07 16:34:51  gtkwave
+ * force hscrollbar update when button release after nailing down marker
+ *
  * Revision 1.11  2008/01/04 22:47:56  gtkwave
  * prelim input focus support for singalwindow
  *

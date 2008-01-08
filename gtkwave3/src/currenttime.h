@@ -85,6 +85,7 @@ void service_right_page(GtkWidget *text, gpointer data);
 
 void make_sigarea_gcs(GtkWidget *widget);
 
+void draw_signalarea_focus(void);
 gint signalarea_configure_event(GtkWidget *widget, GdkEventConfigure *event);
 gint wavearea_configure_event(GtkWidget *widget, GdkEventConfigure *event);
 void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFunc func);
@@ -153,6 +154,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/01/08 04:01:12  gtkwave
+ * more accelerator key ergonomic updates
+ *
  * Revision 1.14  2008/01/05 22:25:46  gtkwave
  * degate busy during treeview dnd as it disrupts focus; dnd cleanups
  *
