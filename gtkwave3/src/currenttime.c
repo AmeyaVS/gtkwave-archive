@@ -258,12 +258,12 @@ void update_basetime(TimeType val)
 {
 if(val>=0)
 	{
-	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), "Base Marker");
+	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), (!GLOBALS->use_toolbutton_interface) ? "Base Marker" : "Base");
 	reformat_time(GLOBALS->curtext_currenttime_c_1, val, GLOBALS->time_dimension);
 	}
 	else
 	{
-	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), "Current Time");
+	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), (!GLOBALS->use_toolbutton_interface) ? "Current Time" : "Current");
 	reformat_time_blackout(GLOBALS->curtext_currenttime_c_1, GLOBALS->cached_currenttimeval_currenttime_c_1, GLOBALS->time_dimension);
 	}
 
@@ -322,31 +322,70 @@ GLOBALS->maxtimewid_currenttime_c_1=gtk_label_new(GLOBALS->maxtext_currenttime_c
 GLOBALS->curtext_currenttime_c_1=(char *)malloc_2(40);
 if(GLOBALS->tims.baseline<0)
 	{
-	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new("Current Time");
+	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new((!GLOBALS->use_toolbutton_interface) ? "Current Time" : "Current");
 	reformat_time(GLOBALS->curtext_currenttime_c_1, (GLOBALS->currenttime=GLOBALS->min_time), GLOBALS->time_dimension);
 	GLOBALS->curtimewid_currenttime_c_1=gtk_label_new(GLOBALS->curtext_currenttime_c_1);
 	}
 	else
 	{
-	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new("Base Marker");
+	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new((!GLOBALS->use_toolbutton_interface) ? "Base Marker" : "Base");
 	reformat_time(GLOBALS->curtext_currenttime_c_1, GLOBALS->tims.baseline, GLOBALS->time_dimension);
 	GLOBALS->curtimewid_currenttime_c_1=gtk_label_new(GLOBALS->curtext_currenttime_c_1);
 	}
 
-mainbox=gtk_vbox_new(FALSE, 0);
+if(!GLOBALS->use_toolbutton_interface)
+	{
+	mainbox=gtk_vbox_new(FALSE, 0);
+	}
+	else
+	{
+	mainbox=gtk_hbox_new(FALSE, 0);
+	}
+
+gtk_widget_show(mainbox);   
 eventbox=gtk_event_box_new();
 gtk_container_add(GTK_CONTAINER(eventbox), mainbox);
 
-gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->max_or_marker_label_currenttime_c_1, TRUE, FALSE, 0);
-gtk_widget_show(GLOBALS->max_or_marker_label_currenttime_c_1);
-gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->maxtimewid_currenttime_c_1, TRUE, FALSE, 0);
-gtk_widget_show(GLOBALS->maxtimewid_currenttime_c_1);
+if(!GLOBALS->use_toolbutton_interface)
+	{
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->max_or_marker_label_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->max_or_marker_label_currenttime_c_1);
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->maxtimewid_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->maxtimewid_currenttime_c_1);
 
-gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->base_or_curtime_label_currenttime_c_1, TRUE, FALSE, 0);
-gtk_widget_show(GLOBALS->base_or_curtime_label_currenttime_c_1);
-gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->curtimewid_currenttime_c_1, TRUE, FALSE, 0);
-gtk_widget_show(GLOBALS->curtimewid_currenttime_c_1);
-gtk_widget_show(mainbox);   
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->base_or_curtime_label_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->base_or_curtime_label_currenttime_c_1);
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->curtimewid_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->curtimewid_currenttime_c_1);
+	}
+	else
+	{
+	GtkWidget *dummy;
+
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->max_or_marker_label_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->max_or_marker_label_currenttime_c_1);
+
+        dummy=gtk_label_new(": ");
+        gtk_widget_show (dummy);
+	gtk_box_pack_start(GTK_BOX(mainbox), dummy, TRUE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->maxtimewid_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->maxtimewid_currenttime_c_1);
+
+        dummy=gtk_label_new("  |  ");
+        gtk_widget_show (dummy);
+	gtk_box_pack_start(GTK_BOX(mainbox), dummy, TRUE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->base_or_curtime_label_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->base_or_curtime_label_currenttime_c_1);
+
+        dummy=gtk_label_new(": ");
+        gtk_widget_show (dummy);
+	gtk_box_pack_start(GTK_BOX(mainbox), dummy, TRUE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->curtimewid_currenttime_c_1, TRUE, FALSE, 0);
+	gtk_widget_show(GLOBALS->curtimewid_currenttime_c_1);
+	}
 
 return(eventbox);
 }
@@ -420,6 +459,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

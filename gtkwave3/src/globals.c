@@ -434,7 +434,11 @@ NULL, /* expanderwindow 205 */
 0, /* socket_xid 224 */
 0, /* disable_menus 225 */
 NULL, /* ftext_main_main_c_1 226 */
-
+#ifdef WAVE_USE_GTK2
+1, /* use_toolbutton_interface */
+#else
+0, /* use_toolbutton_interface */
+#endif
 
 /*
  * markerbox.c
@@ -1402,6 +1406,7 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->indirect_fname, &GLOBALS->indirect_fname);
 
  /* main.c */
+ new_globals->use_toolbutton_interface = GLOBALS->use_toolbutton_interface;
  new_globals->optimize_vcd = GLOBALS->optimize_vcd;
  strcpy2_into_new_context(new_globals, &new_globals->winname, &GLOBALS->winname); /* for page swapping */
 

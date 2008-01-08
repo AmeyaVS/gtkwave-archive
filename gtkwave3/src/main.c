@@ -419,6 +419,12 @@ if(!GLOBALS)
 	GLOBALS->zoombase = old_g->zoombase;
 	GLOBALS->splash_disable = old_g->splash_disable;
 	
+	GLOBALS->vlist_spill_to_disk = old_g->vlist_spill_to_disk;
+	GLOBALS->vlist_prepack = old_g->vlist_prepack;
+	GLOBALS->do_dynamic_treefilter = old_g->do_dynamic_treefilter;
+	GLOBALS->use_standard_clicking = old_g->use_standard_clicking;
+	GLOBALS->use_toolbutton_interface = old_g->use_toolbutton_interface;
+
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_logfile, &old_g->fontname_logfile);
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_signals, &old_g->fontname_signals); 
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_waves, &old_g->fontname_waves);
@@ -1106,156 +1112,311 @@ if(!GLOBALS->socket_xid)
 
 make_pixmaps(GLOBALS->mainwindow);
 
-
-if(!mainwindow_already_built)
-{
-main_vbox = gtk_vbox_new(FALSE, 5);
-gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
-gtk_container_add(GTK_CONTAINER(GLOBALS->mainwindow), main_vbox);
-gtk_widget_show(main_vbox);
-
-if(!GLOBALS->disable_menus)
+#ifdef WAVE_USE_GTK2
+if(GLOBALS->use_toolbutton_interface)
 	{
-	get_main_menu(GLOBALS->mainwindow, &menubar);
-	gtk_widget_show(menubar);
+	GtkWidget *tb;
+	GtkWidget *stock;
+	int tb_pos;
+	GtkWidget *timebox_table;
 
-	if(GLOBALS->force_toolbars)
+	if(!mainwindow_already_built)
 		{
-		toolhandle=gtk_handle_box_new();
-		gtk_widget_show(toolhandle);
-		gtk_container_add(GTK_CONTAINER(toolhandle), menubar);
-		gtk_box_pack_start(GTK_BOX(main_vbox), toolhandle, FALSE, TRUE, 0);
-		}
-		else
+		main_vbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
+		gtk_container_add(GTK_CONTAINER(GLOBALS->mainwindow), main_vbox);
+		gtk_widget_show(main_vbox);
+	
+		if(!GLOBALS->disable_menus)
+			{
+			get_main_menu(GLOBALS->mainwindow, &menubar);
+			gtk_widget_show(menubar);
+	
+			if(GLOBALS->force_toolbars)
+				{
+				toolhandle=gtk_handle_box_new();
+				gtk_widget_show(toolhandle);
+				gtk_container_add(GTK_CONTAINER(toolhandle), menubar);
+				gtk_box_pack_start(GTK_BOX(main_vbox), toolhandle, FALSE, TRUE, 0);
+				}
+				else
+				{
+				gtk_box_pack_start(GTK_BOX(main_vbox), menubar, FALSE, TRUE, 0);
+				}
+			}
+	
+		if(GLOBALS->force_toolbars)
+			{
+			toolhandle=gtk_handle_box_new();
+			gtk_widget_show(toolhandle);
+			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
+			}
+
+		whole_table = gtk_table_new (256, 16, FALSE);
+	
+		tb = gtk_toolbar_new();
+		top_table = tb;		/* export this as our top widget rather than a table */
+
+		gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
+		tb_pos = 0;
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_ZOOM_FIT,
+						 "Zoom Fit",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_zoom_fit),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_ZOOM_IN,
+						 "Zoom In",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_zoom_in),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_ZOOM_OUT,
+						 "Zoom Out",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_zoom_out),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_UNDO,
+						 "Zoom Undo",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_zoom_undo),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_GOTO_FIRST,
+						 "Zoom to Start",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_zoom_left),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_GOTO_LAST,
+						 "Zoom to End",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_zoom_right),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_GO_BACK,
+						 "Find Previous Edge",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_left_edge),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_GO_FORWARD,
+						 "Find Next Edge",
+						 NULL,
+						 GTK_SIGNAL_FUNC(service_right_edge),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		entry = create_entry_box();
+		gtk_widget_show(entry);
+		gtk_toolbar_insert_widget(GTK_TOOLBAR(tb),
+                                          entry,
+                                          NULL,
+					  NULL,
+					  tb_pos++);
+
+		if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
+			{
+			stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_REFRESH,
+						 "Reload",
+						 NULL,
+						 GTK_SIGNAL_FUNC(menu_reload_waveform),
+						 NULL,
+						 tb_pos++);
+			gtk_widget_show(stock);
+			}
+
+		timebox = create_time_box();
+		gtk_widget_show (timebox);
+		gtk_toolbar_insert_widget(GTK_TOOLBAR(tb),
+                                          timebox,
+                                          NULL,
+					  NULL,
+					  tb_pos++);
+
+		} /* of ...if(mainwindow_already_built) */
+	}
+	else
+#endif
+	{
+	if(!mainwindow_already_built)
 		{
-		gtk_box_pack_start(GTK_BOX(main_vbox), menubar, FALSE, TRUE, 0);
-		}
+		main_vbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
+		gtk_container_add(GTK_CONTAINER(GLOBALS->mainwindow), main_vbox);
+		gtk_widget_show(main_vbox);
+	
+		if(!GLOBALS->disable_menus)
+			{
+			get_main_menu(GLOBALS->mainwindow, &menubar);
+			gtk_widget_show(menubar);
+	
+			if(GLOBALS->force_toolbars)
+				{
+				toolhandle=gtk_handle_box_new();
+				gtk_widget_show(toolhandle);
+				gtk_container_add(GTK_CONTAINER(toolhandle), menubar);
+				gtk_box_pack_start(GTK_BOX(main_vbox), toolhandle, FALSE, TRUE, 0);
+				}
+				else
+				{
+				gtk_box_pack_start(GTK_BOX(main_vbox), menubar, FALSE, TRUE, 0);
+				}
+			}
+	
+		top_table = gtk_table_new (1, 284, FALSE);
+	
+		if(GLOBALS->force_toolbars)
+			{
+			toolhandle=gtk_handle_box_new();
+			gtk_widget_show(toolhandle);
+			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
+			}
+
+		whole_table = gtk_table_new (256, 16, FALSE);
+	
+		text1 = create_text ();
+		gtk_table_attach (GTK_TABLE (top_table), text1, 0, 141, 0, 1,
+		                      	GTK_FILL,
+		                      	GTK_FILL | GTK_SHRINK, 0, 0);
+		gtk_widget_set_usize(GTK_WIDGET(text1), 200, -1);
+		gtk_widget_show (text1);
+
+		dummy1=gtk_label_new("");
+		gtk_table_attach (GTK_TABLE (top_table), dummy1, 141, 171, 0, 1,
+		                      	GTK_FILL,
+		                      	GTK_SHRINK, 0, 0);
+		gtk_widget_show (dummy1);
+
+		zoombuttons = create_zoom_buttons ();
+		gtk_table_attach (GTK_TABLE (top_table), zoombuttons, 171, 173, 0, 1,
+		                      	GTK_FILL,
+		                      	GTK_SHRINK, 0, 0);
+		gtk_widget_show (zoombuttons);
+
+		if(!GLOBALS->use_scrollbar_only)
+			{
+			pagebuttons = create_page_buttons ();
+			gtk_table_attach (GTK_TABLE (top_table), pagebuttons, 173, 174, 0, 1,
+			                      	GTK_FILL,
+			                      	GTK_SHRINK, 0, 0);
+			gtk_widget_show (pagebuttons);
+			fetchbuttons = create_fetch_buttons ();
+			gtk_table_attach (GTK_TABLE (top_table), fetchbuttons, 174, 175, 0, 1,
+			                      	GTK_FILL,
+			                      	GTK_SHRINK, 0, 0);
+			gtk_widget_show (fetchbuttons);
+			discardbuttons = create_discard_buttons ();
+			gtk_table_attach (GTK_TABLE (top_table), discardbuttons, 175, 176, 0, 1,
+			                      	GTK_FILL,
+			                      	GTK_SHRINK, 0, 0);
+			gtk_widget_show (discardbuttons);
+		
+			shiftbuttons = create_shift_buttons ();
+			gtk_table_attach (GTK_TABLE (top_table), shiftbuttons, 176, 177, 0, 1,
+			                      	GTK_FILL,
+			                      	GTK_SHRINK, 0, 0);
+			gtk_widget_show (shiftbuttons);
+			}
+
+		edgebuttons = create_edge_buttons ();
+		gtk_table_attach (GTK_TABLE (top_table), edgebuttons, 177, 178, 0, 1,
+		                      	GTK_FILL,
+		                      	GTK_SHRINK, 0, 0);
+		gtk_widget_show (edgebuttons);
+	
+
+		dummy2=gtk_label_new("");
+		gtk_table_attach (GTK_TABLE (top_table), dummy2, 178, 215, 0, 1,
+		                      	GTK_FILL,
+		                      	GTK_SHRINK, 0, 0);
+		gtk_widget_show (dummy2);
+
+		entry = create_entry_box();
+		gtk_table_attach (GTK_TABLE (top_table), entry, 215, 216, 0, 1,
+		                      	GTK_SHRINK,
+		                      	GTK_SHRINK, 0, 0);
+		gtk_widget_show(entry);
+
+		timebox = create_time_box();
+		gtk_table_attach (GTK_TABLE (top_table), timebox, 216, 284, 0, 1,
+		                      	GTK_FILL | GTK_EXPAND,
+		                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 20, 0);
+		gtk_widget_show (timebox);
+
+		if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
+			{
+			GtkWidget *r_pixmap = gtk_pixmap_new(GLOBALS->redo_pixmap, GLOBALS->redo_mask);
+			GtkWidget *main_vbox;
+			GtkWidget *table, *table2;
+			GtkWidget *b1, *frame;
+			GtkTooltips *tooltips;
+
+			gtk_widget_show(r_pixmap);
+		
+			tooltips=gtk_tooltips_new_2();
+			gtk_tooltips_set_delay_2(tooltips,1500);
+
+			table = gtk_table_new (1, 1, FALSE);
+		
+			main_vbox = gtk_vbox_new (FALSE, 1);
+			gtk_container_border_width (GTK_CONTAINER (main_vbox), 1);
+			gtk_container_add (GTK_CONTAINER (table), main_vbox);
+	
+			frame = gtk_frame_new ("Reload ");
+			gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
+	
+			gtk_widget_show (frame);
+			gtk_widget_show (main_vbox);
+
+			table2 = gtk_table_new (2, 1, FALSE);
+	
+			b1 = gtk_button_new();
+			gtk_container_add(GTK_CONTAINER(b1), r_pixmap);
+			gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
+			                        GTK_FILL | GTK_EXPAND,
+			                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
+			gtk_signal_connect_object (GTK_OBJECT (b1), "clicked", GTK_SIGNAL_FUNC(menu_reload_waveform), GTK_OBJECT (table2));
+			gtk_tooltips_set_tip_2(tooltips, b1, "Reload waveform", NULL);
+			gtk_widget_show(b1);
+			gtk_container_add (GTK_CONTAINER (frame), table2);
+			gtk_widget_show(table2);
+
+			gtk_table_attach (GTK_TABLE (top_table), table, 284, 285, 0, 1,
+		                      	0, 
+		                      	0, 2, 0);
+	
+			gtk_widget_show (table);
+			}
+		} /* of ...if(mainwindow_already_built) */
 	}
 
-top_table = gtk_table_new (1, 284, FALSE);
-
-if(GLOBALS->force_toolbars)
-	{
-	toolhandle=gtk_handle_box_new();
-	gtk_widget_show(toolhandle);
-	gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
-	}
-
-whole_table = gtk_table_new (256, 16, FALSE);
-
-text1 = create_text ();
-gtk_table_attach (GTK_TABLE (top_table), text1, 0, 141, 0, 1,
-                      	GTK_FILL,
-                      	GTK_FILL | GTK_SHRINK, 0, 0);
-gtk_widget_set_usize(GTK_WIDGET(text1), 200, -1);
-gtk_widget_show (text1);
-
-dummy1=gtk_label_new("");
-gtk_table_attach (GTK_TABLE (top_table), dummy1, 141, 171, 0, 1,
-                      	GTK_FILL,
-                      	GTK_SHRINK, 0, 0);
-gtk_widget_show (dummy1);
-
-zoombuttons = create_zoom_buttons ();
-gtk_table_attach (GTK_TABLE (top_table), zoombuttons, 171, 173, 0, 1,
-                      	GTK_FILL,
-                      	GTK_SHRINK, 0, 0);
-gtk_widget_show (zoombuttons);
-
-if(!GLOBALS->use_scrollbar_only)
-	{
-	pagebuttons = create_page_buttons ();
-	gtk_table_attach (GTK_TABLE (top_table), pagebuttons, 173, 174, 0, 1,
-	                      	GTK_FILL,
-	                      	GTK_SHRINK, 0, 0);
-	gtk_widget_show (pagebuttons);
-	fetchbuttons = create_fetch_buttons ();
-	gtk_table_attach (GTK_TABLE (top_table), fetchbuttons, 174, 175, 0, 1,
-	                      	GTK_FILL,
-	                      	GTK_SHRINK, 0, 0);
-	gtk_widget_show (fetchbuttons);
-	discardbuttons = create_discard_buttons ();
-	gtk_table_attach (GTK_TABLE (top_table), discardbuttons, 175, 176, 0, 1,
-	                      	GTK_FILL,
-	                      	GTK_SHRINK, 0, 0);
-	gtk_widget_show (discardbuttons);
-	
-	shiftbuttons = create_shift_buttons ();
-	gtk_table_attach (GTK_TABLE (top_table), shiftbuttons, 176, 177, 0, 1,
-	                      	GTK_FILL,
-	                      	GTK_SHRINK, 0, 0);
-	gtk_widget_show (shiftbuttons);
-
-	edgebuttons = create_edge_buttons ();
-	gtk_table_attach (GTK_TABLE (top_table), edgebuttons, 177, 178, 0, 1,
-	                      	GTK_FILL,
-	                      	GTK_SHRINK, 0, 0);
-	gtk_widget_show (edgebuttons);
-	}
-
-dummy2=gtk_label_new("");
-gtk_table_attach (GTK_TABLE (top_table), dummy2, 178, 215, 0, 1,
-                      	GTK_FILL,
-                      	GTK_SHRINK, 0, 0);
-gtk_widget_show (dummy2);
-
-entry = create_entry_box();
-gtk_table_attach (GTK_TABLE (top_table), entry, 215, 216, 0, 1,
-                      	GTK_SHRINK,
-                      	GTK_SHRINK, 0, 0);
-gtk_widget_show(entry);
-
-timebox = create_time_box();
-gtk_table_attach (GTK_TABLE (top_table), timebox, 216, 284, 0, 1,
-                      	GTK_FILL | GTK_EXPAND,
-                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 20, 0);
-gtk_widget_show (timebox);
-
-if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
-	{
-	GtkWidget *r_pixmap = gtk_pixmap_new(GLOBALS->redo_pixmap, GLOBALS->redo_mask);
-	GtkWidget *main_vbox;
-	GtkWidget *table, *table2;
-	GtkWidget *b1, *frame;
-	GtkTooltips *tooltips;
-
-	gtk_widget_show(r_pixmap);
-
-	tooltips=gtk_tooltips_new_2();
-	gtk_tooltips_set_delay_2(tooltips,1500);
-
-	table = gtk_table_new (1, 1, FALSE);
-
-	main_vbox = gtk_vbox_new (FALSE, 1);
-	gtk_container_border_width (GTK_CONTAINER (main_vbox), 1);
-	gtk_container_add (GTK_CONTAINER (table), main_vbox);
-	
-	frame = gtk_frame_new ("Reload ");
-	gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
-	
-	gtk_widget_show (frame);
-	gtk_widget_show (main_vbox);
-
-	table2 = gtk_table_new (2, 1, FALSE);
-	
-	b1 = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(b1), r_pixmap);
-	gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
-	                        GTK_FILL | GTK_EXPAND,
-	                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
-	gtk_signal_connect_object (GTK_OBJECT (b1), "clicked", GTK_SIGNAL_FUNC(menu_reload_waveform), GTK_OBJECT (table2));
-	gtk_tooltips_set_tip_2(tooltips, b1, "Reload waveform", NULL);
-	gtk_widget_show(b1);
-	gtk_container_add (GTK_CONTAINER (frame), table2);
-	gtk_widget_show(table2);
-
-	gtk_table_attach (GTK_TABLE (top_table), table, 284, 285, 0, 1,
-                      	0, 
-                      	0, 2, 0);
-
-	gtk_widget_show (table);
-	}
-} /* of ...if(mainwindow_already_built) */
 
 GLOBALS->wavewindow = create_wavewindow();
 load_all_fonts(); /* must be done before create_signalwindow() */
@@ -1830,6 +1991,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/01/05 22:25:46  gtkwave
+ * degate busy during treeview dnd as it disrupts focus; dnd cleanups
+ *
  * Revision 1.17  2008/01/02 18:54:11  gtkwave
  * cleaned up inconsistent punctuation on --exit option
  *

@@ -328,7 +328,7 @@
 		with the vlist_prepack rc variable.
 		Added --giga option to turn on vlist_spill and
 		vlist_prepack from the command line.
-3.1.3	07jan08	Added dynamic keypress detection in the Pattern
+3.1.3	08jan08	Added dynamic keypress detection in the Pattern
 		Search Requester so users do not need to press
 		enter for search strings.  Likewise, added the
 		rc variable sst_dynamic_filter to enable the
@@ -362,3 +362,6 @@
 		treeview so it acts like the signal window.
 		Added left/right scrolling hotkeys in signal
 		window.
+		Added use_toolbutton_interface environment
+		variable which enables new user interface
+		at the top of screen.

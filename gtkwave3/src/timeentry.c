@@ -158,7 +158,15 @@ gtk_widget_set_usize(GTK_WIDGET(GLOBALS->to_entry), 90, 22);
 gtk_tooltips_set_tip_2(tooltips, GLOBALS->to_entry, "Scroll Upper Bound", NULL);
 gtk_widget_show(GLOBALS->to_entry);
 
-mainbox=gtk_vbox_new(FALSE, 0);
+if(!GLOBALS->use_toolbutton_interface)
+	{
+	mainbox=gtk_vbox_new(FALSE, 0);
+	}
+	else
+	{
+	mainbox=gtk_hbox_new(FALSE, 0);
+	}
+
 gtk_box_pack_start(GTK_BOX(mainbox), box, TRUE, FALSE, 1);
 gtk_widget_show(box);
 gtk_box_pack_start(GTK_BOX(mainbox), box2, TRUE, FALSE, 1);
@@ -170,6 +178,9 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.2  2007/08/26 21:35:45  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

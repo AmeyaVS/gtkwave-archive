@@ -82,6 +82,8 @@ void service_left_shift(GtkWidget *text, gpointer data);
 void service_right_shift(GtkWidget *text, gpointer data);
 void service_left_page(GtkWidget *text, gpointer data);
 void service_right_page(GtkWidget *text, gpointer data);
+void service_left_edge(GtkWidget *text, gpointer data);
+void service_right_edge(GtkWidget *text, gpointer data);
 
 void make_sigarea_gcs(GtkWidget *widget);
 
@@ -154,6 +156,9 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/01/08 07:13:08  gtkwave
+ * more limiting of ctrl-a focus (away from tree and filter entry)
+ *
  * Revision 1.15  2008/01/08 04:01:12  gtkwave
  * more accelerator key ergonomic updates
  *

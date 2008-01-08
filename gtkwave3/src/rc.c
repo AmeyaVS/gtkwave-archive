@@ -460,6 +460,15 @@ GLOBALS->use_standard_clicking=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_use_toolbutton_interface(char *str)
+{
+DEBUG(printf("f_use_toolbutton_interface(\"%s\")\n",str));
+#ifdef WAVE_USE_GTK2
+GLOBALS->use_toolbutton_interface=atoi_64(str)?1:0;
+#endif
+return(0);
+}
+
 int f_vcd_explicit_zero_subscripts(char *str)
 {
 DEBUG(printf("f_vcd_explicit_zero_subscripts(\"%s\")\n",str));
@@ -685,6 +694,7 @@ static struct rc_entry rcitems[]=
 { "use_roundcaps", f_use_roundcaps },
 { "use_scrollbar_only", f_use_scrollbar_only },
 { "use_standard_clicking", f_use_standard_clicking },
+{ "use_toolbutton_interface", f_use_toolbutton_interface },
 { "vcd_explicit_zero_subscripts", f_vcd_explicit_zero_subscripts },
 { "vcd_preserve_glitches", f_vcd_preserve_glitches },
 { "vcd_warning_filesize", f_vcd_warning_filesize },
@@ -864,6 +874,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/01/02 18:17:26  gtkwave
+ * added standard click semantics with user_standard_clicking rc variable
+ *
  * Revision 1.7  2007/12/29 20:19:33  gtkwave
  * added dynamic string updates for entrybox in pattern search and sst
  *
