@@ -1170,6 +1170,25 @@ if(GLOBALS->use_toolbutton_interface)
 		tb_pos = 0;
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_CUT,
+						 "Cut Traces",
+						 NULL,
+						 GTK_SIGNAL_FUNC(menu_cut_traces),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_PASTE,
+						 "Paste Traces",
+						 NULL,
+						 GTK_SIGNAL_FUNC(menu_paste_traces),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
+
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         GTK_STOCK_ZOOM_FIT,
 						 "Zoom Fit",
 						 NULL,
@@ -2000,6 +2019,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2008/01/09 08:07:03  gtkwave
+ * removal of explicit menu string names when unnecessary
+ *
  * Revision 1.20  2008/01/09 04:09:11  gtkwave
  * fix keyboard focus sighandler when multi-tabs are being used
  *
