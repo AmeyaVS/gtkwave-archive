@@ -1128,7 +1128,6 @@ if(GLOBALS->use_toolbutton_interface)
 	GtkWidget *tb;
 	GtkWidget *stock;
 	int tb_pos;
-	GtkWidget *timebox_table;
 
 	if(!mainwindow_already_built)
 		{
@@ -2001,6 +2000,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/01/09 04:09:11  gtkwave
+ * fix keyboard focus sighandler when multi-tabs are being used
+ *
  * Revision 1.19  2008/01/08 23:03:35  gtkwave
  * added toolbar using use_toolbutton_interface rc variable
  *

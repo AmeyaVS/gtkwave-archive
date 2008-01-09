@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -4337,18 +4337,18 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 
     if((GLOBALS->socket_xid)||(GLOBALS->partial_vcd))
 	{
-	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/File/Open New Tab");
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_FONVT].path);
 	}
 
     if(GLOBALS->loaded_file_type == NO_FILE)
 	{
-	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/File/Reload Waveform");
+    	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_FRW].path);
 	}
 
     if(GLOBALS->loaded_file_type != LXT_FILE)
 	{
-	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/View/<separator>");
-	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, "/View/LXT Clock Compress to Z");
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_SEP18].path);
+    	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path);
 	}
 
     gtk_window_add_accel_group(GTK_WINDOW(window), global_accel);
@@ -4499,6 +4499,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/01/08 04:01:12  gtkwave
+ * more accelerator key ergonomic updates
+ *
  * Revision 1.16  2008/01/04 04:03:14  gtkwave
  * disable dnd for 1.3.
  *
