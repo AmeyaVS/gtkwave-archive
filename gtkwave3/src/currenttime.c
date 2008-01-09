@@ -14,20 +14,25 @@
 #include "symbol.h"
 
 static char *time_prefix=" munpf";
+
 static char *maxtime_label_text="Maximum Time";
 static char *marker_label_text ="Marker Time";
 
+static char *maxtime_label_text_hpos="Max";
+static char *marker_label_text_hpos ="Marker";
 
 void update_maxmarker_labels(void)
 {
 if(GLOBALS->use_maxtime_display) 
 	{
-	gtk_label_set(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1),maxtime_label_text);
+	gtk_label_set(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1),
+		(!GLOBALS->use_toolbutton_interface) ? maxtime_label_text : maxtime_label_text_hpos);
 	update_maxtime(GLOBALS->max_time);
 	}
 	else
 	{
-	gtk_label_set(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1),marker_label_text);
+	gtk_label_set(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1),
+		(!GLOBALS->use_toolbutton_interface) ? marker_label_text : marker_label_text_hpos);
 	update_markertime(GLOBALS->tims.marker);
 	}
 }
@@ -304,8 +309,8 @@ GtkWidget *mainbox;
 GtkWidget *eventbox;
 
 GLOBALS->max_or_marker_label_currenttime_c_1=(GLOBALS->use_maxtime_display)
-	? gtk_label_new(maxtime_label_text)
-	: gtk_label_new(marker_label_text);
+	? gtk_label_new((!GLOBALS->use_toolbutton_interface) ? maxtime_label_text : maxtime_label_text_hpos)
+	: gtk_label_new((!GLOBALS->use_toolbutton_interface) ? marker_label_text : marker_label_text_hpos);
 
 GLOBALS->maxtext_currenttime_c_1=(char *)malloc_2(40);
 if(GLOBALS->use_maxtime_display)
@@ -459,6 +464,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/01/08 23:03:35  gtkwave
+ * added toolbar using use_toolbutton_interface rc variable
+ *
  * Revision 1.2  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
