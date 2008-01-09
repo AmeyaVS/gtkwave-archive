@@ -268,7 +268,7 @@ if(val>=0)
 	}
 	else
 	{
-	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), (!GLOBALS->use_toolbutton_interface) ? "Current Time" : "Current");
+	gtk_label_set(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1), (!GLOBALS->use_toolbutton_interface) ? "Current Time" : "Cursor");
 	reformat_time_blackout(GLOBALS->curtext_currenttime_c_1, GLOBALS->cached_currenttimeval_currenttime_c_1, GLOBALS->time_dimension);
 	}
 
@@ -327,7 +327,7 @@ GLOBALS->maxtimewid_currenttime_c_1=gtk_label_new(GLOBALS->maxtext_currenttime_c
 GLOBALS->curtext_currenttime_c_1=(char *)malloc_2(40);
 if(GLOBALS->tims.baseline<0)
 	{
-	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new((!GLOBALS->use_toolbutton_interface) ? "Current Time" : "Current");
+	GLOBALS->base_or_curtime_label_currenttime_c_1=gtk_label_new((!GLOBALS->use_toolbutton_interface) ? "Current Time" : "Cursor");
 	reformat_time(GLOBALS->curtext_currenttime_c_1, (GLOBALS->currenttime=GLOBALS->min_time), GLOBALS->time_dimension);
 	GLOBALS->curtimewid_currenttime_c_1=gtk_label_new(GLOBALS->curtext_currenttime_c_1);
 	}
@@ -464,6 +464,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/01/09 08:26:16  gtkwave
+ * added shorter labels when in horizontal toolbuttons mode
+ *
  * Revision 1.3  2008/01/08 23:03:35  gtkwave
  * added toolbar using use_toolbutton_interface rc variable
  *
