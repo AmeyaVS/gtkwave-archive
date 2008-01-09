@@ -1187,6 +1187,7 @@ if(GLOBALS->use_toolbutton_interface)
 						 tb_pos++);
 		gtk_widget_show(stock);
 
+		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         GTK_STOCK_ZOOM_FIT,
@@ -1242,6 +1243,8 @@ if(GLOBALS->use_toolbutton_interface)
 						 tb_pos++);
 		gtk_widget_show(stock);
 
+		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
+
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         GTK_STOCK_GO_BACK,
 						 "Find Previous Edge",
@@ -1260,6 +1263,8 @@ if(GLOBALS->use_toolbutton_interface)
 						 tb_pos++);
 		gtk_widget_show(stock);
 
+		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
+
 		entry = create_entry_box();
 		gtk_widget_show(entry);
 		gtk_toolbar_insert_widget(GTK_TOOLBAR(tb),
@@ -1267,6 +1272,8 @@ if(GLOBALS->use_toolbutton_interface)
                                           NULL,
 					  NULL,
 					  tb_pos++);
+
+		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
 		if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
 			{
@@ -1278,6 +1285,8 @@ if(GLOBALS->use_toolbutton_interface)
 						 NULL,
 						 tb_pos++);
 			gtk_widget_show(stock);
+
+			gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 			}
 
 		timebox = create_time_box();
@@ -2020,6 +2029,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2008/01/09 19:20:52  gtkwave
+ * more updating to globals management (expose events cause wrong swap)
+ *
  * Revision 1.22  2008/01/09 08:25:41  gtkwave
  * added cut + paste buttons
  *
