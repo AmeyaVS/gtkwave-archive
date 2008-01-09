@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999.
+ * Copyright (c) Tony Bybell 1999-2008
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,7 +133,7 @@ GLOBALS->from_entry=gtk_entry_new_with_max_length(40);
 reformat_time(fromstr, GLOBALS->min_time, GLOBALS->time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),fromstr);
-gtkwave_signal_connect (GTK_OBJECT (GLOBALS->from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS->from_entry);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS->from_entry);
 box=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0); 
 gtk_widget_show(label);
@@ -149,7 +149,7 @@ GLOBALS->to_entry=gtk_entry_new_with_max_length(40);
 reformat_time(tostr, GLOBALS->max_time, GLOBALS->time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),tostr);
-gtkwave_signal_connect (GTK_OBJECT (GLOBALS->to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS->to_entry);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS->to_entry);
 box2=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box2), label2, TRUE, TRUE, 0); 
 gtk_widget_show(label2);
@@ -178,6 +178,9 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/01/08 23:03:36  gtkwave
+ * added toolbar using use_toolbutton_interface rc variable
+ *
  * Revision 1.3  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
