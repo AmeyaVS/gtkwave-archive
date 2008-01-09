@@ -910,11 +910,11 @@ gint rc;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
 struct Global *g_old = GLOBALS;
 
-GLOBALS = (*GLOBALS->contexts)[page_num];
+set_GLOBALS((*GLOBALS->contexts)[page_num]);
 
 rc = signalarea_configure_event(widget, event);
 
-GLOBALS = g_old;
+set_GLOBALS(g_old);
 
 return(rc);
 }
@@ -945,11 +945,12 @@ gint rc;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
 struct Global *g_old = GLOBALS;
 
-GLOBALS = (*GLOBALS->contexts)[page_num];
+set_GLOBALS((*GLOBALS->contexts)[page_num]);
 
 rc = expose_event(widget, event);
 
-GLOBALS = g_old;
+/* seems to cause a conflict flipping back so don't! */
+/* set_GLOBALS(g_old); */
 
 return(rc);
 }
@@ -1313,6 +1314,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2008/01/09 04:09:11  gtkwave
+ * fix keyboard focus sighandler when multi-tabs are being used
+ *
  * Revision 1.20  2008/01/08 18:21:23  gtkwave
  * focus in/out rendering improvements
  *

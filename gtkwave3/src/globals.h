@@ -1067,15 +1067,20 @@ gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalF
 gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line);
 
 #ifdef GTKWAVE_SIGNAL_CONNECT_DEBUG
-
 #define gtkwave_signal_connect(a,b,c,d) gtkwave_signal_connect_x(a,b,c,d,__FILE__,__LINE__)
 #define gtkwave_signal_connect_object(a,b,c,d) gtkwave_signal_connect_object_x(a,b,c,d,__FILE__,__LINE__)
-
 #else
-
 #define gtkwave_signal_connect(a,b,c,d) gtkwave_signal_connect_x(a,b,c,d,NULL,0)
 #define gtkwave_signal_connect_object(a,b,c,d) gtkwave_signal_connect_object_x(a,b,c,d,NULL,0)
+#endif
 
+
+void set_GLOBALS_x(struct Global *g, const char *file, int line);
+
+#ifdef GTKWAVE_GLOBALS_DEBUG
+#define set_GLOBALS(a) set_GLOBALS_x(a,__FILE__,__LINE__)
+#else
+#define set_GLOBALS(a) set_GLOBALS_x(a,NULL,0)
 #endif
 
 

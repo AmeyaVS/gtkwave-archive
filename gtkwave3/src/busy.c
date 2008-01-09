@@ -57,12 +57,12 @@ if(GLOBALS->partial_vcd)
 			}
 		}
 	
-	GLOBALS = g_old;
+	set_GLOBALS(g_old);
 	set_window_idle(NULL);
 	
 	if(gcache)
 		{
-		GLOBALS = gcache;
+		set_GLOBALS(gcache);
 		}
 	}
 }
@@ -135,6 +135,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/01/09 04:09:11  gtkwave
+ * fix keyboard focus sighandler when multi-tabs are being used
+ *
  * Revision 1.7  2008/01/05 22:25:46  gtkwave
  * degate busy during treeview dnd as it disrupts focus; dnd cleanups
  *

@@ -1040,14 +1040,14 @@ gtk_notebook_set_show_border(GTK_NOTEBOOK(n), (np>2));
 gtk_notebook_remove_page(GTK_NOTEBOOK(n), this_page);
 gtk_notebook_set_current_page(GTK_NOTEBOOK(n), new_page);
 
-GLOBALS = (*GLOBALS->contexts)[new_page];
+set_GLOBALS((*GLOBALS->contexts)[new_page]);
 saved_g = GLOBALS;
 
 gtkwave_gtk_main_iteration();
 
-GLOBALS = old_g;
+set_GLOBALS(old_g);
 free_and_destroy_page_context();
-GLOBALS = saved_g;
+set_GLOBALS(saved_g);
 }
 
 void menu_quit_close(GtkWidget *widget, gpointer data)
@@ -1841,11 +1841,11 @@ if(GLOBALS->filesel_ok)
 		main(2, argv);
 
 		g_now = GLOBALS;
-		GLOBALS = g_old;
+		set_GLOBALS(g_old);
 
 		free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
 		set_window_idle(NULL);
-		GLOBALS = g_now;
+		set_GLOBALS(g_now);
 		g_now->vcd_jmp_buf = NULL;
 		}
                 else
@@ -1860,7 +1860,7 @@ if(GLOBALS->filesel_ok)
                 free_outstanding(); /* free anything allocated in loader ctx */
 		free(GLOBALS);
 	
-		GLOBALS = g_old;
+		set_GLOBALS(g_old);
                 free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
 		set_window_idle(NULL);
 
@@ -3991,7 +3991,6 @@ if(GLOBALS->helpbox_is_active)
         return;
         }
 
-
 if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
 
 DEBUG(printf("Paste Traces\n"));
@@ -4499,6 +4498,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/01/09 08:07:03  gtkwave
+ * removal of explicit menu string names when unnecessary
+ *
  * Revision 1.17  2008/01/08 04:01:12  gtkwave
  * more accelerator key ergonomic updates
  *

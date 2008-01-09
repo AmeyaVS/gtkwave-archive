@@ -1116,11 +1116,11 @@ gint rc;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
 struct Global *g_old = GLOBALS;
 
-GLOBALS = (*GLOBALS->contexts)[page_num];
+set_GLOBALS((*GLOBALS->contexts)[page_num]);
 
 rc = wavearea_configure_event(widget, event);
 
-GLOBALS = g_old;
+set_GLOBALS(g_old);
 
 return(rc);
 }
@@ -1141,11 +1141,12 @@ gint rc;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
 struct Global *g_old = GLOBALS;
 
-GLOBALS = (*GLOBALS->contexts)[page_num];
+set_GLOBALS((*GLOBALS->contexts)[page_num]);
 
 rc = expose_event(widget, event);
 
-GLOBALS = g_old;
+/* seems to cause a conflict flipping back so don't! */
+/* set_GLOBALS(g_old); */
 
 return(rc);
 }
@@ -3181,6 +3182,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/01/08 18:21:23  gtkwave
+ * focus in/out rendering improvements
+ *
  * Revision 1.13  2008/01/08 07:13:08  gtkwave
  * more limiting of ctrl-a focus (away from tree and filter entry)
  *

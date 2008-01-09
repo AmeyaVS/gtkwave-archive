@@ -1604,7 +1604,7 @@ void reload_into_new_context(void)
  free(GLOBALS);
 
  /* Set the GLOBALS pointer to the newly allocated struct. */
- GLOBALS = new_globals;
+ set_GLOBALS(new_globals);
  *(GLOBALS->gtk_context_bridge_ptr) = GLOBALS;
 
 
@@ -2026,7 +2026,7 @@ if(gp)
 	{
 	g_curr = GLOBALS;
 
-	GLOBALS = gp;
+	set_GLOBALS(gp);
 	(*GLOBALS->dead_context)[0] = NULL;
 
 	/* remove the bridge pointer */
@@ -2039,7 +2039,7 @@ if(gp)
 	memset(GLOBALS, 0, sizeof(struct Global));
 	free(GLOBALS);
 
-	GLOBALS = g_curr;
+	set_GLOBALS(g_curr);
 	}
 }
 
@@ -2083,7 +2083,7 @@ switch(type)
 
 							/* printf("Switching to: %d %08x\n", i, GTK_WINDOW(wcmp)); */
 
-							GLOBALS = (*GLOBALS->contexts)[i];
+							set_GLOBALS((*GLOBALS->contexts)[i]);
 
 							GLOBALS->lxt_clock_compress_to_z = g_old->lxt_clock_compress_to_z;
 							GLOBALS->autoname_bundles = g_old->autoname_bundles;
@@ -2141,7 +2141,7 @@ if(GLOBALS->gtk_context_bridge_ptr != w)
 		GLOBALS->gtk_context_bridge_ptr,w, (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
 #endif
 
-	GLOBALS = watch;
+	set_GLOBALS(watch);
 	}
 
 return(0);
@@ -2189,4 +2189,15 @@ gtk_signal_connect_object(object, name, (GtkSignalFunc)ctx_swap_watchdog, (GtkOb
 rc = gtk_signal_connect_object(object, name, func, data);
 
 return(rc);
+}
+
+
+void set_GLOBALS_x(struct Global *g, const char *file, int line)
+{
+if(line)
+	{
+	printf("Globals old %p -> new %p (%s: %d)\n", GLOBALS, g, file, line);
+	}
+
+GLOBALS = g;
 }

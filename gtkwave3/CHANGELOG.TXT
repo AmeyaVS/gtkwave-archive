@@ -365,3 +365,5 @@
 		Added use_toolbutton_interface environment
 		variable which enables new user interface
 		at the top of screen.
+		More modifications to handle globals swapping
+		in multi-tab mode.

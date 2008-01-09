@@ -74,7 +74,7 @@ int i;
 char timestr[32];
 struct Global *g_old = GLOBALS;
 
-GLOBALS = (*GLOBALS->contexts)[page_num];
+set_GLOBALS((*GLOBALS->contexts)[page_num]);
 
 GLOBALS->lxt_clock_compress_to_z = g_old->lxt_clock_compress_to_z;
 GLOBALS->autoname_bundles = g_old->autoname_bundles;
@@ -295,14 +295,14 @@ WAVE_LOCALE_FIX
 /* Initialize the GLOBALS structure for the first time... */ 
 if(!GLOBALS)
 	{
-	GLOBALS = initialize_globals();
+	set_GLOBALS(initialize_globals());
 	mainwindow_already_built = 0;
 	}
 	else
 	{
 	struct Global *old_g = GLOBALS;
 
-	GLOBALS = initialize_globals();
+	set_GLOBALS(initialize_globals());
 
 	GLOBALS->second_page_created = old_g->second_page_created = 1;
 
@@ -1430,6 +1430,7 @@ if(GLOBALS->use_toolbutton_interface)
 			gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
 			                        GTK_FILL | GTK_EXPAND,
 			                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
+
 			gtk_signal_connect_object (GTK_OBJECT (b1), "clicked", GTK_SIGNAL_FUNC(menu_reload_waveform), GTK_OBJECT (table2));
 			gtk_tooltips_set_tip_2(tooltips, b1, "Reload waveform", NULL);
 			gtk_widget_show(b1);
@@ -2019,6 +2020,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/01/09 08:25:41  gtkwave
+ * added cut + paste buttons
+ *
  * Revision 1.21  2008/01/09 08:07:03  gtkwave
  * removal of explicit menu string names when unnecessary
  *
