@@ -968,9 +968,17 @@ gint rc = FALSE;
 int yscroll;
 
 #ifdef FOCUS_DEBUG_MSGS
-printf("focus: %d\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box));
+printf("focus: %d %08x %08x %08x\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box), 
+	GLOBALS->signalarea_event_box, widget, data);
 #endif
 
+if(GLOBALS->signalarea_event_box != data)
+	{
+#ifdef FOCUS_DEBUG_MSGS
+	printf("wrong session\n");
+#endif
+	}
+else
 if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 	{
 	switch(event->keyval)
@@ -1261,14 +1269,22 @@ gtk_container_add(GTK_CONTAINER(frame),table);
 
 if(do_focusing)
 	{
-	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "key_press_event",GTK_SIGNAL_FUNC(keypress_local), NULL);
-
 	GLOBALS->signalarea_event_box = gtk_event_box_new();
 	gtk_container_add (GTK_CONTAINER (GLOBALS->signalarea_event_box), frame);
 	gtk_widget_show(frame);
 	GTK_WIDGET_SET_FLAGS (GTK_WIDGET(GLOBALS->signalarea_event_box), GTK_CAN_FOCUS | GTK_RECEIVES_DEFAULT);
-	gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_in_event", GTK_SIGNAL_FUNC(focus_in_local), NULL);
-	gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_out_event", GTK_SIGNAL_FUNC(focus_out_local), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_in_event", GTK_SIGNAL_FUNC(focus_in_local), NULL);
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_out_event", GTK_SIGNAL_FUNC(focus_out_local), NULL);
+
+	if(!GLOBALS->second_page_created)
+		{
+		GLOBALS->keypress_handler_id = install_keypress_handler();
+		}
+		else
+		{
+		GLOBALS->keypress_handler_id = 0;
+		}
+
 	return(GLOBALS->signalarea_event_box);
 	}
 	else
@@ -1278,9 +1294,28 @@ if(do_focusing)
 }
 
 
+gint install_keypress_handler(void)
+{
+gint rc = 
+	gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), 
+	"key_press_event",GTK_SIGNAL_FUNC(keypress_local), GLOBALS->signalarea_event_box);
+
+return(rc);
+}
+
+
+void remove_keypress_handler(gint id)
+{
+gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
+}
+
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/01/08 18:21:23  gtkwave
+ * focus in/out rendering improvements
+ *
  * Revision 1.19  2008/01/08 07:13:08  gtkwave
  * more limiting of ctrl-a focus (away from tree and filter entry)
  *

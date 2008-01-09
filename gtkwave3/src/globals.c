@@ -641,12 +641,13 @@ NULL, /* cachedtrace 382 */
 NULL, /* shift_click_trace 383 */
 0, /* trtarget_signalwindow_c_1 384 */
 NULL, /* starting_unshifted_trace */
-0, /* use_standard_clicking */
+1, /* use_standard_clicking */
 0, /* std_collapse_pressed */
 0, /* std_dnd_tgt_on_signalarea */
 0, /* std_dnd_tgt_on_wavearea */
 0, /* signalarea_has_focus */
 NULL, /* signalarea_event_box */
+0, /* keypress_handler_id */
 
 /*
  * simplereq.c
@@ -1212,6 +1213,7 @@ void reload_into_new_context(void)
 
  /* Default colors, X contexts, pixmaps, drawables, etc from signalwindow.c and wavewindow.c */
  new_globals->signalarea_event_box = GLOBALS->signalarea_event_box;
+ new_globals->keypress_handler_id = GLOBALS->keypress_handler_id;
  new_globals->signalarea = GLOBALS->signalarea;
  new_globals->wavearea = GLOBALS->wavearea;
  new_globals->wavepixmap_wavewindow_c_1 = GLOBALS->wavepixmap_wavewindow_c_1;

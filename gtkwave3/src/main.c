@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -96,6 +96,16 @@ reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
 reformat_time(timestr, GLOBALS->tims.last, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),timestr);
+
+if(g_old->signalarea_event_box)
+	{
+	if(g_old->keypress_handler_id)
+		{
+		remove_keypress_handler(g_old->keypress_handler_id);
+		g_old->keypress_handler_id = 0;
+		}
+	GLOBALS->keypress_handler_id = install_keypress_handler();
+	}
 
 update_maxmarker_labels();
 update_basetime(GLOBALS->tims.baseline);
@@ -1991,6 +2001,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/01/08 23:03:35  gtkwave
+ * added toolbar using use_toolbutton_interface rc variable
+ *
  * Revision 1.18  2008/01/05 22:25:46  gtkwave
  * degate busy during treeview dnd as it disrupts focus; dnd cleanups
  *

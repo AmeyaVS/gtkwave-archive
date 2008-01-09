@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2006.
+ * Copyright (c) Tony Bybell 2006-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -135,6 +135,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/01/05 22:25:46  gtkwave
+ * degate busy during treeview dnd as it disrupts focus; dnd cleanups
+ *
  * Revision 1.6  2007/09/14 14:08:56  gtkwave
  * updating busy handling
  *

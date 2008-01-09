@@ -151,11 +151,18 @@ void update_endcap_times_for_partial_vcd(void);
 /* mouseover support */
 void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 
+/* session swapping */
+gint install_keypress_handler(void);
+void remove_keypress_handler(gint id);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/01/08 23:03:35  gtkwave
+ * added toolbar using use_toolbutton_interface rc variable
+ *
  * Revision 1.16  2008/01/08 07:13:08  gtkwave
  * more limiting of ctrl-a focus (away from tree and filter entry)
  *
