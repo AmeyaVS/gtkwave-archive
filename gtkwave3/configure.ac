@@ -54,9 +54,24 @@ AE2=no
 ])
 
 if test "X$AE2" = "Xyes" ; then
-	AET2_CFLAGS="-DAET2_IS_PRESENT"
-	AET2_LDADD="/afs/awd/projects/simarama/releases/latest/libae2rw.so"
-	AC_MSG_RESULT([yes])
+	AC_CHECK_FILE("/afs/awd/projects/simarama/releases/latest/libae2rw.so", AET2_SO=yes, AET2_SO=no)
+
+	if test "X$AET2_SO" = "Xyes" ; then
+		AET2_CFLAGS="-DAET2_IS_PRESENT"
+		AET2_LDADD="/afs/awd/projects/simarama/releases/latest/libae2rw.so"
+	else
+
+		AC_CHECK_FILE("/afs/awd/projects/simarama/releases/latest/libae2rw.a", AET2_A=yes, AET2_A=no)
+		if test "X$AET2_A" = "Xyes" ; then
+			AET2_CFLAGS="-DAET2_IS_PRESENT"
+			AET2_LDADD="/afs/awd/projects/simarama/releases/latest/libae2rw.a"
+		else
+
+		AC_MSG_WARN([AET2 library not found, skipping.])
+
+		fi
+	fi
+
 else
 	AC_MSG_RESULT([no])
 fi

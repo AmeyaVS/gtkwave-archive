@@ -1859,10 +1859,69 @@ AE2=no
 fi;
 
 if test "X$AE2" = "Xyes" ; then
-	AET2_CFLAGS="-DAET2_IS_PRESENT"
-	AET2_LDADD="/afs/awd/projects/simarama/releases/latest/libae2rw.so"
-	echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
+	echo "$as_me:$LINENO: checking for \"/afs/awd/projects/simarama/releases/latest/libae2rw.so\"" >&5
+echo $ECHO_N "checking for \"/afs/awd/projects/simarama/releases/latest/libae2rw.so\"... $ECHO_C" >&6
+if test "${ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_so_+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  test "$cross_compiling" = yes &&
+  { { echo "$as_me:$LINENO: error: cannot check for file existence when cross compiling" >&5
+echo "$as_me: error: cannot check for file existence when cross compiling" >&2;}
+   { (exit 1); exit 1; }; }
+if test -r ""/afs/awd/projects/simarama/releases/latest/libae2rw.so""; then
+  ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_so_=yes
+else
+  ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_so_=no
+fi
+fi
+echo "$as_me:$LINENO: result: $ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_so_" >&5
+echo "${ECHO_T}$ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_so_" >&6
+if test $ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_so_ = yes; then
+  AET2_SO=yes
+else
+  AET2_SO=no
+fi
+
+
+	if test "X$AET2_SO" = "Xyes" ; then
+		AET2_CFLAGS="-DAET2_IS_PRESENT"
+		AET2_LDADD="/afs/awd/projects/simarama/releases/latest/libae2rw.so"
+	else
+
+		echo "$as_me:$LINENO: checking for \"/afs/awd/projects/simarama/releases/latest/libae2rw.a\"" >&5
+echo $ECHO_N "checking for \"/afs/awd/projects/simarama/releases/latest/libae2rw.a\"... $ECHO_C" >&6
+if test "${ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_a_+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  test "$cross_compiling" = yes &&
+  { { echo "$as_me:$LINENO: error: cannot check for file existence when cross compiling" >&5
+echo "$as_me: error: cannot check for file existence when cross compiling" >&2;}
+   { (exit 1); exit 1; }; }
+if test -r ""/afs/awd/projects/simarama/releases/latest/libae2rw.a""; then
+  ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_a_=yes
+else
+  ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_a_=no
+fi
+fi
+echo "$as_me:$LINENO: result: $ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_a_" >&5
+echo "${ECHO_T}$ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_a_" >&6
+if test $ac_cv_file___afs_awd_projects_simarama_releases_latest_libae2rw_a_ = yes; then
+  AET2_A=yes
+else
+  AET2_A=no
+fi
+
+		if test "X$AET2_A" = "Xyes" ; then
+			AET2_CFLAGS="-DAET2_IS_PRESENT"
+			AET2_LDADD="/afs/awd/projects/simarama/releases/latest/libae2rw.a"
+		else
+
+		{ echo "$as_me:$LINENO: WARNING: AET2 library not found, skipping." >&5
+echo "$as_me: WARNING: AET2 library not found, skipping." >&2;}
+
+		fi
+	fi
+
 else
 	echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
