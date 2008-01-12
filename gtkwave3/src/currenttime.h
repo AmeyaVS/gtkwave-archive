@@ -86,6 +86,8 @@ void service_left_edge(GtkWidget *text, gpointer data);
 void service_right_edge(GtkWidget *text, gpointer data);
 
 void make_sigarea_gcs(GtkWidget *widget);
+void force_screengrab_gcs(void);
+void force_normal_gcs(void);
 
 void draw_signalarea_focus(void);
 gint signalarea_configure_event(GtkWidget *widget, GdkEventConfigure *event);
@@ -160,6 +162,9 @@ void remove_keypress_handler(gint id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/01/09 04:09:11  gtkwave
+ * fix keyboard focus sighandler when multi-tabs are being used
+ *
  * Revision 1.17  2008/01/08 23:03:35  gtkwave
  * added toolbar using use_toolbutton_interface rc variable
  *

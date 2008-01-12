@@ -1045,6 +1045,35 @@ GdkGC *gc_dkgray; /* from wavewindow.c 715 */
 GdkGC *gc_dkblue; /* from wavewindow.c 716 */
 char fill_in_smaller_rgb_areas_wavewindow_c_1; /* from wavewindow.c 719 */
 TimeType prev_markertime; /* from wavewindow.c */
+GdkGC *gccache_ltgray; /* from wavewindow.c */
+GdkGC *gccache_normal; /* from wavewindow.c */
+GdkGC *gccache_mdgray; /* from wavewindow.c */
+GdkGC *gccache_dkgray; /* from wavewindow.c */
+GdkGC *gccache_dkblue; /* from wavewindow.c */
+GdkGC *gccache_back_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_baseline_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_grid_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_time_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_timeb_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_value_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_low_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_high_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_trans_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_mid_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_xfill_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_x_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_vbox_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_vtrans_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_mark_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_umark_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_0_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_1_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_ufill_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_u_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_wfill_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_w_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_dashfill_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_dash_wavewindow_c_1; /* from wavewindow.c */
 
 /*
  * zoombuttons.c

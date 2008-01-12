@@ -1051,6 +1051,35 @@ NULL, /* gc_dkgray 655 */
 NULL, /* gc_dkblue 656 */
 0, /* fill_in_smaller_rgb_areas_wavewindow_c_1 659 */
 -1, /* prev_markertime */
+NULL, /* gccache_ltgray */
+NULL, /* gccache_normal */
+NULL, /* gccache_mdgray */
+NULL, /* gccache_dkgray */
+NULL, /* gccache_dkblue */
+NULL, /* gccache_back_wavewindow_c_1 */
+NULL, /* gccache_baseline_wavewindow_c_1 */
+NULL, /* gccache_grid_wavewindow_c_1 */
+NULL, /* gccache_time_wavewindow_c_1 */
+NULL, /* gccache_timeb_wavewindow_c_1 */
+NULL, /* gccache_value_wavewindow_c_1 */
+NULL, /* gccache_low_wavewindow_c_1 */
+NULL, /* gccache_high_wavewindow_c_1 */
+NULL, /* gccache_trans_wavewindow_c_1 */
+NULL, /* gccache_mid_wavewindow_c_1 */
+NULL, /* gccache_xfill_wavewindow_c_1 */
+NULL, /* gccache_x_wavewindow_c_1 */
+NULL, /* gccache_vbox_wavewindow_c_1 */
+NULL, /* gccache_vtrans_wavewindow_c_1 */
+NULL, /* gccache_mark_wavewindow_c_1 */
+NULL, /* gccache_umark_wavewindow_c_1 */
+NULL, /* gccache_0_wavewindow_c_1 */
+NULL, /* gccache_1_wavewindow_c_1 */
+NULL, /* gccache_ufill_wavewindow_c_1 */
+NULL, /* gccache_u_wavewindow_c_1 */
+NULL, /* gccache_wfill_wavewindow_c_1 */
+NULL, /* gccache_w_wavewindow_c_1 */
+NULL, /* gccache_dashfill_wavewindow_c_1 */
+NULL, /* gccache_dash_wavewindow_c_1 */
 
 /*
  * zoombuttons.c
@@ -1255,6 +1284,36 @@ void reload_into_new_context(void)
  new_globals->gc_dashfill_wavewindow_c_1 = GLOBALS->gc_dashfill_wavewindow_c_1;
  new_globals->gc_dash_wavewindow_c_1 = GLOBALS->gc_dash_wavewindow_c_1;
  new_globals->made_gc_contexts_wavewindow_c_1 = GLOBALS->made_gc_contexts_wavewindow_c_1;
+
+ new_globals->gccache_ltgray = GLOBALS->gccache_ltgray;
+ new_globals->gccache_normal = GLOBALS->gccache_normal;
+ new_globals->gccache_mdgray = GLOBALS->gccache_mdgray;
+ new_globals->gccache_dkgray = GLOBALS->gccache_dkgray;
+ new_globals->gccache_dkblue = GLOBALS->gccache_dkblue;
+ new_globals->gccache_back_wavewindow_c_1 = GLOBALS->gccache_back_wavewindow_c_1;
+ new_globals->gccache_baseline_wavewindow_c_1 = GLOBALS->gccache_baseline_wavewindow_c_1;
+ new_globals->gccache_grid_wavewindow_c_1 = GLOBALS->gccache_grid_wavewindow_c_1;
+ new_globals->gccache_time_wavewindow_c_1 = GLOBALS->gccache_time_wavewindow_c_1;
+ new_globals->gccache_timeb_wavewindow_c_1 = GLOBALS->gccache_timeb_wavewindow_c_1;
+ new_globals->gccache_value_wavewindow_c_1 = GLOBALS->gccache_value_wavewindow_c_1;
+ new_globals->gccache_low_wavewindow_c_1 = GLOBALS->gccache_low_wavewindow_c_1;
+ new_globals->gccache_high_wavewindow_c_1 = GLOBALS->gccache_high_wavewindow_c_1;
+ new_globals->gccache_trans_wavewindow_c_1 = GLOBALS->gccache_trans_wavewindow_c_1;
+ new_globals->gccache_mid_wavewindow_c_1 = GLOBALS->gccache_mid_wavewindow_c_1;
+ new_globals->gccache_xfill_wavewindow_c_1 = GLOBALS->gccache_xfill_wavewindow_c_1;
+ new_globals->gccache_x_wavewindow_c_1 = GLOBALS->gccache_x_wavewindow_c_1;
+ new_globals->gccache_vbox_wavewindow_c_1 = GLOBALS->gccache_vbox_wavewindow_c_1;
+ new_globals->gccache_vtrans_wavewindow_c_1 = GLOBALS->gccache_vtrans_wavewindow_c_1;
+ new_globals->gccache_mark_wavewindow_c_1 = GLOBALS->gccache_mark_wavewindow_c_1;
+ new_globals->gccache_umark_wavewindow_c_1 = GLOBALS->gccache_umark_wavewindow_c_1;
+ new_globals->gccache_0_wavewindow_c_1 = GLOBALS->gccache_0_wavewindow_c_1;
+ new_globals->gccache_1_wavewindow_c_1 = GLOBALS->gccache_1_wavewindow_c_1;
+ new_globals->gccache_ufill_wavewindow_c_1 = GLOBALS->gccache_ufill_wavewindow_c_1;
+ new_globals->gccache_u_wavewindow_c_1 = GLOBALS->gccache_u_wavewindow_c_1;
+ new_globals->gccache_wfill_wavewindow_c_1 = GLOBALS->gccache_wfill_wavewindow_c_1;
+ new_globals->gccache_w_wavewindow_c_1 = GLOBALS->gccache_w_wavewindow_c_1;
+ new_globals->gccache_dashfill_wavewindow_c_1 = GLOBALS->gccache_dashfill_wavewindow_c_1;
+ new_globals->gccache_dash_wavewindow_c_1 = GLOBALS->gccache_dash_wavewindow_c_1;
 
  new_globals->mainwindow = GLOBALS->mainwindow;
  new_globals->signalwindow = GLOBALS->signalwindow; 

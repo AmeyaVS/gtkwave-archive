@@ -1088,6 +1088,36 @@ if(!GLOBALS->made_gc_contexts_wavewindow_c_1)
         GLOBALS->gc_dash_wavewindow_c_1   = alloc_color(GLOBALS->wavearea, GLOBALS->color_dash, GLOBALS->wavearea->style->black_gc);
 
 	GLOBALS->made_gc_contexts_wavewindow_c_1=~0;
+
+	GLOBALS->gccache_ltgray = GLOBALS->gc_ltgray ; 
+	GLOBALS->gccache_normal = GLOBALS->gc_normal ; 
+	GLOBALS->gccache_mdgray = GLOBALS->gc_mdgray ; 
+	GLOBALS->gccache_dkgray = GLOBALS->gc_dkgray ; 
+	GLOBALS->gccache_dkblue = GLOBALS->gc_dkblue ; 
+	GLOBALS->gccache_back_wavewindow_c_1 = GLOBALS->gc_back_wavewindow_c_1 ; 
+	GLOBALS->gccache_baseline_wavewindow_c_1 = GLOBALS->gc_baseline_wavewindow_c_1 ; 
+	GLOBALS->gccache_grid_wavewindow_c_1 = GLOBALS->gc_grid_wavewindow_c_1 ; 
+	GLOBALS->gccache_time_wavewindow_c_1 = GLOBALS->gc_time_wavewindow_c_1 ; 
+	GLOBALS->gccache_timeb_wavewindow_c_1 = GLOBALS->gc_timeb_wavewindow_c_1 ; 
+	GLOBALS->gccache_value_wavewindow_c_1 = GLOBALS->gc_value_wavewindow_c_1 ; 
+	GLOBALS->gccache_low_wavewindow_c_1 = GLOBALS->gc_low_wavewindow_c_1 ; 
+	GLOBALS->gccache_high_wavewindow_c_1 = GLOBALS->gc_high_wavewindow_c_1 ; 
+	GLOBALS->gccache_trans_wavewindow_c_1 = GLOBALS->gc_trans_wavewindow_c_1 ; 
+	GLOBALS->gccache_mid_wavewindow_c_1 = GLOBALS->gc_mid_wavewindow_c_1 ; 
+	GLOBALS->gccache_xfill_wavewindow_c_1 = GLOBALS->gc_xfill_wavewindow_c_1 ; 
+	GLOBALS->gccache_x_wavewindow_c_1 = GLOBALS->gc_x_wavewindow_c_1 ; 
+	GLOBALS->gccache_vbox_wavewindow_c_1 = GLOBALS->gc_vbox_wavewindow_c_1 ; 
+	GLOBALS->gccache_vtrans_wavewindow_c_1 = GLOBALS->gc_vtrans_wavewindow_c_1 ; 
+	GLOBALS->gccache_mark_wavewindow_c_1 = GLOBALS->gc_mark_wavewindow_c_1 ; 
+	GLOBALS->gccache_umark_wavewindow_c_1 = GLOBALS->gc_umark_wavewindow_c_1 ; 
+	GLOBALS->gccache_0_wavewindow_c_1 = GLOBALS->gc_0_wavewindow_c_1 ; 
+	GLOBALS->gccache_1_wavewindow_c_1 = GLOBALS->gc_1_wavewindow_c_1 ; 
+	GLOBALS->gccache_ufill_wavewindow_c_1 = GLOBALS->gc_ufill_wavewindow_c_1 ; 
+	GLOBALS->gccache_u_wavewindow_c_1 = GLOBALS->gc_u_wavewindow_c_1 ; 
+	GLOBALS->gccache_wfill_wavewindow_c_1 = GLOBALS->gc_wfill_wavewindow_c_1 ; 
+	GLOBALS->gccache_w_wavewindow_c_1 = GLOBALS->gc_w_wavewindow_c_1 ; 
+	GLOBALS->gccache_dashfill_wavewindow_c_1 = GLOBALS->gc_dashfill_wavewindow_c_1 ; 
+	GLOBALS->gccache_dash_wavewindow_c_1 = GLOBALS->gc_dash_wavewindow_c_1 ; 
 	}
 
 if(GLOBALS->wavewidth>1)
@@ -1108,6 +1138,75 @@ if(GLOBALS->wavewidth>1)
 
 /* tims.timecache=tims.laststart; */
 return(TRUE);
+}
+
+/*
+ * screengrab vs normal rendering gcs...
+ */ 
+void force_screengrab_gcs(void)
+{
+GLOBALS->gc_ltgray= GLOBALS->gc_white ;
+GLOBALS->gc_normal= GLOBALS->gc_white ;
+GLOBALS->gc_mdgray= GLOBALS->gc_white ;
+GLOBALS->gc_dkgray= GLOBALS->gc_white ;
+GLOBALS->gc_dkblue= GLOBALS->gc_black ;
+GLOBALS->gc_back_wavewindow_c_1   = GLOBALS->gc_white ;
+GLOBALS->gc_baseline_wavewindow_c_1 = GLOBALS->gc_black;
+GLOBALS->gc_grid_wavewindow_c_1   = GLOBALS->gc_black;
+GLOBALS->gc_time_wavewindow_c_1   = GLOBALS->gc_black;
+GLOBALS->gc_timeb_wavewindow_c_1  = GLOBALS->gc_white;
+GLOBALS->gc_value_wavewindow_c_1  = GLOBALS->gc_black;
+GLOBALS->gc_low_wavewindow_c_1    = GLOBALS->gc_black;
+GLOBALS->gc_high_wavewindow_c_1   = GLOBALS->gc_black;
+GLOBALS->gc_trans_wavewindow_c_1  = GLOBALS->gc_black;
+GLOBALS->gc_mid_wavewindow_c_1    = GLOBALS->gc_black;
+GLOBALS->gc_xfill_wavewindow_c_1  = GLOBALS->gc_black;
+GLOBALS->gc_x_wavewindow_c_1      = GLOBALS->gc_black;
+GLOBALS->gc_vbox_wavewindow_c_1   = GLOBALS->gc_black;
+GLOBALS->gc_vtrans_wavewindow_c_1 = GLOBALS->gc_black;
+GLOBALS->gc_mark_wavewindow_c_1   = GLOBALS->gc_black;
+GLOBALS->gc_umark_wavewindow_c_1  = GLOBALS->gc_black;
+GLOBALS->gc_0_wavewindow_c_1      = GLOBALS->gc_black;
+GLOBALS->gc_1_wavewindow_c_1      = GLOBALS->gc_black;
+GLOBALS->gc_ufill_wavewindow_c_1  = GLOBALS->gc_black;
+GLOBALS->gc_u_wavewindow_c_1      = GLOBALS->gc_black;
+GLOBALS->gc_wfill_wavewindow_c_1  = GLOBALS->gc_black;
+GLOBALS->gc_w_wavewindow_c_1      = GLOBALS->gc_black;
+GLOBALS->gc_dashfill_wavewindow_c_1= GLOBALS->gc_black;
+GLOBALS->gc_dash_wavewindow_c_1   = GLOBALS->gc_black;
+}
+
+void force_normal_gcs(void)
+{
+GLOBALS->gc_ltgray = GLOBALS->gccache_ltgray ;
+GLOBALS->gc_normal = GLOBALS->gccache_normal ;
+GLOBALS->gc_mdgray = GLOBALS->gccache_mdgray ;
+GLOBALS->gc_dkgray = GLOBALS->gccache_dkgray ;
+GLOBALS->gc_dkblue = GLOBALS->gccache_dkblue ;
+GLOBALS->gc_back_wavewindow_c_1 = GLOBALS->gccache_back_wavewindow_c_1 ;
+GLOBALS->gc_baseline_wavewindow_c_1 = GLOBALS->gccache_baseline_wavewindow_c_1 ;
+GLOBALS->gc_grid_wavewindow_c_1 = GLOBALS->gccache_grid_wavewindow_c_1 ;
+GLOBALS->gc_time_wavewindow_c_1 = GLOBALS->gccache_time_wavewindow_c_1 ;
+GLOBALS->gc_timeb_wavewindow_c_1 = GLOBALS->gccache_timeb_wavewindow_c_1 ;
+GLOBALS->gc_value_wavewindow_c_1 = GLOBALS->gccache_value_wavewindow_c_1 ;
+GLOBALS->gc_low_wavewindow_c_1 = GLOBALS->gccache_low_wavewindow_c_1 ;
+GLOBALS->gc_high_wavewindow_c_1 = GLOBALS->gccache_high_wavewindow_c_1 ;
+GLOBALS->gc_trans_wavewindow_c_1 = GLOBALS->gccache_trans_wavewindow_c_1 ;
+GLOBALS->gc_mid_wavewindow_c_1 = GLOBALS->gccache_mid_wavewindow_c_1 ;
+GLOBALS->gc_xfill_wavewindow_c_1 = GLOBALS->gccache_xfill_wavewindow_c_1 ;
+GLOBALS->gc_x_wavewindow_c_1 = GLOBALS->gccache_x_wavewindow_c_1 ;
+GLOBALS->gc_vbox_wavewindow_c_1 = GLOBALS->gccache_vbox_wavewindow_c_1 ;
+GLOBALS->gc_vtrans_wavewindow_c_1 = GLOBALS->gccache_vtrans_wavewindow_c_1 ;
+GLOBALS->gc_mark_wavewindow_c_1 = GLOBALS->gccache_mark_wavewindow_c_1 ;
+GLOBALS->gc_umark_wavewindow_c_1 = GLOBALS->gccache_umark_wavewindow_c_1 ;
+GLOBALS->gc_0_wavewindow_c_1 = GLOBALS->gccache_0_wavewindow_c_1 ;
+GLOBALS->gc_1_wavewindow_c_1 = GLOBALS->gccache_1_wavewindow_c_1 ;
+GLOBALS->gc_ufill_wavewindow_c_1 = GLOBALS->gccache_ufill_wavewindow_c_1 ;
+GLOBALS->gc_u_wavewindow_c_1 = GLOBALS->gccache_u_wavewindow_c_1 ;
+GLOBALS->gc_wfill_wavewindow_c_1 = GLOBALS->gccache_wfill_wavewindow_c_1 ;
+GLOBALS->gc_w_wavewindow_c_1 = GLOBALS->gccache_w_wavewindow_c_1 ;
+GLOBALS->gc_dashfill_wavewindow_c_1 = GLOBALS->gccache_dashfill_wavewindow_c_1 ;
+GLOBALS->gc_dash_wavewindow_c_1 = GLOBALS->gccache_dash_wavewindow_c_1 ;
 }
 
 static gint wavearea_configure_event_local(GtkWidget *widget, GdkEventConfigure *event)
@@ -3182,6 +3281,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/01/09 19:20:53  gtkwave
+ * more updating to globals management (expose events cause wrong swap)
+ *
  * Revision 1.14  2008/01/08 18:21:23  gtkwave
  * focus in/out rendering improvements
  *

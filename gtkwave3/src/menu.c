@@ -766,6 +766,45 @@ if(GLOBALS->helpbox_is_active)
 	}
 }
 /**/
+void menu_use_color(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nUse Color");
+        help_text(
+		" draws signal names and trace data in color.  This is normal operation."
+        );
+        }
+	else
+	{
+	force_normal_gcs();
+  
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+/**/
+void menu_use_bw(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nUse Black and White");
+        help_text(
+		" draws signal names and trace data in black and white.  This is intended for use in"
+		" black and white screen dumps."
+        );
+        }
+	else
+	{
+	force_screengrab_gcs();
+  
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+/**/
 void menu_zoom10_snap(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
@@ -4270,6 +4309,9 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/View/Full Precision", "<Alt>Pause", menu_use_full_precision, WV_MENU_VFTP, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP17, "<Separator>"),
     WAVE_GTKIFE("/View/Remove Pattern Marks", NULL, menu_remove_marked, WV_MENU_RMRKS, "<Item>"),
+    WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP17A, "<Separator>"),
+    WAVE_GTKIFE("/View/Use Color", NULL, menu_use_color, WV_MENU_USECOLOR, "<Item>"),
+    WAVE_GTKIFE("/View/Use Black and White", NULL, menu_use_bw, WV_MENU_USEBW, "<Item>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP18, "<Separator>"),
     WAVE_GTKIFE("/View/LXT Clock Compress to Z", NULL, menu_lxt_clk_compress, WV_MENU_LXTCC2Z, "<ToggleItem>"),
       /* 130 */
@@ -4498,6 +4540,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/01/09 19:20:52  gtkwave
+ * more updating to globals management (expose events cause wrong swap)
+ *
  * Revision 1.18  2008/01/09 08:07:03  gtkwave
  * removal of explicit menu string names when unnecessary
  *

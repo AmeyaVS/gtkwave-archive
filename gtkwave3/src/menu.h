@@ -184,6 +184,9 @@ WV_MENU_VZPS,
 WV_MENU_VFTP,
 WV_MENU_SEP17,
 WV_MENU_RMRKS,
+WV_MENU_SEP17A,
+WV_MENU_USECOLOR,
+WV_MENU_USEBW,
 WV_MENU_SEP18,
 WV_MENU_LXTCC2Z,
 WV_MENU_HWH,
@@ -297,6 +300,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2007/09/23 18:33:55  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.5  2007/09/09 20:10:30  gtkwave
  * preliminary support for tabbed viewing of multiple waveforms
  *
