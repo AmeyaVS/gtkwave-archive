@@ -3,7 +3,7 @@
 #
 splash_disable on
 sst_dynamic_filter on
-use_standard_clicking off
+use_standard_clicking on
 use_toolbutton_interface on
 
 vlist_spill off
