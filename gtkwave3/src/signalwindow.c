@@ -252,6 +252,214 @@ static gboolean DNDDragMotionCB(
 	return(FALSE);
 }
 
+/*
+ * keypress processing, return TRUE to block the event from gtk
+ */
+static gint keypress_local(GtkWidget *widget, GdkEventKey *event, gpointer data)
+{
+GtkAdjustment *wadj, *hadj;
+int num_traces_displayable;
+int target;
+int which;
+gint rc = FALSE;
+int yscroll;
+
+#ifdef FOCUS_DEBUG_MSGS
+printf("focus: %d %08x %08x %08x\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box), 
+	GLOBALS->signalarea_event_box, widget, data);
+#endif
+
+if(GLOBALS->signalarea_event_box != data)
+	{
+#ifdef FOCUS_DEBUG_MSGS
+	printf("wrong session\n");
+#endif
+	}
+else
+if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
+	{
+	switch(event->keyval)
+		{
+		case GDK_Page_Up:
+		case GDK_KP_Page_Up:
+		case GDK_Page_Down:
+		case GDK_KP_Page_Down:
+		case GDK_Up:
+		case GDK_KP_Up:
+		case GDK_Down:
+		case GDK_KP_Down:
+			wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+			num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
+			num_traces_displayable--;   /* for the time trace that is always there */
+
+			if(num_traces_displayable<GLOBALS->traces.visible)
+				{
+				switch(event->keyval)
+					{
+					case GDK_Down:
+					case GDK_KP_Down:
+					case GDK_Page_Down:
+					case GDK_KP_Page_Down:
+						yscroll = ((event->keyval == GDK_Page_Down) || (event->keyval == GDK_KP_Page_Down)) ? num_traces_displayable : 1;
+			                        target=((int)wadj->value)+yscroll;  
+			                        which=num_traces_displayable-1;
+
+			                        if(target+which>=(GLOBALS->traces.visible-1)) target=GLOBALS->traces.visible-which-1;
+                        			wadj->value=target;
+
+                        			if(GLOBALS->cachedwhich_signalwindow_c_1==which) GLOBALS->cachedwhich_signalwindow_c_1=which-1; /* force update */
+
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
+						break;
+				
+					case GDK_Up:
+					case GDK_KP_Up:
+					case GDK_Page_Up:
+					case GDK_KP_Page_Up:
+						yscroll = ((event->keyval == GDK_Page_Up) || (event->keyval == GDK_KP_Page_Up)) ? num_traces_displayable : 1;
+                        			target=((int)wadj->value)-yscroll;
+                        			if(target<0) target=0;
+                        			wadj->value=target;
+                         
+						which=0;
+                        			if(GLOBALS->cachedwhich_signalwindow_c_1==which) GLOBALS->cachedwhich_signalwindow_c_1=-1; /* force update */
+
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
+                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
+						break;
+					}
+				}
+			rc = TRUE;
+			break;
+
+		case GDK_Left:
+		case GDK_KP_Left:
+
+			hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
+  
+			if(hadj->value < hadj->page_increment)
+			        {
+			        hadj->value = (gfloat)0.0;
+			        }
+				else
+				{
+				hadj->value = hadj->value - hadj->page_increment;
+				}
+
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "changed");	/* force bar update */
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "value_changed"); /* force text update */
+			signalarea_configure_event(GLOBALS->signalarea, NULL);
+
+			rc = TRUE;
+			break;
+
+		case GDK_Right:
+		case GDK_KP_Right:
+
+			/* fill in left/right hscroll here */
+			hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
+
+			if( ((int) hadj->value + hadj->page_increment) >= hadj->upper)
+			        {
+			        hadj->value = (gfloat)(hadj->upper)-hadj->page_increment;
+			        }
+				else
+				{
+				hadj->value = hadj->value + hadj->page_increment;
+				}
+
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "changed");	/* force bar update */
+			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "value_changed"); /* force text update */
+			signalarea_configure_event(GLOBALS->signalarea, NULL);
+
+			rc = TRUE;
+			break;
+	
+		default:
+#ifdef FOCUS_DEBUG_MSGS
+			printf("key %x, widget: %08x\n", event->keyval, widget);
+#endif
+			break;
+		}
+	}
+else
+if(GLOBALS->dnd_sigview)
+	{
+	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->dnd_sigview) || GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry))
+		{
+		switch(event->keyval)
+			{
+			case GDK_a:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					treeview_select_all_callback();
+					rc = TRUE;
+					}
+				break;
+
+			case GDK_A:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					treeview_unselect_all_callback();
+					rc = TRUE;
+					}
+			default:
+				break;
+			}
+		}
+	else
+	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->tree_treesearch_gtk2_c_1))
+		{
+		switch(event->keyval)
+			{
+			case GDK_a:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					/* eat keystroke */
+					rc = TRUE;
+					}
+				break;
+
+			case GDK_A:
+				if(event->state & GDK_CONTROL_MASK)
+					{
+					/* eat keystroke */
+					rc = TRUE;
+					}
+			default:
+				break;
+			}
+		}
+	}
+
+return(rc);
+}
+
+#ifdef WAVE_USE_GTK2
+static        gint  
+scroll_event( GtkWidget * widget, GdkEventScroll * event )
+{
+  GdkEventKey ev_fake;
+
+  DEBUG(printf("Mouse Scroll Event\n"));
+  switch ( event->direction )
+  {
+    case GDK_SCROLL_UP:
+      ev_fake.keyval = GDK_Up;
+      keypress_local(widget, &ev_fake, GLOBALS->signalarea_event_box);
+      break;
+    case GDK_SCROLL_DOWN:
+      ev_fake.keyval = GDK_Down;
+      keypress_local(widget, &ev_fake, GLOBALS->signalarea_event_box);
+      
+    default:
+      break;
+  }
+  return(TRUE);
+}
+#endif
+
 
 static gint motion_notify_event_std(GtkWidget *widget, GdkEventMotion *event)
 {
@@ -956,190 +1164,6 @@ return(rc);
 }
 
 
-/*
- * keypress processing, return TRUE to block the event from gtk
- */
-static gint keypress_local(GtkWidget *widget, GdkEventKey *event, gpointer data)
-{
-GtkAdjustment *wadj, *hadj;
-int num_traces_displayable;
-int target;
-int which;
-gint rc = FALSE;
-int yscroll;
-
-#ifdef FOCUS_DEBUG_MSGS
-printf("focus: %d %08x %08x %08x\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box), 
-	GLOBALS->signalarea_event_box, widget, data);
-#endif
-
-if(GLOBALS->signalarea_event_box != data)
-	{
-#ifdef FOCUS_DEBUG_MSGS
-	printf("wrong session\n");
-#endif
-	}
-else
-if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
-	{
-	switch(event->keyval)
-		{
-		case GDK_Page_Up:
-		case GDK_KP_Page_Up:
-		case GDK_Page_Down:
-		case GDK_KP_Page_Down:
-		case GDK_Up:
-		case GDK_KP_Up:
-		case GDK_Down:
-		case GDK_KP_Down:
-			wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
-			num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
-			num_traces_displayable--;   /* for the time trace that is always there */
-
-			if(num_traces_displayable<GLOBALS->traces.visible)
-				{
-				switch(event->keyval)
-					{
-					case GDK_Down:
-					case GDK_KP_Down:
-					case GDK_Page_Down:
-					case GDK_KP_Page_Down:
-						yscroll = ((event->keyval == GDK_Page_Down) || (event->keyval == GDK_KP_Page_Down)) ? num_traces_displayable : 1;
-			                        target=((int)wadj->value)+yscroll;  
-			                        which=num_traces_displayable-1;
-
-			                        if(target+which>=(GLOBALS->traces.visible-1)) target=GLOBALS->traces.visible-which-1;
-                        			wadj->value=target;
-
-                        			if(GLOBALS->cachedwhich_signalwindow_c_1==which) GLOBALS->cachedwhich_signalwindow_c_1=which-1; /* force update */
-
-                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
-                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
-						break;
-				
-					case GDK_Up:
-					case GDK_KP_Up:
-					case GDK_Page_Up:
-					case GDK_KP_Page_Up:
-						yscroll = ((event->keyval == GDK_Page_Up) || (event->keyval == GDK_KP_Page_Up)) ? num_traces_displayable : 1;
-                        			target=((int)wadj->value)-yscroll;
-                        			if(target<0) target=0;
-                        			wadj->value=target;
-                         
-						which=0;
-                        			if(GLOBALS->cachedwhich_signalwindow_c_1==which) GLOBALS->cachedwhich_signalwindow_c_1=-1; /* force update */
-
-                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
-                        			gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
-						break;
-					}
-				}
-			rc = TRUE;
-			break;
-
-		case GDK_Left:
-		case GDK_KP_Left:
-
-			hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
-  
-			if(hadj->value < hadj->page_increment)
-			        {
-			        hadj->value = (gfloat)0.0;
-			        }
-				else
-				{
-				hadj->value = hadj->value - hadj->page_increment;
-				}
-
-			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "changed");	/* force bar update */
-			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "value_changed"); /* force text update */
-			signalarea_configure_event(GLOBALS->signalarea, NULL);
-
-			rc = TRUE;
-			break;
-
-		case GDK_Right:
-		case GDK_KP_Right:
-
-			/* fill in left/right hscroll here */
-			hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
-
-			if( ((int) hadj->value + hadj->page_increment) >= hadj->upper)
-			        {
-			        hadj->value = (gfloat)(hadj->upper)-hadj->page_increment;
-			        }
-				else
-				{
-				hadj->value = hadj->value + hadj->page_increment;
-				}
-
-			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "changed");	/* force bar update */
-			gtk_signal_emit_by_name (GTK_OBJECT (hadj), "value_changed"); /* force text update */
-			signalarea_configure_event(GLOBALS->signalarea, NULL);
-
-			rc = TRUE;
-			break;
-	
-		default:
-#ifdef FOCUS_DEBUG_MSGS
-			printf("key %x, widget: %08x\n", event->keyval, widget);
-#endif
-			break;
-		}
-	}
-else
-if(GLOBALS->dnd_sigview)
-	{
-	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->dnd_sigview) || GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry))
-		{
-		switch(event->keyval)
-			{
-			case GDK_a:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					treeview_select_all_callback();
-					rc = TRUE;
-					}
-				break;
-
-			case GDK_A:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					treeview_unselect_all_callback();
-					rc = TRUE;
-					}
-			default:
-				break;
-			}
-		}
-	else
-	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->tree_treesearch_gtk2_c_1))
-		{
-		switch(event->keyval)
-			{
-			case GDK_a:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					/* eat keystroke */
-					rc = TRUE;
-					}
-				break;
-
-			case GDK_A:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					/* eat keystroke */
-					rc = TRUE;
-					}
-			default:
-				break;
-			}
-		}
-	}
-
-return(rc);
-}
-
 static int focus_in_local(GtkWidget *widget, GdkEventFocus *event)
 {
 #ifdef FOCUS_DEBUG_MSGS
@@ -1240,6 +1264,8 @@ if(GLOBALS->use_standard_clicking)
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event_std), NULL);
 
+	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "scroll_event",GTK_SIGNAL_FUNC(scroll_event), NULL);
+
 	do_focusing = 1;
 	}
 	else
@@ -1314,6 +1340,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/01/09 19:20:53  gtkwave
+ * more updating to globals management (expose events cause wrong swap)
+ *
  * Revision 1.21  2008/01/09 04:09:11  gtkwave
  * fix keyboard focus sighandler when multi-tabs are being used
  *
