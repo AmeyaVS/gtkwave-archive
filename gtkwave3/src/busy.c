@@ -21,11 +21,19 @@ if(!GLOBALS->busy_busy_c_1)
 	{
 	switch (event->type) 
 		{
-	        case GDK_CONFIGURE:
-	        case GDK_EXPOSE:
+		/* usual expose events */
+		case GDK_CONFIGURE:
+		case GDK_EXPOSE:
+
+		/* needed to keep dnd from hanging */
+		case GDK_ENTER_NOTIFY:
+		case GDK_LEAVE_NOTIFY:
+		case GDK_FOCUS_CHANGE:
+		case GDK_MAP:
 	            	gtk_main_do_event(event);
 
 		default:
+			/* printf("event->type: %d\n", event->type); */
 			break;
 		}
 	}
@@ -79,7 +87,7 @@ void set_window_busy(GtkWidget *w)
 {
 int i;
 
-if(GLOBALS->tree_dnd_begin) return;
+/* if(GLOBALS->tree_dnd_begin) return; */
 
 if(!GLOBALS->busy_busy_c_1)
 	{
@@ -103,7 +111,7 @@ void set_window_idle(GtkWidget *w)
 {
 int i;
 
-if(GLOBALS->tree_dnd_begin) return;
+/* if(GLOBALS->tree_dnd_begin) return; */
 
 if(GLOBALS->busy_busy_c_1)
 	{
@@ -135,6 +143,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/01/09 19:20:52  gtkwave
+ * more updating to globals management (expose events cause wrong swap)
+ *
  * Revision 1.8  2008/01/09 04:09:11  gtkwave
  * fix keyboard focus sighandler when multi-tabs are being used
  *

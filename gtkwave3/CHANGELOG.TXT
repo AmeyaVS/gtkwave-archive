@@ -353,9 +353,6 @@
 		Recalculate signal width on reload as sometimes
 		it was missed.
 		Added input focus capability to signalwindow.
-		Turn off busy window icon during dnd from
-		treeview as it disrupts focus by causing the
-		dnd to hang partially.
 		Moving menu options to standard GTK accelerator
 		keys.
 		Added Ctrl-A/Shift-Ctrl-A handler to the 
