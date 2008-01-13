@@ -1625,7 +1625,16 @@ if((widget == NULL) || (dc == NULL)) return;
 
 if(!GLOBALS->tree_dnd_begin) return; /* to keep cut and paste in signalwindow from conflicting */
 
+if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
+	{
+	set_window_busy(NULL);
+	}
 DNDEndCB_2(widget, dc, data);
+if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
+	{
+	set_window_idle(NULL);
+	}
+
 GLOBALS->tree_dnd_begin = 0;
 }
 
@@ -1803,6 +1812,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/01/08 04:01:12  gtkwave
+ * more accelerator key ergonomic updates
+ *
  * Revision 1.9  2008/01/05 22:25:46  gtkwave
  * degate busy during treeview dnd as it disrupts focus; dnd cleanups
  *
