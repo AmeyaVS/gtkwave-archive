@@ -181,6 +181,8 @@ accel "/View/Right Justified Signals" <Shift>End
 accel "/View/Zoom Pow10 Snap" <Shift>Pause
 accel "/View/Full Precision" <Alt>Pause
 accel "/View/Remove Pattern Marks" (null)
+accel "/View/Use Color" (null)
+accel "/View/Use Black and White" (null)
 accel "/View/LXT Clock Compress to Z" (null)
 accel "/Help/WAVE Help" <Control>H
 accel "/Help/Wave Version" (null)
