@@ -1589,11 +1589,13 @@ int len=0,maxlen=0;
 int vlen=0, vmaxlen=0;
 char buf[128];
 int bufxlen;
+char dirty_kick;
 
 DEBUG(printf("signalwindow_width_dirty: %d\n",signalwindow_width_dirty));
 
 if((!GLOBALS->signalwindow_width_dirty)&&(GLOBALS->use_nonprop_fonts)) return;
 
+dirty_kick = GLOBALS->signalwindow_width_dirty;
 GLOBALS->signalwindow_width_dirty=0;
 
 t=GLOBALS->traces.first;
@@ -1755,6 +1757,7 @@ if(!GLOBALS->in_button_press_wavewindow_c_1)
 		{
 		int os;
 		os=48;
+
 		gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow), 
 				os+30, -1);
 		}
@@ -1764,7 +1767,7 @@ if(!GLOBALS->in_button_press_wavewindow_c_1)
 		int oldusize;
 	
 		oldusize=GLOBALS->signalwindow->allocation.width;
-		if(oldusize!=GLOBALS->max_signal_name_pixel_width)
+		if((oldusize!=GLOBALS->max_signal_name_pixel_width)||(dirty_kick))
 			{ /* keep signalwindow from expanding arbitrarily large */
 #ifdef WAVE_USE_GTK2
 			int wx, wy;
@@ -3281,6 +3284,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/01/12 21:36:44  gtkwave
+ * added black and white vs color rendering menu options
+ *
  * Revision 1.15  2008/01/09 19:20:53  gtkwave
  * more updating to globals management (expose events cause wrong swap)
  *

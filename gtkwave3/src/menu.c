@@ -4036,10 +4036,12 @@ DEBUG(printf("Paste Traces\n"));
 
 if(PasteBuffer())
 	{
+	GLOBALS->signalwindow_width_dirty=1;
 	MaxSignalLength();
 	signalarea_configure_event(GLOBALS->signalarea, NULL);
 	wavearea_configure_event(GLOBALS->wavearea, NULL);
 	}
+
 }
 /**/
 void menu_center_zooms(GtkWidget *widget, gpointer data)
@@ -4540,6 +4542,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/01/12 21:36:44  gtkwave
+ * added black and white vs color rendering menu options
+ *
  * Revision 1.19  2008/01/09 19:20:52  gtkwave
  * more updating to globals management (expose events cause wrong swap)
  *
