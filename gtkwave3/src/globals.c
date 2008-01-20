@@ -1841,6 +1841,10 @@ void reload_into_new_context(void)
    GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
    gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
    gtk_widget_show(GLOBALS->expanderwindow);
+   if(GLOBALS->dnd_sigview)
+        {
+	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea);
+	}
  }
  #endif
  #if WAVE_USE_GTK2 

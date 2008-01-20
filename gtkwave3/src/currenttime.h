@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.3 (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.4_pre (w)1999-2008 BSI"
 
 
 /* for dnd */
@@ -162,6 +162,9 @@ void remove_keypress_handler(gint id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/01/14 18:37:19  gtkwave
+ * 3.1.3 version bump
+ *
  * Revision 1.19  2008/01/12 21:36:44  gtkwave
  * added black and white vs color rendering menu options
  *

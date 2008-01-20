@@ -368,3 +368,5 @@
 		click-to-front for window managers that automatically move
 		windows to front when their insides (not decorations) are
 		clicked on.
+3.1.4	19jan08	Added fix for how dnd gets killed after reload on new
+		versions of GTK (e.g., 2.10.14).
