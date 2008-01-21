@@ -1305,6 +1305,14 @@ pr_draw_hptr_trace_vector_analog(pr_context * prc, Trptr t, hptr h, int which, i
 					     x1, yt0,
 					     x1, yt1);
 			} else {
+		                if(h->next)
+		                        {
+		                        if(h->next->time > GLOBALS->max_time)
+		                                {
+		                                yt1 = yt0;
+		                                }
+		                        }
+
 				pr_draw_line(prc,
 					     x0, yt0,
 					     x1, yt1);
@@ -1668,6 +1676,14 @@ pr_draw_vptr_trace_analog(pr_context * prc, Trptr t, vptr v, int which, int num_
 					     x1, yt0,
 					     x1, yt1);
 			} else {
+		                if(h->next)
+		                        {
+		                        if(h->next->time > GLOBALS->max_time)
+		                                {
+		                                yt1 = yt0;
+		                                }
+		                        }
+
 				pr_draw_line(prc,
 					     x0, yt0,
 					     x1, yt1);
@@ -2159,6 +2175,9 @@ print_mif_image(FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:43  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

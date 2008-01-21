@@ -2548,7 +2548,14 @@ if(x0!=x1)
 		}
 		else
 		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt1);
+		if(h->next)
+			{
+			if(h->next->time > GLOBALS->max_time)
+				{
+				yt1 = yt0;
+				}
+			}
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
 		}
 	}
 	else
@@ -2989,6 +2996,14 @@ if(x0!=x1)
 		}
 		else
 		{
+                if(h->next)
+                        {
+                        if(h->next->time > GLOBALS->max_time)
+                                {
+                                yt1 = yt0;
+                                }
+                        }
+
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt1);
 		}
 	}
@@ -3284,6 +3299,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/01/20 08:56:35  gtkwave
+ * added dirty_kick to MaxSignalLength
+ *
  * Revision 1.16  2008/01/12 21:36:44  gtkwave
  * added black and white vs color rendering menu options
  *
