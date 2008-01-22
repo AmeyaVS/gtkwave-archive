@@ -2541,6 +2541,15 @@ if(x0!=x1)
 		{
 		c = GLOBALS->gc_x_wavewindow_c_1;
 		}
+
+	if(h->next)
+		{
+		if(h->next->time > GLOBALS->max_time)
+			{
+			yt1 = yt0;
+			}
+		}
+
 	if(t->flags & TR_ANALOG_STEP)
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
@@ -2548,13 +2557,6 @@ if(x0!=x1)
 		}
 		else
 		{
-		if(h->next)
-			{
-			if(h->next->time > GLOBALS->max_time)
-				{
-				yt1 = yt0;
-				}
-			}
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
 		}
 	}
@@ -2989,6 +2991,15 @@ if(x0!=x1)
 		{
 		c = GLOBALS->gc_x_wavewindow_c_1;
 		}
+
+	if(h->next)
+		{
+		if(h->next->time > GLOBALS->max_time)
+			{
+			yt1 = yt0;
+			}
+		}
+
 	if(t->flags & TR_ANALOG_STEP)
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
@@ -2996,14 +3007,6 @@ if(x0!=x1)
 		}
 		else
 		{
-                if(h->next)
-                        {
-                        if(h->next->time > GLOBALS->max_time)
-                                {
-                                yt1 = yt0;
-                                }
-                        }
-
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt1);
 		}
 	}
@@ -3299,6 +3302,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/01/21 16:54:05  gtkwave
+ * some analog fixes for end of screen
+ *
  * Revision 1.17  2008/01/20 08:56:35  gtkwave
  * added dirty_kick to MaxSignalLength
  *

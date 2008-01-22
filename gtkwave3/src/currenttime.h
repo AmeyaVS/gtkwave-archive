@@ -157,11 +157,17 @@ void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
 gint install_keypress_handler(void);
 void remove_keypress_handler(gint id);
 
+/* x/y dataset interpolation */
+int ft_interpolate (double *data, double *ndata, double *oscale, int olen, double *nscale, int nlen, int degree);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2008/01/20 00:30:09  gtkwave
+ * fixes dnd bug on new versions of gtk (2.10.14)
+ *
  * Revision 1.20  2008/01/14 18:37:19  gtkwave
  * 3.1.3 version bump
  *

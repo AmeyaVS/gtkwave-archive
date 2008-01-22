@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1755,7 +1755,11 @@ switch(ch)
 		if(regadd) { time*=(GLOBALS->time_scale); }
 	
 		if(
+#ifndef TRACK_AND_HOLD_FIX
 		  (n->curr->v.h_vector&&vector&&(*(double *)n->curr->v.h_vector!=*(double *)vector))
+#else
+		  (1)
+#endif
 			||(time==GLOBALS->start_time_vcd_c_1)
 			||(!n->curr->v.h_vector)
 			||(GLOBALS->vcd_preserve_glitches)
@@ -2421,6 +2425,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/23 18:33:55  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

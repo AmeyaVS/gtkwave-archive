@@ -18,15 +18,15 @@ gtkwave_SOURCES= \
 	globals.c globals.h ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
 	bsearch.c bsearch.h busy.c busy.h \
 	clipping.c clipping.h color.c color.h currenttime.c currenttime.h \
-	debug.c debug.h discardbuttons.c \
+	debug.c debug.h discardbuttons.c edgebuttons.c \
 	entry.c fetchbuttons.c fgetdynamic.c fgetdynamic.h file.c fonts.c getopt.c \
 	getopt1.c ghw.c ghw.h ghwlib.c ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
 	help.c helpers/lxt2_read.c \
-	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c \
+	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c interpolate.c \
 	logfile.c lx2.c lx2.h lxt.c lxt.h main.c main.h markerbox.c menu.c menu.h mouseover.c \
 	pagebuttons.c pipeio.c pipeio.h pixmaps.c pixmaps.h print.c print.h \
 	ptranslate.c ptranslate.h rc.c rc.h \
-	regex.c regex_wave.h renderopt.c rgb.c search.c edgebuttons.c shiftbuttons.c showchange.c \
+	regex.c regex_wave.h renderopt.c rgb.c search.c shiftbuttons.c showchange.c \
 	signalwindow.c simplereq.c splash.c status.c strace.c strace.h symbol.c symbol.h \
 	timeentry.c translate.c translate.h tree.c tree.h treesearch.c vcd.c vcd.h vcd_keywords.c \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
