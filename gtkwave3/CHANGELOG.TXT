@@ -377,3 +377,4 @@
 		Experimenting with track-and-hold fixing.
 		Integrated spice3f5 poly interpolation routines, but are
 		currently unused.
+		Now allow both interpolated+step simultaneously for analog.

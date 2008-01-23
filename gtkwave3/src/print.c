@@ -1401,14 +1401,15 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h, int which, 
 		}
 	    }
 
+	  if (t->flags & TR_ANALOG_INTERPOLATED)
+	    {
+	      pr_draw_line (prc, x0, yt0, x1, yt1);
+	    }
+
 	  if (t->flags & TR_ANALOG_STEP)
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt0);
 	      pr_draw_line (prc, x1, yt0, x1, yt1);
-	    }
-	  else
-	    {
-	      pr_draw_line (prc, x0, yt0, x1, yt1);
 	    }
 	}
       else
@@ -1795,14 +1796,15 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which, int num
 		}
 	    }
 
+	  if (t->flags & TR_ANALOG_INTERPOLATED)
+	    {
+	      pr_draw_line (prc, x0, yt0, x1, yt1);
+	    }
+
 	  if (t->flags & TR_ANALOG_STEP)
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt0);
 	      pr_draw_line (prc, x1, yt0, x1, yt1);
-	    }
-	  else
-	    {
-	      pr_draw_line (prc, x0, yt0, x1, yt1);
 	    }
 	}
       else
@@ -2312,6 +2314,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/01/22 20:11:47  gtkwave
+ * track and hold experimentation
+ *
  * Revision 1.3  2008/01/21 16:54:04  gtkwave
  * some analog fixes for end of screen
  *

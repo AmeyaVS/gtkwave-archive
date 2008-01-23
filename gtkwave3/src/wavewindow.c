@@ -2399,7 +2399,7 @@ hptr h2, h3;
 int endcnt = 0;
 int type;
 int lasttype=-1;
-GdkGC    *c;
+GdkGC    *c, *ci;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 
@@ -2542,6 +2542,8 @@ if(x0!=x1)
 		c = GLOBALS->gc_x_wavewindow_c_1;
 		}
 
+	ci = (t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP) ? GLOBALS->gc_mid_wavewindow_c_1 : c;
+
 	if(h->next)
 		{
 		if(h->next->time > GLOBALS->max_time)
@@ -2550,15 +2552,17 @@ if(x0!=x1)
 			}
 		}
 
+	if(t->flags & TR_ANALOG_INTERPOLATED)
+		{
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0,x1,yt1);
+		}
+
 	if(t->flags & TR_ANALOG_STEP)
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x1, yt0,x1, yt1);
 		}
-		else
-		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
-		}
+
 	}
 	else
 	{
@@ -2878,7 +2882,7 @@ TimeType tim, h2tim;
 vptr h, h2, h3;
 int type;
 int lasttype=-1;
-GdkGC    *c;
+GdkGC    *c, *ci;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 
@@ -2992,6 +2996,8 @@ if(x0!=x1)
 		c = GLOBALS->gc_x_wavewindow_c_1;
 		}
 
+	ci = (t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP) ? GLOBALS->gc_mid_wavewindow_c_1 : c;
+
 	if(h->next)
 		{
 		if(h->next->time > GLOBALS->max_time)
@@ -3000,14 +3006,15 @@ if(x0!=x1)
 			}
 		}
 
+	if(t->flags & TR_ANALOG_INTERPOLATED)
+		{
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0,x1, yt1);
+		}
+
 	if(t->flags & TR_ANALOG_STEP)
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x1, yt0,x1, yt1);
-		}
-		else
-		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt1);
 		}
 	}
 	else
@@ -3302,6 +3309,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/01/22 20:11:47  gtkwave
+ * track and hold experimentation
+ *
  * Revision 1.18  2008/01/21 16:54:05  gtkwave
  * some analog fixes for end of screen
  *

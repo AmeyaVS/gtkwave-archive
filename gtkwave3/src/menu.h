@@ -96,6 +96,7 @@ WV_MENU_EDFROFF,
 WV_MENU_EDFAOFF,
 WV_MENU_EDFASTEP,
 WV_MENU_EDFAINTERPOL,
+WV_MENU_EDFAINTERPOL2,
 WV_MENU_XLF_0,
 WV_MENU_XLF_1,
 WV_MENU_XLP_0,
@@ -300,6 +301,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/01/12 21:36:44  gtkwave
+ * added black and white vs color rendering menu options
+ *
  * Revision 1.6  2007/09/23 18:33:55  gtkwave
  * warnings cleanups from sun compile
  *
