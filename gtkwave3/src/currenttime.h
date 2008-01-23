@@ -160,11 +160,17 @@ void remove_keypress_handler(gint id);
 /* x/y dataset interpolation */
 int ft_interpolate (double *data, double *ndata, double *oscale, int olen, double *nscale, int nlen, int degree);
 
+/* popups */
+void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/01/22 20:11:47  gtkwave
+ * track and hold experimentation
+ *
  * Revision 1.21  2008/01/20 00:30:09  gtkwave
  * fixes dnd bug on new versions of gtk (2.10.14)
  *

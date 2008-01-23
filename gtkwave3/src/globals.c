@@ -470,6 +470,7 @@ NULL, /* filesel_lxt_writesave 250 */
 0, /* lock_menu_c_1 251 */
 0, /* lock_menu_c_2 252 */
 NULL, /* buf_menu_c_1 253 128 */
+NULL, /* signal_popup_menu */
 
 /*
  * mouseover.c
@@ -1476,6 +1477,7 @@ void reload_into_new_context(void)
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
  strcpy2_into_new_context(new_globals, &new_globals->filesel_writesave, &GLOBALS->filesel_writesave);
  new_globals->save_success_menu_c_1 = GLOBALS->save_success_menu_c_1; 
+ new_globals->signal_popup_menu = GLOBALS->signal_popup_menu;
 
  /* status.c */
  new_globals->text_status_c_2 = GLOBALS->text_status_c_2;

@@ -4387,10 +4387,10 @@ if(GLOBALS->loaded_file_type == LXT_FILE)
  */
 void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 {
-    GLOBALS->regexp_string_menu_c_1 = calloc_2(1, 129);
-
     int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
     GtkAccelGroup *global_accel;
+
+    GLOBALS->regexp_string_menu_c_1 = calloc_2(1, 129);
 
     global_accel = gtk_accel_group_new();
     GLOBALS->item_factory_menu_c_1 = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", global_accel);
@@ -4557,9 +4557,50 @@ for(i=0;i<WV_MENU_NUMITEMS;i++)
 return(0);
 }
 
+
+/***********************/
+/*** popup menu code ***/
+/***********************/
+
+void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
+{
+  GtkWidget *menu;
+  int button, event_time;
+
+  if(!GLOBALS->signal_popup_menu)
+    {
+    int nmenu_items = WV_MENU_RVS - WV_MENU_ESTMH + 1;
+    GtkItemFactory *item_factory = gtk_item_factory_new (GTK_TYPE_MENU, "<main>", NULL);
+    gtk_item_factory_create_items (item_factory, nmenu_items, &menu_items[WV_MENU_ESTMH], NULL);
+    GLOBALS->signal_popup_menu = menu = gtk_item_factory_get_widget (item_factory, "<main>");
+    }
+    else
+    {
+    menu = GLOBALS->signal_popup_menu;
+    }
+
+  if (event)
+    {
+      button = event->button;
+      event_time = event->time;
+    }
+  else
+    {
+      button = 0;
+      event_time = gtk_get_current_event_time ();
+    }
+
+  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 
+                  button, event_time);
+}
+
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2008/01/23 04:49:31  gtkwave
+ * more tweaking of interpolated+step mode (use snap dots)
+ *
  * Revision 1.22  2008/01/23 02:05:43  gtkwave
  * added interpolated + step mode
  *

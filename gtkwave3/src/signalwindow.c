@@ -505,6 +505,12 @@ int trwhich, trtarget;
 GtkAdjustment *wadj;
 Trptr t, t2;
 
+if((event->button == 3) && (event->type == GDK_BUTTON_PRESS))
+	{
+      	do_popup_menu (widget, event);
+      	return TRUE;
+    	}
+
 if(GLOBALS->signalarea_event_box)
 	{
 	if((event->x<0)||(event->x>=widget->allocation.width)||(event->y<0)||(event->y>=widget->allocation.height))
@@ -1031,6 +1037,13 @@ check_button_3:
 return(TRUE);
 }
 
+
+static gint popup_event (GtkWidget *widget)
+{
+do_popup_menu(widget, NULL);
+return(TRUE);
+}
+
 /***  gtkwave click routines turned on with "use_standard_clicking"=0   ***/
 /**************************************************************************/
 
@@ -1303,6 +1316,9 @@ if(do_focusing)
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_in_event", GTK_SIGNAL_FUNC(focus_in_local), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "focus_out_event", GTK_SIGNAL_FUNC(focus_out_local), NULL);
 
+	/* not necessary for now... */
+	/* gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea_event_box), "popup_menu",GTK_SIGNAL_FUNC(popup_event), NULL); */
+
 	if(!GLOBALS->second_page_created)
 		{
 		GLOBALS->keypress_handler_id = install_keypress_handler();
@@ -1340,6 +1356,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2008/01/12 05:04:37  gtkwave
+ * scrollwheel support
+ *
  * Revision 1.22  2008/01/09 19:20:53  gtkwave
  * more updating to globals management (expose events cause wrong swap)
  *

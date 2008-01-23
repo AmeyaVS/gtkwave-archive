@@ -462,6 +462,7 @@ char *filesel_lxt_writesave; /* from menu.c 267 */
 int lock_menu_c_1; /* from menu.c 268 */
 int lock_menu_c_2; /* from menu.c 269 */
 char *buf_menu_c_1; /* from menu.c 270 */
+GtkWidget *signal_popup_menu; /* from menu.c */
 
 
 /*
