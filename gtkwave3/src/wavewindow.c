@@ -2403,6 +2403,8 @@ GdkGC    *c, *ci;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 
+ci = GLOBALS->gc_baseline_wavewindow_c_1;
+
 liney=((which+2+num_extension)*GLOBALS->fontheight)-2;
 y1=((which+1)*GLOBALS->fontheight)+2;	
 y0=liney-2;
@@ -2542,8 +2544,6 @@ if(x0!=x1)
 		c = GLOBALS->gc_x_wavewindow_c_1;
 		}
 
-	ci = (t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP) ? GLOBALS->gc_mid_wavewindow_c_1 : c;
-
 	if(h->next)
 		{
 		if(h->next->time > GLOBALS->max_time)
@@ -2554,9 +2554,14 @@ if(x0!=x1)
 
 	if(t->flags & TR_ANALOG_INTERPOLATED)
 		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0,x1,yt1);
+		if(t->flags & TR_ANALOG_STEP)
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
+			}
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
 		}
-
+	else
 	if(t->flags & TR_ANALOG_STEP)
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
@@ -2886,6 +2891,8 @@ GdkGC    *c, *ci;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 
+ci = GLOBALS->gc_baseline_wavewindow_c_1;
+
 h=v;
 liney=((which+2+num_extension)*GLOBALS->fontheight)-2;
 y1=((which+1)*GLOBALS->fontheight)+2;	
@@ -2996,8 +3003,6 @@ if(x0!=x1)
 		c = GLOBALS->gc_x_wavewindow_c_1;
 		}
 
-	ci = (t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP) ? GLOBALS->gc_mid_wavewindow_c_1 : c;
-
 	if(h->next)
 		{
 		if(h->next->time > GLOBALS->max_time)
@@ -3008,9 +3013,14 @@ if(x0!=x1)
 
 	if(t->flags & TR_ANALOG_INTERPOLATED)
 		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0,x1, yt1);
+		if(t->flags & TR_ANALOG_STEP)
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
+			}
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
 		}
-
+	else
 	if(t->flags & TR_ANALOG_STEP)
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
@@ -3309,6 +3319,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/01/23 02:05:44  gtkwave
+ * added interpolated + step mode
+ *
  * Revision 1.19  2008/01/22 20:11:47  gtkwave
  * track and hold experimentation
  *

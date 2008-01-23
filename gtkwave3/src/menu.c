@@ -3790,10 +3790,11 @@ menu_dataformat_analog_interpol_step(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nAnalog Interpolate+Step");
+        help_text_bold("\n\nAnalog Interpolate Annotated");
         help_text(
                 " causes the waveform data for all currently highlighted traces"
-                " to be displayed as both a stepwise and an interpolated analog waveform."            
+                " to be displayed as an interpolated analog waveform annotated"
+		" with the non-interpolated data sampling points that the cursor snaps to."            
         );
         return;
         }
@@ -4234,7 +4235,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Analog/Off", NULL, menu_dataformat_analog_off, WV_MENU_EDFAOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
-    WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated+Step", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change All Highlighted", NULL, menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change First Highlighted", "<Control>F", menu_showchange, WV_MENU_ESCFH, "<Item>"),
       /* 50 */
@@ -4559,6 +4560,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/01/23 02:05:43  gtkwave
+ * added interpolated + step mode
+ *
  * Revision 1.21  2008/01/20 08:56:35  gtkwave
  * added dirty_kick to MaxSignalLength
  *
