@@ -505,12 +505,6 @@ int trwhich, trtarget;
 GtkAdjustment *wadj;
 Trptr t, t2;
 
-if((event->button == 3) && (event->type == GDK_BUTTON_PRESS))
-	{
-      	do_popup_menu (widget, event);
-      	return TRUE;
-    	}
-
 if(GLOBALS->signalarea_event_box)
 	{
 	if((event->x<0)||(event->x>=widget->allocation.width)||(event->y<0)||(event->y>=widget->allocation.height))
@@ -537,7 +531,7 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 
 	if((which>=GLOBALS->traces.visible)||(which>=num_traces_displayable)||(which<0))
 		{
-		return(TRUE); /* off in no man's land */
+		goto menu_chk; /* off in no man's land */
 		}
 
 	wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
@@ -571,7 +565,7 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 	        		wavearea_configure_event(GLOBALS->wavearea, NULL);
 				GLOBALS->std_collapse_pressed = 1;
 				}
-			return(TRUE);
+			goto menu_chk;
 			}
 		}
 
@@ -642,6 +636,14 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
         wavearea_configure_event(GLOBALS->wavearea, NULL);
 	}
 
+
+menu_chk:
+if((event->button == 3) && (event->type == GDK_BUTTON_PRESS))
+	{
+      	do_popup_menu (widget, event);
+    	}
+
+return(TRUE);
 }
 
 /***  standard click routines turned on with "use_standard_clicking"=1  ***/
@@ -1356,6 +1358,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2008/01/23 11:07:19  gtkwave
+ * integration of preliminary signalwindow popup menu code
+ *
  * Revision 1.23  2008/01/12 05:04:37  gtkwave
  * scrollwheel support
  *

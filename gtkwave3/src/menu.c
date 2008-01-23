@@ -4562,6 +4562,41 @@ return(0);
 /*** popup menu code ***/
 /***********************/
 
+static GtkItemFactoryEntry popmenu_items[] =
+{
+    WAVE_GTKIFE("/Data Format/Hex", NULL, menu_dataformat_hex, WV_MENU_EDFH, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Decimal", NULL, menu_dataformat_dec, WV_MENU_EDFD, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Signed Decimal", NULL, menu_dataformat_signed, WV_MENU_EDFSD, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Binary", NULL, menu_dataformat_bin, WV_MENU_EDFB, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Octal", NULL, menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
+    WAVE_GTKIFE("/Data Format/ASCII", NULL, menu_dataformat_ascii, WV_MENU_EDFA, "<Item>"),
+    WAVE_GTKIFE("/Data Format/BitsToReal", NULL, menu_dataformat_real, WV_MENU_EDRL, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Right Justify/On", NULL, menu_dataformat_rjustify_on, WV_MENU_EDFRJON, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Right Justify/Off", NULL, menu_dataformat_rjustify_off, WV_MENU_EDFRJOFF, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Invert/On", NULL, menu_dataformat_invert_on, WV_MENU_EDFION, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Invert/Off", NULL, menu_dataformat_invert_off, WV_MENU_EDFIOFF, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Reverse Bits/On", NULL, menu_dataformat_reverse_on, WV_MENU_EDFRON, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Reverse Bits/Off", NULL, menu_dataformat_reverse_off, WV_MENU_EDFROFF, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Translate Filter File/Disable", NULL, menu_dataformat_xlate_file_0, WV_MENU_XLF_0, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Translate Filter File/Enable and Select", NULL, menu_dataformat_xlate_file_1, WV_MENU_XLF_1, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Translate Filter Process/Disable", NULL, menu_dataformat_xlate_proc_0, WV_MENU_XLP_0, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Translate Filter Process/Enable and Select", NULL, menu_dataformat_xlate_proc_1, WV_MENU_XLP_1, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Analog/Off", NULL, menu_dataformat_analog_off, WV_MENU_EDFAOFF, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
+
+    WAVE_GTKIFE("/<separator>", NULL, NULL, WV_MENU_SEP1, "<Separator>"),
+    WAVE_GTKIFE("/Insert Analog Height Extension", NULL, menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
+    WAVE_GTKIFE("/<separator>", NULL, NULL, WV_MENU_SEP2, "<Separator>"),
+
+    WAVE_GTKIFE("/Insert Blank", NULL, menu_insert_blank_traces, WV_MENU_EIB, "<Item>"),
+    WAVE_GTKIFE("/Insert Comment", NULL, menu_insert_comment_traces, WV_MENU_EIC, "<Item>"),
+    WAVE_GTKIFE("/Alias Highlighted Trace", NULL, menu_alias, WV_MENU_EAHT, "<Item>"),
+    WAVE_GTKIFE("/Remove Highlighted Aliases", NULL, menu_remove_aliases, WV_MENU_ERHA, "<Item>")
+};
+
+
 void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 {
   GtkWidget *menu;
@@ -4569,9 +4604,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 
   if(!GLOBALS->signal_popup_menu)
     {
-    int nmenu_items = WV_MENU_RVS - WV_MENU_ESTMH + 1;
+    int nmenu_items = sizeof(popmenu_items) / sizeof(popmenu_items[0]);
     GtkItemFactory *item_factory = gtk_item_factory_new (GTK_TYPE_MENU, "<main>", NULL);
-    gtk_item_factory_create_items (item_factory, nmenu_items, &menu_items[WV_MENU_ESTMH], NULL);
+    gtk_item_factory_create_items (item_factory, nmenu_items, popmenu_items, NULL);
     GLOBALS->signal_popup_menu = menu = gtk_item_factory_get_widget (item_factory, "<main>");
     }
     else
@@ -4598,6 +4633,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2008/01/23 11:07:19  gtkwave
+ * integration of preliminary signalwindow popup menu code
+ *
  * Revision 1.23  2008/01/23 04:49:31  gtkwave
  * more tweaking of interpolated+step mode (use snap dots)
  *
