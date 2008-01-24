@@ -2616,7 +2616,10 @@ ytext=yu-(GLOBALS->wavefont->ascent/2)+GLOBALS->wavefont->ascent;
 
 if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 	{
-	if(!(t->flags & TR_ANALOGMASK))
+	if((t->flags & TR_ANALOGMASK) && (t->t_next) && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+		{
+		}
+		else
 		{
 		gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_grid_wavewindow_c_1,(GLOBALS->tims.start<GLOBALS->tims.first)?(GLOBALS->tims.first-GLOBALS->tims.start)*GLOBALS->pxns:0, liney,(GLOBALS->tims.last<=GLOBALS->tims.end)?(GLOBALS->tims.last-GLOBALS->tims.start)*GLOBALS->pxns:GLOBALS->wavewidth-1, liney);
 		}
@@ -2885,6 +2888,7 @@ TimeType x0, x1, newtime;
 int y0, y1, yu, liney, yt0, yt1;
 TimeType tim, h2tim;
 vptr h, h2, h3;
+int endcnt = 0;
 int type;
 int lasttype=-1;
 GdkGC    *c, *ci;
@@ -2904,12 +2908,15 @@ for(;;)
 {
 if(!h2) break;
 tim=(h2->time);
-if((tim>GLOBALS->tims.end)||(tim>GLOBALS->tims.last)) break;
+
+if(tim>GLOBALS->tims.end) { endcnt++; if(endcnt==2) break; }
+if(tim>GLOBALS->tims.last) break;
+
 x0=(tim - GLOBALS->tims.start) * GLOBALS->pxns;
-if(x0>GLOBALS->wavewidth)
-	{
-	break;
-	}
+if((x0>GLOBALS->wavewidth)&&(endcnt==2))
+        {
+        break;
+        }
 h3=h2;
 h2 = h2->next;
 if (!h2) break;
@@ -3075,7 +3082,13 @@ ytext=yu-(GLOBALS->wavefont->ascent/2)+GLOBALS->wavefont->ascent;
 
 if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 	{
-	gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_grid_wavewindow_c_1,(GLOBALS->tims.start<GLOBALS->tims.first)?(GLOBALS->tims.first-GLOBALS->tims.start)*GLOBALS->pxns:0, liney,(GLOBALS->tims.last<=GLOBALS->tims.end)?(GLOBALS->tims.last-GLOBALS->tims.start)*GLOBALS->pxns:GLOBALS->wavewidth-1, liney);
+	if((t->flags & TR_ANALOGMASK) && (t->t_next) && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+		{
+		}
+		else
+		{
+		gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_grid_wavewindow_c_1,(GLOBALS->tims.start<GLOBALS->tims.first)?(GLOBALS->tims.first-GLOBALS->tims.start)*GLOBALS->pxns:0, liney,(GLOBALS->tims.last<=GLOBALS->tims.end)?(GLOBALS->tims.last-GLOBALS->tims.start)*GLOBALS->pxns:GLOBALS->wavewidth-1, liney);
+		}
 	}
 
 if(t->flags & TR_ANALOGMASK)
@@ -3319,6 +3332,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2008/01/23 04:49:32  gtkwave
+ * more tweaking of interpolated+step mode (use snap dots)
+ *
  * Revision 1.20  2008/01/23 02:05:44  gtkwave
  * added interpolated + step mode
  *

@@ -1556,7 +1556,11 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 
   if ((GLOBALS->display_grid) && (GLOBALS->enable_horiz_grid))
     {
-      if (!(t->flags & TR_ANALOGMASK))
+      if ((t->flags & TR_ANALOGMASK) && (t->t_next)
+	  && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+	{
+	}
+      else
 	{
 	  pr_setgray (prc, 0.75);
 	  pr_draw_line (prc,
@@ -1797,6 +1801,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
   int y0, y1, yu, liney, ytext, yt0, yt1;
   TimeType tim, h2tim;
   vptr h, h2, h3;
+  int endcnt = 0;
   int ysiz;
   int type;
   int lasttype = -1;
@@ -1820,11 +1825,21 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
       if (!h2)
 	break;
       tim = h2->time;
-      if ((tim > GLOBALS->tims.end) || (tim > GLOBALS->tims.last))
+
+      if (tim > GLOBALS->tims.end)
+	{
+	  endcnt++;
+	  if (endcnt == 2)
+	    break;
+	}
+      if (tim > GLOBALS->tims.last)
 	break;
+
       x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x0 > GLOBALS->wavewidth)
-	break;
+      if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
+	{
+	  break;
+	}
       h3 = h2;
       h2 = h2->next;
       if (!h2)
@@ -1916,8 +1931,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
 		}
 	    }
-
-	  if (t->flags & TR_ANALOG_STEP)
+	  else if (t->flags & TR_ANALOG_STEP)
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt0);
 	      pr_draw_line (prc, x1, yt0, x1, yt1);
@@ -1971,16 +1985,23 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 
   if ((GLOBALS->display_grid) && (GLOBALS->enable_horiz_grid))
     {
-      pr_setgray (prc, 0.75);
-      pr_draw_line (prc,
-		    (GLOBALS->tims.start <
-		     GLOBALS->tims.first) ? (GLOBALS->tims.first -
-					     GLOBALS->tims.start) *
-		    GLOBALS->pxns : 0, liney,
-		    (GLOBALS->tims.last <=
-		     GLOBALS->tims.end) ? (GLOBALS->tims.last -
-					   GLOBALS->tims.start) *
-		    GLOBALS->pxns : GLOBALS->wavewidth - 1, liney);
+      if ((t->flags & TR_ANALOGMASK) && (t->t_next)
+	  && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+	{
+	}
+      else
+	{
+	  pr_setgray (prc, 0.75);
+	  pr_draw_line (prc,
+			(GLOBALS->tims.start <
+			 GLOBALS->tims.first) ? (GLOBALS->tims.first -
+						 GLOBALS->tims.start) *
+			GLOBALS->pxns : 0, liney,
+			(GLOBALS->tims.last <=
+			 GLOBALS->tims.end) ? (GLOBALS->tims.last -
+					       GLOBALS->tims.start) *
+			GLOBALS->pxns : GLOBALS->wavewidth - 1, liney);
+	}
     }
 
   if (t->flags & TR_ANALOGMASK)
@@ -2456,6 +2477,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/01/23 04:49:32  gtkwave
+ * more tweaking of interpolated+step mode (use snap dots)
+ *
  * Revision 1.5  2008/01/23 02:05:44  gtkwave
  * added interpolated + step mode
  *

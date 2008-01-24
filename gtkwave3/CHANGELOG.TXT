@@ -379,3 +379,4 @@
 		currently unused.
 		Now allow both interpolated+step simultaneously for analog.
 		Integrating signal window popup menu code.
+		Fixed rendering bugs in coalesced vectors displayed as analog.
