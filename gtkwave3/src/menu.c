@@ -4664,7 +4664,11 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
   else
     {
       button = 0;
+#if WAVE_USE_GTK2
       event_time = gtk_get_current_event_time ();
+#else
+      return; /* disabled in GTK1.2 */
+#endif
     }
 
   gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 
@@ -4675,6 +4679,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2008/01/25 04:10:14  gtkwave
+ * added new resizing options to menu
+ *
  * Revision 1.26  2008/01/24 03:17:57  gtkwave
  * added cut and paste to popup menu
  *
