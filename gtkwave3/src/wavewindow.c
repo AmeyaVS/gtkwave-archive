@@ -2402,6 +2402,7 @@ int lasttype=-1;
 GdkGC    *c, *ci;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
+gint rmargin;
 
 ci = GLOBALS->gc_baseline_wavewindow_c_1;
 
@@ -2516,6 +2517,15 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 		}
 	}
 
+if(GLOBALS->tims.last - GLOBALS->tims.start < GLOBALS->wavewidth)
+	{
+	rmargin=(GLOBALS->tims.last - GLOBALS->tims.start) * GLOBALS->pxns;
+	}
+	else
+	{
+	rmargin = GLOBALS->wavewidth;
+	}
+
 /* now do the actual drawing */
 h3 = NULL;
 for(;;)
@@ -2623,7 +2633,22 @@ if(x0!=x1)
 			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
 			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
 			}
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+
+		if(rmargin != GLOBALS->wavewidth)	/* the window is clipped in postscript */
+			{
+			if((yt0==yt1)&&((x0 > x1)||(x0 < 0)))
+				{
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,0, yt0,x1,yt1);
+				}
+				else
+				{
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+				}
+			}
+			else
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+			}
 		}
 	else
 	if(t->flags & TR_ANALOG_STEP)
@@ -2958,6 +2983,7 @@ int lasttype=-1;
 GdkGC    *c, *ci;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
+gint rmargin;
 
 ci = GLOBALS->gc_baseline_wavewindow_c_1;
 
@@ -3060,6 +3086,15 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 		}
 	}
 	
+if(GLOBALS->tims.last - GLOBALS->tims.start < GLOBALS->wavewidth)
+	{
+	rmargin=(GLOBALS->tims.last - GLOBALS->tims.start) * GLOBALS->pxns;
+	}
+	else
+	{
+	rmargin = GLOBALS->wavewidth;
+	}
+
 h3 = NULL;
 for(;;)
 {
@@ -3145,7 +3180,22 @@ if(x0!=x1)
 			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
 			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
 			}
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+
+		if(rmargin != GLOBALS->wavewidth)	/* the window is clipped in postscript */
+			{
+			if((yt0==yt1)&&((x0 > x1)||(x0 < 0)))
+				{
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,0, yt0,x1,yt1);
+				}
+				else
+				{
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+				}
+			}
+			else
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+			}
 		}
 	else
 	if(t->flags & TR_ANALOG_STEP)
@@ -3452,6 +3502,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2008/01/25 04:10:15  gtkwave
+ * added new resizing options to menu
+ *
  * Revision 1.22  2008/01/24 20:19:39  gtkwave
  * analog rendering fixes
  *
