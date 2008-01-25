@@ -2400,9 +2400,13 @@ int endcnt = 0;
 int type;
 int lasttype=-1;
 GdkGC    *c, *ci;
+GdkGC    *cnan = GLOBALS->gc_w_wavewindow_c_1;
+GdkGC    *cinf = GLOBALS->gc_u_wavewindow_c_1;
+GdkGC    *cfixed;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 gint rmargin;
+int is_nan, is_inf;
 
 ci = GLOBALS->gc_baseline_wavewindow_c_1;
 
@@ -2432,7 +2436,8 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 					{
 					if(h3->time <= GLOBALS->tims.last) tv=convert_real_vec(t,h3->v.h_vector);
 					}
-				if (!isnan(tv))
+
+				if (!isnan(tv) && !isinf(tv))
 					{
 					if (isnan(tmin) || tv < tmin)
 						tmin = tv;
@@ -2496,7 +2501,7 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 		{
 		if(h3->time <= GLOBALS->tims.last) tv=convert_real_vec(t,h3->v.h_vector);
 		}
-	if (!isnan(tv))
+	if (!isnan(tv) & !isinf(tv))
 		{
 		if (isnan(tmin) || tv < tmin)
 			tmin = tv;
@@ -2591,7 +2596,19 @@ if(h2->flags&HIST_REAL)
 	if(h2->time <= GLOBALS->tims.last) tv2=convert_real_vec(t,h2->v.h_vector);
 	}
 
-if(isnan(tv))
+if((is_inf = isinf(tv)))
+	{
+	if(tv < 0)
+		{
+		yt0 = y0;
+		}
+		else
+		{
+		yt0 = y1;
+		}
+	}
+else
+if((is_nan = isnan(tv)))
 	{
 	yt0 = yu;
 	}
@@ -2599,6 +2616,19 @@ if(isnan(tv))
 	{
 	yt0 = y0 + (tv - tmin) * tmax;
 	}
+
+if(isinf(tv2))
+	{
+	if(tv2 < 0)
+		{
+		yt1 = y0;
+		}
+		else
+		{
+		yt1 = y1;
+		}
+	}
+else
 if(isnan(tv2))
 	{
 	yt1 = yu;
@@ -2607,6 +2637,7 @@ if(isnan(tv2))
 	{
 	yt1 = y0 + (tv2 - tmin) * tmax;
 	}
+
 if(x0!=x1)
 	{
 	if(type == AN_0) 
@@ -2626,6 +2657,9 @@ if(x0!=x1)
 			}
 		}
 
+	cfixed = is_nan ? cnan : c;
+	cfixed = is_inf ? cinf : cfixed;
+
 	if(t->flags & TR_ANALOG_INTERPOLATED)
 		{
 		if(t->flags & TR_ANALOG_STEP)
@@ -2638,23 +2672,23 @@ if(x0!=x1)
 			{
 			if((yt0==yt1)&&((x0 > x1)||(x0 < 0)))
 				{
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,0, yt0,x1,yt1);
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,0, yt0,x1,yt1);
 				}
 				else
 				{
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1,yt1);
 				}
 			}
 			else
 			{
-			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1,yt1);
 			}
 		}
 	else
 	if(t->flags & TR_ANALOG_STEP)
 		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x1, yt0,x1, yt1);
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1, yt0);
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x1, yt0,x1, yt1);
 		}
 
 	}
@@ -2981,9 +3015,13 @@ int endcnt = 0;
 int type;
 int lasttype=-1;
 GdkGC    *c, *ci;
+GdkGC    *cnan = GLOBALS->gc_w_wavewindow_c_1;
+GdkGC    *cinf = GLOBALS->gc_u_wavewindow_c_1;
+GdkGC    *cfixed;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 gint rmargin;
+int is_nan, is_inf;
 
 ci = GLOBALS->gc_baseline_wavewindow_c_1;
 
@@ -3007,7 +3045,7 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
                                 tv = mynan;
 
 				tv=convert_real(t,h3);
-				if (!isnan(tv))
+				if (!isnan(tv) && !isinf(tv))
 					{
 					if (isnan(tmin) || tv < tmin)
 						tmin = tv;
@@ -3065,7 +3103,7 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 	if(x1<0)
 		continue;
 	tv=convert_real(t,h3);
-	if (!isnan(tv))
+	if (!isnan(tv) && !isinf(tv))
 		{
 		if (isnan(tmin) || tv < tmin)
 			tmin = tv;
@@ -3138,7 +3176,20 @@ if(x1>GLOBALS->wavewidth)
 type = vtype2(t,h);
 tv=convert_real(t,h);
 tv2=convert_real(t,h2);
-if(isnan(tv))
+
+if((is_inf = isinf(tv)))
+	{
+	if(tv < 0)
+		{
+		yt0 = y0;
+		}
+		else
+		{
+		yt0 = y1;
+		}
+	}
+else
+if((is_nan = isnan(tv)))
 	{
 	yt0 = yu;
 	}
@@ -3146,6 +3197,19 @@ if(isnan(tv))
 	{
 	yt0 = y0 + (tv - tmin) * tmax;
 	}
+
+if(isinf(tv2))
+	{
+	if(tv2 < 0)
+		{
+		yt1 = y0;
+		}
+		else
+		{
+		yt1 = y1;
+		}
+	}
+else
 if(isnan(tv2))
 	{
 	yt1 = yu;
@@ -3154,6 +3218,7 @@ if(isnan(tv2))
 	{
 	yt1 = y0 + (tv2 - tmin) * tmax;
 	}
+
 if(x0!=x1)
 	{
 	if(type == AN_0) 
@@ -3173,6 +3238,9 @@ if(x0!=x1)
 			}
 		}
 
+        cfixed = is_nan ? cnan : c;
+	cfixed = is_inf ? cinf : cfixed;
+
 	if(t->flags & TR_ANALOG_INTERPOLATED)
 		{
 		if(t->flags & TR_ANALOG_STEP)
@@ -3185,23 +3253,23 @@ if(x0!=x1)
 			{
 			if((yt0==yt1)&&((x0 > x1)||(x0 < 0)))
 				{
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,0, yt0,x1,yt1);
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,0, yt0,x1,yt1);
 				}
 				else
 				{
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1,yt1);
 				}
 			}
 			else
 			{
-			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1,yt1);
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1,yt1);
 			}
 		}
 	else
 	if(t->flags & TR_ANALOG_STEP)
 		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x0, yt0,x1, yt0);
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, c,x1, yt0,x1, yt1);
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1, yt0);
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x1, yt0,x1, yt1);
 		}
 	}
 	else
@@ -3502,6 +3570,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2008/01/25 21:50:35  gtkwave
+ * added clipping on analog waveforms for horiz lines > tims.last xpos
+ *
  * Revision 1.23  2008/01/25 04:10:15  gtkwave
  * added new resizing options to menu
  *

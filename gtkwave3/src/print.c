@@ -1351,6 +1351,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
   int lasttype = -1;
   double mynan = strtod ("NaN", NULL);
   double tmin = mynan, tmax = mynan, tv, tv2;
+  int is_nan, is_inf;
 
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
   y1 = ((which + 1) * GLOBALS->fontheight) + 2;
@@ -1386,7 +1387,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 		      if (h3->time <= GLOBALS->tims.last)
 			tv = convert_real_vec (t, h3->v.h_vector);
 		    }
-		  if (!isnan (tv))
+		  if (!isnan (tv) && !isinf (tv))
 		    {
 		      if (isnan (tmin) || tv < tmin)
 			tmin = tv;
@@ -1457,7 +1458,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	      if (h3->time <= GLOBALS->tims.last)
 		tv = convert_real_vec (t, h3->v.h_vector);
 	    }
-	  if (!isnan (tv))
+	  if (!isnan (tv) && !isinf (tv))
 	    {
 	      if (isnan (tmin) || tv < tmin)
 		tmin = tv;
@@ -1537,14 +1538,47 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	  if (h2->time <= GLOBALS->tims.last)
 	    tv2 = convert_real_vec (t, h2->v.h_vector);
 	}
-      if (isnan (tv))
-	yt0 = yu;
+
+      if ((is_inf = isinf (tv)))
+	{
+	  if (tv < 0)
+	    {
+	      yt0 = y0;
+	    }
+	  else
+	    {
+	      yt0 = y1;
+	    }
+	}
+      else if ((is_nan = isnan (tv)))
+	{
+	  yt0 = yu;
+	}
       else
-	yt0 = y0 + (tv - tmin) * tmax;
-      if (isnan (tv2))
-	yt1 = yu;
+	{
+	  yt0 = y0 + (tv - tmin) * tmax;
+	}
+
+      if (isinf (tv2))
+	{
+	  if (tv2 < 0)
+	    {
+	      yt1 = y0;
+	    }
+	  else
+	    {
+	      yt1 = y1;
+	    }
+	}
+      else if (isnan (tv2))
+	{
+	  yt1 = yu;
+	}
       else
-	yt1 = y0 + (tv2 - tmin) * tmax;
+	{
+	  yt1 = y0 + (tv2 - tmin) * tmax;
+	}
+
       if (x0 != x1)
 	{
 	  if (h->next)
@@ -1869,6 +1903,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
   int lasttype = -1;
   double mynan = strtod ("NaN", NULL);
   double tmin = mynan, tmax = mynan, tv, tv2;
+  int is_nan, is_inf;
 
   h = v;
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
@@ -1897,7 +1932,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 		  tv = mynan;
 
 		  tv = convert_real (t, h3);
-		  if (!isnan (tv))
+		  if (!isnan (tv) && !isinf (tv))
 		    {
 		      if (isnan (tmin) || tv < tmin)
 			tmin = tv;
@@ -1963,7 +1998,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	  if (x1 < 0)
 	    continue;
 	  tv = convert_real (t, h3);
-	  if (!isnan (tv))
+	  if (!isnan (tv) && !isinf (tv))
 	    {
 	      if (isnan (tmin) || tv < tmin)
 		tmin = tv;
@@ -2021,14 +2056,47 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
       type = vtype2 (t, h);
       tv = convert_real (t, h);
       tv2 = convert_real (t, h2);
-      if (isnan (tv))
-	yt0 = yu;
+
+      if ((is_inf = isinf (tv)))
+	{
+	  if (tv < 0)
+	    {
+	      yt0 = y0;
+	    }
+	  else
+	    {
+	      yt0 = y1;
+	    }
+	}
+      else if ((is_nan = isnan (tv)))
+	{
+	  yt0 = yu;
+	}
       else
-	yt0 = y0 + (tv - tmin) * tmax;
-      if (isnan (tv2))
-	yt1 = yu;
+	{
+	  yt0 = y0 + (tv - tmin) * tmax;
+	}
+
+      if (isinf (tv2))
+	{
+	  if (tv2 < 0)
+	    {
+	      yt1 = y0;
+	    }
+	  else
+	    {
+	      yt1 = y1;
+	    }
+	}
+      else if (isnan (tv2))
+	{
+	  yt1 = yu;
+	}
       else
-	yt1 = y0 + (tv2 - tmin) * tmax;
+	{
+	  yt1 = y0 + (tv2 - tmin) * tmax;
+	}
+
       if (x0 != x1)
 	{
 	  if (h->next)
@@ -2594,6 +2662,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/01/25 04:10:15  gtkwave
+ * added new resizing options to menu
+ *
  * Revision 1.7  2008/01/24 20:19:39  gtkwave
  * analog rendering fixes
  *
