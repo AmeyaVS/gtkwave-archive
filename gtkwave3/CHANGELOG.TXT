@@ -368,7 +368,7 @@
 		click-to-front for window managers that automatically move
 		windows to front when their insides (not decorations) are
 		clicked on.
-3.1.4	23jan08	Added fix for how dnd gets killed after reload on new
+3.1.4	24jan08	Added fix for how dnd gets killed after reload on new
 		versions of GTK (e.g., 2.10.14).
 		Added dirty_kick in MaxSignalLength that forces usize if
 		width is dirty.
@@ -380,3 +380,5 @@
 		Now allow both interpolated+step simultaneously for analog.
 		Integrating signal window popup menu code.
 		Fixed rendering bugs in coalesced vectors displayed as analog.
+		Added resizing options that are windowed to either the screen
+		or across all trace data.

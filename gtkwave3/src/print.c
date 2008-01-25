@@ -1362,60 +1362,120 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
   if (ysiz < 1)
     ysiz = 1;
 
-  h2 = h;
-  for (;;)
+  if (t->flags & TR_ANALOG_FULLSCALE)	/* otherwise use dynamic */
     {
-      if (!h2)
-	break;
-      tim = h2->time;
-      if (tim > GLOBALS->tims.end)
+      if ((t->flags != t->cached_flags) || (!t->minmax_valid))
 	{
-	  endcnt++;
-	  if (endcnt == 2)
-	    break;
-	}
-      if (tim > GLOBALS->tims.last)
-	break;
-      x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
-	break;
-      h3 = h2;
-      h2 = h2->next;
-      if (!h2)
-	break;
-      tim = h2->time;
-      x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x1 < 0)
-	continue;
-      tv = mynan;
-      if (h3->flags & HIST_REAL)
-	{
-	  if (!(h3->flags & HIST_STRING) && h3->v.h_vector)
-	    tv = *(double *) h3->v.h_vector;
+	  h3 = &t->n.nd->head;
+	  for (;;)
+	    {
+	      if (!h3)
+		break;
+
+	      if ((h3->time >= GLOBALS->tims.first)
+		  && (h3->time <= GLOBALS->tims.last))
+		{
+		  tv = mynan;
+		  if (h3->flags & HIST_REAL)
+		    {
+		      if (!(h3->flags & HIST_STRING) && h3->v.h_vector)
+			tv = *(double *) h3->v.h_vector;
+		    }
+		  else
+		    {
+		      if (h3->time <= GLOBALS->tims.last)
+			tv = convert_real_vec (t, h3->v.h_vector);
+		    }
+		  if (!isnan (tv))
+		    {
+		      if (isnan (tmin) || tv < tmin)
+			tmin = tv;
+		      if (isnan (tmax) || tv > tmax)
+			tmax = tv;
+		    }
+		}
+	      h3 = h3->next;
+	    }
+
+	  if (isnan (tmin) || isnan (tmax))
+	    tmin = tmax = 0;
+	  if ((tmax - tmin) < 1e-20)
+	    {
+	      tmax = 1;
+	      tmin -= 0.5 * (y1 - y0);
+	    }
+	  else
+	    {
+	      tmax = (y1 - y0) / (tmax - tmin);
+	    }
+
+	  t->minmax_valid = 1;
+	  t->d_minval = tmin;
+	  t->d_maxval = tmax;
 	}
       else
 	{
-	  if (h3->time <= GLOBALS->tims.last)
-	    tv = convert_real_vec (t, h3->v.h_vector);
+	  tmin = t->d_minval;
+	  tmax = t->d_maxval;
 	}
-      if (!isnan (tv))
-	{
-	  if (isnan (tmin) || tv < tmin)
-	    tmin = tv;
-	  if (isnan (tmax) || tv > tmax)
-	    tmax = tv;
-	}
-    }
-  if (isnan (tmin) || isnan (tmax))
-    tmin = tmax = 0;
-  if ((tmax - tmin) < 1e-20)
-    {
-      tmax = 1;
-      tmin -= 0.5 * (y1 - y0);
     }
   else
     {
-      tmax = (y1 - y0) / (tmax - tmin);
+      h2 = h;
+      for (;;)
+	{
+	  if (!h2)
+	    break;
+	  tim = h2->time;
+	  if (tim > GLOBALS->tims.end)
+	    {
+	      endcnt++;
+	      if (endcnt == 2)
+		break;
+	    }
+	  if (tim > GLOBALS->tims.last)
+	    break;
+	  x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	  if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
+	    break;
+	  h3 = h2;
+	  h2 = h2->next;
+	  if (!h2)
+	    break;
+	  tim = h2->time;
+	  x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	  if (x1 < 0)
+	    continue;
+	  tv = mynan;
+	  if (h3->flags & HIST_REAL)
+	    {
+	      if (!(h3->flags & HIST_STRING) && h3->v.h_vector)
+		tv = *(double *) h3->v.h_vector;
+	    }
+	  else
+	    {
+	      if (h3->time <= GLOBALS->tims.last)
+		tv = convert_real_vec (t, h3->v.h_vector);
+	    }
+	  if (!isnan (tv))
+	    {
+	      if (isnan (tmin) || tv < tmin)
+		tmin = tv;
+	      if (isnan (tmax) || tv > tmax)
+		tmax = tv;
+	    }
+	}
+      if (isnan (tmin) || isnan (tmax))
+	tmin = tmax = 0;
+      if ((tmax - tmin) < 1e-20)
+	{
+	  tmax = 1;
+	  tmin -= 0.5 * (y1 - y0);
+	}
+      else
+	{
+	  tmax = (y1 - y0) / (tmax - tmin);
+	}
     }
 
   pr_setgray (prc, 0.0);
@@ -1428,10 +1488,12 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	break;
 
       x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x0 < -1)
-	x0 = -1;
-      else if (x0 > GLOBALS->wavewidth)
-	break;
+      /*
+         if (x0 < -1)
+         x0 = -1;
+         else if (x0 > GLOBALS->wavewidth)
+         break;
+       */
 
       h2 = h->next;
       if (!h2)
@@ -1439,15 +1501,15 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
       h2tim = tim = (h2->time);
       if (tim > GLOBALS->tims.last)
 	tim = GLOBALS->tims.last;
-      else if (tim > GLOBALS->tims.end + 1)
-	tim = GLOBALS->tims.end + 1;
+      /* else if (tim > GLOBALS->tims.end + 1)
+         tim = GLOBALS->tims.end + 1; */
       x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-
-      if (x1 < -1)
-	x1 = -1;
-      else if (x1 > GLOBALS->wavewidth)
-	x1 = GLOBALS->wavewidth;
-
+      /*
+         if (x1 < -1)
+         x1 = -1;
+         else if (x1 > GLOBALS->wavewidth)
+         x1 = GLOBALS->wavewidth;
+       */
 
       /* draw trans */
       type =
@@ -1819,54 +1881,107 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
   if (ysiz < 1)
     ysiz = 1;
 
-  h2 = h;
-  for (;;)
+  if (t->flags & TR_ANALOG_FULLSCALE)	/* otherwise use dynamic */
     {
-      if (!h2)
-	break;
-      tim = h2->time;
+      if ((t->flags != t->cached_flags) || (!t->minmax_valid))
+	{
+	  h3 = t->n.vec->vectors[0];
+	  for (;;)
+	    {
+	      if (!h3)
+		break;
 
-      if (tim > GLOBALS->tims.end)
-	{
-	  endcnt++;
-	  if (endcnt == 2)
-	    break;
-	}
-      if (tim > GLOBALS->tims.last)
-	break;
+	      if ((h3->time >= GLOBALS->tims.first)
+		  && (h3->time <= GLOBALS->tims.last))
+		{
+		  tv = mynan;
 
-      x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
-	{
-	  break;
+		  tv = convert_real (t, h3);
+		  if (!isnan (tv))
+		    {
+		      if (isnan (tmin) || tv < tmin)
+			tmin = tv;
+		      if (isnan (tmax) || tv > tmax)
+			tmax = tv;
+		    }
+		}
+
+	      h3 = h3->next;
+	    }
+
+	  if (isnan (tmin) || isnan (tmax))
+	    tmin = tmax = 0;
+	  if ((tmax - tmin) < 1e-20)
+	    {
+	      tmax = 1;
+	      tmin -= 0.5 * (y1 - y0);
+	    }
+	  else
+	    {
+	      tmax = (y1 - y0) / (tmax - tmin);
+	    }
+
+	  t->minmax_valid = 1;
+	  t->d_minval = tmin;
+	  t->d_maxval = tmax;
 	}
-      h3 = h2;
-      h2 = h2->next;
-      if (!h2)
-	break;
-      tim = h2->time;
-      x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x1 < 0)
-	continue;
-      tv = convert_real (t, h3);
-      if (!isnan (tv))
+      else
 	{
-	  if (isnan (tmin) || tv < tmin)
-	    tmin = tv;
-	  if (isnan (tmax) || tv > tmax)
-	    tmax = tv;
+	  tmin = t->d_minval;
+	  tmax = t->d_maxval;
 	}
-    }
-  if (isnan (tmin) || isnan (tmax))
-    tmin = tmax = 0;
-  if ((tmax - tmin) < 1e-20)
-    {
-      tmax = 1;
-      tmin -= 0.5 * (y1 - y0);
     }
   else
     {
-      tmax = (y1 - y0) / (tmax - tmin);
+      h2 = h;
+      for (;;)
+	{
+	  if (!h2)
+	    break;
+	  tim = h2->time;
+
+	  if (tim > GLOBALS->tims.end)
+	    {
+	      endcnt++;
+	      if (endcnt == 2)
+		break;
+	    }
+	  if (tim > GLOBALS->tims.last)
+	    break;
+
+	  x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	  if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
+	    {
+	      break;
+	    }
+	  h3 = h2;
+	  h2 = h2->next;
+	  if (!h2)
+	    break;
+	  tim = h2->time;
+	  x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	  if (x1 < 0)
+	    continue;
+	  tv = convert_real (t, h3);
+	  if (!isnan (tv))
+	    {
+	      if (isnan (tmin) || tv < tmin)
+		tmin = tv;
+	      if (isnan (tmax) || tv > tmax)
+		tmax = tv;
+	    }
+	}
+      if (isnan (tmin) || isnan (tmax))
+	tmin = tmax = 0;
+      if ((tmax - tmin) < 1e-20)
+	{
+	  tmax = 1;
+	  tmin -= 0.5 * (y1 - y0);
+	}
+      else
+	{
+	  tmax = (y1 - y0) / (tmax - tmin);
+	}
     }
 
   pr_setgray (prc, 0.0);
@@ -1879,10 +1994,12 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	break;
 
       x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x0 < -1)
-	x0 = -1;
-      else if (x0 > GLOBALS->wavewidth)
-	break;
+      /*
+         if (x0 < -1)
+         x0 = -1;
+         else if (x0 > GLOBALS->wavewidth)
+         break;
+       */
 
       h2 = h->next;
       if (!h2)
@@ -1890,15 +2007,15 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
       h2tim = tim = (h2->time);
       if (tim > GLOBALS->tims.last)
 	tim = GLOBALS->tims.last;
-      else if (tim > GLOBALS->tims.end + 1)
-	tim = GLOBALS->tims.end + 1;
+      /* else if (tim > GLOBALS->tims.end + 1)
+         tim = GLOBALS->tims.end + 1; */
       x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-
-      if (x1 < -1)
-	x1 = -1;
-      else if (x1 > GLOBALS->wavewidth)
-	x1 = GLOBALS->wavewidth;
-
+      /*
+         if (x1 < -1)
+         x1 = -1;
+         else if (x1 > GLOBALS->wavewidth)
+         x1 = GLOBALS->wavewidth;
+       */
 
       /* draw trans */
       type = vtype2 (t, h);
@@ -2477,6 +2594,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/01/24 20:19:39  gtkwave
+ * analog rendering fixes
+ *
  * Revision 1.6  2008/01/23 04:49:32  gtkwave
  * more tweaking of interpolated+step mode (use snap dots)
  *

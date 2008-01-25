@@ -97,6 +97,8 @@ WV_MENU_EDFAOFF,
 WV_MENU_EDFASTEP,
 WV_MENU_EDFAINTERPOL,
 WV_MENU_EDFAINTERPOL2,
+WV_MENU_EDFARSD,
+WV_MENU_EDFARAD,
 WV_MENU_XLF_0,
 WV_MENU_XLF_1,
 WV_MENU_XLP_0,
@@ -301,6 +303,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/01/23 02:05:43  gtkwave
+ * added interpolated + step mode
+ *
  * Revision 1.7  2008/01/12 21:36:44  gtkwave
  * added black and white vs color rendering menu options
  *

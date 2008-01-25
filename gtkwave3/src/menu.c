@@ -3801,6 +3801,41 @@ if(GLOBALS->helpbox_is_active)
 
 dataformat( ~(TR_ANALOGMASK), (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP) );
 }
+
+void
+menu_dataformat_analog_resize_screen(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nAnalog Resizing Screen Data");
+        help_text(
+                " causes the waveform data for all currently highlighted traces"
+                " to be displayed such that the y-value scaling maximizes the on-screen trace"
+		" data so if fills the whole trace width at all times."            
+        );
+        return;
+        }
+
+dataformat( ~(TR_ANALOG_FULLSCALE), 0 );
+}
+
+void
+menu_dataformat_analog_resize_all(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nAnalog Resizing All Data"); 
+        help_text(
+                " causes the waveform data for all currently highlighted traces"
+                " to be displayed such that the y-value scaling maximizes the on-screen trace"
+		" data so if fills the whole trace width only when fully zoomed out."            
+		" (i.e., the scale used goes across all trace data)"
+        );
+        return;
+        }
+
+dataformat( ~(TR_ANALOG_FULLSCALE), (TR_ANALOG_FULLSCALE) );
+}
 /**/
 void menu_dataformat_highlight_all(GtkWidget *widget, gpointer data)
 {
@@ -4236,6 +4271,8 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Analog/Resizing/Screen Data", NULL, menu_dataformat_analog_resize_screen, WV_MENU_EDFARSD, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Analog/Resizing/All Data", NULL, menu_dataformat_analog_resize_all, WV_MENU_EDFARAD, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change All Highlighted", NULL, menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change First Highlighted", "<Control>F", menu_showchange, WV_MENU_ESCFH, "<Item>"),
       /* 50 */
@@ -4585,6 +4622,8 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Analog/Resizing/Screen Data", NULL, menu_dataformat_analog_resize_screen, WV_MENU_EDFARSD, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Analog/Resizing/All Data", NULL, menu_dataformat_analog_resize_all, WV_MENU_EDFARAD, "<Item>"),
 
     WAVE_GTKIFE("/<separator>", NULL, NULL, WV_MENU_SEP1, "<Separator>"),
     WAVE_GTKIFE("/Insert Analog Height Extension", NULL, menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
@@ -4636,6 +4675,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2008/01/24 03:17:57  gtkwave
+ * added cut and paste to popup menu
+ *
  * Revision 1.25  2008/01/23 16:37:56  gtkwave
  * created separate smaller popup instead of using normal itemfactory list
  *

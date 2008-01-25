@@ -230,12 +230,17 @@ typedef struct TraceEnt
     int	     f_filter;		/* file filter */
     int	     p_filter;		/* process filter */
 
+    double   d_minval, d_maxval; /* cached value for when auto scaling is turned off */
+
     unsigned is_alias : 1;	/* set when it's an alias (safe to free t->name then) */
     unsigned vector : 1;	/* 1 if bit vector, 0 if node */
     unsigned shift_drag_valid : 1; /* qualifies shift_drag above */
     unsigned interactive_vector_needs_regeneration : 1; /* for interactive VCDs */
+    unsigned minmax_valid : 1;	/* for d_minval, d_maxval */
 
     unsigned int flags;		/* see def below in TraceEntFlagBits */
+    unsigned int cached_flags;	/* used for analog to determine if need to recalculate */
+
     union
       {
 	nptr    nd;		/* what makes up this trace */
@@ -248,7 +253,8 @@ enum TraceEntFlagBits
 { TR_HIGHLIGHT_B, TR_HEX_B, TR_DEC_B, TR_BIN_B, TR_OCT_B, 
   TR_RJUSTIFY_B, TR_INVERT_B, TR_REVERSE_B, TR_EXCLUDE_B,
   TR_BLANK_B, TR_SIGNED_B, TR_ASCII_B, TR_COLLAPSED_B, TR_FTRANSLATED_B, TR_PTRANSLATED_B,
-  TR_ANALOG_STEP_B, TR_ANALOG_INTERPOLATED_B, TR_ANALOG_BLANK_STRETCH_B, TR_REAL_B
+  TR_ANALOG_STEP_B, TR_ANALOG_INTERPOLATED_B, TR_ANALOG_BLANK_STRETCH_B, TR_REAL_B,
+  TR_ANALOG_FULLSCALE_B
 };
  
 #define TR_HIGHLIGHT 		(1<<TR_HIGHLIGHT_B)
@@ -267,6 +273,7 @@ enum TraceEntFlagBits
 #define TR_ANALOG_INTERPOLATED	(1<<TR_ANALOG_INTERPOLATED_B)
 #define TR_ANALOG_BLANK_STRETCH	(1<<TR_ANALOG_BLANK_STRETCH_B)
 #define TR_REAL			(1<<TR_REAL_B)
+#define TR_ANALOG_FULLSCALE	(1<<TR_ANALOG_FULLSCALE_B)
 
 #define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL)
 
@@ -321,6 +328,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/12/17 03:22:44  gtkwave
+ * integration of (currently unused) vlist_packer routines
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
