@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2005. 
+ * Copyright (c) Tony Bybell 1999-2008. 
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -1351,7 +1351,8 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
   int lasttype = -1;
   double mynan = strtod ("NaN", NULL);
   double tmin = mynan, tmax = mynan, tv, tv2;
-  int is_nan, is_inf;
+  int is_nan = 0, is_nan2 = 0, is_inf = 0;
+  int any_infs = 0, any_infp = 0, any_infm = 0;
 
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
   y1 = ((which + 1) * GLOBALS->fontheight) + 2;
@@ -1394,12 +1395,36 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 		      if (isnan (tmax) || tv > tmax)
 			tmax = tv;
 		    }
+		  else if (isinf (tv))
+		    {
+		      any_infs = 1;
+
+		      if (tv > 0)
+			{
+			  any_infp = 1;
+			}
+		      else
+			{
+			  any_infm = 1;
+			}
+		    }
 		}
 	      h3 = h3->next;
 	    }
 
 	  if (isnan (tmin) || isnan (tmax))
 	    tmin = tmax = 0;
+
+	  if (any_infs)
+	    {
+	      double tdelta = tmax - tmin;
+
+	      if (any_infp)
+		tmax = tmax + tdelta;
+	      if (any_infm)
+		tmin = tmin - tdelta;
+	    }
+
 	  if ((tmax - tmin) < 1e-20)
 	    {
 	      tmax = 1;
@@ -1422,12 +1447,12 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
     }
   else
     {
-      h2 = h;
+      h3 = h;
       for (;;)
 	{
-	  if (!h2)
+	  if (!h3)
 	    break;
-	  tim = h2->time;
+	  tim = h3->time;
 	  if (tim > GLOBALS->tims.end)
 	    {
 	      endcnt++;
@@ -1439,14 +1464,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	  x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
 	  if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
 	    break;
-	  h3 = h2;
-	  h2 = h2->next;
-	  if (!h2)
-	    break;
-	  tim = h2->time;
-	  x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-	  if (x1 < 0)
-	    continue;
+
 	  tv = mynan;
 	  if (h3->flags & HIST_REAL)
 	    {
@@ -1465,9 +1483,34 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	      if (isnan (tmax) || tv > tmax)
 		tmax = tv;
 	    }
+	  else if (isinf (tv))
+	    {
+	      any_infs = 1;
+	      if (tv > 0)
+		{
+		  any_infp = 1;
+		}
+	      else
+		{
+		  any_infm = 1;
+		}
+	    }
+
+	  h3 = h3->next;
 	}
       if (isnan (tmin) || isnan (tmax))
 	tmin = tmax = 0;
+
+      if (any_infs)
+	{
+	  double tdelta = tmax - tmin;
+
+	  if (any_infp)
+	    tmax = tmax + tdelta;
+	  if (any_infm)
+	    tmin = tmin - tdelta;
+	}
+
       if ((tmax - tmin) < 1e-20)
 	{
 	  tmax = 1;
@@ -1570,7 +1613,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	      yt1 = y1;
 	    }
 	}
-      else if (isnan (tv2))
+      else if ((is_nan2 = isnan (tv2)))
 	{
 	  yt1 = yu;
 	}
@@ -1589,7 +1632,50 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 		}
 	    }
 
-	  if (t->flags & TR_ANALOG_INTERPOLATED)
+	  if (is_nan || is_nan2)
+	    {
+	      if (is_nan)
+		{
+		  pr_draw_line (prc, x0, y1, x0, y0);
+		  pr_draw_line (prc, x0, y0, x1, yt1);
+		  pr_draw_line (prc, x1, yt1, x0, y1);
+
+		  if ((t->
+		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
+		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
+		    {
+		      pr_draw_line (prc, x1 - 1, yt1, x1 + 1, yt1);
+		      pr_draw_line (prc, x1, yt1 - 1, x1, yt1 + 1);
+
+		      pr_draw_line (prc, x0 - 1, y0, x0 + 1, y0);
+		      pr_draw_line (prc, x0, y0 - 1, x0, y0 + 1);
+
+		      pr_draw_line (prc, x0 - 1, y1, x0 + 1, y1);
+		      pr_draw_line (prc, x0, y1 - 1, x0, y1 + 1);
+		    }
+		}
+	      if (is_nan2)
+		{
+		  pr_draw_line (prc, x0, yt0, x1, y1);
+		  pr_draw_line (prc, x1, y1, x1, y0);
+		  pr_draw_line (prc, x1, y0, x0, yt0);
+
+		  if ((t->
+		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
+		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
+		    {
+		      pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
+		      pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+
+		      pr_draw_line (prc, x1 - 1, y0, x1 + 1, y0);
+		      pr_draw_line (prc, x1, y0 - 1, x1, y0 + 1);
+
+		      pr_draw_line (prc, x1 - 1, y1, x1 + 1, y1);
+		      pr_draw_line (prc, x1, y1 - 1, x1, y1 + 1);
+		    }
+		}
+	    }
+	  else if (t->flags & TR_ANALOG_INTERPOLATED)
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt1);
 	      if (t->flags & TR_ANALOG_STEP)
@@ -1903,7 +1989,8 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
   int lasttype = -1;
   double mynan = strtod ("NaN", NULL);
   double tmin = mynan, tmax = mynan, tv, tv2;
-  int is_nan, is_inf;
+  int is_nan = 0, is_nan2 = 0, is_inf = 0;
+  int any_infs = 0, any_infp = 0, any_infm = 0;
 
   h = v;
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
@@ -1939,6 +2026,19 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 		      if (isnan (tmax) || tv > tmax)
 			tmax = tv;
 		    }
+		  else if (isinf (tv))
+		    {
+		      any_infs = 1;
+
+		      if (tv > 0)
+			{
+			  any_infp = 1;
+			}
+		      else
+			{
+			  any_infm = 1;
+			}
+		    }
 		}
 
 	      h3 = h3->next;
@@ -1946,6 +2046,17 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 
 	  if (isnan (tmin) || isnan (tmax))
 	    tmin = tmax = 0;
+
+	  if (any_infs)
+	    {
+	      double tdelta = tmax - tmin;
+
+	      if (any_infp)
+		tmax = tmax + tdelta;
+	      if (any_infm)
+		tmin = tmin - tdelta;
+	    }
+
 	  if ((tmax - tmin) < 1e-20)
 	    {
 	      tmax = 1;
@@ -1968,12 +2079,12 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
     }
   else
     {
-      h2 = h;
+      h3 = h;
       for (;;)
 	{
-	  if (!h2)
+	  if (!h3)
 	    break;
-	  tim = h2->time;
+	  tim = h3->time;
 
 	  if (tim > GLOBALS->tims.end)
 	    {
@@ -1989,14 +2100,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	    {
 	      break;
 	    }
-	  h3 = h2;
-	  h2 = h2->next;
-	  if (!h2)
-	    break;
-	  tim = h2->time;
-	  x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-	  if (x1 < 0)
-	    continue;
+
 	  tv = convert_real (t, h3);
 	  if (!isnan (tv) && !isinf (tv))
 	    {
@@ -2005,9 +2109,34 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	      if (isnan (tmax) || tv > tmax)
 		tmax = tv;
 	    }
+	  else if (isinf (tv))
+	    {
+	      any_infs = 1;
+	      if (tv > 0)
+		{
+		  any_infp = 1;
+		}
+	      else
+		{
+		  any_infm = 1;
+		}
+	    }
+
+	  h3 = h3->next;
 	}
       if (isnan (tmin) || isnan (tmax))
 	tmin = tmax = 0;
+
+      if (any_infs)
+	{
+	  double tdelta = tmax - tmin;
+
+	  if (any_infp)
+	    tmax = tmax + tdelta;
+	  if (any_infm)
+	    tmin = tmin - tdelta;
+	}
+
       if ((tmax - tmin) < 1e-20)
 	{
 	  tmax = 1;
@@ -2088,7 +2217,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	      yt1 = y1;
 	    }
 	}
-      else if (isnan (tv2))
+      else if ((is_nan2 = isnan (tv2)))
 	{
 	  yt1 = yu;
 	}
@@ -2107,7 +2236,50 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 		}
 	    }
 
-	  if (t->flags & TR_ANALOG_INTERPOLATED)
+	  if (is_nan || is_nan2)
+	    {
+	      if (is_nan)
+		{
+		  pr_draw_line (prc, x0, y1, x0, y0);
+		  pr_draw_line (prc, x0, y0, x1, yt1);
+		  pr_draw_line (prc, x1, yt1, x0, y1);
+
+		  if ((t->
+		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
+		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
+		    {
+		      pr_draw_line (prc, x1 - 1, yt1, x1 + 1, yt1);
+		      pr_draw_line (prc, x1, yt1 - 1, x1, yt1 + 1);
+
+		      pr_draw_line (prc, x0 - 1, y0, x0 + 1, y0);
+		      pr_draw_line (prc, x0, y0 - 1, x0, y0 + 1);
+
+		      pr_draw_line (prc, x0 - 1, y1, x0 + 1, y1);
+		      pr_draw_line (prc, x0, y1 - 1, x0, y1 + 1);
+		    }
+		}
+	      if (is_nan2)
+		{
+		  pr_draw_line (prc, x0, yt0, x1, y1);
+		  pr_draw_line (prc, x1, y1, x1, y0);
+		  pr_draw_line (prc, x1, y0, x0, yt0);
+
+		  if ((t->
+		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
+		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
+		    {
+		      pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
+		      pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+
+		      pr_draw_line (prc, x1 - 1, y0, x1 + 1, y0);
+		      pr_draw_line (prc, x1, y0 - 1, x1, y0 + 1);
+
+		      pr_draw_line (prc, x1 - 1, y1, x1 + 1, y1);
+		      pr_draw_line (prc, x1, y1 - 1, x1, y1 + 1);
+		    }
+		}
+	    }
+	  else if (t->flags & TR_ANALOG_INTERPOLATED)
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt1);
 	      if (t->flags & TR_ANALOG_STEP)
@@ -2662,6 +2834,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/01/25 23:29:23  gtkwave
+ * modify analog slightly for nan and inf handling
+ *
  * Revision 1.8  2008/01/25 04:10:15  gtkwave
  * added new resizing options to menu
  *
