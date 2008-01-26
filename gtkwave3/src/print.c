@@ -1636,9 +1636,9 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	    {
 	      if (is_nan)
 		{
-		  pr_draw_line (prc, x0, y1, x0, y0);
-		  pr_draw_line (prc, x0, y0, x1, yt1);
-		  pr_draw_line (prc, x1, yt1, x0, y1);
+		  pr_setgray (prc, 0.70);
+		  pr_draw_box (prc, x0, y1, x1, y0);
+		  pr_setgray (prc, 0.0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
@@ -1656,16 +1656,15 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 		}
 	      if (is_nan2)
 		{
-		  pr_draw_line (prc, x0, yt0, x1, y1);
-		  pr_draw_line (prc, x1, y1, x1, y0);
-		  pr_draw_line (prc, x1, y0, x0, yt0);
+		  pr_draw_line (prc, x0, yt0, x1, yt0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		    {
-		      pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
-		      pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		      pr_setgray (prc, 0.70);
+		      pr_draw_line (prc, x1, y1, x1, y0);
+		      pr_setgray (prc, 0.0);
 
 		      pr_draw_line (prc, x1 - 1, y0, x1 + 1, y0);
 		      pr_draw_line (prc, x1, y0 - 1, x1, y0 + 1);
@@ -2240,9 +2239,9 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	    {
 	      if (is_nan)
 		{
-		  pr_draw_line (prc, x0, y1, x0, y0);
-		  pr_draw_line (prc, x0, y0, x1, yt1);
-		  pr_draw_line (prc, x1, yt1, x0, y1);
+		  pr_setgray (prc, 0.70);
+		  pr_draw_box (prc, x0, y1, x1, y0);
+		  pr_setgray (prc, 0.0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
@@ -2260,16 +2259,15 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 		}
 	      if (is_nan2)
 		{
-		  pr_draw_line (prc, x0, yt0, x1, y1);
-		  pr_draw_line (prc, x1, y1, x1, y0);
-		  pr_draw_line (prc, x1, y0, x0, yt0);
+		  pr_draw_line (prc, x0, yt0, x1, yt0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		    {
-		      pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
-		      pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		      pr_setgray (prc, 0.70);
+		      pr_draw_line (prc, x1, y1, x1, y0);
+		      pr_setgray (prc, 0.0);
 
 		      pr_draw_line (prc, x1 - 1, y0, x1 + 1, y0);
 		      pr_draw_line (prc, x1, y0 - 1, x1, y0 + 1);
@@ -2834,6 +2832,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/01/26 05:02:14  gtkwave
+ * added parallelogram rendering for nans
+ *
  * Revision 1.9  2008/01/25 23:29:23  gtkwave
  * modify analog slightly for nan and inf handling
  *

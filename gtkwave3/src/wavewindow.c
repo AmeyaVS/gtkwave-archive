@@ -2711,8 +2711,7 @@ if(x0!=x1)
 		{
 		if(is_nan)
 			{
-			GdkPoint points[6] = {x0, y1, x0, y0, x1, yt1 };
-			gdk_draw_polygon(GLOBALS->wavepixmap_wavewindow_c_1, cnan, TRUE, points, 3);
+			gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cnan, TRUE, x0, y1, x1-x0, y0-y1);
 
 			if((t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP))
 				{
@@ -2728,13 +2727,11 @@ if(x0!=x1)
 			}
 		if(is_nan2)
 			{
-			GdkPoint points[6] = {x0, yt0, x1, y1, x1, y0 };
-			gdk_draw_polygon(GLOBALS->wavepixmap_wavewindow_c_1, cnan, TRUE, points, 3);
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0, x1, yt0);
 
 			if((t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP))
 				{
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cnan,x1, yt1,x1, yt0);
 
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x1-1, y0,x1+1, y0);
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x1, y0-1,x1, y0+1);
@@ -3369,10 +3366,9 @@ if(x0!=x1)
 
         if(is_nan || is_nan2)
                 {
-                if(is_nan)
-                        {
-                        GdkPoint points[6] = {x0, y1, x0, y0, x1, yt1 };
-                        gdk_draw_polygon(GLOBALS->wavepixmap_wavewindow_c_1, cnan, TRUE, points, 3);
+		if(is_nan)
+			{
+			gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cnan, TRUE, x0, y1, x1-x0, y0-y1);
 
 			if((t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP))
 				{
@@ -3385,24 +3381,22 @@ if(x0!=x1)
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, y1,x0+1, y1);
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, y1-1,x0, y1+1);
 				}
-                        }
-                if(is_nan2)
-                        {
-                        GdkPoint points[6] = {x0, yt0, x1, y1, x1, y0 };
-                        gdk_draw_polygon(GLOBALS->wavepixmap_wavewindow_c_1, cnan, TRUE, points, 3);
+			}
+		if(is_nan2)
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0, x1, yt0);
 
-                        if((t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP))
-                                {
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
-				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
+			if((t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP))
+				{
+				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cnan,x1, yt1,x1, yt0);
 
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x1-1, y0,x1+1, y0);
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x1, y0-1,x1, y0+1);
 
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x1-1, y1,x1+1, y1);
 				wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x1, y1-1,x1, y1+1);
-                                }
-                        }
+				}
+			}
                 }
         else
 	if(t->flags & TR_ANALOG_INTERPOLATED)
@@ -3734,6 +3728,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2008/01/26 05:02:14  gtkwave
+ * added parallelogram rendering for nans
+ *
  * Revision 1.25  2008/01/25 23:29:23  gtkwave
  * modify analog slightly for nan and inf handling
  *
