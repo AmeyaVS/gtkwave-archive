@@ -2706,6 +2706,7 @@ if(x0!=x1)
 		}
 
 	cfixed = is_inf ? cinf : c;
+	if((is_nan2) && (h2tim > GLOBALS->max_time)) is_nan2 = 0;
 
 	if(is_nan || is_nan2)
 		{
@@ -3370,6 +3371,7 @@ if(x0!=x1)
 		}
 
 	cfixed = is_inf ? cinf : c;
+	if((is_nan2) && (h2tim > GLOBALS->max_time)) is_nan2 = 0;
 
         if(is_nan || is_nan2)
                 {
@@ -3743,6 +3745,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2008/01/27 01:21:05  gtkwave
+ * make transition to/from inf/-inf a square wave when interpolated
+ *
  * Revision 1.27  2008/01/26 19:13:34  gtkwave
  * replace NaN trapezoids with NaN boxes
  *
