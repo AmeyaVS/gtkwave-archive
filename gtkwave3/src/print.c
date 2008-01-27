@@ -1351,7 +1351,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
   int lasttype = -1;
   double mynan = strtod ("NaN", NULL);
   double tmin = mynan, tmax = mynan, tv, tv2;
-  int is_nan = 0, is_nan2 = 0, is_inf = 0;
+  int is_nan = 0, is_nan2 = 0, is_inf = 0, is_inf2 = 0;
   int any_infs = 0, any_infp = 0, any_infm = 0;
 
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
@@ -1602,7 +1602,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	  yt0 = y0 + (tv - tmin) * tmax;
 	}
 
-      if (isinf (tv2))
+      if ((is_inf2 = isinf (tv2)))
 	{
 	  if (tv2 < 0)
 	    {
@@ -1674,7 +1674,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 		    }
 		}
 	    }
-	  else if (t->flags & TR_ANALOG_INTERPOLATED)
+	  else if (t->flags & TR_ANALOG_INTERPOLATED && !is_inf && !is_inf2)
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt1);
 	      if (t->flags & TR_ANALOG_STEP)
@@ -1683,10 +1683,17 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
 		}
 	    }
-	  else if (t->flags & TR_ANALOG_STEP)
+	  else			/* if (t->flags & TR_ANALOG_STEP) */
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt0);
 	      pr_draw_line (prc, x1, yt0, x1, yt1);
+
+	      if ((t->flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
+		  (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
+		{
+		  pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
+		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		}
 	    }
 	}
       else
@@ -1988,7 +1995,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
   int lasttype = -1;
   double mynan = strtod ("NaN", NULL);
   double tmin = mynan, tmax = mynan, tv, tv2;
-  int is_nan = 0, is_nan2 = 0, is_inf = 0;
+  int is_nan = 0, is_nan2 = 0, is_inf = 0, is_inf2 = 0;
   int any_infs = 0, any_infp = 0, any_infm = 0;
 
   h = v;
@@ -2205,7 +2212,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	  yt0 = y0 + (tv - tmin) * tmax;
 	}
 
-      if (isinf (tv2))
+      if ((is_inf2 = isinf (tv2)))
 	{
 	  if (tv2 < 0)
 	    {
@@ -2277,7 +2284,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 		    }
 		}
 	    }
-	  else if (t->flags & TR_ANALOG_INTERPOLATED)
+	  else if ((t->flags & TR_ANALOG_INTERPOLATED) && !is_inf && !is_inf2)
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt1);
 	      if (t->flags & TR_ANALOG_STEP)
@@ -2286,10 +2293,17 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
 		}
 	    }
-	  else if (t->flags & TR_ANALOG_STEP)
+	  else			/* if (t->flags & TR_ANALOG_STEP) */
 	    {
 	      pr_draw_line (prc, x0, yt0, x1, yt0);
 	      pr_draw_line (prc, x1, yt0, x1, yt1);
+
+	      if ((t->flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
+		  (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
+		{
+		  pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
+		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		}
 	    }
 	}
       else
@@ -2832,6 +2846,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/01/26 19:13:34  gtkwave
+ * replace NaN trapezoids with NaN boxes
+ *
  * Revision 1.10  2008/01/26 05:02:14  gtkwave
  * added parallelogram rendering for nans
  *

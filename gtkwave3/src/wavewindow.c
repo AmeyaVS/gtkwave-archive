@@ -2406,7 +2406,7 @@ GdkGC    *cfixed;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 gint rmargin;
-int is_nan = 0, is_nan2 = 0, is_inf = 0;
+int is_nan = 0, is_nan2 = 0, is_inf = 0, is_inf2 = 0;
 int any_infs = 0, any_infp = 0, any_infm = 0;
 
 ci = GLOBALS->gc_baseline_wavewindow_c_1;
@@ -2665,7 +2665,7 @@ if((is_nan = isnan(tv)))
 	yt0 = y0 + (tv - tmin) * tmax;
 	}
 
-if(isinf(tv2))
+if((is_inf2 = isinf(tv2)))
 	{
 	if(tv2 < 0)
 		{
@@ -2742,7 +2742,7 @@ if(x0!=x1)
 			}
 		}
 	else
-	if(t->flags & TR_ANALOG_INTERPOLATED)
+	if((t->flags & TR_ANALOG_INTERPOLATED) && !is_inf && !is_inf2)
 		{
 		if(t->flags & TR_ANALOG_STEP)
 			{
@@ -2767,12 +2767,19 @@ if(x0!=x1)
 			}
 		}
 	else
-	if(t->flags & TR_ANALOG_STEP)
+	/* if(t->flags & TR_ANALOG_STEP) */
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1, yt0);
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x1, yt0,x1, yt1);
-		}
 
+		if(is_inf2) cfixed = cinf;
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x1, yt0,x1, yt1);
+
+		if ((t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP))
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
+			}
+		}
 	}
 	else
 	{
@@ -3103,7 +3110,7 @@ GdkGC    *cfixed;
 double mynan = strtod("NaN", NULL);
 double tmin = mynan, tmax = mynan, tv, tv2;
 gint rmargin;
-int is_nan = 0, is_nan2 = 0, is_inf = 0;
+int is_nan = 0, is_nan2 = 0, is_inf = 0, is_inf2 = 0;
 int any_infs = 0, any_infp = 0, any_infm = 0;
 
 ci = GLOBALS->gc_baseline_wavewindow_c_1;
@@ -3322,7 +3329,7 @@ if((is_nan = isnan(tv)))
 	yt0 = y0 + (tv - tmin) * tmax;
 	}
 
-if(isinf(tv2))
+if((is_inf2 = isinf(tv2)))
 	{
 	if(tv2 < 0)
 		{
@@ -3399,7 +3406,7 @@ if(x0!=x1)
 			}
                 }
         else
-	if(t->flags & TR_ANALOG_INTERPOLATED)
+	if((t->flags & TR_ANALOG_INTERPOLATED) && !is_inf && !is_inf2)
 		{
 		if(t->flags & TR_ANALOG_STEP)
 			{
@@ -3424,10 +3431,18 @@ if(x0!=x1)
 			}
 		}
 	else
-	if(t->flags & TR_ANALOG_STEP)
+	/* if(t->flags & TR_ANALOG_STEP) */
 		{
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x0, yt0,x1, yt0);
+
+		if(is_inf2) cfixed = cinf;
 		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, cfixed,x1, yt0,x1, yt1);
+
+		if ((t->flags & (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP)) == (TR_ANALOG_INTERPOLATED|TR_ANALOG_STEP))
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0-1, yt0,x0+1, yt0);
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, ci,x0, yt0-1,x0, yt0+1);
+			}
 		}
 	}
 	else
@@ -3728,6 +3743,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2008/01/26 19:13:34  gtkwave
+ * replace NaN trapezoids with NaN boxes
+ *
  * Revision 1.26  2008/01/26 05:02:14  gtkwave
  * added parallelogram rendering for nans
  *
