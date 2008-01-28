@@ -166,6 +166,8 @@ if(is_writemode)
 	        GTK_STOCK_SAVE,
 	        GTK_RESPONSE_ACCEPT,
 	        NULL);
+
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER (pFileChoose), TRUE);
 	}
 	else
 	{
@@ -268,6 +270,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:44  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/11 02:12:50  gtkwave
  * context locking in busy spinloops (gtk_main_iteration() calls)
  *
