@@ -167,7 +167,7 @@ if(is_writemode)
 	        GTK_RESPONSE_ACCEPT,
 	        NULL);
 
-#if !GTK_CHECK_VERSION(2,8,0)
+#if GTK_CHECK_VERSION(2,8,0)
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER (pFileChoose), TRUE);
 #endif
 	}
@@ -274,6 +274,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/01/28 21:47:06  gtkwave
+ * gtk_dialog_set_default_response added so pressing ok is not needed
+ *
  * Revision 1.5  2008/01/28 20:07:45  gtkwave
  * added overwrite confirm save on file chooser
  *

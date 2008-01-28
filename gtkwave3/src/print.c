@@ -1417,7 +1417,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 
 	  if (any_infs)
 	    {
-	      double tdelta = tmax - tmin;
+	      double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
 
 	      if (any_infp)
 		tmax = tmax + tdelta;
@@ -1503,7 +1503,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 
       if (any_infs)
 	{
-	  double tdelta = tmax - tmin;
+	  double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
 
 	  if (any_infp)
 	    tmax = tmax + tdelta;
@@ -2058,7 +2058,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 
 	  if (any_infs)
 	    {
-	      double tdelta = tmax - tmin;
+	      double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
 
 	      if (any_infp)
 		tmax = tmax + tdelta;
@@ -2138,7 +2138,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 
       if (any_infs)
 	{
-	  double tdelta = tmax - tmin;
+	  double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
 
 	  if (any_infp)
 	    tmax = tmax + tdelta;
@@ -2852,6 +2852,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/01/27 23:54:05  gtkwave
+ * right side margin NaN fix
+ *
  * Revision 1.12  2008/01/27 01:21:05  gtkwave
  * make transition to/from inf/-inf a square wave when interpolated
  *

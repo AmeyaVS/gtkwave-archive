@@ -22,6 +22,7 @@
 
 #define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.4_pre (w)1999-2008 BSI"
 
+#define WAVE_INF_SCALING (0.5)
 
 /* for dnd */
 #define WAVE_DRAG_TAR_NAME_0         "text/plain"
@@ -168,6 +169,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2008/01/23 11:07:19  gtkwave
+ * integration of preliminary signalwindow popup menu code
+ *
  * Revision 1.22  2008/01/22 20:11:47  gtkwave
  * track and hold experimentation
  *

@@ -2471,7 +2471,7 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 
 		if(any_infs)
 			{
-			double tdelta = tmax - tmin;
+			double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
 
 			if(any_infp) tmax = tmax + tdelta;
 			if(any_infm) tmin = tmin - tdelta;
@@ -2553,7 +2553,7 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 
 	if(any_infs)
 		{
-		double tdelta = tmax - tmin;
+		double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
 
 		if(any_infp) tmax = tmax + tdelta;
 		if(any_infm) tmin = tmin - tdelta;
@@ -3167,7 +3167,7 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 
                 if(any_infs)
                         {
-                        double tdelta = tmax - tmin;
+			double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
                                          
                         if(any_infp) tmax = tmax + tdelta;
                         if(any_infm) tmin = tmin - tdelta;
@@ -3239,7 +3239,7 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 
         if(any_infs)
                 {
-                double tdelta = tmax - tmin;
+		double tdelta = (tmax - tmin) * WAVE_INF_SCALING;
                  
                 if(any_infp) tmax = tmax + tdelta;
                 if(any_infm) tmin = tmin - tdelta;
@@ -3745,6 +3745,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2008/01/27 23:54:05  gtkwave
+ * right side margin NaN fix
+ *
  * Revision 1.28  2008/01/27 01:21:05  gtkwave
  * make transition to/from inf/-inf a square wave when interpolated
  *
