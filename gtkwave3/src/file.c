@@ -167,7 +167,9 @@ if(is_writemode)
 	        GTK_RESPONSE_ACCEPT,
 	        NULL);
 
+#if !GTK_CHECK_VERSION(2,8,0)
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER (pFileChoose), TRUE);
+#endif
 	}
 	else
 	{
@@ -190,6 +192,8 @@ if(pattn)
 	gtk_file_filter_add_pattern(filter, pattn);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(pFileChoose), filter);
 	}
+
+gtk_dialog_set_default_response(GTK_DIALOG(pFileChoose), GTK_RESPONSE_ACCEPT);
 
 gtk_object_set_data(GTK_OBJECT(pFileChoose), "FileChooseWindow", pFileChoose);
 gtk_container_set_border_width(GTK_CONTAINER(pFileChoose), 10);
@@ -270,6 +274,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/01/28 20:07:45  gtkwave
+ * added overwrite confirm save on file chooser
+ *
  * Revision 1.4  2007/09/12 17:26:44  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
