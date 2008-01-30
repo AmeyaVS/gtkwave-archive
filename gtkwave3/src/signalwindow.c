@@ -211,6 +211,7 @@ static gboolean DNDDragMotionCB(
         if((widget == NULL) || (dc == NULL))
                 return(FALSE);
 
+
 	/* Get source widget and target widget. */
 	src_widget = gtk_drag_get_source_widget(dc);
 	tar_widget = widget;
@@ -221,6 +222,7 @@ static gboolean DNDDragMotionCB(
 	GLOBALS->std_dnd_tgt_on_signalarea = (tar_widget == GLOBALS->signalarea);
 	GLOBALS->std_dnd_tgt_on_wavearea = (tar_widget == GLOBALS->wavearea);
 
+#ifdef WAVE_USE_GTK2
 	/* If this is the same widget, our suggested action should be
 	 * move.  For all other case we assume copy.
 	 */
@@ -248,6 +250,7 @@ static gboolean DNDDragMotionCB(
         /* All else respond with 0. */
         else
             gdk_drag_status(dc, 0, t);
+#endif
 
 	return(FALSE);
 }
@@ -1228,7 +1231,6 @@ gtk_widget_set_events(GLOBALS->signalarea,
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "configure_event", GTK_SIGNAL_FUNC(signalarea_configure_event_local), NULL);
 gtk_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "expose_event",GTK_SIGNAL_FUNC(expose_event_local), NULL);
 
-#ifdef WAVE_USE_GTK2
 if(GLOBALS->use_standard_clicking)
 	{
 	GtkTargetEntry target_entry[3];
@@ -1279,12 +1281,12 @@ if(GLOBALS->use_standard_clicking)
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event_std), NULL);
 
+#ifdef WAVE_USE_GTK2
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "scroll_event",GTK_SIGNAL_FUNC(scroll_event), NULL);
-
+#endif
 	do_focusing = 1;
 	}
 	else
-#endif
 	{
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
@@ -1358,6 +1360,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2008/01/23 16:37:56  gtkwave
+ * created separate smaller popup instead of using normal itemfactory list
+ *
  * Revision 1.24  2008/01/23 11:07:19  gtkwave
  * integration of preliminary signalwindow popup menu code
  *

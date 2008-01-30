@@ -17,11 +17,70 @@
 #include "lx2.h"
 #include "debug.h"
 
+void dnd_setup(GtkWidget *src, GtkWidget *w)
+{
+	GtkWidget *win = w;
+	GtkTargetEntry target_entry[3];
 
+	/* Realize the clist widget and make sure it has a window,
+	 * this will be for DND setup.
+	 */
+        if(!GTK_WIDGET_NO_WINDOW(w))
+	{
+		/* DND: Set up the clist as a potential DND destination.
+		 * First we set up target_entry which is a sequence of of
+		 * structure which specify the kinds (which we define) of
+		 * drops accepted on this widget.
+		 */
+
+		/* Set up the list of data format types that our DND
+		 * callbacks will accept.
+		 */
+		target_entry[0].target = WAVE_DRAG_TAR_NAME_0;
+		target_entry[0].flags = 0;
+		target_entry[0].info = WAVE_DRAG_TAR_INFO_0;
+                target_entry[1].target = WAVE_DRAG_TAR_NAME_1;
+                target_entry[1].flags = 0;
+                target_entry[1].info = WAVE_DRAG_TAR_INFO_1;
+                target_entry[2].target = WAVE_DRAG_TAR_NAME_2;
+                target_entry[2].flags = 0;
+                target_entry[2].info = WAVE_DRAG_TAR_INFO_2;
+
+		/* Set the drag destination for this widget, using the
+		 * above target entry types, accept move's and coppies'.
+		 */
+
+		/* required gtk1 hack */
+		gtk_object_set_data(GTK_OBJECT(w), "gtk-drag-dest", NULL);
+
+		gtk_drag_dest_set(
+			w,
+			GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT |
+			GTK_DEST_DEFAULT_DROP,
+			target_entry,
+			sizeof(target_entry) / sizeof(GtkTargetEntry),
+			GDK_ACTION_MOVE | GDK_ACTION_COPY
+		);
+
+		/* Set the drag source for this widget, allowing the user
+		 * to drag items off of this clist.
+		 */
+		gtk_drag_source_set(
+			src,
+			GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
+                        target_entry,
+                        sizeof(target_entry) / sizeof(GtkTargetEntry),
+			GDK_ACTION_MOVE | GDK_ACTION_COPY
+		);
+	}
+}
+
+#if 0
 void dnd_setup(GtkWidget *src, GtkWidget *widget)
 {
 /* nothing, no dnd for gtk1 implemented yet */
 }
+#endif
 
 void treeview_select_all_callback(void)
 {
@@ -761,6 +820,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/01/08 18:59:04  gtkwave
+ * gtk1 fixes for dnd
+ *
  * Revision 1.5  2008/01/08 04:01:12  gtkwave
  * more accelerator key ergonomic updates
  *

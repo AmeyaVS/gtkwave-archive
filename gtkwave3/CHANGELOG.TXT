@@ -383,3 +383,4 @@
 		Added resizing options that are windowed to either the screen
 		or across all trace data.
 		Added enter=OK as a default file chooser response.
+		Added DND and standard clicking to GTK1 compiles.
