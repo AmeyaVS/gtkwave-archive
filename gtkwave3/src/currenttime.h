@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.4_pre (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.4 (w)1999-2008 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 
@@ -169,6 +169,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2008/01/28 23:08:50  gtkwave
+ * added infinite scaling define in currenttime.h
+ *
  * Revision 1.23  2008/01/23 11:07:19  gtkwave
  * integration of preliminary signalwindow popup menu code
  *
