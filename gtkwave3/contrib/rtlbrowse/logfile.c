@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -939,6 +939,8 @@ resolved_vzt:		free(pfx);
 								{
 								if(!strcmp(fnam+tlen, node->key.s))
 									{
+									mat = 1;
+
 									if(lx2->flags[i] & LXT2_RD_SYM_F_ALIAS)
 										{
 										node->val.i = lxt2_rd_get_alias_root(lx2, i);
@@ -1317,6 +1319,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.1  2007/08/06 03:50:44  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
