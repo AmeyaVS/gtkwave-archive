@@ -1,3 +1,12 @@
+/* 
+ * Copyright (c) Tony Bybell 2006-2008.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ */
+
 #include <config.h>
 #include <gtk/gtk.h>
 
@@ -13,7 +22,7 @@
 
 extern GtkCTree *ctree_main;
 void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
-
+gboolean update_ctx_when_idle(gpointer dummy);
 
 int mod_cnt;
 ds_Tree **mod_list;
@@ -478,6 +487,7 @@ if(anno_ctx)
 
 treebox("RTL Design Hierarchy", NULL, NULL);
 
+g_timeout_add(100, update_ctx_when_idle, NULL);
 gtk_main();
 
 return(0);
@@ -486,6 +496,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/23 18:33:53  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

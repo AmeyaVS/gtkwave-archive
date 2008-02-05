@@ -15,10 +15,12 @@
 #include "jrb.h"
 #include "wavelink.h"
 
-void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
-
 extern ds_Tree *flattened_mod_list_root;
 extern struct gtkwave_annotate_ipc_t *anno_ctx;
+
+TimeType old_marker = 0;
+unsigned old_marker_set = 0;
+
 
 /* only for use locally */
 struct wave_logfile_lines_t
@@ -31,6 +33,7 @@ char *text;
 struct logfile_context_t
 {
 ds_Tree *which;
+char *title;
 int display_mode;
 int width;
 };
@@ -40,7 +43,19 @@ struct text_find_t
 struct text_find_t *next;
 GtkWidget *text, *window;
 struct logfile_context_t *ctx;
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+GtkTextTag *bold_tag;
+GtkTextTag *dgray_tag, *lgray_tag;
+GtkTextTag *blue_tag, *fwht_tag;
+GtkTextTag *mono_tag;
+GtkTextTag *size_tag;
+#endif
 };
+
+
+void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
+void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *text);
 
 
 struct text_find_t *text_root = NULL;
@@ -498,6 +513,89 @@ static void ok_callback(GtkWidget *widget, struct logfile_context_t *ctx)
   bwlogbox(ctx->which->fullname, ctx->width, ctx->which, (ctx->display_mode == 0));
 }
 
+
+gboolean update_ctx_when_idle(gpointer dummy)
+{
+struct text_find_t *t;
+
+if(anno_ctx)
+	{
+	if((anno_ctx->marker_set != old_marker_set) || (old_marker != anno_ctx->marker))
+		{
+		old_marker_set = anno_ctx->marker_set;
+		old_marker = anno_ctx->marker;
+		}	
+		else
+		{
+		return(TRUE);
+		}
+	}
+	else
+	{
+	return(TRUE);
+	}
+
+t = text_root;
+while(t)
+	{
+	if(t->window)
+		{
+		if(!t->ctx->display_mode)
+			{
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+			GtkTextIter st_iter, en_iter;
+
+			GtkAdjustment *vadj = GTK_TEXT_VIEW (t->text)->vadjustment;
+			gdouble vvalue = vadj->value;
+
+			gtk_text_buffer_get_start_iter(GTK_TEXT_VIEW (t->text)->buffer, &st_iter);
+			gtk_text_buffer_get_end_iter(GTK_TEXT_VIEW (t->text)->buffer, &en_iter);
+			gtk_text_buffer_delete(GTK_TEXT_VIEW (t->text)->buffer, &st_iter, &en_iter);
+
+			gtk_text_buffer_get_start_iter (GTK_TEXT_VIEW (t->text)->buffer, &iter);
+
+
+			bold_tag = t->bold_tag;
+			dgray_tag = t->dgray_tag;
+			lgray_tag = t->lgray_tag;
+			blue_tag = t->blue_tag;
+			fwht_tag = t->fwht_tag;
+			mono_tag = t->mono_tag;
+			size_tag = t->size_tag;
+
+			bwlogbox_2(t->ctx, NULL, t->text);
+
+			vadj->value = vvalue;
+			gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
+			gtk_signal_emit_by_name (GTK_OBJECT (vadj), "value_changed");
+#else			
+			GtkText *text = GTK_TEXT(t->text);
+			GtkAdjustment *vadj = GTK_TEXT (t->text)->vadj;
+			gdouble vvalue = vadj->value;
+
+			guint len = gtk_text_get_length(text);
+			gtk_text_set_point(text, 0);
+
+			gtk_text_freeze(GTK_TEXT(text));
+			gtk_text_forward_delete (text, len);
+
+			bwlogbox_2(t->ctx, NULL, t->text);
+			gtk_text_thaw(GTK_TEXT(text));
+
+			vadj->value = vvalue;
+			gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
+			gtk_signal_emit_by_name (GTK_OBJECT (vadj), "value_changed");
+#endif
+			}
+		}
+	t = t->next;
+	}
+
+return(TRUE);
+}
+
+
+
 static void destroy_callback(GtkWidget *widget, gpointer dummy)
 {
 struct text_find_t *t = text_root, *tprev = NULL;
@@ -528,7 +626,11 @@ while(t)
 	}
 
 gtk_widget_destroy(widget);
-if(ctx) free(ctx);
+if(ctx)
+	{
+	if(ctx->title) free(ctx->title);
+	free(ctx);
+	}
 }
 
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
@@ -627,6 +729,7 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     ctx->which = t;
     ctx->display_mode = display_mode;
     ctx->width = width;
+    ctx->title = strdup(title);
 
     button1 = gtk_button_new_with_label (display_mode ? "View Design Unit Only": "View Full File");
     gtk_widget_set_usize(button1, 100, -1);
@@ -646,6 +749,41 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 
     gtk_widget_show(window);
 
+    bwlogbox_2(ctx, window, text);
+}
+
+
+void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *text)
+{
+    ds_Tree *t = ctx->which;
+    int display_mode = ctx->display_mode;
+    char *title = ctx->title;
+
+    FILE *handle;
+    int lx;
+    int lx_module_line = 0;
+    int lx_module_line_locked = 0;
+    int lx_endmodule_line_locked = 0;
+
+    struct wave_logfile_lines_t *wlog_head=NULL, *wlog_curr=NULL;
+    int wlog_size = 0;
+    int line_no;
+    int s_line_find = -1, e_line_find = -1;
+    struct text_find_t *text_curr;
+
+    char *default_text = t->filename;
+    char *design_unit = t->item;
+    int s_line = t->s_line;
+    int e_line = t->e_line;
+
+
+    handle = fopen(default_text, "rb");
+    if(!handle)
+	{
+	fprintf(stderr, "Could not open logfile '%s'\n", default_text);
+	return;
+	}
+    fclose(handle);
 
     v_preproc_name = default_text;
     while((lx = yylex()))
@@ -1208,7 +1346,7 @@ resolved_ae2:		free(pfx);
 			{
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 #else
-			gtk_text_freeze(GTK_TEXT(text));
+			if(window) gtk_text_freeze(GTK_TEXT(text));
 #endif
 			w = wlog_head;
 			while(w)
@@ -1253,7 +1391,7 @@ iter_free:			free(w->text);
 			wlog_head = wlog_curr = NULL;
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 #else
-			gtk_text_thaw(GTK_TEXT(text));
+			if(window) gtk_text_thaw(GTK_TEXT(text));
 #endif
 			goto free_vars;
 			}
@@ -1307,18 +1445,34 @@ free_vars:
 	varnames = NULL;
 
 	/* insert context for destroy */
-        text_curr = (struct text_find_t *)calloc(1, sizeof(struct text_find_t));
-	text_curr->window = window;
-	text_curr->text = text;
-	text_curr->ctx = ctx;
-	text_curr->next = text_root;
-	text_root = text_curr;
+	if(window)
+		{
+	        text_curr = (struct text_find_t *)calloc(1, sizeof(struct text_find_t));
+		text_curr->window = window;
+		text_curr->text = text;
+		text_curr->ctx = ctx;
+		text_curr->next = text_root;
+		text_root = text_curr;
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+		text_curr->bold_tag = bold_tag;
+		text_curr->dgray_tag = dgray_tag;
+		text_curr->lgray_tag = lgray_tag;
+		text_curr->blue_tag = blue_tag;
+		text_curr->fwht_tag = fwht_tag;
+		text_curr->mono_tag = mono_tag;
+		text_curr->size_tag = size_tag;
+#endif
+		}
 	}
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/02/04 03:48:57  gtkwave
+ * rtlbrowse fix for lxt2 files
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
