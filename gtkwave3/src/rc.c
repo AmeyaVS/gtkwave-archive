@@ -439,6 +439,13 @@ GLOBALS->use_nonprop_fonts=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_use_pango_fonts(char *str)
+{
+DEBUG(printf("f_use_pango_fonts(\"%s\")\n",str));
+GLOBALS->use_pango_fonts=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_use_roundcaps(char *str)
 {
 DEBUG(printf("f_use_roundcaps(\"%s\")\n",str));
@@ -691,6 +698,7 @@ static struct rc_entry rcitems[]=
 { "use_full_precision", f_use_full_precision },
 { "use_maxtime_display", f_use_maxtime_display },
 { "use_nonprop_fonts", f_use_nonprop_fonts },
+{ "use_pango_fonts", f_use_pango_fonts },
 { "use_roundcaps", f_use_roundcaps },
 { "use_scrollbar_only", f_use_scrollbar_only },
 { "use_standard_clicking", f_use_standard_clicking },
@@ -719,6 +727,7 @@ f_use_frequency_display ("off");
 f_use_maxtime_display	("off");
 f_use_roundcaps		("on");
 f_use_nonprop_fonts	("on");
+f_use_pango_fonts	("on");
 f_constant_marker_update("on");
 f_show_base_symbols	("off");
 f_color_back   		("000000");
@@ -874,6 +883,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/01/08 23:03:36  gtkwave
+ * added toolbar using use_toolbutton_interface rc variable
+ *
  * Revision 1.8  2008/01/02 18:17:26  gtkwave
  * added standard click semantics with user_standard_clicking rc variable
  *

@@ -225,6 +225,7 @@ GdkScreen *fonts_screen;
 PangoContext *fonts_context;
 PangoLayout *fonts_layout;
 #endif
+char use_pango_fonts;
 
 
 /*

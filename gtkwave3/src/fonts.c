@@ -65,19 +65,17 @@ return(f->ascent + f->descent);
 static void pango_load_all_fonts(void)
 {
   setup_fonts();
-  /*  GLOBALS->signalfont=do_font_load(GLOBALS->fontname_signals); */
-
-  if(GLOBALS->use_big_fonts) fprintf(stderr,"Using big fonts\n");
+  GLOBALS->signalfont=do_font_load(GLOBALS->fontname_signals);
 
   if(!GLOBALS->signalfont)
     {
       if(GLOBALS->use_big_fonts)
 	{ 
-	  GLOBALS->signalfont=do_font_load("Mono 12");
+	  GLOBALS->signalfont=do_font_load(GLOBALS->use_nonprop_fonts ? "Mono 12" : "Sans 12");
 	}
       else
 	{
-	  GLOBALS->signalfont=do_font_load("Mono 10");
+	  GLOBALS->signalfont=do_font_load(GLOBALS->use_nonprop_fonts ? "Mono 10" : "Sans 10");
 	}
     }
   
@@ -310,14 +308,25 @@ GLOBALS->wavecrosspiece=GLOBALS->wavefont->ascent+1;
 
 void load_all_fonts(void)
 {
-/* pango_load_all_fonts(); */
-gdk_load_all_fonts();
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+if(GLOBALS->use_pango_fonts)
+	{
+	pango_load_all_fonts();
+	}
+	else
+#endif
+	{
+	gdk_load_all_fonts();
+	}
 }
 
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.2  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

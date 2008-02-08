@@ -1,4 +1,4 @@
-.TH "GTKWAVERC" "5" "3.1.3" "Anthony Bybell" "GTKWave Configuration File"
+.TH "GTKWAVERC" "5" "3.1.5" "Anthony Bybell" "GTKWave Configuration File"
 .SH "NAME"
 .LP 
 gtkwaverc \- GTKWave Configuration File
@@ -255,6 +255,9 @@ A nonzero value indicates that the maximum time will be displayed in the upper r
 .TP 
 \fBuse_nonprop_fonts\fR <\fIvalue\fP>
 Allows accelerated redraws of the signalwindow that can be done because the font width is constant. Default is off.
+.TP 
+\fBuse_pango_fonts\fR <\fIvalue\fP>
+Uses anti-aliased pango fonts (GTK2) rather than bitmapped X11 ones. Default is on.
 .TP 
 \fBuse_roundcaps\fR <\fIvalue\fP>
 A nonzero value indicates that vector traces should be drawn with rounded caps rather than perpendicular ones. The default for this is zero.

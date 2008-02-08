@@ -230,6 +230,8 @@ NULL, /* fonts_screen */
 NULL, /* fonts_context */
 NULL, /* fonts_layout */
 #endif
+1, /* use_pango_fonts */
+
 
 /*
  * ghw.c
@@ -1355,6 +1357,7 @@ void reload_into_new_context(void)
  new_globals->fonts_context = GLOBALS->fonts_context;
  new_globals->fonts_layout = GLOBALS->fonts_layout;
 #endif
+ new_globals->use_pango_fonts = GLOBALS->use_pango_fonts;
 
  /* busy.c */
  new_globals->busycursor_busy_c_1 = GLOBALS->busycursor_busy_c_1;
