@@ -33,6 +33,27 @@ for(t=GLOBALS->traces.first;t;t=t->t_next)
 return(t);
 }
 
+Trptr static find_next_highlighted_trace(Trptr t)
+{
+if(t)
+	{	
+	t = t->t_next;
+	for(;t;t=t->t_next)
+		{
+		if ((t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))||(!(t->flags&TR_HIGHLIGHT))||(!(t->name))) 
+			{
+			continue;
+			}
+			else
+			{
+			break;
+			}
+		}
+	}
+
+return(t);
+}
+
 /************************************************/
 
 /*
@@ -54,6 +75,19 @@ if(!t) return;
 memset(s_head = &s_tmp, 0, sizeof(struct strace));
 s_head->trace = t;
 s_head->value = ST_ANY;
+s = s_head;
+
+while(t)
+	{
+	t = find_next_highlighted_trace(t);
+	if(t)
+		{
+		s->next = wave_alloca(sizeof(struct strace));
+		memset(s = s->next, 0, sizeof(struct strace));
+		s->trace = t;
+		s->value = ST_ANY;
+		}
+	}
 
 if(direction==STRACE_BACKWARD) /* backwards */
 {
@@ -550,6 +584,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/12/31 17:11:58  gtkwave
+ * fixed backward seek bug in pattern/edge search
+ *
  * Revision 1.2  2007/12/30 04:27:39  gtkwave
  * added edge buttons to main window
  *

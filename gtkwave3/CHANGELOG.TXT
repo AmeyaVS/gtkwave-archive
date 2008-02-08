@@ -390,3 +390,5 @@
 		marker position.
 		Added anti-aliased font rendering code.
 		Added use_pango_fonts rc variable.
+		Updated edge buttons so they can handle multiply selected
+		signals.
