@@ -48,7 +48,7 @@ GLOBALS->num_rows_hiersearch_c_1=0;
 
 if(t!=GLOBALS->treeroot)
 	{
-	maxpixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(dotdot));
+	maxpixlen=font_engine_string_measure(GLOBALS->signalfont,(gchar *)(dotdot));
 	}
 
 if(!GLOBALS->hier_grouping)
@@ -101,7 +101,7 @@ if(!GLOBALS->hier_grouping)
 	                        tmp=t2->name;
 	                        }
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
-			pixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
+			pixlen=font_engine_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
 			}
 		maxpixlen=(pixlen>maxpixlen)?pixlen:maxpixlen;		
 		gtk_clist_set_row_data(cl, row,t2); 
@@ -155,7 +155,7 @@ if(!GLOBALS->hier_grouping)
 	                        }
 
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
-			pixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
+			pixlen=font_engine_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
 			maxpixlen=(pixlen>maxpixlen)?pixlen:maxpixlen;		
 			gtk_clist_set_row_data(cl, row,t2); 
 			GLOBALS->num_rows_hiersearch_c_1++;
@@ -172,7 +172,7 @@ if(!GLOBALS->hier_grouping)
                         strcpy(tmp,   "(+) ");
                         strcpy(tmp+4, t2->name);
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
-			pixlen=gdk_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
+			pixlen=font_engine_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
 			maxpixlen=(pixlen>maxpixlen)?pixlen:maxpixlen;		
 			gtk_clist_set_row_data(cl, row,t2); 
 			GLOBALS->num_rows_hiersearch_c_1++;
@@ -980,6 +980,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:44  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

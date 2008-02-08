@@ -158,7 +158,7 @@ vcache[0]=*str;
 vcache[1]=*(str+1);
 *str='+';
 *(str+1)=0;
-obj=gdk_string_measure(GLOBALS->wavefont,GLOBALS->trunc_asciibase_bsearch_c_1);
+obj=font_engine_string_measure(GLOBALS->wavefont,GLOBALS->trunc_asciibase_bsearch_c_1);
 *str=vcache[0];
 *(str+1)=vcache[1];
 
@@ -244,6 +244,9 @@ if(rc) return(*rc); else return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:54  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

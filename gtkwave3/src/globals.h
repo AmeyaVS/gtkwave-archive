@@ -27,6 +27,7 @@
 #include"currenttime.h"
 #include"debug.h"
 #include"fgetdynamic.h"
+#include"fonts.h"
 #include"ghw.h"
 #include"globals.h"
 #include"gnu_regex.h"
@@ -217,6 +218,13 @@ void (*bad_cleanup_file_c_1)(); /* from file.c 91 */
  */ 
 char *fontname_signals; /* from fonts.c 92 */
 char *fontname_waves; /* from fonts.c 93 */
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+PangoRenderer *fonts_renderer;
+GdkGC *fonts_gc;
+GdkScreen *fonts_screen;
+PangoContext *fonts_context;
+PangoLayout *fonts_layout;
+#endif
 
 
 /*
@@ -618,7 +626,7 @@ unsigned int flags_showchange_c_1; /* from showchange.c 395 */
  * signalwindow.c
  */
 GtkWidget *signalarea; /* from signalwindow.c 396 */
-GdkFont *signalfont; /* from signalwindow.c 397 */
+struct font_engine_font_t *signalfont; /* from signalwindow.c 397 */
 GdkDrawable *signalpixmap; /* from signalwindow.c 398 */
 int max_signal_name_pixel_width; /* from signalwindow.c 399 */
 int signal_pixmap_width; /* from signalwindow.c 400 */
@@ -1002,8 +1010,8 @@ struct TraceEnt *topmost_trace; /* from wavewindow.c 671 */
 int waveheight; /* from wavewindow.c 672 */
 int wavecrosspiece; /* from wavewindow.c 673 */
 int wavewidth; /* from wavewindow.c 674 */
-GdkFont *wavefont; /* from wavewindow.c 675 */
-GdkFont *wavefont_smaller; /* from wavewindow.c 676 */
+struct font_engine_font_t *wavefont; /* from wavewindow.c 675 */
+struct font_engine_font_t *wavefont_smaller; /* from wavewindow.c 676 */
 GtkWidget *wavearea; /* from wavewindow.c 677 */
 GtkWidget *vscroll_wavewindow_c_1; /* from wavewindow.c 678 */
 GtkWidget *hscroll_wavewindow_c_2; /* from wavewindow.c 679 */

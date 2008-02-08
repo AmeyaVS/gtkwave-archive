@@ -33,7 +33,7 @@ int vlen=0;
 
 if(t->name)
 	{
-	len=gdk_string_measure(GLOBALS->wavefont, t->name);
+	len=font_engine_string_measure(GLOBALS->wavefont, t->name);
 
 	if((tim!=-1)&&(!(t->flags&TR_EXCLUDE)))
 		{
@@ -46,7 +46,7 @@ if(t->name)
                         str=convert_ascii(t,v);
 			if(str)
 				{
-				vlen=gdk_string_measure(GLOBALS->wavefont,str);
+				vlen=font_engine_string_measure(GLOBALS->wavefont,str);
 				*asciivalue=str;
 				}
 				else
@@ -74,7 +74,7 @@ if(t->name)
 						str[0]=AN_STR[h_ptr->v.h_val];
 						}
 					*asciivalue=str;
-					vlen=gdk_string_measure(GLOBALS->wavefont,str);
+					vlen=font_engine_string_measure(GLOBALS->wavefont,str);
 					}
 					else
 					{
@@ -96,7 +96,7 @@ if(t->name)
 
 					if(str)
 						{
-						vlen=gdk_string_measure(GLOBALS->wavefont,str);
+						vlen=font_engine_string_measure(GLOBALS->wavefont,str);
 						*asciivalue=str;
 						}
 						else
@@ -217,7 +217,7 @@ if(t)
 		strcpy(alternate_name, "...");
 		strcpy(alternate_name + 3, t->name + name_charlen - (MOUSEOVER_BREAKSIZE - 3));
 	
-		nmaxlen=gdk_string_measure(GLOBALS->wavefont, alternate_name);
+		nmaxlen=font_engine_string_measure(GLOBALS->wavefont, alternate_name);
 		}
 
 	if(value_charlen > MOUSEOVER_BREAKSIZE)
@@ -232,7 +232,7 @@ if(t)
 			{
 			memset(breakbuf, 0, MOUSEOVER_BREAKSIZE+1);
 			strncpy(breakbuf, asciivalue + (i*MOUSEOVER_BREAKSIZE), MOUSEOVER_BREAKSIZE);
-			localmax = gdk_string_measure(GLOBALS->wavefont, breakbuf);
+			localmax = font_engine_string_measure(GLOBALS->wavefont, breakbuf);
 			vmaxlen = (localmax > vmaxlen) ? localmax : vmaxlen;
 			}
 
@@ -290,11 +290,11 @@ gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_black_mouseover
 		1,1, 
 		GLOBALS->mo_width_mouseover_c_1-2, GLOBALS->mo_height_mouseover_c_1-2);
 
-gdk_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, fh + 2, alternate_name ? alternate_name : t->name);
+font_engine_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, fh + 2, alternate_name ? alternate_name : t->name);
 
 if(num_info_rows == 2)
 	{
-	if(asciivalue) gdk_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, 2*fh+2, asciivalue);
+	if(asciivalue) font_engine_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, 2*fh+2, asciivalue);
 	}
 	else
 	{
@@ -306,7 +306,7 @@ if(num_info_rows == 2)
 		{
 		memset(breakbuf, 0, MOUSEOVER_BREAKSIZE+1);
 		strncpy(breakbuf, asciivalue + (i*MOUSEOVER_BREAKSIZE), MOUSEOVER_BREAKSIZE);
-		gdk_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, ((2+i)*fh)+2, breakbuf);
+		font_engine_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, ((2+i)*fh)+2, breakbuf);
 		}
 	}
 
@@ -322,6 +322,9 @@ if(alternate_name) { free_2(alternate_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.2  2007/08/26 21:35:43  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

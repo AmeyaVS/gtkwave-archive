@@ -606,14 +606,14 @@ ps_MaxSignalLength (void)
 	  reformat_time (sbuf + 1, t->shift, GLOBALS->time_dimension);
 	  strcpy (sbuf + (bufclen = strlen (sbuf + 1) + 1), ")");
 	  bufclen++;
-	  bufxlen = gdk_string_measure (GLOBALS->signalfont, sbuf);
+	  bufxlen = font_engine_string_measure (GLOBALS->signalfont, sbuf);
 	}
 
       if ((!t->vector) && (t->n.nd) && (t->n.nd->array_height))
 	{
 	  bufclen +=
 	    sprintf (sbuf + strlen (sbuf), "{%d}", t->n.nd->this_row);
-	  bufxlen = gdk_string_measure (GLOBALS->signalfont, sbuf);
+	  bufxlen = font_engine_string_measure (GLOBALS->signalfont, sbuf);
 	}
 
       if (t->flags & (TR_BLANK | TR_ANALOG_BLANK_STRETCH))
@@ -621,7 +621,7 @@ ps_MaxSignalLength (void)
 	  if (t->name)
 	    {
 	      len =
-		gdk_string_measure (GLOBALS->signalfont, t->name) + bufxlen;
+		font_engine_string_measure (GLOBALS->signalfont, t->name) + bufxlen;
 	      numchars = strlen (t->name) + bufclen;
 
 	      if (len > maxlen)
@@ -632,7 +632,7 @@ ps_MaxSignalLength (void)
 	}
       else if (t->name)
 	{
-	  len = gdk_string_measure (GLOBALS->signalfont, t->name) + bufxlen;
+	  len = font_engine_string_measure (GLOBALS->signalfont, t->name) + bufxlen;
 	  numchars = strlen (t->name) + bufclen;
 	  if ((GLOBALS->tims.marker != -1) && (!(t->flags & TR_EXCLUDE)))
 	    {
@@ -662,13 +662,13 @@ ps_MaxSignalLength (void)
 			  str2[GLOBALS->ps_maxveclen] = 0;
 			  str2[GLOBALS->ps_maxveclen - 1] = '+';
 			  vlen =
-			    gdk_string_measure (GLOBALS->signalfont, str2);
+			    font_engine_string_measure (GLOBALS->signalfont, str2);
 			  numchars += GLOBALS->ps_maxveclen;
 			}
 		      else
 			{
 			  vlen =
-			    gdk_string_measure (GLOBALS->signalfont, str2);
+			    font_engine_string_measure (GLOBALS->signalfont, str2);
 			  numchars += slen;
 			}
 		    }
@@ -699,7 +699,7 @@ ps_MaxSignalLength (void)
 			    }
 			  t->asciivalue = str;
 			  vlen =
-			    gdk_string_measure (GLOBALS->signalfont, str);
+			    font_engine_string_measure (GLOBALS->signalfont, str);
 			  numchars += 2;
 			}
 		      else
@@ -741,14 +741,14 @@ ps_MaxSignalLength (void)
 				  str2[GLOBALS->ps_maxveclen] = 0;
 				  str2[GLOBALS->ps_maxveclen - 1] = '+';
 				  vlen =
-				    gdk_string_measure (GLOBALS->signalfont,
+				    font_engine_string_measure (GLOBALS->signalfont,
 							str2);
 				  numchars += GLOBALS->ps_maxveclen;
 				}
 			      else
 				{
 				  vlen =
-				    gdk_string_measure (GLOBALS->signalfont,
+				    font_engine_string_measure (GLOBALS->signalfont,
 							str2);
 				  numchars += slen;
 				}
@@ -975,7 +975,7 @@ pr_rendertimes (pr_context * prc)
 	  strcpy (timebuff, "0");
 	}
 
-      len = gdk_string_measure (GLOBALS->wavefont, timebuff) >> 1;
+      len = font_engine_string_measure (GLOBALS->wavefont, timebuff) >> 1;
       lenhalf = len >> 1;
 
       if ((prc->gpd == &ps_print_device)
@@ -1036,7 +1036,7 @@ pr_draw_named_markers (pr_context * prc)
 		      pr_draw_line (prc, xl, y, xl, y + 5);
 		    }
 
-		  xsize = gdk_string_measure (GLOBALS->wavefont, nbuff);
+		  xsize = font_engine_string_measure (GLOBALS->wavefont, nbuff);
 		  pr_setgray (prc, 0.00);
 		  pr_draw_string (prc,
 				  xl - (xsize >> 1) + 1,
@@ -1249,7 +1249,7 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 			if ((x1 >= GLOBALS->wavewidth)
 			    ||
 			    ((pixlen =
-			      gdk_string_measure (GLOBALS->wavefont,
+			      font_engine_string_measure (GLOBALS->wavefont,
 						  identifier_str)) +
 			     GLOBALS->vector_padding <= width))
 			  {
@@ -1928,7 +1928,7 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 
 
 		  if (((pixlen =
-			gdk_string_measure (GLOBALS->wavefont,
+			font_engine_string_measure (GLOBALS->wavefont,
 					    ascii)) +
 		       GLOBALS->vector_padding <= width)
 		      || ((x1 >= GLOBALS->wavewidth)
@@ -2509,7 +2509,7 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 		  ascii = convert_ascii (t, h);
 
 		  if (((pixlen =
-			gdk_string_measure (GLOBALS->wavefont,
+			font_engine_string_measure (GLOBALS->wavefont,
 					    ascii)) +
 		       GLOBALS->vector_padding <= width)
 		      || ((x1 >= GLOBALS->wavewidth)
@@ -2751,7 +2751,7 @@ pr_RenderSigs (pr_context * prc, int trtarget)
   pr_setgray (prc, 0.0);
   pr_draw_string (prc, 3, GLOBALS->fontheight, "Time",
 		  (width =
-		   gdk_string_measure (GLOBALS->wavefont, "Time")) * 2,
+		   font_engine_string_measure (GLOBALS->wavefont, "Time")) * 2,
 		  GLOBALS->fontheight);
 
   GLOBALS->ps_chwidth_print_c_1 =
@@ -2852,6 +2852,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/01/28 23:08:50  gtkwave
+ * added infinite scaling define in currenttime.h
+ *
  * Revision 1.13  2008/01/27 23:54:05  gtkwave
  * right side margin NaN fix
  *

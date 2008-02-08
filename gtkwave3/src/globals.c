@@ -223,7 +223,13 @@ NULL, /* fileselbox_text 87 */
  */
 NULL, /* fontname_signals 90 */
 NULL, /* fontname_waves 91 */
-
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+NULL, /* fonts_renderer */
+NULL, /* fonts_gc */
+NULL, /* fonts_screen */
+NULL, /* fonts_context */
+NULL, /* fonts_layout */
+#endif
 
 /*
  * ghw.c
@@ -1006,7 +1012,7 @@ NULL, /* blackout_regions 606 */
 2.0, /* zoombase 612 */
 NULL, /* topmost_trace 613 */
 1, /* waveheight 614 */
-0, /* wavecrosspiec */
+0, /* wavecrosspiece */
 1, /* wavewidth 615 */
 NULL, /* wavefont 616 */
 NULL, /* wavefont_smaller 617 */
@@ -1337,6 +1343,18 @@ void reload_into_new_context(void)
  new_globals->curtimewid_currenttime_c_1 = GLOBALS->curtimewid_currenttime_c_1;
  new_globals->from_entry = GLOBALS->from_entry;
  new_globals->to_entry = GLOBALS->to_entry;
+
+ new_globals->fontheight = GLOBALS->fontheight;
+ new_globals->wavefont_smaller = GLOBALS->wavefont_smaller;
+ new_globals->wavecrosspiece = GLOBALS->wavecrosspiece;
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+ new_globals->fonts_renderer = GLOBALS->fonts_renderer;
+ new_globals->fonts_gc = GLOBALS->fonts_gc;
+ new_globals->fonts_screen = GLOBALS->fonts_screen;
+ new_globals->fonts_context = GLOBALS->fonts_context;
+ new_globals->fonts_layout = GLOBALS->fonts_layout;
+#endif
 
  /* busy.c */
  new_globals->busycursor_busy_c_1 = GLOBALS->busycursor_busy_c_1;
@@ -1673,7 +1691,7 @@ void reload_into_new_context(void)
  GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
  init_proctrans_data();
- load_all_fonts();
+ /* load_all_fonts(); */
 
  /* attempt to reload file and recover on loader errors until successful */
  for(;;)

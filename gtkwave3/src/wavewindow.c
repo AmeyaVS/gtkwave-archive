@@ -324,9 +324,9 @@ if((t=GLOBALS->named_markers[i])!=-1)
         	        		xl, y, xl, y+5);
 				}
 
-			gdk_draw_string(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->wavefont_smaller,
+			font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->wavefont_smaller,
 				GLOBALS->gc_mark_wavewindow_c_1,
-				xl-(gdk_string_measure(GLOBALS->wavefont_smaller, nbuff)>>1), 
+				xl-(font_engine_string_measure(GLOBALS->wavefont_smaller, nbuff)>>1), 
 				GLOBALS->fontheight-2, nbuff);
 			}
 		}
@@ -1333,7 +1333,7 @@ num_traces_displayable--;   /* for the time trace that is always there */
 
 gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_dkgray, TRUE, 0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight); 
 gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_white, 0, GLOBALS->fontheight-1, GLOBALS->signal_fill_width-1, GLOBALS->fontheight-1);
-gdk_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont, GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
+font_engine_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont, GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
 
 t=GLOBALS->traces.first;
 trwhich=0;
@@ -1390,13 +1390,13 @@ if((t->name)&&(t->shift))
 	buf[0]='`';
 	reformat_time(buf+1, t->shift, GLOBALS->time_dimension);
 	strcpy(buf+strlen(buf+1)+1,"\'");
-	bufxlen=gdk_string_measure(GLOBALS->signalfont, buf);
+	bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
 	}
 
 if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
 	{
 	sprintf(buf + strlen(buf), "{%d}", t->n.nd->this_row);
-	bufxlen=gdk_string_measure(GLOBALS->signalfont, buf);
+	bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
 	}
 
 liney=((i+2)*GLOBALS->fontheight)-2;
@@ -1433,17 +1433,17 @@ if(!(t->flags&TR_HIGHLIGHT))
 			{
 			if(bufxlen)
 				{
-				int baselen=gdk_string_measure(GLOBALS->signalfont, t->name);
+				int baselen=font_engine_string_measure(GLOBALS->signalfont, t->name);
 				int combined=baselen+bufxlen;
 
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        GLOBALS->gc_black,
 				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
 						combined, 
 					texty,
 				        t->name);
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        GLOBALS->gc_black,
 				        GLOBALS->left_justify_sigs?3+baselen:3+GLOBALS->max_signal_name_pixel_width-
@@ -1453,18 +1453,18 @@ if(!(t->flags&TR_HIGHLIGHT))
 				}
 				else
 				{
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        GLOBALS->gc_black,
 				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						gdk_string_measure(GLOBALS->signalfont, t->name), 
+						font_engine_string_measure(GLOBALS->signalfont, t->name), 
 					texty,
 				        t->name);
 				}
 			}
 
 		if((t->asciivalue)&&(!(t->flags&TR_EXCLUDE)))
-			gdk_draw_string(GLOBALS->signalpixmap,
+			font_engine_draw_string(GLOBALS->signalpixmap,
 				GLOBALS->signalfont,
 	        		GLOBALS->gc_black,
 	        		GLOBALS->max_signal_name_pixel_width+6,
@@ -1479,17 +1479,17 @@ if(!(t->flags&TR_HIGHLIGHT))
 
 			if(bufxlen)
 				{
-				int baselen=gdk_string_measure(GLOBALS->signalfont, t->name);
+				int baselen=font_engine_string_measure(GLOBALS->signalfont, t->name);
 				int combined=baselen+bufxlen;
 
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        comment_color,
 				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
 						combined, 
 					texty,
 				        t->name);
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        comment_color,
 				        GLOBALS->left_justify_sigs?3+baselen:3+GLOBALS->max_signal_name_pixel_width-
@@ -1499,11 +1499,11 @@ if(!(t->flags&TR_HIGHLIGHT))
 				}
 				else
 				{
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        comment_color,
 				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						gdk_string_measure(GLOBALS->signalfont, t->name), 
+						font_engine_string_measure(GLOBALS->signalfont, t->name), 
 					texty,
 				        t->name);
 				}
@@ -1526,17 +1526,17 @@ if(!(t->flags&TR_HIGHLIGHT))
 			{
 			if(bufxlen)
 				{
-				int baselen=gdk_string_measure(GLOBALS->signalfont, t->name);
+				int baselen=font_engine_string_measure(GLOBALS->signalfont, t->name);
 				int combined=baselen+bufxlen;
 
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        GLOBALS->gc_white,
 				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
 						combined, 
 					texty,
 				        t->name);
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        GLOBALS->gc_white,
 				        GLOBALS->left_justify_sigs?3+baselen:3+GLOBALS->max_signal_name_pixel_width-
@@ -1546,18 +1546,18 @@ if(!(t->flags&TR_HIGHLIGHT))
 				}
 				else
 				{
-				gdk_draw_string(GLOBALS->signalpixmap,
+				font_engine_draw_string(GLOBALS->signalpixmap,
 					GLOBALS->signalfont,
 				        GLOBALS->gc_white,
 				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						gdk_string_measure(GLOBALS->signalfont, t->name), 
+						font_engine_string_measure(GLOBALS->signalfont, t->name), 
 					texty,
 				        t->name);
 				}
 			}
 
 		if((t->asciivalue)&&(!(t->flags&TR_EXCLUDE)))
-			gdk_draw_string(GLOBALS->signalpixmap,
+			font_engine_draw_string(GLOBALS->signalpixmap,
 		      	GLOBALS->signalfont,
 		       	GLOBALS->gc_white,
 		        GLOBALS->max_signal_name_pixel_width+6,
@@ -1567,11 +1567,11 @@ if(!(t->flags&TR_HIGHLIGHT))
 		else
 		{
 		if(t->name)
-		gdk_draw_string(GLOBALS->signalpixmap,
+		font_engine_draw_string(GLOBALS->signalpixmap,
 		      	GLOBALS->signalfont,
 		        (dobackground==2)?GLOBALS->gc_ltgray:GLOBALS->gc_dkgray,
 		        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-				gdk_string_measure(GLOBALS->signalfont, t->name), 
+				font_engine_string_measure(GLOBALS->signalfont, t->name), 
 			texty,
   		        t->name);
 		}
@@ -1605,7 +1605,7 @@ if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))	/* for "comment" style blank tra
 	{
 	if(t->name)
 		{
-		len=gdk_string_measure(GLOBALS->signalfont, t->name);
+		len=font_engine_string_measure(GLOBALS->signalfont, t->name);
 		if(len>maxlen) maxlen=len;
 		}
 	t=GiveNextTrace(t);
@@ -1621,16 +1621,16 @@ if(t->name)
         	buf[0]='`';
         	reformat_time(buf+1, t->shift, GLOBALS->time_dimension);
         	strcpy(buf+strlen(buf+1)+1,"\'");
-        	bufxlen=gdk_string_measure(GLOBALS->signalfont, buf);
+        	bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
         	}
 
 	if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
 		{
 		sprintf(buf + strlen(buf), "{%d}", t->n.nd->this_row);
-		bufxlen=gdk_string_measure(GLOBALS->signalfont, buf);
+		bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
 		}
 
-	len=gdk_string_measure(GLOBALS->signalfont, t->name)+bufxlen;
+	len=font_engine_string_measure(GLOBALS->signalfont, t->name)+bufxlen;
 	if(len>maxlen) maxlen=len;
 
 	if((GLOBALS->tims.marker!=-1)&&(!(t->flags&TR_EXCLUDE)))
@@ -1652,7 +1652,7 @@ if(t->name)
 				strcpy(str2+1,str);
 				free_2(str);
 
-				vlen=gdk_string_measure(GLOBALS->signalfont,str2);
+				vlen=font_engine_string_measure(GLOBALS->signalfont,str2);
 				t->asciivalue=str2;
 				}
 				else
@@ -1681,7 +1681,7 @@ if(t->name)
 						str[1]=AN_STR[h_ptr->v.h_val];
 						}
 					t->asciivalue=str;
-					vlen=gdk_string_measure(GLOBALS->signalfont,str);
+					vlen=font_engine_string_measure(GLOBALS->signalfont,str);
 					}
 					else
 					{
@@ -1711,7 +1711,7 @@ if(t->name)
 
 						free_2(str); 
 
-						vlen=gdk_string_measure(GLOBALS->signalfont,str2);
+						vlen=font_engine_string_measure(GLOBALS->signalfont,str2);
 						t->asciivalue=str2;
 						}
 						else
@@ -2067,11 +2067,11 @@ for(;;)
 		strcpy(timebuff, "0");
 		}
 
-	lenhalf=gdk_string_measure(GLOBALS->wavefont, timebuff) >> 1;
+	lenhalf=font_engine_string_measure(GLOBALS->wavefont, timebuff) >> 1;
 
 	if((x-lenhalf >= lastx) || (GLOBALS->pixelsperframe >= 200))
 		{
-		gdk_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_time_wavewindow_c_1,x-lenhalf, GLOBALS->wavefont->ascent-1,timebuff);
+		font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_time_wavewindow_c_1,x-lenhalf, GLOBALS->wavefont->ascent-1,timebuff);
 
 		lastx = x+lenhalf;
 		}
@@ -2319,9 +2319,9 @@ if(x0!=x1)
 
 			if((width=x1-x0_new)>GLOBALS->vector_padding)
 				{
-				if((x1>=GLOBALS->wavewidth)||(gdk_string_measure(GLOBALS->wavefont, identifier_str)+GLOBALS->vector_padding<=width))
+				if((x1>=GLOBALS->wavewidth)||(font_engine_string_measure(GLOBALS->wavefont, identifier_str)+GLOBALS->vector_padding<=width))
 					{
-		                        gdk_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,  GLOBALS->gc_value_wavewindow_c_1,  x0+2,ytext,identifier_str);
+		                        font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,  GLOBALS->gc_value_wavewindow_c_1,  x0+2,ytext,identifier_str);
 					}
 				}
 			}
@@ -3006,9 +3006,9 @@ if(x0<0) x0=0;	/* fixup left margin */
 				}
 			}
 
-		if((x1>=GLOBALS->wavewidth)||(gdk_string_measure(GLOBALS->wavefont, ascii2)+GLOBALS->vector_padding<=width))
+		if((x1>=GLOBALS->wavewidth)||(font_engine_string_measure(GLOBALS->wavefont, ascii2)+GLOBALS->vector_padding<=width))
 			{
-			gdk_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
+			font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
 			}
 		else
 			{
@@ -3020,7 +3020,7 @@ if(x0<0) x0=0;	/* fixup left margin */
 				*mod='+';
 				*(mod+1)=0;
 
-				gdk_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
+				font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
 				}
 			}
 		}
@@ -3669,9 +3669,9 @@ if(x0<0) x0=0;	/* fixup left margin */
 				}
 			}
 
-		if((x1>=GLOBALS->wavewidth)||(gdk_string_measure(GLOBALS->wavefont, ascii2)+GLOBALS->vector_padding<=width))
+		if((x1>=GLOBALS->wavewidth)||(font_engine_string_measure(GLOBALS->wavefont, ascii2)+GLOBALS->vector_padding<=width))
 			{
-			gdk_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
+			font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
 			}
 		else
 			{
@@ -3683,7 +3683,7 @@ if(x0<0) x0=0;	/* fixup left margin */
 				*mod='+';
 				*(mod+1)=0;
 
-				gdk_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
+				font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1,GLOBALS->wavefont,GLOBALS->gc_value_wavewindow_c_1,x0+2,ytext,ascii2);
 				}
 			}
 
@@ -3745,6 +3745,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2008/01/28 23:08:50  gtkwave
+ * added infinite scaling define in currenttime.h
+ *
  * Revision 1.29  2008/01/27 23:54:05  gtkwave
  * right side margin NaN fix
  *

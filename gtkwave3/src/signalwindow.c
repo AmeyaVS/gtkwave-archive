@@ -43,7 +43,7 @@ if(GLOBALS->signalpixmap)
 	        0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight);
 	gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_white,  
 	        0, GLOBALS->fontheight-1, GLOBALS->signal_fill_width-1, GLOBALS->fontheight-1);
-	gdk_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont,
+	font_engine_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont,
 	        GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
 
 	if(GLOBALS->signalarea_has_focus)
@@ -1360,6 +1360,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2008/01/30 21:12:22  gtkwave
+ * dnd for gtk1
+ *
  * Revision 1.25  2008/01/23 16:37:56  gtkwave
  * created separate smaller popup instead of using normal itemfactory list
  *
