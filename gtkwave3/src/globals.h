@@ -1122,6 +1122,7 @@ void set_GLOBALS_x(struct Global *g, const char *file, int line);
 #define set_GLOBALS(a) set_GLOBALS_x(a,NULL,0)
 #endif
 
+void logbox_reload(void);
 
 extern struct Global *GLOBALS;
 #endif

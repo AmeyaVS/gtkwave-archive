@@ -1187,6 +1187,8 @@ void reload_into_new_context(void)
  char cached_ignore_savefile_size = GLOBALS->ignore_savefile_size;
  char cached_splash_disable = GLOBALS->splash_disable;
 
+ logbox_reload();
+
  /* let all GTK/X events spin through in order to keep menus from freezing open during reload */
  if(GLOBALS->text_status_c_2)
 	{

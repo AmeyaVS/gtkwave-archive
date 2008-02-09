@@ -384,7 +384,7 @@
 		or across all trace data.
 		Added enter=OK as a default file chooser response.
 		Added DND and standard clicking to GTK1 compiles.
-3.1.5	08feb08	Fixed bug in rtlbrowse that causes lxt2 dumps not to be value
+3.1.5	09feb08	Fixed bug in rtlbrowse that causes lxt2 dumps not to be value
 		annotated.  (signal match worked for bitblasted nets only)
 		Updated rtlbrowse so that it can update dynamically with the
 		marker position.
@@ -392,3 +392,4 @@
 		Added use_pango_fonts rc variable.
 		Updated edge buttons so they can handle multiply selected
 		signals.
+		Logfile(s) now update on waveform reload.

@@ -22,6 +22,25 @@ struct wave_logfile_lines_t *next;
 char *text;
 };
 
+struct logfile_instance_t
+{
+struct logfile_instance_t *next;
+GtkWidget *window;
+GtkWidget *text;
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+GtkTextTag *bold_tag;
+GtkTextTag *mono_tag;
+GtkTextTag *size_tag;
+#else
+GdkFont *font_logfile;
+#endif
+
+char default_text[1];
+};
+
+static struct logfile_instance_t *log_collection = NULL;
+
 
 
 /* Add some text to our text widget - this is a callback that is invoked
@@ -218,9 +237,9 @@ gtk_table_attach (GTK_TABLE (table), vscrollbar, 15, 16, 0, 1,
 gtk_widget_show (vscrollbar);
 
 /* Add a handler to put a message in the text widget when it is realized */
-gtkwave_signal_connect (GTK_OBJECT (text), "realize", GTK_SIGNAL_FUNC (log_realize_text), NULL);
+gtk_signal_connect (GTK_OBJECT (text), "realize", GTK_SIGNAL_FUNC (log_realize_text), NULL);
 
-gtkwave_signal_connect(GTK_OBJECT(text), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
+gtk_signal_connect(GTK_OBJECT(text), "button_release_event", GTK_SIGNAL_FUNC(button_release_event), NULL);
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_CHAR);
@@ -235,15 +254,40 @@ return(table);
 
 static void ok_callback(GtkWidget *widget, GtkWidget *cached_window)
 {
-  DEBUG(printf("WM destroy\n"));
+struct logfile_instance_t *l = log_collection;
+struct logfile_instance_t *lprev = NULL;
+
+while(l)
+	{
+	if(l->window == cached_window)
+		{
+		if(lprev)
+			{
+			lprev->next = l->next;
+			}
+			else
+			{
+			log_collection = l->next;
+			}
+
+		free(l);  /* deliberately not free_2 */
+		break;
+		}
+
+	lprev = l;
+	l = l->next;
+	}
+
+  DEBUG(printf("OK\n"));
   gtk_widget_destroy(cached_window);
 }
 
-static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
+
+static void destroy_callback(GtkWidget *widget, GtkWidget *cached_window)
 {
-  DEBUG(printf("OK\n"));
-  gtk_widget_destroy(widget);
+ok_callback(widget, widget);
 }
+
 
 void logbox(char *title, int width, char *default_text)
 {
@@ -253,6 +297,8 @@ void logbox(char *title, int width, char *default_text)
     GtkWidget *label, *separator;
     GtkWidget *ctext;
     GtkWidget *text;
+    struct logfile_instance_t *log_c;
+
     FILE *handle;
     struct wave_logfile_lines_t *wlog_head=NULL, *wlog_curr=NULL;
     int wlog_size = 0;
@@ -305,7 +351,7 @@ void logbox(char *title, int width, char *default_text)
 	}
     gtk_window_set_title(GTK_WINDOW (window), title);
 
-    gtkwave_signal_connect(GTK_OBJECT (window), "delete_event", (GtkSignalFunc) destroy_callback, NULL);
+    gtk_signal_connect(GTK_OBJECT (window), "delete_event", (GtkSignalFunc) destroy_callback, window);
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (window), vbox);
@@ -333,11 +379,11 @@ void logbox(char *title, int width, char *default_text)
 
     button1 = gtk_button_new_with_label ("Close Logfile");
     gtk_widget_set_usize(button1, 100, -1);
-    gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(ok_callback), window);
+    gtk_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(ok_callback), window);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);  
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
-    gtkwave_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
+    gtk_signal_connect_object (GTK_OBJECT (button1), "realize", (GtkSignalFunc) gtk_widget_grab_default, GTK_OBJECT (button1));
 
     gtk_widget_show(window);
 
@@ -385,11 +431,136 @@ void logbox(char *title, int width, char *default_text)
 	}
 
     fclose(handle);
+
+    log_c = calloc(1, sizeof(struct logfile_instance_t) + strlen(default_text));  /* not calloc_2, needs to be persistent! */
+    strcpy(log_c->default_text, default_text);
+    log_c->window = window;
+    log_c->text = text;
+    log_c->next = log_collection;
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+    log_c->bold_tag = GLOBALS->bold_tag_logfile_c_2;
+    log_c->mono_tag = GLOBALS->mono_tag_logfile_c_1;
+    log_c->size_tag = GLOBALS->size_tag_logfile_c_1;
+#else
+    log_c->font_logfile = GLOBALS->font_logfile_c_1;
+#endif
+    log_collection = log_c;
+}
+
+
+static void logbox_reload_single(GtkWidget *window, GtkWidget *text, char *default_text)
+{
+    FILE *handle;
+    struct wave_logfile_lines_t *wlog_head=NULL, *wlog_curr=NULL;
+    int wlog_size = 0;
+
+    handle = fopen(default_text, "rb");
+    if(!handle)
+	{
+	char *buf = malloc_2(strlen(default_text)+128);
+	sprintf(buf, "Could not open logfile '%s'\n", default_text);
+	status_text(buf);
+	free_2(buf);
+	return;
+	}
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+    {
+    GtkTextIter st_iter, en_iter;
+  
+    gtk_text_buffer_get_start_iter(GTK_TEXT_VIEW (text)->buffer, &st_iter);
+    gtk_text_buffer_get_end_iter(GTK_TEXT_VIEW (text)->buffer, &en_iter);
+    gtk_text_buffer_delete(GTK_TEXT_VIEW (text)->buffer, &st_iter, &en_iter);
+
+    gtk_text_buffer_get_start_iter (GTK_TEXT_VIEW (text)->buffer, &GLOBALS->iter_logfile_c_2);
+    }
+#else
+    {
+    guint len = gtk_text_get_length(GTK_TEXT(text));
+    gtk_text_set_point(GTK_TEXT(text), 0);
+
+    gtk_text_freeze(GTK_TEXT(text)); 
+    gtk_text_forward_delete (GTK_TEXT(text), len);
+    }
+#endif
+
+    log_text_bold(text, NULL, "Click-select");
+    log_text(text, NULL, " on numbers to jump to that time value in the wave viewer.\n");
+    log_text(text, NULL, " \n");
+
+    while(!feof(handle))
+	{
+	char *pnt = fgetmalloc(handle);
+	if(pnt)
+		{
+		struct wave_logfile_lines_t *w = calloc_2(1, sizeof(struct wave_logfile_lines_t));
+
+		wlog_size += (GLOBALS->fgetmalloc_len+1);
+		w->text = pnt;
+		if(!wlog_curr) { wlog_head = wlog_curr = w; } else { wlog_curr->next = w; wlog_curr = w; }
+		}
+	}
+
+    if(wlog_curr)
+	{
+	struct wave_logfile_lines_t *w = wlog_head;
+	struct wave_logfile_lines_t *wt;
+	char *pnt = malloc_2(wlog_size + 1);
+	char *pnt2 = pnt;
+
+	while(w)
+		{
+		int len = strlen(w->text);
+		memcpy(pnt2, w->text, len);
+		pnt2 += len;
+		*pnt2 = '\n';
+		pnt2++;
+
+		free_2(w->text);
+		wt = w;
+		w = w->next;
+		free_2(wt);
+		}
+	wlog_head = wlog_curr = NULL;
+	*pnt2 = 0;
+	log_text(text, GLOBALS->font_logfile_c_1, pnt);
+	free_2(pnt);
+	}
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#else
+    gtk_text_thaw(GTK_TEXT(text));
+#endif
+
+    fclose(handle);
+}
+
+
+void logbox_reload(void)
+{
+struct logfile_instance_t *l = log_collection;
+
+while(l)
+	{
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+	GLOBALS->bold_tag_logfile_c_2 = l->bold_tag;
+	GLOBALS->mono_tag_logfile_c_1 = l->mono_tag;
+	GLOBALS->size_tag_logfile_c_1 = l->size_tag;
+#else
+	GLOBALS->font_logfile_c_1 = l->font_logfile;
+#endif
+
+	logbox_reload_single(l->window, l->text, l->default_text);
+	l = l->next;
+	}
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/12 17:26:44  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.2  2007/08/26 21:35:41  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
