@@ -428,6 +428,7 @@ if(!GLOBALS)
 	GLOBALS->vlist_compression_depth = old_g->vlist_compression_depth;
 	GLOBALS->zoombase = old_g->zoombase;
 	GLOBALS->splash_disable = old_g->splash_disable;
+	GLOBALS->use_pango_fonts = old_g->use_pango_fonts;
 	
 	GLOBALS->vlist_spill_to_disk = old_g->vlist_spill_to_disk;
 	GLOBALS->vlist_prepack = old_g->vlist_prepack;
@@ -2029,6 +2030,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2008/01/09 22:25:55  gtkwave
+ * added toolbar spacers, increased starting mainwindow x size
+ *
  * Revision 1.23  2008/01/09 19:20:52  gtkwave
  * more updating to globals management (expose events cause wrong swap)
  *

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ GdkFont *font_logfile;
 char default_text[1];
 };
 
-static struct logfile_instance_t *log_collection = NULL;
+static struct logfile_instance_t *log_collection = NULL; /* this is not in globals as logfiles are independent across all contexts */
 
 
 
@@ -432,7 +432,7 @@ void logbox(char *title, int width, char *default_text)
 
     fclose(handle);
 
-    log_c = calloc(1, sizeof(struct logfile_instance_t) + strlen(default_text));  /* not calloc_2, needs to be persistent! */
+    log_c = calloc(1, sizeof(struct logfile_instance_t) + strlen(default_text));  /* deliberately not calloc_2, needs to be persistent! */
     strcpy(log_c->default_text, default_text);
     log_c->window = window;
     log_c->text = text;
@@ -558,6 +558,9 @@ while(l)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/09 06:17:20  gtkwave
+ * logfiles update now on waveform reload
+ *
  * Revision 1.3  2007/09/12 17:26:44  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
