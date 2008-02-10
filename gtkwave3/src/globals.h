@@ -295,6 +295,7 @@ int is_active_hiersearch_c_1; /* from hiersearch.c 135 */
 /*
  * logfile.c
  */
+void **logfiles;
 char *fontname_logfile; /* from logfile.c 137 */
 GdkFont *font_logfile_c_1; /* from logfile.c 138 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)

@@ -298,6 +298,7 @@ NULL, /* treechain_hiersearch_c_1 130 */
 /* 
  * logfile.c
  */
+NULL, /* logfiles */
 NULL, /* fontname_logfile 133 */
 NULL, /* font_logfile_c_1 134 */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
@@ -1477,6 +1478,8 @@ void reload_into_new_context(void)
  new_globals->vector_padding = GLOBALS->vector_padding;
  new_globals->zoombase = GLOBALS->zoombase;
  new_globals->splash_disable = 1; /* to disable splash for reload */
+
+ new_globals->logfiles = GLOBALS->logfiles; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
 
  strcpy2_into_new_context(new_globals, &new_globals->fontname_logfile, &GLOBALS->fontname_logfile);
  strcpy2_into_new_context(new_globals, &new_globals->fontname_signals, &GLOBALS->fontname_signals); 

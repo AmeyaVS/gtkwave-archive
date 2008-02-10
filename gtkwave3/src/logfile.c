@@ -39,8 +39,7 @@ GdkFont *font_logfile;
 char default_text[1];
 };
 
-static struct logfile_instance_t *log_collection = NULL; /* this is not in globals as logfiles are independent across all contexts */
-
+#define log_collection (*((struct logfile_instance_t **)GLOBALS->logfiles))
 
 
 /* Add some text to our text widget - this is a callback that is invoked
@@ -558,6 +557,9 @@ while(l)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/10 01:24:00  gtkwave
+ * minor cleanups
+ *
  * Revision 1.4  2008/02/09 06:17:20  gtkwave
  * logfiles update now on waveform reload
  *
@@ -584,4 +586,3 @@ while(l)
  * initial release
  *
  */
-

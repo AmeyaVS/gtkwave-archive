@@ -297,6 +297,8 @@ if(!GLOBALS)
 	{
 	set_GLOBALS(initialize_globals());
 	mainwindow_already_built = 0;
+
+	GLOBALS->logfiles = calloc(1, sizeof(void **)); /* calloc is deliberate! */
 	}
 	else
 	{
@@ -316,6 +318,9 @@ if(!GLOBALS)
 
 	/* busy.c */
 	GLOBALS->busycursor_busy_c_1 = old_g->busycursor_busy_c_1;
+
+	/* logfiles.c */
+	GLOBALS->logfiles = old_g->logfiles;
 
 	/* menu.c */
 	GLOBALS->item_factory_menu_c_1 = old_g->item_factory_menu_c_1;
@@ -1528,6 +1533,7 @@ if(!mainwindow_already_built)
 	                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 	}
 
+
 if(!GLOBALS->notebook)
 	{
 	GLOBALS->num_notebook_pages = 1;
@@ -2030,6 +2036,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2008/02/10 01:24:00  gtkwave
+ * minor cleanups
+ *
  * Revision 1.24  2008/01/09 22:25:55  gtkwave
  * added toolbar spacers, increased starting mainwindow x size
  *
