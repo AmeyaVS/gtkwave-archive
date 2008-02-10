@@ -1335,8 +1335,6 @@ void reload_into_new_context(void)
  new_globals->signal_hslider = GLOBALS->signal_hslider;
  new_globals->wave_vslider = GLOBALS->wave_vslider;
  new_globals->wave_hslider = GLOBALS->wave_hslider;
- new_globals->signalfont = GLOBALS->signalfont;
- new_globals->wavefont = GLOBALS->wavefont;
  new_globals->max_or_marker_label_currenttime_c_1 = GLOBALS->max_or_marker_label_currenttime_c_1;
  new_globals->maxtext_currenttime_c_1 = (char *) calloc_2_into_context(new_globals,1,40);
  memcpy(new_globals->maxtext_currenttime_c_1, GLOBALS->maxtext_currenttime_c_1,40); 
@@ -1349,8 +1347,16 @@ void reload_into_new_context(void)
  new_globals->to_entry = GLOBALS->to_entry;
 
  new_globals->fontheight = GLOBALS->fontheight;
- new_globals->wavefont_smaller = GLOBALS->wavefont_smaller;
  new_globals->wavecrosspiece = GLOBALS->wavecrosspiece;
+
+ new_globals->signalfont = calloc_2_into_context(new_globals, 1, sizeof(struct font_engine_font_t));
+ memcpy(new_globals->signalfont, GLOBALS->signalfont, sizeof(struct font_engine_font_t));
+
+ new_globals->wavefont = calloc_2_into_context(new_globals, 1, sizeof(struct font_engine_font_t));
+ memcpy(new_globals->wavefont, GLOBALS->wavefont, sizeof(struct font_engine_font_t));
+
+ new_globals->wavefont_smaller = calloc_2_into_context(new_globals, 1, sizeof(struct font_engine_font_t));
+ memcpy(new_globals->wavefont_smaller, GLOBALS->wavefont_smaller, sizeof(struct font_engine_font_t));
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
  new_globals->fonts_renderer = GLOBALS->fonts_renderer;

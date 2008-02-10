@@ -26,10 +26,12 @@ PangoFontMetrics *metrics;
 #endif
 
 int ascent, descent;
+int mono_width;
 
 GdkFont *gdkfont;
 
 unsigned is_pango : 1;
+unsigned is_mono : 1;
 };
 
 
@@ -51,6 +53,9 @@ gint font_engine_string_measure
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.1  2008/02/06 00:00:01  gtkwave
  * initial release
  *

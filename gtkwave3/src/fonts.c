@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2001
+ * Copyright (c) Tony Bybell 1999-2008
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ PangoFontDescription *desc;
 
 if( (name) && (desc = pango_font_description_from_string(name)) )
 	{
-	fef = calloc(1, sizeof(struct font_engine_font_t)); /* deliberately not calloc_2!!! */
+	fef = calloc_2(1, sizeof(struct font_engine_font_t));
 
 	fef->desc = desc;
 	fef->font = pango_font_map_load_font( pango_cairo_font_map_get_default(), GLOBALS->fonts_context,   fef->desc);
@@ -31,6 +31,12 @@ if( (name) && (desc = pango_font_description_from_string(name)) )
 	fef->descent = pango_font_metrics_get_descent(fef->metrics) / 1000;
 
 	fef->is_pango = 1;
+
+	if(!strncmp(name, "Mono ", 5))
+		{
+		fef->mono_width = font_engine_string_measure(fef, "O");
+		fef->is_mono = 1;
+		}
 	}
 
 return(fef);
@@ -120,7 +126,7 @@ GdkFont *f = gdk_font_load(string);
 
 if(f)
 	{
-	struct font_engine_font_t *fef = calloc(1, sizeof(struct font_engine_font_t)); /* deliberately not calloc_2!!! */
+	struct font_engine_font_t *fef = calloc_2(1, sizeof(struct font_engine_font_t));
 	fef->gdkfont = f;
 	fef->ascent = f->ascent;
 	fef->descent = f->descent;
@@ -170,12 +176,19 @@ if(!font->is_pango)
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 	else
 	{
-	PangoRectangle ink,logical;
+	if(font->is_mono)
+		{
+		rc = strlen(string) * font->mono_width;
+		}
+		else
+		{
+		PangoRectangle ink,logical;
 
-	pango_layout_set_text(GLOBALS->fonts_layout, string, -1);
-	pango_layout_set_font_description(GLOBALS->fonts_layout, font->desc);
-	pango_layout_get_extents(GLOBALS->fonts_layout,&ink,&logical);
-	rc = logical.width/1000;
+		pango_layout_set_text(GLOBALS->fonts_layout, string, -1);
+		pango_layout_set_font_description(GLOBALS->fonts_layout, font->desc);
+		pango_layout_get_extents(GLOBALS->fonts_layout,&ink,&logical);
+		rc = logical.width/1000;
+		}
 	}
 #endif
 
@@ -228,7 +241,7 @@ if(!GLOBALS->signalfont)
 	if(!GLOBALS->signalfont) GLOBALS->signalfont=font_engine_gdk_font_load("-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*");
 	if(!GLOBALS->signalfont) { fprintf(stderr, "Could not load signalfont courier 14 or misc-fixed 14, exiting!\n"); exit(255); }
 #else
-	GLOBALS->signalfont= calloc(1, sizeof(struct font_engine_font_t));   /* deliberately not calloc_2!!! */
+	GLOBALS->signalfont= calloc_2(1, sizeof(struct font_engine_font_t));
 	GLOBALS->signalfont->gdkfont = GLOBALS->wavearea->style->font;
 	GLOBALS->signalfont->ascent = GLOBALS->wavearea->style->font->ascent; 
 	GLOBALS->signalfont->descent = GLOBALS->wavearea->style->font->descent; 
@@ -277,12 +290,12 @@ if(!GLOBALS->wavefont)
 	if(!GLOBALS->wavefont) GLOBALS->wavefont=GLOBALS->wavefont_smaller=font_engine_gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
 	if(!GLOBALS->wavefont) { fprintf(stderr, "Could not load wavefont courier 10 or misc-fixed 10, exiting!\n"); exit(255); }
 #else
-	GLOBALS->wavefont = calloc(1, sizeof(struct font_engine_font_t));   /* deliberately not calloc_2!!! */
+	GLOBALS->wavefont = calloc_2(1, sizeof(struct font_engine_font_t));
         GLOBALS->wavefont->gdkfont = GLOBALS->wavearea->style->font;
 	GLOBALS->wavefont->ascent = GLOBALS->wavearea->style->font->ascent;
 	GLOBALS->wavefont->descent = GLOBALS->wavearea->style->font->descent;
 
-	GLOBALS->wavefont_smaller = calloc(1, sizeof(struct font_engine_font_t));   /* deliberately not calloc_2!!! */
+	GLOBALS->wavefont_smaller = calloc_2(1, sizeof(struct font_engine_font_t));
         GLOBALS->wavefont_smaller->gdkfont = GLOBALS->wavearea->style->font;
 	GLOBALS->wavefont_smaller->ascent = GLOBALS->wavearea->style->font->ascent;
 	GLOBALS->wavefont_smaller->descent = GLOBALS->wavearea->style->font->descent;
@@ -324,6 +337,9 @@ if(GLOBALS->use_pango_fonts)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/08 15:29:19  gtkwave
+ * enabled pango font support for gtk2
+ *
  * Revision 1.3  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *
