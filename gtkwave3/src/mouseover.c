@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2006.
+ * Copyright (c) Tony Bybell 2006-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -322,6 +322,9 @@ if(alternate_name) { free_2(alternate_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.3  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

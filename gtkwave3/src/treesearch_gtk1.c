@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2004.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -820,6 +820,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/01/30 21:12:23  gtkwave
+ * dnd for gtk1
+ *
  * Revision 1.6  2008/01/08 18:59:04  gtkwave
  * gtk1 fixes for dnd
  *

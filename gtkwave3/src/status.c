@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2004
+ * Copyright (c) Tony Bybell 1999-2008
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -158,6 +158,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/01/04 03:23:33  gtkwave
+ * have dormant key_press_event handler code.
+ *
  * Revision 1.4  2007/09/12 19:24:45  gtkwave
  * more ctx_swap_watchdog updates
  *

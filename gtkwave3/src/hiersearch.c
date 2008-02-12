@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2001.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -980,6 +980,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.4  2007/09/12 17:26:44  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

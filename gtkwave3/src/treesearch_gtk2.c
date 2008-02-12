@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tristan Gingold and Tony Bybell 2006.
+ * Copyright (c) Tristan Gingold and Tony Bybell 2006-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1812,6 +1812,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/01/13 19:16:54  gtkwave
+ * add busy on vcd_recoder dnd (not normally activated)
+ *
  * Revision 1.10  2008/01/08 04:01:12  gtkwave
  * more accelerator key ergonomic updates
  *

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -464,6 +464,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/01/09 08:47:10  gtkwave
+ * renamed status strings to gtkwave-2 style
+ *
  * Revision 1.4  2008/01/09 08:26:16  gtkwave
  * added shorter labels when in horizontal toolbuttons mode
  *

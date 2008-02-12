@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Tony Bybell.
+ * Copyright (c) 2006-2008 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -281,6 +281,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/02/12 16:24:05  gtkwave
+ * mingw fixes
+ *
  * Revision 1.2  2007/08/31 22:50:47  gtkwave
  * update shmidcat for mingw32 compile (disabled)
  *

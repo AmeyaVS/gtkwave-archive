@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -328,6 +328,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/01/25 04:10:14  gtkwave
+ * added new resizing options to menu
+ *
  * Revision 1.3  2007/12/17 03:22:44  gtkwave
  * integration of (currently unused) vlist_packer routines
  *

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -303,6 +303,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/01/25 04:10:14  gtkwave
+ * added new resizing options to menu
+ *
  * Revision 1.8  2008/01/23 02:05:43  gtkwave
  * added interpolated + step mode
  *

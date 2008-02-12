@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -274,6 +274,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/01/28 23:08:50  gtkwave
+ * added infinite scaling define in currenttime.h
+ *
  * Revision 1.6  2008/01/28 21:47:06  gtkwave
  * gtk_dialog_set_default_response added so pressing ok is not needed
  *
