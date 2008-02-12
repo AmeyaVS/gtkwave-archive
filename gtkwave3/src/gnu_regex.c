@@ -380,7 +380,9 @@ init_syntax_once ()
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#ifndef __MINGW32__
 typedef char boolean;
+#endif
 #define false 0
 #define true 1
 
@@ -5894,6 +5896,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:35  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:12  gtkwave
  * initial release
  *

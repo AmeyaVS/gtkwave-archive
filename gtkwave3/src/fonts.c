@@ -34,8 +34,9 @@ if( (name) && (desc = pango_font_description_from_string(name)) )
 
 	if(!strncmp(name, "Mono ", 5))
 		{
+		int i_width = font_engine_string_measure(fef, "i");
 		fef->mono_width = font_engine_string_measure(fef, "O");
-		fef->is_mono = 1;
+		fef->is_mono = (i_width == fef->mono_width);
 		}
 	}
 
@@ -337,6 +338,9 @@ if(GLOBALS->use_pango_fonts)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/10 01:08:39  gtkwave
+ * speedup on mono font string length determination with pango
+ *
  * Revision 1.4  2008/02/08 15:29:19  gtkwave
  * enabled pango font support for gtk2
  *

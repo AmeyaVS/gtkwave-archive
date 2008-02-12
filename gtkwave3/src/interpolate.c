@@ -34,6 +34,12 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <strings.h>
 #include <math.h>
 
+#ifdef __MINGW32__ 
+#define bcopy(a,b,c) memcpy((b),(a),(c))
+#define bzero(a,b) memset((a),0,(b))
+#define bcmp(a,b,c) memcmp((a),(b),(c))
+#endif
+
 
 #if 0
 static void
@@ -351,6 +357,9 @@ bot:
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2008/01/22 20:45:29  gtkwave
+ * added to cvs
+ *
  * Revision 1.0  2008/01/23 00:00:01  gtkwave
  * initial release
  *

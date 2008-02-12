@@ -24,8 +24,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if !defined _MSC_VER && !defined __MINGW32__
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#endif
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -279,6 +281,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/31 22:50:47  gtkwave
+ * update shmidcat for mingw32 compile (disabled)
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
  * Imported sources
  *

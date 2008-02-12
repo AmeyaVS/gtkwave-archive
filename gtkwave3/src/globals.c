@@ -1205,7 +1205,9 @@ void reload_into_new_context(void)
  statefile = fopen(save_tmpfilename,"wb");
  if(statefile == NULL) {
    fprintf(stderr, "Failed to reload file.\n");
+#if !defined _MSC_VER && !defined __MINGW32__
    free_2(save_tmpfilename);
+#endif
    return;
  }
  if(fd_dummy >=0) close(fd_dummy);
@@ -1213,7 +1215,9 @@ void reload_into_new_context(void)
  fclose(statefile);
 
  reload_tmpfilename = strdup(save_tmpfilename);
+#if !defined _MSC_VER && !defined __MINGW32__
  free_2(save_tmpfilename);
+#endif
  
  /* save off size of tree frame if active */
 #if WAVE_USE_GTK2
