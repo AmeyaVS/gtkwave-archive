@@ -1367,7 +1367,7 @@ if(GLOBALS->signalarea_has_focus)
 
 if((GLOBALS->wavepixmap_wavewindow_c_1)&&(update_waves))
 	{
-	gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_back_wavewindow_c_1, TRUE, 0, GLOBALS->fontheight-1,GLOBALS->wavewidth, GLOBALS->waveheight-GLOBALS->fontheight+1);
+        gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_back_wavewindow_c_1, TRUE, 0, 0,GLOBALS->wavewidth, GLOBALS->waveheight);
 
 	if(GLOBALS->display_grid) rendertimes();
 	rendertraces();
@@ -2088,7 +2088,7 @@ for(;;)
 
 static void rendertimebar(void)
 {
-gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_timeb_wavewindow_c_1, TRUE,0, -1, GLOBALS->wavewidth, GLOBALS->fontheight); 
+gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_timeb_wavewindow_c_1, TRUE,0, -1, GLOBALS->wavewidth, GLOBALS->fontheight);
 rendertimes();
 rendertraces();
 
@@ -3745,6 +3745,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.30  2008/01/28 23:08:50  gtkwave
  * added infinite scaling define in currenttime.h
  *
