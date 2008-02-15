@@ -12,7 +12,7 @@
 #include "gtk12compat.h"
 #include "currenttime.h"
 
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
 
 static struct font_engine_font_t *do_font_load(const char *name)
 {
@@ -151,7 +151,7 @@ if(!font->is_pango)
 	{
 	gdk_draw_string(drawable, font->gdkfont, gc, x, y, string);
 	}
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
 	else
 	{
 	PangoRectangle ink,logical;
@@ -174,7 +174,7 @@ if(!font->is_pango)
 	{
 	rc = gdk_string_measure(font->gdkfont, string);
 	}
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
 	else
 	{
 	if(font->is_mono)
@@ -322,7 +322,7 @@ GLOBALS->wavecrosspiece=GLOBALS->wavefont->ascent+1;
 
 void load_all_fonts(void)
 {
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
 if(GLOBALS->use_pango_fonts)
 	{
 	pango_load_all_fonts();
@@ -338,6 +338,9 @@ if(GLOBALS->use_pango_fonts)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/02/12 16:24:05  gtkwave
+ * mingw fixes
+ *
  * Revision 1.5  2008/02/10 01:08:39  gtkwave
  * speedup on mono font string length determination with pango
  *

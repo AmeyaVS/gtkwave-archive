@@ -223,7 +223,7 @@ NULL, /* fileselbox_text 87 */
  */
 NULL, /* fontname_signals 90 */
 NULL, /* fontname_waves 91 */
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
 NULL, /* fonts_renderer */
 NULL, /* fonts_gc */
 NULL, /* fonts_screen */
@@ -1363,7 +1363,7 @@ void reload_into_new_context(void)
  new_globals->wavefont_smaller = calloc_2_into_context(new_globals, 1, sizeof(struct font_engine_font_t));
  memcpy(new_globals->wavefont_smaller, GLOBALS->wavefont_smaller, sizeof(struct font_engine_font_t));
 
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
  new_globals->fonts_renderer = GLOBALS->fonts_renderer;
  new_globals->fonts_gc = GLOBALS->fonts_gc;
  new_globals->fonts_screen = GLOBALS->fonts_screen;

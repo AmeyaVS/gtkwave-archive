@@ -218,7 +218,7 @@ void (*bad_cleanup_file_c_1)(); /* from file.c 91 */
  */ 
 char *fontname_signals; /* from fonts.c 92 */
 char *fontname_waves; /* from fonts.c 93 */
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
 PangoRenderer *fonts_renderer;
 GdkGC *fonts_gc;
 GdkScreen *fonts_screen;

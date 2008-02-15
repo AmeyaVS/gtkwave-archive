@@ -394,3 +394,6 @@
 		signals.
 		Logfile(s) now update on waveform reload.
 		MinGW compile fixes.  MinGW crash on reload fixed.
+3.1.6	15feb08	Added additional #ifdefs that disable Pango on GTK versions
+		less than 2.8.0.
+
