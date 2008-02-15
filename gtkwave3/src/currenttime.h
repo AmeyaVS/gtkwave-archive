@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.5_pre (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.5 (w)1999-2008 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 
@@ -169,6 +169,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.25  2008/01/31 04:09:47  gtkwave
  * revision bump to 3.1.4
  *
