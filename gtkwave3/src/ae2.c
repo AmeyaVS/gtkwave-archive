@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2004-2007.
+ * Copyright (c) Tony Bybell 2004-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -166,6 +166,7 @@ struct Node *n;
 struct symbol *s, *prevsymroot=NULL, *prevsym=NULL;
 FILE *ind_h = NULL;
 TimeType first_cycle, last_cycle, total_cycles;
+char *info_fname = NULL;
 
 ae2_initialize(error_fn, msg_fn, alloc_fn, free_fn);
 
@@ -180,9 +181,86 @@ if ( (!(GLOBALS->ae2_f=fopen(fname, "rb"))) || (!(GLOBALS->ae2 = ae2_read_initia
         return(LLDescriptor(0));        /* look at GLOBALS->ae2 in caller for success status... */
         }
 
-/* SPLASH */                            splash_create();
 
 GLOBALS->time_dimension = 'n';
+
+info_fname = malloc_2(strlen(fname) + 4 + 1);
+strcpy(info_fname, fname);
+strcat(info_fname, "info");
+if ( (!(GLOBALS->ae2_info_f=fopen(info_fname, "rb"))) || (!(GLOBALS->ae2_info = ae2_read_initialize(GLOBALS->ae2_info_f))) )
+        {
+	if(GLOBALS->ae2_info_f)
+		{
+		fclose(GLOBALS->ae2_info_f);
+		GLOBALS->ae2_info_f = NULL;
+		}
+
+	/* non-null GLOBALS->ae2_info says we have annotation info available */
+        }
+	else
+	{
+	time_t m1 = ae2_read_model_timestamp(GLOBALS->ae2);
+	time_t m2 = ae2_read_model_timestamp(GLOBALS->ae2_info);
+
+	uint64_t st_1 = ae2_read_start_cycle(GLOBALS->ae2);
+	uint64_t en_1 = ae2_read_end_cycle(GLOBALS->ae2);
+
+	uint64_t st_2 = ae2_read_start_cycle(GLOBALS->ae2_info);
+	uint64_t en_2 = ae2_read_end_cycle(GLOBALS->ae2_info);
+
+	FACREF time_fr, prec_fr;
+        ulong time_rc = ae2_read_find_symbol(GLOBALS->ae2_info, AET2_TIMEFAC, &time_fr);
+        ulong prec_rc = ae2_read_find_symbol(GLOBALS->ae2_info, AET2_PRECFAC, &prec_fr);
+
+	if((m1 == m2) && (st_1 == st_2) && (en_1 == en_2) && (time_rc) && (prec_rc) & (time_fr.length == 64))
+		{
+                uint64_t i_value = 0;            
+                uint64_t timestep;
+		int bit;
+		char precstr[65];
+		unsigned int prec = 0;
+		char scale;
+
+		fprintf(stderr, AET2_RDLOAD"Using info file for extra information.\n");
+
+		ae2_read_value(GLOBALS->ae2_info, &prec_fr, st_2, precstr);
+		for(bit=0;bit<8;bit++)
+			{
+			prec <<= 1;
+			prec |= (precstr[bit]&1);
+			}
+
+		scale = (char)(prec & 0xff);
+		exponent_to_time_scale(scale);
+
+		GLOBALS->ae2_time_xlate = calloc_2(en_2 - st_2 + 1, sizeof(TimeType));
+         
+                for(timestep = st_2; timestep <= en_2; timestep++)
+                        {
+			char valstr[65];
+			uint64_t val;
+			ae2_read_value(GLOBALS->ae2_info, &time_fr, timestep, valstr);
+
+			for(bit=0;bit<64;bit++)
+				{
+				val <<= 1;
+				val |= (valstr[bit]&1);
+				}
+
+			i_value += val;
+			GLOBALS->ae2_time_xlate[timestep - st_2] = i_value * GLOBALS->time_scale;
+                        }
+		}
+		else
+		{
+		ae2_read_end(GLOBALS->ae2_info); GLOBALS->ae2_info = NULL;
+		fclose(GLOBALS->ae2_info_f); GLOBALS->ae2_info_f = NULL;
+		}
+	}
+free_2(info_fname); info_fname = NULL;
+
+
+/* SPLASH */                            splash_create();
 
 GLOBALS->ae2_num_sections=ae2_read_num_sections(GLOBALS->ae2);
 GLOBALS->numfacs=ae2_read_num_symbols(GLOBALS->ae2);
@@ -362,7 +440,31 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if(GLOBALS->ae2_fr[match_idx].length>1)
 		{
-		int len2 = sprintf(buf+len, "[%d:%d]", 0, GLOBALS->ae2_fr[match_idx].length-1);
+		int len2;
+		FACREF info_fr;
+		ulong find_rc;
+
+		if((GLOBALS->ae2_info)&&((find_rc = ae2_read_find_symbol(GLOBALS->ae2_info, buf, &info_fr)))&&(info_fr.length == 32))
+			{
+			int bit;
+			char valstr[33];
+			unsigned int val;
+			ae2_read_value(GLOBALS->ae2_info, &info_fr, 0, valstr);
+
+			for(bit=0;bit<32;bit++)
+				{
+				val <<= 1;
+				val |= (valstr[bit]&1);
+				}
+
+			len2 = sprintf(buf+len, "[%d:%d]", (val >> 16) & 0xffff, val & 0xffff);
+			}
+			else
+			{
+			len2 = sprintf(buf+len, "[%d:%d]", 0, GLOBALS->ae2_fr[match_idx].length-1);
+			}
+
+
 		str=malloc_2(len + len2 + 1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -518,12 +620,26 @@ if(GLOBALS->fast_tree_sort)
 	treesort(GLOBALS->treeroot, NULL);
 	}
 
-GLOBALS->min_time = first_cycle; GLOBALS->max_time=last_cycle;
+
+if(GLOBALS->ae2_time_xlate)
+	{
+	GLOBALS->min_time = GLOBALS->ae2_time_xlate[0];
+	GLOBALS->max_time = GLOBALS->ae2_time_xlate[last_cycle - first_cycle];
+	}
+	else
+	{
+	GLOBALS->min_time = first_cycle; GLOBALS->max_time=last_cycle;
+	}
+
+GLOBALS->ae2_start_cyc = GLOBALS->ae2_start_limit_cyc = first_cycle;
+GLOBALS->ae2_end_cyc = GLOBALS->ae2_end_limit_cyc = last_cycle;
+
 GLOBALS->is_lx2 = LXT2_IS_AET2;
 
 if(skip_start || skip_end)
 	{
 	TimeType b_start, b_end;
+	TimeType lim_idx;
 
 	if(!skip_start) b_start = GLOBALS->min_time; else b_start = unformat_time(skip_start, GLOBALS->time_dimension);
 	if(!skip_end) b_end = GLOBALS->max_time; else b_end = unformat_time(skip_end, GLOBALS->time_dimension);
@@ -543,6 +659,31 @@ if(skip_start || skip_end)
 
 	GLOBALS->min_time = b_start;
 	GLOBALS->max_time = b_end;
+
+	if(GLOBALS->ae2_time_xlate)
+		{
+		for(lim_idx = first_cycle; lim_idx <= last_cycle; lim_idx++)
+			{
+			if(GLOBALS->ae2_time_xlate[lim_idx - first_cycle] <= GLOBALS->min_time)
+				{
+				GLOBALS->ae2_start_limit_cyc = lim_idx;			
+				}
+	
+			if(GLOBALS->ae2_time_xlate[lim_idx - first_cycle] >= GLOBALS->min_time)
+				{
+				break;
+				}
+			}
+	
+		for(; lim_idx <= last_cycle; lim_idx++)
+			{
+			if(GLOBALS->ae2_time_xlate[lim_idx - first_cycle] >= GLOBALS->max_time)
+				{
+				GLOBALS->ae2_end_limit_cyc = lim_idx;			
+				break;
+				}
+			}
+		}
 	}
 
 fprintf(stderr, AET2_RDLOAD"["TTFormat"] start time.\n"AET2_RDLOAD"["TTFormat"] end time.\n", GLOBALS->min_time, GLOBALS->max_time);
@@ -588,7 +729,14 @@ if(f->length>1)
 		}
         }
 
-htemp->time = (*time);
+if(!GLOBALS->ae2_time_xlate)
+	{
+	htemp->time = (*time);
+	}
+	else
+	{
+	htemp->time = GLOBALS->ae2_time_xlate[(*time) - GLOBALS->ae2_start_cyc];
+	}
 
 if(l2e->histent_head)
 	{
@@ -885,7 +1033,7 @@ if((1)||(f->row <= 1)) /* sorry, arrays not supported yet in the viewer */
 	fprintf(stderr, "Import: %s\n", np->nname);
 
 	aet2_rd_set_fac_process_mask(txidx);
-	ae2_iterator(GLOBALS->min_time, GLOBALS->max_time);
+	ae2_iterator(GLOBALS->ae2_start_limit_cyc, GLOBALS->ae2_end_limit_cyc);
 	aet2_rd_clr_fac_process_mask(txidx);
 	}
 	else
@@ -997,7 +1145,7 @@ if(cnt>100)
 	}
 
 set_window_busy(NULL);
-ae2_iterator(GLOBALS->min_time, GLOBALS->max_time);
+ae2_iterator(GLOBALS->ae2_start_limit_cyc, GLOBALS->ae2_end_limit_cyc);
 set_window_idle(NULL);
 
 for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
@@ -1076,6 +1224,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/08/31 22:42:43  gtkwave
+ * 3.1.0 RC3 updates
+ *
  * Revision 1.4  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

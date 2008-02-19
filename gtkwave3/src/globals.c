@@ -70,6 +70,13 @@ NULL, /* ae2_lx2_table */
 NULL, /* ae2_f */
 NULL, /* ae2 */
 NULL, /* ae2_fr */
+NULL, /* ae2_info_f */
+NULL, /* ae2_info */
+NULL, /* ae2_time_xlate */
+LLDescriptor(0), /* ae2_start_cyc */
+LLDescriptor(0), /* ae2_end_cyc */
+LLDescriptor(0), /* ae2_start_limit_cyc */
+LLDescriptor(0), /* ae2_end_limit_cyc */
 NULL, /* ae2_process_mask */
 0, /* ae2_msg_suppress */
 NULL, /* ae2_regex_head */
@@ -1579,6 +1586,7 @@ void reload_into_new_context(void)
    case AE2_FILE: 
 #ifdef AET2_IS_PRESENT
 	ae2_read_end(GLOBALS->ae2); fclose(GLOBALS->ae2_f); 
+	if(GLOBALS->ae2_info) { ae2_read_end(GLOBALS->ae2_info); fclose(GLOBALS->ae2_info_f); } 
 #endif
 	break;
   

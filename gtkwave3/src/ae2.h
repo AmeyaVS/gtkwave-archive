@@ -17,6 +17,8 @@
 #include "lx2.h"
 
 #define AET2_RDLOAD "AE2LOAD | "
+#define AET2_TIMEFAC "AE2(!!TIME!!)"
+#define AET2_PRECFAC "AE2(!!PREC!!)"
 
 struct ae2_ncycle_autosort
 {
@@ -84,6 +86,9 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/08/31 22:42:43  gtkwave
+ * 3.1.0 RC3 updates
+ *
  * Revision 1.3  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
