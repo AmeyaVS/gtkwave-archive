@@ -13,6 +13,7 @@
 #define BSEARCH_NODES_VECTORS_H
 
 int bsearch_timechain(TimeType key);
+int bsearch_aetinfo_timechain(TimeType key);
 hptr bsearch_node(nptr n, TimeType key);
 vptr bsearch_vector(bvptr b, TimeType key);
 char *bsearch_trunc(char *ascii, int maxlen);
@@ -23,6 +24,9 @@ struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

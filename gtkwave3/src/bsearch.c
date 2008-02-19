@@ -59,6 +59,25 @@ return(GLOBALS->max_compare_pos_tc_bsearch_c_1-GLOBALS->timearray);
 
 /*****************************************************************************************/
 
+int bsearch_aetinfo_timechain(TimeType key)
+{
+void *bsearch_dummy_rv;
+
+GLOBALS->max_compare_time_tc_bsearch_c_1=-2; GLOBALS->max_compare_pos_tc_bsearch_c_1=NULL; 
+
+if(!GLOBALS->ae2_time_xlate) return(-1);
+
+bsearch_dummy_rv = bsearch(&key, GLOBALS->ae2_time_xlate, GLOBALS->ae2_end_cyc - GLOBALS->ae2_start_cyc + 1, sizeof(TimeType), compar_timechain);
+if(!GLOBALS->max_compare_pos_tc_bsearch_c_1)
+	{
+	GLOBALS->max_compare_pos_tc_bsearch_c_1=GLOBALS->ae2_time_xlate; /* aix bsearch fix */
+	}
+
+return(GLOBALS->max_compare_pos_tc_bsearch_c_1-GLOBALS->ae2_time_xlate);
+}
+
+/*****************************************************************************************/
+
 static int compar_histent(const void *s1, const void *s2)
 {
 TimeType key, obj, delta;
@@ -244,6 +263,9 @@ if(rc) return(*rc); else return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.3  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *

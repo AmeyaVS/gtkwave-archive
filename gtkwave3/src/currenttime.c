@@ -179,7 +179,17 @@ if(GLOBALS->anno_ctx)
 	if(val >= 0)
 		{
 		GLOBALS->anno_ctx->marker_set = 0;	/* avoid race on update */
-		GLOBALS->anno_ctx->marker = val / GLOBALS->time_scale;
+
+		if(!GLOBALS->ae2_time_xlate)
+			{
+			GLOBALS->anno_ctx->marker = val / GLOBALS->time_scale;
+			}
+			else
+			{
+			int rvs_xlate = bsearch_aetinfo_timechain(val);
+			GLOBALS->anno_ctx->marker = ((TimeType)rvs_xlate) + GLOBALS->ae2_start_cyc;
+			}
+
 		reformat_time(GLOBALS->anno_ctx->time_string, val, GLOBALS->time_dimension);
 
 		GLOBALS->anno_ctx->marker_set = 1;
@@ -464,6 +474,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.5  2008/01/09 08:47:10  gtkwave
  * renamed status strings to gtkwave-2 style
  *

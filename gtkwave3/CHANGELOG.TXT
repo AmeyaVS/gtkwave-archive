@@ -397,4 +397,5 @@
 3.1.6	19feb08	Added additional #ifdefs that disable Pango on GTK versions
 		less than 2.8.0.
 		Added support for optional sideband .aetinfo files when
-		using .aet files.
+		using .aet files.  Update interface to rtlbrowse to
+		translate time value back to original aet ones.
