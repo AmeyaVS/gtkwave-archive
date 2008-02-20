@@ -32,7 +32,7 @@ if( (name) && (desc = pango_font_description_from_string(name)) )
 
 	fef->is_pango = 1;
 
-	if(!strncmp(name, "Mono ", 5))
+	if(!strncmp(name, "Monospace ", 5))
 		{
 		int i_width = font_engine_string_measure(fef, "i");
 		fef->mono_width = font_engine_string_measure(fef, "O");
@@ -78,11 +78,11 @@ static void pango_load_all_fonts(void)
     {
       if(GLOBALS->use_big_fonts)
 	{ 
-	  GLOBALS->signalfont=do_font_load(GLOBALS->use_nonprop_fonts ? "Mono 12" : "Sans 12");
+	  GLOBALS->signalfont=do_font_load(GLOBALS->use_nonprop_fonts ? "Monospace 12" : "Sans 12");
 	}
       else
 	{
-	  GLOBALS->signalfont=do_font_load(GLOBALS->use_nonprop_fonts ? "Mono 10" : "Sans 10");
+	  GLOBALS->signalfont=do_font_load(GLOBALS->use_nonprop_fonts ? "Monospace 10" : "Sans 10");
 	}
     }
   
@@ -93,13 +93,13 @@ static void pango_load_all_fonts(void)
     {
       if(GLOBALS->use_big_fonts)
 	{
-	  GLOBALS->wavefont=do_font_load("Mono 12");
-	  GLOBALS->wavefont_smaller=do_font_load("Mono 10");
+	  GLOBALS->wavefont=do_font_load("Monospace 12");
+	  GLOBALS->wavefont_smaller=do_font_load("Monospace 10");
 	}
       else
 	{
-	  GLOBALS->wavefont=do_font_load("Mono 8");
-	  GLOBALS->wavefont_smaller=do_font_load("Mono 6");
+	  GLOBALS->wavefont=do_font_load("Monospace 8");
+	  GLOBALS->wavefont_smaller=do_font_load("Monospace 6");
 	}
     }
 
@@ -338,6 +338,9 @@ if(GLOBALS->use_pango_fonts)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/02/15 16:25:21  gtkwave
+ * gtk2 fixes for versions < 2.8.0
+ *
  * Revision 1.6  2008/02/12 16:24:05  gtkwave
  * mingw fixes
  *
