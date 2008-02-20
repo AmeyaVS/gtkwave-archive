@@ -32,7 +32,7 @@ if( (name) && (desc = pango_font_description_from_string(name)) )
 
 	fef->is_pango = 1;
 
-	if(!strncmp(name, "Monospace ", 5))
+	if(!strncmp(name, "Monospace", 9))
 		{
 		int i_width = font_engine_string_measure(fef, "i");
 		fef->mono_width = font_engine_string_measure(fef, "O");
@@ -338,6 +338,9 @@ if(GLOBALS->use_pango_fonts)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/02/20 18:53:41  gtkwave
+ * replace mono string with monospace in fontnames
+ *
  * Revision 1.7  2008/02/15 16:25:21  gtkwave
  * gtk2 fixes for versions < 2.8.0
  *
