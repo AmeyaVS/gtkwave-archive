@@ -54,10 +54,10 @@ color_value  ffffff
 color_vbox   00ff00
 color_vtrans 00c000
 
-color_x      00ff00
-color_xfill  004000
-color_u      ff0000
-color_ufill  400000
+color_x      ff0000
+color_xfill  400000
+color_u      cc0000
+color_ufill  200000
 color_w      79f6f2
 color_wfill  3f817f
 color_dash   edf508

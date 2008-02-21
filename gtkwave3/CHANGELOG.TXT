@@ -400,3 +400,5 @@
 		using .aet files.  Update interface to rtlbrowse to
 		translate time value back to original aet ones.
 		Improved x vs X (z vs Z, etc) handling at signal boundaries.
+		Changed color scheme where red marks X data similar to how
+		it marks U for VHDL.

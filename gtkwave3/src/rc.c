@@ -742,10 +742,10 @@ f_color_mid		("c0c000");
 f_color_value		("ffffff");
 f_color_vbox		("00ff00");
 f_color_vtrans		("00c000");
-f_color_x		("00ff00");
-f_color_xfill		("004000");
-f_color_u		("ff0000");
-f_color_ufill		("400000");
+f_color_x		("ff0000");
+f_color_xfill		("400000");
+f_color_u		("cc0000");
+f_color_ufill		("200000");
 f_color_w		("79f6f2");
 f_color_wfill		("3f817f");
 f_color_dash		("edf508");
@@ -883,6 +883,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/02/08 15:29:19  gtkwave
+ * enabled pango font support for gtk2
+ *
  * Revision 1.9  2008/01/08 23:03:36  gtkwave
  * added toolbar using use_toolbutton_interface rc variable
  *
