@@ -394,8 +394,9 @@
 		signals.
 		Logfile(s) now update on waveform reload.
 		MinGW compile fixes.  MinGW crash on reload fixed.
-3.1.6	19feb08	Added additional #ifdefs that disable Pango on GTK versions
+3.1.6	20feb08	Added additional #ifdefs that disable Pango on GTK versions
 		less than 2.8.0.
 		Added support for optional sideband .aetinfo files when
 		using .aet files.  Update interface to rtlbrowse to
 		translate time value back to original aet ones.
+		Improved x vs X (z vs Z, etc) handling at signal boundaries.
