@@ -155,11 +155,17 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 			else
 			if(parse[j]==AN_X)
 				{ 
-				int match = (j==0);
+				int match = (j==0) || ((parse + i + j) == (newbuff + 3));
 				int k;
 				for(k=j+1;k<4;k++)
 					{
-					if(parse[k]!=AN_X) match = 0; break;
+					if(parse[k]!=AN_X) 
+						{
+						char *thisbyt = parse + i + k;
+						char *lastbyt = newbuff + 3 + nbits - 1;
+						if((lastbyt - thisbyt) >= 0) match = 0; 
+						break;
+						}
 					}
 				val = (match) ? 16 : 21; break; 
 				}
@@ -167,14 +173,23 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 			if(parse[j]==AN_Z)    
 				{ 
 				int xover = 0;
-				int match = (j==0);
+				int match = (j==0) || ((parse + i + j) == (newbuff + 3));
 				int k;
 				for(k=j+1;k<4;k++)
 					{
 					if(parse[k]!=AN_Z) 
 						{
-						if(parse[k]==AN_X) xover = 1;
-						match = 0; break;
+						if(parse[k]==AN_X) 
+							{
+							xover = 1;
+							}
+							else
+							{
+							char *thisbyt = parse + i + k;
+							char *lastbyt = newbuff + 3 + nbits - 1;
+							if((lastbyt - thisbyt) >= 0) match = 0; 
+							}
+						break;
 						}
 					}
 
@@ -186,14 +201,23 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 			if(parse[j]==AN_W)    
 				{ 
 				int xover = 0;
-				int match = (j==0);
+				int match = (j==0) || ((parse + i + j) == (newbuff + 3));
 				int k;
 				for(k=j+1;k<4;k++)
 					{
 					if(parse[k]!=AN_W) 
 						{
-						if(parse[k]==AN_X) xover = 1;
-						match = 0; break;
+						if(parse[k]==AN_X) 
+							{
+							xover = 1;
+							}
+							else
+							{
+							char *thisbyt = parse + i + k;
+							char *lastbyt = newbuff + 3 + nbits - 1;
+							if((lastbyt - thisbyt) >= 0) match = 0; 
+							}
+						break;
 						}
 					}
 
@@ -205,14 +229,23 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 			if(parse[j]==AN_U)
 				{ 
 				int xover = 0;
-				int match = (j==0);
+				int match = (j==0) || ((parse + i + j) == (newbuff + 3));
 				int k;
 				for(k=j+1;k<4;k++)
 					{
 					if(parse[k]!=AN_U) 
 						{
-						if(parse[k]==AN_X) xover = 1;
-						match = 0; break;
+						if(parse[k]==AN_X) 
+							{
+							xover = 1;
+							}
+							else
+							{
+							char *thisbyt = parse + i + k;
+							char *lastbyt = newbuff + 3 + nbits - 1;
+							if((lastbyt - thisbyt) >= 0) match = 0; 
+							}
+						break;
 						}
 					}
 
@@ -227,9 +260,12 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 				int k;
 				for(k=j+1;k<4;k++)
 					{
-					if(parse[k]!=AN_U) 
+					if(parse[k]!=AN_DASH) 
 						{
-						if(parse[k]==AN_X) xover = 1;
+						if(parse[k]==AN_X) 
+							{
+							xover = 1;
+							}
 						break;
 						}
 					}
@@ -1357,6 +1393,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.5  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *
