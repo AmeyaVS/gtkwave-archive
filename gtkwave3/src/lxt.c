@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2001-2006.
+ * Copyright (c) Tony Bybell 2001-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1113,7 +1113,7 @@ if(!GLOBALS->sync_table_offset_lxt_c_1)
 				}
 				else
 				{
-				offs += (GLOBALS->mvlfacs_lxt_c_2[facidx].len + 7)/8;
+				offs += (modlen + 7)/8; /* was offs += (GLOBALS->mvlfacs_lxt_c_2[facidx].len + 7)/8 which is wrong for integers! */
 				}
 
 			break;
@@ -2319,6 +2319,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:41  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.8  2007/08/25 19:42:39  gtkwave
  * lxt loader hardening
  *

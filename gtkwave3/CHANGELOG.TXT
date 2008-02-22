@@ -394,7 +394,7 @@
 		signals.
 		Logfile(s) now update on waveform reload.
 		MinGW compile fixes.  MinGW crash on reload fixed.
-3.1.6	20feb08	Added additional #ifdefs that disable Pango on GTK versions
+3.1.6	22feb08	Added additional #ifdefs that disable Pango on GTK versions
 		less than 2.8.0.
 		Added support for optional sideband .aetinfo files when
 		using .aet files.  Update interface to rtlbrowse to
@@ -402,3 +402,6 @@
 		Improved x vs X (z vs Z, etc) handling at signal boundaries.
 		Changed color scheme where red marks X data similar to how
 		it marks U for VHDL.
+		Fixed longstanding bug in linear lxts that only occurs if
+		integers are present in the lxt dump (length is failed to
+		be promoted to 32 during re-chaining).
