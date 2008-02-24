@@ -532,7 +532,20 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 	which=(int)(event->y);
 	which=(which/GLOBALS->fontheight)-1;
 
-	if((which>=GLOBALS->traces.visible)||(which>=num_traces_displayable)||(which<0))
+	if(which>=GLOBALS->traces.visible)
+		{
+		if((event->state&(GDK_CONTROL_MASK|GDK_SHIFT_MASK)) == (GDK_SHIFT_MASK))
+			{
+			/* ok for plain-vanilla shift click only */
+			which = GLOBALS->traces.visible-1;
+			}
+			else
+			{
+			goto menu_chk; /* off in no man's land */
+			}
+		}
+
+	if((which>=num_traces_displayable)||(which<0))
 		{
 		goto menu_chk; /* off in no man's land */
 		}
@@ -1360,6 +1373,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.26  2008/01/30 21:12:22  gtkwave
  * dnd for gtk1
  *
