@@ -11,24 +11,24 @@ Mines LXT2 files for specific data values and generates gtkwave save files to st
 .SH "OPTIONS"
 .LP 
 .TP 
-\fB\-d,--dumpfile\fR <\fIfilename\fP>
+\fB\-d,\-\-dumpfile\fR <\fIfilename\fP>
 Specify LXT2 input dumpfile.
 .TP 
-\fB\-m,--match\fR <\fIvalue\fP>
+\fB\-m,\-\-match\fR <\fIvalue\fP>
 Specifies "bitwise" match data (binary, real, string)
 .TP 
-\fB\-x,--hex\fR <\fIvalue\fP>
+\fB\-x,\-\-hex\fR <\fIvalue\fP>
 Specifies hexadecimal match data that will automatically be converted to binary for searches
 .TP 
-\fB\-n,--namesonly\fR
+\fB\-n,\-\-namesonly\fR
 Indicates that only facnames should be printed in a gtkwave savefile compatible format.  By doing this, the file can be used to
 specify which traces are to be imported into gtkwave.
 .TP 
-\fB\-h,--help\fR
+\fB\-h,\-\-help\fR
 Show help screen.
 .SH "EXAMPLES"
 .LP 
-lxt2miner dumpfile.lxt2 --hex 20470000 -n
+lxt2miner dumpfile.lxt2 \-\-hex 20470000 -n
 .TP 
 This attempts to match the hex value 20470000 across all facilities and when the value is encountered, the facname only is printed to stdout in order to generate a gtkwave compatible save file.
 .SH "LIMITATIONS"
