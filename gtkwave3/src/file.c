@@ -84,7 +84,7 @@ gtk_widget_show(GLOBALS->fs_file_c_1);
 
 void fileselbox(char *title, char **filesel_path, GtkSignalFunc ok_func, GtkSignalFunc notok_func, char *pattn, int is_writemode)
 {
-
+int can_set_filename = 0;
 #if GTK_CHECK_VERSION(2,4,0)
 GtkWidget *pFileChoose;
 GtkWidget *pWindowMain;
@@ -131,10 +131,14 @@ if(*GLOBALS->fileselbox_text && (!g_path_is_absolute(*GLOBALS->fileselbox_text))
 #ifdef __linux__
 	char *can = canonicalize_file_name(*GLOBALS->fileselbox_text);
 
-	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
-        *GLOBALS->fileselbox_text=(char *)malloc_2(strlen(can)+1);
-        strcpy(*GLOBALS->fileselbox_text, can);
-	free(can);
+	if(can)
+		{
+		if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
+	        *GLOBALS->fileselbox_text=(char *)malloc_2(strlen(can)+1);
+	        strcpy(*GLOBALS->fileselbox_text, can);
+		free(can);
+		can_set_filename = 1;
+		}
 
 #else
 #if defined __USE_BSD || defined __USE_XOPEN_EXTENDED || defined __CYGWIN__ || defined HAVE_REALPATH
@@ -146,6 +150,7 @@ if(*GLOBALS->fileselbox_text && (!g_path_is_absolute(*GLOBALS->fileselbox_text))
 	        *GLOBALS->fileselbox_text=(char *)malloc_2(strlen(can)+1);
 	        strcpy(*GLOBALS->fileselbox_text, can);
 		free(can);
+		can_set_filename = 1;
 		}
 #else
 #if __GNUC__
@@ -184,7 +189,7 @@ if(is_writemode)
 	        NULL);
 	}
 
-if(*filesel_path) gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(pFileChoose), *filesel_path);
+if((can_set_filename) && (*filesel_path)) gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(pFileChoose), *filesel_path);
 
 if(pattn)
 	{
@@ -274,6 +279,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.7  2008/01/28 23:08:50  gtkwave
  * added infinite scaling define in currenttime.h
  *
