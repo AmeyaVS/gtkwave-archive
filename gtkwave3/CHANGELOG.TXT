@@ -415,3 +415,5 @@
 		Fixed problem in black and white mode where process filter
 		could possible cause colors to be displayed when ?color?
 		value escaping is used.
+		Fixed problem where primary marker was listed as 0 sec on
+		init instead of -- if not set initially from a save file.

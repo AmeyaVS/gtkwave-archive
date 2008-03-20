@@ -1603,7 +1603,14 @@ gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->notebook, 0, 16, 1, 256,
 gtk_widget_show(whole_table);
 gtk_container_add (GTK_CONTAINER (main_vbox), whole_table);
 
-update_markertime(time_trunc(GLOBALS->tims.marker));
+if(GLOBALS->tims.marker != -1)
+	{
+	update_markertime(time_trunc(GLOBALS->tims.marker));
+	}
+	else
+	{
+	update_markertime(GLOBALS->tims.marker);
+	}
 
 set_window_xypos(GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
 GLOBALS->xy_ignore_main_c_1 = 1;
@@ -2036,6 +2043,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2008/02/10 18:08:28  gtkwave
+ * removal of logfiles static and moved into global structure
+ *
  * Revision 1.25  2008/02/10 01:24:00  gtkwave
  * minor cleanups
  *
