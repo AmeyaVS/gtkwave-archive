@@ -2996,7 +2996,10 @@ if(x0<0) x0=0;	/* fixup left margin */
 				if(cb)
 					{	
 					ascii2 =  srch_for_color + 1;
-					gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, x0+1, y1+1, width-1, (y0-1) - (y1+1) + 1);
+					if(GLOBALS->gc_back_wavewindow_c_1 != GLOBALS->gc_white)
+						{
+						gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, x0+1, y1+1, width-1, (y0-1) - (y1+1) + 1);
+						}
 					GLOBALS->fill_in_smaller_rgb_areas_wavewindow_c_1 = 1;
 					}
 					else
@@ -3056,7 +3059,10 @@ if(x0<0) x0=0;	/* fixup left margin */
 				if(cb)
 					{	
 					ascii2 =  srch_for_color + 1;
-					gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+					if(GLOBALS->gc_back_wavewindow_c_1 != GLOBALS->gc_white)
+						{
+						gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+						}
 					}
 					else
 					{
@@ -3706,7 +3712,10 @@ if(x0<0) x0=0;	/* fixup left margin */
 				if(cb)
 					{	
 					ascii2 =  srch_for_color + 1;
-					gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+					if(GLOBALS->gc_back_wavewindow_c_1 != GLOBALS->gc_white)
+						{
+						gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, x0, y1+1, width, (y0-1) - (y1+1) + 1);
+						}
 					}
 					else
 					{
@@ -3745,6 +3754,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2008/02/14 04:15:43  gtkwave
+ * fixed recently introduced wavewindow clearing bug
+ *
  * Revision 1.31  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *
