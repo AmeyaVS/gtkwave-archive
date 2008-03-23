@@ -409,7 +409,7 @@
 		such that shift-clicks past the last trace when the
 		signalwindow isn't fully populated count as a shift-click
 		on the last trace.
-3.1.7	19mar08	Updated file.c to remove potential file chooser crash in
+3.1.7	23mar08	Updated file.c to remove potential file chooser crash in
 		the case of a missing save file at the command line followed
 		by "write save file as".
 		Fixed problem in black and white mode where process filter
