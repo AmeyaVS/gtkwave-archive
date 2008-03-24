@@ -56,6 +56,65 @@ if(flags&TR_INVERT)
 	memcpy(xtab,xfwd,AN_COUNT);
 	}
 
+if(flags&TR_ZEROFILL)
+	{
+	int msi = 0, lsi = 0, ok = 0;
+	if((t->name)&&(nbits > 1))
+		{
+		char *lbrack = strrchr(t->name, '[');
+		if(lbrack)
+			{
+			int rc = sscanf(lbrack+1, "%d:%d", &msi, &lsi);
+			if(rc == 2)
+				{
+				if(((msi - lsi + 1) == nbits) || ((lsi - msi + 1) == nbits))
+					{
+					ok = 1;	/* to ensure sanity... */
+					}
+				}
+			}
+		}
+
+	if(ok)
+		{
+		if(msi > lsi)
+			{
+			if(lsi > 0)
+				{
+				pnt=wave_alloca(msi + 1);
+	
+				memcpy(pnt, bits, nbits);
+	
+	        		for(i=nbits;i<msi+1;i++)
+	                		{
+	                		pnt[i]=AN_0;
+	                		}
+	
+				bits = pnt;
+				nbits = msi + 1;
+				}
+			}
+			else
+			{
+			if(msi > 0)
+				{
+				pnt=wave_alloca(lsi + 1);
+				
+	        		for(i=0;i<msi;i++)
+	                		{
+	                		pnt[i]=AN_0;
+	                		}
+	
+				memcpy(pnt+i, bits, nbits);
+	
+				bits = pnt;
+				nbits = lsi + 1;
+				}
+			}
+		}
+	}
+
+
 newbuff=(char *)malloc_2(nbits+6); /* for justify */
 if(flags&TR_REVERSE)
 	{
@@ -604,6 +663,43 @@ if(vec)
                 }
         }
 
+if((flags&TR_ZEROFILL)&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->ext->lsi))
+	{
+	if(t->n.nd->ext->msi > t->n.nd->ext->lsi)
+		{
+		if(t->n.nd->ext->lsi > 0)
+			{
+			pnt=wave_alloca(t->n.nd->ext->msi + 1);
+
+			memcpy(pnt, bits, nbits);
+
+        		for(i=nbits;i<t->n.nd->ext->msi+1;i++)
+                		{
+                		pnt[i]=AN_0;
+                		}
+
+			bits = pnt;
+			nbits = t->n.nd->ext->msi + 1;
+			}
+		}
+		else
+		{
+		if(t->n.nd->ext->msi > 0)
+			{
+			pnt=wave_alloca(t->n.nd->ext->lsi + 1);
+			
+        		for(i=0;i<t->n.nd->ext->msi;i++)
+                		{
+                		pnt[i]=AN_0;
+                		}
+
+			memcpy(pnt+i, bits, nbits);
+
+			bits = pnt;
+			nbits = t->n.nd->ext->lsi + 1;
+			}
+		}
+	}
 
 if(flags&TR_INVERT)
 	{
@@ -1429,6 +1525,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/24 00:26:26  gtkwave
+ * added improved x vs X handling for hptrs (was only vptrs in prev patch)
+ *
  * Revision 1.4  2008/02/21 03:53:39  gtkwave
  * improved x vs X (z vs Z, etc) handling
  *

@@ -3738,6 +3738,39 @@ dataformat( ~(TR_EXCLUDE), 0 );
 }
 /**/
 void
+menu_dataformat_zerofill_on(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-Zero Range Fill-On");
+        help_text(
+                " will step through all highlighted traces and ensure that"
+                " vectors with this qualifier will be displayed as if" 
+                " the bitrange of the MSB or LSB as appropriate goes to zero."                       
+        );
+        return;
+        }  
+
+dataformat( ~(TR_ZEROFILL), TR_ZEROFILL );
+}
+
+void
+menu_dataformat_zerofill_off(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-Zero Range Fill-Off");
+        help_text(
+                " will step through all highlighted traces and ensure that"
+		" normal bitrange displays are used."
+        );
+        return;
+        }  
+
+dataformat( ~(TR_ZEROFILL), 0 );
+}
+/**/
+void
 menu_dataformat_analog_off(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
@@ -4273,6 +4306,8 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Resizing/Screen Data", NULL, menu_dataformat_analog_resize_screen, WV_MENU_EDFARSD, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Resizing/All Data", NULL, menu_dataformat_analog_resize_all, WV_MENU_EDFARAD, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Zero Range Fill/On", NULL, menu_dataformat_zerofill_on, WV_MENU_ZFILLON, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Zero Range Fill/Off", NULL, menu_dataformat_zerofill_off, WV_MENU_ZFILLOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change All Highlighted", NULL, menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change First Highlighted", "<Control>F", menu_showchange, WV_MENU_ESCFH, "<Item>"),
       /* 50 */
@@ -4624,6 +4659,8 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Resizing/Screen Data", NULL, menu_dataformat_analog_resize_screen, WV_MENU_EDFARSD, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Resizing/All Data", NULL, menu_dataformat_analog_resize_all, WV_MENU_EDFARAD, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Zero Range Fill/On", NULL, menu_dataformat_zerofill_on, WV_MENU_ZFILLON, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Zero Range Fill/Off", NULL, menu_dataformat_zerofill_off, WV_MENU_ZFILLOFF, "<Item>"),
 
     WAVE_GTKIFE("/<separator>", NULL, NULL, WV_MENU_SEP1, "<Separator>"),
     WAVE_GTKIFE("/Insert Analog Height Extension", NULL, menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
@@ -4679,6 +4716,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2008/01/25 04:33:48  gtkwave
+ * gtk1 fix
+ *
  * Revision 1.27  2008/01/25 04:10:14  gtkwave
  * added new resizing options to menu
  *

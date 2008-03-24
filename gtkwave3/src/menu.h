@@ -99,6 +99,8 @@ WV_MENU_EDFAINTERPOL,
 WV_MENU_EDFAINTERPOL2,
 WV_MENU_EDFARSD,
 WV_MENU_EDFARAD,
+WV_MENU_ZFILLON,
+WV_MENU_ZFILLOFF,
 WV_MENU_XLF_0,
 WV_MENU_XLF_1,
 WV_MENU_XLP_0,
@@ -303,6 +305,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.9  2008/01/25 04:10:14  gtkwave
  * added new resizing options to menu
  *

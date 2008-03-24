@@ -254,7 +254,7 @@ enum TraceEntFlagBits
   TR_RJUSTIFY_B, TR_INVERT_B, TR_REVERSE_B, TR_EXCLUDE_B,
   TR_BLANK_B, TR_SIGNED_B, TR_ASCII_B, TR_COLLAPSED_B, TR_FTRANSLATED_B, TR_PTRANSLATED_B,
   TR_ANALOG_STEP_B, TR_ANALOG_INTERPOLATED_B, TR_ANALOG_BLANK_STRETCH_B, TR_REAL_B,
-  TR_ANALOG_FULLSCALE_B
+  TR_ANALOG_FULLSCALE_B, TR_ZEROFILL_B
 };
  
 #define TR_HIGHLIGHT 		(1<<TR_HIGHLIGHT_B)
@@ -274,6 +274,7 @@ enum TraceEntFlagBits
 #define TR_ANALOG_BLANK_STRETCH	(1<<TR_ANALOG_BLANK_STRETCH_B)
 #define TR_REAL			(1<<TR_REAL_B)
 #define TR_ANALOG_FULLSCALE	(1<<TR_ANALOG_FULLSCALE_B)
+#define TR_ZEROFILL		(1<<TR_ZEROFILL_B)
 
 #define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL)
 
@@ -328,6 +329,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.4  2008/01/25 04:10:14  gtkwave
  * added new resizing options to menu
  *
