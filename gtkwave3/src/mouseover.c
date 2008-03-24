@@ -23,6 +23,50 @@
 #include "color.h"
 #include "bsearch.h"
 
+/************************************************************************************************/
+
+static int determine_trace_flags(unsigned int flags, char *ch)
+{
+int pos = 0;
+
+/* [0] */
+if((flags & TR_SIGNED) != 0)
+	{
+	ch[pos++] = '+';
+	}
+
+/* [1] */
+if((flags & TR_HEX) != 0) { ch[pos++] = 'X'; }
+else if ((flags & TR_ASCII) != 0) { ch[pos++] = 'A'; }
+else if ((flags & TR_DEC) != 0) { ch[pos++] = 'D'; }  
+else if ((flags & TR_BIN) != 0) { ch[pos++] = 'B'; }  
+else if ((flags & TR_OCT) != 0) { ch[pos++] = 'O'; }  
+        
+/* [2] */
+if((flags & TR_RJUSTIFY) != 0) { ch[pos++] = 'J'; } 
+
+/* [3] */
+if((flags & TR_INVERT) != 0) { ch[pos++] = '~'; }
+
+/* [4] */
+if((flags & TR_REVERSE) != 0) { ch[pos++] = 'V'; }
+
+/* [5] */
+if((flags & (TR_ANALOG_STEP|TR_ANALOG_INTERPOLATED)) == (TR_ANALOG_STEP|TR_ANALOG_INTERPOLATED)) { ch[pos++] = '*'; } 
+else if((flags & TR_ANALOG_STEP) != 0) { ch[pos++] = 'S'; }
+else if((flags & TR_ANALOG_INTERPOLATED) != 0) { ch[pos++] = 'I'; }
+
+/* [6] */
+if((flags & TR_REAL) != 0) { ch[pos++] = 'R'; }
+
+/* [7] */
+if((flags & TR_ZEROFILL) != 0) { ch[pos++] = 'Z'; }
+
+/* [8] (at worst case this needs 9 characters) */
+ch[pos] = 0;
+
+return(pos);
+}
 
 /************************************************************************************************/
 
@@ -189,8 +233,10 @@ int nmaxlen = 0, vmaxlen = 0;
 int totalmax;
 int name_charlen = 0, value_charlen = 0;
 int num_info_rows = 2;
+char *flagged_name = NULL;
 char *alternate_name = NULL;
 int fh;
+char flag_string[9];
 
 if(GLOBALS->disable_mouseover)
 	{
@@ -208,16 +254,30 @@ if(t)
 	{
 	local_trace_asciival(t, tim, &nmaxlen, &vmaxlen, &asciivalue);
 
-	name_charlen = t->name ? strlen(t->name) : 0;
 	value_charlen = asciivalue ? strlen(asciivalue) : 0;
+
+	name_charlen = t->name ? strlen(t->name) : 0;
+	if(name_charlen)
+		{
+		int len = determine_trace_flags(t->flags, flag_string);
+		flagged_name = malloc_2(name_charlen + 1 + len + 1);
+		memcpy(flagged_name, t->name, name_charlen);
+		flagged_name[name_charlen] = ' ';
+		strcpy(flagged_name+name_charlen+1, flag_string);
+		name_charlen += (len + 1);
+		}
 
 	if(name_charlen > MOUSEOVER_BREAKSIZE)
 		{
 		alternate_name = malloc_2(MOUSEOVER_BREAKSIZE + 1);
 		strcpy(alternate_name, "...");
-		strcpy(alternate_name + 3, t->name + name_charlen - (MOUSEOVER_BREAKSIZE - 3));
+		strcpy(alternate_name + 3, flagged_name + name_charlen - (MOUSEOVER_BREAKSIZE - 3));
 	
 		nmaxlen=font_engine_string_measure(GLOBALS->wavefont, alternate_name);
+		}
+		else
+		{
+		nmaxlen=font_engine_string_measure(GLOBALS->wavefont, flagged_name);
 		}
 
 	if(value_charlen > MOUSEOVER_BREAKSIZE)
@@ -290,7 +350,7 @@ gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_black_mouseover
 		1,1, 
 		GLOBALS->mo_width_mouseover_c_1-2, GLOBALS->mo_height_mouseover_c_1-2);
 
-font_engine_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, fh + 2, alternate_name ? alternate_name : t->name);
+font_engine_draw_string(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->wavefont, GLOBALS->mo_dk_gray_mouseover_c_1, 4, fh + 2, alternate_name ? alternate_name : flagged_name);
 
 if(num_info_rows == 2)
 	{
@@ -316,12 +376,16 @@ gdk_draw_pixmap(GLOBALS->mo_area_mouseover_c_1->window, GLOBALS->mo_area_mouseov
 bot:
 if(asciivalue) { free_2(asciivalue); }
 if(alternate_name) { free_2(alternate_name); }
+if(flagged_name) { free_2(flagged_name); }
 #endif
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.4  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *
