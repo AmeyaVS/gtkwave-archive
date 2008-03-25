@@ -422,3 +422,5 @@
 		expects to read them.  Fill in can be zeros or ones.
 		Added trace flags display at right hand side of signal name
 		in mouseover popup window.
+		Added more visual feedback in signal D&D window in order
+		for users to determine more easily where a drop will insert.

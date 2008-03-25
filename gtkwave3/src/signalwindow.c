@@ -252,6 +252,120 @@ static gboolean DNDDragMotionCB(
             gdk_drag_status(dc, 0, t);
 #endif
 
+if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
+	{
+	GtkAdjustment *wadj;
+	GtkWidget *ddest;
+	int which;
+	gdouble x,y;
+	GdkModifierType state;
+	Trptr t;
+	int trwhich, trtarget;
+        
+	#ifdef WAVE_USE_GTK2    
+	gint xi, yi;
+	#else
+	GdkEventMotion event[1];
+	event[0].deviceid = GDK_CORE_POINTER;
+	#endif
+
+        wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+
+	WAVE_GDK_GET_POINTER(GLOBALS->std_dnd_tgt_on_signalarea ? GLOBALS->signalarea->window : GLOBALS->wavearea->window, &x, &y, &xi, &yi, &state);
+	WAVE_GDK_GET_POINTER_COPY;
+
+        which=(int)(y);
+        which=(which/GLOBALS->fontheight)-2;
+	if(which < -1) which = -1;
+
+	trtarget=((int)wadj->value)+which;
+
+	ddest = (GLOBALS->std_dnd_tgt_on_signalarea) ? GTK_WIDGET(GLOBALS->signalarea) : GTK_WIDGET(GLOBALS->wavearea);
+	if((x<0)||(x>=ddest->allocation.width)||(y<0)||(y>=ddest->allocation.height))
+		{
+		goto bot;
+		}
+
+	t=GLOBALS->traces.first;
+	trwhich=0;
+	while(t)
+		{
+	        if((trwhich<trtarget)&&(GiveNextTrace(t)))
+	        	{
+	                trwhich++;
+	                t=GiveNextTrace(t);
+	                }
+	                else
+	                {
+	                break;
+	                }
+	        }       
+
+	if(t)
+		{
+		while(t)
+			{
+			if(t->flags & TR_HIGHLIGHT)
+				{
+				t=GivePrevTrace(t);
+				which--;
+				}
+				else
+				{
+				break;
+				}
+			}
+		}
+
+	if(1)
+		{
+	        GtkAdjustment *hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
+	        GtkAdjustment *sadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+	        int rsig_trtarget=(int)(sadj->value);
+	        gint xsrc=(gint)hadj->value;
+		gint ylin;
+
+                gdk_draw_rectangle(GLOBALS->signalpixmap,
+                        GLOBALS->gc_ltgray, TRUE, 0, 0,
+                        GLOBALS->signal_fill_width, GLOBALS->signalarea->allocation.height);
+
+		RenderSigs(rsig_trtarget, 0);
+
+		if((t)&&(which >= -1))
+			{
+			if(which >= GLOBALS->traces.total) { which = GLOBALS->traces.total-1; } 
+			ylin = ((which + 2) * GLOBALS->fontheight) - 2;
+
+		        gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_black,
+	                	0, ylin, GLOBALS->signal_fill_width-1, ylin);
+			}
+			else
+			{
+			int i;
+
+			which = -1;
+			ylin = ((which + 2) * GLOBALS->fontheight) - 2;
+
+			for(i=0;i<GLOBALS->signal_fill_width-1; i+=16)
+				{
+			        gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_black,
+		                	i, ylin, i+7, ylin);
+			        gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_white,
+		                	i+8, ylin, i+15, ylin);
+				}
+			}
+
+                gdk_draw_pixmap(GLOBALS->signalarea->window, GLOBALS->signalarea->style->fg_gc[GTK_WIDGET_STATE(GLOBALS->signalarea)],
+                        GLOBALS->signalpixmap,
+                        xsrc, 0,
+                        0, 0,
+                        GLOBALS->signalarea->allocation.width, GLOBALS->signalarea->allocation.height);
+
+		/* printf("drop to %d of %d: '%s'\n", which, GLOBALS->traces.total, t ? t->name : "undef"); */
+		}
+	bot: 1;
+	}
+
 	return(FALSE);
 }
 
@@ -1373,6 +1487,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2008/02/24 02:47:33  gtkwave
+ * minor adjustment to shift-clicking when signal window not full
+ *
  * Revision 1.27  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *
