@@ -60,7 +60,9 @@ else if((flags & TR_ANALOG_INTERPOLATED) != 0) { ch[pos++] = 'I'; }
 if((flags & TR_REAL) != 0) { ch[pos++] = 'R'; }
 
 /* [7] */
-if((flags & TR_ZEROFILL) != 0) { ch[pos++] = 'Z'; }
+if((flags & TR_ZEROFILL) != 0) { ch[pos++] = '0'; }
+else
+if((flags & TR_ONEFILL) != 0) { ch[pos++] = '1'; }
 
 /* [8] (at worst case this needs 9 characters) */
 ch[pos] = 0;
@@ -383,6 +385,9 @@ if(flagged_name) { free_2(flagged_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/03/24 21:50:03  gtkwave
+ * added trace flags display to mouseover window
+ *
  * Revision 1.5  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *

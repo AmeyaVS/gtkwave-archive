@@ -56,8 +56,9 @@ if(flags&TR_INVERT)
 	memcpy(xtab,xfwd,AN_COUNT);
 	}
 
-if(flags&TR_ZEROFILL)
+if(flags&(TR_ZEROFILL|TR_ONEFILL))
 	{
+	char whichfill = (flags&TR_ZEROFILL) ? AN_0 : AN_1;
 	int msi = 0, lsi = 0, ok = 0;
 	if((t->name)&&(nbits > 1))
 		{
@@ -87,7 +88,7 @@ if(flags&TR_ZEROFILL)
 	
 	        		for(i=nbits;i<msi+1;i++)
 	                		{
-	                		pnt[i]=AN_0;
+	                		pnt[i]=whichfill;
 	                		}
 	
 				bits = pnt;
@@ -102,7 +103,7 @@ if(flags&TR_ZEROFILL)
 				
 	        		for(i=0;i<msi;i++)
 	                		{
-	                		pnt[i]=AN_0;
+	                		pnt[i]=whichfill;
 	                		}
 	
 				memcpy(pnt+i, bits, nbits);
@@ -663,8 +664,10 @@ if(vec)
                 }
         }
 
-if((flags&TR_ZEROFILL)&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->ext->lsi))
+if((flags&(TR_ZEROFILL|TR_ONEFILL))&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->ext->lsi))
 	{
+	char whichfill = (flags&TR_ZEROFILL) ? AN_0 : AN_1;
+
 	if(t->n.nd->ext->msi > t->n.nd->ext->lsi)
 		{
 		if(t->n.nd->ext->lsi > 0)
@@ -675,7 +678,7 @@ if((flags&TR_ZEROFILL)&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->ext->lsi))
 
         		for(i=nbits;i<t->n.nd->ext->msi+1;i++)
                 		{
-                		pnt[i]=AN_0;
+                		pnt[i]=whichfill;
                 		}
 
 			bits = pnt;
@@ -690,7 +693,7 @@ if((flags&TR_ZEROFILL)&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->ext->lsi))
 			
         		for(i=0;i<t->n.nd->ext->msi;i++)
                 		{
-                		pnt[i]=AN_0;
+                		pnt[i]=whichfill;
                 		}
 
 			memcpy(pnt+i, bits, nbits);
@@ -1525,6 +1528,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/03/24 19:33:59  gtkwave
+ * added zero range fill feature
+ *
  * Revision 1.5  2008/02/24 00:26:26  gtkwave
  * added improved x vs X handling for hptrs (was only vptrs in prev patch)
  *

@@ -3738,28 +3738,49 @@ dataformat( ~(TR_EXCLUDE), 0 );
 }
 /**/
 void
-menu_dataformat_zerofill_on(GtkWidget *widget, gpointer data)
+menu_dataformat_rangefill_zero(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nData Format-Zero Range Fill-On");
+        help_text_bold("\n\nData Format-Range Fill With 0s");
         help_text(
                 " will step through all highlighted traces and ensure that"
                 " vectors with this qualifier will be displayed as if" 
                 " the bitrange of the MSB or LSB as appropriate goes to zero."                       
+		" Zero bits will be filled in for the missing bits."
         );
         return;
         }  
 
-dataformat( ~(TR_ZEROFILL), TR_ZEROFILL );
+dataformat( ~(TR_ZEROFILL|TR_ONEFILL), TR_ZEROFILL );
 }
 
 void
-menu_dataformat_zerofill_off(GtkWidget *widget, gpointer data)
+menu_dataformat_rangefill_one(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nData Format-Zero Range Fill-Off");
+        help_text_bold("\n\nData Format-Range Fill With 1s");
+        help_text(
+                " will step through all highlighted traces and ensure that"
+                " vectors with this qualifier will be displayed as if" 
+                " the bitrange of the MSB or LSB as appropriate goes to zero."                       
+		" One bits will be filled in for the missing bits; this is mostly intended"
+		" to be used when viewing values which are inverted in the logic and need"
+		" to be inverted in the viewer."
+        );
+        return;
+        }  
+
+dataformat( ~(TR_ZEROFILL|TR_ONEFILL), TR_ONEFILL );
+}
+
+void
+menu_dataformat_rangefill_off(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-Zero Range Fill Off");
         help_text(
                 " will step through all highlighted traces and ensure that"
 		" normal bitrange displays are used."
@@ -3767,7 +3788,7 @@ if(GLOBALS->helpbox_is_active)
         return;
         }  
 
-dataformat( ~(TR_ZEROFILL), 0 );
+dataformat( ~(TR_ZEROFILL|TR_ONEFILL), 0 );
 }
 /**/
 void
@@ -4306,8 +4327,9 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Resizing/Screen Data", NULL, menu_dataformat_analog_resize_screen, WV_MENU_EDFARSD, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Resizing/All Data", NULL, menu_dataformat_analog_resize_all, WV_MENU_EDFARAD, "<Item>"),
-    WAVE_GTKIFE("/Edit/Data Format/Zero Range Fill/On", NULL, menu_dataformat_zerofill_on, WV_MENU_ZFILLON, "<Item>"),
-    WAVE_GTKIFE("/Edit/Data Format/Zero Range Fill/Off", NULL, menu_dataformat_zerofill_off, WV_MENU_ZFILLOFF, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Range Fill/With 0s", NULL, menu_dataformat_rangefill_zero, WV_MENU_RFILL0, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Range Fill/With 1s", NULL, menu_dataformat_rangefill_one, WV_MENU_RFILL1, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Range Fill/Off", NULL, menu_dataformat_rangefill_off, WV_MENU_RFILLOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change All Highlighted", NULL, menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change First Highlighted", "<Control>F", menu_showchange, WV_MENU_ESCFH, "<Item>"),
       /* 50 */
@@ -4659,8 +4681,10 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Analog/Interpolated Annotated", NULL, menu_dataformat_analog_interpol_step, WV_MENU_EDFAINTERPOL2, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Resizing/Screen Data", NULL, menu_dataformat_analog_resize_screen, WV_MENU_EDFARSD, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Resizing/All Data", NULL, menu_dataformat_analog_resize_all, WV_MENU_EDFARAD, "<Item>"),
-    WAVE_GTKIFE("/Data Format/Zero Range Fill/On", NULL, menu_dataformat_zerofill_on, WV_MENU_ZFILLON, "<Item>"),
-    WAVE_GTKIFE("/Data Format/Zero Range Fill/Off", NULL, menu_dataformat_zerofill_off, WV_MENU_ZFILLOFF, "<Item>"),
+
+    WAVE_GTKIFE("/Data Format/Range Fill/With 0s", NULL, menu_dataformat_rangefill_zero, WV_MENU_RFILL0, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Range Fill/With 1s", NULL, menu_dataformat_rangefill_one, WV_MENU_RFILL1, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Range Fill/Off", NULL, menu_dataformat_rangefill_off, WV_MENU_RFILLOFF, "<Item>"),
 
     WAVE_GTKIFE("/<separator>", NULL, NULL, WV_MENU_SEP1, "<Separator>"),
     WAVE_GTKIFE("/Insert Analog Height Extension", NULL, menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
@@ -4716,6 +4740,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2008/03/24 19:34:00  gtkwave
+ * added zero range fill feature
+ *
  * Revision 1.28  2008/01/25 04:33:48  gtkwave
  * gtk1 fix
  *
