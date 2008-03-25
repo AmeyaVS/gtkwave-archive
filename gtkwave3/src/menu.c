@@ -4231,7 +4231,23 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" toggles the dynamic tooltip for signal names and values which follow the marker on mouse button presses in the waveform display."
 		" This is useful for examining the values of closely packed value changes without having to zoom outward and without having to"
-		" refer to the signal name pane to the left."
+		" refer to the signal name pane to the left.  Note that an encoded string will be displayed next to the signal name that"
+		" indicates what data format flags are currently active for that signal.  Flags are as follows:\n"
+                " + = Signed Decimal\n"
+                " X = Hexadecimal\n"
+                " A = ASCII\n"
+                " D = Decimal\n"
+                " B = Binary\n"
+                " O = Octal\n"
+                " J = Right Justify\n"
+                " ~ = Invert\n"
+                " V = Reverse\n"
+                " * = Analog Step+Interpolated\n"   
+                " S = Analog Step\n"
+                " I = Analog Interpolated\n"
+                " R = Real\n"
+                " 0 = Range Fill with 0s\n"
+                " 1 = Range Fill with 1s\n"
         );
         }
 	else
@@ -4740,6 +4756,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2008/03/25 03:22:10  gtkwave
+ * expanded zero fill to include also a one fill (for pre-inverted nets)
+ *
  * Revision 1.29  2008/03/24 19:34:00  gtkwave
  * added zero range fill feature
  *
