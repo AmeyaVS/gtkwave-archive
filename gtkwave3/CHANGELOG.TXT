@@ -424,3 +424,5 @@
 		in mouseover popup window.
 		Added more visual feedback in signal D&D window in order
 		for users to determine more easily where a drop will insert.
+		Reduced visual noise on D&D by not updating screen after a
+		cut if a paste also occurs.

@@ -102,6 +102,7 @@ gdouble x,y;
 GdkModifierType state;
 Trptr t;
 int trwhich, trtarget;
+int must_update_screen = 0;
         
 #ifdef WAVE_USE_GTK2    
 gint xi, yi;
@@ -158,10 +159,7 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 			                /* char buf[32];
 			                sprintf(buf,"Dragging %d trace%s.\n",GLOBALS->traces.buffercount,GLOBALS->traces.buffercount!=1?"s":"");
 			                status_text(buf); */
-
-			                MaxSignalLength();
-			                signalarea_configure_event(GLOBALS->signalarea, NULL);
-			                wavearea_configure_event(GLOBALS->wavearea, NULL);
+					must_update_screen = 1;
 			                }
 
 		                GLOBALS->cachedtrace->flags|=TR_HIGHLIGHT;
@@ -187,10 +185,19 @@ success:
                 MaxSignalLength();
                 signalarea_configure_event(GLOBALS->signalarea, NULL);
                 wavearea_configure_event(GLOBALS->wavearea, NULL);
+		must_update_screen = 0;
                 }
         }
 
 bot:
+
+if(must_update_screen)
+	{
+        MaxSignalLength();
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+
 GLOBALS->dnd_state = 0;
 }
 
@@ -1487,6 +1494,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2008/03/25 17:42:55  gtkwave
+ * added d&d visual feedback
+ *
  * Revision 1.28  2008/02/24 02:47:33  gtkwave
  * minor adjustment to shift-clicking when signal window not full
  *
