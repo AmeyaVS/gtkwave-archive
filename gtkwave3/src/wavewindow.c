@@ -1005,7 +1005,7 @@ if((event->button)&&(event->button==GLOBALS->in_button_press_wavewindow_c_1))
 		}
 
 	GLOBALS->tims.lmbcache=-1;
-	update_markertime(time_trunc(GLOBALS->tims.marker));
+	update_markertime(GLOBALS->tims.marker);
 	}
 
 move_mouseover(NULL, 0, 0, LLDescriptor(0));
@@ -3754,6 +3754,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2008/03/20 01:15:13  gtkwave
+ * black and white mode color bug fixed when process filter color escapes used
+ *
  * Revision 1.32  2008/02/14 04:15:43  gtkwave
  * fixed recently introduced wavewindow clearing bug
  *

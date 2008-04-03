@@ -427,4 +427,5 @@
 		Reduced visual noise on D&D by not updating screen after a
 		cut if a paste also occurs.
 		Fixed problem where primary marker was filtered through
-		time_trunc() on initialization
+		time_trunc() on initialization.  Removed other time_trunc()
+		calls causing similar problems as necessary.

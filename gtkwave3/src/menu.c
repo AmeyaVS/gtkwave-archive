@@ -3029,7 +3029,7 @@ void read_save_helper(char *wname) {
 
                 GLOBALS->default_flags=TR_RJUSTIFY;
 		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
-		update_markertime(time_trunc(GLOBALS->tims.marker));
+		update_markertime(GLOBALS->tims.marker);
                 if(wave_is_compressed) pclose(wave); else fclose(wave);
 
 		GLOBALS->signalwindow_width_dirty=1;
@@ -4756,6 +4756,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2008/03/25 19:21:25  gtkwave
+ * updated mouseover help to indicate what the flags mean
+ *
  * Revision 1.30  2008/03/25 03:22:10  gtkwave
  * expanded zero fill to include also a one fill (for pre-inverted nets)
  *
