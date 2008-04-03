@@ -1605,12 +1605,9 @@ gtk_container_add (GTK_CONTAINER (main_vbox), whole_table);
 
 if(GLOBALS->tims.marker != -1)
 	{
-	update_markertime(time_trunc(GLOBALS->tims.marker));
+	if(GLOBALS->tims.marker<GLOBALS->tims.first) GLOBALS->tims.marker=GLOBALS->tims.first;
 	}
-	else
-	{
-	update_markertime(GLOBALS->tims.marker);
-	}
+update_markertime(GLOBALS->tims.marker);
 
 set_window_xypos(GLOBALS->initial_window_xpos, GLOBALS->initial_window_ypos);
 GLOBALS->xy_ignore_main_c_1 = 1;
@@ -2043,6 +2040,10 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2008/03/20 01:37:44  gtkwave
+ * fix for primary marker time on init (should be -- instead of 0 sec if not
+ * specified in a save file)
+ *
  * Revision 1.26  2008/02/10 18:08:28  gtkwave
  * removal of logfiles static and moved into global structure
  *
