@@ -121,13 +121,13 @@ Alternatively you can run it with a save file as:
 gtkwave dumpfile.vcd dumpfile.sav
 .TP
 To run interactively using shared memory handle 0x00050003:
-gtkwave -I 00050003 dumpfile.sav
+gtkwave \-I 00050003 dumpfile.sav
 .LP 
 Command line options are not necessary for representing the dumpfile, savefile, and rcfile names.  They are merely provided to allow specifying them
 out of order.
 .SH "BUGS"
 .TP
-AIX requires  -bmaxdata:0x80000000 (-bmaxdata:0xd0000000/dsa for AIX 5.3) to be added to your list of compiler flags for xlc if you want GTKWave to be able to access more than 256MB of virtual memory. The value shown allows the VMM to use up to 2GB (3.25GB AIX5.3). This may be necessary for very large traces.
+AIX requires  \-bmaxdata:0x80000000 (\-bmaxdata:0xd0000000/dsa for AIX 5.3) to be added to your list of compiler flags for xlc if you want GTKWave to be able to access more than 256MB of virtual memory. The value shown allows the VMM to use up to 2GB (3.25GB AIX5.3). This may be necessary for very large traces.
 .TP
 Shift and Page operations using the wave window hscrollbar may be nonfunctional as you move away from the dump start for very large traces. A trace that goes out to 45 billion ticks has been known to exhibit this problem. This stems from using the gfloat element of the horizontal slider to encode the time value for the left margin. The result is a loss of precision for very large values. Use the hotkeys or buttons at the top of the screen if this is a problem. 
 .TP

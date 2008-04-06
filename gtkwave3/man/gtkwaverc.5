@@ -202,16 +202,16 @@ If nonzero, specifies that the window position attribute is to be ignored during
 If nonzero, specifies that the window size attribute is to be ignored during savefile loading and is to be skipped during saving.  Default is that the size attribute is used.
 .TP
 \fBinitial_window_x\fR <\fIvalue\fP>
-Sets the size of the initial width of the wave viewer window. Values less than or equal to zero will set the initial width equal to -1 which will let GTK determine the minimum size.
+Sets the size of the initial width of the wave viewer window. Values less than or equal to zero will set the initial width equal to \-1 which will let GTK determine the minimum size.
 .TP 
 \fBinitial_window_xpos\fR <\fIvalue\fP>
-Sets the size of the initial x coordinate of the wave viewer window. -1 which will let the window manager determine the position.
+Sets the size of the initial x coordinate of the wave viewer window. \-1 will let the window manager determine the position.
 .TP 
 \fBinitial_window_y\fR <\fIvalue\fP>
-Sets the size of the initial height of the wave viewer window. Values less than or equal to zero will set the initial width equal to -1 which will let GTK determine the minimum size.
+Sets the size of the initial height of the wave viewer window. Values less than or equal to zero will set the initial width equal to \-1 which will let GTK determine the minimum size.
 .TP 
 \fBinitial_window_ypos\fR <\fIvalue\fP>
-Sets the size of the initial y coordinate of the wave viewer window. -1 which will let the window manager determine the position.
+Sets the size of the initial y coordinate of the wave viewer window. \-1 will let the window manager determine the position.
 .TP 
 \fBleft_justify_sigs\fR <\fIvalue\fP>
 When nonzero, indicates that the signal window signal name justification should default to left, else the justification is to the right (default).
@@ -286,7 +286,7 @@ indicates the number of pixels of extra whitespace that should be added to any s
 .TP 
 
 \fBvlist_compression\fR <\fIvalue\fP>
-indicates the value to pass to zlib during vlist processing (which is used in the VCD recoder).  -1 disables compression,
+indicates the value to pass to zlib during vlist processing (which is used in the VCD recoder).  \-1 disables compression,
 0-9 correspond to the value zlib expects.  4 is default.
 .TP 
 \fBvlist_prepack\fR <\fIvalue\fP>
