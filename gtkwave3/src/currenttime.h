@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.8_pre (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.8 (w)1999-2008 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 
@@ -169,6 +169,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2008/03/25 03:22:09  gtkwave
+ * expanded zero fill to include also a one fill (for pre-inverted nets)
+ *
  * Revision 1.32  2008/03/24 19:33:59  gtkwave
  * added zero range fill feature
  *

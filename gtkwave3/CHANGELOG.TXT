@@ -417,7 +417,7 @@
 		value escaping is used.
 		Fixed problem where primary marker was listed as 0 sec on
 		init instead of -- if not set initially from a save file.
-3.1.8	03apr08	Added Range Fill option in the data format menu so
+3.1.8	06apr08	Added Range Fill option in the data format menu so
 		that vectors like address[31:2] will display as a human
 		expects to read them.  Fill in can be zeros or ones.
 		Added trace flags display at right hand side of signal name
