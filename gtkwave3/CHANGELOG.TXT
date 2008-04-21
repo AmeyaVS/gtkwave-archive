@@ -430,4 +430,4 @@
 		time_trunc() on initialization.  Removed other time_trunc()
 		calls causing similar problems as necessary.
 3.1.9	20apr08	Added missing init_filetrans_data() to reload function.
-
+		Updated manfiles to get them in line with Debian lintian.
