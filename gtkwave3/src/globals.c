@@ -1716,6 +1716,7 @@ void reload_into_new_context(void)
  /* Initialize new variables */
  GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
+ init_filetrans_data();
  init_proctrans_data();
  /* load_all_fonts(); */
 
