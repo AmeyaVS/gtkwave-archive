@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.9 (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.10_pre (w)1999-2008 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 
@@ -169,6 +169,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2008/04/21 00:03:15  gtkwave
+ * fix for crash on reload with file filters active
+ *
  * Revision 1.34  2008/04/06 23:09:19  gtkwave
  * promote to 3.1.8
  *

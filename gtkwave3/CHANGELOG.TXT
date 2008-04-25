@@ -431,3 +431,7 @@
 		calls causing similar problems as necessary.
 3.1.9	20apr08	Added missing init_filetrans_data() to reload function.
 		Updated manfiles to get them in line with Debian lintian.
+3.1.10	25apr08	Added missing adjustment of t->shift in mouseover.c in 
+		order to allow the mouseover on shifted traces to display 
+		properly.
+

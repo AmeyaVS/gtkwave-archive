@@ -83,6 +83,8 @@ if(t->name)
 
 	if((tim!=-1)&&(!(t->flags&TR_EXCLUDE)))
 		{
+                GLOBALS->shift_timebase=t->shift;
+
 		if(t->vector)
 			{
 			char *str;
@@ -385,6 +387,9 @@ if(flagged_name) { free_2(flagged_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/03/25 03:22:11  gtkwave
+ * expanded zero fill to include also a one fill (for pre-inverted nets)
+ *
  * Revision 1.6  2008/03/24 21:50:03  gtkwave
  * added trace flags display to mouseover window
  *
