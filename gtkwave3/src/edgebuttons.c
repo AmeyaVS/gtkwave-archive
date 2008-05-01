@@ -153,7 +153,6 @@ while(s)
 		vp=GLOBALS->vmax_compare_index;
 		if((vp==&(t->n.vec->vectors[1]))||(vp==&(t->n.vec->vectors[0]))) return;
 		if(basetime == ((*vp)->time+GLOBALS->shift_timebase)) vp--;
-		vp--;
 		v=*vp;
 		s->his.v=v;
 		utt=strace_adjust(v->time,GLOBALS->shift_timebase); tt=utt;
@@ -584,6 +583,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/08 21:50:12  gtkwave
+ * edge buttons update (multiple signals)
+ *
  * Revision 1.3  2007/12/31 17:11:58  gtkwave
  * fixed backward seek bug in pattern/edge search
  *

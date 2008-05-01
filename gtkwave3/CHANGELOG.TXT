@@ -434,4 +434,5 @@
 3.1.10	25apr08	Added missing adjustment of t->shift in mouseover.c in 
 		order to allow the mouseover on shifted traces to display 
 		properly.
-
+		Fixed problem with edgebutton going back two edges on a
+		combined vector.  (Cut and paste typo from strace.c.)
