@@ -1892,6 +1892,11 @@ void reload_into_new_context(void)
         {
 	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea);
 	}
+
+   if(GLOBALS->clist_search_c_3)
+	{
+	dnd_setup(GLOBALS->clist_search_c_3, GLOBALS->signalarea);
+	}
  }
  #endif
  #if WAVE_USE_GTK2 

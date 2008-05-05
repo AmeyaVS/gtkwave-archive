@@ -99,6 +99,7 @@ void fileselbox(char *title, char **filesel_path, GtkSignalFunc ok_func, GtkSign
 void status_text(char *str);
 void searchbox(char *title, GtkSignalFunc func);
 void search_enter_callback(GtkWidget *widget, GtkWidget *do_warning);
+void search_insert_callback(GtkWidget *widget, char is_prepend);
 void showchange(char *title, Trptr t, GtkSignalFunc func);
 
 void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
@@ -169,6 +170,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2008/04/25 21:31:09  gtkwave
+ * added missing t->shift in mouseover time calculation
+ *
  * Revision 1.35  2008/04/21 00:03:15  gtkwave
  * fix for crash on reload with file filters active
  *

@@ -20,6 +20,8 @@
 #include "busy.h"
 #include "debug.h"
 
+enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
+
 /* Treesearch is a pop-up window used to select signals.
    It is composed of two main areas:
    * A tree area to select the hierarchy [tree area]
@@ -1508,7 +1510,14 @@ static void DNDBeginCB(
 	/* Put any needed drag begin setup code here. */
 	if(!GLOBALS->dnd_state)
 		{
-		GLOBALS->tree_dnd_begin = 1;
+		if(widget == GLOBALS->clist_search_c_3)
+			{
+			GLOBALS->tree_dnd_begin = SEARCH_TO_VIEW_DRAG_ACTIVE;
+			}
+			else
+			{
+			GLOBALS->tree_dnd_begin = TREE_TO_VIEW_DRAG_ACTIVE;
+			}
 		}
 }
 
@@ -1575,7 +1584,17 @@ if(trtarget < 0)
 		}
 		else
 		{
-		action_callback(ACTION_PREPEND);  /* prepend in this widget only ever used by this function call */
+		if(GLOBALS->tree_dnd_begin == SEARCH_TO_VIEW_DRAG_ACTIVE)
+			{
+			if(GLOBALS->window_search_c_7)
+				{
+				search_insert_callback(GLOBALS->window_search_c_7, 1 /* is prepend */);
+				}
+			}
+			else
+			{
+			action_callback(ACTION_PREPEND);  /* prepend in this widget only ever used by this function call */
+			}
 		goto dnd_import_fini;
 		}
 	}
@@ -1603,7 +1622,17 @@ if(t)
 	t->flags |= TR_HIGHLIGHT;
 	}
 
-action_callback (ACTION_INSERT);
+if(GLOBALS->tree_dnd_begin == SEARCH_TO_VIEW_DRAG_ACTIVE)
+	{
+	if(GLOBALS->window_search_c_7)
+		{
+		search_insert_callback(GLOBALS->window_search_c_7, 0 /* is insert */);
+		}
+	}
+	else
+	{
+	action_callback (ACTION_INSERT);
+	}
 
 if(t)
 	{
@@ -1635,7 +1664,7 @@ if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
 	set_window_idle(NULL);
 	}
 
-GLOBALS->tree_dnd_begin = 0;
+GLOBALS->tree_dnd_begin = VIEW_DRAG_INACTIVE;
 }
 
 
@@ -1724,7 +1753,7 @@ static void DNDDataRequestCB(
  *	inputs may reflect those of the drop target so we need to check
  *	if this is the same structure or not.
  */
-static void DNDDataRecievedCB(
+static void DNDDataReceivedCB(
 	GtkWidget *widget, GdkDragContext *dc,
 	gint x, gint y, GtkSelectionData *selection_data,
 	guint info, guint t, gpointer data
@@ -1804,7 +1833,7 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 		gtkwave_signal_connect(GTK_OBJECT(src), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), win);
                 gtkwave_signal_connect(GTK_OBJECT(src), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), win);
                 gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_received", GTK_SIGNAL_FUNC(DNDDataRecievedCB), win);
+                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_received", GTK_SIGNAL_FUNC(DNDDataReceivedCB), win);
                 gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), win);
 	}
 }
@@ -1812,6 +1841,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.11  2008/01/13 19:16:54  gtkwave
  * add busy on vcd_recoder dnd (not normally activated)
  *

@@ -186,6 +186,11 @@ bundle_callback_generic();
 
 static void insert_callback(GtkWidget *widget, GtkWidget *nothing)
 {
+search_insert_callback(widget, 0);	/* native to search */
+}
+
+void search_insert_callback(GtkWidget *widget, char is_prepend)
+{
 Traces tcache;
 struct symchain *symc, *symc_current;
 int i;
@@ -304,7 +309,14 @@ GLOBALS->traces.first=tcache.first;
 GLOBALS->traces.last=tcache.last;
 GLOBALS->traces.total=tcache.total;
 
-PasteBuffer();
+if(is_prepend)
+	{
+	PrependBuffer();
+	}
+	else
+	{
+	PasteBuffer();
+	}
 
 GLOBALS->traces.buffercount=tcache.buffercount;
 GLOBALS->traces.buffer=tcache.buffer;
@@ -862,6 +874,10 @@ void searchbox(char *title, GtkSignalFunc func)
     gtkwave_signal_connect_object (GTK_OBJECT (GLOBALS->clist_search_c_3), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
     gtk_widget_show (GLOBALS->clist_search_c_3);
 
+#if GTK_CHECK_VERSION(2,4,0)
+    dnd_setup(GLOBALS->clist_search_c_3, GLOBALS->signalarea);
+#endif
+
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
                                       GTK_POLICY_AUTOMATIC,
@@ -1017,6 +1033,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.4  2007/09/11 02:12:50  gtkwave
  * context locking in busy spinloops (gtk_main_iteration() calls)
  *
