@@ -1650,9 +1650,13 @@ static void DNDEndCB(
 	GtkWidget *widget, GdkDragContext *dc, gpointer data
 )
 {
-if((widget == NULL) || (dc == NULL)) return;
+if((widget == NULL) || (dc == NULL)) 
+	{
+	GLOBALS->tree_dnd_begin = VIEW_DRAG_INACTIVE;
+	return;
+	}
 
-if(!GLOBALS->tree_dnd_begin) return; /* to keep cut and paste in signalwindow from conflicting */
+if(GLOBALS->tree_dnd_begin == VIEW_DRAG_INACTIVE) return; /* to keep cut and paste in signalwindow from conflicting */
 
 if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
 	{
@@ -1683,7 +1687,10 @@ static gboolean DNDDragMotionCB(
 	GdkDragAction suggested_action;
 	GtkWidget *src_widget, *tar_widget;
         if((widget == NULL) || (dc == NULL))
+		{
+                gdk_drag_status(dc, 0, t);
                 return(FALSE);
+		}
 
 	/* Get source widget and target widget. */
 	src_widget = gtk_drag_get_source_widget(dc);
@@ -1841,6 +1848,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/05/05 19:27:06  gtkwave
+ * support for DND from regex search window to sig/waveareas
+ *
  * Revision 1.12  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *
