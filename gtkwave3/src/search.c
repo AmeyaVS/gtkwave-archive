@@ -874,7 +874,7 @@ void searchbox(char *title, GtkSignalFunc func)
     gtkwave_signal_connect_object (GTK_OBJECT (GLOBALS->clist_search_c_3), "unselect_row",GTK_SIGNAL_FUNC(unselect_row_callback),NULL);
     gtk_widget_show (GLOBALS->clist_search_c_3);
 
-#if GTK_CHECK_VERSION(2,4,0)
+#if WAVE_USE_GTK2
     dnd_setup(GLOBALS->clist_search_c_3, GLOBALS->signalarea);
 #endif
 
@@ -1033,6 +1033,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/05/05 19:27:05  gtkwave
+ * support for DND from regex search window to sig/waveareas
+ *
  * Revision 1.5  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

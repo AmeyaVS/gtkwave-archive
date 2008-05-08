@@ -75,13 +75,6 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 	}
 }
 
-#if 0
-void dnd_setup(GtkWidget *src, GtkWidget *widget)
-{
-/* nothing, no dnd for gtk1 implemented yet */
-}
-#endif
-
 void treeview_select_all_callback(void)
 {
 /* nothing, no treeview for gtk1 implemented yet */
@@ -820,6 +813,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.7  2008/01/30 21:12:23  gtkwave
  * dnd for gtk1
  *
