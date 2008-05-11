@@ -1658,14 +1658,19 @@ if((widget == NULL) || (dc == NULL))
 
 if(GLOBALS->tree_dnd_begin == VIEW_DRAG_INACTIVE) return; /* to keep cut and paste in signalwindow from conflicting */
 
-if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
+if(GLOBALS->tree_dnd_requested)
 	{
-	set_window_busy(NULL);
-	}
-DNDEndCB_2(widget, dc, data);
-if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
-	{
-	set_window_idle(NULL);
+	GLOBALS->tree_dnd_requested = 0;
+
+	if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
+		{
+		set_window_busy(NULL);
+		}
+	DNDEndCB_2(widget, dc, data);
+	if(GLOBALS->is_lx2 == LXT2_IS_VLIST)
+		{
+		set_window_idle(NULL);
+		}
 	}
 
 GLOBALS->tree_dnd_begin = VIEW_DRAG_INACTIVE;
@@ -1749,6 +1754,7 @@ static void DNDDataRequestCB(
 	gpointer data
 )
 {
+GLOBALS->tree_dnd_requested = 1;  /* indicate that a request for data occurred... */
 }
 
 /*
@@ -1848,6 +1854,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/05/06 19:37:55  gtkwave
+ * DND tweaking for drag status
+ *
  * Revision 1.13  2008/05/05 19:27:06  gtkwave
  * support for DND from regex search window to sig/waveareas
  *
