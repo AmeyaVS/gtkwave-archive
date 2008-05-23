@@ -24,6 +24,13 @@
 #include <time.h>
 #include <sys/types.h>
 
+#ifdef __MINGW32__  
+#ifndef REGEX_MAY_COMPILE
+#define REGEX_MAY_COMPILE
+#include "gnu_regex.c"
+#endif
+#endif
+
 #include "../gnu_regex.h"
 
 #include <zlib.h>
@@ -555,6 +562,9 @@ main( int argc, char *argv[] )
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/31 22:42:44  gtkwave
+ * 3.1.0 RC3 updates
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:15  gtkwave
  * Imported sources
  *
