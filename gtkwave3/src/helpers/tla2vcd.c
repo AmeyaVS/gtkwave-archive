@@ -27,7 +27,7 @@
 #ifdef __MINGW32__  
 #ifndef REGEX_MAY_COMPILE
 #define REGEX_MAY_COMPILE
-#include "gnu_regex.c"
+#include "../gnu_regex.c"
 #endif
 #endif
 
@@ -562,6 +562,9 @@ main( int argc, char *argv[] )
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/05/23 04:50:28  gtkwave
+ * mingw compile fix
+ *
  * Revision 1.2  2007/08/31 22:42:44  gtkwave
  * 3.1.0 RC3 updates
  *
