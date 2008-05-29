@@ -439,4 +439,4 @@
 		Added support for DND from regex search window to the
 		signal/waveareas.
 3.1.11	23may08	Compile fix for tla2vcd in MinGW.
-
+		Added #ifdef for HAVE_BZERO for MinGW.

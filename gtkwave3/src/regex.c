@@ -21,22 +21,22 @@
 #endif
 #endif
 
-#ifdef __CYGWIN__
-#include <sys/types.h>
-#include <stdlib.h>
-#define REGEX_MAY_COMPILE
-#include "gnu_regex.c"
-#else
-#if defined __linux__
+#ifdef __linux__
 #include <sys/types.h>
 #include <stdlib.h>
 #include <regex.h>
-#else			/* or for any other compiler that doesn't support POSIX.2 regexs properly like xlc or vc++ */
-#ifdef __MINGW32__
+#else
+#if defined __CYGWIN__ || defined __MINGW32__
+#include <sys/types.h>
+#include <stdlib.h>
+#ifndef HAVE_BZERO
 #define bcopy(a,b,c) memcpy((b),(a),(c))
 #define bzero(a,b) memset((a),0,(b))
 #define bcmp(a,b,c) memcmp((a),(b),(c))
 #endif
+#define REGEX_MAY_COMPILE
+#include "gnu_regex.c"
+#else			/* or for any other compiler that doesn't support POSIX.2 regexs properly like xlc or vc++ */
 #ifdef _MSC_VER
 #include <malloc.h> 
 #define STDC_HEADERS  
@@ -134,6 +134,9 @@ if(mreg)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:55  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

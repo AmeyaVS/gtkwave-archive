@@ -34,7 +34,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <strings.h>
 #include <math.h>
 
-#ifdef __MINGW32__ 
+#ifndef HAVE_BZERO
 #define bcopy(a,b,c) memcpy((b),(a),(c))
 #define bzero(a,b) memset((a),0,(b))
 #define bcmp(a,b,c) memcmp((a),(b),(c))
@@ -357,6 +357,9 @@ bot:
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2008/02/15 16:30:58  gtkwave
+ * re-added after permission fix
+ *
  * Revision 1.0  2008/01/23 00:00:01  gtkwave
  * initial release
  *
