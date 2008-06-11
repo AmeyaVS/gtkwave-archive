@@ -146,7 +146,12 @@ if(GLOBALS->vlist_handle)
 
 		vrebuild = malloc_2(sizeof(struct vlist_t) + vhdr.siz);
 		memcpy(vrebuild, &vhdr, sizeof(struct vlist_t));
-		fread(vrebuild+1, vrebuild->siz, 1, GLOBALS->vlist_handle);
+		rc = fread(vrebuild+1, vrebuild->siz, 1, GLOBALS->vlist_handle);
+		if(!rc)
+			{
+			printf("Error in reading from VList spill file!\n");
+			exit(255);
+			}
 
 		if(vprev) 
 			{
@@ -769,6 +774,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2007/12/24 19:56:03  gtkwave
+ * preparing for 3.1.2 version bump
+ *
  * Revision 1.9  2007/12/17 03:22:44  gtkwave
  * integration of (currently unused) vlist_packer routines
  *

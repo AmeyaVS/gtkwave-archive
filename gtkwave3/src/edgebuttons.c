@@ -479,10 +479,6 @@ wavearea_configure_event(GLOBALS->wavearea, NULL);
 void
 service_left_edge(GtkWidget *text, gpointer data)
 {
-GtkAdjustment *hadj;
-gfloat inc;
-TimeType ntinc;
-
 if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nFind Next Edge Left");
@@ -501,10 +497,6 @@ DEBUG(printf("Edge Left\n"));
 void
 service_right_edge(GtkWidget *text, gpointer data)
 {
-GtkAdjustment *hadj;
-gfloat inc;
-TimeType ntinc, pageinc;
-
 if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nFind Next Edge Right");
@@ -583,6 +575,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/05/01 02:53:37  gtkwave
+ * edgebutton fix (went back two edges on a concat vector instead of one)
+ *
  * Revision 1.4  2008/02/08 21:50:12  gtkwave
  * edge buttons update (multiple signals)
  *

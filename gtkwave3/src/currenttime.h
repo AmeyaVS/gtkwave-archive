@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.10 (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.11_pre (w)1999-2008 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 
@@ -170,6 +170,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2008/05/14 21:08:19  gtkwave
+ * revision bump to 3.1.10
+ *
  * Revision 1.37  2008/05/05 19:27:03  gtkwave
  * support for DND from regex search window to sig/waveareas
  *

@@ -45,7 +45,6 @@ DEBUG(printf("picked: %s\n", render_targets[i]));
 static void pagesize_clicked(GtkWidget *widget, gpointer which)
 {
 int i;
-char *which_char;
 
 for(i=0;i<5;i++) GLOBALS->page_mutex_renderopt_c_1[i]=0;
 
@@ -58,7 +57,6 @@ DEBUG(printf("picked: %s\n", page_size[GLOBALS->page_size_type_renderopt_c_1]));
 static void rendertype_clicked(GtkWidget *widget, gpointer which)
 {
 int i;
-char *which_char;
 
 for(i=0;i<2;i++) GLOBALS->render_mutex_renderopt_c_1[i]=0;
 
@@ -317,6 +315,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.4  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

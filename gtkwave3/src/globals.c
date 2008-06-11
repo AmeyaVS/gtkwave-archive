@@ -1177,12 +1177,11 @@ void reload_into_new_context(void)
 {
  FILE *statefile;
  struct Global *new_globals, *setjmp_globals;
- int i;
  gint tree_frame_x = -1, tree_frame_y = -1;
  gdouble tree_vadj_value = 0.0;
  gdouble tree_hadj_value = 0.0;
  int fix_from_time = 0, fix_to_time = 0;
- TimeType from_time, to_time;
+ TimeType from_time = LLDescriptor(0), to_time = LLDescriptor(0);
  char timestr[32];
  struct stringchain_t *hier_head = NULL, *hier_curr = NULL;
  int load_was_success = 0;
@@ -1591,6 +1590,7 @@ void reload_into_new_context(void)
 #endif
 	break;
   
+   case NO_FILE:
    case GHW_FILE:
    case VCD_FILE:
    case VCD_RECODER_FILE: /* do nothing */ break;
@@ -1773,6 +1773,7 @@ void reload_into_new_context(void)
 			   		case LXT_FILE: lxt_main(GLOBALS->loaded_file_name); break;
 			   		case VCD_FILE: vcd_main(GLOBALS->loaded_file_name); break;
 					case VCD_RECODER_FILE: vcd_recoder_main(GLOBALS->loaded_file_name); break;
+					default: break;
 					}
 				
 				t = (void **)setjmp_globals->alloc2_chain;
@@ -1818,6 +1819,8 @@ void reload_into_new_context(void)
 				free(setjmp_globals);					/* remove cached old ctx */
 				/* now try again, jump through recovery sequence below */
 				}
+			break;
+		default:
 			break;
  		} 
 
@@ -2086,6 +2089,7 @@ void free_and_destroy_page_context(void)
 #endif
         break;
  
+   case NO_FILE:
    case GHW_FILE:
    case VCD_FILE:
    case VCD_RECODER_FILE: /* do nothing */ break;

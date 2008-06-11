@@ -642,22 +642,8 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     GtkWidget *ctext;
     GtkWidget *text;
     FILE *handle;
-    int lx;
-    int lx_module_line = 0;
-    int lx_module_line_locked = 0;
-    int lx_endmodule_line_locked = 0;
-
-    struct wave_logfile_lines_t *wlog_head=NULL, *wlog_curr=NULL;
-    int wlog_size = 0;
-    int line_no;
-    int s_line_find = -1, e_line_find = -1;
     struct logfile_context_t *ctx;
-    struct text_find_t *text_curr;
-
     char *default_text = t->filename;
-    char *design_unit = t->item;
-    int s_line = t->s_line;
-    int e_line = t->e_line;
 
     handle = fopen(default_text, "rb");
     if(!handle)
@@ -1470,6 +1456,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/05 07:20:24  gtkwave
+ * added realtime rtlbrowse updates (follows marker at 100ms intervals)
+ *
  * Revision 1.3  2008/02/04 03:48:57  gtkwave
  * rtlbrowse fix for lxt2 files
  *

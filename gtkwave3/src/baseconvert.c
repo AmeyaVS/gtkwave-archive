@@ -91,7 +91,7 @@ if(flags&(TR_ZEROFILL|TR_ONEFILL))
 	                		pnt[i]=whichfill;
 	                		}
 	
-				bits = pnt;
+				bits = (unsigned char *)pnt;
 				nbits = msi + 1;
 				}
 			}
@@ -108,7 +108,7 @@ if(flags&(TR_ZEROFILL|TR_ONEFILL))
 	
 				memcpy(pnt+i, bits, nbits);
 	
-				bits = pnt;
+				bits = (unsigned char *)pnt;
 				nbits = lsi + 1;
 				}
 			}
@@ -1528,6 +1528,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/03/25 03:22:06  gtkwave
+ * expanded zero fill to include also a one fill (for pre-inverted nets)
+ *
  * Revision 1.6  2008/03/24 19:33:59  gtkwave
  * added zero range fill feature
  *

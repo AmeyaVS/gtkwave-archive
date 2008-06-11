@@ -272,7 +272,7 @@ char *scriptfile=NULL;
 FILE *wave = NULL;
 FILE *vcd_save_handle_cached = NULL;
 
-GtkWidget *main_vbox, *top_table, *whole_table;
+GtkWidget *main_vbox = NULL, *top_table = NULL, *whole_table = NULL;
 GtkWidget *menubar;
 GtkWidget *text1;
 GtkWidget *zoombuttons;
@@ -1160,13 +1160,6 @@ if(GLOBALS->use_toolbutton_interface)
 				}
 			}
 	
-		if(GLOBALS->force_toolbars)
-			{
-			toolhandle=gtk_handle_box_new();
-			gtk_widget_show(toolhandle);
-			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
-			}
-
 		whole_table = gtk_table_new (256, 16, FALSE);
 	
 		tb = gtk_toolbar_new();
@@ -1174,6 +1167,13 @@ if(GLOBALS->use_toolbutton_interface)
 
 		gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
 		tb_pos = 0;
+
+		if(GLOBALS->force_toolbars)
+			{
+			toolhandle=gtk_handle_box_new();
+			gtk_widget_show(toolhandle);
+			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
+			}
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         GTK_STOCK_CUT,
@@ -2040,6 +2040,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2008/04/03 16:45:06  gtkwave
+ * removed call to time_trunc with marker setting on initialization
+ *
  * Revision 1.27  2008/03/20 01:37:44  gtkwave
  * fix for primary marker time on init (should be -- instead of 0 sec if not
  * specified in a save file)

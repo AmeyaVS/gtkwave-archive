@@ -2295,14 +2295,14 @@ int arr_pos;
 unsigned int accum;
 unsigned char ch;
 double *d;
-unsigned char *depacked;
+unsigned char *depacked = NULL;
 
 if(!v) return;
 vlist_uncompress(&v);
 
 if(GLOBALS->vlist_prepack)
 	{
-	depacked = vlist_packer_decompress(v, &list_size);
+	depacked = vlist_packer_decompress(v, (unsigned int *)&list_size);
 	vlist_destroy(v);
 	}
 	else
@@ -2631,7 +2631,7 @@ else if(vlist_type == '!') /* error in loading */
 
 		if(GLOBALS->vlist_prepack)
 			{
-			vlist_packer_decompress_destroy(depacked);
+			vlist_packer_decompress_destroy((char *)depacked);
 			}
 			else
 			{
@@ -2650,7 +2650,7 @@ else if(vlist_type == '!') /* error in loading */
 
 if(GLOBALS->vlist_prepack)
 	{
-	vlist_packer_decompress_destroy(depacked);
+	vlist_packer_decompress_destroy((char *)depacked);
 	}
 	else
 	{
@@ -2662,6 +2662,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2007/12/24 19:56:03  gtkwave
+ * preparing for 3.1.2 version bump
+ *
  * Revision 1.7  2007/12/18 17:28:54  gtkwave
  * added --giga command line option to gtkwave
  *

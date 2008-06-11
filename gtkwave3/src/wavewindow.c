@@ -1238,7 +1238,7 @@ static gint expose_event_local(GtkWidget *widget, GdkEventExpose *event)
 {
 gint rc;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
-struct Global *g_old = GLOBALS;
+/* struct Global *g_old = GLOBALS; */
 
 set_GLOBALS((*GLOBALS->contexts)[page_num]);
 
@@ -3754,6 +3754,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2008/04/03 16:56:11  gtkwave
+ * more time_trunc() removals
+ *
  * Revision 1.33  2008/03/20 01:15:13  gtkwave
  * black and white mode color bug fixed when process filter color escapes used
  *

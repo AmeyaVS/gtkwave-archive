@@ -688,7 +688,7 @@ return(GLOBALS->traces.first);
  */
 Trptr PrependBuffer(void)
 {
-Trptr t, prev;
+Trptr t, prev = NULL;
 
 if(!GLOBALS->traces.buffer) return(NULL);
 
@@ -1090,6 +1090,9 @@ UpdateTracesVisible();
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/01/02 18:17:26  gtkwave
+ * added standard click semantics with user_standard_clicking rc variable
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

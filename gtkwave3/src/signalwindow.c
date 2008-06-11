@@ -1177,11 +1177,13 @@ return(TRUE);
 }
 
 
+/*
 static gint popup_event (GtkWidget *widget)
 {
 do_popup_menu(widget, NULL);
 return(TRUE);
 }
+*/
 
 /***  gtkwave click routines turned on with "use_standard_clicking"=0   ***/
 /**************************************************************************/
@@ -1303,7 +1305,7 @@ static gint expose_event_local(GtkWidget *widget, GdkEventExpose *event)
 {
 gint rc;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
-struct Global *g_old = GLOBALS;
+/* struct Global *g_old = GLOBALS; */
 
 set_GLOBALS((*GLOBALS->contexts)[page_num]);
 
@@ -1494,6 +1496,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2008/03/26 01:23:52  gtkwave
+ * reduce drag and drop visual noise
+ *
  * Revision 1.29  2008/03/25 17:42:55  gtkwave
  * added d&d visual feedback
  *

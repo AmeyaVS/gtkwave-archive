@@ -636,7 +636,6 @@ void search_enter_callback(GtkWidget *widget, GtkWidget *do_warning)
 GtkCList *cl;
 G_CONST_RETURN gchar *entry_text;
 char *entry_suffixed;
-int len;
 int i, row;
 char *s, *tmp2;
 gfloat interval;
@@ -1033,6 +1032,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/05/08 20:10:04  gtkwave
+ * 2.4 not required for dnd so requirement relaxed
+ *
  * Revision 1.6  2008/05/05 19:27:05  gtkwave
  * support for DND from regex search window to sig/waveareas
  *

@@ -1052,7 +1052,7 @@ unsigned int this_page = GLOBALS->this_context_page;
 unsigned np = GLOBALS->num_notebook_pages;
 unsigned int new_page = (this_page != np-1) ? this_page : (this_page-1);
 GtkWidget *n = GLOBALS->notebook;
-struct Global *old_g, *saved_g;
+struct Global *old_g = NULL, *saved_g;
 
 dead_context_sweep();
 
@@ -1859,8 +1859,6 @@ fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_
 void
 menu_new_viewer_tab_cleanup(GtkWidget *widget, gpointer data)
 {
-pid_t pid;
-
 if(GLOBALS->filesel_ok)
         { 
 	char *argv[2];
@@ -4756,6 +4754,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2008/04/03 16:56:10  gtkwave
+ * more time_trunc() removals
+ *
  * Revision 1.31  2008/03/25 19:21:25  gtkwave
  * updated mouseover help to indicate what the flags mean
  *
