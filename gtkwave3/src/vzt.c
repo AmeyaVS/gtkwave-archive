@@ -573,6 +573,22 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
         if(f->flags&VZT_RD_SYM_F_STRING) np->head.flags |= HIST_STRING;
         }
 
+	{
+        struct HistEnt *htemp2 = calloc_2(1, sizeof(struct HistEnt));
+        htemp2->time = -1;
+        if(len>1)
+        	{
+                htemp2->v.h_vector = htemp->v.h_vector;
+                }
+                else
+                {
+                htemp2->v.h_val = htemp->v.h_val;
+                }
+	htemp2->next = htemp;
+        htemp = htemp2;
+        GLOBALS->vzt_table_vzt_c_1[txidx].numtrans++;
+        }
+
 np->head.time  = -2;
 np->head.next = htemp;
 np->numhist=GLOBALS->vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
@@ -699,6 +715,22 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 		        if(f->flags&VZT_RD_SYM_F_STRING) np->head.flags |= HIST_STRING;
 		        }
 
+                        {
+                        struct HistEnt *htemp2 = calloc_2(1, sizeof(struct HistEnt));
+                        htemp2->time = -1;
+                        if(len>1)
+                                {
+                                htemp2->v.h_vector = htemp->v.h_vector;
+                                }
+                                else
+                                {
+                                htemp2->v.h_val = htemp->v.h_val;
+                                }
+                        htemp2->next = htemp;
+                        htemp = htemp2;
+                        GLOBALS->vzt_table_vzt_c_1[txidx].numtrans++;
+                        }
+
 		np->head.time  = -2;
 		np->head.next = htemp;
 		np->numhist=GLOBALS->vzt_table_vzt_c_1[txidx].numtrans +2 /*endcap*/ +1 /*frontcap*/;
@@ -715,6 +747,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.4  2007/08/23 23:28:48  gtkwave
  * reload fail handling and retries
  *

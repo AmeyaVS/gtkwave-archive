@@ -441,3 +441,4 @@
 3.1.11	11jun08	Compile fix for tla2vcd in MinGW.
 		Added #ifdef for HAVE_BZERO for MinGW.
 		Compiler warning fixes.
+		Added time = -1 endcaps in LXT2+VZT loaders.
