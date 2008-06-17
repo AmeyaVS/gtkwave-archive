@@ -1031,6 +1031,15 @@ len = f->length;
 if((1)||(f->row <= 1)) /* sorry, arrays not supported yet in the viewer */
 	{
 	fprintf(stderr, "Import: %s\n", np->nname);
+	if(nr<1) nr=1;
+	if(!GLOBALS->ae2_lx2_table[txidx])
+		{
+	        GLOBALS->ae2_lx2_table[txidx] = calloc_2(nr, sizeof(struct lx2_entry));
+	        for(r=0;r<nr;r++)
+	                {
+	                GLOBALS->ae2_lx2_table[txidx][r].np = &np[r];
+	                }
+		}
 
 	aet2_rd_set_fac_process_mask(txidx);
 	ae2_iterator(GLOBALS->ae2_start_limit_cyc, GLOBALS->ae2_end_limit_cyc);
@@ -1042,9 +1051,9 @@ if((1)||(f->row <= 1)) /* sorry, arrays not supported yet in the viewer */
 	}
 
 
-if(nr<1) nr=1;
 for(r = 0; r < nr; r++)
 	{
+
 	histent_tail = htemp = histent_calloc();
 	if(len>1)
 		{
@@ -1085,6 +1094,23 @@ for(r = 0; r < nr; r++)
 		{
 		np[r].head.v.h_val = AN_X;	/* x */
 		}
+
+
+                {
+                struct HistEnt *htemp2 = calloc_2(1, sizeof(struct HistEnt));
+                htemp2->time = -1;  
+                if(len>1)
+                	{
+                        htemp2->v.h_vector = htemp->v.h_vector;
+                        }
+                        else
+                        {  
+                        htemp2->v.h_val = htemp->v.h_val;
+                        }
+		htemp2->next = htemp;
+                htemp = htemp2;
+                GLOBALS->ae2_lx2_table[txidx][r].numtrans++;
+                }
 
 	np[r].head.time  = -2;
 	np[r].head.next = htemp;
@@ -1194,6 +1220,23 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 				htemp = GLOBALS->ae2_lx2_table[txidx][r].histent_head;
 				}
 
+
+                        {
+                        struct HistEnt *htemp2 = calloc_2(1, sizeof(struct HistEnt));
+                        htemp2->time = -1;  
+                        if(len>1)
+                                {
+                                htemp2->v.h_vector = htemp->v.h_vector;
+                                }
+                                else
+                                {  
+                                htemp2->v.h_val = htemp->v.h_val;
+                                }
+                        htemp2->next = htemp;
+                        htemp = htemp2;
+                        GLOBALS->ae2_lx2_table[txidx][r].numtrans++;
+                        }
+
 			if(len>1)
 				{
 				np->head.v.h_vector = (char *)malloc_2(len);
@@ -1224,6 +1267,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/02/19 22:00:28  gtkwave
+ * added aetinfo support
+ *
  * Revision 1.5  2007/08/31 22:42:43  gtkwave
  * 3.1.0 RC3 updates
  *
