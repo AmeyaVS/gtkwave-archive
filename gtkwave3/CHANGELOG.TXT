@@ -438,7 +438,7 @@
 		combined vector.  (Cut and paste typo from strace.c.)
 		Added support for DND from regex search window to the
 		signal/waveareas.
-3.1.11	17jun08	Compile fix for tla2vcd in MinGW.
+3.1.11	18jun08	Compile fix for tla2vcd in MinGW.
 		Added #ifdef for HAVE_BZERO for MinGW.
 		Compiler warning fixes.
 		Added time = -1 endcaps in LXT2+VZT+AET loaders.
