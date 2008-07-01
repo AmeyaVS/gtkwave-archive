@@ -370,7 +370,7 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 
 		/* printf("drop to %d of %d: '%s'\n", which, GLOBALS->traces.total, t ? t->name : "undef"); */
 		}
-	bot: 1;
+	bot: return(FALSE);
 	}
 
 	return(FALSE);
@@ -1496,6 +1496,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2008/06/11 08:01:55  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.30  2008/03/26 01:23:52  gtkwave
  * reduce drag and drop visual noise
  *

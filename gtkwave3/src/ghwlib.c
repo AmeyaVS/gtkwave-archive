@@ -1161,7 +1161,7 @@ ghw_read_snapshot (struct ghw_handler *h)
     return -1;
   h->snap_time = ghw_get_i64 (h, (unsigned char *)&hdr[4]);
   if (h->flag_verbose > 1)
-    printf ("Time is %lld fs\n", h->snap_time);
+    printf ("Time is "GHWLLD" fs\n", h->snap_time);
 
   for (i = 0; i < h->nbr_sigs; i++)
     {
@@ -1294,7 +1294,7 @@ ghw_disp_value (union ghw_val *val, union ghw_type *type)
       printf ("%d", val->i32);
       break;
     case ghdl_rtik_type_p64:
-      printf ("%lld", val->i64);
+      printf (GHWLLD, val->i64);
       break;
     case ghdl_rtik_type_f64:
       printf ("%g", val->f64);
@@ -1348,7 +1348,7 @@ ghw_get_value (char *buf, int len, union ghw_val *val, union ghw_type *type)
       snprintf (buf, len, "%d", val->i32);
       break;
     case ghdl_rtik_type_p64:
-      snprintf (buf, len, "%lld", val->i64);
+      snprintf (buf, len, GHWLLD, val->i64);
       break;
     case ghdl_rtik_type_f64:
       snprintf (buf, len, "%g", val->f64);
@@ -1505,7 +1505,7 @@ ghw_read_sm (struct ghw_handler *h, enum ghw_sm_type *sm)
 	  break;
 	case ghw_sm_cycle:
 	  if (0)
-	    printf ("Time is %lld fs\n", h->snap_time);
+	    printf ("Time is "GHWLLD" fs\n", h->snap_time);
 	  if (0)
 	    ghw_disp_values (h);
 	  
@@ -1543,7 +1543,7 @@ ghw_read_cycle (struct ghw_handler *h)
 	return res;
       
       if (0)
-	printf ("Time is %lld fs\n", h->snap_time);
+	printf ("Time is "GHWLLD" fs\n", h->snap_time);
       if (0)
 	ghw_disp_values (h);
       
@@ -1670,7 +1670,7 @@ ghw_disp_range (union ghw_type *type, union ghw_range *rng)
       break;
     case ghdl_rtik_type_i64:
     case ghdl_rtik_type_p64:
-      printf ("%lld %s %lld",
+      printf (GHWLLD" %s "GHWLLD,
 	      rng->i64.left, ghw_get_dir (rng->i64.dir), rng->i64.right);
       break;
     case ghdl_rtik_type_f64:
@@ -1723,7 +1723,7 @@ ghw_disp_type (struct ghw_handler *h, union ghw_type *t)
 	for (i = 0; i < p->nbr_units; i++)
 	  {
 	    struct ghw_unit *u = &p->units[i];
-	    printf ("  %s = %lld %s;\n", u->name, u->val, p->units[0].name);
+	    printf ("  %s = "GHWLLD" %s;\n", u->name, u->val, p->units[0].name);
 	  }
 	printf ("end units\n");
       }
@@ -1806,6 +1806,9 @@ ghw_disp_types (struct ghw_handler *h)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/23 23:28:48  gtkwave
  * reload fail handling and retries
  *

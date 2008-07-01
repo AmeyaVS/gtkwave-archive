@@ -74,7 +74,11 @@ typedef uint16_t 		vztint16_t;
 typedef uint32_t		vztint32_t;
 typedef uint64_t	 	vztint64_t;
 #ifndef __MINGW32__
-#define VZT_RD_LLD "%lld"
+#if __WORDSIZE == 64
+        #define VZT_RD_LLD "%ld"      
+#else
+        #define VZT_RD_LLD "%lld"      
+#endif
 #else
 #define VZT_RD_LLD "%I64d"
 #endif
@@ -271,6 +275,9 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *

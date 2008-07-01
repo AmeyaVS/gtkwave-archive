@@ -73,7 +73,11 @@ typedef uint16_t 		lxtint16_t;
 typedef uint32_t		lxtint32_t;
 typedef uint64_t	 	lxtint64_t;
 #ifndef __MINGW32__
-#define LXT2_RD_LLD "%lld"
+#if __WORDSIZE == 64
+        #define LXT2_RD_LLD "%ld"
+#else
+        #define LXT2_RD_LLD "%lld"
+#endif
 #else
 #define LXT2_RD_LLD "%I64d"
 #endif
@@ -285,6 +289,9 @@ unsigned int			lxt2_rd_unlimit_time_range(struct lxt2_rd_trace *lt);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

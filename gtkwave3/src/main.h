@@ -22,6 +22,7 @@ struct logfile_chain *next;
 char *name;
 };
 
+int main_2(int argc, char *argv[]);
 
 GtkWidget *create_text(void);
 GtkWidget *create_zoom_buttons(void);
@@ -75,6 +76,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/12/30 04:27:39  gtkwave
+ * added edge buttons to main window
+ *
  * Revision 1.2  2007/08/26 21:35:42  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

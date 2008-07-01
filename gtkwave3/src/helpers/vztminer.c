@@ -44,7 +44,7 @@ void vcd_callback(struct vzt_rd_trace **lt, vztint64_t *pnt_time, vztint32_t *pn
 {
 struct vzt_rd_geometry *g = vzt_rd_get_fac_geometry(*lt, *pnt_facidx);
 
-/* fprintf(stderr, "%lld %d %s\n", *pnt_time, *pnt_facidx, *pnt_value); */
+/* fprintf(stderr, VZT_RD_LLD" %d %s\n", *pnt_time, *pnt_facidx, *pnt_value); */
 
 if(!(*pnt_value)[0])
 	{
@@ -75,7 +75,7 @@ if(g->len >= matchlen)
 				{
 				if(!names_only)
 					{
-					printf("#%lld %s[%d:%d] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb, *pnt_value);
+					printf("#"VZT_RD_LLD" %s[%d:%d] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb, *pnt_value);
 					}
 					else
 					{
@@ -88,7 +88,7 @@ if(g->len >= matchlen)
 					{
 					if(!names_only)
 						{
-						printf("#%lld %s %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), *pnt_value);
+						printf("#"VZT_RD_LLD" %s %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), *pnt_value);
 						}
 						else
 						{
@@ -99,7 +99,7 @@ if(g->len >= matchlen)
 					{
 					if(!names_only)
 						{
-						printf("#%lld %s[%d] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, *pnt_value);
+						printf("#"VZT_RD_LLD" %s[%d] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, *pnt_value);
 						}
 						else
 						{
@@ -310,6 +310,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *

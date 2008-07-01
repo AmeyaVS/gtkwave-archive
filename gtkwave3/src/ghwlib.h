@@ -26,9 +26,21 @@
 
 #if HAVE_STDINT_H
 #include <stdint.h>
+#if __WORDSIZE == 64
+	#define GHWLLD "%ld"
+#else
+	#define GHWLLD "%lld"
+#endif
 #endif
 #if HAVE_INTTYPES_H
 #include <inttypes.h>
+#ifndef GHWLLD
+#if __WORDSIZE == 64
+	#define GHWLLD "%ld"
+#else
+	#define GHWLLD "%lld"
+#endif
+#endif
 #endif
 
 enum ghdl_rtik {
@@ -407,6 +419,9 @@ void ghw_disp_types (struct ghw_handler *h);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:41  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:46  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

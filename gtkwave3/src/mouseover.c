@@ -234,7 +234,7 @@ return;
 gint xd = 0, yd = 0;
 char *asciivalue = NULL;
 int nmaxlen = 0, vmaxlen = 0;
-int totalmax;
+int totalmax = 0;
 int name_charlen = 0, value_charlen = 0;
 int num_info_rows = 2;
 char *flagged_name = NULL;
@@ -387,6 +387,9 @@ if(flagged_name) { free_2(flagged_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/04/25 21:31:10  gtkwave
+ * added missing t->shift in mouseover time calculation
+ *
  * Revision 1.7  2008/03/25 03:22:11  gtkwave
  * expanded zero fill to include also a one fill (for pre-inverted nets)
  *

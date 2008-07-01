@@ -1343,7 +1343,7 @@ if(GLOBALS->mark_idx_start>0)
 		basetime=GLOBALS->named_markers[GLOBALS->mark_idx_start-1];
 	else
 		{
-		status_text(item_mark_start_strings[GLOBALS->mark_idx_start].str);
+		status_text(item_mark_start_strings[(unsigned int)GLOBALS->mark_idx_start].str);
 		status_text(" not in use.\n");
 		}
 	}
@@ -1354,7 +1354,7 @@ if(GLOBALS->mark_idx_end>0)
 		endtime=GLOBALS->named_markers[GLOBALS->mark_idx_end-1];
 	else
 		{
-		status_text(item_mark_end_strings[GLOBALS->mark_idx_end].str);
+		status_text(item_mark_end_strings[(unsigned int)GLOBALS->mark_idx_end].str);
 		status_text(" not in use.\n");
 		}
 	}
@@ -1641,6 +1641,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/12/31 17:11:58  gtkwave
+ * fixed backward seek bug in pattern/edge search
+ *
  * Revision 1.6  2007/12/30 04:27:39  gtkwave
  * added edge buttons to main window
  *

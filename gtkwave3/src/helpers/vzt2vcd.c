@@ -90,12 +90,12 @@ void vcd_callback(struct vzt_rd_trace **lt, vztint64_t *pnt_time, vztint32_t *pn
 {
 struct vzt_rd_geometry *g = vzt_rd_get_fac_geometry(*lt, *pnt_facidx);
 
-/* fprintf(stderr, "%lld %d %s\n", *pnt_time, *pnt_facidx, *pnt_value); */
+/* fprintf(stderr, VZT_RD_LLD" %d %s\n", *pnt_time, *pnt_facidx, *pnt_value); */
 
 if(vcd_prevtime != *pnt_time)
 	{
 	vcd_prevtime = *pnt_time;
-	printf("#%lld\n", *pnt_time);
+	printf("#"VZT_RD_LLD"\n", *pnt_time);
 	}
 
 if(!(*pnt_value)[0])
@@ -266,7 +266,7 @@ if(lt)
 
 	if(vcd_prevtime!=vzt_rd_get_end_time(lt))
 		{
-		printf("#%lld\n", vzt_rd_get_end_time(lt));
+		printf("#"VZT_RD_LLD"\n", vzt_rd_get_end_time(lt));
 		}
 
 	vzt_rd_close(lt);
@@ -398,6 +398,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:25  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *

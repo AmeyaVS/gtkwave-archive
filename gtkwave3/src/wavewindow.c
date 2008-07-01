@@ -3115,7 +3115,7 @@ GdkGC    *cnan = GLOBALS->gc_u_wavewindow_c_1;
 GdkGC    *cinf = GLOBALS->gc_w_wavewindow_c_1;
 GdkGC    *cfixed;
 double mynan = strtod("NaN", NULL);
-double tmin = mynan, tmax = mynan, tv, tv2;
+double tmin = mynan, tmax = mynan, tv=0.0, tv2;
 gint rmargin;
 int is_nan = 0, is_nan2 = 0, is_inf = 0, is_inf2 = 0;
 int any_infs = 0, any_infp = 0, any_infm = 0;
@@ -3754,6 +3754,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2008/06/11 08:01:57  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.34  2008/04/03 16:56:11  gtkwave
  * more time_trunc() removals
  *

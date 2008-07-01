@@ -15,6 +15,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef _MSC_VER
+#ifndef __MINGW32__
+#include <stdint.h>
+#endif
+#endif
+
 #define WAVE_MAX_CLIST_LENGTH 15000
 
 struct memchunk
@@ -31,11 +37,11 @@ size_t size;
  * types...
  */
 #ifdef G_HAVE_GINT64
-	typedef long long int          TimeType; 
-	typedef unsigned long long int UTimeType;
+	/* typedef long long int          TimeType; */
+	/* typedef unsigned long long int UTimeType; */
 
-	/* typedef gint64          TimeType; */
-	/* typedef guint64         UTimeType; */
+	typedef gint64          TimeType; 
+	typedef guint64         UTimeType;
 
         #ifndef _MSC_VER
                 #define LLDescriptor(x) x##LL
@@ -44,8 +50,13 @@ size_t size;
 			#define TTFormat "%I64d"
 			#define UTTFormat "%I64u"
 		#else
-	                #define TTFormat "%lld"
-	                #define UTTFormat "%llu"
+			#if __WORDSIZE == 64
+		                #define TTFormat "%ld"
+		                #define UTTFormat "%lu"
+			#else
+		                #define TTFormat "%lld"
+		                #define UTTFormat "%llu"
+			#endif
 		#endif
         #else
                 #define LLDescriptor(x) x##i64
@@ -182,6 +193,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.2.2.3  2007/08/07 04:54:59  gtkwave
  * slight modifications to global initialization scheme
  *

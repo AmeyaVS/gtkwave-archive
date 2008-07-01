@@ -1875,7 +1875,7 @@ if(GLOBALS->filesel_ok)
 
 	if(!setjmp(*(GLOBALS->vcd_jmp_buf)))
 		{
-		main(2, argv);
+		main_2(2, argv);
 
 		g_now = GLOBALS;
 		set_GLOBALS(g_old);
@@ -4754,6 +4754,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2008/06/11 08:01:51  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.32  2008/04/03 16:56:10  gtkwave
  * more time_trunc() removals
  *

@@ -168,7 +168,7 @@ gint font_engine_string_measure
                         (struct font_engine_font_t      *font,
                          const gchar                    *string)
 {
-gint rc;
+gint rc = 1; /* dummy value */
 
 if(!font->is_pango)
 	{
@@ -338,6 +338,9 @@ if(GLOBALS->use_pango_fonts)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/02/20 18:55:14  gtkwave
+ * strncmp length fix from previous update
+ *
  * Revision 1.8  2008/02/20 18:53:41  gtkwave
  * replace mono string with monospace in fontnames
  *

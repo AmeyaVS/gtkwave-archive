@@ -70,7 +70,6 @@ static void switch_page(GtkNotebook     *notebook,
 			guint            page_num,
 			gpointer         user_data) 
 {
-int i;
 char timestr[32];
 struct Global *g_old = GLOBALS;
 
@@ -251,6 +250,11 @@ return(GLOBALS->ftext_main_main_c_1);
 
 
 int main(int argc, char *argv[])
+{
+return(main_2(argc, argv));
+}
+
+int main_2(int argc, char *argv[])
 {
 static char *winprefix="GTKWave - ";
 static char *winstd="GTKWave (stdio) ";
@@ -2040,6 +2044,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2008/06/11 08:01:50  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.28  2008/04/03 16:45:06  gtkwave
  * removed call to time_trunc with marker setting on initialization
  *

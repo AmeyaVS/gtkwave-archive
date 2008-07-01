@@ -176,7 +176,7 @@ main (int argc, char **argv)
 		case ghw_res_snapshot:
 		case ghw_res_cycle:
 		  if (flag_disp_time)
-		    printf ("Time is %lld fs\n", hp->snap_time);
+		    printf ("Time is "GHWLLD" fs\n", hp->snap_time);
 		  if (flag_disp_signals)
 		    ghw_disp_values (hp);
 		  break;
@@ -204,6 +204,9 @@ main (int argc, char **argv)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:15  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *
