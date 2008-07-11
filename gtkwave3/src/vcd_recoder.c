@@ -2407,6 +2407,12 @@ if(vlist_type == '0') /* single bit */
 		time_idx += delta;
 
 		curtime_pnt = vlist_locate(GLOBALS->time_vlist_vcd_recoder_c_1, time_idx ? time_idx-1 : 0);
+		if(!curtime_pnt)
+			{
+			fprintf(stderr, "GTKWAVE | malformed bitwise signal data for '%s' after time_idx = %d\n", 
+				np->nname, time_idx - delta);
+			exit(255);
+			}
 
 		if(vartype != V_EVENT)
 			{
@@ -2460,6 +2466,12 @@ else if(vlist_type == 'B') /* bit vector, port type was converted to bit vector 
 		time_idx += delta;
 
 		curtime_pnt = vlist_locate(GLOBALS->time_vlist_vcd_recoder_c_1,  time_idx ? time_idx-1 : 0);
+		if(!curtime_pnt)
+			{
+			fprintf(stderr, "GTKWAVE | malformed 'b' signal data for '%s' after time_idx = %d\n", 
+				np->nname, time_idx - delta);
+			exit(255);
+			}
 
 		dst_len = 0;
 		for(;;)
@@ -2541,6 +2553,12 @@ else if(vlist_type == 'R') /* real */
 		time_idx += delta;
 
 		curtime_pnt = vlist_locate(GLOBALS->time_vlist_vcd_recoder_c_1,  time_idx ? time_idx-1 : 0);
+		if(!curtime_pnt)
+			{
+			fprintf(stderr, "GTKWAVE | malformed 'r' signal data for '%s' after time_idx = %d\n", 
+				np->nname, time_idx - delta);
+			exit(255);
+			}
 
 		dst_len = 0;
 		do
@@ -2596,6 +2614,12 @@ else if(vlist_type == 'S') /* string */
 		time_idx += delta;
 
 		curtime_pnt = vlist_locate(GLOBALS->time_vlist_vcd_recoder_c_1,  time_idx ? time_idx-1 : 0);
+		if(!curtime_pnt)
+			{
+			fprintf(stderr, "GTKWAVE | malformed 's' signal data for '%s' after time_idx = %d\n", 
+				np->nname, time_idx - delta);
+			exit(255);
+			}
 
 		dst_len = 0;
 		do
@@ -2662,6 +2686,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/06/11 08:01:55  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.8  2007/12/24 19:56:03  gtkwave
  * preparing for 3.1.2 version bump
  *

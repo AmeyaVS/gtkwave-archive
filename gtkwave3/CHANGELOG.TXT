@@ -442,4 +442,6 @@
 		Added #ifdef for HAVE_BZERO for MinGW.
 		Compiler warning fixes.
 		Added time = -1 endcaps in LXT2+VZT+AET loaders.
-3.1.12	01jul08 Compiler warning fixes.
+3.1.12	11jul08 Compiler warning fixes.
+		Fixed crash in vcd recoder for b vs 01xz mixups in
+		malformed VCD files.
