@@ -1387,14 +1387,28 @@ for(;;)
 			else
 			if((v->msi>v->lsi)&&((v->msi-v->lsi+1)!=v->size))
 				{
-				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) goto err;
-				v->size=v->msi-v->lsi+1;
+                                if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
+                                        {
+                                        v->msi = v->size-1; v->lsi = 0;
+                                        /* all this formerly was goto err; */
+                                        }
+                                        else
+                                        {
+                                        v->size=v->msi-v->lsi+1;
+                                        }
 				}
 			else
 			if((v->lsi>=v->msi)&&((v->lsi-v->msi+1)!=v->size)) 
 				{
-				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) goto err;
-				v->size=v->msi-v->lsi+1;
+                                if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
+                                        {
+                                        v->lsi = v->size-1; v->msi = 0;
+                                        /* all this formerly was goto err; */
+                                        }
+                                        else
+                                        {
+                                        v->size=v->lsi-v->msi+1;
+                                        }
 				}
 
 			/* initial conditions */
@@ -2425,6 +2439,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/01/22 20:11:47  gtkwave
+ * track and hold experimentation
+ *
  * Revision 1.3  2007/09/23 18:33:55  gtkwave
  * warnings cleanups from sun compile
  *

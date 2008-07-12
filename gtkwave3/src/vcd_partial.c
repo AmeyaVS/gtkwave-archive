@@ -1381,14 +1381,28 @@ for(;;)
 			else
 			if((v->msi>v->lsi)&&((v->msi-v->lsi+1)!=v->size))
 				{
-				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) goto err;
-				v->size=v->msi-v->lsi+1;
+                                if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
+                                        {
+                                        v->msi = v->size-1; v->lsi = 0;
+                                        /* all this formerly was goto err; */
+                                        }
+                                        else
+                                        {
+                                        v->size=v->msi-v->lsi+1;
+                                        }
 				}
 			else
 			if((v->lsi>=v->msi)&&((v->lsi-v->msi+1)!=v->size)) 
 				{
-				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) goto err;
-				v->size=v->msi-v->lsi+1;
+                                if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
+                                        {
+                                        v->lsi = v->size-1; v->msi = 0;
+                                        /* all this formerly was goto err; */
+                                        }
+                                        else
+                                        {
+                                        v->size=v->lsi-v->msi+1;
+                                        }
 				}
 
 			/* initial conditions */
@@ -2367,6 +2381,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/11 02:12:50  gtkwave
+ * context locking in busy spinloops (gtk_main_iteration() calls)
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

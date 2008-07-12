@@ -1390,14 +1390,28 @@ for(;;)
 			else
 			if((v->msi>v->lsi)&&((v->msi-v->lsi+1)!=v->size))
 				{
-				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) goto err;
-				v->size=v->msi-v->lsi+1;
+				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) 
+					{
+					v->msi = v->size-1; v->lsi = 0;
+					/* all this formerly was goto err; */
+					}
+					else
+					{
+					v->size=v->msi-v->lsi+1;
+					}
 				}
 			else
 			if((v->lsi>=v->msi)&&((v->lsi-v->msi+1)!=v->size)) 
 				{
-				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) goto err;
-				v->size=v->msi-v->lsi+1;
+				if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER)) 
+					{
+					v->lsi = v->size-1; v->msi = 0;
+					/* all this formerly was goto err; */
+					}
+					else
+					{
+					v->size=v->lsi-v->msi+1;
+					}
 				}
 
 			/* initial conditions */
@@ -2686,6 +2700,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/07/11 07:02:54  gtkwave
+ * recoder fix for malformed files
+ *
  * Revision 1.9  2008/06/11 08:01:55  gtkwave
  * gcc 4.3.x compiler warning fixes
  *
