@@ -144,9 +144,11 @@ if(GLOBALS->vlist_handle)
 			exit(255);
 			}
 
+		/* args are reversed to fread (compared to above) to handle short read at end of file! */
+		/* (this can happen because of how we write out only the used size of a block)         */
 		vrebuild = malloc_2(sizeof(struct vlist_t) + vhdr.siz);
 		memcpy(vrebuild, &vhdr, sizeof(struct vlist_t));
-		rc = fread(vrebuild+1, vrebuild->siz, 1, GLOBALS->vlist_handle);
+		rc = fread(vrebuild+1, 1, vrebuild->siz, GLOBALS->vlist_handle);
 		if(!rc)
 			{
 			printf("Error in reading from VList spill file!\n");
@@ -774,6 +776,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/06/11 08:01:57  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.10  2007/12/24 19:56:03  gtkwave
  * preparing for 3.1.2 version bump
  *

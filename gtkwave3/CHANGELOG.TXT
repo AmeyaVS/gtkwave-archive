@@ -447,3 +447,8 @@
 		malformed VCD files.
 		Fixed abort on VCD load for malformed size vs 
 		[msi:lsi] syntax.  NC does this on arrays of wires.
+		Fix to vlist reader with --giga enabled in order to
+		handle reads which go off the end of the file.
+		(Possible due to how only the amount used in a block
+		is actually written to the file in order to save
+		space.)
