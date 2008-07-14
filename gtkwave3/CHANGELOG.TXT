@@ -442,7 +442,7 @@
 		Added #ifdef for HAVE_BZERO for MinGW.
 		Compiler warning fixes.
 		Added time = -1 endcaps in LXT2+VZT+AET loaders.
-3.1.12	12jul08 Compiler warning fixes.
+3.1.12	14jul08 Compiler warning fixes.
 		Fixed crash in vcd recoder for b vs 01xz mixups in
 		malformed VCD files.
 		Fixed abort on VCD load for malformed size vs 
@@ -451,4 +451,5 @@
 		handle reads which go off the end of the file.
 		(Possible due to how only the amount used in a block
 		is actually written to the file in order to save
-		space.)
+		space, so the vlist blocks can be overlapping yet
+		usable.)
