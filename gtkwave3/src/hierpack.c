@@ -158,3 +158,12 @@ if(last_h)
 
 return(name);
 }
+
+/*
+ * $Id$
+ * $Log$
+ * Revision 1.1  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
+ */
+

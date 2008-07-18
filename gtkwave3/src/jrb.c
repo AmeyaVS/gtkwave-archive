@@ -609,11 +609,8 @@ JRB jrb_insert_gen(JRB tree, Jval key, Jval val,
 /*
  * $Id$
  * $Log$
- * Revision 1.1.1.1  2007/05/30 04:25:40  gtkwave
- * Imported sources
- *
- * Revision 1.2  2007/04/20 02:08:10  gtkwave
- * initial release
+ * Revision 1.1  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
  *
  */
 

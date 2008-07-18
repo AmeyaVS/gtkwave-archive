@@ -113,11 +113,8 @@ int jrb_plength(JRB n);       /* returns the # of nodes in path from
 /*
  * $Id$
  * $Log$
- * Revision 1.1.1.1  2007/05/30 04:25:41  gtkwave
- * Imported sources
- *
- * Revision 1.2  2007/04/20 02:08:10  gtkwave
- * initial release
+ * Revision 1.1  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
  *
  */
 

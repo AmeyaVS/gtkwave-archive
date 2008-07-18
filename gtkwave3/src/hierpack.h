@@ -20,3 +20,12 @@ char *hier_compress(char *name, int add_missing_pfx_to_tree, int *was_packed);
 enum { HIERPACK_DO_NOT_ADD = 0, HIERPACK_ADD };
 
 #endif
+
+/*
+ * $Id$
+ * $Log$
+ * Revision 1.1  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code   
+ *
+ */
+
