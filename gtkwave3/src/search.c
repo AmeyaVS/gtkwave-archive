@@ -24,6 +24,63 @@
 #include "ghw.h"
 #include "debug.h"
 #include "busy.h"
+#include "hierpack.h"
+
+static gint
+clist_sigcmp (GtkCList      *clist,
+                 gconstpointer  ptr1,
+                 gconstpointer  ptr2)
+{  
+  char *text1 = NULL;
+  char *text2 = NULL;
+
+  GtkCListRow *row1 = (GtkCListRow *) ptr1; 
+  GtkCListRow *row2 = (GtkCListRow *) ptr2;
+
+  char *nd1, *nd2;
+  int was_packed1=0, was_packed2=0;
+  int rc;
+  
+  switch (row1->cell[clist->sort_column].type)
+    {
+    case GTK_CELL_TEXT:
+      text1 = GTK_CELL_TEXT (row1->cell[clist->sort_column])->text;
+      break;
+    case GTK_CELL_PIXTEXT:
+      text1 = GTK_CELL_PIXTEXT (row1->cell[clist->sort_column])->text;
+      break;
+    default:
+      break;
+    }
+ 
+  switch (row2->cell[clist->sort_column].type)
+    {
+    case GTK_CELL_TEXT:
+      text2 = GTK_CELL_TEXT (row2->cell[clist->sort_column])->text;
+      break;
+    case GTK_CELL_PIXTEXT:
+      text2 = GTK_CELL_PIXTEXT (row2->cell[clist->sort_column])->text;
+      break;
+    default:
+      break;
+    }
+     
+  if (!text2)
+    return (text1 != NULL);
+    
+  if (!text1)
+    return -1;
+
+  nd1 = hier_decompress_flagged(text1, &was_packed1);
+  nd2 = hier_decompress_flagged(text2, &was_packed2);
+  rc = sigcmp(nd1, nd2);
+
+  if(was_packed1) free_2(nd1);
+  if(was_packed2) free_2(nd2);
+    
+  return (rc);
+}
+
 
 
 int searchbox_is_active(void)
@@ -639,6 +696,7 @@ char *entry_suffixed;
 int i, row;
 char *s, *tmp2;
 gfloat interval;
+int depack_cnt = 0;
 
 if(GLOBALS->is_searching_running_search_c_1) return;
 GLOBALS->is_searching_running_search_c_1 = ~0;
@@ -679,6 +737,9 @@ interval = (gfloat)(GLOBALS->numfacs/100.0);
 
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
+	int was_packed;
+	char *hfacname = NULL;
+
 	GLOBALS->pdata->value = i;
 	if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))		
 		{
@@ -687,12 +748,15 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 	GLOBALS->pdata->oldvalue = i;
 
-	if(wave_regex_match(GLOBALS->facs[i]->name, WAVE_REGEX_SEARCH))
-	if((!GLOBALS->is_ghw)||(strcmp(WAVE_GHW_DUMMYFACNAME, GLOBALS->facs[i]->name)))
+	hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
+	depack_cnt += was_packed;
+
+	if(wave_regex_match(hfacname, WAVE_REGEX_SEARCH))
+	if((!GLOBALS->is_ghw)||(strcmp(WAVE_GHW_DUMMYFACNAME, hfacname)))
 		{
 		if(!GLOBALS->facs[i]->vec_root)
 			{
-			row=gtk_clist_append(cl,(gchar **)&(GLOBALS->facs[i]->name));
+			row=gtk_clist_append(cl,(gchar **)&(hfacname));
 			}
 			else
 			{
@@ -708,9 +772,9 @@ for(i=0;i<GLOBALS->numfacs;i++)
 				}
 				else
 				{
-				s=(char *)malloc_2(strlen(GLOBALS->facs[i]->name)+4);
+				s=(char *)malloc_2(strlen(hfacname)+4);
 				strcpy(s,"[] ");
-				strcpy(s+3, GLOBALS->facs[i]->name);
+				strcpy(s+3, hfacname);
 				}
 
 			row=gtk_clist_append(cl,(gchar **)&s);
@@ -719,8 +783,20 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		gtk_clist_set_row_data(cl, row,GLOBALS->facs[i]); 
 		GLOBALS->num_rows_search_c_2++;
-		if(GLOBALS->num_rows_search_c_2==WAVE_MAX_CLIST_LENGTH) break;
+		if(GLOBALS->num_rows_search_c_2==WAVE_MAX_CLIST_LENGTH) 
+			{
+			if(was_packed) { free_2(hfacname); }
+			break;
+			}
 		}
+
+	if(was_packed) { free_2(hfacname); }
+	}
+
+if(depack_cnt) 
+	{ 
+	gtk_clist_set_compare_func(cl, clist_sigcmp);
+	gtk_clist_sort (cl);
 	}
 
 gtk_clist_set_column_width(GTK_CLIST(GLOBALS->clist_search_c_3),0,gtk_clist_optimal_column_width(GTK_CLIST(GLOBALS->clist_search_c_3),0));
@@ -1032,6 +1108,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/06/11 08:01:54  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.7  2008/05/08 20:10:04  gtkwave
  * 2.4 not required for dnd so requirement relaxed
  *
@@ -1096,4 +1175,3 @@ void searchbox(char *title, GtkSignalFunc func)
  * initial release
  *
  */
-

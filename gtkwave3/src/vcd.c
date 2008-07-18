@@ -38,6 +38,7 @@
 #include <config.h>
 #include "globals.h"
 #include "vcd.h"
+#include "hierpack.h"
 
 #undef VCD_BSEARCH_IS_PERFECT		/* bsearch is imperfect under linux, but OK under AIX */
 
@@ -1544,6 +1545,14 @@ for(;;)
 				}
 
 			bail:
+                        if((v) && (GLOBALS->do_hier_compress))
+                                {
+                                char *old_name = v->name;
+                                int was_packed;
+                                v->name = hier_compress(v->name, HIERPACK_ADD, &was_packed);
+                                if(was_packed) free_2(old_name);
+                                }
+
 			if(vtok!=V_END) sync_end(NULL);
 			break;
 			}
@@ -2179,6 +2188,17 @@ if(sym_chain)
 void vcd_sortfacs(void)
 {
 int i;
+JRB ptr, lst;
+
+GLOBALS->pfx_hier_array = calloc(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
+lst = GLOBALS->hier_pfx;
+if(lst)
+	{
+	jrb_traverse(ptr, lst)
+		{
+		GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
+		}
+	}
 
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 GLOBALS->curnode=GLOBALS->firstnode;
@@ -2221,7 +2241,19 @@ GLOBALS->facs_are_sorted=1;
 init_tree();
 for(i=0;i<GLOBALS->numfacs;i++)
 {                       
-build_tree_from_name(GLOBALS->facs[i]->name, i);
+char *n = GLOBALS->facs[i]->name;
+int was_packed;
+char *recon = hier_decompress_flagged(n, &was_packed);
+
+if(was_packed)
+	{
+	build_tree_from_name(recon, i);
+	free_2(recon);
+	}
+	else
+	{
+	build_tree_from_name(n, i);
+	}
 
 if(GLOBALS->escaped_names_found_vcd_c_1)
 	{
@@ -2439,6 +2471,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/07/12 22:54:12  gtkwave
+ * array of wires malformed vcd dump load abort fixed
+ *
  * Revision 1.4  2008/01/22 20:11:47  gtkwave
  * track and hold experimentation
  *

@@ -24,6 +24,7 @@
 #include "translate.h"
 #include "ptranslate.h"
 #include "lx2.h"
+#include "hierpack.h"
 
 #if !defined __MINGW32__ && !defined _MSC_VER
 #include <unistd.h>
@@ -598,11 +599,28 @@ if(GLOBALS->entrybox_text)
 					{
 	        			if(!GLOBALS->hier_max_level)
 	                			{
-	                			t->name = t->n.nd->nname;
+				                int flagged;
+
+						if(t->is_depacked) { free_2(t->name); }
+				                t->name = hier_decompress_flagged(t->n.nd->nname, &flagged);
+				                t->is_depacked = (flagged != 0);
 	                			}
 	                			else
 	                			{
-	                			t->name = hier_extract(t->n.nd->nname, GLOBALS->hier_max_level);
+				                int flagged;
+				                char *tbuff = hier_decompress_flagged(t->n.nd->nname, &flagged);
+
+						if(t->is_depacked) { free_2(t->name); }
+						t->is_depacked = (flagged != 0);
+				                if(!flagged)
+				                        {   
+				                        t->name = hier_extract(t->n.nd->nname, GLOBALS->hier_max_level);
+				                        }
+				                        else
+				                        {   
+				                        t->name = strdup_2(hier_extract(tbuff, GLOBALS->hier_max_level));
+				                        free_2(tbuff);
+				                        }
 	                			} 
 					}
 				}
@@ -2559,15 +2577,22 @@ entrybox("Regexp Highlight",300,GLOBALS->regexp_string_menu_c_1,128,GTK_SIGNAL_F
 
 static char *append_array_row(nptr n)
 {
+int was_packed;
+char *hname = hier_decompress_flagged(n->nname, &was_packed);
+
+
 if(!n->array_height)
 	{
-	return(n->nname);
+	strcpy(GLOBALS->buf_menu_c_1, hname);
 	}
 	else
 	{
-	sprintf(GLOBALS->buf_menu_c_1, "%s{%d}", n->nname, n->this_row);
-	return(GLOBALS->buf_menu_c_1);
+	sprintf(GLOBALS->buf_menu_c_1, "%s{%d}", hname, n->this_row);
 	}
+
+if(was_packed) free_2(hname);
+
+return(GLOBALS->buf_menu_c_1);
 }
 
 
@@ -4754,6 +4779,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.33  2008/06/11 08:01:51  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

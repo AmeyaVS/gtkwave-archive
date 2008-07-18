@@ -233,6 +233,7 @@ typedef struct TraceEnt
     double   d_minval, d_maxval; /* cached value for when auto scaling is turned off */
 
     unsigned is_alias : 1;	/* set when it's an alias (safe to free t->name then) */
+    unsigned is_depacked : 1;	/* set when it's been depacked from a compressed entry (safe to free t->name then) */
     unsigned vector : 1;	/* 1 if bit vector, 0 if node */
     unsigned shift_drag_valid : 1; /* qualifies shift_drag above */
     unsigned interactive_vector_needs_regeneration : 1; /* for interactive VCDs */
@@ -330,6 +331,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/03/25 03:22:05  gtkwave
+ * expanded zero fill to include also a one fill (for pre-inverted nets)
+ *
  * Revision 1.6  2008/03/24 19:33:59  gtkwave
  * added zero range fill feature
  *

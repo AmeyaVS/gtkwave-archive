@@ -33,6 +33,7 @@
 #include "wavealloca.h"
 #include "debug.h"
 #include "tree.h"
+#include "jrb.h"
 
 #define VCD_SIZE_WARN (256)	/* number of MB size where converter warning message appears */
 #define VCD_BSIZ 32768	/* size of getch() emulation buffer--this val should be ok */
@@ -130,6 +131,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

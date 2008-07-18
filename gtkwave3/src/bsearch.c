@@ -14,8 +14,8 @@
 #include "symbol.h"
 #include "bsearch.h"
 #include "strace.h"
+#include "hierpack.h"
 #include <ctype.h>
-
 
 static int compar_timechain(const void *s1, const void *s2)
 {
@@ -213,6 +213,7 @@ int rc;
 
 s2=*((struct symbol **)v2);
 rc=sigcmp((char *)key,s2->name);
+
 return(rc);
 }
 
@@ -220,11 +221,18 @@ struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return)
 {
 struct symbol **rc;
 int len;
+int was_packed = 0;
 
 if ((!ascii)||(!(len=strlen(ascii)))) return(NULL);
 if(rows_return)
 	{
 	*rows_return = 0;
+	}
+
+if(GLOBALS->hier_pfx)
+	{
+	ascii = hier_compress(ascii, HIERPACK_DO_NOT_ADD, &was_packed);
+	len = strlen(ascii);  
 	}
 
 if(ascii[len-1]=='}')
@@ -247,6 +255,7 @@ if(ascii[len-1]=='}')
 
 				if(whichrow <= (*rc)->n->array_height) 
 					{	
+					if(was_packed) { free_2(ascii); }
 					return(*rc);
 					}
 				}
@@ -257,12 +266,16 @@ if(ascii[len-1]=='}')
 	}
 
 rc=(struct symbol **)bsearch(ascii, GLOBALS->facs, GLOBALS->numfacs, sizeof(struct symbol *), compar_facs);
+if(was_packed) { free_2(ascii); }
 if(rc) return(*rc); else return(NULL);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/19 22:56:11  gtkwave
+ * rtlbrowse update to handle aet time substitutions
+ *
  * Revision 1.4  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *

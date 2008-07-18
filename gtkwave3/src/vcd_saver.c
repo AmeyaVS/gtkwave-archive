@@ -12,6 +12,7 @@
 #include "vcd_saver.h"
 #include "helpers/lxt_write.h"
 #include "ghw.h"
+#include "hierpack.h"
 #include <time.h>
 
 
@@ -460,7 +461,9 @@ recurse_build(vt, &hp_clone);
 
 for(i=0;i<nodecnt;i++)
 	{
-	char *netname = lxt ? GLOBALS->hp_vcd_saver_c_1[i]->item->nname : output_hier(GLOBALS->hp_vcd_saver_c_1[i]->item->nname);
+	int was_packed = 0;
+	char *hname = hier_decompress_flagged(GLOBALS->hp_vcd_saver_c_1[i]->item->nname, &was_packed);
+	char *netname = lxt ? hname : output_hier(hname);
 
 	if(GLOBALS->hp_vcd_saver_c_1[i]->flags & (HIST_REAL|HIST_STRING))
 		{
@@ -515,6 +518,10 @@ for(i=0;i<nodecnt;i++)
 			}
 		}
 
+	if(was_packed)
+		{
+		free_2(hname);
+		}
 	}
 
 row_data = malloc_2(max_len + 1);
@@ -850,6 +857,9 @@ return(nh_curr->name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/07 03:18:56  kermin
  * Changed to pointer based GLOBAL structure and added initialization function
  *

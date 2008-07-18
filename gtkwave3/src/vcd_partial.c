@@ -33,6 +33,7 @@
 #include <config.h>
 #include "globals.h"
 #include "vcd.h"
+#include "hierpack.h"
 
 #if !defined _MSC_VER && !defined __MINGW32__
 #include <sys/time.h>
@@ -1481,6 +1482,14 @@ for(;;)
 				}
 
 			bail:
+                        if((v) && (GLOBALS->do_hier_compress))
+                                {
+                                char *old_name = v->name;
+                                int was_packed;
+                                v->name = hier_compress(v->name, HIERPACK_ADD, &was_packed);
+                                if(was_packed) free_2(old_name);
+                                }
+
 			if(vtok!=V_END) sync_end(NULL);
 			break;
 			}
@@ -2381,6 +2390,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/07/12 22:54:12  gtkwave
+ * array of wires malformed vcd dump load abort fixed
+ *
  * Revision 1.3  2007/09/11 02:12:50  gtkwave
  * context locking in busy spinloops (gtk_main_iteration() calls)
  *

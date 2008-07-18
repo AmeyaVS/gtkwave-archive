@@ -21,7 +21,7 @@ gtkwave_SOURCES= \
 	debug.c debug.h discardbuttons.c edgebuttons.c \
 	entry.c fetchbuttons.c fgetdynamic.c fgetdynamic.h file.c fonts.c fonts.h getopt.c \
 	getopt1.c ghw.c ghw.h ghwlib.c ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
-	help.c helpers/lxt2_read.c \
+	hierpack.c hierpack.h jrb.c jrb.h help.c helpers/lxt2_read.c \
 	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c interp.c \
 	logfile.c lx2.c lx2.h lxt.c lxt.h main.c main.h markerbox.c menu.c menu.h mouseover.c \
 	pagebuttons.c pipeio.c pipeio.h pixmaps.c pixmaps.h print.c print.h \

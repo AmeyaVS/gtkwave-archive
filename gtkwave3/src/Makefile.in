@@ -54,15 +54,15 @@ am_gtkwave_OBJECTS = globals.$(OBJEXT) ae2.$(OBJEXT) \
 	discardbuttons.$(OBJEXT) edgebuttons.$(OBJEXT) entry.$(OBJEXT) \
 	fetchbuttons.$(OBJEXT) fgetdynamic.$(OBJEXT) file.$(OBJEXT) \
 	fonts.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
-	ghw.$(OBJEXT) ghwlib.$(OBJEXT) help.$(OBJEXT) \
-	lxt2_read.$(OBJEXT) lxt_write.$(OBJEXT) vzt_read.$(OBJEXT) \
-	hiersearch.$(OBJEXT) interp.$(OBJEXT) logfile.$(OBJEXT) \
-	lx2.$(OBJEXT) lxt.$(OBJEXT) main.$(OBJEXT) markerbox.$(OBJEXT) \
-	menu.$(OBJEXT) mouseover.$(OBJEXT) pagebuttons.$(OBJEXT) \
-	pipeio.$(OBJEXT) pixmaps.$(OBJEXT) print.$(OBJEXT) \
-	ptranslate.$(OBJEXT) rc.$(OBJEXT) regex.$(OBJEXT) \
-	renderopt.$(OBJEXT) rgb.$(OBJEXT) search.$(OBJEXT) \
-	shiftbuttons.$(OBJEXT) showchange.$(OBJEXT) \
+	ghw.$(OBJEXT) ghwlib.$(OBJEXT) hierpack.$(OBJEXT) \
+	jrb.$(OBJEXT) help.$(OBJEXT) lxt2_read.$(OBJEXT) \
+	lxt_write.$(OBJEXT) vzt_read.$(OBJEXT) hiersearch.$(OBJEXT) \
+	interp.$(OBJEXT) logfile.$(OBJEXT) lx2.$(OBJEXT) lxt.$(OBJEXT) \
+	main.$(OBJEXT) markerbox.$(OBJEXT) menu.$(OBJEXT) \
+	mouseover.$(OBJEXT) pagebuttons.$(OBJEXT) pipeio.$(OBJEXT) \
+	pixmaps.$(OBJEXT) print.$(OBJEXT) ptranslate.$(OBJEXT) \
+	rc.$(OBJEXT) regex.$(OBJEXT) renderopt.$(OBJEXT) rgb.$(OBJEXT) \
+	search.$(OBJEXT) shiftbuttons.$(OBJEXT) showchange.$(OBJEXT) \
 	signalwindow.$(OBJEXT) simplereq.$(OBJEXT) splash.$(OBJEXT) \
 	status.$(OBJEXT) strace.$(OBJEXT) symbol.$(OBJEXT) \
 	timeentry.$(OBJEXT) translate.$(OBJEXT) tree.$(OBJEXT) \
@@ -202,7 +202,7 @@ gtkwave_SOURCES = \
 	debug.c debug.h discardbuttons.c edgebuttons.c \
 	entry.c fetchbuttons.c fgetdynamic.c fgetdynamic.h file.c fonts.c fonts.h getopt.c \
 	getopt1.c ghw.c ghw.h ghwlib.c ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
-	help.c helpers/lxt2_read.c \
+	hierpack.c hierpack.h jrb.c jrb.h help.c helpers/lxt2_read.c \
 	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c interp.c \
 	logfile.c lx2.c lx2.h lxt.c lxt.h main.c main.h markerbox.c menu.c menu.h mouseover.c \
 	pagebuttons.c pipeio.c pipeio.h pixmaps.c pixmaps.h print.c print.h \
@@ -314,8 +314,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/globals.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hierpack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hiersearch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jrb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lx2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt.Po@am__quote@

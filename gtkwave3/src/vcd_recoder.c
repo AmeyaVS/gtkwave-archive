@@ -36,6 +36,7 @@
 #include "vcd.h"
 #include "vlist.h"
 #include "lx2.h"
+#include "hierpack.h"
 
 /**/
 
@@ -1478,11 +1479,19 @@ for(;;)
 					fprintf(stderr, "Near byte %d, $VAR parse error encountered\n", (int)(GLOBALS->vcdbyteno_vcd_recoder_c_3+(GLOBALS->vst_vcd_recoder_c_3-GLOBALS->vcdbuf_vcd_recoder_c_3)));
 					}
 				if(v->id) free_2(v->id);
-				free_2(v);
+				free_2(v); v=NULL;
 				GLOBALS->pv_vcd_recoder_c_3 = NULL;
 				}
 
 			bail:
+			if((v) && (GLOBALS->do_hier_compress))
+				{
+				char *old_name = v->name;
+				int was_packed;
+				v->name = hier_compress(v->name, HIERPACK_ADD, &was_packed);
+				if(was_packed) free_2(old_name);
+				}
+
 			if(vtok!=V_END) sync_end(NULL);
 			break;
 			}
@@ -2700,6 +2709,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/07/12 22:54:12  gtkwave
+ * array of wires malformed vcd dump load abort fixed
+ *
  * Revision 1.10  2008/07/11 07:02:54  gtkwave
  * recoder fix for malformed files
  *

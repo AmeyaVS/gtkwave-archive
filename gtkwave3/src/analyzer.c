@@ -24,6 +24,7 @@
 #include "strace.h"
 #include "translate.h"
 #include "ptranslate.h"
+#include "hierpack.h"
 
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
@@ -306,11 +307,25 @@ if(aliasname)
 	{
     	if(!GLOBALS->hier_max_level) 
 		{
-		t->name = nd->nname;
+		int flagged;
+
+		t->name = hier_decompress_flagged(nd->nname, &flagged);
+		t->is_depacked = (flagged != 0);
 		}
 		else
 		{
-		t->name = hier_extract(nd->nname, GLOBALS->hier_max_level);
+		int flagged;
+		char *tbuff = hier_decompress_flagged(nd->nname, &flagged);
+		if(!flagged)
+			{
+			t->name = hier_extract(nd->nname, GLOBALS->hier_max_level);
+			}
+			else
+			{
+			t->name = strdup_2(hier_extract(tbuff, GLOBALS->hier_max_level));
+			free_2(tbuff);
+			t->is_depacked = 1;
+			}
 		}
 	}
 
@@ -455,7 +470,7 @@ if(t->vector)
 	}
 
 if(t->asciivalue) free_2(t->asciivalue);
-if((t->is_alias)&&(t->name)) free_2(t->name);
+if(((t->is_alias)||(t->is_depacked))&&(t->name)) free_2(t->name);
 
 free_2( t );
 }
@@ -1090,6 +1105,9 @@ UpdateTracesVisible();
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/06/11 08:01:40  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.3  2008/01/02 18:17:26  gtkwave
  * added standard click semantics with user_standard_clicking rc variable
  *

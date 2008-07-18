@@ -52,7 +52,7 @@
 #include"vlist.h" 
 #include"vzt.h"
 #include"wavealloca.h"
-
+#include"jrb.h"
 
 struct Global{ 
 
@@ -822,6 +822,13 @@ GtkWidget *dnd_sigview; /* from treesearch_gtk2.c */
 /*
  * vcd.c
  */
+unsigned char do_hier_compress; /* from vcd.c */
+JRB hier_pfx; /* from vcd.c */
+unsigned int hier_pfx_cnt; /* from vcd.c */
+char *prev_hier_pfx; /* from vcd.c */
+int prev_hier_pfx_len; /* from vcd.c */
+unsigned int prev_hier_pfx_cnt; /* from vcd.c */
+char **pfx_hier_array; /* from vcd.c */
 jmp_buf *vcd_jmp_buf; /* from vcd.c */
 int vcd_warning_filesize; /* from vcd.c 502 */
 char autocoalesce; /* from vcd.c 503 */

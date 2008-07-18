@@ -827,6 +827,13 @@ NULL, /* dnd_sigview */
 /*
  * vcd.c
  */
+0, /* do_hier_compress */
+NULL, /* hier_pfx */
+0, /* hier_pfx_cnt */
+NULL, /* prev_hier_pfx */
+0, /* prev_hier_pfx_len */
+0, /* prev_hier_pfx_cnt */
+NULL, /* pfx_hier_array */
 NULL, /* vcd_jmp_buf */
 -1, /* vcd_warning_filesize 472 */
 1, /* autocoalesce 473 */
@@ -1495,6 +1502,10 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->fontname_logfile, &GLOBALS->fontname_logfile);
  strcpy2_into_new_context(new_globals, &new_globals->fontname_signals, &GLOBALS->fontname_signals); 
  strcpy2_into_new_context(new_globals, &new_globals->fontname_waves, &GLOBALS->fontname_waves);
+
+ /* hierarchy handling from vcd.c */
+ if(GLOBALS->hier_pfx) { jrb_free_tree(GLOBALS->hier_pfx); GLOBALS->hier_pfx = NULL; }
+
 
  /* vlist.c */
  if(GLOBALS->vlist_handle)
