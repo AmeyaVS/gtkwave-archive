@@ -34,7 +34,7 @@
 /*
  * attempt to match top vs bottom rather than emit <Vector>
  */
-char *attempt_vecmatch(char *s1, char *s2)
+char *attempt_vecmatch_2(char *s1, char *s2)
 {
 char *s;
 char *p1, *p2;
@@ -47,8 +47,6 @@ char *sfx = NULL;
 int sfxlen = 0;
 int totlen;
 int idx;
-
-if((!s1)||(!*s1)||(!s2)||(!*s2)) return(NULL);
 
 if(!strcmp(s1, s2)) { s = malloc_2(strlen(s1)+1); strcpy(s, s1); return(s); }
 
@@ -148,20 +146,51 @@ totlen = pfxlen + 1 + n1len + 1 + n2len + 1 + sfxlen + 1;
 s = malloc_2(totlen);
 memcpy(s, s1, pfxlen);
 idx = pfxlen;
-s[idx] = '[';
-idx++;
+if(!(pfxlen && (s1[pfxlen-1]=='[')))
+	{
+	s[idx] = '[';
+	idx++;
+	}
 memcpy(s+idx, n1, n1len);
 idx += n1len;
 s[idx] = ':';
 idx++;
 memcpy(s+idx, n2, n2len);
 idx += n2len;
-s[idx] = ']';
-idx++;
+if(*sfx != ']')
+	{
+	s[idx] = ']';
+	idx++;
+	}
 if(sfxlen) { memcpy(s+idx, sfx, sfxlen); idx+=sfxlen; }
 s[idx] = 0;
 
 return(s);
+}
+
+
+char *attempt_vecmatch(char *s1, char *s2)
+{
+char *pnt;
+
+if((!s1)||(!*s1)||(!s2)||(!*s2)) 
+	{
+	return(NULL);
+	}
+	else
+	{
+	int ns1_was_decompressed;
+	char *ns1 = hier_decompress_flagged(s1, &ns1_was_decompressed);
+	int ns2_was_decompressed;
+	char *ns2 = hier_decompress_flagged(s2, &ns2_was_decompressed);
+
+	pnt = attempt_vecmatch_2(ns1, ns2);
+
+	if(ns1_was_decompressed) free_2(ns1);
+	if(ns2_was_decompressed) free_2(ns2);
+
+	return(pnt);
+	}
 }
 
 
@@ -2832,6 +2861,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/07/18 19:37:00  gtkwave
+ * hierpack fix for makename
+ *
  * Revision 1.4  2007/09/23 18:33:53  gtkwave
  * warnings cleanups from sun compile
  *
