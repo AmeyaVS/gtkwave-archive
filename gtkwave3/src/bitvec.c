@@ -28,6 +28,7 @@
 #include "main.h"
 #include "menu.h"
 #include "busy.h"
+#include "hierpack.h"
 #include <stdlib.h>
 
 /*
@@ -1438,6 +1439,7 @@ struct symbol *symhi = NULL, *symlo = NULL;
 char hier_delimeter2;
 char *name=NULL;
 char *s1, *s2;
+int s1_was_packed, s2_was_packed;
 int root1len=0, root2len=0;
 int l1, l2;
 
@@ -1470,8 +1472,8 @@ if(!GLOBALS->autocoalesce_reversal)		/* normal case for MTI */
 	}
 
 
-s1=symhi->n->nname;
-s2=symlo->n->nname;
+s1=hier_decompress_flagged(symhi->n->nname, &s1_was_packed);
+s2=hier_decompress_flagged(symlo->n->nname, &s2_was_packed);
 		
 l1=strlen(s1); 
 
@@ -1569,6 +1571,9 @@ if((root1len!=root2len)||(!root1len)||(!root2len)||
 			}
 		}
 	}
+
+if(s1_was_packed) { free_2(s1); }
+if(s2_was_packed) { free_2(s2); }
 
 return(name);
 }
@@ -2827,6 +2832,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/23 18:33:53  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.3  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

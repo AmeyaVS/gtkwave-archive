@@ -827,7 +827,7 @@ NULL, /* dnd_sigview */
 /*
  * vcd.c
  */
-0, /* do_hier_compress */
+1, /* do_hier_compress */
 NULL, /* hier_pfx */
 0, /* hier_pfx_cnt */
 NULL, /* prev_hier_pfx */
