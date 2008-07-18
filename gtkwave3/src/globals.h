@@ -829,6 +829,7 @@ char *prev_hier_pfx; /* from vcd.c */
 int prev_hier_pfx_len; /* from vcd.c */
 unsigned int prev_hier_pfx_cnt; /* from vcd.c */
 char **pfx_hier_array; /* from vcd.c */
+char *prev_hier_uncompressed_name; /* from vcd.c */
 jmp_buf *vcd_jmp_buf; /* from vcd.c */
 int vcd_warning_filesize; /* from vcd.c 502 */
 char autocoalesce; /* from vcd.c 503 */

@@ -1482,14 +1482,6 @@ for(;;)
 				}
 
 			bail:
-                        if((v) && (GLOBALS->do_hier_compress))
-                                {
-                                char *old_name = v->name;
-                                int was_packed;
-                                v->name = hier_compress(v->name, HIERPACK_ADD, &was_packed);
-                                if(was_packed) free_2(old_name);
-                                }
-
 			if(vtok!=V_END) sync_end(NULL);
 			break;
 			}
@@ -2390,6 +2382,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/07/18 18:23:06  gtkwave
+ * fixes for aix
+ *
  * Revision 1.5  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *

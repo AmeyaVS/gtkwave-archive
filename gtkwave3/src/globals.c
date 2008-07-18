@@ -827,13 +827,14 @@ NULL, /* dnd_sigview */
 /*
  * vcd.c
  */
-0, /* do_hier_compress */
+1, /* do_hier_compress */
 NULL, /* hier_pfx */
 0, /* hier_pfx_cnt */
 NULL, /* prev_hier_pfx */
 0, /* prev_hier_pfx_len */
 0, /* prev_hier_pfx_cnt */
 NULL, /* pfx_hier_array */
+NULL, /* prev_hier_uncompressed_name */
 NULL, /* vcd_jmp_buf */
 -1, /* vcd_warning_filesize 472 */
 1, /* autocoalesce 473 */

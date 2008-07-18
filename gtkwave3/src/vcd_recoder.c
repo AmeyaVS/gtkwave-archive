@@ -1249,7 +1249,7 @@ for(;;)
 
                                 if(GLOBALS->pv_vcd_recoder_c_3)
                                         { 
-                                        if(!strcmp(GLOBALS->pv_vcd_recoder_c_3->name,v->name))
+                                        if(!strcmp(GLOBALS->prev_hier_uncompressed_name,v->name))
                                                 {
                                                 GLOBALS->pv_vcd_recoder_c_3->chain=v;
                                                 v->root=GLOBALS->rootv_vcd_recoder_c_3;
@@ -1259,12 +1259,16 @@ for(;;)
                                                 {
                                                 GLOBALS->rootv_vcd_recoder_c_3=v;
                                                 }
+
+					free_2(GLOBALS->prev_hier_uncompressed_name);
                                         }
 					else
 					{
 					GLOBALS->rootv_vcd_recoder_c_3=v;
 					}
+
                                 GLOBALS->pv_vcd_recoder_c_3=v;
+				GLOBALS->prev_hier_uncompressed_name;
 				}
 				else	/* regular vcd var, not an evcd port var */
 				{
@@ -1328,7 +1332,7 @@ for(;;)
 
                                 if(GLOBALS->pv_vcd_recoder_c_3)
                                         { 
-                                        if(!strcmp(GLOBALS->pv_vcd_recoder_c_3->name,v->name))
+                                        if(!strcmp(GLOBALS->prev_hier_uncompressed_name,v->name))
                                                 {
                                                 GLOBALS->pv_vcd_recoder_c_3->chain=v;
                                                 v->root=GLOBALS->rootv_vcd_recoder_c_3;
@@ -1338,13 +1342,16 @@ for(;;)
                                                 {
                                                 GLOBALS->rootv_vcd_recoder_c_3=v;
                                                 }
+
+					free_2(GLOBALS->prev_hier_uncompressed_name);
                                         }
 					else
 					{
 					GLOBALS->rootv_vcd_recoder_c_3=v;
 					}
                                 GLOBALS->pv_vcd_recoder_c_3=v;
-				
+				GLOBALS->prev_hier_uncompressed_name = strdup_2(v->name);
+
 				vtok=get_vartoken(1);
 				if(vtok==V_END) goto dumpv;
 				if(vtok!=V_LB) goto err;
@@ -1599,6 +1606,10 @@ for(;;)
 				{
 				GLOBALS->blackout_regions->bend = GLOBALS->current_time_vcd_recoder_c_3;
 				}
+
+			GLOBALS->pv_vcd_recoder_c_3 = NULL;
+			if(GLOBALS->prev_hier_uncompressed_name) { free_2(GLOBALS->prev_hier_uncompressed_name); GLOBALS->prev_hier_uncompressed_name = NULL; }
+			
 			return;
 		default:
 			DEBUG(fprintf(stderr,"UNKNOWN TOKEN\n"));
@@ -2709,6 +2720,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/07/18 18:23:07  gtkwave
+ * fixes for aix
+ *
  * Revision 1.12  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *
