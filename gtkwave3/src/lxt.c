@@ -146,25 +146,26 @@ return(0);
  */
    
 inline static unsigned int get_byte(offset) {
-  return ((unsigned int)(*((unsigned char *)mm+(offset))));
+  return ((unsigned int)(*((unsigned char *)(GLOBALS->mm_lxt_c_1)+(offset))));
+}
+ 
+inline static unsigned int get_16(offset) {
+  return ((unsigned int)(*((unsigned short *)(((unsigned char *)(GLOBALS->mm_lxt_c_1))
+                +(offset)))));
 }
 
-inline static unsigned int define get_16(offset) {
-  return ((unsigned int)(*((unsigned short *)(((unsigned char *)mm)+(offset))))
-}
-
-inline static usigned int get_32(offset) {
-  return (*(unsigned int *)(((unsigned char *)mm)+(offset)));
+inline static unsigned int get_32(offset) {
+  return (*(unsigned int *)(((unsigned char *)(GLOBALS->mm_lxt_c_1))+(offset)));
 }
 
 inline static unsigned int get_24(offset) {
   return ((get_32((offset)-1)<<8)>>8);
 }
 
-inline static usigned int get_64(offset) {
-  return ((((UTimeType)get_32(offset))<<32)|((UTimeType)get_32((offset)+4)))
+inline static unsigned int get_64(offset) {
+  return ((((UTimeType)get_32(offset))<<32)|((UTimeType)get_32((offset)+4)));
 }
- 
+   
 #else
 
 /*
@@ -2319,6 +2320,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/02/22 22:08:06  gtkwave
+ * fix of previously undetected linear lxt reader bug involving integers
+ *
  * Revision 1.2  2007/08/26 21:35:41  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

@@ -520,7 +520,7 @@ if(GLOBALS->vcd_fsiz_vcd_recoder_c_2)
 return((int)(*(GLOBALS->vst_vcd_recoder_c_3++)));
 }
 
-static char getch() {
+static signed char getch() {
   return ((GLOBALS->vst_vcd_recoder_c_3!=GLOBALS->vend_vcd_recoder_c_3)?((int)(*(GLOBALS->vst_vcd_recoder_c_3++))):(getch_fetch()));
 }
 
@@ -2709,6 +2709,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.11  2008/07/12 22:54:12  gtkwave
  * array of wires malformed vcd dump load abort fixed
  *

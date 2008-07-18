@@ -341,7 +341,7 @@ if(!rd) return(-1);
 return((int)(*(GLOBALS->vst_vcd_partial_c_2++)));
 }
 
-static char getch() {
+static signed char getch() {
   return ((GLOBALS->vst_vcd_partial_c_2!=GLOBALS->vend_vcd_partial_c_2)?((int)(*(GLOBALS->vst_vcd_partial_c_2++))):(getch_fetch()));
 }
 
@@ -2390,6 +2390,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.4  2008/07/12 22:54:12  gtkwave
  * array of wires malformed vcd dump load abort fixed
  *

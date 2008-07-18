@@ -337,7 +337,7 @@ if(GLOBALS->vcd_fsiz_vcd_c_1)
 return((int)(*(GLOBALS->vst_vcd_c_1++)));
 }
 
-static char getch() {
+static signed char getch() {
   return ((GLOBALS->vst_vcd_c_1!=GLOBALS->vend_vcd_c_1)?((int)(*(GLOBALS->vst_vcd_c_1++))):(getch_fetch()));
 }
 
@@ -2471,6 +2471,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.5  2008/07/12 22:54:12  gtkwave
  * array of wires malformed vcd dump load abort fixed
  *
