@@ -578,6 +578,8 @@ for(;word<row_size;word++)
 				{
 				for(i=0;i<len;i++)
 					{
+					if((facidx+i)>=lt->numfacs) break;
+
 					vindex_offset = lt->vindex_offset[facidx+i];
 					vindex_offset_x = vindex_offset + lt->total_values;
 
@@ -591,6 +593,8 @@ for(;word<row_size;word++)
 				{
 				for(i=0;i<len;i++)
 					{
+					if((facidx+i)>=lt->numfacs) break;
+
 					vindex_offset = lt->vindex_offset[facidx+i];
 
 					valpnt = b->change_dict + (b->vindex[vindex_offset] * row_size + word);
@@ -665,8 +669,10 @@ if(!(lt->flags[facidx]&VZT_RD_SYM_F_SYNVEC))
 		vztint32_t *valpnt_x;
 		int which;
 	
-		for(i=0;i<len;i++)
+		for(i=0;i<len;i++)  
 			{
+			if((facidx+i)>=lt->numfacs) break;
+
 			vindex_offset = lt->vindex_offset[facidx+i];
 			vindex_offset_x = vindex_offset + lt->total_values;
 
@@ -681,6 +687,8 @@ if(!(lt->flags[facidx]&VZT_RD_SYM_F_SYNVEC))
 		{
 		for(i=0;i<len;i++)
 			{
+			if((facidx+i)>=lt->numfacs) break;
+
 			vindex_offset = lt->vindex_offset[facidx+i];
 
 			valpnt = val_base + (b->vindex[vindex_offset] * row_size);
@@ -2045,7 +2053,10 @@ if((!lt)||(lt->vectorize))
 					lt->vindex_offset[i] = lt->vindex_offset[j];
 					for(k=1;k<lt->len[i];k++)
 						{
-						lt->vindex_offset[k+i] = lt->vindex_offset[vzt_rd_get_alias_root(lt, k+i)];
+						if((k+i) <= (lt->numfacs-1))
+							{
+							lt->vindex_offset[k+i] = lt->vindex_offset[vzt_rd_get_alias_root(lt, k+i)];
+							}
 						}
 
 					if(synvec_chain[j])
@@ -2060,7 +2071,10 @@ if((!lt)||(lt->vectorize))
 								{
 								for(l=0;l<lt->len[i];l++)
 									{
-									if(lt->vindex_offset[idx+l] != lt->vindex_offset[i+l]) break;
+									if((idx+l)<=(lt->numfacs-1))
+										{
+										if(lt->vindex_offset[idx+l] != lt->vindex_offset[i+l]) break;
+										}
 									}
 
 								if(l == (lt->len[i]))
@@ -2334,6 +2348,9 @@ return(rcval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:22  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *

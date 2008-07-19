@@ -241,7 +241,7 @@ if(lt)
                                 {
 				if(!(g->flags & VZT_RD_SYM_F_INTEGER))
 					{
-	                                printf("$var wire %d %s %s[%d:%d] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
+	                                if(g->len) printf("$var wire %d %s %s[%d:%d] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
 					}
 					else
 					{
@@ -398,6 +398,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:25  gtkwave
  * Imported sources
  *
