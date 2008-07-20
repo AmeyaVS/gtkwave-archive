@@ -1453,6 +1453,7 @@ void reload_into_new_context(void)
  new_globals->convert_to_reals = GLOBALS->convert_to_reals;
  new_globals->disable_mouseover = GLOBALS->disable_mouseover;
  new_globals->disable_tooltips = GLOBALS->disable_tooltips;
+ new_globals->do_hier_compress = GLOBALS->do_hier_compress;
  new_globals->do_initial_zoom_fit = GLOBALS->do_initial_zoom_fit;
  new_globals->do_resize_signals = GLOBALS->do_resize_signals;
  new_globals->enable_fast_exit = GLOBALS->enable_fast_exit;

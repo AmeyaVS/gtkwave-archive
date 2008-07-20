@@ -90,6 +90,8 @@ if(last_h)
 		GLOBALS->hier_pfx = make_jrb();
 		GLOBALS->prev_hier_pfx = strdup_2("");
 		GLOBALS->prev_hier_pfx_len = 0;
+
+		fprintf(stderr, "MEMPACK | Using compressed hierarchy names\n");
 		}
 	curr_pfx_len = last_h - pnt + 1;
 	*last_h = 0;
@@ -162,6 +164,9 @@ return(name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/18 17:29:50  gtkwave
+ * adding cvs headers
+ *
  * Revision 1.1  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *

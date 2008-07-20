@@ -2182,7 +2182,7 @@ void vcd_sortfacs(void)
 int i;
 JRB ptr, lst;
 
-GLOBALS->pfx_hier_array = calloc(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
+GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
 lst = GLOBALS->hier_pfx;
 if(lst)
 	{
@@ -2463,6 +2463,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/07/18 18:46:11  gtkwave
+ * bitblasted vector relinking fix, disable hier pack in legacy+partial vcdload
+ *
  * Revision 1.7  2008/07/18 18:22:58  gtkwave
  * fixes for aix
  *

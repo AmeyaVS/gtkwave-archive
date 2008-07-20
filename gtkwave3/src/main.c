@@ -198,6 +198,7 @@ WAVE_GETOPT_CPUS
 "  -S, --script=FILE          specify GUI command script file for execution\n"
 XID_GETOPT
 INTR_GETOPT
+"  -C, --comphier             use compressed hierarchy names (slower)\n"
 "  -g, --giga                 use gigabyte mempacking when recoding (slower)\n"
 "  -L, --legacy               use legacy VCD mode rather than the VCD recoder\n" 
 "  -v, --vcd                  use stdin as a VCD dumpfile\n"
@@ -503,11 +504,12 @@ while (1)
                 {"dualid", 1, 0, 'D'},
                 {"interactive", 0, 0, 'I'},
 		{"giga", 0, 0, 'g'},
+		{"comphier", 0, 0, 'C'},
                 {"legacy", 0, 0, 'L'},  
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgL", long_options, &option_index);
+        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCL", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -704,6 +706,10 @@ while (1)
 
 		case 'g':
 			is_giga = 1;
+			break;
+
+		case 'C':
+			GLOBALS->do_hier_compress = 1;
 			break;
 
                 case '?':
@@ -2044,6 +2050,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2008/07/01 18:51:06  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.29  2008/06/11 08:01:50  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

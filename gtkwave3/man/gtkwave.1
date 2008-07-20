@@ -1,4 +1,4 @@
-.TH "GTKWAVE" "1" "3.1.5" "Anthony Bybell" "Simulation Wave Viewer"
+.TH "GTKWAVE" "1" "3.1.13" "Anthony Bybell" "Simulation Wave Viewer"
 .SH "NAME"
 .LP 
 gtkwave \- Visualization tool for VCD, LXT, and VZT files
@@ -96,6 +96,10 @@ considerably more memory than the recoder and its use is discouraged for very la
 \fB\-g\fR,\fB\-\-giga\fR
 specifies that the viewer should use gigabyte mempacking when recoding (possibly slower).  This is equivalent to setting
 the vlist_spill and vlist_prepack flags in the rc file.
+.TP
+\fB\-C\fR,\fB\-\-comphier\fR
+specifies that the viewer should use compressed hierarchy names when loading the dumpfile.  This will use less memory
+at the expense of speed.
 .TP
 \fB\-v\fR,\fB\-\-vcd\fR
 Use stdin as a VCD dumpfile.
