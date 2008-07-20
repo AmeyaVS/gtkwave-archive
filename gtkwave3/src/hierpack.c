@@ -148,10 +148,8 @@ if(last_h)
 		name = namereplace;
 		savecnt += curr_pfx_len+1-pfxlen;
 		}
-		else
-		{
-		*last_h = GLOBALS->hier_delimeter;
-		}
+
+	*last_h = GLOBALS->hier_delimeter;
 	}
 	else 
 	{
@@ -164,6 +162,9 @@ return(name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/07/20 01:29:36  gtkwave
+ * added command line option --comphier
+ *
  * Revision 1.2  2008/07/18 17:29:50  gtkwave
  * adding cvs headers
  *

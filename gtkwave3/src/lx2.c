@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2003-2006.
+ * Copyright (c) Tony Bybell 2003-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include "lxt2_read.h"
 #include "debug.h"
 #include "busy.h"
+#include "hierpack.h"
 
 
 /*
@@ -40,6 +41,7 @@ signed char scale;
 unsigned int numalias = 0;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
+JRB ptr, lst;
 
 GLOBALS->lx2_lx2_c_1 = lxt2_rd_init(fname);
 if(!GLOBALS->lx2_lx2_c_1)
@@ -86,10 +88,24 @@ if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
 if(GLOBALS->numfacs)
 	{
 	char *fnam = lxt2_rd_get_facname(GLOBALS->lx2_lx2_c_1, 0);
-	int flen = strlen(fnam);
+        char *pnt;
+        int was_packed = 0;
 
-	GLOBALS->mvlfacs_lx2_c_1[0].name=malloc_2(flen+1);
-	strcpy(GLOBALS->mvlfacs_lx2_c_1[0].name, fnam);
+        if(GLOBALS->do_hier_compress)
+                {
+                pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
+                }
+
+        if(was_packed)
+                {
+                GLOBALS->mvlfacs_lx2_c_1[0].name = pnt;
+                }
+                else
+                {
+		int flen = strlen(fnam);
+		GLOBALS->mvlfacs_lx2_c_1[0].name=malloc_2(flen+1);
+		strcpy(GLOBALS->mvlfacs_lx2_c_1[0].name, fnam);
+                }
 	}
 
 for(i=0;i<GLOBALS->numfacs;i++)
@@ -101,10 +117,24 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if(i!=(GLOBALS->numfacs-1))
 		{
 		char *fnam = lxt2_rd_get_facname(GLOBALS->lx2_lx2_c_1, i+1);
-		int flen = strlen(fnam);
+	        char *pnt;
+	        int was_packed = 0;
 
-		GLOBALS->mvlfacs_lx2_c_1[i+1].name=malloc_2(flen+1);
-		strcpy(GLOBALS->mvlfacs_lx2_c_1[i+1].name, fnam);
+	        if(GLOBALS->do_hier_compress)
+	                {
+	                pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
+	                }
+
+	        if(was_packed)
+	                {
+			GLOBALS->mvlfacs_lx2_c_1[i+1].name = pnt;
+			}
+			else
+			{
+			int flen = strlen(fnam);
+			GLOBALS->mvlfacs_lx2_c_1[i+1].name=malloc_2(flen+1);
+			strcpy(GLOBALS->mvlfacs_lx2_c_1[i+1].name, fnam);
+			}
 		}
 
 	if(i>1)
@@ -238,11 +268,21 @@ for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 		}
 	}
 
+GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
+
+lst = GLOBALS->hier_pfx;
+if(lst)
+        {
+        jrb_traverse(ptr, lst)
+                {
+                GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
+                }
+        }
 
 /* SPLASH */                            splash_sync(2, 5);
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
-if(GLOBALS->fast_tree_sort)
+if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         {
         GLOBALS->curnode=GLOBALS->firstnode;
         for(i=0;i<GLOBALS->numfacs;i++)
@@ -353,11 +393,29 @@ if(GLOBALS->fast_tree_sort)
 	init_tree();		
 	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
-		build_tree_from_name(GLOBALS->facs[i]->name, i);
+		char *n = GLOBALS->facs[i]->name;
+		int was_packed;
+		char *recon = hier_decompress_flagged(n, &was_packed);
+                
+		if(was_packed)   
+		        {
+		        build_tree_from_name(recon, i);
+		        free_2(recon);
+		        }
+		        else
+		        {
+		        build_tree_from_name(n, i);
+		        }
 		}
 /* SPLASH */                            splash_sync(5, 5);
 	treegraft(GLOBALS->treeroot);
 	treesort(GLOBALS->treeroot, NULL);
+	}
+
+if(GLOBALS->prev_hier_uncompressed_name) 
+	{
+	free_2(GLOBALS->prev_hier_uncompressed_name);
+	GLOBALS->prev_hier_uncompressed_name = NULL; 
 	}
 
 GLOBALS->min_time = GLOBALS->first_cycle_lx2_c_1; GLOBALS->max_time=GLOBALS->last_cycle_lx2_c_1;
@@ -776,6 +834,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/06/15 21:26:45  gtkwave
+ * time -1 endcap add for LXT2 + VZT loaders
+ *
  * Revision 1.2  2007/08/26 21:35:41  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
