@@ -31,6 +31,7 @@
 #include "lxt.h"
 #include "bsearch.h"
 #include "debug.h"
+#include "hierpack.h"
 
 /****************************************************************************/
 
@@ -433,13 +434,18 @@ char *pnt;
 int total_mem = get_32(GLOBALS->facname_offset_lxt_c_1+4);
 gzFile zhandle = NULL;
 char *decmem=NULL;
+JRB ptr, lst;
+
 
 #if defined __MINGW32__ || defined _MSC_VER
 FILE *tmp;
 #endif
 
-buf=malloc_2(total_mem);
-pnt=bufprev=buf;
+if(!GLOBALS->do_hier_compress)
+	{
+	buf=malloc_2(total_mem);
+	pnt=bufprev=buf;
+	}
 
 if(GLOBALS->zfacname_size_lxt_c_1)
 	{
@@ -465,20 +471,60 @@ if(GLOBALS->zfacname_size_lxt_c_1)
 	offs=0;	/* we're in our new memory region now.. */
 	}
 
-fprintf(stderr, LXTHDR"Building %d facilities.\n", GLOBALS->numfacs);
-for(i=0;i<GLOBALS->numfacs;i++)
+if(GLOBALS->do_hier_compress)
 	{
-        clone=get_16(offs);  offs+=2;
-	bufcurr=pnt;
-	for(j=0;j<clone;j++)
+	char workspace[4097];
+	int was_packed;
+	char *string_ret;
+
+	workspace[0] = 0;
+
+	fprintf(stderr, LXTHDR"Building %d compressed facilities.\n", GLOBALS->numfacs);
+	for(i=0;i<GLOBALS->numfacs;i++)
 		{
-		*(pnt++) = *(bufprev++);
-		}
-        while((*(pnt++)=get_byte(offs++)));
-        GLOBALS->mvlfacs_lxt_c_2[i].name=bufcurr;
-	DEBUG(printf(LXTHDR"Encountered facility %d: '%s'\n", i, bufcurr));
-	bufprev=bufcurr;
+	        clone=get_16(offs);  offs+=2;
+		pnt=workspace+clone;
+	        while((*(pnt++)=get_byte(offs++)));
+		string_ret =  hier_compress(workspace, HIERPACK_ADD, &was_packed);
+		if(was_packed)
+			{
+			GLOBALS->mvlfacs_lxt_c_2[i].name=string_ret;
+			}
+			else
+			{
+		        GLOBALS->mvlfacs_lxt_c_2[i].name=strdup_2(workspace);
+			}
+	        }
+	}
+	else
+	{
+	fprintf(stderr, LXTHDR"Building %d facilities.\n", GLOBALS->numfacs);
+	for(i=0;i<GLOBALS->numfacs;i++)
+		{
+	        clone=get_16(offs);  offs+=2;
+		bufcurr=pnt;
+		for(j=0;j<clone;j++)
+			{
+			*(pnt++) = *(bufprev++);
+			}
+	        while((*(pnt++)=get_byte(offs++)));
+	        GLOBALS->mvlfacs_lxt_c_2[i].name=bufcurr;
+		DEBUG(printf(LXTHDR"Encountered facility %d: '%s'\n", i, bufcurr));
+		bufprev=bufcurr;
+	        }
+	}
+
+GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
+lst = GLOBALS->hier_pfx;
+if(lst)
+        {
+        jrb_traverse(ptr, lst)
+                {
+                GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
+                }
         }
+
+if(GLOBALS->prev_hier_uncompressed_name) { free_2(GLOBALS->prev_hier_uncompressed_name); GLOBALS->prev_hier_uncompressed_name = NULL; }
 
 if(GLOBALS->zfacname_size_lxt_c_1)
 	{
@@ -1742,7 +1788,19 @@ fprintf(stderr, LXTHDR"Building facility hierarchy tree...");
 init_tree();		
 for(i=0;i<GLOBALS->numfacs;i++)	
 {
-build_tree_from_name(GLOBALS->facs[i]->name, i);
+char *n = GLOBALS->facs[i]->name;
+int was_packed;
+char *recon = hier_decompress_flagged(n, &was_packed);
+
+if(was_packed)
+        {
+        build_tree_from_name(recon, i);   
+        free_2(recon);
+        }
+        else
+        {
+        build_tree_from_name(n, i);
+        }
 }
 /* SPLASH */                            splash_sync(5, 5);
 treegraft(GLOBALS->treeroot);
@@ -2320,6 +2378,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/07/18 18:22:58  gtkwave
+ * fixes for aix
+ *
  * Revision 1.3  2008/02/22 22:08:06  gtkwave
  * fix of previously undetected linear lxt reader bug involving integers
  *

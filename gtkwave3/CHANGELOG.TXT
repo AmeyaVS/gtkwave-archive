@@ -453,9 +453,9 @@
 		is actually written to the file in order to save
 		space, so the vlist blocks can be overlapping yet
 		usable.)
-3.1.13	20jul08	Adding compressed hierarchy handling in order to
+3.1.13	22jul08	Adding compressed hierarchy handling in order to
 		reduce memory usage on large bitblasted models.
 		This is currently only enabled for the VCD recoder,
-		LXT2, and VZT loaders.
+		LXT, LXT2, and VZT loaders.
 		Fixed some buffer overflows in vectorization code
 		(and when vectorization is enabled) in vzt_read.c.
