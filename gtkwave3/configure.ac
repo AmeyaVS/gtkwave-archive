@@ -235,7 +235,15 @@ AC_FUNC_ALLOCA
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h rpc/xdr.h getopt.h])
+AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h])
+
+# rpc workaround for cygwin
+AC_CHECK_HEADERS([rpc/types.h rpc/xdr.h], [], [],
+     [[#ifdef HAVE_RPC_TYPES_H
+     # include <rpc/types.h>
+     #endif
+     ]])
+
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
