@@ -25,7 +25,11 @@ hadj->upper=GLOBALS->tims.last+2.0;
 
 pageinc=(gfloat)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
 hadj->page_size=hadj->page_increment=(pageinc>=1.0)?pageinc:1.0;
-hadj->step_increment=(GLOBALS->nspx>=1.0)?GLOBALS->nspx:1.0;
+
+/* hadj->step_increment=(GLOBALS->nspx>=1.0)?GLOBALS->nspx:1.0; */
+
+hadj->step_increment = pageinc / 10.0;
+if(hadj->step_increment < 1.0) hadj->step_increment = 1.0;
 
 if(hadj->page_size >= (hadj->upper-hadj->lower)) hadj->value=hadj->lower;
 if(hadj->value+hadj->page_size>hadj->upper)
@@ -473,6 +477,9 @@ return table;
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 19:24:45  gtkwave
+ * more ctx_swap_watchdog updates
+ *
  * Revision 1.3  2007/09/12 17:26:46  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

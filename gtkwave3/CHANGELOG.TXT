@@ -462,3 +462,5 @@
 		Modification to autoconf handling for rpc.h.
 		Fix for DnD to directly under an expanded comment
 		trace.
+		Make step_increment equal to 1/10 page_increment
+		for the horizontal scroller in the wavewindow.
