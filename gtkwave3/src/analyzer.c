@@ -652,7 +652,7 @@ while(t)
 	{
 	if(t->flags&TR_HIGHLIGHT) 
 		{
-		if((t->flags & (TR_BLANK|TR_COLLAPSED)) && (t->name))
+		if(((t->flags & TR_ISCOLLAPSED)==(TR_ISCOLLAPSED)) && (t->name))
 			{
 			tinsert=t;
 			t=t->t_next;
@@ -1105,6 +1105,9 @@ UpdateTracesVisible();
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/07/18 17:27:00  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.4  2008/06/11 08:01:40  gtkwave
  * gcc 4.3.x compiler warning fixes
  *
