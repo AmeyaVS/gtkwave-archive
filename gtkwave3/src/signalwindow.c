@@ -752,7 +752,7 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 			t->flags |= TR_HIGHLIGHT;
 			}
 		}
-	else
+	else if(!(t->flags & TR_HIGHLIGHT)) /* Ben Sferrazza suggested fix rather than a regular "else" */
 		{
 		GLOBALS->starting_unshifted_trace = t;
 
@@ -1496,6 +1496,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.31  2008/06/11 08:01:55  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

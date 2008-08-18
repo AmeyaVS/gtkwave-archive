@@ -20,6 +20,7 @@
 #include "busy.h"
 #include "debug.h"
 
+
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
 
 /* Treesearch is a pop-up window used to select signals.
@@ -1004,7 +1005,42 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 	}
 }
 
+/**********************************************************************/
 
+/* view_selection_func is commented out for now... */
+
+static gboolean
+  view_selection_func (GtkTreeSelection *selection,
+                       GtkTreeModel     *model,
+                       GtkTreePath      *path,
+                       gboolean          path_currently_selected,
+                       gpointer          userdata)
+  {
+/*
+    GtkTreeIter iter;
+
+    if (gtk_tree_model_get_iter(model, &iter, path))
+    {
+      gchar *name;
+
+      gtk_tree_model_get(model, &iter, 0, &name, -1);
+
+      if (!path_currently_selected)
+      {
+        g_print ("%s is going to be selected.\n", name);
+      }
+      else
+      {
+        g_print ("%s is going to be unselected.\n", name);
+      }
+
+      g_free(name);
+    }
+*/
+    return TRUE; /* allow selection state to change */
+  }
+
+/**********************************************************************/
 
 /*
  * mainline..
@@ -1129,6 +1165,8 @@ do_tooltips:
 	/* Setup the selection handler */
 	GLOBALS->sig_selection_treesearch_gtk2_c_1 = gtk_tree_view_get_selection (GTK_TREE_VIEW (sig_view));
 	gtk_tree_selection_set_mode (GLOBALS->sig_selection_treesearch_gtk2_c_1, GTK_SELECTION_MULTIPLE);
+        /* gtk_tree_selection_set_select_function (GLOBALS->sig_selection_treesearch_gtk2_c_1,
+                                                view_selection_func, NULL, NULL); */
       }
 
     GLOBALS->dnd_sigview = sig_view;
@@ -1362,6 +1400,8 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
 	/* Setup the selection handler */
 	GLOBALS->sig_selection_treesearch_gtk2_c_1 = gtk_tree_view_get_selection (GTK_TREE_VIEW (sig_view));
 	gtk_tree_selection_set_mode (GLOBALS->sig_selection_treesearch_gtk2_c_1, GTK_SELECTION_MULTIPLE);
+        /* gtk_tree_selection_set_select_function (GLOBALS->sig_selection_treesearch_gtk2_c_1,
+                                                view_selection_func, NULL, NULL); */
       }
 
     GLOBALS->dnd_sigview = sig_view;
@@ -1854,6 +1894,10 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/05/11 03:05:25  gtkwave
+ * add gating flag on dnd data request so moving in/out of search window
+ * doesn't cause spurious insert ops into the signal/wavewindow
+ *
  * Revision 1.14  2008/05/06 19:37:55  gtkwave
  * DND tweaking for drag status
  *
