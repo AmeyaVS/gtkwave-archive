@@ -453,7 +453,7 @@
 		is actually written to the file in order to save
 		space, so the vlist blocks can be overlapping yet
 		usable.)
-3.1.13	18aug08	Adding compressed hierarchy handling in order to
+3.1.13	20aug08	Adding compressed hierarchy handling in order to
 		reduce memory usage on large bitblasted models.
 		This is currently only enabled for the VCD recoder,
 		LXT, LXT2, and VZT loaders.
@@ -466,5 +466,6 @@
 		for the horizontal scroller in the wavewindow.
 		Added sticky click semantics for clicks in signal
 		window.  To do this in the treesearch_gtk2 file
-		will require some work with view_selection_func().
-
+		will require some additional future work with 
+		view_selection_func() and/or signal handling and
+		trapping.
