@@ -909,6 +909,7 @@ process_binary:
 						}
 					}
 
+
 				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)toupper(typ2)); /* B/R/P/S for decompress */
 				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
 				vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
@@ -932,7 +933,7 @@ process_binary:
 				}
 				else
 				{
-				if(v->vartype == V_REAL)
+				if((v->vartype == V_REAL)||(typ=='s')||(typ=='S'))
 					{
 					vlist_emit_string(&n->mv.mvlfac_vlist, vector);
 					}
@@ -2720,6 +2721,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/07/18 18:46:11  gtkwave
+ * bitblasted vector relinking fix, disable hier pack in legacy+partial vcdload
+ *
  * Revision 1.13  2008/07/18 18:23:07  gtkwave
  * fixes for aix
  *

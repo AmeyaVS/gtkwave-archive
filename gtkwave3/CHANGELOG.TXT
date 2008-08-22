@@ -469,3 +469,4 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
+3.1.14	22aug08	Fix for strings ('s' type) in recoder.  
