@@ -1120,6 +1120,21 @@ if(!GLOBALS->made_gc_contexts_wavewindow_c_1)
 	GLOBALS->gccache_dash_wavewindow_c_1 = GLOBALS->gc_dash_wavewindow_c_1 ; 
 	}
 
+if(GLOBALS->timestart_from_savefile_valid)
+	{
+	gfloat pageinc=(gfloat)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+
+	if((GLOBALS->timestart_from_savefile >= GLOBALS->tims.first) && (GLOBALS->timestart_from_savefile <= (GLOBALS->tims.last-pageinc)))
+		{
+		GtkAdjustment *hadj = GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+		hadj->value = GLOBALS->timestart_from_savefile;
+		fix_wavehadj();
+		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */ 
+		gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+		}
+	GLOBALS->timestart_from_savefile_valid = 0;
+	}
+
 if(GLOBALS->wavewidth>1)
 	{
 	if(!GLOBALS->do_initial_zoom_fit)
@@ -3754,6 +3769,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.35  2008/06/11 08:01:57  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

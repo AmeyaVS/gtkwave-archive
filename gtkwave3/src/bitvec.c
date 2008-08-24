@@ -2450,6 +2450,11 @@ else if (*w2 == '[')
 	set_window_xypos (x, y);
 	}
       }
+    else if (strcmp (w2, "timestart") == 0)
+      {
+      sscanf(w, TTFormat, &GLOBALS->timestart_from_savefile);
+      GLOBALS->timestart_from_savefile_valid = 1;
+      }
 #if WAVE_USE_GTK2
     else if (strcmp (w2, "treeopen") == 0)
 	{
@@ -2717,6 +2722,10 @@ break;			/* start grabbing chars from here */
 }
 
 sscanf(w2,"%s",prefix);
+if(*w2=='[')
+	{
+	}
+else
 if(*w2=='*')
 	{
 	}
@@ -2861,6 +2870,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/07/18 19:54:56  gtkwave
+ * hierpack and vecmatch fixes with removal of extra brackets
+ *
  * Revision 1.5  2008/07/18 19:37:00  gtkwave
  * hierpack fix for makename
  *

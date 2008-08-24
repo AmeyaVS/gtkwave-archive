@@ -2608,6 +2608,7 @@ void write_save_helper(FILE *wave) {
 
 	DEBUG(printf("Write Save Fini: %s\n", *fileselbox_text));
 
+	fprintf(wave, "[timestart] "TTFormat"\n", GLOBALS->tims.start);
 
 	get_window_size (&sz_x, &sz_y);
 	if(!GLOBALS->ignore_savefile_size) fprintf(wave,"[size] %d %d\n", sz_x, sz_y);
@@ -2964,6 +2965,8 @@ void read_save_helper(char *wname) {
         FILE *wave;
         char *str = NULL;
         int wave_is_compressed;
+	char traces_already_exist = (GLOBALS->traces.first != NULL);
+
         if(((strlen(wname)>2)&&(!strcmp(wname+strlen(wname)-3,".gz")))||
           ((strlen(wname)>3)&&(!strcmp(wname+strlen(wname)-4,".zip"))))
                 {
@@ -3055,6 +3058,8 @@ void read_save_helper(char *wname) {
 		update_markertime(GLOBALS->tims.marker);
                 if(wave_is_compressed) pclose(wave); else fclose(wave);
 
+		if(traces_already_exist) GLOBALS->timestart_from_savefile_valid = 0;
+
 		GLOBALS->signalwindow_width_dirty=1;
 		MaxSignalLength();
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -3075,7 +3080,6 @@ void read_save_helper(char *wname) {
 void
 menu_read_save_cleanup(GtkWidget *widget, gpointer data)
 {
-
 if(GLOBALS->filesel_ok)
 	{
 	char *wname;
@@ -3084,7 +3088,6 @@ if(GLOBALS->filesel_ok)
         
         wname=*GLOBALS->fileselbox_text;
         read_save_helper(wname);
-
   }
 }
 
@@ -4779,6 +4782,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.34  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *
