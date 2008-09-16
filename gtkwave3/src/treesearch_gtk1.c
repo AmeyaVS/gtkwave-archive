@@ -17,7 +17,7 @@
 #include "lx2.h"
 #include "debug.h"
 
-void dnd_setup(GtkWidget *src, GtkWidget *w)
+void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 {
 	GtkWidget *win = w;
 	GtkTargetEntry target_entry[3];
@@ -813,6 +813,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/05/08 20:10:04  gtkwave
+ * 2.4 not required for dnd so requirement relaxed
+ *
  * Revision 1.8  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *

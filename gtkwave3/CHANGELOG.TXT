@@ -469,6 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.1.14	24aug08	Fix for strings ('s' type) in recoder.  
+3.1.14	15sep08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
+		Adding signal name DnD from external apps.

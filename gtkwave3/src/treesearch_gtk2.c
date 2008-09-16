@@ -20,6 +20,8 @@
 #include "busy.h"
 #include "debug.h"
 
+#define ENABLE_CONCEPT_DE
+#undef ENABLE_CONCEPT_DE
 
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
 
@@ -1170,7 +1172,7 @@ do_tooltips:
       }
 
     GLOBALS->dnd_sigview = sig_view;
-    dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea);
+    dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea, 1);
 
     sig_frame = gtk_frame_new (NULL);
     gtk_container_border_width (GTK_CONTAINER (sig_frame), 3);
@@ -1809,10 +1811,58 @@ GLOBALS->tree_dnd_requested = 1;  /* indicate that a request for data occurred..
 static void DNDDataReceivedCB(
 	GtkWidget *widget, GdkDragContext *dc,
 	gint x, gint y, GtkSelectionData *selection_data,
-	guint info, guint t, gpointer data
-)
-{
+	guint info, guint t, gpointer data) {
+    gboolean same;
+    gint row, column;
+    GtkWidget *source_widget;
+    GtkCList *clist;
+    (void)t;
+
+    if((widget == NULL) || (data == NULL) || (dc == NULL)) return;
+
+    /* Important, check if we actually got data.  Sometimes errors
+     * occure and selection_data will be NULL.
+     */
+    if(selection_data == NULL)     return;
+    if(selection_data->length < 0) return;
+
+    /* Source and target widgets are the same? */
+    source_widget = gtk_drag_get_source_widget(dc);
+    same = (source_widget == widget) ? TRUE : FALSE;
+
+    /* Now check if the data format type is one that we support
+     * (remember, data format type, not data type).
+     *
+     * We check this by testing if info matches one of the info
+     * values that we have defined.
+     *
+     * Note that we can also iterate through the atoms in:
+     *	GList *glist = dc->targets;
+     *
+     *	while(glist != NULL)
+     *	{
+     *	    gchar *name = gdk_atom_name((GdkAtom)glist->data);
+     *	     * strcmp the name to see if it matches
+     *	     * one that we support
+     *	     *
+     *	    glist = glist->next;
+     *	}
+     */
+    if((info == WAVE_DRAG_TAR_INFO_0) ||
+       (info == WAVE_DRAG_TAR_INFO_1) ||
+       (info == WAVE_DRAG_TAR_INFO_2))
+    {
+#ifdef ENABLE_CONCEPT_DE
+    printf("%08x '%s'\n", selection_data->data, selection_data->data);
+
+#endif
+    }
+
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
+
 
 /*
  *	DND "drag_data_delete" handler, this function is called when
@@ -1830,7 +1880,7 @@ static void DNDDataDeleteCB(
 /***********************/
 
 
-void dnd_setup(GtkWidget *src, GtkWidget *w)
+void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 {
 	GtkWidget *win = w;
 	GtkTargetEntry target_entry[3];
@@ -1886,7 +1936,7 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 		gtkwave_signal_connect(GTK_OBJECT(src), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), win);
                 gtkwave_signal_connect(GTK_OBJECT(src), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), win);
                 gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_received", GTK_SIGNAL_FUNC(DNDDataReceivedCB), win);
+                if(enable_receive) gtkwave_signal_connect(GTK_OBJECT(w),   "drag_data_received", GTK_SIGNAL_FUNC(DNDDataReceivedCB), win);
                 gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), win);
 	}
 }
@@ -1894,6 +1944,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/08/18 16:10:54  gtkwave
+ * adding sticky click semantics on already selected entries
+ *
  * Revision 1.15  2008/05/11 03:05:25  gtkwave
  * add gating flag on dnd data request so moving in/out of search window
  * doesn't cause spurious insert ops into the signal/wavewindow

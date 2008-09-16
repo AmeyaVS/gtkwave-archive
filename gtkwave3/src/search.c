@@ -950,7 +950,7 @@ void searchbox(char *title, GtkSignalFunc func)
     gtk_widget_show (GLOBALS->clist_search_c_3);
 
 #if WAVE_USE_GTK2
-    dnd_setup(GLOBALS->clist_search_c_3, GLOBALS->signalarea);
+    dnd_setup(GLOBALS->clist_search_c_3, GLOBALS->signalarea, 0);
 #endif
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
@@ -1108,6 +1108,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.8  2008/06/11 08:01:54  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

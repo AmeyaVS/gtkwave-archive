@@ -1520,10 +1520,10 @@ gtk_widget_show(panedwindow);
 
 if(GLOBALS->dnd_sigview)
 	{
-	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea);
+	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea, 1);
 	}
-dnd_setup(GLOBALS->signalarea, GLOBALS->signalarea);
-dnd_setup(GLOBALS->signalarea, GLOBALS->wavearea);
+/* dnd_setup(GLOBALS->signalarea, GLOBALS->signalarea); */
+dnd_setup(GLOBALS->signalarea, GLOBALS->wavearea, 1);
 
 #if GTK_CHECK_VERSION(2,4,0)
 if(!GLOBALS->hide_sst)
@@ -2050,6 +2050,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2008/07/20 01:29:36  gtkwave
+ * added command line option --comphier
+ *
  * Revision 1.30  2008/07/01 18:51:06  gtkwave
  * compiler warning fixes for amd64
  *

@@ -109,7 +109,7 @@ void dump_open_tree_nodes(FILE *wave, xl_Tree *t);
 void force_open_tree_node(char *name);
 void select_tree_node(char *name);
 
-void dnd_setup(GtkWidget *src, GtkWidget *widget); /* dnd from gtk2 tree to signalwindow */
+void dnd_setup(GtkWidget *src, GtkWidget *widget, int enable_receive); /* dnd from gtk2 tree to signalwindow */
 void treeview_select_all_callback(void); /* gtk2 */
 void treeview_unselect_all_callback(void); /* gtk2 */
 
@@ -170,6 +170,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2008/08/22 20:19:12  gtkwave
+ * fix for strings in vcd recoder
+ *
  * Revision 1.45  2008/08/21 03:48:45  gtkwave
  * promote to 3.1.13
  *

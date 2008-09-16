@@ -1909,12 +1909,12 @@ void reload_into_new_context(void)
    gtk_widget_show(GLOBALS->expanderwindow);
    if(GLOBALS->dnd_sigview)
         {
-	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea);
+	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea, 0);
 	}
 
    if(GLOBALS->clist_search_c_3)
 	{
-	dnd_setup(GLOBALS->clist_search_c_3, GLOBALS->signalarea);
+	dnd_setup(GLOBALS->clist_search_c_3, GLOBALS->signalarea, 0);
 	}
  }
  #endif
