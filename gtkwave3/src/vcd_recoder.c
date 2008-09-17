@@ -1033,6 +1033,7 @@ for(;;)
 
 			vtok=get_token();
 			if((vtok==T_END)||(vtok==T_EOF)) break;
+			fractional_timescale_fix(GLOBALS->yytext_vcd_recoder_c_3);
 			GLOBALS->time_scale=atoi_64(GLOBALS->yytext_vcd_recoder_c_3);
 			if(!GLOBALS->time_scale) GLOBALS->time_scale=1;
 			for(i=0;i<GLOBALS->yylen_vcd_recoder_c_3;i++)
@@ -1057,6 +1058,8 @@ for(;;)
 				case 'n':
 				case 'p':
 				case 'f':
+				case 'a':
+				case 'z':
 					GLOBALS->time_dimension=prefix;
 					break;
 				case 's':
@@ -2721,6 +2724,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/08/22 20:19:12  gtkwave
+ * fix for strings in vcd recoder
+ *
  * Revision 1.14  2008/07/18 18:46:11  gtkwave
  * bitblasted vector relinking fix, disable hier pack in legacy+partial vcdload
  *

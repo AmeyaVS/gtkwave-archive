@@ -13,13 +13,70 @@
 #include "currenttime.h"
 #include "symbol.h"
 
-static char *time_prefix=" munpf";
+static char *time_prefix=WAVE_SI_UNITS;
 
 static char *maxtime_label_text="Maximum Time";
 static char *marker_label_text ="Marker Time";
 
 static char *maxtime_label_text_hpos="Max";
 static char *marker_label_text_hpos ="Marker";
+
+
+void fractional_timescale_fix(char *s)
+{
+char buf[32], sfx[2];
+float f;
+int i, len;
+char prefix_idx = 0;
+
+if(*s != '0') return;
+
+len = strlen(s);
+for(i=0;i<len;i++)
+	{
+        if((s[i]!='0')&&(s[i]!='1')&&(s[i]!='.'))
+        	{
+		buf[i] = 0;
+                prefix_idx=i;
+                break;   
+                }
+		else
+		{
+		buf[i] = s[i];
+		}
+	}
+
+if(!strcmp(buf, "0.1"))
+	{
+	strcpy(buf, "100");
+	}
+else if(!strcmp(buf, "0.01"))
+	{
+	strcpy(buf, "10");
+	}
+else if(!strcmp(buf, "0.001"))
+	{
+	strcpy(buf, "1");
+	}
+else
+	{
+	return;
+	}
+
+len = strlen(WAVE_SI_UNITS);
+for(i=0;i<len-1;i++)
+	{
+	if(s[prefix_idx] == WAVE_SI_UNITS[i]) break;
+	}
+
+sfx[0] = WAVE_SI_UNITS[i+1];
+sfx[1] = 0;
+strcat(buf, sfx);
+strcat(buf, "s");
+/* printf("old time: '%s', new time: '%s'\n", s, buf); */
+strcpy(s, buf);
+}
+
 
 void update_maxmarker_labels(void)
 {
@@ -114,7 +171,7 @@ char *pnt;
 int offset;
 double k;
 
-static const double negpow[] = { 1.0, 1.0e-3, 1.0e-6, 1.0e-9, 1.0e-12, 1.0e-15 };
+static const double negpow[] = { 1.0, 1.0e-3, 1.0e-6, 1.0e-9, 1.0e-12, 1.0e-15, 1.0e-18, 1.0e-21 };
 
 pnt=strchr(time_prefix, (int)dim);
 if(pnt) { offset=pnt-time_prefix; } else offset=0;
@@ -464,6 +521,14 @@ switch(scale)
         case -14:       GLOBALS->time_scale = LLDescriptor(10);
         case -15:                                       GLOBALS->time_dimension = 'f'; break;
 
+        case -16:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'a'; break;
+        case -17:       GLOBALS->time_scale = LLDescriptor(10);
+        case -18:                                       GLOBALS->time_dimension = 'a'; break;
+
+        case -19:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'z'; break;
+        case -20:       GLOBALS->time_scale = LLDescriptor(10);
+        case -21:                                       GLOBALS->time_dimension = 'z'; break;
+
         case -7:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'n'; break;
         case -8:        GLOBALS->time_scale = LLDescriptor(10);
         case -9:
@@ -474,6 +539,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/02/19 22:56:11  gtkwave
+ * rtlbrowse update to handle aet time substitutions
+ *
  * Revision 1.6  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *

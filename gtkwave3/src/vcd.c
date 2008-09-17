@@ -1029,6 +1029,7 @@ for(;;)
 
 			vtok=get_token();
 			if((vtok==T_END)||(vtok==T_EOF)) break;
+			fractional_timescale_fix(GLOBALS->yytext_vcd_c_1);
 			GLOBALS->time_scale=atoi_64(GLOBALS->yytext_vcd_c_1);
 			if(!GLOBALS->time_scale) GLOBALS->time_scale=1;
 			for(i=0;i<GLOBALS->yylen_vcd_c_1;i++)
@@ -1053,6 +1054,8 @@ for(;;)
 				case 'n':
 				case 'p':
 				case 'f':
+				case 'a':
+				case 'z':
 					GLOBALS->time_dimension=prefix;
 					break;
 				case 's':
@@ -2463,6 +2466,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/07/20 01:29:36  gtkwave
+ * added command line option --comphier
+ *
  * Revision 1.8  2008/07/18 18:46:11  gtkwave
  * bitblasted vector relinking fix, disable hier pack in legacy+partial vcdload
  *

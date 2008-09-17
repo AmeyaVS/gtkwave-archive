@@ -23,6 +23,7 @@
 #define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.14_pre (w)1999-2008 BSI"
 
 #define WAVE_INF_SCALING (0.5)
+#define WAVE_SI_UNITS " munpfaz"
 
 /* for dnd */
 #define WAVE_DRAG_TAR_NAME_0         "text/plain"
@@ -41,7 +42,7 @@ struct blackout_region_t *next;
 TimeType bstart, bend;
 };
 
-
+void fractional_timescale_fix(char *);
 char *convert_ascii(Trptr t, vptr v);
 char *convert_ascii_vec(Trptr t, char *vec);
 char *convert_ascii_real(double *d);
@@ -170,6 +171,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2008/09/16 00:01:23  gtkwave
+ * prelim drag and drop from external apps (now disabled)
+ *
  * Revision 1.46  2008/08/22 20:19:12  gtkwave
  * fix for strings in vcd recoder
  *
