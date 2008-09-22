@@ -12,7 +12,7 @@
 #ifndef REGEX_WAVE_H
 #define REGEX_WAVE_H
 
-enum WaveRegexTypes { WAVE_REGEX_SEARCH, WAVE_REGEX_TREE, WAVE_REGEX_WILD, WAVE_REGEX_TOTAL };
+enum WaveRegexTypes { WAVE_REGEX_SEARCH, WAVE_REGEX_TREE, WAVE_REGEX_WILD, WAVE_REGEX_DND, WAVE_REGEX_TOTAL };
 
 int wave_regex_compile(char *regex, int which);
 int wave_regex_match(char *str, int which);
@@ -26,6 +26,9 @@ void wave_regex_alloc_free(void *pnt);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *
