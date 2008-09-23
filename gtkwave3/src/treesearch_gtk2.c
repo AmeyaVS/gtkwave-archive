@@ -22,6 +22,8 @@
 #include "debug.h"
 #include "hierpack.h"
 
+int process_tcl_list(char *s);
+
 
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
 
@@ -1809,302 +1811,6 @@ GLOBALS->tree_dnd_requested = 1;  /* indicate that a request for data occurred..
  *	inputs may reflect those of the drop target so we need to check
  *	if this is the same structure or not.
  */
-Trptr determine_trace_from_y(void)
-{
-Trptr t;
-int trwhich, trtarget;
-GdkModifierType state;
-gdouble x, y;
-#ifdef WAVE_USE_GTK2
-gint xi, yi;
-#endif
-
-/* Put any needed drag end cleanup code here. */
-
-if(GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1)
-	{
-	WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
-	WAVE_GDK_GET_POINTER_COPY;
-
-	if((x<0)||(y<0)||(x>=GLOBALS->signalarea->allocation.width)||(y>=GLOBALS->signalarea->allocation.height)) return;
-	}
-else
-if(GLOBALS->dnd_tgt_on_wavearea_treesearch_gtk2_c_1)
-	{
-	WAVE_GDK_GET_POINTER(GLOBALS->wavearea->window, &x, &y, &xi, &yi, &state);
-	WAVE_GDK_GET_POINTER_COPY;
-
-	if((x<0)||(y<0)||(x>=GLOBALS->wavearea->allocation.width)||(y>=GLOBALS->wavearea->allocation.height)) return;
-	}
-else
-	{
-	return;
-	}
-
-
-if((t=GLOBALS->traces.first))
-        {       
-        while(t)
-                {
-                t->flags&=~TR_HIGHLIGHT;
-                t=t->t_next;
-                }
-        signalarea_configure_event(GLOBALS->signalarea, NULL);
-        wavearea_configure_event(GLOBALS->wavearea, NULL);
-	}
-
-trtarget = ((int)y / (int)GLOBALS->fontheight) - 2; 
-if(trtarget < 0) 
-	{
-	return(NULL);
-	}
-	else
-	{
-	t=GLOBALS->topmost_trace;
-	}
-
-trwhich=0;
-while(t)
-	{
-        if((trwhich<trtarget)&&(GiveNextTrace(t)))
-        	{
-                trwhich++;
-                t=GiveNextTrace(t);
-                }
-                else
-                {
-                break;
-                }
-	}
-
-return(t);
-}
-
-
-static char *synthesize_net_name(char *s)
-{
-char *s_new = NULL;
-char *s_copy = strdup_2(s);
-char *pnt = s_copy;
-char *pnt_head;
-int len;
-char *most_recent_lbrack = NULL;
-int i;
-char *this_regex = "\\(\\[.*\\]\\)*$";
-char *entry_suffixed;
-int match_idx = -1;
-int match_type = 0;
-
-if(*s_copy == '{')
-	{
-	len = strlen(s);
-
-	pnt++;
-	pnt_head = pnt;
-	while(*pnt)
-		{
-		if(!isspace(*pnt))
-			{
-			pnt++;
-			continue;
-			}
-		*pnt = 0;
-		}
-
-	if((!strcmp("net", pnt_head)) || (!strcmp("netBus", pnt_head)))
-		{
-		pnt++;
-		pnt_head = pnt;
-		while(*pnt)
-			{
-			if(*pnt == '{')
-				{
-				char *pnt2 = pnt;
-				do
-					{
-					*(pnt2) = *(pnt2+1);
-					} while(*(pnt2++));
-				continue;
-				}
-
-			if(*pnt == '[') 
-				{
-				most_recent_lbrack = pnt;
-				pnt++;
-				continue;
-				}
-			else
-			if(*pnt == '}')
-				{
-				*pnt = 0;
-				break;
-				}
-			else
-			if(!isspace(*pnt))
-				{
-				pnt++;
-				continue;
-				}
-
-			*pnt = GLOBALS->hier_delimeter;
-			}
-
-		entry_suffixed=wave_alloca(2+strlen(pnt_head)+strlen(this_regex)+1);
-		*entry_suffixed=0x00;
-		strcpy(entry_suffixed, "\\<");
-		strcat(entry_suffixed,pnt_head);
-		strcat(entry_suffixed,this_regex);
-
-		for(i=0;i<GLOBALS->numfacs;i++)
-		        {
-		        GLOBALS->facs[i]->selected=0;
-		        }
-		                         
-		wave_regex_compile(entry_suffixed, WAVE_REGEX_DND); 
-		for(i=0;i<GLOBALS->numfacs;i++)
-		        {
-		        int was_packed;
-		        char *hfacname = NULL;
-	                                 
-        		hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
-
-		        if(wave_regex_match(hfacname, WAVE_REGEX_DND)) 
-		                {
-				match_idx = i;
-				match_type = 1;	/* match was on normal search */
-			        if(was_packed) { free_2(hfacname); }
-				goto import;
-		                }
-		        
-		        if(was_packed) { free_2(hfacname); }
-		        }
-
-		if(most_recent_lbrack)
-			{
-			*most_recent_lbrack = 0;
-
-			entry_suffixed=wave_alloca(2+strlen(pnt_head)+strlen(this_regex)+1);
-			*entry_suffixed=0x00;
-			strcpy(entry_suffixed, "\\<");
-			strcat(entry_suffixed,pnt_head);
-			strcat(entry_suffixed,this_regex);
-
-			wave_regex_compile(entry_suffixed, WAVE_REGEX_DND); 
-			for(i=0;i<GLOBALS->numfacs;i++)
-			        {
-			        int was_packed;
-			        char *hfacname = NULL;
-		                                 
-	        		hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
-	
-			        if(wave_regex_match(hfacname, WAVE_REGEX_DND)) 
-			                {
-					match_idx = i;
-					match_type = 2; /* match was on lbrack removal */
-				        if(was_packed) { free_2(hfacname); }
-					goto import;
-			                }
-			        
-			        if(was_packed) { free_2(hfacname); }
-			        }
-			}
-
-import: /* printf("import fac: %d\n", match_idx); */
-		if(match_idx >= 0)
-			{
-			Trptr t = determine_trace_from_y();
-			struct symbol *s = GLOBALS->facs[match_idx];
-
-			if(GLOBALS->is_lx2)
-				{
-                                lx2_set_fac_process_mask(s->n);
-			        GLOBALS->facs[match_idx]->selected=1;
-
-				lx2_import_masked();
-				}
-
-			if(t)
-				{
-				t->flags |=  TR_HIGHLIGHT;
-				}
-
-			memcpy(&GLOBALS->tcache_treesearch_gtk2_c_2,&GLOBALS->traces,sizeof(Traces));
-			GLOBALS->traces.total=0;
-			GLOBALS->traces.first=GLOBALS->traces.last=NULL;
-					
-			if((match_type == 2)&&(s->n->ext))
-				{
-				nptr nexp;
-				int bit = atoi(most_recent_lbrack+1);
-				int which, cnt;
-			
-				if(s->n->ext->lsi > s->n->ext->msi)
-					{
-					for(which=0,cnt=s->n->ext->lsi ; cnt>=s->n->ext->msi ; cnt--,which++)
-						{
-						if(cnt==bit) break;
-						}
-					}
-					else
-					{
-					for(which=0,cnt=s->n->ext->msi ; cnt>=s->n->ext->lsi ; cnt--,which++)
-						{
-						if(cnt==bit) break;
-						}
-					}
-
-				nexp = ExtractNodeSingleBit(s->n, which);
-				*most_recent_lbrack = '[';
-		                if(nexp)
-		                        {
-		                        AddNode(nexp, NULL);
-		                        }
-					else
-					{
-					AddNodeUnroll(s->n, NULL);
-					}
-				}
-				else
-				{
-				AddNodeUnroll(s->n, NULL);
-				}
-
-     			GLOBALS->traces.buffercount=GLOBALS->traces.total;
-     			GLOBALS->traces.buffer=GLOBALS->traces.first;
-     			GLOBALS->traces.bufferlast=GLOBALS->traces.last;
-     			GLOBALS->traces.first=GLOBALS->tcache_treesearch_gtk2_c_2.first;
-     			GLOBALS->traces.last=GLOBALS->tcache_treesearch_gtk2_c_2.last;
-     			GLOBALS->traces.total=GLOBALS->tcache_treesearch_gtk2_c_2.total;
-                                
-			if(t)
-				{
-        			PasteBuffer();
-				}
-				else
-				{	
-				PrependBuffer();
-				}
-
-     			GLOBALS->traces.buffercount=GLOBALS->tcache_treesearch_gtk2_c_2.buffercount;
-     			GLOBALS->traces.buffer=GLOBALS->tcache_treesearch_gtk2_c_2.buffer;
-     			GLOBALS->traces.bufferlast=GLOBALS->tcache_treesearch_gtk2_c_2.bufferlast;
-
-			if(t)
-				{
-				t->flags &= ~TR_HIGHLIGHT;
-				}
-
-			MaxSignalLength();
-			signalarea_configure_event(GLOBALS->signalarea, NULL);
-			wavearea_configure_event(GLOBALS->wavearea, NULL);
-			}
-		}
-	}
-free_2(s_copy);
-return(s_new);
-}
-
-
 static void DNDDataReceivedCB(
 	GtkWidget *widget, GdkDragContext *dc,
 	gint x, gint y, GtkSelectionData *selection_data,
@@ -2112,8 +1818,6 @@ static void DNDDataReceivedCB(
     gboolean same;
     gint row, column;
     GtkWidget *source_widget;
-    GtkCList *clist;
-    (void)t;
 
     if((widget == NULL) || (data == NULL) || (dc == NULL)) return;
 
@@ -2149,13 +1853,18 @@ static void DNDDataReceivedCB(
        (info == WAVE_DRAG_TAR_INFO_1) ||
        (info == WAVE_DRAG_TAR_INFO_2))
     {
-    /* printf("%08x '%s'\n", selection_data->data, selection_data->data); */
-    synthesize_net_name(selection_data->data);
-    }
+    int num_found ;
 
-MaxSignalLength();
-signalarea_configure_event(GLOBALS->signalarea, NULL);
-wavearea_configure_event(GLOBALS->wavearea, NULL);
+    /* printf("%08x '%s'\n", selection_data->data, selection_data->data); */
+    num_found = process_tcl_list(selection_data->data);
+
+    if(num_found)
+	{
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+    }
 }
 
 
@@ -2239,6 +1948,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/09/22 03:27:03  gtkwave
+ * more DND adds
+ *
  * Revision 1.17  2008/09/16 00:01:27  gtkwave
  * prelim drag and drop from external apps (now disabled)
  *

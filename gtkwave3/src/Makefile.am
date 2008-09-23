@@ -27,7 +27,7 @@ gtkwave_SOURCES= \
 	pagebuttons.c pipeio.c pipeio.h pixmaps.c pixmaps.h print.c print.h \
 	ptranslate.c ptranslate.h rc.c rc.h \
 	regex.c regex_wave.h renderopt.c rgb.c search.c shiftbuttons.c showchange.c \
-	signalwindow.c simplereq.c splash.c status.c strace.c strace.h symbol.c symbol.h \
+	signalwindow.c simplereq.c splash.c status.c strace.c strace.h symbol.c symbol.h tcl_helper.c \
 	timeentry.c translate.c translate.h tree.c tree.h treesearch.c vcd.c vcd.h vcd_keywords.c \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c
