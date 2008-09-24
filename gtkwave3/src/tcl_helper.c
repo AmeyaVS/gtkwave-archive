@@ -461,7 +461,7 @@ if(elem)
 			len += (strlen(elem[i])) + 1;
 			}
 
-		s_new = calloc(1, len);
+		s_new = calloc_2(1, len);
 		for(i=1;i<l;i++)
 			{
 			strcat(s_new, elem[i]);
@@ -675,6 +675,10 @@ if(t)
 	}
 
 cleanup:
+for(ii=0;ii<c;ii++)
+	{
+	if(s_new_list[ii]) free_2(s_new_list[ii]);
+	}
 free_2(s_new_list);
 free_2(match_idx_list);
 free_2(match_type_list);
@@ -687,6 +691,7 @@ return(found);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2008/09/23 18:22:01  gtkwave
+ * file creation
  *
  */
-
