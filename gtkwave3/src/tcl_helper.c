@@ -443,9 +443,12 @@ return(t);
 static char *make_net_name_from_tcl_list(char *s)
 {
 char *s_new = NULL;
+char *s_new2 = NULL;
 int len;
 int i,l;
 char** elem = NULL;
+char *pnt, *pnt2;
+int esc = 0;
 
 elem = zSplitTclList(s, &l);
 
@@ -470,6 +473,34 @@ if(elem)
 		}
 
 	free_2(elem);
+
+	pnt = s_new;
+	while(*pnt)
+		{
+		if( (!isalnum(*pnt)) && (!isspace(*pnt)) && (*pnt != GLOBALS->hier_delimeter) )
+			{
+			esc++;
+			}
+		pnt++;
+		}
+
+	if(esc)
+		{
+		s_new2 = calloc_2(1, len + esc);
+		pnt = s_new;
+		pnt2 = s_new2;
+		while(*pnt)
+			{
+			if( (!isalnum(*pnt)) && (!isspace(*pnt)) && (*pnt != GLOBALS->hier_delimeter) )
+				{
+				*(pnt2++) = '\\';
+				}
+
+			*(pnt2++) = *(pnt++);
+			}
+		free_2(s_new);
+		s_new = s_new2;				
+		}
 	}
 
 return(s_new);
@@ -688,10 +719,156 @@ free_2(list);
 return(found);
 }
 
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+static char *make_single_tcl_list_name(char *s)
+{
+char *rpnt = NULL;
+char *pnt, *pnt2;
+int delim_cnt = 0;
+char *lbrack=NULL, *colon=NULL, *rbrack=NULL;
+
+if(s)
+	{
+	int len = strlen(s);
+	char *s2 = wave_alloca(len+1);
+	
+	strcpy(s2, s);
+	pnt = s2;
+	while(*pnt)
+		{
+		if(*pnt == GLOBALS->hier_delimeter)
+			{
+			*pnt = ' ';
+			delim_cnt++;
+			}
+		else if(*pnt == '[') { lbrack = pnt; }
+		else if(*pnt == ':') { colon  = pnt; }
+		else if(*pnt == ']') { rbrack = pnt; }
+
+		pnt++;
+		}
+
+	if(lbrack && colon && rbrack && ((colon-lbrack)>0) && ((rbrack - colon)>0) && ((rbrack-lbrack)>0))
+		{
+		*lbrack = 0;
+		len = lbrack - s2;
+		}
+
+	len += 7+1+2+(delim_cnt*2); /* "{net ...} " + trailing null char etc */
+
+	pnt = s2;
+	rpnt = malloc_2(len+1);
+	strcpy(rpnt, "{net {");
+	pnt2 = rpnt + 6;
+
+	while(*pnt)
+		{
+		if(isspace(*pnt))
+			{
+			*(pnt2++) = '}';
+			*(pnt2++) = ' ';
+			*(pnt2++) = '{';
+			}
+			else
+			{
+			*(pnt2++) = *pnt;
+			}
+
+		pnt++;
+		}
+
+	*(pnt2++) = '}';
+	*(pnt2++) = '}';
+	*(pnt2++) = ' ';
+	*(pnt2)   = 0;
+	}
+
+return(rpnt);
+}
+
+char *add_dnd_from_searchbox(void)
+{
+int i;
+char *one_entry = NULL, *mult_entry = NULL;
+unsigned int sing_len, mult_len = 0;
+char *pnt;
+
+for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
+        {
+        int len;
+        struct symbol *s, *t;
+        s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
+        if(s->selected)
+                {
+                if((!s->vec_root)||(!GLOBALS->autocoalesce))
+                        {
+			one_entry = make_single_tcl_list_name(s->n->nname);
+			if(one_entry)
+				{
+				if(!mult_entry)
+					{
+					mult_entry = one_entry;
+					mult_len = strlen(mult_entry);
+					}
+					else
+					{
+					sing_len = strlen(one_entry);
+					mult_entry = realloc_2(mult_entry, mult_len + sing_len + 1);
+					strcpy(mult_entry + mult_len, one_entry);
+					mult_len += sing_len;
+					free_2(one_entry);				
+					}
+				}
+                        }
+                        else
+                        {
+                        len=0;
+                        t=s->vec_root;
+                        while(t)
+                                {
+				one_entry = make_single_tcl_list_name(t->n->nname);
+				if(one_entry)
+					{
+					if(!mult_entry)
+						{
+						mult_entry = one_entry;
+						mult_len = strlen(mult_entry);
+						}
+						else
+						{
+						sing_len = strlen(one_entry);
+						mult_entry = realloc_2(mult_entry, mult_len + sing_len + 1);
+						strcpy(mult_entry + mult_len, one_entry);
+						mult_len += sing_len;
+						free_2(one_entry);				
+						}
+					}
+
+                                if(t->selected)
+                                        {
+                                        if(len) t->selected=0;
+                                        }
+                                len++;
+                                t=t->vec_chain;
+                                }
+                        /* if(len)add_vector_chain(s->vec_root, len); */
+                        }
+                }
+        }
+return(mult_entry);
+}
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/09/24 02:17:32  gtkwave
+ * fix memory leak on recreated signal names at import end
+ *
  * Revision 1.1  2008/09/23 18:22:01  gtkwave
  * file creation
  *
  */
+

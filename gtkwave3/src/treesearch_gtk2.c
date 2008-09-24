@@ -23,6 +23,7 @@
 #include "hierpack.h"
 
 int process_tcl_list(char *s);
+char *add_dnd_from_searchbox(void);
 
 
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
@@ -1802,15 +1803,18 @@ static void DNDDataRequestCB(
 GLOBALS->tree_dnd_requested = 1;  /* indicate that a request for data occurred... */
 
 #if 0
-/* commented out for now...the 0/16/31 is arbitrary for simply for drag 
+/* commented out for now...the 16/31 is arbitrary for simply for drag 
    source identification and will be removed once actual signal names are 
    filled in... */
 
 if(widget == GLOBALS->clist_search_c_3)	/* from search */
 	{
-	char text[1025];
-	sprintf(text, "{net test {COUNT[0]}}");
-	gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
+	char *text = add_dnd_from_searchbox();
+	if(text)
+		{
+		gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
+		free_2(text);
+		}
 	}
 else if(widget == GLOBALS->signalarea)
 	{
@@ -1889,7 +1893,7 @@ static void DNDDataReceivedCB(
     {
     int num_found ;
 
-    /* printf("%08x '%s'\n", selection_data->data, selection_data->data); */
+    /* printf("XXX %08x '%s'\n", selection_data->data, selection_data->data); */
     num_found = process_tcl_list(selection_data->data);
 
     if(num_found)
@@ -1982,6 +1986,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/09/24 02:22:49  gtkwave
+ * added (commented out) prelim support for dragging names from viewer
+ *
  * Revision 1.19  2008/09/23 18:23:03  gtkwave
  * adding more support for DnD from external apps
  *
