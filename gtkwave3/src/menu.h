@@ -33,6 +33,7 @@ void get_main_menu (GtkWidget *, GtkWidget **menubar);
 int file_quit_cmd_callback (GtkWidget *widget, gpointer data);
 int set_wave_menu_accelerator(char *str);
 int execute_script(char *name);
+char *append_array_row(nptr n);
 
 struct stringchain_t
 {
@@ -306,6 +307,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/03/25 03:22:11  gtkwave
+ * expanded zero fill to include also a one fill (for pre-inverted nets)
+ *
  * Revision 1.11  2008/03/24 19:34:00  gtkwave
  * added zero range fill feature
  *

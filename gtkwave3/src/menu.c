@@ -2575,7 +2575,7 @@ entrybox("Regexp Highlight",300,GLOBALS->regexp_string_menu_c_1,128,GTK_SIGNAL_F
 
 /**/
 
-static char *append_array_row(nptr n)
+char *append_array_row(nptr n)
 {
 int was_packed;
 char *hname = hier_decompress_flagged(n->nname, &was_packed);
@@ -4782,6 +4782,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2008/08/24 21:55:27  gtkwave
+ * update for timestart line in savefiles
+ *
  * Revision 1.35  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *

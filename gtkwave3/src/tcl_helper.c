@@ -530,6 +530,7 @@ int *match_type_list;
 char delim_str[2] = { GLOBALS->hier_delimeter, 0 };
 Trptr t;
 int found = 0;
+int lbrack_adj;
 
 list = zSplitTclList(s, &c);
 if(!list)
@@ -547,7 +548,17 @@ for(ii=0;ii<c;ii++)
 	if(!s_new) continue;
 	s_new_list[ii] = s_new;
 
+	lbrack_adj = 0;
 	most_recent_lbrack_list[ii] = strrchr(s_new, '[');
+	if((most_recent_lbrack_list[ii])&&(most_recent_lbrack_list[ii] != s_new))
+		{
+		char *chp = most_recent_lbrack_list[ii]-1;
+		if(*chp == '\\')
+			{
+			most_recent_lbrack_list[ii] = chp;
+			lbrack_adj = 1;
+			}
+		}
 
 	entry_suffixed=wave_alloca(2+strlen(s_new)+strlen(this_regex)+1);
 	*entry_suffixed=0x00;
@@ -597,7 +608,7 @@ for(ii=0;ii<c;ii++)
 		                {
 				found++;
 				match_idx_list[ii] = i;
-				match_type_list[ii] = 2; /* match was on lbrack removal */
+				match_type_list[ii] = 2+lbrack_adj; /* match was on lbrack removal */
 			        if(was_packed) { free_2(hfacname); }
 				goto import;
 		                }
@@ -641,10 +652,10 @@ for(ii=0;ii<c;ii++)
 		{
 		struct symbol *s = GLOBALS->facs[match_idx_list[ii]];
 
-		if((match_type_list[ii] == 2)&&(s->n->ext))
+		if((match_type_list[ii] >= 2)&&(s->n->ext))
 			{
 			nptr nexp;
-			int bit = atoi(most_recent_lbrack_list[ii]+1);
+			int bit = atoi(most_recent_lbrack_list[ii]+1 + (match_type_list[ii] == 3)); /* == 3 for adjustment when lbrack is escaped */
 			int which, cnt;
 			
 			if(s->n->ext->lsi > s->n->ext->msi)
@@ -722,6 +733,25 @@ return(found);
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+#define WAVE_OE_ME \
+	if(one_entry) \
+		{ \
+		if(!mult_entry) \
+			{ \
+			mult_entry = one_entry; \
+			mult_len = strlen(mult_entry); \
+			} \
+			else \
+			{ \
+			sing_len = strlen(one_entry); \
+			mult_entry = realloc_2(mult_entry, mult_len + sing_len + 1); \
+			strcpy(mult_entry + mult_len, one_entry); \
+			mult_len += sing_len; \
+			free_2(one_entry); \				
+			} \
+		}
+
 
 static char *make_single_tcl_list_name(char *s)
 {
@@ -806,22 +836,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 if((!s->vec_root)||(!GLOBALS->autocoalesce))
                         {
 			one_entry = make_single_tcl_list_name(s->n->nname);
-			if(one_entry)
-				{
-				if(!mult_entry)
-					{
-					mult_entry = one_entry;
-					mult_len = strlen(mult_entry);
-					}
-					else
-					{
-					sing_len = strlen(one_entry);
-					mult_entry = realloc_2(mult_entry, mult_len + sing_len + 1);
-					strcpy(mult_entry + mult_len, one_entry);
-					mult_len += sing_len;
-					free_2(one_entry);				
-					}
-				}
+			WAVE_OE_ME
                         }
                         else
                         {
@@ -830,22 +845,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                         while(t)
                                 {
 				one_entry = make_single_tcl_list_name(t->n->nname);
-				if(one_entry)
-					{
-					if(!mult_entry)
-						{
-						mult_entry = one_entry;
-						mult_len = strlen(mult_entry);
-						}
-						else
-						{
-						sing_len = strlen(one_entry);
-						mult_entry = realloc_2(mult_entry, mult_len + sing_len + 1);
-						strcpy(mult_entry + mult_len, one_entry);
-						mult_len += sing_len;
-						free_2(one_entry);				
-						}
-					}
+				WAVE_OE_ME
 
                                 if(t->selected)
                                         {
@@ -861,9 +861,113 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 return(mult_entry);
 }
 
+
+char *add_dnd_from_signal_window(void)
+{
+Trptr t;
+int i;
+char *one_entry = NULL, *mult_entry = NULL;
+unsigned int sing_len, mult_len = 0;
+char *pnt;
+
+t=GLOBALS->traces.first;
+while(t)
+	{
+        if( (!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))) && (t->flags & TR_HIGHLIGHT) )
+		{
+                if(t->vector)
+                        {
+                        int i;
+                        nptr *nodes;
+                        bptr bits = t->n.vec->bits;
+                                        
+                        nodes=t->n.vec->bits->nodes;
+                        for(i=0;i<t->n.vec->nbits;i++)
+                                {
+                                if(nodes[i]->expansion)
+                                        {
+		                        int which, cnt;
+					int bit = nodes[i]->expansion->parentbit;
+					nptr n = nodes[i]->expansion->parent;
+					char *str = append_array_row(n);
+					char *p = strrchr(str, '[');
+					if(p) { *p = 0; }					
+              
+                        		if(n->ext->lsi > n->ext->msi)
+                                		{
+                                		for(which=0,cnt=n->ext->lsi ; cnt>=n->ext->msi ; cnt--,which++)
+                                        		{
+                                        		if(cnt==bit) break;
+                                        		}
+                                		}
+                                		else
+                                		{
+                                		for(which=0,cnt=n->ext->msi ; cnt>=n->ext->lsi ; cnt--,which++)
+                                        		{
+                                        		if(cnt==bit) break;
+                                        		}
+                                		}   
+
+					sprintf(str+strlen(str), "[%d]", which);
+					one_entry = make_single_tcl_list_name(str);
+					WAVE_OE_ME
+                                        }
+                                        else
+                                        {
+					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]));
+					WAVE_OE_ME
+                                        }
+                                }
+                        }
+			else
+			{
+			if(t->n.nd->expansion)
+				{
+	                        int which, cnt;
+				int bit = t->n.nd->expansion->parentbit;
+				nptr n = t->n.nd->expansion->parent;
+				char *str = append_array_row(n);
+				char *p = strrchr(str, '[');
+				if(p) { *p = 0; }					
+              
+                       		if(n->ext->lsi > n->ext->msi)
+                               		{
+                               		for(which=0,cnt=n->ext->lsi ; cnt>=n->ext->msi ; cnt--,which++)
+                                       		{
+                                       		if(cnt==bit) break;
+                                       		}
+                               		}
+                               		else
+                               		{
+                               		for(which=0,cnt=n->ext->msi ; cnt>=n->ext->lsi ; cnt--,which++)
+                                       		{
+                                       		if(cnt==bit) break;
+                                       		}
+                               		}   
+
+				sprintf(str+strlen(str), "[%d]", which);
+				one_entry = make_single_tcl_list_name(str);
+				WAVE_OE_ME
+				}
+				else
+				{
+				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd));
+				WAVE_OE_ME
+				}
+			}
+		}
+	t = t->t_next;
+	}
+
+return(mult_entry);
+}
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/09/24 18:54:00  gtkwave
+ * drag from search widget into external processes
+ *
  * Revision 1.2  2008/09/24 02:17:32  gtkwave
  * fix memory leak on recreated signal names at import end
  *
@@ -871,4 +975,3 @@ return(mult_entry);
  * file creation
  *
  */
-
