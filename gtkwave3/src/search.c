@@ -333,6 +333,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 			{
 			len=0;
 			t=s->vec_root;
+			t->selected = 1; /* move selected to head */
 			while(t)
 				{
 				if(t->selected)
@@ -1109,6 +1110,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/09/24 02:22:49  gtkwave
+ * added (commented out) prelim support for dragging names from viewer
+ *
  * Revision 1.10  2008/09/16 00:01:26  gtkwave
  * prelim drag and drop from external apps (now disabled)
  *
