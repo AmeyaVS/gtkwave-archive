@@ -1800,12 +1800,37 @@ static void DNDDataRequestCB(
 )
 {
 GLOBALS->tree_dnd_requested = 1;  /* indicate that a request for data occurred... */
+
+#if 0
+/* commented out for now...the 0/16/31 is arbitrary for simply for drag 
+   source identification and will be removed once actual signal names are 
+   filled in... */
+
+if(widget == GLOBALS->clist_search_c_3)	/* from search */
+	{
+	char text[1025];
+	sprintf(text, "{net test {COUNT[0]}}");
+	gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
+	}
+else if(widget == GLOBALS->signalarea)
+	{
+	char text[1025];
+	sprintf(text, "{net test {COUNT[16]}}");
+	gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
+	}
+else if(widget == GLOBALS->dnd_sigview)
+	{
+	char text[1025];
+	sprintf(text, "{net test {COUNT[31]}}");
+	gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
+	}
+#endif
 }
 
 /*
  *      DND "drag_data_received" handler. When DNDDataRequestCB()
  *	calls gtk_selection_data_set() to send out the data, this function
- *	recieves it and is responsible for handling it.
+ *	receives it and is responsible for handling it.
  *
  *	This is also the only DND callback function where the given
  *	inputs may reflect those of the drop target so we need to check
@@ -1830,6 +1855,15 @@ static void DNDDataReceivedCB(
     /* Source and target widgets are the same? */
     source_widget = gtk_drag_get_source_widget(dc);
     same = (source_widget == widget) ? TRUE : FALSE;
+
+    if(source_widget)
+    if((source_widget == GLOBALS->clist_search_c_3) || /* from search */
+       (source_widget == GLOBALS->signalarea) ||
+       (source_widget == GLOBALS->dnd_sigview))
+		{
+		/* use internal mechanism instead of passing names around... */
+		return;
+		}
 
     /* Now check if the data format type is one that we support
      * (remember, data format type, not data type).
@@ -1948,6 +1982,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/09/23 18:23:03  gtkwave
+ * adding more support for DnD from external apps
+ *
  * Revision 1.18  2008/09/22 03:27:03  gtkwave
  * more DND adds
  *
@@ -2058,4 +2095,3 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
  * initial release
  *
  */
-

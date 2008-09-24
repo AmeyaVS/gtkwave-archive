@@ -823,6 +823,7 @@ if((!GLOBALS->is_insert_running_search_c_1)&&(!GLOBALS->is_replace_running_searc
   	GLOBALS->is_active_search_c_4=0;
   	gtk_widget_destroy(GLOBALS->window_search_c_7);
 	GLOBALS->window_search_c_7 = NULL;
+	GLOBALS->clist_search_c_3 = NULL;
 	}
 }
 
@@ -1108,6 +1109,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/09/16 00:01:26  gtkwave
+ * prelim drag and drop from external apps (now disabled)
+ *
  * Revision 1.9  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *
