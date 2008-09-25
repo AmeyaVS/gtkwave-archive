@@ -21,11 +21,7 @@
 #include "busy.h"
 #include "debug.h"
 #include "hierpack.h"
-
-int process_tcl_list(char *s);
-char *add_dnd_from_searchbox(void);
-char *add_dnd_from_signal_window(void);
-
+#include "tcl_helper.h"
 
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
 
@@ -1804,11 +1800,6 @@ static void DNDDataRequestCB(
 int upd = 0;
 GLOBALS->tree_dnd_requested = 1;  /* indicate that a request for data occurred... */
 
-#if 0
-/* commented out for now...the COUNT[31] identifier is arbitrary for simply for drag 
-   source identification and will be removed once actual signal names are 
-   filled in and don't need to be mocked up... */
-
 if(widget == GLOBALS->clist_search_c_3)	/* from search */
 	{
 	char *text = add_dnd_from_searchbox();
@@ -1831,18 +1822,17 @@ else if(widget == GLOBALS->signalarea)
 	}
 else if(widget == GLOBALS->dnd_sigview)
 	{
-	char text[1025];
-	sprintf(text, "{net test {COUNT[31]}}");
-	gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
-
+	char *text = add_dnd_from_tree_window();
+	if(text)
+		{
+		gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
+		free_2(text);
+		}
 	upd = 1;
 	}
-#endif
 
 if(upd)
 	{
-	GLOBALS->dnd_state = 0;
-	GLOBALS->tree_dnd_requested = 0;
 	MaxSignalLength();
 	signalarea_configure_event(GLOBALS->signalarea, NULL);
 	wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -1886,6 +1876,9 @@ static void DNDDataReceivedCB(
 		/* use internal mechanism instead of passing names around... */
 		return;
 		}
+
+    GLOBALS->dnd_state = 0;
+    GLOBALS->tree_dnd_requested = 0;
 
     /* Now check if the data format type is one that we support
      * (remember, data format type, not data type).
@@ -2004,6 +1997,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/09/24 23:41:25  gtkwave
+ * drag from signal window into external process
+ *
  * Revision 1.21  2008/09/24 18:54:00  gtkwave
  * drag from search widget into external processes
  *

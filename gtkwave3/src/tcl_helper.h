@@ -46,8 +46,8 @@ char *add_dnd_from_tree_window(void);
 /* 
  * $Id$
  * $Log$
- * Revision 1.1  2008/09/23 18:22:01  gtkwave
- * file creation   
+ * Revision 1.1  2008/09/25 01:31:29  gtkwave
+ * file creation
  *
  */
 

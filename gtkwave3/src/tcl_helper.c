@@ -24,6 +24,7 @@
 #include "busy.h"
 #include "debug.h"
 #include "hierpack.h"
+#include "tcl_helper.h"
 
 /*----------------------------------------------------------------------
  * tclBackslash -- Figure out how to handle a backslash sequence in tcl list.
@@ -351,9 +352,10 @@ static char** zSplitTclList(const char* list, int* argcPtr) {
 }
 
 
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXX functions for data coming into gtkwave XXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
 
 /* ----------------------------------------------------------------------------
  * determine_trace_from_y - finds trace under the marker
@@ -730,28 +732,19 @@ free_2(list);
 return(found);
 }
 
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
-#define WAVE_OE_ME \
-	if(one_entry) \
-		{ \
-		if(!mult_entry) \
-			{ \
-			mult_entry = one_entry; \
-			mult_len = strlen(mult_entry); \
-			} \
-			else \
-			{ \
-			sing_len = strlen(one_entry); \
-			mult_entry = realloc_2(mult_entry, mult_len + sing_len + 1); \
-			strcpy(mult_entry + mult_len, one_entry); \
-			mult_len += sing_len; \
-			free_2(one_entry); \				
-			} \
-		}
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXX functions for data exiting from gtkwave XXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
+
+/* ----------------------------------------------------------------------------
+ * make_single_tcl_list_name - generates tcl name from a gtkwave one
+ *
+ * Results:
+ *      generated tcl list string
+ * ----------------------------------------------------------------------------
+ */
 
 static char *make_single_tcl_list_name(char *s)
 {
@@ -819,6 +812,15 @@ if(s)
 return(rpnt);
 }
 
+
+/* ----------------------------------------------------------------------------
+ * add_dnd_from_searchbox - generates tcl names from selected searchbox ones
+ *
+ * Results:
+ *      tcl list containing all generated names
+ * ----------------------------------------------------------------------------
+ */
+
 char *add_dnd_from_searchbox(void)
 {
 int i;
@@ -854,13 +856,20 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                                 len++;
                                 t=t->vec_chain;
                                 }
-                        /* if(len)add_vector_chain(s->vec_root, len); */
                         }
                 }
         }
 return(mult_entry);
 }
 
+
+/* ----------------------------------------------------------------------------
+ * add_dnd_from_signal_window - generates tcl names from selected sigwin ones
+ *
+ * Results:
+ *      tcl list containing all generated names
+ * ----------------------------------------------------------------------------
+ */
 
 char *add_dnd_from_signal_window(void)
 {
@@ -962,9 +971,97 @@ while(t)
 return(mult_entry);
 }
 
+
+/* ----------------------------------------------------------------------------
+ * sig_selection_foreach_dnd - generates tcl names from iterated clist ones
+ *
+ * Results:
+ *      tcl list containing all generated names coalesced back into *data
+ * ----------------------------------------------------------------------------
+ */
+
+static void
+sig_selection_foreach_dnd
+                      (GtkTreeModel *model,
+                       GtkTreePath *path,
+                       GtkTreeIter *iter,
+                       gpointer data)
+{
+  struct tree *sel;
+  int i;
+  int low, high;
+  struct iter_dnd_strings *it;
+  char *one_entry, *mult_entry;
+  unsigned int sing_len, mult_len;
+  enum { NAME_COLUMN, TREE_COLUMN, N_COLUMNS };
+
+  it = (struct iter_dnd_strings *)data;
+  one_entry = it->one_entry;
+  mult_entry = it->mult_entry;
+  sing_len = it->sing_len;
+  mult_len = it->mult_len;
+
+  /* Get the tree.  */
+  gtk_tree_model_get (model, iter, TREE_COLUMN, &sel, -1);
+ 
+  if(!sel) return;
+
+  low = fetchlow(sel)->which;
+  high = fetchhigh(sel)->which;
+ 
+  /* If signals are vectors, iterate through them if so.  */
+  for(i=low;i<=high;i++)
+        {
+        struct symbol *s;
+        s=GLOBALS->facs[i];
+        if((s->vec_root)&&(GLOBALS->autocoalesce))
+                {
+		struct symbol *t = s->vec_root;
+                while(t)
+			{
+                        one_entry = make_single_tcl_list_name(t->n->nname);
+                        WAVE_OE_ME
+                        t=t->vec_chain;
+                        }
+                }
+		else
+		{		
+                one_entry = make_single_tcl_list_name(s->n->nname);
+                WAVE_OE_ME
+		}
+        }
+
+  it->one_entry = one_entry;
+  it->mult_entry = mult_entry;
+  it->sing_len = sing_len;
+  it->mult_len = mult_len;
+}
+
+
+/* ----------------------------------------------------------------------------
+ * add_dnd_from_tree_window - generates tcl names from selected tree clist ones
+ *
+ * Results:
+ *      tcl list containing all generated names
+ * ----------------------------------------------------------------------------
+ */
+
+char *add_dnd_from_tree_window(void)
+{
+struct iter_dnd_strings it;
+
+memset(&it, 0, sizeof(struct iter_dnd_strings));
+gtk_tree_selection_selected_foreach(GLOBALS->sig_selection_treesearch_gtk2_c_1, &sig_selection_foreach_dnd, (gpointer)&it);
+
+return(it.mult_entry);
+}
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/09/24 23:41:24  gtkwave
+ * drag from signal window into external process
+ *
  * Revision 1.3  2008/09/24 18:54:00  gtkwave
  * drag from search widget into external processes
  *
