@@ -293,7 +293,7 @@ static void tclCopyAndCollapse(int count, const char *src, char *dst)
  *	This procedure does allocate a single memory block
  *	by calling malloc to store both, the the argv pointer array and
  *	the extracted list elements.  The returned element
- *	pointer array must be freed by calling free().
+ *	pointer array must be freed by calling free_2().
  *
  *	*argcPtr will get filled in with the number of valid elements
  *	in the array.  Note: *argcPtr is only modified if the procedure
@@ -349,6 +349,278 @@ static char** zSplitTclList(const char* list, int* argcPtr) {
     argv[i] = NULL;
     *argcPtr = i;
     return argv;
+}
+
+
+/*----------------------------------------------------------------------
+ * tclScanElement -- scan a tcl list string to see what needs to be done.
+ *
+ *  This procedure is a companion procedure to tclConvertElement.
+ *
+ * Results:
+ *  The return value is an overestimate of the number of characters
+ *  that will be needed by tclConvertElement to produce a valid
+ *  list element from string.  The word at *flagPtr is filled in
+ *  with a value needed by tclConvertElement when doing the actual
+ *  conversion.
+ *
+ *
+ * This procedure and tclConvertElement together do two things:
+ *
+ * 1. They produce a proper list, one that will yield back the
+ * argument strings when evaluated or when disassembled with
+ * zSplitTclList.  This is the most important thing.
+ * 
+ * 2. They try to produce legible output, which means minimizing the
+ * use of backslashes (using braces instead).  However, there are
+ * some situations where backslashes must be used (e.g. an element
+ * like "{abc": the leading brace will have to be backslashed.  For
+ * each element, one of three things must be done:
+ *
+ * (a) Use the element as-is (it doesn't contain anything special
+ * characters).  This is the most desirable option.
+ *
+ * (b) Enclose the element in braces, but leave the contents alone.
+ * This happens if the element contains embedded space, or if it
+ * contains characters with special interpretation ($, [, ;, or \),
+ * or if it starts with a brace or double-quote, or if there are
+ * no characters in the element.
+ *
+ * (c) Don't enclose the element in braces, but add backslashes to
+ * prevent special interpretation of special characters.  This is a
+ * last resort used when the argument would normally fall under case
+ * (b) but contains unmatched braces.  It also occurs if the last
+ * character of the argument is a backslash or if the element contains
+ * a backslash followed by newline.
+ *
+ * The procedure figures out how many bytes will be needed to store
+ * the result (actually, it overestimates).  It also collects information
+ * about the element in the form of a flags word.
+ *----------------------------------------------------------------------
+ */
+#define DONT_USE_BRACES  1
+#define USE_BRACES       2
+#define BRACES_UNMATCHED 4
+
+static int tclScanElement(const char* string, int* flagPtr) {
+    register const char *p;
+    int nestingLevel = 0;
+    int flags = 0;
+
+    if (string == NULL) string = "";
+
+    p = string;
+    if ((*p == '{') || (*p == '"') || (*p == 0)) {	/* } */
+	flags |= USE_BRACES;
+    }
+    for ( ; *p != 0; p++) {
+	switch (*p) {
+	    case '{':
+		nestingLevel++;
+		break;
+	    case '}':
+		nestingLevel--;
+		if (nestingLevel < 0) {
+		    flags |= DONT_USE_BRACES | BRACES_UNMATCHED;
+		}
+		break;
+	    case '[':
+	    case '$':
+	    case ';':
+	    case ' ':
+	    case '\f':
+	    case '\r':
+	    case '\t':
+	    case '\v':
+		flags |= USE_BRACES;
+		break;
+	    case '\n':		/* lld: dont want line breaks inside a list */
+		flags |= DONT_USE_BRACES;
+		break;
+	    case '\\':
+		if ((p[1] == 0) || (p[1] == '\n')) {
+		    flags = DONT_USE_BRACES | BRACES_UNMATCHED;
+		} else {
+		    int size;
+
+		    tclBackslash(p, &size);
+		    p += size-1;
+		    flags |= USE_BRACES;
+		}
+		break;
+	}
+    }
+    if (nestingLevel != 0) {
+	flags = DONT_USE_BRACES | BRACES_UNMATCHED;
+    }
+    *flagPtr = flags;
+
+    /* Allow enough space to backslash every character plus leave
+     * two spaces for braces.
+     */
+    return 2*(p-string) + 2;
+}
+
+
+/*----------------------------------------------------------------------
+ *
+ * tclConvertElement - convert a string into a list element
+ *
+ *  This is a companion procedure to tclScanElement.  Given the
+ *  information produced by tclScanElement, this procedure converts
+ *  a string to a list element equal to that string.
+ *
+ *  See the comment block at tclScanElement above for details of how this
+ *  works.
+ *
+ * Results:
+ *  Information is copied to *dst in the form of a list element
+ *  identical to src (i.e. if zSplitTclList is applied to dst it
+ *  will produce a string identical to src).  The return value is
+ *  a count of the number of characters copied (not including the
+ *  terminating NULL character).
+ *----------------------------------------------------------------------
+ */
+static int tclConvertElement(const char* src, char* dst, int flags)
+{
+    register char *p = dst;
+
+    if ((src == NULL) || (*src == 0)) {
+	p[0] = '{';
+	p[1] = '}';
+	p[2] = 0;
+	return 2;
+    }
+    if ((flags & USE_BRACES) && !(flags & DONT_USE_BRACES)) {
+	*p = '{';
+	p++;
+	for ( ; *src != 0; src++, p++) {
+	    *p = *src;
+	}
+	*p = '}';
+	p++;
+    } else {
+	if (*src == '{') {		/* } */
+	    /* Can't have a leading brace unless the whole element is
+	     * enclosed in braces.  Add a backslash before the brace.
+	     * Furthermore, this may destroy the balance between open
+	     * and close braces, so set BRACES_UNMATCHED.
+	     */
+	    p[0] = '\\';
+	    p[1] = '{';			/* } */
+	    p += 2;
+	    src++;
+	    flags |= BRACES_UNMATCHED;
+	}
+	for (; *src != 0 ; src++) {
+	    switch (*src) {
+		case ']':
+		case '[':
+		case '$':
+		case ';':
+		case ' ':
+		case '\\':
+		case '"':
+		    *p = '\\';
+		    p++;
+		    break;
+		case '{':
+		case '}':
+		    /* It may not seem necessary to backslash braces, but
+		     * it is.  The reason for this is that the resulting
+		     * list element may actually be an element of a sub-list
+		     * enclosed in braces, so there may be a brace mismatch
+		     * if the braces aren't backslashed.
+		     */
+		    if (flags & BRACES_UNMATCHED) {
+			*p = '\\';
+			p++;
+		    }
+		    break;
+		case '\f':
+		    *p = '\\';
+		    p++;
+		    *p = 'f';
+		    p++;
+		    continue;
+		case '\n':
+		    *p = '\\';
+		    p++;
+		    *p = 'n';
+		    p++;
+		    continue;
+		case '\r':
+		    *p = '\\';
+		    p++;
+		    *p = 'r';
+		    p++;
+		    continue;
+		case '\t':
+		    *p = '\\';
+		    p++;
+		    *p = 't';
+		    p++;
+		    continue;
+		case '\v':
+		    *p = '\\';
+		    p++;
+		    *p = 'v';
+		    p++;
+		    continue;
+	    }
+	    *p = *src;
+	    p++;
+	}
+    }
+    *p = '\0';
+    return p-dst;
+}
+
+
+/* ============================================================================
+ * zMergeTclList - Creates a tcl list from a set of element strings.
+ *
+ *	Given a collection of strings, merge them together into a
+ *	single string that has proper Tcl list structured (i.e.
+ *	zSplitTclList may be used to retrieve strings equal to the
+ *	original elements).
+ *	The merged list is stored in dynamically-allocated memory.
+ *
+ * Results:
+ *      The return value is the address of a dynamically-allocated string.
+ * ============================================================================
+ */
+static char* zMergeTclList(int argc, const char** argv) {
+    enum  {LOCAL_SIZE = 20};
+    int   localFlags[LOCAL_SIZE];
+    int*  flagPtr;
+    int   numChars;
+    int   i;
+    char* result;
+    char* dst;
+
+    /* Pass 1: estimate space, gather flags */
+    if (argc <= LOCAL_SIZE) flagPtr = localFlags;
+    else                    flagPtr = malloc_2(argc*sizeof(int));
+    numChars = 1;
+
+    for (i=0; i<argc; i++) numChars += tclScanElement(argv[i], &flagPtr[i]) + 1;
+
+    result = malloc_2(numChars);
+
+    /* Pass two: copy into the result area */
+    dst = result;
+    for (i = 0; i < argc; i++) {
+	numChars = tclConvertElement(argv[i], dst, flagPtr[i]);
+	dst += numChars;
+	*dst = ' ';
+	dst++;
+    }
+    if (dst == result) *dst = 0;
+    else                dst[-1] = 0;
+
+    if (flagPtr != localFlags) free_2(flagPtr);
+    return result;
 }
 
 
@@ -752,6 +1024,11 @@ char *rpnt = NULL;
 char *pnt, *pnt2;
 int delim_cnt = 0;
 char *lbrack=NULL, *colon=NULL, *rbrack=NULL;
+const char **names = NULL;
+char *tcllist = NULL;
+int tcllist_len;
+int names_idx = 0;
+char is_bus = 0;
 
 if(s)
 	{
@@ -764,7 +1041,6 @@ if(s)
 		{
 		if(*pnt == GLOBALS->hier_delimeter)
 			{
-			*pnt = ' ';
 			delim_cnt++;
 			}
 		else if(*pnt == '[') { lbrack = pnt; }
@@ -776,37 +1052,57 @@ if(s)
 
 	if(lbrack && colon && rbrack && ((colon-lbrack)>0) && ((rbrack - colon)>0) && ((rbrack-lbrack)>0))
 		{
+		is_bus = 1;
 		*lbrack = 0;
 		len = lbrack - s2;
 		}
 
-	len += 7+1+2+(delim_cnt*2); /* "{net ...} " + trailing null char etc */
-
+	names = calloc_2(delim_cnt+1, sizeof(char *));
 	pnt = s2;
-	rpnt = malloc_2(len+1);
-	strcpy(rpnt, "{net {");
-	pnt2 = rpnt + 6;
-
+	names[0] = pnt;
 	while(*pnt)
 		{
-		if(isspace(*pnt))
+		if(*pnt == GLOBALS->hier_delimeter)
 			{
-			*(pnt2++) = '}';
-			*(pnt2++) = ' ';
-			*(pnt2++) = '{';
+			*pnt = 0;
+			names_idx++;
+			pnt++;
+			if(*pnt) { names[names_idx] = pnt; }
 			}
 			else
 			{
-			*(pnt2++) = *pnt;
+			pnt++;
 			}
-
-		pnt++;
 		}
 
-	*(pnt2++) = '}';
-	*(pnt2++) = '}';
-	*(pnt2++) = ' ';
-	*(pnt2)   = 0;
+	
+	tcllist = zMergeTclList(delim_cnt+1, names);
+	tcllist_len = strlen(tcllist);
+	free_2(names);
+
+	if(is_bus)
+		{
+		len = 8 + strlen(tcllist) + 1 + 1 + 1; /* "{netBus ...} " + trailing null char */
+
+		pnt = s2;
+		rpnt = malloc_2(len+1);
+		strcpy(rpnt, "{netBus ");
+		pnt2 = rpnt + 8;
+		}
+		else
+		{
+		len = 5 + strlen(tcllist) + 1 + 1 + 1; /* "{net ...} " + trailing null char */
+
+		pnt = s2;
+		rpnt = malloc_2(len+1);
+		strcpy(rpnt, "{net ");
+		pnt2 = rpnt + 5;
+		}
+
+	strcpy(pnt2, tcllist);
+	strcpy(pnt2 + tcllist_len, "} ");
+
+	free_2(tcllist);
 	}
 
 return(rpnt);
@@ -1059,6 +1355,9 @@ return(it.mult_entry);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/09/25 01:41:35  gtkwave
+ * drag from tree clist window into external process
+ *
  * Revision 1.4  2008/09/24 23:41:24  gtkwave
  * drag from signal window into external process
  *
