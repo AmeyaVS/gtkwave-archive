@@ -793,6 +793,8 @@ NULL, /* void (*cleanup_treesearch_gtk1_c)(); */
 /*
  * treesearch_gtk2.c
  */
+NULL, /* treeopen_chain_head */
+NULL, /* treeopen_chain_curr */
 0, /* tree_dnd_begin */
 0, /* tree_dnd_requested */
 1, /* do_dynamic_treefilter */

@@ -1534,6 +1534,26 @@ if(!GLOBALS->hide_sst)
 	}
 #endif
 
+if(GLOBALS->treeopen_chain_head)
+	{
+	struct string_chain_t *t = GLOBALS->treeopen_chain_head;
+	struct string_chain_t *t2;
+	while(t)
+		{
+		if(GLOBALS->ctree_main)
+			{
+			force_open_tree_node(t->str);
+			}
+
+		t2 = t;
+		if(t->str) free_2(t->str);
+		free_2(t);
+		t = t2->next;
+		}
+
+	GLOBALS->treeopen_chain_head = GLOBALS->treeopen_chain_curr = NULL;
+	}
+
 if(!mainwindow_already_built)
 	{
 	gtk_widget_show(top_table);
@@ -2050,6 +2070,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2008/09/16 00:01:25  gtkwave
+ * prelim drag and drop from external apps (now disabled)
+ *
  * Revision 1.31  2008/07/20 01:29:36  gtkwave
  * added command line option --comphier
  *

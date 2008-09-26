@@ -68,6 +68,13 @@ struct symbol *symbol;
 };
 
 
+struct string_chain_t
+{
+struct string_chain_t *next;
+char *str;
+};
+
+
 struct symbol *symfind(char *, unsigned int *);
 struct symbol *symadd(char *, int);
 struct symbol *symadd_name_exists(char *name, int hv);
@@ -112,6 +119,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:45  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

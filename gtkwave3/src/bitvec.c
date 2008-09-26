@@ -2467,7 +2467,26 @@ else if (*w2 == '[')
 		w++;
 		}
 
-	force_open_tree_node(w);
+	if(GLOBALS->ctree_main)
+		{
+		force_open_tree_node(w);
+		}
+		else
+		{
+		/* cache values until ctree_main is created */
+		struct string_chain_t *t = calloc_2(1, sizeof(struct string_chain_t));
+		t->str = strdup_2(w);
+
+		if(!GLOBALS->treeopen_chain_curr)
+			{
+			GLOBALS->treeopen_chain_head = GLOBALS->treeopen_chain_curr = t;
+			}
+			else
+			{
+			GLOBALS->treeopen_chain_curr->next = t;
+			GLOBALS->treeopen_chain_curr = t;
+			}
+		}
 	}
 #endif
     else
@@ -2870,6 +2889,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/08/24 21:55:27  gtkwave
+ * update for timestart line in savefiles
+ *
  * Revision 1.6  2008/07/18 19:54:56  gtkwave
  * hierpack and vecmatch fixes with removal of extra brackets
  *

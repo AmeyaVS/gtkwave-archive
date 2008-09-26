@@ -787,6 +787,8 @@ void (*cleanup_treesearch_gtk1_c)(); /* ...end of manual adds */
 /*
  * treesearch_gtk2.c
  */
+struct string_chain_t *treeopen_chain_head; /* from bitvec.c */
+struct string_chain_t *treeopen_chain_curr; /* from bitvec.c */
 char tree_dnd_begin; /* from treesearch_gtk2.c */
 char tree_dnd_requested; /* from treesearch_gtk2.c */
 char do_dynamic_treefilter; /* from treesearch_gtk2.c */
