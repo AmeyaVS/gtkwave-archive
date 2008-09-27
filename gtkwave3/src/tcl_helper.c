@@ -26,6 +26,12 @@
 #include "hierpack.h"
 #include "tcl_helper.h"
 
+#if !defined __MINGW32__ && !defined _MSC_VER
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
+
 /*----------------------------------------------------------------------
  * tclBackslash -- Figure out how to handle a backslash sequence in tcl list.
  *
@@ -707,6 +713,34 @@ return(t);
 
 
 /* ----------------------------------------------------------------------------
+ * check_gtkwave_directive_from_tcl_list - parses tcl list for any gtkwave 
+ * directives
+ *
+ * Results:
+ *      Returns decomposed list or NULL if not applicable.  Number of items
+ *      is passed back through pointer in l.
+ * ----------------------------------------------------------------------------
+ */
+
+static char **check_gtkwave_directive_from_tcl_list(char *s, int *l)
+{
+char** elem = NULL; 
+                         
+elem = zSplitTclList(s, l);
+                 
+if(elem)  
+        {
+        if(strcmp("gtkwave", elem[0]))
+		{
+		free_2(elem);
+		elem = NULL;
+		}
+	}
+return(elem);
+}
+
+
+/* ----------------------------------------------------------------------------
  * make_net_name_from_tcl_list - creates gtkwave-style name from tcl list entry
  *
  * Results:
@@ -744,9 +778,14 @@ if(elem)
 			strcat(s_new, elem[i]);
 			if(i!=(l-1)) strcat(s_new, delim_str);
 			}
-		}
 
-	free_2(elem);
+		free_2(elem);
+		}
+		else
+		{
+		free_2(elem);
+		return(NULL);
+		}
 
 	pnt = s_new;
 	while(*pnt)
@@ -819,7 +858,34 @@ most_recent_lbrack_list = calloc_2(c, sizeof(char *));
 for(ii=0;ii<c;ii++)
 	{
 	s_new = make_net_name_from_tcl_list(list[ii]);
-	if(!s_new) continue;
+	if(!s_new)
+		{
+		int ngl;
+		char **gdirect = check_gtkwave_directive_from_tcl_list(list[ii], &ngl);
+		if(gdirect)
+			{
+			switch(ngl)
+				{
+				case 3:
+				 	if(!strcmp(gdirect[1], "PID"))
+						{
+						pid_t pid = atoi(gdirect[2]);
+						if(pid == getpid())	/* block self-drags in XEmbed */
+							{
+							free_2(gdirect);
+							goto cleanup;
+							}
+						}
+					 break;
+
+				default: break;
+				}
+
+			free_2(gdirect);
+			}
+
+		continue;
+		}
 	s_new_list[ii] = s_new;
 
 	lbrack_adj = 0;
@@ -1008,6 +1074,30 @@ return(found);
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 /* XXX functions for data exiting from gtkwave XXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+/* ----------------------------------------------------------------------------
+ * make_gtkwave_pid - generates gtkwave pid (necessary when using twinwave as
+ * the XEmbed protocol seems to be dropping the source widget for drags which
+ * causes drops to occur twice), this should only need to be called by
+ * add_dnd_from_signal_window().
+ *
+ * Results:
+ *      generated tcl list string containing gtkwave PID for drop filtering
+ * ----------------------------------------------------------------------------
+ */
+
+static char *make_gtkwave_pid(void)
+{
+#if !defined __MINGW32__ && !defined _MSC_VER
+char pidstr[128];
+
+sprintf(pidstr, "{gtkwave PID %d} ", getpid());
+
+return(strdup_2(pidstr));
+#else
+return(NULL);
+#endif
+}
 
 
 /* ----------------------------------------------------------------------------
@@ -1214,11 +1304,13 @@ while(t)
                                 		}   
 
 					sprintf(str+strlen(str), "[%d]", which);
+					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
 					one_entry = make_single_tcl_list_name(str);
 					WAVE_OE_ME
                                         }
                                         else
                                         {
+					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
 					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]));
 					WAVE_OE_ME
                                         }
@@ -1251,11 +1343,13 @@ while(t)
                                		}   
 
 				sprintf(str+strlen(str), "[%d]", which);
+				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
 				one_entry = make_single_tcl_list_name(str);
 				WAVE_OE_ME
 				}
 				else
 				{
+				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
 				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd));
 				WAVE_OE_ME
 				}
@@ -1353,6 +1447,9 @@ return(it.mult_entry);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/09/27 05:05:04  gtkwave
+ * removed unnecessary sing_len struct item
+ *
  * Revision 1.6  2008/09/25 18:23:47  gtkwave
  * cut over to usage of zMergeTclList for list generation
  *

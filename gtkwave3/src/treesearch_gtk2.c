@@ -23,6 +23,7 @@
 #include "hierpack.h"
 #include "tcl_helper.h"
 
+
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
 
 /* Treesearch is a pop-up window used to select signals.
@@ -1997,6 +1998,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2008/09/25 01:41:36  gtkwave
+ * drag from tree clist window into external process
+ *
  * Revision 1.22  2008/09/24 23:41:25  gtkwave
  * drag from signal window into external process
  *
