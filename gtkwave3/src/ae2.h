@@ -66,8 +66,10 @@ void 		ae2_initialize(AE2_SEVERROR error_fn, AE2_MSG msg_fn, AE2_ALLOC alloc_fn,
 AE2_HANDLE 	ae2_read_initialize(FILE* file);
 uint64_t 	ae2_read_start_cycle(AE2_HANDLE handle);
 uint64_t 	ae2_read_end_cycle(AE2_HANDLE handle);  
+unsigned long   ae2_read_find_symbol(AE2_HANDLE handle, const char* name, FACREF* fr);
 unsigned long 	ae2_read_num_sections(AE2_HANDLE handle);
 uint64_t* 	ae2_read_ith_section_range(AE2_HANDLE handle, unsigned long section_idx);
+time_t          ae2_read_model_timestamp(AE2_HANDLE handle);
 unsigned long	ae2_read_num_symbols(AE2_HANDLE handle);
 unsigned long 	ae2_read_symbol_name(AE2_HANDLE handle, unsigned long symbol_idx, char* name);
 unsigned long	ae2_read_symbol_rows(AE2_HANDLE handle, unsigned long symbol_idx);
@@ -86,6 +88,9 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/02/19 22:00:28  gtkwave
+ * added aetinfo support
+ *
  * Revision 1.4  2007/08/31 22:42:43  gtkwave
  * 3.1.0 RC3 updates
  *

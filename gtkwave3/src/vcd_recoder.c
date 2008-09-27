@@ -1272,7 +1272,7 @@ for(;;)
 					}
 
                                 GLOBALS->pv_vcd_recoder_c_3=v;
-				GLOBALS->prev_hier_uncompressed_name;
+				GLOBALS->prev_hier_uncompressed_name = strdup_2(v->name);
 				}
 				else	/* regular vcd var, not an evcd port var */
 				{
@@ -2724,6 +2724,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/09/17 04:33:39  gtkwave
+ * support for smaller timescales in VCD files
+ *
  * Revision 1.15  2008/08/22 20:19:12  gtkwave
  * fix for strings in vcd recoder
  *

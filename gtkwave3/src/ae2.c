@@ -238,7 +238,7 @@ if ( (!(GLOBALS->ae2_info_f=fopen(info_fname, "rb"))) || (!(GLOBALS->ae2_info = 
                 for(timestep = st_2; timestep <= en_2; timestep++)
                         {
 			char valstr[65];
-			uint64_t val;
+			uint64_t val = 0;
 			ae2_read_value(GLOBALS->ae2_info, &time_fr, timestep, valstr);
 
 			for(bit=0;bit<64;bit++)
@@ -448,7 +448,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			{
 			int bit;
 			char valstr[33];
-			unsigned int val;
+			unsigned int val = 0;
 			ae2_read_value(GLOBALS->ae2_info, &info_fr, 0, valstr);
 
 			for(bit=0;bit<32;bit++)
@@ -821,7 +821,6 @@ for(j=0;j<GLOBALS->ae2_num_sections;j++)
 		                        for(r=1;r<rows+1;r++)
 		                                {
 						nptr np; 
-						char *value;
 		                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc, r);
 
 		                                GLOBALS->ae2_fr[i].row = row;
@@ -1267,6 +1266,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/06/17 18:03:45  gtkwave
+ * added time = -1 endcaps
+ *
  * Revision 1.6  2008/02/19 22:00:28  gtkwave
  * added aetinfo support
  *

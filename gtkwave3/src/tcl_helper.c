@@ -658,7 +658,7 @@ if(GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1)
 	WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
 	WAVE_GDK_GET_POINTER_COPY;
 
-	if((x<0)||(y<0)||(x>=GLOBALS->signalarea->allocation.width)||(y>=GLOBALS->signalarea->allocation.height)) return;
+	if((x<0)||(y<0)||(x>=GLOBALS->signalarea->allocation.width)||(y>=GLOBALS->signalarea->allocation.height)) return(NULL);
 	}
 else
 if(GLOBALS->dnd_tgt_on_wavearea_treesearch_gtk2_c_1)
@@ -666,11 +666,11 @@ if(GLOBALS->dnd_tgt_on_wavearea_treesearch_gtk2_c_1)
 	WAVE_GDK_GET_POINTER(GLOBALS->wavearea->window, &x, &y, &xi, &yi, &state);
 	WAVE_GDK_GET_POINTER_COPY;
 
-	if((x<0)||(y<0)||(x>=GLOBALS->wavearea->allocation.width)||(y>=GLOBALS->wavearea->allocation.height)) return;
+	if((x<0)||(y<0)||(x>=GLOBALS->wavearea->allocation.width)||(y>=GLOBALS->wavearea->allocation.height)) return(NULL);
 	}
 else
 	{
-	return;
+	return(NULL);
 	}
 
 if((t=GLOBALS->traces.first))
@@ -831,7 +831,6 @@ return(s_new);
 int process_tcl_list(char *s)
 {
 char *s_new = NULL;
-char *most_recent_lbrack = NULL;
 char *this_regex = "\\(\\[.*\\]\\)*$";
 char *entry_suffixed;
 int c, i, ii;
@@ -840,7 +839,6 @@ char **s_new_list;
 char **most_recent_lbrack_list;
 int *match_idx_list;
 int *match_type_list;
-char delim_str[2] = { GLOBALS->hier_delimeter, 0 };
 Trptr t;
 int found = 0;
 int lbrack_adj;
@@ -848,7 +846,7 @@ int lbrack_adj;
 list = zSplitTclList(s, &c);
 if(!list)
 	{
-	return;
+	return(0);
 	}
 s_new_list = calloc_2(c, sizeof(char *));
 match_idx_list = calloc_2(c, sizeof(int *));
@@ -1212,7 +1210,6 @@ char *add_dnd_from_searchbox(void)
 int i;
 char *one_entry = NULL, *mult_entry = NULL;
 unsigned int mult_len = 0;
-char *pnt;
 
 for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
         {
@@ -1260,10 +1257,8 @@ return(mult_entry);
 char *add_dnd_from_signal_window(void)
 {
 Trptr t;
-int i;
 char *one_entry = NULL, *mult_entry = NULL;
 unsigned int mult_len = 0;
-char *pnt;
 
 t=GLOBALS->traces.first;
 while(t)
@@ -1274,7 +1269,6 @@ while(t)
                         {
                         int i;
                         nptr *nodes;
-                        bptr bits = t->n.vec->bits;
                                         
                         nodes=t->n.vec->bits->nodes;
                         for(i=0;i<t->n.vec->nbits;i++)
@@ -1447,6 +1441,9 @@ return(it.mult_entry);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/09/27 06:26:35  gtkwave
+ * twinwave (XEmbed) fixes for self-dnd in signal window
+ *
  * Revision 1.7  2008/09/27 05:05:04  gtkwave
  * removed unnecessary sing_len struct item
  *

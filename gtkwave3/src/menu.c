@@ -2636,7 +2636,7 @@ void write_save_helper(FILE *wave) {
 	t=GLOBALS->traces.first;
 	while(t)
 		{
-		if(t->flags!=def)
+		if((t->flags!=def)||(t==GLOBALS->traces.first))
 			{
 			if((t->flags & TR_PTRANSLATED) && (!t->p_filter)) t->flags &= (~TR_PTRANSLATED);
 			if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
@@ -4782,6 +4782,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2008/09/24 23:41:22  gtkwave
+ * drag from signal window into external process
+ *
  * Revision 1.36  2008/08/24 21:55:27  gtkwave
  * update for timestart line in savefiles
  *

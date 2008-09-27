@@ -25,9 +25,8 @@ static char *marker_label_text_hpos ="Marker";
 void fractional_timescale_fix(char *s)
 {
 char buf[32], sfx[2];
-float f;
 int i, len;
-char prefix_idx = 0;
+int prefix_idx = 0;
 
 if(*s != '0') return;
 
@@ -539,6 +538,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/09/17 04:33:38  gtkwave
+ * support for smaller timescales in VCD files
+ *
  * Revision 1.7  2008/02/19 22:56:11  gtkwave
  * rtlbrowse update to handle aet time substitutions
  *

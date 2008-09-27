@@ -427,10 +427,10 @@ fprintf(stderr, LXTHDR"...expanded %d entries from %08x into %08x bytes.\n", GLO
  */
 static void build_facs(char *fname)
 {
-char *buf, *bufprev, *bufcurr;
+char *buf, *bufprev = NULL, *bufcurr;
 off_t offs=GLOBALS->facname_offset_lxt_c_1+8;
 int i, j, clone;
-char *pnt;
+char *pnt = NULL;
 int total_mem = get_32(GLOBALS->facname_offset_lxt_c_1+4);
 gzFile zhandle = NULL;
 char *decmem=NULL;
@@ -2378,6 +2378,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/07/22 18:46:16  gtkwave
+ * add compressed hierarchy handling to lxt reader
+ *
  * Revision 1.4  2008/07/18 18:22:58  gtkwave
  * fixes for aix
  *

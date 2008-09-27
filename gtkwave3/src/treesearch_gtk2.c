@@ -1012,6 +1012,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 
 /* view_selection_func is commented out for now... */
 
+#if 0
 static gboolean
   view_selection_func (GtkTreeSelection *selection,
                        GtkTreeModel     *model,
@@ -1019,7 +1020,6 @@ static gboolean
                        gboolean          path_currently_selected,
                        gpointer          userdata)
   {
-/*
     GtkTreeIter iter;
 
     if (gtk_tree_model_get_iter(model, &iter, path))
@@ -1039,9 +1039,9 @@ static gboolean
 
       g_free(name);
     }
-*/
     return TRUE; /* allow selection state to change */
   }
+#endif
 
 /**********************************************************************/
 
@@ -1854,7 +1854,6 @@ static void DNDDataReceivedCB(
 	gint x, gint y, GtkSelectionData *selection_data,
 	guint info, guint t, gpointer data) {
     gboolean same;
-    gint row, column;
     GtkWidget *source_widget;
 
     if((widget == NULL) || (data == NULL) || (dc == NULL)) return;
@@ -1906,7 +1905,7 @@ static void DNDDataReceivedCB(
     int num_found ;
 
     /* printf("XXX %08x '%s'\n", selection_data->data, selection_data->data); */
-    num_found = process_tcl_list(selection_data->data);
+    num_found = process_tcl_list((char *)selection_data->data);
 
     if(num_found)
 	{
@@ -1998,6 +1997,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2008/09/27 06:26:35  gtkwave
+ * twinwave (XEmbed) fixes for self-dnd in signal window
+ *
  * Revision 1.23  2008/09/25 01:41:36  gtkwave
  * drag from tree clist window into external process
  *
