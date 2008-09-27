@@ -20,7 +20,7 @@
 			} \
 			else \
 			{ \
-			sing_len = strlen(one_entry); \
+			int sing_len = strlen(one_entry); \
 			mult_entry = realloc_2(mult_entry, mult_len + sing_len + 1); \
 			strcpy(mult_entry + mult_len, one_entry); \
 			mult_len += sing_len; \
@@ -32,7 +32,6 @@ struct iter_dnd_strings
 	{
 	char *one_entry;
 	char *mult_entry;
-	int sing_len;
 	int mult_len;
 	};
 
@@ -46,6 +45,9 @@ char *add_dnd_from_tree_window(void);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.2  2008/09/25 01:41:36  gtkwave
+ * drag from tree clist window into external process
+ *
  * Revision 1.1  2008/09/25 01:31:29  gtkwave
  * file creation
  *

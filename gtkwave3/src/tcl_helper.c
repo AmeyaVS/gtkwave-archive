@@ -1121,7 +1121,7 @@ char *add_dnd_from_searchbox(void)
 {
 int i;
 char *one_entry = NULL, *mult_entry = NULL;
-unsigned int sing_len, mult_len = 0;
+unsigned int mult_len = 0;
 char *pnt;
 
 for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
@@ -1172,7 +1172,7 @@ char *add_dnd_from_signal_window(void)
 Trptr t;
 int i;
 char *one_entry = NULL, *mult_entry = NULL;
-unsigned int sing_len, mult_len = 0;
+unsigned int mult_len = 0;
 char *pnt;
 
 t=GLOBALS->traces.first;
@@ -1288,13 +1288,12 @@ sig_selection_foreach_dnd
   int low, high;
   struct iter_dnd_strings *it;
   char *one_entry, *mult_entry;
-  unsigned int sing_len, mult_len;
+  unsigned int mult_len;
   enum { NAME_COLUMN, TREE_COLUMN, N_COLUMNS };
 
   it = (struct iter_dnd_strings *)data;
   one_entry = it->one_entry;
   mult_entry = it->mult_entry;
-  sing_len = it->sing_len;
   mult_len = it->mult_len;
 
   /* Get the tree.  */
@@ -1329,7 +1328,6 @@ sig_selection_foreach_dnd
 
   it->one_entry = one_entry;
   it->mult_entry = mult_entry;
-  it->sing_len = sing_len;
   it->mult_len = mult_len;
 }
 
@@ -1355,6 +1353,9 @@ return(it.mult_entry);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/09/25 18:23:47  gtkwave
+ * cut over to usage of zMergeTclList for list generation
+ *
  * Revision 1.5  2008/09/25 01:41:35  gtkwave
  * drag from tree clist window into external process
  *
