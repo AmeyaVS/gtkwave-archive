@@ -13,6 +13,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #include "gtk12compat.h"
@@ -839,9 +840,10 @@ char **s_new_list;
 char **most_recent_lbrack_list;
 int *match_idx_list;
 int *match_type_list;
-Trptr t;
+Trptr t = NULL;
 int found = 0;
 int lbrack_adj;
+int net_processing_is_off = 0;
 
 list = zSplitTclList(s, &c);
 if(!list)
@@ -856,7 +858,11 @@ most_recent_lbrack_list = calloc_2(c, sizeof(char *));
 for(ii=0;ii<c;ii++)
 	{
 	s_new = make_net_name_from_tcl_list(list[ii]);
-	if(!s_new)
+	if(s_new)
+		{
+		if(net_processing_is_off) continue;
+		}
+	else
 		{
 		int ngl;
 		char **gdirect = check_gtkwave_directive_from_tcl_list(list[ii], &ngl);
@@ -872,6 +878,78 @@ for(ii=0;ii<c;ii++)
 							{
 							free_2(gdirect);
 							goto cleanup;
+							}
+						}
+					 else if(!strcmp(gdirect[1], "NET"))
+						{
+						net_processing_is_off = !strcmp(gdirect[2], "OFF");
+						}
+					 else if(!strcmp(gdirect[1], "SAVEFILE"))
+						{
+						int is;
+						for(is = 0; is < 4; is++)
+							{
+							char *pnt = gdirect[2];
+							char *nxt_hd = pnt;
+
+							if(is == 1)
+								{
+								if(found)
+									{
+							                if(GLOBALS->is_lx2)
+										{
+										lx2_import_masked();
+										}
+
+									t = determine_trace_from_y();
+									if(t)
+										{
+										t->flags |=  TR_HIGHLIGHT;
+										}
+	
+									memcpy(&GLOBALS->tcache_treesearch_gtk2_c_2,&GLOBALS->traces,sizeof(Traces));
+									GLOBALS->traces.total=0;
+									GLOBALS->traces.first=GLOBALS->traces.last=NULL;
+	
+									continue;
+									}
+									else
+									{
+									goto cleanup;
+									}
+								}
+							else
+							if(is==3)
+								{
+								goto paste_routine;
+								}
+							else /* (is == 0) or (is == 2) */
+							for(;;)
+								{
+								if(*pnt == 0)
+									{
+									if(!(*nxt_hd))
+										{
+										break;
+										}
+	
+									if((!is)&&(GLOBALS->is_lx2)) { parsewavline_lx2(nxt_hd, 0); found++; } else { parsewavline(nxt_hd, 0); }
+									break;
+									}
+								else
+								if(*pnt == '\n')
+									{
+									*pnt = 0;
+									if((!is)&&(GLOBALS->is_lx2)) { parsewavline_lx2(nxt_hd, 0); found++; } else { parsewavline(nxt_hd, 0); }
+									*pnt = '\n';
+									nxt_hd = pnt+1;
+									pnt++;
+									}
+								else
+									{
+									pnt++;
+									}
+								}
 							}
 						}
 					 break;
@@ -1029,6 +1107,8 @@ for(ii=0;ii<c;ii++)
 		}
 	}
 
+paste_routine:
+
 GLOBALS->traces.buffercount=GLOBALS->traces.total;
 GLOBALS->traces.buffer=GLOBALS->traces.first;
 GLOBALS->traces.bufferlast=GLOBALS->traces.last;
@@ -1072,6 +1152,7 @@ return(found);
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 /* XXX functions for data exiting from gtkwave XXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
 
 /* ----------------------------------------------------------------------------
  * make_gtkwave_pid - generates gtkwave pid (necessary when using twinwave as
@@ -1259,6 +1340,7 @@ char *add_dnd_from_signal_window(void)
 Trptr t;
 char *one_entry = NULL, *mult_entry = NULL;
 unsigned int mult_len = 0;
+char *netoff = "{gtkwave NET OFF} ";
 
 t=GLOBALS->traces.first;
 while(t)
@@ -1298,13 +1380,13 @@ while(t)
                                 		}   
 
 					sprintf(str+strlen(str), "[%d]", which);
-					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
+					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME }
 					one_entry = make_single_tcl_list_name(str);
 					WAVE_OE_ME
                                         }
                                         else
                                         {
-					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
+					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
 					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]));
 					WAVE_OE_ME
                                         }
@@ -1337,13 +1419,13 @@ while(t)
                                		}   
 
 				sprintf(str+strlen(str), "[%d]", which);
-				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
+				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
 				one_entry = make_single_tcl_list_name(str);
 				WAVE_OE_ME
 				}
 				else
 				{
-				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME }
+				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
 				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd));
 				WAVE_OE_ME
 				}
@@ -1438,9 +1520,228 @@ gtk_tree_selection_selected_foreach(GLOBALS->sig_selection_treesearch_gtk2_c_1, 
 return(it.mult_entry);
 }
 
+
+/* ----------------------------------------------------------------------------
+ * make_message - printf() which mallocs into a string
+ *
+ * Results:
+ *      dynamically allocated string
+ * ----------------------------------------------------------------------------
+ */
+
+static char *make_message (const char *fmt, ...)
+{
+  /* Guess we need no more than 100 bytes. */
+  int n, size = 100;
+  char *p, *np;
+  va_list ap;
+
+  if ((p = malloc_2(size)) == NULL)
+    return NULL;
+
+  while (1)
+    {
+      /* Try to print in the allocated space. */
+      va_start (ap, fmt);
+      n = vsnprintf (p, size, fmt, ap);
+      va_end (ap);
+      /* If that worked, return the string. */
+      if (n > -1 && n < size)
+	return p;
+      /* Else try again with more space. */
+      if (n > -1)		/* glibc 2.1 */
+	size = n + 1;		/* precisely what is needed */
+      else			/* glibc 2.0 */
+	size *= 2;		/* twice the old size */
+      if ((np = realloc_2(p, size)) == NULL)
+	{
+	  free (p);
+	  return NULL;
+	}
+      else
+	{
+	  p = np;
+	}
+    }
+}
+
+
+/* ----------------------------------------------------------------------------
+ * emit_gtkwave_savefile_formatted_entries_in_tcl_list - performs as named
+ *
+ * Results:
+ *      tcl list which mimics a gtkwave save file for cut and paste entries
+ *      which is later iteratively run through the normal gtkwave save file 
+ *      loader parsewavline() on the distant end.  the reason this is 
+ *      necessary is in order to pass attribute and concatenation information
+ *      along to the distant end.
+ * ----------------------------------------------------------------------------
+ */
+
+char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void) {
+	char *one_entry, *mult_entry = NULL;
+	unsigned int mult_len = 0;
+
+	Trptr t;
+	unsigned int def=0;
+	TimeType prevshift=LLDescriptor(0);
+	int is_first = 1;
+
+	t=GLOBALS->traces.first;
+	while(t)
+		{
+		if(!(t->flags & TR_HIGHLIGHT))
+			{
+			t = t->t_next;
+			continue;
+			}
+
+		if((t->flags!=def)||(is_first))
+			{
+			is_first = 0;
+			if((t->flags & TR_PTRANSLATED) && (!t->p_filter)) t->flags &= (~TR_PTRANSLATED);
+			if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
+			one_entry = make_message("@%x\n",(def=t->flags) & ~TR_HIGHLIGHT);
+			WAVE_OE_ME
+			}
+
+		if((t->shift)||((prevshift)&&(!t->shift)))
+			{
+			one_entry = make_message(">"TTFormat"\n", t->shift);
+			WAVE_OE_ME
+			}
+		prevshift=t->shift;
+
+		if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))	
+			{
+			if(t->flags & TR_FTRANSLATED)
+				{
+				if(t->f_filter && GLOBALS->filesel_filter[t->f_filter])
+					{
+					one_entry = make_message("^%d %s\n", t->f_filter, GLOBALS->filesel_filter[t->f_filter]);
+					WAVE_OE_ME
+					}
+					else
+					{
+					one_entry = make_message("^%d %s\n", 0, "disabled");
+					WAVE_OE_ME
+					}
+				}
+			else
+			if(t->flags & TR_PTRANSLATED)
+				{
+				if(t->p_filter && GLOBALS->procsel_filter[t->p_filter])
+					{
+					one_entry = make_message("^>%d %s\n", t->p_filter, GLOBALS->procsel_filter[t->p_filter]);
+					WAVE_OE_ME
+					}
+					else
+					{
+					one_entry = make_message("^>%d %s\n", 0, "disabled");
+					WAVE_OE_ME
+					}
+				}
+
+			if(t->vector)
+				{
+				int i;
+				nptr *nodes;
+				bptr bits = t->n.vec->bits;
+				baptr ba = bits ? bits->attribs : NULL;
+
+				one_entry = make_message("%c%s", ba ? ':' : '#', t->name);
+				WAVE_OE_ME
+
+				nodes=t->n.vec->bits->nodes;
+				for(i=0;i<t->n.vec->nbits;i++)
+					{
+					if(nodes[i]->expansion)
+						{
+						one_entry = make_message(" (%d)%s",nodes[i]->expansion->parentbit, append_array_row(nodes[i]->expansion->parent));
+						WAVE_OE_ME
+						}
+						else
+						{
+						one_entry = make_message(" %s",append_array_row(nodes[i]));
+						WAVE_OE_ME
+						}
+					if(ba)
+						{
+						one_entry = make_message(" "TTFormat" %x", ba[i].shift, ba[i].flags);
+						WAVE_OE_ME
+						}
+					}
+
+				one_entry = make_message("\n");
+				WAVE_OE_ME
+				}
+				else
+				{
+				if(t->is_alias)
+					{
+					if(t->n.nd->expansion)
+						{
+						one_entry = make_message("+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
+						WAVE_OE_ME
+						}
+						else
+						{
+						one_entry = make_message("+%s %s\n",t->name+2,append_array_row(t->n.nd));
+						WAVE_OE_ME
+						}
+					}
+					else
+					{
+					if(t->n.nd->expansion)
+						{
+						one_entry = make_message("(%d)%s\n",t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
+						WAVE_OE_ME
+						}
+						else
+						{
+						one_entry = make_message("%s\n",append_array_row(t->n.nd));
+						WAVE_OE_ME
+						}
+					}
+				}
+			}
+			else
+			{
+			if(!t->name) { one_entry = make_message("-\n"); WAVE_OE_ME }
+			else { one_entry = make_message("-%s\n",t->name); WAVE_OE_ME }
+			}
+
+		t=t->t_next;
+		}
+
+if(mult_entry)
+	{
+	const char *hdr = "{gtkwave SAVEFILE ";
+	int hdr_len = strlen(hdr);
+	const char *av[1] = { mult_entry };
+	char *zm = zMergeTclList(1, av);
+	int zm_len = strlen(zm);
+
+	free_2(mult_entry);
+
+	mult_entry = malloc_2(hdr_len + zm_len + 2 + 1);
+	memcpy(mult_entry, hdr, hdr_len);
+	memcpy(mult_entry + hdr_len, zm, zm_len);
+	strcpy(mult_entry + hdr_len + zm_len, "} ");
+
+	free_2(zm);
+	}
+
+return(mult_entry);
+}
+
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.8  2008/09/27 06:26:35  gtkwave
  * twinwave (XEmbed) fixes for self-dnd in signal window
  *

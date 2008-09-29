@@ -1816,6 +1816,21 @@ else if(widget == GLOBALS->signalarea)
 	char *text = add_dnd_from_signal_window();
 	if(text)
 		{
+		char *text2 = emit_gtkwave_savefile_formatted_entries_in_tcl_list();
+		if(text2)
+			{
+			int textlen = strlen(text);
+			int text2len = strlen(text2);
+			char *pnt = calloc_2(1, textlen + text2len + 1);
+			
+			memcpy(pnt, text, textlen);
+			memcpy(pnt + textlen, text2, text2len);
+
+			free_2(text2);
+			free_2(text);
+			text = pnt;
+			}
+
 		gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)text, strlen(text));
 		free_2(text);
 		}
@@ -1997,6 +2012,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.24  2008/09/27 06:26:35  gtkwave
  * twinwave (XEmbed) fixes for self-dnd in signal window
  *

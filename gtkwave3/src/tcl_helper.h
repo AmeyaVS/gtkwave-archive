@@ -39,12 +39,16 @@ int process_tcl_list(char *s);
 char *add_dnd_from_searchbox(void);
 char *add_dnd_from_signal_window(void);
 char *add_dnd_from_tree_window(void);
+char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void);
 
 #endif
 
 /* 
  * $Id$
  * $Log$
+ * Revision 1.3  2008/09/27 05:05:05  gtkwave
+ * removed unnecessary sing_len struct item
+ *
  * Revision 1.2  2008/09/25 01:41:36  gtkwave
  * drag from tree clist window into external process
  *
