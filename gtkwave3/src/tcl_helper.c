@@ -855,6 +855,8 @@ match_idx_list = calloc_2(c, sizeof(int *));
 match_type_list = calloc_2(c, sizeof(int *));
 most_recent_lbrack_list = calloc_2(c, sizeof(char *));
 
+GLOBALS->default_flags=TR_RJUSTIFY;
+
 for(ii=0;ii<c;ii++)
 	{
 	s_new = make_net_name_from_tcl_list(list[ii]);
@@ -1108,6 +1110,8 @@ for(ii=0;ii<c;ii++)
 	}
 
 paste_routine:
+
+GLOBALS->default_flags=TR_RJUSTIFY;
 
 GLOBALS->traces.buffercount=GLOBALS->traces.total;
 GLOBALS->traces.buffer=GLOBALS->traces.first;
@@ -1431,6 +1435,10 @@ while(t)
 				}
 			}
 		}
+		else
+		{
+		one_entry = strdup_2(netoff); WAVE_OE_ME
+		}
 	t = t->t_next;
 	}
 
@@ -1581,19 +1589,40 @@ static char *make_message (const char *fmt, ...)
 char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void) {
 	char *one_entry, *mult_entry = NULL;
 	unsigned int mult_len = 0;
+	unsigned int prev_flags = 0;
 
 	Trptr t;
 	unsigned int def=0;
 	TimeType prevshift=LLDescriptor(0);
-	int is_first = 1;
+	char is_first = 1;
+	char collapsed_state = 0, flag_skip;
 
 	t=GLOBALS->traces.first;
 	while(t)
 		{
+		flag_skip = 0;
+
+		if((t->flags & (TR_HIGHLIGHT|TR_COLLAPSED)) == (TR_HIGHLIGHT|TR_COLLAPSED)) 
+			{
+			collapsed_state = 1;
+			}
+		else
+		if((t->flags & TR_BLANK) && collapsed_state)
+			{
+			collapsed_state = 0;
+			}
+		else
 		if(!(t->flags & TR_HIGHLIGHT))
 			{
-			t = t->t_next;
-			continue;
+			if((prev_flags & TR_ANALOGMASK) && (t->flags &TR_ANALOG_BLANK_STRETCH))
+				{
+				flag_skip = 1;
+				}
+			else
+				{
+				t = t->t_next;
+				continue;
+				}
 			}
 
 		if((t->flags!=def)||(is_first))
@@ -1603,6 +1632,7 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void) {
 			if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
 			one_entry = make_message("@%x\n",(def=t->flags) & ~TR_HIGHLIGHT);
 			WAVE_OE_ME
+			if(!flag_skip) prev_flags = def;
 			}
 
 		if((t->shift)||((prevshift)&&(!t->shift)))
@@ -1739,6 +1769,9 @@ return(mult_entry);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/09/29 22:46:39  gtkwave
+ * complex dnd handling with gtkwave trace attributes
+ *
  * Revision 1.9  2008/09/27 19:08:39  gtkwave
  * compiler warning fixes
  *
