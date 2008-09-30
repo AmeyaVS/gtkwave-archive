@@ -1833,7 +1833,7 @@ if(!n->ext)
 		actual = n->ext->msi - bit;
 		}
 
-	if((bit>rgh)||(bit<lft))
+	if((actual>rgh)||(actual<lft))
 		{
 		DEBUG(fprintf(stderr, "Out of range\n"));
 		return(NULL);
@@ -2889,6 +2889,10 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/09/26 17:05:09  gtkwave
+ * force open tree nodes in ctree on initial .sav file read (didn't happen
+ * before as ctree was not built yet)
+ *
  * Revision 1.7  2008/08/24 21:55:27  gtkwave
  * update for timestart line in savefiles
  *
