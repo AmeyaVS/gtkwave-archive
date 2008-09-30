@@ -477,3 +477,5 @@
 		Adding signal name DnD support from external apps.
 		Force open tree nodes on initial .sav file read.
 		Yet more new warning (-Wall) cleanups.
+		Fixed ExtractNodeSingleBit for vectors which do not 
+		have a zero in either the msb or lsb (e.g., [1:9]).
