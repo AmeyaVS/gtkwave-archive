@@ -1173,7 +1173,7 @@ do_tooltips:
       }
 
     GLOBALS->dnd_sigview = sig_view;
-    dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea, 1);
+    dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea, 0);
 
     sig_frame = gtk_frame_new (NULL);
     gtk_container_border_width (GTK_CONTAINER (sig_frame), 3);
@@ -1993,25 +1993,32 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 		/* Set the drag source for this widget, allowing the user
 		 * to drag items off of this clist.
 		 */
-		gtk_drag_source_set(
-			src,
-			GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
-                        target_entry,
-                        sizeof(target_entry) / sizeof(GtkTargetEntry),
-			GDK_ACTION_MOVE | GDK_ACTION_COPY
-		);
-		/* Set DND signals on clist. */
-		gtkwave_signal_connect(GTK_OBJECT(src), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(src), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), win);
+		if(src)
+			{
+			gtk_drag_source_set(
+				src,
+				GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
+	                        target_entry,
+	                        sizeof(target_entry) / sizeof(GtkTargetEntry),
+				GDK_ACTION_MOVE | GDK_ACTION_COPY
+			);
+			/* Set DND signals on clist. */
+			gtkwave_signal_connect(GTK_OBJECT(src), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), win);
+	                gtkwave_signal_connect(GTK_OBJECT(src), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), win);
+	                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), win);
+	                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), win);
+			}
+
                 if(enable_receive) gtkwave_signal_connect(GTK_OBJECT(w),   "drag_data_received", GTK_SIGNAL_FUNC(DNDDataReceivedCB), win);
-                gtkwave_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), win);
 	}
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2008/09/29 22:46:39  gtkwave
+ * complex dnd handling with gtkwave trace attributes
+ *
  * Revision 1.25  2008/09/27 19:08:39  gtkwave
  * compiler warning fixes
  *

@@ -1522,6 +1522,10 @@ if(GLOBALS->dnd_sigview)
 	{
 	dnd_setup(GLOBALS->dnd_sigview, GLOBALS->signalarea, 1);
 	}
+	else
+	{
+	dnd_setup(NULL, GLOBALS->signalarea, 1);
+	}
 /* dnd_setup(GLOBALS->signalarea, GLOBALS->signalarea); */
 dnd_setup(GLOBALS->signalarea, GLOBALS->wavearea, 1);
 
@@ -2070,6 +2074,10 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2008/09/26 17:05:10  gtkwave
+ * force open tree nodes in ctree on initial .sav file read (didn't happen
+ * before as ctree was not built yet)
+ *
  * Revision 1.32  2008/09/16 00:01:25  gtkwave
  * prelim drag and drop from external apps (now disabled)
  *
