@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.1.14	27sep08	Fix for strings ('s' type) in recoder.  
+3.1.14	01oct08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -479,3 +479,5 @@
 		Yet more new warning (-Wall) cleanups.
 		Fixed ExtractNodeSingleBit for vectors which do not 
 		have a zero in either the msb or lsb (e.g., [1:9]).
+		Added support for dragging files into the viewer
+		(i.e., dumpfile, savefile, stems file)

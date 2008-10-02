@@ -395,6 +395,7 @@ NULL, /* lt_buf_lxt_c_1 183 */
 /* 
  * main.c
  */
+0, /* block_xy_update */
 NULL, /* winname */
 0, /* num_notebook_pages */
 1, /* num_notebook_pages_cumulative */

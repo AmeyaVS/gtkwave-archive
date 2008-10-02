@@ -1920,8 +1920,11 @@ static void DNDDataReceivedCB(
     int num_found ;
 
     /* printf("XXX %08x '%s'\n", selection_data->data, selection_data->data); */
-    num_found = process_tcl_list((char *)selection_data->data);
-
+    if(!(num_found = process_url_list((char *)selection_data->data)))
+	{
+    	num_found = process_tcl_list((char *)selection_data->data);
+	}
+	
     if(num_found)
 	{
 	MaxSignalLength();
@@ -2016,6 +2019,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2008/10/01 01:31:38  gtkwave
+ * more dnd fixes
+ *
  * Revision 1.26  2008/09/29 22:46:39  gtkwave
  * complex dnd handling with gtkwave trace attributes
  *

@@ -3065,6 +3065,7 @@ void read_save_helper(char *wname) {
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
 		wavearea_configure_event(GLOBALS->wavearea, NULL);
 
+		if(!GLOBALS->block_xy_update)
 			{
 			int x, y;
 
@@ -4782,6 +4783,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.37  2008/09/24 23:41:22  gtkwave
  * drag from signal window into external process
  *

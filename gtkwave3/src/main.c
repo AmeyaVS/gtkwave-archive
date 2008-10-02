@@ -1833,6 +1833,11 @@ get_window_size (int *x, int *y)
 void
 set_window_size (int x, int y)
 {
+  if(GLOBALS->block_xy_update)
+    {
+      return;
+    }
+
   if (GLOBALS->mainwindow == NULL)
     {
       GLOBALS->initial_window_width = x;
@@ -2074,6 +2079,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2008/10/01 01:31:38  gtkwave
+ * more dnd fixes
+ *
  * Revision 1.33  2008/09/26 17:05:10  gtkwave
  * force open tree nodes in ctree on initial .sav file read (didn't happen
  * before as ctree was not built yet)

@@ -2437,7 +2437,7 @@ else if (*w2 == '[')
 	/* Main window size.  */
 	int x, y;
 	sscanf (w, "%d %d", &x, &y);
-	set_window_size (x, y);
+	if(!GLOBALS->block_xy_update) set_window_size (x, y);
 	}
       }
     else if (strcmp (w2, "pos") == 0)
@@ -2447,7 +2447,7 @@ else if (*w2 == '[')
 	/* Main window position.  */
 	int x, y;
 	sscanf (w, "%d %d", &x, &y);
-	set_window_xypos (x, y);
+	if(!GLOBALS->block_xy_update) set_window_xypos (x, y);
 	}
       }
     else if (strcmp (w2, "timestart") == 0)
@@ -2889,6 +2889,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/09/30 00:27:22  gtkwave
+ * fixed ExtractNodeSingleBit for vectors which do not have a zero for msb+lsb
+ *
  * Revision 1.8  2008/09/26 17:05:09  gtkwave
  * force open tree nodes in ctree on initial .sav file read (didn't happen
  * before as ctree was not built yet)

@@ -390,6 +390,7 @@ int max_compare_pos_tc_lxt_c_2; /* from lxt.c 200 */
 /*
  * main.c
  */
+char block_xy_update;
 char *winname;
 unsigned int num_notebook_pages;
 unsigned int num_notebook_pages_cumulative;

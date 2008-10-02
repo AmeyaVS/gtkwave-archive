@@ -11,6 +11,7 @@
 #include "globals.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gconvert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -30,6 +31,10 @@
 #if !defined __MINGW32__ && !defined _MSC_VER
 #include <sys/types.h>
 #include <unistd.h>
+#endif
+
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
 #endif
 
 
@@ -886,7 +891,7 @@ for(ii=0;ii<c;ii++)
 						{
 						net_processing_is_off = !strcmp(gdirect[2], "OFF");
 						}
-					 else if(!strcmp(gdirect[1], "SAVEFILE"))
+					 else if(!strcmp(gdirect[1], "SAVELIST"))
 						{
 						int is;
 						for(is = 0; is < 4; is++)
@@ -1746,7 +1751,7 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void) {
 
 if(mult_entry)
 	{
-	const char *hdr = "{gtkwave SAVEFILE ";
+	const char *hdr = "{gtkwave SAVELIST ";
 	int hdr_len = strlen(hdr);
 	const char *av[1] = { mult_entry };
 	char *zm = zMergeTclList(1, av);
@@ -1766,9 +1771,204 @@ return(mult_entry);
 }
 
 
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXX functions for URL (not TCL list) handling XXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+/* ----------------------------------------------------------------------------
+ * process_url_file - examines filename and performs appropriate side-effect
+ *
+ * Results:
+ *      Loads save file, new dump file, or stems file viewer
+ * ----------------------------------------------------------------------------
+ */
+
+static int process_url_file(char *s)
+{
+int rc = 0;
+char *pnt = s;
+char *dot = NULL, *dot2 = NULL;
+int ftype = 0;
+
+while(*pnt)
+	{
+	if(*pnt == '.') { dot2 = dot; dot = pnt; }
+	pnt++;
+	}
+
+if(dot)
+	{
+	if(!strcasecmp("sav", dot+1))
+		{
+		ftype = 1;
+		}
+	else
+	if(!strcasecmp("stems", dot+1))
+		{
+		ftype = 2;
+		}
+	else /* detect dumpfile type */
+	if	(
+		(!strcasecmp("vcd", dot+1)) ||
+		(!strcasecmp("dmp", dot+1)) ||
+		(!strcasecmp("lxt", dot+1)) ||
+		(!strcasecmp("lx2", dot+1)) ||
+		(!strcasecmp("vzt", dot+1)) ||
+		(!strcasecmp("ghw", dot+1)) ||
+		(!strcasecmp("aet", dot+1)) ||
+		(!strcasecmp("ae2", dot+1))
+		)
+		{
+		ftype = 3;
+		}
+	else
+	if(dot2)
+		{
+		if	(
+			(!strcasecmp("ghw.gz", dot2+1))  ||
+			(!strcasecmp("ghw.bz2", dot2+1)) ||
+			(!strcasecmp("ghw.bz2", dot2+1)) ||
+			(!strcasecmp("vcd.gz", dot2+1))  ||
+			(!strcasecmp("vcd.zip", dot2+1)) 
+			)
+			{
+			ftype = 3;
+			}
+		}
+	}
+	else
+	{
+	FILE *f = fopen(s, "rb");
+	if(f)
+		{
+		int ch0 = getc(f);
+		int ch1 = getc(f);
+
+		if(ch0 == EOF) { ch0 = ch1 = 0; }
+		else
+		if(ch1 == EOF) { ch1 = 0; }
+
+		if((ch0 == '+') && (ch1 == '+'))
+			{
+			ftype = 2; /* stems file */
+			}
+		else 
+		if(ch0 == '[')
+			{
+			ftype = 1; /* save file */
+			}
+
+		fclose(f);
+		}
+	}
+
+
+switch(ftype)
+	{
+	case 1:
+		GLOBALS->fileselbox_text = &GLOBALS->filesel_writesave;
+	        GLOBALS->filesel_ok=1;
+        	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
+        	*GLOBALS->fileselbox_text=(char *)strdup_2(s);
+
+		GLOBALS->block_xy_update = 1;
+		read_save_helper(s);
+		GLOBALS->block_xy_update = 0;
+		rc = 1;
+		break;
+
+	case 2:
+		GLOBALS->fileselbox_text = &GLOBALS->stems_name;
+	        GLOBALS->filesel_ok=1;
+        	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
+        	*GLOBALS->fileselbox_text=(char *)strdup_2(s);
+
+		menu_read_stems_cleanup(NULL, NULL);
+		rc = 1;
+		break;
+
+	case 3:
+		GLOBALS->fileselbox_text = &GLOBALS->filesel_newviewer_menu_c_1;
+	        GLOBALS->filesel_ok=1;
+        	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
+        	*GLOBALS->fileselbox_text=(char *)strdup_2(s);
+
+		menu_new_viewer_tab_cleanup(NULL, NULL);
+		rc = 1;
+		break;
+
+	default:
+		break;
+	}
+
+return(rc);
+}
+
+
+/* ----------------------------------------------------------------------------
+ * process_url_list - examines list of URLs and 
+ *
+ * Results:
+ *      Indicates if any URLs were processed
+ * ----------------------------------------------------------------------------
+ */
+
+int process_url_list(char *s)
+{
+int is_url = 0;
+char pch = 0;
+
+char *nxt_hd = s;
+char *pnt = s;
+char *path;
+
+if(*pnt == '{') return(0); /* exit early if tcl list */
+
+for(;;)
+	{
+	if(*pnt == 0)
+		{
+		if(!(*nxt_hd))
+			{
+			break;
+			}
+
+		path = g_filename_from_uri(nxt_hd, NULL, NULL);
+		if(path) { is_url += process_url_file(path); }
+		break;
+		}
+	else
+	if((*pnt == '\n')||(*pnt == '\r'))
+		{
+		if((pch != '\n') && (pch != '\r'))
+			{
+			char sav = *pnt;
+			*pnt = 0;
+
+			path = g_filename_from_uri(nxt_hd, NULL, NULL);
+			if(path) { is_url += process_url_file(path); }
+			*pnt = sav;
+			}
+		pch = *pnt;
+		nxt_hd = pnt+1;
+		pnt++;
+		}
+	else
+		{
+		pch = *pnt;
+		pnt++;
+		}
+	}
+
+return(is_url);
+}
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/09/30 06:32:00  gtkwave
+ * added dnd support for comment traces, collapse groups, blank traces
+ *
  * Revision 1.10  2008/09/29 22:46:39  gtkwave
  * complex dnd handling with gtkwave trace attributes
  *

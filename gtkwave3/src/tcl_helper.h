@@ -35,6 +35,7 @@ struct iter_dnd_strings
 	int mult_len;
 	};
 
+int process_url_list(char *s);
 int process_tcl_list(char *s);
 char *add_dnd_from_searchbox(void);
 char *add_dnd_from_signal_window(void);
@@ -46,6 +47,9 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.4  2008/09/29 22:46:39  gtkwave
+ * complex dnd handling with gtkwave trace attributes
+ *
  * Revision 1.3  2008/09/27 05:05:05  gtkwave
  * removed unnecessary sing_len struct item
  *
