@@ -77,6 +77,235 @@ static GtkTextTag *mono_tag = NULL;
 static GtkTextTag *size_tag = NULL;
 #endif
 
+static char *tmpnam_rtlbrowse(char *s, int *fd)
+{
+#if defined _MSC_VER || defined __MINGW32__
+
+*fd = -1;
+return(tmpnam(s));
+
+#else    
+
+char *backpath = "gtkwaveXXXXXX";
+char *tmpspace;
+int len = strlen(P_tmpdir);
+int i;
+
+unsigned char slash = '/';
+for(i=0;i<len;i++)
+        {
+        if((P_tmpdir[i] == '\\') || (P_tmpdir[i] == '/'))
+                {
+                slash = P_tmpdir[i];
+                break;
+                }
+        }
+         
+tmpspace = malloc(len + 1 + strlen(backpath) + 1);
+sprintf(tmpspace, "%s%c%s", P_tmpdir, slash, backpath);
+*fd = mkstemp(tmpspace);
+if(*fd<0)
+        {
+        fprintf(stderr, "tmpnam_rtlbrowse() could not create tempfile, exiting.\n");
+        perror("Why");
+        exit(255);
+        }
+         
+return(tmpspace);
+
+#endif
+}
+
+
+/* for dnd */
+#define WAVE_DRAG_TAR_NAME_0         "text/plain"
+#define WAVE_DRAG_TAR_INFO_0         0
+
+#define WAVE_DRAG_TAR_NAME_1         "text/uri-list"         /* not url-list */
+#define WAVE_DRAG_TAR_INFO_1         1
+
+#define WAVE_DRAG_TAR_NAME_2         "STRING"
+#define WAVE_DRAG_TAR_INFO_2         2
+
+
+static void DNDBeginCB(
+        GtkWidget *widget, GdkDragContext *dc, gpointer data
+)
+{
+/* nothing */
+}
+
+static void DNDEndCB(  
+        GtkWidget *widget, GdkDragContext *dc, gpointer data
+)
+{
+/* nothing */
+}
+
+static void DNDDataDeleteCB(
+        GtkWidget *widget, GdkDragContext *dc, gpointer data
+)
+{
+/* nothing */
+}
+
+static void DNDDataRequestCB(
+        GtkWidget *widget, GdkDragContext *dc,
+        GtkSelectionData *selection_data, guint info, guint t,
+        gpointer data
+)
+{
+struct logfile_context_t *ctx = (struct logfile_context_t *)data;
+GtkWidget *text = (GtkWidget *)widget;
+gchar *sel = NULL;
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+GtkTextIter start;
+GtkTextIter end;
+
+if((!text)||(!ctx)) return;
+         
+if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
+                                         &start, &end))
+       	{
+       	if(gtk_text_iter_compare (&start, &end) < 0)
+               	{
+               	sel = gtk_text_buffer_get_text(GTK_TEXT_VIEW(text)->buffer,
+                                              &start, &end, FALSE);
+                                        
+
+		gtk_text_buffer_delete_selection (GTK_TEXT_VIEW(text)->buffer, 0, 0);
+		}
+
+	}
+
+#else
+GtkOldEditable *oe;
+GtkOldEditableClass *oec;
+
+if((!text)||(!ctx)) return;
+
+oe = GTK_OLD_EDITABLE(&GTK_TEXT(text)->old_editable);
+oec = GTK_OLD_EDITABLE_GET_CLASS(oe);
+                                        
+if(oe->has_selection)
+        {
+        if(oec->get_chars)
+                {
+                sel = oec->get_chars(oe, oe->selection_start_pos, oe->selection_end_pos);
+		}
+	}
+#endif
+
+if(sel) 
+	{
+	JRB strs, node;
+	int fd;
+	char *fname = tmpnam_rtlbrowse("rtlbrowse", &fd);
+	FILE *handle = fopen(fname, "wb");
+	int lx;
+	int degate = 0;
+	int cnt = 0;
+
+	if(!handle)
+		{
+        	fprintf(stderr, "Could not open cutpaste file '%s'\n", fname);
+        	return;
+        	}
+	fprintf(handle, "%s", sel);
+	fclose(handle); 
+	if(fd>=0) close(fd);
+
+	v_preproc_name = fname;
+	strs = make_jrb();
+    	while((lx = yylex()))
+        	{
+        	char *pnt = yytext;
+
+                if(lx==V_ID)
+                        {
+			if(!degate)
+				{
+				JRB str = jrb_find_str(strs, pnt);
+				Jval jv;
+				jv.v = NULL;
+				if(!str)
+					{
+					jrb_insert_str(strs, strdup(pnt), jv);
+					cnt++;
+					} 
+				}
+                        }
+		else if(lx==V_IGNORE)
+			{
+			if(*pnt == '[') degate = 1;
+			else if(*pnt == ']') degate = 0;
+			}
+		}
+	free(fname);
+
+
+	if(cnt)
+		{
+		int title_len = 5 + strlen(ctx->title) + 1;
+		char *tpnt = calloc(1, title_len + 1);
+		char *op = ctx->title;
+		char *np = tpnt;
+		char *mlist = NULL;
+		int mlen = 0;
+
+		strcpy(np, "{net ");
+		np+=5;
+		while(*op)
+			{
+			if(*op == '.') *np = ' '; else *np = *op;
+			op++;
+			np++;
+			}
+		*np = ' ';
+
+		jrb_traverse(node, strs)
+			{
+			int slen = strlen(node->key.s);
+			int singlen = title_len + slen + 2;
+			char *singlist = calloc(1, singlen + 1);
+			memcpy(singlist, tpnt, title_len);
+			strcpy(singlist + title_len, node->key.s);
+			strcpy(singlist + title_len + slen, "} ");
+
+			if(mlist)
+				{
+				mlist = realloc(mlist, mlen + singlen + 1);
+				strcpy(mlist + mlen, singlist);
+				mlen += singlen;
+				}
+				else
+				{
+				mlist = strdup(singlist);
+				mlen = singlen;
+				}
+
+			free(singlist);
+			free(node->key.s);
+			}
+
+		gtk_selection_data_set(selection_data,GDK_SELECTION_TYPE_STRING, 8, (guchar*)mlist, mlen);
+		free(mlist);
+
+		update_ctx_when_idle(text);
+
+		free(tpnt);
+		}
+
+	jrb_free_tree(strs);
+	unlink(fname);
+	g_free(sel);
+	}
+
+}
+
+
+
 
 void log_text(GtkWidget *text, GdkFont *font, char *str)
 {
@@ -493,7 +722,7 @@ gtk_widget_show (vscrollbar);
 /* Add a handler to put a message in the text widget when it is realized */
 gtk_signal_connect (GTK_OBJECT (text), "realize",
                         GTK_SIGNAL_FUNC (log_realize_text), NULL);
-
+	
 gtk_signal_connect(GTK_OBJECT(text), "button_release_event",
                        GTK_SIGNAL_FUNC(button_release_event), NULL);
 
@@ -518,6 +747,7 @@ gboolean update_ctx_when_idle(gpointer dummy)
 {
 struct text_find_t *t;
 
+if(dummy == NULL)
 if(anno_ctx)
 	{
 	if((anno_ctx->marker_set != old_marker_set) || (old_marker != anno_ctx->marker))
@@ -736,6 +966,38 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     gtk_widget_show(window);
 
     bwlogbox_2(ctx, window, text);
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+    if(text)
+	{
+	GtkWidget *src = text;
+        GtkTargetEntry target_entry[3];
+        /* Set up the list of data format types that our DND
+         * callbacks will accept.
+         */
+        target_entry[0].target = WAVE_DRAG_TAR_NAME_0;
+        target_entry[0].flags = 0;
+        target_entry[0].info = WAVE_DRAG_TAR_INFO_0;
+        target_entry[1].target = WAVE_DRAG_TAR_NAME_1;
+        target_entry[1].flags = 0;  
+        target_entry[1].info = WAVE_DRAG_TAR_INFO_1;
+        target_entry[2].target = WAVE_DRAG_TAR_NAME_2;
+        target_entry[2].flags = 0;   
+        target_entry[2].info = WAVE_DRAG_TAR_INFO_2;
+
+        gtk_drag_source_set(
+        	src,
+                GDK_BUTTON2_MASK,
+                target_entry,
+                sizeof(target_entry) / sizeof(GtkTargetEntry),
+                GDK_ACTION_COPY | GDK_ACTION_MOVE
+                );
+        gtk_signal_connect(GTK_OBJECT(src), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), ctx);
+        gtk_signal_connect(GTK_OBJECT(src), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), ctx);
+        gtk_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), ctx);
+        gtk_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), ctx);
+        }
+#endif
 }
 
 
@@ -1456,6 +1718,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/06/11 08:01:40  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.4  2008/02/05 07:20:24  gtkwave
  * added realtime rtlbrowse updates (follows marker at 100ms intervals)
  *
