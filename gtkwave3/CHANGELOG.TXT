@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.1.14	03oct08	Fix for strings ('s' type) in recoder.  
+3.1.14	04oct08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -484,3 +484,5 @@
 		Added DnD of signal names from RTLBrowse source code
 		windows	directly into gtkwave.  
 		GTK1 compiler compatibility fixes.
+		Improved search performance from rtlbrowse initiated
+		DnD searches.

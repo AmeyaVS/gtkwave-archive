@@ -760,7 +760,7 @@ return(elem);
  * ----------------------------------------------------------------------------
  */     
 
-static char *make_net_name_from_tcl_list(char *s)
+static char *make_net_name_from_tcl_list(char *s, char **unescaped_str)
 {
 char *s_new = NULL;
 char *s_new2 = NULL;
@@ -823,8 +823,13 @@ if(elem)
 
 			*(pnt2++) = *(pnt++);
 			}
-		free_2(s_new);
+		*unescaped_str = s_new;
+		/* free_2(s_new); */
 		s_new = s_new2;				
+		}
+		else
+		{
+		*unescaped_str = s_new;
 		}
 	}
 
@@ -855,6 +860,9 @@ Trptr t = NULL;
 int found = 0;
 int lbrack_adj;
 int net_processing_is_off = 0;
+int unesc_len;
+int curr_srch_idx = 0;
+char *unescaped_str = NULL;
 
 list = zSplitTclList(s, &c);
 if(!list)
@@ -870,7 +878,7 @@ GLOBALS->default_flags=TR_RJUSTIFY;
 
 for(ii=0;ii<c;ii++)
 	{
-	s_new = make_net_name_from_tcl_list(list[ii]);
+	s_new = make_net_name_from_tcl_list(list[ii], &unescaped_str);
 	if(s_new)
 		{
 		if(net_processing_is_off) continue;
@@ -988,6 +996,37 @@ for(ii=0;ii<c;ii++)
 			lbrack_adj = 1;
 			}
 		}
+
+
+	unesc_len = strlen(unescaped_str);
+	for(i=0;i<GLOBALS->numfacs;i++)
+	        {
+	        int was_packed;
+	        char *hfacname = NULL;
+	                                 
+       		hfacname = hier_decompress_flagged(GLOBALS->facs[curr_srch_idx]->name, &was_packed);
+
+	        if(!strncmp(unescaped_str, hfacname, unesc_len)) 
+	                {
+			int hfacname_len = strlen(hfacname);
+			if((unesc_len == hfacname_len) || ((hfacname_len > unesc_len) && (hfacname[unesc_len] == '[')))
+				{
+				found++;
+				match_idx_list[ii] = curr_srch_idx;
+				match_type_list[ii] = 1; /* match was on normal search */
+			        if(was_packed) { free_2(hfacname); }
+				if(s_new != unescaped_str) { free_2(unescaped_str); }
+				goto import;
+		                }
+			}
+
+		curr_srch_idx++;
+		if(curr_srch_idx == GLOBALS->numfacs) curr_srch_idx = 0; /* optimization for rtlbrowse as names should be in order */
+		        
+	        if(was_packed) { free_2(hfacname); }
+	        }
+
+	if(s_new != unescaped_str) { free_2(unescaped_str); }
 
 	entry_suffixed=wave_alloca(2+strlen(s_new)+strlen(this_regex)+1);
 	*entry_suffixed=0x00;
@@ -1979,6 +2018,9 @@ return(is_url);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/10/04 15:15:20  gtkwave
+ * gtk1 compatibility fixes
+ *
  * Revision 1.12  2008/10/02 00:52:25  gtkwave
  * added dnd of external filetypes into viewer
  *
