@@ -11,7 +11,9 @@
 #include "globals.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#if WAVE_USE_GTK2
 #include <glib/gconvert.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -657,7 +659,11 @@ GdkModifierType state;
 gdouble x, y;
 #ifdef WAVE_USE_GTK2
 gint xi, yi;
+#else
+GdkEventMotion event[1];
+event[0].deviceid = GDK_CORE_POINTER;
 #endif
+
 
 if(GLOBALS->dnd_tgt_on_signalarea_treesearch_gtk2_c_1)
 	{
@@ -1459,6 +1465,7 @@ return(mult_entry);
  * ----------------------------------------------------------------------------
  */
 
+#if WAVE_USE_GTK2
 static void
 sig_selection_foreach_dnd
                       (GtkTreeModel *model,
@@ -1513,7 +1520,7 @@ sig_selection_foreach_dnd
   it->mult_entry = mult_entry;
   it->mult_len = mult_len;
 }
-
+#endif
 
 /* ----------------------------------------------------------------------------
  * add_dnd_from_tree_window - generates tcl names from selected tree clist ones
@@ -1525,12 +1532,16 @@ sig_selection_foreach_dnd
 
 char *add_dnd_from_tree_window(void)
 {
+#if WAVE_USE_GTK2
 struct iter_dnd_strings it;
 
 memset(&it, 0, sizeof(struct iter_dnd_strings));
 gtk_tree_selection_selected_foreach(GLOBALS->sig_selection_treesearch_gtk2_c_1, &sig_selection_foreach_dnd, (gpointer)&it);
 
 return(it.mult_entry);
+#else
+return(NULL);
+#endif
 }
 
 
@@ -1916,6 +1927,7 @@ return(rc);
 int process_url_list(char *s)
 {
 int is_url = 0;
+#if WAVE_USE_GTK2
 char pch = 0;
 
 char *nxt_hd = s;
@@ -1960,12 +1972,16 @@ for(;;)
 		}
 	}
 
+#endif
 return(is_url);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/10/02 00:52:25  gtkwave
+ * added dnd of external filetypes into viewer
+ *
  * Revision 1.11  2008/09/30 06:32:00  gtkwave
  * added dnd support for comment traces, collapse groups, blank traces
  *

@@ -65,6 +65,7 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 		/* Set the drag source for this widget, allowing the user
 		 * to drag items off of this clist.
 		 */
+		if(src)
 		gtk_drag_source_set(
 			src,
 			GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
@@ -813,6 +814,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/09/16 00:01:27  gtkwave
+ * prelim drag and drop from external apps (now disabled)
+ *
  * Revision 1.9  2008/05/08 20:10:04  gtkwave
  * 2.4 not required for dnd so requirement relaxed
  *

@@ -483,3 +483,4 @@
 		(i.e., dumpfile, savefile, stems file)
 		Added DnD of signal names from RTLBrowse source code
 		windows	directly into gtkwave.  
+		GTK1 compiler compatibility fixes.

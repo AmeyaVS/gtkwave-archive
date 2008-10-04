@@ -180,19 +180,18 @@ if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
 	}
 
 #else
-GtkOldEditable *oe;
-GtkOldEditableClass *oec;
+GtkEditable *oe = GTK_EDITABLE(&GTK_TEXT(text)->editable);
+GtkTextClass *tc = (GtkTextClass *) ((GtkObject*) (GTK_OBJECT(text)))->klass;
+GtkEditableClass *oec = &tc->parent_class;
 
 if((!text)||(!ctx)) return;
 
-oe = GTK_OLD_EDITABLE(&GTK_TEXT(text)->old_editable);
-oec = GTK_OLD_EDITABLE_GET_CLASS(oe);
-                                        
 if(oe->has_selection)
         {
         if(oec->get_chars)
                 {
                 sel = oec->get_chars(oe, oe->selection_start_pos, oe->selection_end_pos);
+                oec->delete_text(oe, oe->selection_start_pos, oe->selection_end_pos); /* guessing we needs to do this like with gtk2 */
 		}
 	}
 #endif
@@ -967,7 +966,6 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 
     bwlogbox_2(ctx, window, text);
 
-#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
     if(text)
 	{
 	GtkWidget *src = text;
@@ -997,7 +995,6 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         gtk_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), ctx);
         gtk_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), ctx);
         }
-#endif
 }
 
 
@@ -1718,6 +1715,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/10/03 20:29:33  gtkwave
+ * added dnd of signals from rtlbrowse into gtkwave
+ *
  * Revision 1.5  2008/06/11 08:01:40  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

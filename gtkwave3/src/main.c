@@ -1538,6 +1538,7 @@ if(!GLOBALS->hide_sst)
 	}
 #endif
 
+#if WAVE_USE_GTK2
 if(GLOBALS->treeopen_chain_head)
 	{
 	struct string_chain_t *t = GLOBALS->treeopen_chain_head;
@@ -1557,6 +1558,7 @@ if(GLOBALS->treeopen_chain_head)
 
 	GLOBALS->treeopen_chain_head = GLOBALS->treeopen_chain_curr = NULL;
 	}
+#endif
 
 if(!mainwindow_already_built)
 	{
@@ -2079,6 +2081,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2008/10/02 00:52:25  gtkwave
+ * added dnd of external filetypes into viewer
+ *
  * Revision 1.34  2008/10/01 01:31:38  gtkwave
  * more dnd fixes
  *
