@@ -742,11 +742,11 @@ static void ok_callback(GtkWidget *widget, struct logfile_context_t *ctx)
 }
 
 
-gboolean update_ctx_when_idle(gpointer dummy)
+gboolean update_ctx_when_idle(gpointer textview_or_dummy)
 {
 struct text_find_t *t;
 
-if(dummy == NULL)
+if(textview_or_dummy == NULL)
 if(anno_ctx)
 	{
 	if((anno_ctx->marker_set != old_marker_set) || (old_marker != anno_ctx->marker))
@@ -776,6 +776,15 @@ while(t)
 
 			GtkAdjustment *vadj = GTK_TEXT_VIEW (t->text)->vadjustment;
 			gdouble vvalue = vadj->value;
+
+			if(textview_or_dummy)
+				{
+				if(textview_or_dummy != (gpointer)(t->text))
+					{
+					t = t->next; 
+					continue;
+					}
+				}
 
 			gtk_text_buffer_get_start_iter(GTK_TEXT_VIEW (t->text)->buffer, &st_iter);
 			gtk_text_buffer_get_end_iter(GTK_TEXT_VIEW (t->text)->buffer, &en_iter);
@@ -1715,6 +1724,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/10/04 15:15:20  gtkwave
+ * gtk1 compatibility fixes
+ *
  * Revision 1.6  2008/10/03 20:29:33  gtkwave
  * added dnd of signals from rtlbrowse into gtkwave
  *
