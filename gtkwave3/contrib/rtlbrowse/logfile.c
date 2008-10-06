@@ -117,6 +117,104 @@ return(tmpspace);
 }
 
 
+static int is_identifier(char ch)
+{
+int rc = ((ch>='a')&&(ch<='z')) || ((ch>='A')&&(ch<='Z')) || ((ch>='0')&&(ch<='9')) || (ch == '_') || (ch == '$');
+
+return(rc);
+}
+
+
+static char *hexify(char *s)
+{
+int len = strlen(s);
+
+if(len < 4) 
+	{
+	char *s2 = malloc(len+1+1);
+	int idx;
+
+	s2[0]='b';
+	for(idx = 0; idx < len; idx++)
+		{
+		s2[idx+1] = toupper(s[idx]);
+		}
+	s2[idx+1] = 0;
+
+	free(s);
+	return(s2);
+	}
+	else
+	{
+	int skip = len & 3;
+	int siz = ((len + 3) / 4) + 1;
+	char *sorig = s;
+	char *s2 = calloc(1, siz);
+	int idx;
+	char *pnt = s2;
+	char arr[4];
+
+	while(*s)
+		{
+		char isx, isz;
+		int val;
+
+		if(!skip)
+			{
+			arr[0] = toupper(*(s++));
+			arr[1] = toupper(*(s++));
+			arr[2] = toupper(*(s++));
+			arr[3] = toupper(*(s++));
+			}
+			else
+			{
+			int j = 3;
+			for(idx = skip-1; idx>=0; idx--)
+				{
+				arr[j] = toupper(s[idx]);
+				j--;
+				}
+			for(idx = j; idx >= 0; idx--)
+				{
+				arr[idx] = ((arr[j+1] == 'X') || (arr[j+1] == 'Z')) ? arr[j+1] : '0';
+				}
+
+			s+=skip;
+			skip = 0;
+			}
+
+		isx = isz = 0;
+		val = 0;
+		for(idx=0; idx<4; idx++)
+			{
+			val <<= 1;
+			if(arr[idx] == '0') continue;
+			if(arr[idx] == '1') { val |= 1; continue; }
+			if(arr[idx] == 'Z') { isz++; continue; }
+			isx++;
+			}
+
+		if(isx)
+			{
+			*(pnt++) = (isx==4) ? 'X' : 'x';	
+			}
+		else
+		if(isz)
+			{
+			*(pnt++) = (isz==4) ? 'Z' : 'z';	
+			}
+		else
+			{
+			*(pnt++) = "0123456789ABCDEF"[val];
+			}
+		}
+
+	free(sorig);
+	return(s2);
+	}
+}
+
+
 /* for dnd */
 #define WAVE_DRAG_TAR_NAME_0         "text/plain"
 #define WAVE_DRAG_TAR_INFO_0         0
@@ -158,6 +256,8 @@ static void DNDDataRequestCB(
 struct logfile_context_t *ctx = (struct logfile_context_t *)data;
 GtkWidget *text = (GtkWidget *)widget;
 gchar *sel = NULL;
+gchar *sel2 = NULL;
+char ch;
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GtkTextIter start;
@@ -170,10 +270,51 @@ if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
        	{
        	if(gtk_text_iter_compare (&start, &end) < 0)
                	{
+		gint offs = gtk_text_iter_get_offset(&start);
+
                	sel = gtk_text_buffer_get_text(GTK_TEXT_VIEW(text)->buffer,
                                               &start, &end, FALSE);
-                                        
 
+		if(sel && strlen(sel))
+			{
+			while(gtk_text_iter_backward_char(&start))
+				{
+		               	sel2 = gtk_text_buffer_get_text(GTK_TEXT_VIEW(text)->buffer,
+                                              &start, &end, FALSE);
+				if(!sel2) break;
+				ch = *sel2;
+				g_free(sel2);
+				if(!is_identifier(ch))
+					{
+					gtk_text_iter_forward_char(&start);
+					break;
+					}
+				}
+
+			gtk_text_iter_backward_char(&end);
+			for(;;)
+				{
+				gtk_text_iter_forward_char(&end);
+		               	sel2 = gtk_text_buffer_get_text(GTK_TEXT_VIEW(text)->buffer,
+                                              	&start, &end, FALSE);
+				if(!sel2) break;
+				ch = *(sel2 + strlen(sel2) - 1);
+				g_free(sel2);
+				if(!is_identifier(ch))
+					{
+					gtk_text_iter_backward_char(&end);
+					break;
+					}
+				}
+
+		 	sel2 = gtk_text_buffer_get_text(GTK_TEXT_VIEW(text)->buffer,
+						&start, &end, FALSE);
+
+			g_free(sel);
+			sel = sel2;
+			sel2 = NULL;
+			}
+                        
 		gtk_text_buffer_delete_selection (GTK_TEXT_VIEW(text)->buffer, 0, 0);
 		}
 
@@ -350,104 +491,6 @@ static void
 log_realize_text (GtkWidget *text, gpointer data)
 {
 /* nothing for now */
-}
-
-
-static int is_identifier(char ch)
-{
-int rc = ((ch>='a')&&(ch<='z')) || ((ch>='A')&&(ch<='Z')) || ((ch>='0')&&(ch<='9')) || (ch == '_') || (ch == '$');
-
-return(rc);
-}
-
-
-static char *hexify(char *s)
-{
-int len = strlen(s);
-
-if(len < 4) 
-	{
-	char *s2 = malloc(len+1+1);
-	int idx;
-
-	s2[0]='b';
-	for(idx = 0; idx < len; idx++)
-		{
-		s2[idx+1] = toupper(s[idx]);
-		}
-	s2[idx+1] = 0;
-
-	free(s);
-	return(s2);
-	}
-	else
-	{
-	int skip = len & 3;
-	int siz = ((len + 3) / 4) + 1;
-	char *sorig = s;
-	char *s2 = calloc(1, siz);
-	int idx;
-	char *pnt = s2;
-	char arr[4];
-
-	while(*s)
-		{
-		char isx, isz;
-		int val;
-
-		if(!skip)
-			{
-			arr[0] = toupper(*(s++));
-			arr[1] = toupper(*(s++));
-			arr[2] = toupper(*(s++));
-			arr[3] = toupper(*(s++));
-			}
-			else
-			{
-			int j = 3;
-			for(idx = skip-1; idx>=0; idx--)
-				{
-				arr[j] = toupper(s[idx]);
-				j--;
-				}
-			for(idx = j; idx >= 0; idx--)
-				{
-				arr[idx] = ((arr[j+1] == 'X') || (arr[j+1] == 'Z')) ? arr[j+1] : '0';
-				}
-
-			s+=skip;
-			skip = 0;
-			}
-
-		isx = isz = 0;
-		val = 0;
-		for(idx=0; idx<4; idx++)
-			{
-			val <<= 1;
-			if(arr[idx] == '0') continue;
-			if(arr[idx] == '1') { val |= 1; continue; }
-			if(arr[idx] == 'Z') { isz++; continue; }
-			isx++;
-			}
-
-		if(isx)
-			{
-			*(pnt++) = (isx==4) ? 'X' : 'x';	
-			}
-		else
-		if(isz)
-			{
-			*(pnt++) = (isz==4) ? 'Z' : 'z';	
-			}
-		else
-			{
-			*(pnt++) = "0123456789ABCDEF"[val];
-			}
-		}
-
-	free(sorig);
-	return(s2);
-	}
 }
 
 
@@ -1724,6 +1767,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/10/06 17:58:03  gtkwave
+ * optimize by not refreshing un-DnD'd windows
+ *
  * Revision 1.7  2008/10/04 15:15:20  gtkwave
  * gtk1 compatibility fixes
  *
