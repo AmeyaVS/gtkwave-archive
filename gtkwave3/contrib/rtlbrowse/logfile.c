@@ -382,8 +382,9 @@ if(sel)
 			else if(*pnt == ']') degate = 0;
 			}
 		}
-	free(fname);
 
+	unlink(fname);
+	free(fname);
 
 	if(cnt)
 		{
@@ -438,7 +439,6 @@ if(sel)
 		}
 
 	jrb_free_tree(strs);
-	unlink(fname);
 	g_free(sel);
 	}
 
@@ -810,24 +810,24 @@ if(anno_ctx)
 t = text_root;
 while(t)
 	{
+	if(textview_or_dummy)
+		{
+		if(textview_or_dummy != (gpointer)(t->text))
+			{
+			t = t->next; 
+			continue;
+			}
+		}
+
 	if(t->window)
 		{
-		if(!t->ctx->display_mode)
+		if((!t->ctx->display_mode) || (textview_or_dummy))
 			{
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 			GtkTextIter st_iter, en_iter;
 
 			GtkAdjustment *vadj = GTK_TEXT_VIEW (t->text)->vadjustment;
 			gdouble vvalue = vadj->value;
-
-			if(textview_or_dummy)
-				{
-				if(textview_or_dummy != (gpointer)(t->text))
-					{
-					t = t->next; 
-					continue;
-					}
-				}
 
 			gtk_text_buffer_get_start_iter(GTK_TEXT_VIEW (t->text)->buffer, &st_iter);
 			gtk_text_buffer_get_end_iter(GTK_TEXT_VIEW (t->text)->buffer, &en_iter);
@@ -1767,6 +1767,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/10/06 18:30:57  gtkwave
+ * allow DnD text drag to be able to process half-highlighted signal names
+ *
  * Revision 1.8  2008/10/06 17:58:03  gtkwave
  * optimize by not refreshing un-DnD'd windows
  *
