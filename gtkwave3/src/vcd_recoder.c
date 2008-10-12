@@ -2293,6 +2293,17 @@ if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
         vcd_exit(255);
         }
 
+if(GLOBALS->blackout_regions)
+	{
+	struct blackout_region_t *bt = GLOBALS->blackout_regions;
+	while(bt)
+		{
+		bt->bstart *= GLOBALS->time_scale;
+		bt->bend *= GLOBALS->time_scale;
+		bt = bt->next;
+		}
+	}
+
 /* is_vcd=~0; */
 GLOBALS->is_lx2 = LXT2_IS_VLIST;
 
@@ -2724,6 +2735,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.16  2008/09/17 04:33:39  gtkwave
  * support for smaller timescales in VCD files
  *

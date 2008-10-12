@@ -1542,7 +1542,7 @@ for(;;)
 				{
 				struct blackout_region_t *bt = calloc_2(1, sizeof(struct blackout_region_t));
 
-				bt->bstart = GLOBALS->current_time_vcd_partial_c_2;
+				bt->bstart = GLOBALS->current_time_vcd_partial_c_2 * GLOBALS->time_scale;
 				bt->next = GLOBALS->blackout_regions;
 				GLOBALS->blackout_regions = bt;
 				}
@@ -1552,7 +1552,7 @@ for(;;)
 			GLOBALS->dumping_off_vcd_partial_c_2=0;
 			if((GLOBALS->blackout_regions)&&(GLOBALS->blackout_regions->bstart>GLOBALS->blackout_regions->bend))
 				{
-				GLOBALS->blackout_regions->bend = GLOBALS->current_time_vcd_partial_c_2;
+				GLOBALS->blackout_regions->bend = GLOBALS->current_time_vcd_partial_c_2 * GLOBALS->time_scale;
 				}
 			break;
 		case T_DUMPVARS:
@@ -1570,7 +1570,7 @@ for(;;)
 		case T_EOF:
 			if((GLOBALS->blackout_regions)&&(GLOBALS->blackout_regions->bstart>GLOBALS->blackout_regions->bend))
 				{
-				GLOBALS->blackout_regions->bend = GLOBALS->current_time_vcd_partial_c_2;
+				GLOBALS->blackout_regions->bend = GLOBALS->current_time_vcd_partial_c_2 * GLOBALS->time_scale;
 				}
 			return;
 		default:
@@ -2385,6 +2385,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/09/17 04:33:38  gtkwave
+ * support for smaller timescales in VCD files
+ *
  * Revision 1.7  2008/07/18 18:46:11  gtkwave
  * bitblasted vector relinking fix, disable hier pack in legacy+partial vcdload
  *

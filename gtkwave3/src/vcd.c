@@ -2456,6 +2456,17 @@ if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
         vcd_exit(255);
         }
 
+if(GLOBALS->blackout_regions)
+        {
+        struct blackout_region_t *bt = GLOBALS->blackout_regions;
+        while(bt)
+                {               
+                bt->bstart *= GLOBALS->time_scale;
+                bt->bend *= GLOBALS->time_scale;
+                bt = bt->next;   
+                }
+        }
+
 GLOBALS->is_vcd=~0;
 
 return(GLOBALS->max_time);
@@ -2466,6 +2477,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/09/17 04:33:38  gtkwave
+ * support for smaller timescales in VCD files
+ *
  * Revision 1.9  2008/07/20 01:29:36  gtkwave
  * added command line option --comphier
  *

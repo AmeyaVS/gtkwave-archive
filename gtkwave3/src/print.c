@@ -851,8 +851,11 @@ pr_renderblackout (pr_context * prc)
 
       while (bt)
 	{
-	  if (((bt->bstart <= lhs) && (bt->bend >= lhs))
-	      || ((bt->bstart >= lhs) && (bt->bstart <= rhs)))
+	  if((bt->bend < lhs) || (bt->bstart > rhs))
+	    {
+  	      /* nothing */
+	    }
+	    else
 	    {
 	      lclip = bt->bstart;
 	      rclip = bt->bend;
@@ -867,8 +870,8 @@ pr_renderblackout (pr_context * prc)
 
 	      lclip -= lhs;
 	      rclip -= lhs;
-	      if (rclip > (GLOBALS->wavewidth + 1))
-		rclip = GLOBALS->wavewidth + 1;
+              if(rclip>((GLOBALS->wavewidth+1)*GLOBALS->nspx)) 
+                rclip = (GLOBALS->wavewidth+1)*(GLOBALS->nspx);
 
 	      pr_setgray (prc, 0.80);
 	      pr_draw_box (prc,
@@ -2852,6 +2855,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/02/08 02:26:36  gtkwave
+ * anti-aliased font support add
+ *
  * Revision 1.14  2008/01/28 23:08:50  gtkwave
  * added infinite scaling define in currenttime.h
  *

@@ -492,7 +492,11 @@ if(bt)
 
 	while(bt)
 		{
-		if( ((bt->bstart <= lhs) && (bt->bend >= lhs)) || ((bt->bstart >= lhs) && (bt->bstart <= rhs)) )
+		if((bt->bend < lhs) || (bt->bstart > rhs))
+			{
+			/* nothing, out of bounds */
+			}
+			else
 			{
 			lclip = bt->bstart; rclip = bt->bend;
 
@@ -503,7 +507,7 @@ if(bt)
 
 			lclip -= lhs;
 			rclip -= lhs;
-			if(rclip>(GLOBALS->wavewidth+1)) rclip = GLOBALS->wavewidth+1;
+			if(rclip>((GLOBALS->wavewidth+1)*GLOBALS->nspx)) rclip = (GLOBALS->wavewidth+1)*(GLOBALS->nspx);
 			
 			gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_xfill_wavewindow_c_1, TRUE, (((gdouble)lclip)*GLOBALS->pxns), GLOBALS->fontheight,(((gdouble)(rclip-lclip))*GLOBALS->pxns), GLOBALS->waveheight-GLOBALS->fontheight);
 			}
@@ -3769,6 +3773,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2008/08/24 21:55:27  gtkwave
+ * update for timestart line in savefiles
+ *
  * Revision 1.36  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

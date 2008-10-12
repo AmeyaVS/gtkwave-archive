@@ -1539,6 +1539,7 @@ if(GLOBALS->exclude_offset_lxt_c_1)
 		bt = calloc_2(1, sizeof(struct blackout_region_t));
 		bt->bstart = bs;
 		bt->bend = be;
+
 		bt->next = GLOBALS->blackout_regions;
 
 		GLOBALS->blackout_regions = bt;
@@ -1814,6 +1815,17 @@ treedebug(GLOBALS->treeroot,"");
 GLOBALS->min_time = GLOBALS->first_cycle_lxt_c_2*GLOBALS->time_scale; GLOBALS->max_time=GLOBALS->last_cycle_lxt_c_2*GLOBALS->time_scale;
 fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS->min_time, GLOBALS->max_time);
 GLOBALS->is_lxt = ~0;
+
+if(GLOBALS->blackout_regions)
+        {
+        struct blackout_region_t *bt = GLOBALS->blackout_regions;
+        while(bt)
+                {
+                bt->bstart *= GLOBALS->time_scale;
+                bt->bend *= GLOBALS->time_scale;
+                bt = bt->next;
+                }
+        }
 
 return(GLOBALS->max_time);
 }
@@ -2378,6 +2390,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.5  2008/07/22 18:46:16  gtkwave
  * add compressed hierarchy handling to lxt reader
  *
