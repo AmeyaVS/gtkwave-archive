@@ -70,6 +70,9 @@
 /* Define to 1 if you have the `rpc' library (-lrpc). */
 #undef HAVE_LIBRPC
 
+/* Define to 1 if you have the `tcl' library (-ltcl). */
+#undef HAVE_LIBTCL
+
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
@@ -200,6 +203,9 @@
 
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
 #undef HAVE_SYS_WAIT_H
+
+/* Define to 1 if you have the <tcl.h> header file. */
+#undef HAVE_TCL_H
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H

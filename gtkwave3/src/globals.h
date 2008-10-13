@@ -54,6 +54,10 @@
 #include"wavealloca.h"
 #include"jrb.h"
 
+#ifdef HAVE_TCL_H
+#include <tcl.h>
+#endif
+
 struct Global{ 
 
 /*
@@ -390,6 +394,9 @@ int max_compare_pos_tc_lxt_c_2; /* from lxt.c 200 */
 /*
  * main.c
  */
+#ifdef HAVE_TCL_H
+Tcl_Interp *interp;
+#endif
 char block_xy_update;
 char *winname;
 unsigned int num_notebook_pages;

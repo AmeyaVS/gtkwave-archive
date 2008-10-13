@@ -42,11 +42,16 @@ char *add_dnd_from_signal_window(void);
 char *add_dnd_from_tree_window(void);
 char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void);
 
+void make_tcl_interpreter(char *argv[]);
+
 #endif
 
 /* 
  * $Id$
  * $Log$
+ * Revision 1.5  2008/10/02 00:52:25  gtkwave
+ * added dnd of external filetypes into viewer
+ *
  * Revision 1.4  2008/09/29 22:46:39  gtkwave
  * complex dnd handling with gtkwave trace attributes
  *

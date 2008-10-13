@@ -235,7 +235,7 @@ AC_FUNC_ALLOCA
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h])
+AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h tcl.h])
 
 # rpc workaround for cygwin
 AC_CHECK_HEADERS([rpc/types.h rpc/xdr.h], [], [],
@@ -273,6 +273,7 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([atexit btowc bzero dup2 memmove memset munmap pow putenv re_comp realpath regcomp select setenv strcasecmp strchr strdup strerror strncasecmp strrchr strstr getopt_long setenv unsetenv])
 AC_CHECK_LIB(nsl,xdrmem_create)
 AC_CHECK_LIB(rpc,xdrmem_create)
+AC_CHECK_LIB(tcl,Tcl_CreateInterp)
 
 AC_CONFIG_FILES([Makefile
 		doc/Makefile

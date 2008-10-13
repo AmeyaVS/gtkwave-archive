@@ -65,6 +65,8 @@
 #include "translate.h"
 #include "ptranslate.h"
 
+#include "tcl_helper.h"
+
 static void switch_page(GtkNotebook     *notebook,
 			GtkNotebookPage *page,
 			guint            page_num,
@@ -291,6 +293,7 @@ GtkWidget *timebox;
 GtkWidget *panedwindow;
 GtkWidget *dummy1, *dummy2;
 GtkWidget *toolhandle=NULL;
+int tcl_interpreter_needs_making = 0;
 
 int splash_disable_rc_override = 0;
 int mainwindow_already_built;
@@ -304,6 +307,7 @@ if(!GLOBALS)
 	mainwindow_already_built = 0;
 
 	GLOBALS->logfiles = calloc(1, sizeof(void **)); /* calloc is deliberate! */
+	tcl_interpreter_needs_making = 1;
 	}
 	else
 	{
@@ -765,6 +769,10 @@ if(is_giga)
 	}
 
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
+if(tcl_interpreter_needs_making)
+	{
+	make_tcl_interpreter(argv);
+	}
 
 if((!wname)&&(GLOBALS->make_vcd_save_file))
 	{
@@ -2081,6 +2089,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2008/10/04 15:15:20  gtkwave
+ * gtk1 compatibility fixes
+ *
  * Revision 1.35  2008/10/02 00:52:25  gtkwave
  * added dnd of external filetypes into viewer
  *

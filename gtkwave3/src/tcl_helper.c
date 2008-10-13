@@ -35,6 +35,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef HAVE_TCL_H
+#include <tcl.h>
+#endif
+
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
 #endif
@@ -2015,9 +2019,100 @@ for(;;)
 return(is_url);
 }
 
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXX functions for embedding TCL interpreter XXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+#if HAVE_TCL_H
+
+static int gtkwavetcl_about(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+return(TCL_OK);
+
+#if 0
+Tcl_Obj *aobj = NULL;
+char *reportString = "sample report string";
+int i;
+printf("gtkwave::about(%d args)\n", objc);
+
+for(i=0;i<objc;i++)
+        {
+        char *s = Tcl_GetString(objv[i]);
+        printf("\t'%s'\n", s);
+        }
+
+if(reportString) 
+        {
+        aobj = Tcl_NewStringObj(reportString, -1);
+        Tcl_SetObjResult(interp, aobj);
+        }
+
+return(TCL_ERROR);
+#endif
+}
+
+static int gtkwavetcl_zoom(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+return(TCL_OK);
+}
+
+
+typedef struct 
+	{
+    	const char *cmdstr;
+    	int (*func)();
+	} cmdstruct;
+
+static cmdstruct gtkwave_commands[] =
+	{
+   	{"about", gtkwavetcl_about},
+   	{"zoom", gtkwavetcl_zoom},
+   	{"", NULL} /* sentinel */
+	};
+
+void make_tcl_interpreter(char *argv[])
+{
+int i;
+char commandName[128];
+
+Tcl_FindExecutable(argv[0]);
+
+GLOBALS->interp = Tcl_CreateInterp();
+
+if (TCL_OK != Tcl_Init(GLOBALS->interp)) 
+	{
+   	fprintf(stderr, "GTKWAVE | Tcl_Init error: %s\n", Tcl_GetStringResult (GLOBALS->interp));
+   	exit(EXIT_FAILURE);
+  	}
+
+strcpy(commandName, "gtkwave::");
+for (i = 0; gtkwave_commands[i].func != NULL; i++) 
+	{
+      	strcpy(commandName + 9, gtkwave_commands[i].cmdstr);
+      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
+                (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
+                (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+   	}
+
+fprintf(stderr, "GTKWAVE | Created Tcl interpreter\n");
+}
+
+#else
+
+void make_tcl_interpreter(char *argv[])
+{
+/* nothing */
+}
+
+#endif
+
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/10/04 21:00:08  gtkwave
+ * do direct search before any attempted regex ones in list process
+ *
  * Revision 1.13  2008/10/04 15:15:20  gtkwave
  * gtk1 compatibility fixes
  *

@@ -395,6 +395,9 @@ NULL, /* lt_buf_lxt_c_1 183 */
 /* 
  * main.c
  */
+#ifdef HAVE_TCL_H
+NULL, /* interp */
+#endif
 0, /* block_xy_update */
 NULL, /* winname */
 0, /* num_notebook_pages */
@@ -1262,6 +1265,11 @@ void reload_into_new_context(void)
  new_globals = initialize_globals();
  free(new_globals->gtk_context_bridge_ptr); /* don't need this one as we're copying over the old one... */
  new_globals->gtk_context_bridge_ptr = GLOBALS->gtk_context_bridge_ptr;
+
+ /* tcl interpreter */
+#ifdef HAVE_TCL_H
+ new_globals->interp = GLOBALS->interp;
+#endif
  
  /* Marker positions */
  memcpy(new_globals->named_markers, GLOBALS->named_markers, sizeof(GLOBALS->named_markers));
