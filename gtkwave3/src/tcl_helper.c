@@ -2026,34 +2026,10 @@ return(is_url);
 
 #if HAVE_TCL_H
 
-static int gtkwavetcl_about(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int gtkwavetcl_nop(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-return(TCL_OK);
-
-#if 0
-Tcl_Obj *aobj = NULL;
-char *reportString = "sample report string";
-int i;
-printf("gtkwave::about(%d args)\n", objc);
-
-for(i=0;i<objc;i++)
-        {
-        char *s = Tcl_GetString(objv[i]);
-        printf("\t'%s'\n", s);
-        }
-
-if(reportString) 
-        {
-        aobj = Tcl_NewStringObj(reportString, -1);
-        Tcl_SetObjResult(interp, aobj);
-        }
-
-return(TCL_ERROR);
-#endif
-}
-
-static int gtkwavetcl_zoom(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
+/* nothing, this is simply to call gtk's main loop */
+gtkwave_gtk_main_iteration();
 return(TCL_OK);
 }
 
@@ -2100,7 +2076,7 @@ if(objc > 1)
 
 GLOBALS->enable_fast_exit = fexit;
 GLOBALS->script_handle = old_handle;
-return(TCL_OK);
+return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewStringObj(reportString, -1); Tcl_SetObjResult(interp, aobj); */
 }
 
 
@@ -2108,12 +2084,11 @@ typedef struct
 	{
     	const char *cmdstr;
     	int (*func)();
-	} cmdstruct;
+	} tcl_cmdstruct;
 
-static cmdstruct gtkwave_commands[] =
+static tcl_cmdstruct gtkwave_commands[] =
 	{
-   	{"about", gtkwavetcl_about},
-   	{"zoom", gtkwavetcl_zoom},
+   	{"nop", gtkwavetcl_nop},
    	{"", NULL} /* sentinel */
 	};
 
@@ -2156,12 +2131,14 @@ for(i=0;i<num_menu_items;i++)
 	}
 
 
-#if 0
 for (i = 0; gtkwave_commands[i].func != NULL; i++) 
 	{
       	strcpy(commandName + 9, gtkwave_commands[i].cmdstr);
+
+      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
+                (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
+                (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
    	}
-#endif
 }
 
 #else
@@ -2177,6 +2154,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/10/14 00:53:46  gtkwave
+ * enabled tcl scripts to call existing gtkwave style scripted menu functions
+ *
  * Revision 1.15  2008/10/13 22:16:52  gtkwave
  * tcl interpreter integration
  *
