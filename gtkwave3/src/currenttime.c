@@ -117,10 +117,18 @@ if((pnt=GLOBALS->atoi_cont_ptr))
 	}
 
 if(!offs) return(rval);
-doffs=strchr(time_prefix, (int)dim);
-if(!doffs) return(rval); /* should *never* happen */
+if((dim=='S')||(dim=='s'))
+	{
+	doffs = time_prefix;
+	}
+	else
+	{
+	doffs=strchr(time_prefix, (int)dim);
+	if(!doffs) return(rval); /* should *never* happen */
+	}
 
 delta= (doffs-time_prefix) - (offs-time_prefix);
+
 if(delta<0)
 	{
 	for(i=delta;i<0;i++)
@@ -538,6 +546,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.8  2008/09/17 04:33:38  gtkwave
  * support for smaller timescales in VCD files
  *
