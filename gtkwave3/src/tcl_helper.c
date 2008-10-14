@@ -2409,6 +2409,78 @@ int value = GLOBALS->fontheight;
 return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
 }
 
+static int gtkwavetcl_setMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+        TimeType mrk = atoi_64(s);
+
+	if((mrk >= GLOBALS->min_time) && (mrk <= GLOBALS->max_time))
+		{
+		GLOBALS->tims.marker = mrk;
+		}
+		else
+		{
+		GLOBALS->tims.marker = LLDescriptor(-1);
+		}
+
+        update_markertime(GLOBALS->tims.marker);
+        GLOBALS->signalwindow_width_dirty=1;
+        MaxSignalLength();
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        wavearea_configure_event(GLOBALS->wavearea, NULL);
+
+	gtkwave_gtk_main_iteration();
+	}
+
+return(TCL_OK);
+}
+
+static int gtkwavetcl_setWindowStartTime(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+
+	if(s)
+	        {
+	        TimeType gt;
+	        char update_string[128];
+	        char timval[40];
+	        GtkAdjustment *hadj;
+	        TimeType pageinc;
+
+	        gt=unformat_time(s, GLOBALS->time_dimension);    
+          
+	        if(gt<GLOBALS->tims.first) gt=GLOBALS->tims.first;
+	        else if(gt>GLOBALS->tims.last) gt=GLOBALS->tims.last;
+ 
+	        hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+	        hadj->value=gt;
+
+	        pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+	        if(gt<(GLOBALS->tims.last-pageinc+1))
+	                GLOBALS->tims.timecache=gt;
+	                else
+	                {
+	                GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
+	                if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
+	                }
+	
+	        reformat_time(timval,GLOBALS->tims.timecache,GLOBALS->time_dimension);
+	        
+	        time_update();
+	        }
+
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        wavearea_configure_event(GLOBALS->wavearea, NULL);
+	gtkwave_gtk_main_iteration();
+	}
+
+return(TCL_OK);
+}
+
 
 
 typedef struct 
@@ -2445,6 +2517,8 @@ static tcl_cmdstruct gtkwave_commands[] =
 	{"getWindowStartTime", 			gtkwavetcl_getWindowStartTime},
 	{"getZoomFactor",			gtkwavetcl_getZoomFactor},
    	{"nop", 				gtkwavetcl_nop},
+	{"setMarker",				gtkwavetcl_setMarker},
+	{"setWindowStartTime",			gtkwavetcl_setWindowStartTime},
    	{"", 					NULL} /* sentinel */
 	};
 
@@ -2558,6 +2632,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/10/14 18:56:12  gtkwave
+ * starting to add getXX functions called from tcl
+ *
  * Revision 1.17  2008/10/14 03:32:09  gtkwave
  * starting to add non-menu commands
  *
