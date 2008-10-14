@@ -490,3 +490,5 @@
 		Fixed longstanding bug with blackout regions
 		rendering.
 		Integrating embedded Tcl interpreter.
+		Fixed bug with unformat time when base time is in
+		seconds.

@@ -2409,12 +2409,20 @@ int value = GLOBALS->fontheight;
 return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
 }
 
+static int gtkwavetcl_getLeftJustifySigs(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+int value = (GLOBALS->left_justify_sigs != 0);
+return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
+}
+
+
+
 static int gtkwavetcl_setMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 if(objc == 2)
         {
         char *s = Tcl_GetString(objv[1]);
-        TimeType mrk = atoi_64(s);
+        TimeType mrk = unformat_time(s, GLOBALS->time_dimension);
 
 	if((mrk >= GLOBALS->min_time) && (mrk <= GLOBALS->max_time))
 		{
@@ -2481,6 +2489,89 @@ if(objc == 2)
 return(TCL_OK);
 }
 
+static int gtkwavetcl_setZoomFactor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+        float f;
+         
+        sscanf(s, "%f", &f);
+        if(f>0.0)
+                {
+                f=0.0; /* in case they try to go out of range */
+                }
+        else
+        if(f<-62.0)
+                {
+                f=-62.0; /* in case they try to go out of range */
+                } 
+                
+        GLOBALS->tims.prevzoom=GLOBALS->tims.zoom; 
+        GLOBALS->tims.zoom=(gdouble)f;
+        calczoom(GLOBALS->tims.zoom);
+        fix_wavehadj();
+
+        gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed");
+        gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed");
+
+	gtkwave_gtk_main_iteration();
+	}
+
+return(TCL_OK);
+}
+
+static int gtkwavetcl_setLeftJustifySigs(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+        TimeType val = atoi_64(s);
+	GLOBALS->left_justify_sigs = (val != LLDescriptor(0)) ? ~0 : 0;
+
+        MaxSignalLength();
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+
+	gtkwave_gtk_main_iteration();
+	}
+
+return(TCL_OK);
+}
+
+static int gtkwavetcl_setNamedMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 3)
+        {
+        char *s = Tcl_GetString(objv[1]);
+	int which = -1;
+
+        if((s[0]>='A')&&(s[0]<='Z'))  
+                {
+                which = s[0] - 'A';
+                }
+        else
+        if((s[0]>='a')&&(s[0]<='z'))  
+                {
+                which = s[0] - 'a';
+                }
+	else                
+		{
+	        which = atoi(s);
+		}
+
+        if((which >= 0) && (which < 26))
+                {
+	        char *t = Tcl_GetString(objv[2]);
+		TimeType gt=unformat_time(t, GLOBALS->time_dimension);
+
+                GLOBALS->named_markers[which] = gt;
+	        wavearea_configure_event(GLOBALS->wavearea, NULL);
+		gtkwave_gtk_main_iteration();
+                } 
+	}
+
+return(TCL_OK);
+}
 
 
 typedef struct 
@@ -2497,6 +2588,7 @@ static tcl_cmdstruct gtkwave_commands[] =
 	{"getFacName", 				gtkwavetcl_getFacName},
 	{"getFontHeight",			gtkwavetcl_getFontHeight},
 	{"getHierMaxLevel",			gtkwavetcl_getHierMaxLevel},
+	{"getLeftJustifySigs",			gtkwavetcl_getLeftJustifySigs},
 	{"getLongestName", 			gtkwavetcl_getLongestName},
 	{"getMarker",				gtkwavetcl_getMarker},
 	{"getMaxTime", 				gtkwavetcl_getMaxTime},
@@ -2517,8 +2609,11 @@ static tcl_cmdstruct gtkwave_commands[] =
 	{"getWindowStartTime", 			gtkwavetcl_getWindowStartTime},
 	{"getZoomFactor",			gtkwavetcl_getZoomFactor},
    	{"nop", 				gtkwavetcl_nop},
+	{"setLeftJustifySigs",			gtkwavetcl_setLeftJustifySigs},
 	{"setMarker",				gtkwavetcl_setMarker},
+	{"setNamedMarker",			gtkwavetcl_setNamedMarker},
 	{"setWindowStartTime",			gtkwavetcl_setWindowStartTime},
+	{"setZoomFactor",			gtkwavetcl_setZoomFactor},
    	{"", 					NULL} /* sentinel */
 	};
 
@@ -2632,6 +2727,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/10/14 19:39:04  gtkwave
+ * beginning to add setXX capability from tcl scripts
+ *
  * Revision 1.18  2008/10/14 18:56:12  gtkwave
  * starting to add getXX functions called from tcl
  *
