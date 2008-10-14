@@ -2415,6 +2415,36 @@ int value = (GLOBALS->left_justify_sigs != 0);
 return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
 }
 
+static int gtkwavetcl_getSaveFileName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+char *value = GLOBALS->filesel_writesave;
+if(value)
+	{
+	return(gtkwavetcl_printString(clientData, interp, objc, objv, value));
+	}
+
+return(TCL_OK);
+}
+
+static int gtkwavetcl_getStemsFileName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+char *value = GLOBALS->stems_name;
+if(value)
+	{
+	return(gtkwavetcl_printString(clientData, interp, objc, objv, value));
+	}
+
+return(TCL_OK);
+}
+
+static int gtkwavetcl_getTraceScrollbarRowValue(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+int value = (int)wadj->value;
+
+return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
+}
+
 
 
 static int gtkwavetcl_setMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -2574,6 +2604,32 @@ return(TCL_OK);
 }
 
 
+static int gtkwavetcl_setTraceScrollbarRowValue(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+        int target = atoi(s);
+        GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+
+        int num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
+        num_traces_displayable--;   /* for the time trace that is always there */
+
+	if(target > GLOBALS->traces.visible - num_traces_displayable) target = GLOBALS->traces.visible - num_traces_displayable;
+
+	if(target < 0) target = 0;
+
+	wadj->value = target;
+
+        gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
+        gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
+	gtkwave_gtk_main_iteration();
+	}
+
+return(TCL_OK);
+}
+
+
 typedef struct 
 	{
     	const char *cmdstr;
@@ -2596,10 +2652,13 @@ static tcl_cmdstruct gtkwave_commands[] =
 	{"getNamedMarker", 			gtkwavetcl_getNamedMarker},
 	{"getNumFacs", 				gtkwavetcl_getNumFacs},
 	{"getPixelsUnitTime", 			gtkwavetcl_getPixelsUnitTime},
+	{"getSaveFileName",			gtkwavetcl_getSaveFileName},
+	{"getStemsFileName",			gtkwavetcl_getStemsFileName},
 	{"getTimeDimension", 			gtkwavetcl_getTimeDimension},
 	{"getTotalNumTraces",  			gtkwavetcl_getTotalNumTraces},
 	{"getTraceFlagsFromIndex", 		gtkwavetcl_getTraceFlagsFromIndex},
 	{"getTraceNameFromIndex", 		gtkwavetcl_getTraceNameFromIndex},
+	{"getTraceScrollbarRowValue", 		gtkwavetcl_getTraceScrollbarRowValue},
 	{"getTraceValueAtMarkerFromIndex", 	gtkwavetcl_getTraceValueAtMarkerFromIndex},
 	{"getUnitTimePixels", 			gtkwavetcl_getUnitTimePixels},
 	{"getVisibleNumTraces", 		gtkwavetcl_getVisibleNumTraces},
@@ -2612,6 +2671,7 @@ static tcl_cmdstruct gtkwave_commands[] =
 	{"setLeftJustifySigs",			gtkwavetcl_setLeftJustifySigs},
 	{"setMarker",				gtkwavetcl_setMarker},
 	{"setNamedMarker",			gtkwavetcl_setNamedMarker},
+	{"setTraceScrollbarRowValue", 		gtkwavetcl_setTraceScrollbarRowValue},
 	{"setWindowStartTime",			gtkwavetcl_setWindowStartTime},
 	{"setZoomFactor",			gtkwavetcl_setZoomFactor},
    	{"", 					NULL} /* sentinel */
@@ -2727,6 +2787,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/10/14 20:47:53  gtkwave
+ * more setXX adds for tcl
+ *
  * Revision 1.19  2008/10/14 19:39:04  gtkwave
  * beginning to add setXX capability from tcl scripts
  *
