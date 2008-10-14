@@ -34,6 +34,10 @@
 #include <io.h>
 #endif
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#endif
+
 
 static GtkItemFactoryEntry menu_items[WV_MENU_NUMITEMS];
 
@@ -4585,6 +4589,7 @@ int execute_script(char *name)
 FILE *f = fopen(name, "rb");
 int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
 int i;
+int nlen = strlen(name);
 
 if(!f)
 	{
@@ -4593,11 +4598,33 @@ if(!f)
 	gtk_exit(255);
 	}
 
+if((nlen > 4) && (!strcasecmp(".tcl", name + nlen - 4)))
+	{
+#ifdef HAVE_TCL_H
+	int tclrc;
+	char *tcl_cmd = malloc_2(7 + nlen + 1);
+	strcpy(tcl_cmd, "source ");
+	strcpy(tcl_cmd+7, name);
+
+	fprintf(stderr, "GTKWAVE | Executing Tcl script '%s'\n", name);
+	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
+	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
+
+	free_2(tcl_cmd);
+#else
+	fprintf(stderr, "GTKWAVE | Tcl support not compiled into gtkwave, exiting.");
+	gtk_exit(255);
+#endif
+	}
+else
 while(!feof(f))
 	{
 	char *s = fgetmalloc_stripspaces(f);
+	char fexit = GLOBALS->enable_fast_exit;
 
 	if(!s) continue;
+
+	GLOBALS->enable_fast_exit = 1;
 
 	if(s[0] != '#')
 	for(i=0;i<nmenu_items;i++)
@@ -4618,6 +4645,7 @@ while(!feof(f))
 			}
 		}
 
+	GLOBALS->enable_fast_exit = fexit;
 	if(s) free_2(s);
 	}
 
@@ -4629,6 +4657,14 @@ for(i=0;i<GLOBALS->num_notebook_pages;i++)
 	}
 
 return(0);
+}
+
+
+GtkItemFactoryEntry *retrieve_menu_items_array(int *num_items)
+{
+*num_items = sizeof(menu_items) / sizeof(menu_items[0]);
+
+return(menu_items);
 }
 
 
@@ -4783,6 +4819,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2008/10/02 00:52:25  gtkwave
+ * added dnd of external filetypes into viewer
+ *
  * Revision 1.38  2008/09/27 19:08:39  gtkwave
  * compiler warning fixes
  *

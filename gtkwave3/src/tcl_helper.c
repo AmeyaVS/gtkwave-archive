@@ -28,6 +28,7 @@
 #include "busy.h"
 #include "debug.h"
 #include "hierpack.h"
+#include "menu.h"
 #include "tcl_helper.h"
 
 #if !defined __MINGW32__ && !defined _MSC_VER
@@ -2056,6 +2057,52 @@ static int gtkwavetcl_zoom(ClientData clientData, Tcl_Interp *interp, int objc, 
 return(TCL_OK);
 }
 
+static int menu_func(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+GtkItemFactoryEntry *ife = (GtkItemFactoryEntry *)clientData;
+int i;
+FILE *old_handle = GLOBALS->script_handle;
+char fexit = GLOBALS->enable_fast_exit;
+
+GLOBALS->script_handle = NULL;
+GLOBALS->enable_fast_exit = 1;
+
+if(objc > 1)
+	{
+	int fd = -1;
+	char *fnam = tmpnam_2("tclwave", &fd);
+	if(fnam)
+		{
+		GLOBALS->script_handle = fopen(fnam, "wb");
+		for(i=1;i<objc;i++)
+			{
+			char *s = Tcl_GetString(objv[i]);
+			fprintf(GLOBALS->script_handle,"%s\n", s);
+			}
+		fclose(GLOBALS->script_handle);
+		GLOBALS->script_handle = fopen(fnam, "rb");
+		ife->callback();
+		gtkwave_gtk_main_iteration();
+		unlink(fnam);
+		if(fd>-1) 
+			{
+			free_2(fnam);
+			close(fd);
+			}
+		GLOBALS->script_handle = NULL;
+		}
+	}
+	else
+	{
+	ife->callback();
+	gtkwave_gtk_main_iteration();
+	}
+
+GLOBALS->enable_fast_exit = fexit;
+GLOBALS->script_handle = old_handle;
+return(TCL_OK);
+}
+
 
 typedef struct 
 	{
@@ -2074,6 +2121,8 @@ void make_tcl_interpreter(char *argv[])
 {
 int i;
 char commandName[128];
+GtkItemFactoryEntry *ife;
+int num_menu_items;
 
 Tcl_FindExecutable(argv[0]);
 
@@ -2086,15 +2135,33 @@ if (TCL_OK != Tcl_Init(GLOBALS->interp))
   	}
 
 strcpy(commandName, "gtkwave::");
+
+ife = retrieve_menu_items_array(&num_menu_items);
+for(i=0;i<num_menu_items;i++)
+	{
+	if(ife[i].callback)
+		{
+		char *pnt = commandName + 9;
+		strcpy(pnt, ife[i].path);	
+		while(*pnt)
+			{
+			if(*pnt==' ') *pnt='_';
+			pnt++;
+			}
+	
+	      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
+	                (Tcl_ObjCmdProc *)menu_func,
+	                (ClientData)(ife+i), (Tcl_CmdDeleteProc *)NULL);
+		}
+	}
+
+
+#if 0
 for (i = 0; gtkwave_commands[i].func != NULL; i++) 
 	{
       	strcpy(commandName + 9, gtkwave_commands[i].cmdstr);
-      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
-                (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
-                (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
    	}
-
-fprintf(stderr, "GTKWAVE | Created Tcl interpreter\n");
+#endif
 }
 
 #else
@@ -2110,6 +2177,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/10/13 22:16:52  gtkwave
+ * tcl interpreter integration
+ *
  * Revision 1.14  2008/10/04 21:00:08  gtkwave
  * do direct search before any attempted regex ones in list process
  *

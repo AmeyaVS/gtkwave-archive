@@ -298,6 +298,9 @@ void menu_lxt_clk_compress(GtkWidget *widget, gpointer data);
 void menu_help(GtkWidget *widget, gpointer data);
 void menu_version(GtkWidget *widget, gpointer data);
 
+GtkItemFactoryEntry *retrieve_menu_items_array(int *num_items);
+
+
 /* These should eventually have error values */
 void write_save_helper(FILE *file);
 void read_save_helper(char *wname);
@@ -307,6 +310,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/09/24 23:41:23  gtkwave
+ * drag from signal window into external process
+ *
  * Revision 1.12  2008/03/25 03:22:11  gtkwave
  * expanded zero fill to include also a one fill (for pre-inverted nets)
  *

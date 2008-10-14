@@ -39,7 +39,7 @@ if(nam)
 	GLOBALS->vlist_handle = fopen(nam, "w+b");
 	
 	unlink(nam);
-	if(fd_dummy >=0) close(fd_dummy);
+	if(fd_dummy >=0) { close(fd_dummy); free_2(nam); }
 
 	fputc('!', GLOBALS->vlist_handle);
 	GLOBALS->vlist_bytes_written = 1;
@@ -776,6 +776,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/07/13 00:15:41  gtkwave
+ * fix for short reads when --giga option is enabled
+ *
  * Revision 1.11  2008/06/11 08:01:57  gtkwave
  * gcc 4.3.x compiler warning fixes
  *
