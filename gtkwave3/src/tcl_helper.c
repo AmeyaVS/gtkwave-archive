@@ -2630,6 +2630,53 @@ return(TCL_OK);
 }
 
 
+static int gtkwavetcl_addSignalsFromList(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+int i;
+char *one_entry = NULL, *mult_entry = NULL;
+unsigned int mult_len = 0;
+int num_found = 0;
+char reportString[33];
+Tcl_Obj *aobj;
+
+if(objc==2)
+	{
+        char *s = Tcl_GetString(objv[1]);
+	char** elem = NULL;
+	int l = 0;
+
+	elem = zSplitTclList(s, &l);
+ 
+	if(elem)
+        	{
+		for(i=0;i<l;i++)
+			{
+			one_entry = make_single_tcl_list_name(elem[i]);
+			WAVE_OE_ME
+			}
+                free_2(elem);
+                elem = NULL;
+		num_found = process_tcl_list(mult_entry);
+		free_2(mult_entry);
+		if(num_found)
+        		{
+        		MaxSignalLength();
+        		signalarea_configure_event(GLOBALS->signalarea, NULL);
+        		wavearea_configure_event(GLOBALS->wavearea, NULL);
+			gtkwave_gtk_main_iteration();
+        		}
+                }
+	}
+
+sprintf(reportString, "%d", num_found);
+
+aobj = Tcl_NewStringObj(reportString, -1);
+Tcl_SetObjResult(interp, aobj);
+
+return(TCL_OK);
+}
+
+
 typedef struct 
 	{
     	const char *cmdstr;
@@ -2638,6 +2685,7 @@ typedef struct
 
 static tcl_cmdstruct gtkwave_commands[] =
 	{
+	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
 	{"getBaselineMarker",			gtkwavetcl_getBaselineMarker},
 	{"getDumpFileName",			gtkwavetcl_getDumpFileName},
 	{"getDumpType", 			gtkwavetcl_getDumpType},
@@ -2787,6 +2835,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2008/10/14 22:06:32  gtkwave
+ * added scroll get/set for trace row
+ *
  * Revision 1.20  2008/10/14 20:47:53  gtkwave
  * more setXX adds for tcl
  *
