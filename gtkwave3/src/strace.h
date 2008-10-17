@@ -83,6 +83,8 @@ void swap_strace_contexts(void);
 void delete_strace_context(void);
 void cache_actual_pattern_mark_traces(void);
 
+void edge_search(int direction); /* from edgebuttons.c */
+
 int mprintf(const char *fmt, ... );
 void delete_mprintf(void);
 
@@ -91,6 +93,9 @@ void delete_mprintf(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/12/30 04:27:39  gtkwave
+ * added edge buttons to main window
+ *
  * Revision 1.2  2007/08/26 21:35:45  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

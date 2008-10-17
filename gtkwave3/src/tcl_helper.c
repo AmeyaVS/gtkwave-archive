@@ -2677,6 +2677,20 @@ return(TCL_OK);
 }
 
 
+static int gtkwavetcl_findNextEdge(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+edge_search(STRACE_FORWARD);
+return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
+}
+
+
+static int gtkwavetcl_findPrevEdge(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+edge_search(STRACE_BACKWARD);
+return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
+}
+
+
 typedef struct 
 	{
     	const char *cmdstr;
@@ -2686,6 +2700,8 @@ typedef struct
 static tcl_cmdstruct gtkwave_commands[] =
 	{
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
+	{"findNextEdge",			gtkwavetcl_findNextEdge},
+	{"findPrevEdge",			gtkwavetcl_findPrevEdge},
 	{"getBaselineMarker",			gtkwavetcl_getBaselineMarker},
 	{"getDumpFileName",			gtkwavetcl_getDumpFileName},
 	{"getDumpType", 			gtkwavetcl_getDumpType},
@@ -2835,6 +2851,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/10/15 19:13:22  gtkwave
+ * added addSignalsFromList command
+ *
  * Revision 1.21  2008/10/14 22:06:32  gtkwave
  * added scroll get/set for trace row
  *
