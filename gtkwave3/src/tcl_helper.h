@@ -10,6 +10,20 @@
 #ifndef WAVE_TCLHELPER_H
 #define WAVE_TCLHELPER_H
 
+#include <config.h>
+
+#ifdef HAVE_TCL_H
+
+typedef struct
+        {
+        const char *cmdstr;
+        int (*func)();
+        } tcl_cmdstruct;
+
+extern tcl_cmdstruct gtkwave_commands[];
+
+#endif
+
 #define WAVE_OE_ME \
 	if(one_entry) \
 		{ \
@@ -42,6 +56,8 @@ char *add_dnd_from_signal_window(void);
 char *add_dnd_from_tree_window(void);
 char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void);
 
+char** zSplitTclList(const char* list, int* argcPtr);
+char *make_single_tcl_list_name(char *s);
 void make_tcl_interpreter(char *argv[]);
 
 #endif
@@ -49,6 +65,9 @@ void make_tcl_interpreter(char *argv[]);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.6  2008/10/13 22:16:52  gtkwave
+ * tcl interpreter integration
+ *
  * Revision 1.5  2008/10/02 00:52:25  gtkwave
  * added dnd of external filetypes into viewer
  *
