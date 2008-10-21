@@ -1933,12 +1933,14 @@ switch(ftype)
 		break;
 
 	case 2:
+#if !defined _MSC_VER && !defined __MINGW32__
 		GLOBALS->fileselbox_text = &GLOBALS->stems_name;
 	        GLOBALS->filesel_ok=1;
         	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
         	*GLOBALS->fileselbox_text=(char *)strdup_2(s);
 
 		menu_read_stems_cleanup(NULL, NULL);
+#endif
 		rc = 1;
 		break;
 
@@ -2135,6 +2137,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2008/10/17 18:05:27  gtkwave
+ * split tcl command extensions out into their own separate file
+ *
  * Revision 1.24  2008/10/17 15:32:49  gtkwave
  * beginning to add error messages on malformed commands
  *
