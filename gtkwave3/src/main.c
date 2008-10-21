@@ -462,6 +462,9 @@ strcpy(GLOBALS->whoami, argv[0]);
 
 if(!mainwindow_already_built)
 	{
+#ifdef __MINGW32__
+	gtk_disable_setlocale();
+#endif
 	if(!gtk_init_check(&argc, &argv))
 		{
 		printf("Could not initialize GTK!  Is DISPLAY env var/xhost set?\n\n");
@@ -2089,6 +2092,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2008/10/13 22:16:52  gtkwave
+ * tcl interpreter integration
+ *
  * Revision 1.36  2008/10/04 15:15:20  gtkwave
  * gtk1 compatibility fixes
  *
