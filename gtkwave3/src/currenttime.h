@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.1.14_pre (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.0_pre (w)1999-2008 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -171,6 +171,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2008/09/17 04:33:38  gtkwave
+ * support for smaller timescales in VCD files
+ *
  * Revision 1.47  2008/09/16 00:01:23  gtkwave
  * prelim drag and drop from external apps (now disabled)
  *
