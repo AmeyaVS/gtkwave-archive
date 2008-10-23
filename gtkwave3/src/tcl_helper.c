@@ -1221,15 +1221,23 @@ return(found);
  *
  * Results:
  *      generated tcl list string containing gtkwave PID for drop filtering
+ *      also contains current marker time
  * ----------------------------------------------------------------------------
  */
 
 static char *make_gtkwave_pid(void)
 {
 #if !defined __MINGW32__ && !defined _MSC_VER
-char pidstr[128];
+char pidstr[257];
 
 sprintf(pidstr, "{gtkwave PID %d} ", getpid());
+
+if(GLOBALS->tims.marker != -1)
+	{
+	char mrkbuf[128];
+	reformat_time(mrkbuf, GLOBALS->tims.marker, GLOBALS->time_dimension);
+	sprintf(pidstr+strlen(pidstr), "{marker %s} ", mrkbuf);
+	}
 
 return(strdup_2(pidstr));
 #else
@@ -2137,6 +2145,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2008/10/21 03:54:42  gtkwave
+ * mingw compile fix
+ *
  * Revision 1.25  2008/10/17 18:05:27  gtkwave
  * split tcl command extensions out into their own separate file
  *
