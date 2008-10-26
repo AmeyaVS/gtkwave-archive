@@ -732,7 +732,7 @@ if(objc==2)
         	{
 		for(i=0;i<l;i++)
 			{
-			one_entry = make_single_tcl_list_name(elem[i]);
+			one_entry = make_single_tcl_list_name(elem[i], NULL);
 			WAVE_OE_ME
 			}
                 free_2(elem);
@@ -929,6 +929,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2008/10/17 18:05:27  gtkwave
+ * split tcl command extensions out into their own separate file
+ *
  * Revision 1.1  2008/10/17 18:22:01  gtkwave
  * file creation
  *

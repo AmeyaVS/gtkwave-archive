@@ -57,7 +57,7 @@ char *add_dnd_from_tree_window(void);
 char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void);
 
 char** zSplitTclList(const char* list, int* argcPtr);
-char *make_single_tcl_list_name(char *s);
+char *make_single_tcl_list_name(char *s, char *opt_value);
 void make_tcl_interpreter(char *argv[]);
 
 #endif
@@ -65,6 +65,9 @@ void make_tcl_interpreter(char *argv[]);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.7  2008/10/17 18:05:27  gtkwave
+ * split tcl command extensions out into their own separate file
+ *
  * Revision 1.6  2008/10/13 22:16:52  gtkwave
  * tcl interpreter integration
  *

@@ -1254,7 +1254,7 @@ return(NULL);
  * ----------------------------------------------------------------------------
  */
 
-char *make_single_tcl_list_name(char *s)
+char *make_single_tcl_list_name(char *s, char *opt_value)
 {
 char *rpnt = NULL;
 char *pnt, *pnt2;
@@ -1316,23 +1316,49 @@ if(s)
 	tcllist_len = strlen(tcllist);
 	free_2(names);
 
-	if(is_bus)
+	if(!opt_value)
 		{
-		len = 8 + strlen(tcllist) + 1 + 1 + 1; /* "{netBus ...} " + trailing null char */
-
-		pnt = s2;
-		rpnt = malloc_2(len+1);
-		strcpy(rpnt, "{netBus ");
-		pnt2 = rpnt + 8;
+		if(is_bus)
+			{
+			len = 8 + strlen(tcllist) + 1 + 1 + 1; /* "{netBus ...} " + trailing null char */
+	
+			pnt = s2;
+			rpnt = malloc_2(len+1);
+			strcpy(rpnt, "{netBus ");
+			pnt2 = rpnt + 8;
+			}
+			else
+			{
+			len = 5 + strlen(tcllist) + 1 + 1 + 1; /* "{net ...} " + trailing null char */
+	
+			pnt = s2;
+			rpnt = malloc_2(len+1);
+			strcpy(rpnt, "{net ");
+			pnt2 = rpnt + 5;
+			}
 		}
 		else
 		{
-		len = 5 + strlen(tcllist) + 1 + 1 + 1; /* "{net ...} " + trailing null char */
+		int len_value = strlen(opt_value);
 
-		pnt = s2;
-		rpnt = malloc_2(len+1);
-		strcpy(rpnt, "{net ");
-		pnt2 = rpnt + 5;
+		if(is_bus)
+			{
+			len = 15 + (len_value + 1) + strlen(tcllist) + 1 + 1 + 1; /* "{netBusValue 0x...} " + trailing null char */
+	
+			pnt = s2;
+			rpnt = malloc_2(len+1);
+			sprintf(rpnt, "{netBusValue 0x%s ", opt_value);
+			pnt2 = rpnt + 15 + (len_value + 1);
+			}
+			else
+			{
+			len = 10 + (len_value + 1) + strlen(tcllist) + 1 + 1 + 1; /* "{netValue ...} " + trailing null char */
+	
+			pnt = s2;
+			rpnt = malloc_2(len+1);
+			sprintf(rpnt, "{netValue %s ", opt_value);
+			pnt2 = rpnt + 10 + (len_value + 1);
+			}
 		}
 
 	strcpy(pnt2, tcllist);
@@ -1342,6 +1368,80 @@ if(s)
 	}
 
 return(rpnt);
+}
+
+
+/* ----------------------------------------------------------------------------
+ * give_value_string - generates value string from trace @ markertime
+ *
+ * Results:
+ *      generated value which is similar to that generated in the signalwindow
+ *      pane when the marker button is pressed.  note that this modifies the
+ *      flags so it is always TR_RJUSTIFY | TR_HEX
+ * ----------------------------------------------------------------------------
+ */
+static char *give_value_string(Trptr t)
+{
+char *rc = NULL;
+unsigned int flags;
+int f_filter, p_filter;
+
+if(t)
+	{
+	flags = t->flags;
+	f_filter = t->f_filter;
+	p_filter = t->p_filter;
+
+	t->flags = TR_RJUSTIFY | TR_HEX;
+	t->f_filter = 0;
+	t->p_filter = 0;
+
+	if(GLOBALS->tims.marker != -1)
+		{
+		if(t->vector)
+			{
+			/* this is currently unused as vectors are exploded into single bits */
+			vptr v = bsearch_vector(t->n.vec, GLOBALS->tims.marker);
+                        rc = convert_ascii(t, v);
+			}
+			else
+			{
+			hptr h_ptr = bsearch_node(t->n.nd, GLOBALS->tims.marker);
+			if(h_ptr)
+				{
+				if(!t->n.nd->ext)
+					{
+					rc = (char *)calloc_2(2, 2*sizeof(char));
+					rc[0] = AN_STR[h_ptr->v.h_val];
+					}
+					else
+					{
+					if(h_ptr->flags&HIST_REAL)
+						{
+						if(!(h_ptr->flags&HIST_STRING))
+							{
+							rc = convert_ascii_real((double *)h_ptr->v.h_vector);
+							}
+							else
+							{
+							rc = convert_ascii_string((char *)h_ptr->v.h_vector);
+							}
+						}
+						else
+						{
+		                        	rc = convert_ascii_vec(t,h_ptr->v.h_vector);
+						}
+					}
+				}
+			}
+		}
+
+	t->flags = flags;
+	t->f_filter = f_filter;
+	t->p_filter = p_filter;
+	}
+
+return(rc);
 }
 
 
@@ -1368,7 +1468,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 {
                 if((!s->vec_root)||(!GLOBALS->autocoalesce))
                         {
-			one_entry = make_single_tcl_list_name(s->n->nname);
+			one_entry = make_single_tcl_list_name(s->n->nname, NULL);
 			WAVE_OE_ME
                         }
                         else
@@ -1377,7 +1477,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                         t=s->vec_root;
                         while(t)
                                 {
-				one_entry = make_single_tcl_list_name(t->n->nname);
+				one_entry = make_single_tcl_list_name(t->n->nname, NULL);
 				WAVE_OE_ME
 
                                 if(t->selected)
@@ -1408,6 +1508,9 @@ Trptr t;
 char *one_entry = NULL, *mult_entry = NULL;
 unsigned int mult_len = 0;
 char *netoff = "{gtkwave NET OFF} ";
+char *trace_val = NULL;
+const char xfwd[AN_COUNT]= AN_NORMAL;
+char trace_val_vec_single[2] = { 0, 0 };
 
 t=GLOBALS->traces.first;
 while(t)
@@ -1418,6 +1521,8 @@ while(t)
                         {
                         int i;
                         nptr *nodes;
+                        vptr v = (GLOBALS->tims.marker != -1) ? bsearch_vector(t->n.vec, GLOBALS->tims.marker) : NULL;
+			char *bits = v ? (v->v) : NULL;
                                         
                         nodes=t->n.vec->bits->nodes;
                         for(i=0;i<t->n.vec->nbits;i++)
@@ -1448,14 +1553,33 @@ while(t)
 
 					sprintf(str+strlen(str), "[%d]", which);
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME }
-					one_entry = make_single_tcl_list_name(str);
+					one_entry = make_single_tcl_list_name(str, NULL);
 					WAVE_OE_ME
+
+					if(bits)
+						{
+						int bitnum = bits[i];
+
+						if(bitnum < 0) bitnum = AN_DASH;
+						else if(bitnum >= AN_COUNT) bitnum = AN_DASH;
+
+						trace_val_vec_single[0] = AN_STR[xfwd[bits[i]]];
+						one_entry = make_single_tcl_list_name(str, trace_val_vec_single);
+						WAVE_OE_ME
+						}
                                         }
                                         else
                                         {
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]));
+					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), NULL);
 					WAVE_OE_ME
+					trace_val = give_value_string(t);
+					if(trace_val)
+						{
+						one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), trace_val);
+						WAVE_OE_ME
+						free_2(trace_val);
+						}
                                         }
                                 }
                         }
@@ -1487,20 +1611,37 @@ while(t)
 
 				sprintf(str+strlen(str), "[%d]", which);
 				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-				one_entry = make_single_tcl_list_name(str);
+				one_entry = make_single_tcl_list_name(str, NULL);
 				WAVE_OE_ME
+				trace_val = give_value_string(t);
+				if(trace_val)
+					{
+					one_entry = make_single_tcl_list_name(str, trace_val);
+					WAVE_OE_ME
+					free_2(trace_val);
+					}
 				}
 				else
 				{
 				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd));
+				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), NULL);
 				WAVE_OE_ME
+				trace_val = give_value_string(t);
+				if(trace_val)
+					{
+					one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), trace_val);
+					WAVE_OE_ME
+					free_2(trace_val);
+					}
 				}
 			}
 		}
 		else
 		{
-		one_entry = strdup_2(netoff); WAVE_OE_ME
+		if(!mult_entry)
+			{
+			one_entry = strdup_2(netoff); WAVE_OE_ME
+			}
 		}
 	t = t->t_next;
 	}
@@ -1556,14 +1697,14 @@ sig_selection_foreach_dnd
 		struct symbol *t = s->vec_root;
                 while(t)
 			{
-                        one_entry = make_single_tcl_list_name(t->n->nname);
+                        one_entry = make_single_tcl_list_name(t->n->nname, NULL);
                         WAVE_OE_ME
                         t=t->vec_chain;
                         }
                 }
 		else
 		{		
-                one_entry = make_single_tcl_list_name(s->n->nname);
+                one_entry = make_single_tcl_list_name(s->n->nname, NULL);
                 WAVE_OE_ME
 		}
         }
@@ -2145,6 +2286,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2008/10/23 17:14:55  gtkwave
+ * added marker position to tcl list dragged from signal window
+ *
  * Revision 1.26  2008/10/21 03:54:42  gtkwave
  * mingw compile fix
  *
