@@ -1523,8 +1523,77 @@ while(t)
                         nptr *nodes;
                         vptr v = (GLOBALS->tims.marker != -1) ? bsearch_vector(t->n.vec, GLOBALS->tims.marker) : NULL;
 			char *bits = v ? (v->v) : NULL;
+			char *first_str = NULL;
+			int coalesce_pass = 1;
                                         
                         nodes=t->n.vec->bits->nodes;
+
+			for(i=0;i<t->n.vec->nbits;i++)
+				{
+				if(!nodes[i]->expansion)
+					{
+					nptr n = nodes[i];
+                                        char *str = append_array_row(n);
+                                        char *p = strrchr(str, '[');
+                                        if(p) { *p = 0; } else { coalesce_pass = 0; break; }
+
+					if(!i)
+						{
+						first_str = strdup_2(str);
+						}
+						else
+						{
+						if(strcmp(str, first_str)) { coalesce_pass = 0; break; }
+						}
+					}
+					else
+					{
+					coalesce_pass = 0;
+					}
+				}
+
+			if(coalesce_pass)
+				{
+				if(t->n.vec->nbits < 2)
+					{
+					coalesce_pass = 0;
+					}
+					else
+					{
+					nptr nl = nodes[0];
+					char *strl = append_array_row(nl);
+					char *pl = strrchr(strl, '[');
+					int lidx = atoi(pl+1);
+
+					nptr nr = nodes[t->n.vec->nbits - 1];
+					char *strr = append_array_row(nr);
+					char *pr = strrchr(strr, '[');
+					int ridx = atoi(pr+1);
+
+					int first_str_len = strlen(first_str);
+					char *newname = malloc_2(first_str_len + 40);
+
+					sprintf(newname, "%s[%d:%d]", first_str, lidx, ridx); /* this disappears in make_single_tcl_list_name() but might be used in future code */
+
+					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
+					one_entry = make_single_tcl_list_name(newname, NULL);
+					WAVE_OE_ME
+					trace_val = give_value_string(t);
+					if(trace_val)
+						{
+						one_entry = make_single_tcl_list_name(newname, trace_val);
+						WAVE_OE_ME
+						free_2(trace_val);
+						}
+
+					free_2(newname);
+					}
+
+				free_2(first_str);
+				first_str = NULL;
+				}
+
+			if(!coalesce_pass)
                         for(i=0;i<t->n.vec->nbits;i++)
                                 {
                                 if(nodes[i]->expansion)
@@ -2286,6 +2355,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2008/10/26 02:36:06  gtkwave
+ * added netValue and netBusValue tcl list values from sigwin drag
+ *
  * Revision 1.27  2008/10/23 17:14:55  gtkwave
  * added marker position to tcl list dragged from signal window
  *

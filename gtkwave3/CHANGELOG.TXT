@@ -494,3 +494,6 @@
 		seconds.
 		Added tcl example in examples/ directory.
 		Updated -f argument file handling in vermin.
+		Updated tcl_helper code so that signalwindow drags of bit-
+		blasted vectors are properly re-coalesced for client code
+		for the drag.		
