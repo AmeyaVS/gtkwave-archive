@@ -3,6 +3,10 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/11/25 01:42:36  gtkwave
+ * added named parameter support to module instantiations in the vermin
+ * parser.  (this is a verilog 2001 feature.)
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:47  gtkwave
  * Imported sources
  *
@@ -537,6 +541,7 @@ for(i=1;i<v_argc;i++)
 		warn("** Cannot nest -f option inside an args file, exiting.\n");
 		exit(255);
 		}
+	else
 	if(!strcmp(v_argv[i], "-emitstems"))
 		{
 		emit_stems = 1;
@@ -694,6 +699,11 @@ for(i=1;i<v_argc;i++)
                         }
                 }
         else
+	if((arglen>=2)&&(v_argv[i][0] == '+'))
+		{
+		warn("** Skipping plusarg '%s' in command line argument %d.\n", v_argv[i], i);
+		}
+	else
         if((arglen>=2)&&(!strncmp(v_argv[i],"-D",2)))
                 {
                 if(arglen==2)

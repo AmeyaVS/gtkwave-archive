@@ -58,19 +58,47 @@ while(!feof(f))
 	len = strlen(srt);
 	if(!len) continue;
 
-	if(!head)
+	if((srt[0]=='+')||((srt[0]=='-')&&(srt[1]=='D'))) /* do not parse spaces out of front/back of plusargs and defines */
 		{
-		head = curr = calloc(1, sizeof(struct arglines_t));
-		head->s = strdup(srt);
-		head->count = 1;
+		if(!head)
+			{
+			head = curr = calloc(1, sizeof(struct arglines_t));
+			head->s = strdup(srt);
+			head->count = 1;
+			}
+			else
+			{
+			struct arglines_t *l = calloc(1, sizeof(struct arglines_t));
+			l->s = strdup(srt);
+			curr->next = l;
+			curr = l;
+			head->count++;
+			}
 		}
 		else
 		{
-		struct arglines_t *l = calloc(1, sizeof(struct arglines_t));
-		l->s = strdup(srt);
-		curr->next = l;
-		curr = l;
-		head->count++;
+		char *srt_new = srt;
+		int first = 1;
+
+		while((srt_new = strtok(first ? srt : NULL, " \t")))
+			{
+			first = 0;
+
+			if(!head)
+				{
+				head = curr = calloc(1, sizeof(struct arglines_t));
+				head->s = strdup(srt_new);
+				head->count = 1;
+				}
+				else
+				{
+				struct arglines_t *l = calloc(1, sizeof(struct arglines_t));
+				l->s = strdup(srt_new);
+				curr->next = l;
+				curr = l;
+				head->count++;
+				}
+			}
 		}
 	}
 
@@ -157,6 +185,9 @@ for(i=0;i<argc;i++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:41  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *

@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	15oct08	Fix for strings ('s' type) in recoder.  
+3.2.0	08nov08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -493,3 +493,4 @@
 		Fixed bug with unformat time when base time is in
 		seconds.
 		Added tcl example in examples/ directory.
+		Updated -f argument file handling in vermin.
