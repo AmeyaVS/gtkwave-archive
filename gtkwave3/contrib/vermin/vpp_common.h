@@ -14,7 +14,7 @@
 /*
  * then, some globally accessible defines...
  */
-#define VERNAME "Vermin: Verilog Parser v0.3.0 (w)1999-2007 BSI"
+#define VERNAME "Vermin: Verilog Parser v0.3.1 (w)1999-2008 BSI"
 
 
 /*
@@ -128,6 +128,10 @@ void parsecomment(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/11/25 01:42:36  gtkwave
+ * added named parameter support to module instantiations in the vermin
+ * parser.  (this is a verilog 2001 feature.)
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:51  gtkwave
  * Imported sources
  *

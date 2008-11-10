@@ -3,6 +3,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/11/08 15:39:11  gtkwave
+ * updated -f argument file handling in vermin
+ *
  * Revision 1.2  2007/11/25 01:42:36  gtkwave
  * added named parameter support to module instantiations in the vermin
  * parser.  (this is a verilog 2001 feature.)
@@ -1799,7 +1802,7 @@ v_task_enable: 	v_name_of_task V_SEMI
 		| v_name_of_task V_LP v_explist V_RP V_SEMI
 		;
 
-v_name_of_task: v_identifier_nodot
+v_name_of_task: v_identifier
 		;
 
 // for disable ()
