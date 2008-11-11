@@ -635,6 +635,14 @@ if(s2)
 
 		warn("** Warning: malformed `define directive in file '%s' line %d missing endquote, added.\n", zzfilename, zzline);
 		}
+
+	len = strlen(s2);
+	pnt = s2+len;
+	while(pnt != s2)
+		{
+		pnt--;
+		if(isspace(*pnt)) { *pnt = 0; } else { break; }
+		}
 	}
 
 add_define_to_tree(define_tree, s1, s2);
@@ -986,6 +994,9 @@ if(ics)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:46  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *

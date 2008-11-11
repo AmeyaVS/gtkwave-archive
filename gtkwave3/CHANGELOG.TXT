@@ -499,3 +499,6 @@
 		for the drag.		
 		Updated task definition in vermin so that identifiers with
 		dots in them can be used as task enable names.
+		Fixed problem in vermin preprocessor where defines in 0x0d0a
+		terminated lines would insert the carriage return into the
+		sourcecode.
