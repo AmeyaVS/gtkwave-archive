@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	10nov08	Fix for strings ('s' type) in recoder.  
+3.2.0	12nov08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -502,3 +502,6 @@
 		Fixed problem in vermin preprocessor where defines in 0x0d0a
 		terminated lines would insert the carriage return into the
 		sourcecode.
+		Added synthesis pragmas which mirror synopsys ones to vermin.
+		Used gtk_window_set_default_size instead of gtk_widget_set_usize
+		in rtlbrowse in order to allow window to shrink appropriately.

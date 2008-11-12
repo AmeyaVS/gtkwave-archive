@@ -21,6 +21,12 @@ extern struct gtkwave_annotate_ipc_t *anno_ctx;
 TimeType old_marker = 0;
 unsigned old_marker_set = 0;
 
+#if WAVE_USE_GTK2
+#define set_winsize(w,x,y) gtk_window_set_default_size(GTK_WINDOW(w),(x),(y))
+#else
+#define set_winsize(w,x,y) gtk_widget_set_usize(GTK_WIDGET(w),(x),(y))
+#endif
+
 
 /* only for use locally */
 struct wave_logfile_lines_t
@@ -959,11 +965,11 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     if(fontname_logfile)
 	{
-    	gtk_widget_set_usize( GTK_WIDGET (window), width*1.8, 640);
+    	set_winsize(window, width*1.8, 640);
 	}
 	else
 	{
-    	gtk_widget_set_usize( GTK_WIDGET (window), width, 640);
+    	set_winsize(window, width, 640);
 	}
     gtk_window_set_title(GTK_WINDOW (window), title);
 
@@ -1767,6 +1773,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/10/06 19:22:58  gtkwave
+ * more dnd logfile fixes
+ *
  * Revision 1.9  2008/10/06 18:30:57  gtkwave
  * allow DnD text drag to be able to process half-highlighted signal names
  *

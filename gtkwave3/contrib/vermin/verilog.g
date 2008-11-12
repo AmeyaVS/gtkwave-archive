@@ -3,6 +3,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/11/10 13:46:07  gtkwave
+ * update to task enable in vermin grammar to handle hierarchical identifiers
+ *
  * Revision 1.3  2008/11/08 15:39:11  gtkwave
  * updated -f argument file handling in vermin
  *
@@ -181,11 +184,12 @@ void warn_about_translation_off(void)
 {
 if(do_not_translate)
 	{
-	warn("** Warning: source code translation off for { %s%s%s%s} at EOF in '%s'.\n", 
-			(do_not_translate&STMODE_XLATEOFF_IFDEF)    ? "ifdef "    : "",
-			(do_not_translate&STMODE_XLATEOFF_SYNOPSYS) ? "synopsys " : "",
-			(do_not_translate&STMODE_XLATEOFF_VERILINT) ? "verilint " : "",
-			(do_not_translate&STMODE_XLATEOFF_VERTEX)   ? "vertex "   : "",
+	warn("** Warning: source code translation off for { %s%s%s%s%s} at EOF in '%s'.\n", 
+			(do_not_translate&STMODE_XLATEOFF_IFDEF)     ? "ifdef "     : "",
+			(do_not_translate&STMODE_XLATEOFF_SYNOPSYS)  ? "synopsys "  : "",
+			(do_not_translate&STMODE_XLATEOFF_SYNTHESIS) ? "synthesis " : "",
+			(do_not_translate&STMODE_XLATEOFF_VERILINT)  ? "verilint "  : "",
+			(do_not_translate&STMODE_XLATEOFF_VERTEX)    ? "vertex "    : "",
 			zzfilename);
 
 	do_not_translate = 0;
@@ -260,6 +264,28 @@ if(!(do_not_translate&STMODE_XLATEOFF_IFDEF))	/* make sure preprocessed block is
 			else
 				{
 				warn("** Warning: unsupported synopsys pragma '%s' on line %d in file '%s', skipping.\n",
+					tok, zzline, zzfilename);
+				}
+			}
+	        }
+	else
+	if ((!strcmp("synthesis", tok))&&(do_not_translate_mask & STMODE_XLATEOFF_SYNTHESIS))
+		{
+	        tok = strtok(NULL, " \t");
+	        if(tok) 
+			{
+			if(!strcmp("translate_on", tok))
+				{
+				do_not_translate &= ~(STMODE_XLATEOFF_SYNTHESIS);
+				}
+			else
+			if(!strcmp("translate_off", tok))
+				{
+				do_not_translate |= (do_not_translate_mask & STMODE_XLATEOFF_SYNTHESIS);
+				}
+			else
+				{
+				warn("** Warning: unsupported synthesis pragma '%s' on line %d in file '%s', skipping.\n",
 					tok, zzline, zzfilename);
 				}
 			}
@@ -501,6 +527,11 @@ for(i=1;i<v_argc;i++)
 				do_not_translate_mask |= STMODE_XLATEOFF_SYNOPSYS; 
 				}
 			else
+			if(!strcmp(v_argv[i], "synthesis"))
+				{
+				do_not_translate_mask |= STMODE_XLATEOFF_SYNTHESIS; 
+				}
+			else
 			if(!strcmp(v_argv[i], "verilint"))
 				{
 				do_not_translate_mask |= STMODE_XLATEOFF_VERILINT; 
@@ -530,7 +561,7 @@ for(i=1;i<v_argc;i++)
 			"+define+x=y     equivalent to `define X Y in source\n"
 			"+incdir+dirname add dirname to include search path\n"
 			"+libext+ext     add ext to filename when searching for files\n"
-			"-pragma name    add name (synopsys, verilint, vertex) to accepted pragmas\n"
+			"-pragma name    add name (synopsys, synthesis, verilint, vertex) to accepted pragmas\n"
 			"-y dirname      add directory to source input path\n"
 			"-yi dirname     add directory to source input path (case insensitive search)\n"
 			"-f filename     insert args from filename (does not work recursively)\n"

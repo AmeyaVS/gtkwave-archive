@@ -28,16 +28,20 @@ typedef union
 
 extern int do_not_translate, do_not_translate_mask;
 #define STMODE do{if(do_not_translate)zzskip();}while(0)
-#define STMODE_XLATEOFF_SYNOPSYS 1
-#define STMODE_XLATEOFF_VERILINT 2
-#define STMODE_XLATEOFF_VERTEX   4
-#define STMODE_XLATEOFF_IFDEF    8
+#define STMODE_XLATEOFF_SYNOPSYS  1
+#define STMODE_XLATEOFF_SYNTHESIS 2
+#define STMODE_XLATEOFF_VERILINT  4
+#define STMODE_XLATEOFF_VERTEX    8
+#define STMODE_XLATEOFF_IFDEF     16
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:51  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *

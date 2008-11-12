@@ -11,6 +11,12 @@
 #include <gtk/gtk.h>
 #include "splay.h"
 
+#if WAVE_USE_GTK2
+#define set_winsize(w,x,y) gtk_window_set_default_size(GTK_WINDOW(w),(x),(y))
+#else
+#define set_winsize(w,x,y) gtk_widget_set_usize(GTK_WIDGET(w),(x),(y))
+#endif
+
 void bwmaketree(void);
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
 
@@ -102,7 +108,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     gtk_window_set_title(GTK_WINDOW (window), title);
     gtk_signal_connect(GTK_OBJECT (window), "delete_event",
                        (GtkSignalFunc) destroy_callback, NULL);
-    gtk_widget_set_usize(GTK_WIDGET(window), 640, 600);
+    set_winsize(window, 640, 600);
 
 
     table = gtk_table_new (256, 1, FALSE);
@@ -174,6 +180,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.1  2007/08/22 02:26:19  gtkwave
  * treebox fixes to match revised gtkwave headers
  *
