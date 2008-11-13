@@ -74,6 +74,7 @@ a hierarchy first */
 
 static GdkFont *font = NULL;
 
+
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 static GtkTextIter iter;
 static GtkTextTag *bold_tag = NULL;
@@ -81,7 +82,21 @@ static GtkTextTag *dgray_tag = NULL, *lgray_tag = NULL;
 static GtkTextTag *blue_tag = NULL, *fwht_tag = NULL;
 static GtkTextTag *mono_tag = NULL;
 static GtkTextTag *size_tag = NULL;
+
+static void *pressWindow = NULL;
+static gint pressX = 0;
+static gint pressY = 0;
+
+static gint button_press_event(GtkWidget *widget, GdkEventButton *event)
+{
+pressWindow = (void *)widget->window;
+pressX = event->x;
+pressY = event->y;
+
+return(FALSE);
+}
 #endif
+
 
 static char *tmpnam_rtlbrowse(char *s, int *fd)
 {
@@ -268,11 +283,32 @@ char ch;
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GtkTextIter start;
 GtkTextIter end;
+int ok = 0;
 
 if((!text)||(!ctx)) return;
-         
-if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
-                                         &start, &end))
+
+if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer, &start, &end))
+	{
+	ok = 1;
+	}
+else
+if(((void *)widget->window) == pressWindow)
+	{
+	GtkTextView *text_view = GTK_TEXT_VIEW(text);
+	gint buffer_x, buffer_y;
+	gint s_trailing, e_trailing;
+
+	gtk_text_view_window_to_buffer_coords(text_view, GTK_TEXT_WINDOW_WIDGET, pressX, pressY, &buffer_x, &buffer_y);
+
+	gtk_text_view_get_iter_at_position  (text_view, &start, &s_trailing, buffer_x, buffer_y);
+	gtk_text_view_get_iter_at_position  (text_view, &end,   &e_trailing, buffer_x, buffer_y);
+	gtk_text_iter_forward_char(&end);
+	ok = 1;
+	} 
+   
+pressWindow = NULL;     
+
+if(ok)
        	{
        	if(gtk_text_iter_compare (&start, &end) < 0)
                	{
@@ -736,7 +772,7 @@ blue_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "blue_backg
 mono_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "monospace", 
 					"family", "monospace", NULL);
 size_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "fsiz",
-					"size", 10 * PANGO_SCALE, NULL);
+					"size", 8 * PANGO_SCALE, NULL);
 #else                                  
 text = gtk_text_new (NULL, NULL);
 #endif
@@ -989,6 +1025,10 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     ctext=create_log_text(&text);
     gtk_box_pack_start (GTK_BOX (vbox), ctext, TRUE, TRUE, 0);
     gtk_widget_show (ctext);
+
+#if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
+    gtk_signal_connect(GTK_OBJECT(text), "button_press_event",GTK_SIGNAL_FUNC(button_press_event), NULL);
+#endif
 
     separator = gtk_hseparator_new ();
     gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
@@ -1773,6 +1813,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/11/12 19:49:42  gtkwave
+ * changed usage of usize
+ *
  * Revision 1.10  2008/10/06 19:22:58  gtkwave
  * more dnd logfile fixes
  *
