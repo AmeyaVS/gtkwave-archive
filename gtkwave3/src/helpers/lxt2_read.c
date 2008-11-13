@@ -57,9 +57,11 @@ _LXT2_RD_INLINE static unsigned int lxt2_rd_get_16(void *mm, int offset)
 {
 unsigned short x = *((unsigned short *)((unsigned char *)mm+offset));
 
-  __asm("xchgb %b0,%h0" :
-        "=q" (x)        :
-        "0" (x));
+#if defined(__i386__)
+    __asm("xchgb %b0,%h0" : "=q" (x) : "0" (x));
+#else
+    __asm("xchgb %b0,%h0" : "=Q" (x) : "0" (x));
+#endif
 
     return (unsigned int) x;
 }
@@ -1729,6 +1731,9 @@ return(blk);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:17  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

@@ -508,3 +508,5 @@
 		Made size_tag values smaller in logfile.c in gtkwave/rtlbrowse.
 		Allow dragging from rtlbrowse window without needing to high-
 		light signals first.  This allows single signal drags.
+		GCC-4.1.3 with -O3 flag fix for x86_64 on xchgb instruction
+		assembler intrinsic.
