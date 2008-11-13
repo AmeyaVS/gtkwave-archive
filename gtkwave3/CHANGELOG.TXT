@@ -505,3 +505,6 @@
 		Added synthesis pragmas which mirror synopsys ones to vermin.
 		Used gtk_window_set_default_size instead of gtk_widget_set_usize
 		in rtlbrowse in order to allow window to shrink appropriately.
+		Made size_tag values smaller in logfile.c in gtkwave/rtlbrowse.
+		Allow dragging from rtlbrowse window without needing to high-
+		light signals first.  This allows single signal drags.

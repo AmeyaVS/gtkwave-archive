@@ -202,7 +202,7 @@ GLOBALS->bold_tag_logfile_c_2 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)
 GLOBALS->mono_tag_logfile_c_1 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "monospace", "family", "monospace", NULL);
 
 GLOBALS->size_tag_logfile_c_1 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "fsiz",
-			      "size", (GLOBALS->use_big_fonts ? 18 : 10) * PANGO_SCALE, NULL);
+			      "size", (GLOBALS->use_big_fonts ? 12 : 8) * PANGO_SCALE, NULL);
 
 
 #else
@@ -557,6 +557,9 @@ while(l)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/02/10 18:08:28  gtkwave
+ * removal of logfiles static and moved into global structure
+ *
  * Revision 1.5  2008/02/10 01:24:00  gtkwave
  * minor cleanups
  *
