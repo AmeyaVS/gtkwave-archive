@@ -1094,10 +1094,22 @@ for(ii=0;ii<c;ii++)
 	if(match_type_list[ii])
 		{
 		struct symbol *s = GLOBALS->facs[match_idx_list[ii]];
+		struct symbol *schain = s->vec_root;
 
 		if(GLOBALS->is_lx2)
 			{
-                        lx2_set_fac_process_mask(s->n);
+			if(schain)
+				{
+				while(schain)
+					{
+					lx2_set_fac_process_mask(schain->n);
+					schain = schain-> vec_chain;
+					}
+				}
+				else
+				{
+	                        lx2_set_fac_process_mask(s->n);
+				}
 			}
 		}
 	}
@@ -1159,7 +1171,18 @@ for(ii=0;ii<c;ii++)
 			}
 			else
 			{
-			AddNodeUnroll(s->n, NULL);
+			struct symbol *schain = s->vec_root;
+
+			if(!schain)
+				{
+				AddNodeUnroll(s->n, NULL);
+				}
+				else
+				{
+				int len = 0;
+				while(schain) { len++; schain = schain->vec_chain; }
+				add_vector_chain(s->vec_root, len);
+				}
 			}
 		}
 	}
@@ -1468,6 +1491,33 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 {
                 if((!s->vec_root)||(!GLOBALS->autocoalesce))
                         {
+                        }
+                        else
+                        {
+                        t=s->vec_root;
+			t->selected = 1;
+			t=t->vec_chain;
+                        while(t)
+                                {
+                                if(t->selected)
+                                        {
+                                        t->selected=0;
+                                        }
+                                t=t->vec_chain;
+                                }
+                        }
+                }
+        }
+
+for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
+        {
+        int len;
+        struct symbol *s, *t;
+        s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
+        if(s->selected)
+                {
+                if((!s->vec_root)||(!GLOBALS->autocoalesce))
+                        {
 			one_entry = make_single_tcl_list_name(s->n->nname, NULL);
 			WAVE_OE_ME
                         }
@@ -1485,7 +1535,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                                         if(len) t->selected=0;
                                         }
                                 len++;
-                                t=t->vec_chain;
+				break; /* t=t->vec_chain; ...no longer needed because of for() loop above and handler in process_tcl_list() */
                                 }
                         }
                 }
@@ -1768,7 +1818,7 @@ sig_selection_foreach_dnd
 			{
                         one_entry = make_single_tcl_list_name(t->n->nname, NULL);
                         WAVE_OE_ME
-                        t=t->vec_chain;
+                        break; /* t=t->vec_chain; ...no longer needed as this is resolved in process_tcl_list() */
                         }
                 }
 		else
@@ -2355,6 +2405,10 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2008/11/08 19:17:51  gtkwave
+ * detected coalesced vectors which all contain same prefix and emit the
+ * netBus/netBusValue versions accordingly.
+ *
  * Revision 1.28  2008/10/26 02:36:06  gtkwave
  * added netValue and netBusValue tcl list values from sigwin drag
  *
