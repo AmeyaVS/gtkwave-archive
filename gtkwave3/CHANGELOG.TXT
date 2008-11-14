@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	12nov08	Fix for strings ('s' type) in recoder.  
+3.2.0	14nov08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -510,3 +510,4 @@
 		light signals first.  This allows single signal drags.
 		GCC-4.1.3 with -O3 flag fix for x86_64 on xchgb instruction
 		assembler intrinsic.
+		Use gtk_window_set_transient_for() on simplereq windows.
