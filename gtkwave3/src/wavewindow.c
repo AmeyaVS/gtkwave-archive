@@ -1777,8 +1777,10 @@ if(!GLOBALS->in_button_press_wavewindow_c_1)
 		int os;
 		os=48;
 
-		gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow), 
-				os+30, -1);
+		if(GLOBALS->signalwindow)
+			{
+			gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow), os+30, -1);
+			}
 		}
 	else
 	if((GLOBALS->do_resize_signals)&&(GLOBALS->signalwindow))
@@ -3773,6 +3775,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2008/10/12 02:56:20  gtkwave
+ * fix for blackout regions
+ *
  * Revision 1.37  2008/08/24 21:55:27  gtkwave
  * update for timestart line in savefiles
  *
