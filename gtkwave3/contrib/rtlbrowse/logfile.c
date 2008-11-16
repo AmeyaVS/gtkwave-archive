@@ -919,8 +919,7 @@ return(TRUE);
 }
 
 
-
-static void destroy_callback(GtkWidget *widget, gpointer alt_widget)
+static void destroy_callback(GtkWidget *widget, gpointer dummy)
 {
 struct text_find_t *t = text_root, *tprev = NULL;
 struct logfile_context_t *ctx = NULL;
@@ -960,6 +959,23 @@ if(ctx)
 	free(ctx);
 	}
 }
+
+
+static gint destroy_via_closebutton_release(GtkWidget *widget, GdkEventButton *event)
+{
+if((event->x<0)||(event->x>=widget->allocation.width)||(event->y<0)||(event->y>=widget->allocation.height))
+	{       
+        /* let gtk take focus from us with focus out event */
+        }
+	else
+	{
+	destroy_callback(widget, NULL);
+	}
+
+return(TRUE);
+}
+
+
 
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 {
@@ -1035,6 +1051,8 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	gtk_widget_show(image);
 
         close_button = gtk_event_box_new();
+	gtk_widget_set_events(close_button, GDK_BUTTON_RELEASE_MASK);
+
         gtk_container_add (GTK_CONTAINER (close_button), image);
         gtk_widget_show(close_button);
 
@@ -1048,7 +1066,7 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	pagenum = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), window, tbox);
 
 	gtk_signal_connect (GTK_OBJECT (close_button), "button_release_event",
-	                        GTK_SIGNAL_FUNC (destroy_callback), NULL); /* this will destroy the tab by destroying the parent container */
+	                        GTK_SIGNAL_FUNC (destroy_via_closebutton_release), NULL); /* this will destroy the tab by destroying the parent container */
 	}
 #endif
 
@@ -1865,6 +1883,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/11/16 02:17:47  gtkwave
+ * rtlbrowse updates for single integrated window
+ *
  * Revision 1.12  2008/11/13 00:12:01  gtkwave
  * allow d&d to move one signal even if not highlighted
  *
