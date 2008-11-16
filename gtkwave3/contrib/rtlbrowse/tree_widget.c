@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2004.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +16,8 @@
 #else
 #define set_winsize(w,x,y) gtk_widget_set_usize(GTK_WIDGET(w),(x),(y))
 #endif
+
+GtkWidget *notebook = NULL;
 
 void bwmaketree(void);
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
@@ -114,9 +116,22 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     table = gtk_table_new (256, 1, FALSE);
     gtk_widget_show (table);
 
+#ifndef WAVE_USE_GTK2
     frame2 = gtk_frame_new (NULL);
-    gtk_container_border_width (GTK_CONTAINER (frame2), 3);
     gtk_widget_show(frame2);
+#else
+    frame2 = gtk_hpaned_new();
+    gtk_widget_show(frame2);
+
+    notebook = gtk_notebook_new();
+    gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_TOP);
+    gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), ~0); 
+    gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), ~0);
+    gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), ~0);
+  
+    gtk_widget_show(notebook);
+    gtk_paned_pack2(GTK_PANED(frame2), notebook, TRUE, TRUE);
+#endif
 
     gtk_table_attach (GTK_TABLE (table), frame2, 0, 1, 0, 255,
                         GTK_FILL | GTK_EXPAND,
@@ -143,15 +158,24 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     selectedtree=NULL;
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+#ifndef WAVE_USE_GTK2
     gtk_widget_set_usize( GTK_WIDGET (scrolled_win), -1, 300);
+#else
+    gtk_widget_set_usize( GTK_WIDGET (scrolled_win), 150, 300);
+#endif
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
                                       GTK_POLICY_AUTOMATIC,
                                       GTK_POLICY_AUTOMATIC);
     gtk_widget_show(scrolled_win);
     gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (tree));
+
+#ifndef WAVE_USE_GTK2
     gtk_container_add (GTK_CONTAINER (frame2), scrolled_win);
+#else
+    gtk_paned_pack1(GTK_PANED(frame2), scrolled_win, TRUE, TRUE);
+#endif
 
-
+#ifndef WAVE_USE_GTK2
     frameh = gtk_frame_new (NULL);
     gtk_container_border_width (GTK_CONTAINER (frameh), 3);
     gtk_widget_show(frameh);
@@ -172,6 +196,8 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     gtk_box_pack_start (GTK_BOX (hbox), button5, TRUE, TRUE, 0);
 
     gtk_container_add (GTK_CONTAINER (frameh), hbox);
+#endif
+
     gtk_container_add (GTK_CONTAINER (window), table);
 
     gtk_widget_show(window);
@@ -180,6 +206,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/11/12 19:49:42  gtkwave
+ * changed usage of usize
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

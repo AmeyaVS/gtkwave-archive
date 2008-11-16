@@ -17,6 +17,7 @@
 
 extern ds_Tree *flattened_mod_list_root;
 extern struct gtkwave_annotate_ipc_t *anno_ctx;
+extern GtkWidget *notebook;
 
 TimeType old_marker = 0;
 unsigned old_marker_set = 0;
@@ -47,7 +48,7 @@ int width;
 struct text_find_t
 {
 struct text_find_t *next;
-GtkWidget *text, *window;
+GtkWidget *text, *window, *button;
 struct logfile_context_t *ctx;
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
@@ -61,7 +62,7 @@ GtkTextTag *size_tag;
 
 
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
-void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *text);
+void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *button, GtkWidget *text);
 
 
 struct text_find_t *text_root = NULL;
@@ -886,7 +887,7 @@ while(t)
 			mono_tag = t->mono_tag;
 			size_tag = t->size_tag;
 
-			bwlogbox_2(t->ctx, NULL, t->text);
+			bwlogbox_2(t->ctx, NULL, t->button, t->text);
 
 			vadj->value = vvalue;
 			gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
@@ -902,7 +903,7 @@ while(t)
 			gtk_text_freeze(GTK_TEXT(text));
 			gtk_text_forward_delete (text, len);
 
-			bwlogbox_2(t->ctx, NULL, t->text);
+			bwlogbox_2(t->ctx, NULL, t->button, t->text);
 			gtk_text_thaw(GTK_TEXT(text));
 
 			vadj->value = vvalue;
@@ -919,15 +920,18 @@ return(TRUE);
 
 
 
-static void destroy_callback(GtkWidget *widget, gpointer dummy)
+static void destroy_callback(GtkWidget *widget, gpointer alt_widget)
 {
 struct text_find_t *t = text_root, *tprev = NULL;
 struct logfile_context_t *ctx = NULL;
+int which = (notebook != NULL);
+GtkWidget *matched = NULL;
 
 while(t)
 	{
-	if(t->window==widget)
+	if((which ? t->button : t->window)==widget)
 		{
+		matched = t->window;
 		if(tprev)	/* prune out struct text_find_t */
 			{
 			tprev->next = t->next;
@@ -948,7 +952,8 @@ while(t)
 	t = t->next;
 	}
 
-gtk_widget_destroy(widget);
+if(matched) gtk_widget_destroy(matched);
+
 if(ctx)
 	{
 	if(ctx->title) free(ctx->title);
@@ -964,6 +969,8 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     GtkWidget *label, *separator;
     GtkWidget *ctext;
     GtkWidget *text;
+    GtkWidget *close_button = NULL;
+    gint pagenum;
     FILE *handle;
     struct logfile_context_t *ctx;
     char *default_text = t->filename;
@@ -998,17 +1005,52 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 #endif
 
     /* create a new nonmodal window */
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    if(fontname_logfile)
+#ifdef WAVE_USE_GTK2
+    if(!notebook)
+#endif
 	{
-    	set_winsize(window, width*1.8, 640);
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    	if(fontname_logfile)
+		{
+    		set_winsize(window, width*1.8, 640);
+		}
+		else
+		{
+    		set_winsize(window, width, 640);
+		}
+    	gtk_window_set_title(GTK_WINDOW (window), title);
 	}
+
+#ifdef WAVE_USE_GTK2
 	else
 	{
-    	set_winsize(window, width, 640);
-	}
-    gtk_window_set_title(GTK_WINDOW (window), title);
+	window = gtk_hpaned_new();
+	GtkWidget *tbox = gtk_hbox_new(FALSE, 0);
+	GtkWidget *l1;
+	GtkWidget *image;
+	
+	l1 = gtk_label_new(title);
 
+	image  = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	gtk_widget_show(image);
+
+        close_button = gtk_event_box_new();
+        gtk_container_add (GTK_CONTAINER (close_button), image);
+        gtk_widget_show(close_button);
+
+	gtk_box_pack_start(GTK_BOX (tbox), l1, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX (tbox), close_button, FALSE, FALSE, 0);
+
+	gtk_widget_show(l1);
+	gtk_widget_show(close_button);
+	gtk_widget_show(tbox);
+
+	pagenum = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), window, tbox);
+
+	gtk_signal_connect (GTK_OBJECT (close_button), "button_release_event",
+	                        GTK_SIGNAL_FUNC (destroy_callback), NULL); /* this will destroy the tab by destroying the parent container */
+	}
+#endif
 
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (window), vbox);
@@ -1057,12 +1099,14 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
                              (GtkSignalFunc) gtk_widget_grab_default,
                              GTK_OBJECT (button1));
 
+#ifndef WAVE_USE_GTK2
     gtk_signal_connect(GTK_OBJECT (window), "delete_event",
                        (GtkSignalFunc) destroy_callback, NULL);
+#endif
 
     gtk_widget_show(window);
 
-    bwlogbox_2(ctx, window, text);
+    bwlogbox_2(ctx, window, close_button, text);
 
     if(text)
 	{
@@ -1093,10 +1137,17 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         gtk_signal_connect(GTK_OBJECT(src), "drag_data_get", GTK_SIGNAL_FUNC(DNDDataRequestCB), ctx);
         gtk_signal_connect(GTK_OBJECT(src), "drag_data_delete", GTK_SIGNAL_FUNC(DNDDataDeleteCB), ctx);
         }
+
+#ifdef WAVE_USE_GTK2
+    if(notebook)
+	{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), pagenum);
+	}
+#endif
 }
 
 
-void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *text)
+void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *button, GtkWidget *text)
 {
     ds_Tree *t = ctx->which;
     int display_mode = ctx->display_mode;
@@ -1792,6 +1843,7 @@ free_vars:
 		{
 	        text_curr = (struct text_find_t *)calloc(1, sizeof(struct text_find_t));
 		text_curr->window = window;
+		text_curr->button = button;
 		text_curr->text = text;
 		text_curr->ctx = ctx;
 		text_curr->next = text_root;
@@ -1813,6 +1865,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/11/13 00:12:01  gtkwave
+ * allow d&d to move one signal even if not highlighted
+ *
  * Revision 1.11  2008/11/12 19:49:42  gtkwave
  * changed usage of usize
  *
