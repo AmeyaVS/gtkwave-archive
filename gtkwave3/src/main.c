@@ -1124,11 +1124,14 @@ if(!GLOBALS->socket_xid)
         {
 	GLOBALS->mainwindow = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->winname);
-	gtk_widget_set_usize(GTK_WIDGET(GLOBALS->mainwindow), GLOBALS->initial_window_x, GLOBALS->initial_window_y);
 
 	if((GLOBALS->initial_window_width>0)&&(GLOBALS->initial_window_height>0))
 		{
 		gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mainwindow), GLOBALS->initial_window_width, GLOBALS->initial_window_height);
+		}
+		else
+		{
+		gtk_window_set_default_size(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->initial_window_x, GLOBALS->initial_window_y);
 		}
 
 	gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), "delete_event", 	/* formerly was "destroy" */GTK_SIGNAL_FUNC(file_quit_cmd_callback), "WM destroy");
@@ -1154,6 +1157,7 @@ if(GLOBALS->use_toolbutton_interface)
 	{
 	GtkWidget *tb;
 	GtkWidget *stock;
+	GtkStyle *style;
 	int tb_pos;
 
 	if(!mainwindow_already_built)
@@ -1203,6 +1207,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(menu_cut_traces),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1212,6 +1219,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(menu_paste_traces),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
@@ -1223,6 +1233,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_zoom_fit),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1232,6 +1245,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_zoom_in),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1241,6 +1257,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_zoom_out),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1250,6 +1269,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_zoom_undo),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1259,6 +1281,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_zoom_left),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1268,6 +1293,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_zoom_right),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
@@ -1279,6 +1307,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_left_edge),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1288,6 +1319,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(service_right_edge),
 						 NULL,
 						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
 		gtk_widget_show(stock);
 
 		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
@@ -1311,6 +1345,9 @@ if(GLOBALS->use_toolbutton_interface)
 						 GTK_SIGNAL_FUNC(menu_reload_waveform),
 						 NULL,
 						 tb_pos++);
+			style = gtk_widget_get_style(stock);
+			style->xthickness = style->ythickness = 0;
+			gtk_widget_set_style (stock, style);
 			gtk_widget_show(stock);
 
 			gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
@@ -2092,6 +2129,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2008/10/21 04:03:01  gtkwave
+ * setlocale disable for mingw on gtk init
+ *
  * Revision 1.37  2008/10/13 22:16:52  gtkwave
  * tcl interpreter integration
  *

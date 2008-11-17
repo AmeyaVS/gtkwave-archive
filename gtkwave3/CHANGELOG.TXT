@@ -513,4 +513,5 @@
 		Use gtk_window_set_transient_for() on simplereq windows.
 		Starting to update environment for rtlbrowse into a single
 		integrated window.
-
+		Adjust xthickness/ythickness in toolbars to make images
+		take up less space.
