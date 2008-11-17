@@ -9,6 +9,7 @@
 
 #include <config.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include "splay.h"
 
 #if WAVE_USE_GTK2
@@ -22,6 +23,49 @@ GtkWidget *notebook = NULL;
 void bwmaketree(void);
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
 
+
+#if WAVE_USE_GTK2
+static void search_backward(GtkWidget *widget, gpointer data)
+{
+printf("search backward\n");
+}
+
+static void search_forward(GtkWidget *widget, gpointer data)
+{
+printf("search forward\n");
+}
+
+/* Signal callback for the filter widget.
+   This catch the return key to update the signal area.  */
+static
+gboolean find_edit_cb (GtkWidget *widget, GdkEventKey *ev, gpointer *data)
+{
+  /* Maybe this test is too strong ?  */
+  if (ev->keyval == GDK_Return)
+    {
+      const char *t = gtk_entry_get_text (GTK_ENTRY (widget));
+      if (t == NULL || *t == 0)
+	{
+	}
+      else
+        { 
+        /* regex_compile( on *t ) */
+        }
+    /* do regex compare here */
+    }
+  return FALSE;
+}
+ 
+static
+void press_callback (GtkWidget *widget, gpointer *data)
+{
+GdkEventKey ev;
+
+ev.keyval = GDK_Return;
+
+find_edit_cb (widget, &ev, data);
+}
+#endif
 
 static ds_Tree *selectedtree=NULL;
 
@@ -128,6 +172,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), ~0); 
     gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), ~0);
     gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), ~0);
+    gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
   
     gtk_widget_show(notebook);
     gtk_paned_pack2(GTK_PANED(frame2), notebook, TRUE, TRUE);
@@ -196,6 +241,73 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     gtk_box_pack_start (GTK_BOX (hbox), button5, TRUE, TRUE, 0);
 
     gtk_container_add (GTK_CONTAINER (frameh), hbox);
+#else
+
+if(0) /* XXX : search toolbar goes here */
+    {
+    GtkWidget *find_label;
+    GtkWidget *find_entry;
+    GtkWidget *tb;
+    GtkWidget *stock;
+    GtkStyle  *style;
+    int tb_pos = 0;
+
+    hbox = gtk_hbox_new (FALSE, 1);
+    gtk_widget_show (hbox);
+
+    gtk_table_attach (GTK_TABLE (table), hbox, 0, 1, 255, 256,
+                        GTK_FILL | GTK_EXPAND,
+                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
+
+    find_label = gtk_label_new ("Find:");
+    gtk_widget_show (find_label);
+    gtk_box_pack_start (GTK_BOX (hbox), find_label, FALSE, FALSE, 1);
+    
+    find_entry = gtk_entry_new ();
+    gtk_widget_show (find_entry);
+    
+    gtk_signal_connect(GTK_OBJECT(find_entry), "activate", GTK_SIGNAL_FUNC(press_callback), NULL);
+    gtk_signal_connect(GTK_OBJECT (find_entry), "key_press_event", (GtkSignalFunc) find_edit_cb, NULL);
+    gtk_box_pack_start (GTK_BOX (hbox), find_entry, FALSE, FALSE, 1);
+
+    tb = gtk_toolbar_new();
+    style = gtk_widget_get_style(tb);
+    style->xthickness = style->ythickness = 0;
+    gtk_widget_set_style (tb, style);
+    gtk_widget_show (tb);
+
+    gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
+    stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+                                                 GTK_STOCK_GO_BACK,
+                                                 "Search Back",
+                                                 NULL,
+                                                 GTK_SIGNAL_FUNC(search_backward),
+                                                 NULL,
+                                                 tb_pos++);
+
+    style = gtk_widget_get_style(stock);
+    style->xthickness = style->ythickness = 0;
+    gtk_widget_set_style (stock, style);
+    gtk_widget_show(stock);
+        
+    stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+                                                 GTK_STOCK_GO_FORWARD,
+                                                 "Search Forward",
+                                                 NULL,
+                                                 GTK_SIGNAL_FUNC(search_forward),
+                                                 NULL,
+                                                 tb_pos++);
+
+    style = gtk_widget_get_style(stock);
+    style->xthickness = style->ythickness = 0;
+    gtk_widget_set_style (stock, style);
+    gtk_widget_show(stock);
+
+    gtk_box_pack_start (GTK_BOX (hbox), tb, FALSE, FALSE, 1);
+    
+
+    }
+
 #endif
 
     gtk_container_add (GTK_CONTAINER (window), table);
@@ -206,6 +318,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/11/16 02:17:47  gtkwave
+ * rtlbrowse updates for single integrated window
+ *
  * Revision 1.3  2008/11/12 19:49:42  gtkwave
  * changed usage of usize
  *

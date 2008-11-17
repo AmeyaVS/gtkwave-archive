@@ -66,6 +66,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 
 
 struct text_find_t *text_root = NULL;
+struct text_find_t *selected_text_via_tab = NULL;
 char *fontname_logfile = NULL;
 
 /* Add some text to our text widget - this is a callback that is invoked
@@ -96,6 +97,30 @@ pressY = event->y;
 
 return(FALSE);
 }
+
+
+static gint expose_event_local(GtkWidget *widget, GdkEventExpose *event)
+{
+struct text_find_t *tr = text_root;
+
+while(tr)
+	{
+	if(tr->window == widget)
+		{
+		if(selected_text_via_tab != tr)
+			{
+			selected_text_via_tab = tr;
+			/* printf("Expose: %08x '%s'\n", widget, tr->ctx->title); */
+			}
+		return(FALSE);
+		}
+	tr = tr->next;
+	}
+selected_text_via_tab = NULL;
+
+return(FALSE);
+}
+
 #endif
 
 
@@ -1063,7 +1088,7 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	gtk_widget_show(close_button);
 	gtk_widget_show(tbox);
 
-	pagenum = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), window, tbox);
+        pagenum = gtk_notebook_append_page_menu  (GTK_NOTEBOOK(notebook), window, tbox, gtk_label_new(title));
 
 	gtk_signal_connect (GTK_OBJECT (close_button), "button_release_event",
 	                        GTK_SIGNAL_FUNC (destroy_via_closebutton_release), NULL); /* this will destroy the tab by destroying the parent container */
@@ -1103,6 +1128,10 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     ctx->display_mode = display_mode;
     ctx->width = width;
     ctx->title = strdup(title);
+
+#if WAVE_USE_GTK2
+    gtk_signal_connect(GTK_OBJECT(window), "expose_event",GTK_SIGNAL_FUNC(expose_event_local), NULL);
+#endif
 
     button1 = gtk_button_new_with_label (display_mode ? "View Design Unit Only": "View Full File");
     gtk_widget_set_usize(button1, 100, -1);
@@ -1883,6 +1912,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/11/16 02:40:05  gtkwave
+ * do bounds checking for close button release in bounds for tabs
+ *
  * Revision 1.13  2008/11/16 02:17:47  gtkwave
  * rtlbrowse updates for single integrated window
  *
