@@ -1277,7 +1277,7 @@ return(NULL);
  * ----------------------------------------------------------------------------
  */
 
-char *make_single_tcl_list_name(char *s, char *opt_value)
+char *make_single_tcl_list_name(char *s, char *opt_value, int promote_to_bus)
 {
 char *rpnt = NULL;
 char *pnt, *pnt2;
@@ -1309,7 +1309,7 @@ if(s)
 		pnt++;
 		}
 
-	if(lbrack && colon && rbrack && ((colon-lbrack)>0) && ((rbrack - colon)>0) && ((rbrack-lbrack)>0))
+	if((lbrack && colon && rbrack && ((colon-lbrack)>0) && ((rbrack - colon)>0) && ((rbrack-lbrack)>0)) || (lbrack && promote_to_bus))
 		{
 		is_bus = 1;
 		*lbrack = 0;
@@ -1518,7 +1518,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 {
                 if((!s->vec_root)||(!GLOBALS->autocoalesce))
                         {
-			one_entry = make_single_tcl_list_name(s->n->nname, NULL);
+			one_entry = make_single_tcl_list_name(s->n->nname, NULL, 0);
 			WAVE_OE_ME
                         }
                         else
@@ -1527,7 +1527,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                         t=s->vec_root;
                         while(t)
                                 {
-				one_entry = make_single_tcl_list_name(t->n->nname, NULL);
+				one_entry = make_single_tcl_list_name(t->n->nname, NULL, 1);
 				WAVE_OE_ME
 
                                 if(t->selected)
@@ -1626,12 +1626,12 @@ while(t)
 					sprintf(newname, "%s[%d:%d]", first_str, lidx, ridx); /* this disappears in make_single_tcl_list_name() but might be used in future code */
 
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-					one_entry = make_single_tcl_list_name(newname, NULL);
+					one_entry = make_single_tcl_list_name(newname, NULL, 0);
 					WAVE_OE_ME
 					trace_val = give_value_string(t);
 					if(trace_val)
 						{
-						one_entry = make_single_tcl_list_name(newname, trace_val);
+						one_entry = make_single_tcl_list_name(newname, trace_val, 0);
 						WAVE_OE_ME
 						free_2(trace_val);
 						}
@@ -1672,7 +1672,7 @@ while(t)
 
 					sprintf(str+strlen(str), "[%d]", which);
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME }
-					one_entry = make_single_tcl_list_name(str, NULL);
+					one_entry = make_single_tcl_list_name(str, NULL, 0);
 					WAVE_OE_ME
 
 					if(bits)
@@ -1683,19 +1683,19 @@ while(t)
 						else if(bitnum >= AN_COUNT) bitnum = AN_DASH;
 
 						trace_val_vec_single[0] = AN_STR[xfwd[bits[i]]];
-						one_entry = make_single_tcl_list_name(str, trace_val_vec_single);
+						one_entry = make_single_tcl_list_name(str, trace_val_vec_single, 0);
 						WAVE_OE_ME
 						}
                                         }
                                         else
                                         {
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), NULL);
+					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), NULL, 0);
 					WAVE_OE_ME
 					trace_val = give_value_string(t);
 					if(trace_val)
 						{
-						one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), trace_val);
+						one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), trace_val, 0);
 						WAVE_OE_ME
 						free_2(trace_val);
 						}
@@ -1730,12 +1730,12 @@ while(t)
 
 				sprintf(str+strlen(str), "[%d]", which);
 				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-				one_entry = make_single_tcl_list_name(str, NULL);
+				one_entry = make_single_tcl_list_name(str, NULL, 0);
 				WAVE_OE_ME
 				trace_val = give_value_string(t);
 				if(trace_val)
 					{
-					one_entry = make_single_tcl_list_name(str, trace_val);
+					one_entry = make_single_tcl_list_name(str, trace_val, 0);
 					WAVE_OE_ME
 					free_2(trace_val);
 					}
@@ -1743,12 +1743,12 @@ while(t)
 				else
 				{
 				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), NULL);
+				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), NULL, 0);
 				WAVE_OE_ME
 				trace_val = give_value_string(t);
 				if(trace_val)
 					{
-					one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), trace_val);
+					one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), trace_val, 0);
 					WAVE_OE_ME
 					free_2(trace_val);
 					}
@@ -1816,14 +1816,14 @@ sig_selection_foreach_dnd
 		struct symbol *t = s->vec_root;
                 while(t)
 			{
-                        one_entry = make_single_tcl_list_name(t->n->nname, NULL);
+                        one_entry = make_single_tcl_list_name(t->n->nname, NULL, 1);
                         WAVE_OE_ME
                         break; /* t=t->vec_chain; ...no longer needed as this is resolved in process_tcl_list() */
                         }
                 }
 		else
 		{		
-                one_entry = make_single_tcl_list_name(s->n->nname, NULL);
+                one_entry = make_single_tcl_list_name(s->n->nname, NULL, 0);
                 WAVE_OE_ME
 		}
         }
@@ -2405,6 +2405,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2008/11/13 19:13:39  gtkwave
+ * fixes for bitblasted nets in DnD
+ *
  * Revision 1.29  2008/11/08 19:17:51  gtkwave
  * detected coalesced vectors which all contain same prefix and emit the
  * netBus/netBusValue versions accordingly.

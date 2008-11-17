@@ -732,7 +732,7 @@ if(objc==2)
         	{
 		for(i=0;i<l;i++)
 			{
-			one_entry = make_single_tcl_list_name(elem[i], NULL);
+			one_entry = make_single_tcl_list_name(elem[i], NULL, 0);
 			WAVE_OE_ME
 			}
                 free_2(elem);
@@ -929,6 +929,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/10/26 02:36:06  gtkwave
+ * added netValue and netBusValue tcl list values from sigwin drag
+ *
  * Revision 1.1  2008/10/17 18:05:27  gtkwave
  * split tcl command extensions out into their own separate file
  *
