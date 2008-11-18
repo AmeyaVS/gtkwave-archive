@@ -636,7 +636,7 @@ if(ok)
 			sel2 = NULL;
 			}
                         
-		gtk_text_buffer_delete_selection (GTK_TEXT_VIEW(text)->buffer, 0, 0);
+		/* gtk_text_buffer_delete_selection (GTK_TEXT_VIEW(text)->buffer, 0, 0); ...no need to delete because of update_ctx_when_idle() */
 		}
 
 	}
@@ -757,6 +757,10 @@ if(sel)
 		update_ctx_when_idle(text);
 
 		free(tpnt);
+		}
+		else
+		{
+		update_ctx_when_idle(text);
 		}
 
 	jrb_free_tree(strs);
@@ -2166,6 +2170,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/11/18 05:37:34  gtkwave
+ * code cleanups
+ *
  * Revision 1.16  2008/11/18 04:15:26  gtkwave
  * prelim support for text searching in rtlbrowse
  *
