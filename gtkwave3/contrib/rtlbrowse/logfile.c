@@ -10,6 +10,7 @@
 #include <config.h>
 #include <gtk/gtk.h>
 #include <string.h>
+#include <gdk/gdkkeysyms.h>
 #include "splay.h"
 #include "vlex.h"
 #include "jrb.h"
@@ -99,6 +100,7 @@ pressY = event->y;
 
 return(FALSE);
 }
+
 
 
 static gint expose_event_local(GtkWidget *widget, GdkEventExpose *event)
@@ -256,6 +258,121 @@ if(tr)
 		}
 	}
 }
+
+
+static char *search_string = NULL;
+
+static void search_backward(GtkWidget *widget, gpointer data)
+{
+tr_search_backward(search_string);
+}
+
+static gboolean forward_noskip = FALSE;
+static void search_forward(GtkWidget *widget, gpointer data)
+{
+tr_search_forward(search_string, forward_noskip);
+}
+
+/* Signal callback for the filter widget.
+   This catch the return key to update the signal area.  */
+static
+gboolean find_edit_cb (GtkWidget *widget, GdkEventKey *ev, gpointer *data)
+{
+  /* Maybe this test is too strong ?  */
+  if (ev->keyval == GDK_Return)
+    {
+      const char *t = gtk_entry_get_text (GTK_ENTRY (widget));
+
+      if(search_string) { free(search_string); search_string = NULL; }
+      if (t == NULL || *t == 0)
+	{
+	}
+      else
+        { 
+	search_string = strdup(t);
+        }
+
+    search_forward(NULL, NULL);
+    }
+  return FALSE;
+}
+ 
+static
+void press_callback (GtkWidget *widget, gpointer *data)
+{
+GdkEventKey ev;
+
+ev.keyval = GDK_Return;
+
+forward_noskip = TRUE;
+find_edit_cb (widget, &ev, data);
+forward_noskip = FALSE;
+}
+
+
+void create_toolbar(GtkWidget *table)
+    {
+    GtkWidget *find_label;
+    GtkWidget *find_entry;
+    GtkWidget *tb;
+    GtkWidget *stock;
+    GtkStyle  *style;
+    GtkWidget *hbox;
+    int tb_pos = 0;
+
+    hbox = gtk_hbox_new (FALSE, 1);
+    gtk_widget_show (hbox);
+
+    gtk_table_attach (GTK_TABLE (table), hbox, 0, 1, 255, 256,
+                        GTK_FILL | GTK_EXPAND,
+                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
+
+    find_label = gtk_label_new ("Find:");
+    gtk_widget_show (find_label);
+    gtk_box_pack_start (GTK_BOX (hbox), find_label, FALSE, FALSE, 1);
+    
+    find_entry = gtk_entry_new ();
+    gtk_widget_show (find_entry);
+    
+    gtk_signal_connect(GTK_OBJECT(find_entry), "changed", GTK_SIGNAL_FUNC(press_callback), NULL);
+    gtk_signal_connect(GTK_OBJECT (find_entry), "key_press_event", (GtkSignalFunc) find_edit_cb, NULL);
+    gtk_box_pack_start (GTK_BOX (hbox), find_entry, FALSE, FALSE, 1);
+
+    tb = gtk_toolbar_new();
+    style = gtk_widget_get_style(tb);
+    style->xthickness = style->ythickness = 0;
+    gtk_widget_set_style (tb, style);
+    gtk_widget_show (tb);
+
+    gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
+    stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+                                                 GTK_STOCK_GO_BACK,
+                                                 "Search Back",
+                                                 NULL,
+                                                 GTK_SIGNAL_FUNC(search_backward),
+                                                 NULL,
+                                                 tb_pos++);
+
+    style = gtk_widget_get_style(stock);
+    style->xthickness = style->ythickness = 0;
+    gtk_widget_set_style (stock, style);
+    gtk_widget_show(stock);
+        
+    stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+                                                 GTK_STOCK_GO_FORWARD,
+                                                 "Search Forward",
+                                                 NULL,
+                                                 GTK_SIGNAL_FUNC(search_forward),
+                                                 NULL,
+                                                 tb_pos++);
+
+    style = gtk_widget_get_style(stock);
+    style->xthickness = style->ythickness = 0;
+    gtk_widget_set_style (stock, style);
+    gtk_widget_show(stock);
+
+    gtk_box_pack_start (GTK_BOX (hbox), tb, FALSE, FALSE, 1);
+    }
 
 #endif
 
@@ -2049,6 +2166,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/11/18 04:15:26  gtkwave
+ * prelim support for text searching in rtlbrowse
+ *
  * Revision 1.15  2008/11/17 22:36:14  gtkwave
  * adding find widgets
  *
