@@ -25,14 +25,20 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
 
 
 #if WAVE_USE_GTK2
+static char *search_string = NULL;
+
+void tr_search_forward(char *str, gboolean noskip);
+void tr_search_backward(char *str);
+
 static void search_backward(GtkWidget *widget, gpointer data)
 {
-printf("search backward\n");
+tr_search_backward(search_string);
 }
 
+static gboolean forward_noskip = FALSE;
 static void search_forward(GtkWidget *widget, gpointer data)
 {
-printf("search forward\n");
+tr_search_forward(search_string, forward_noskip);
 }
 
 /* Signal callback for the filter widget.
@@ -44,14 +50,17 @@ gboolean find_edit_cb (GtkWidget *widget, GdkEventKey *ev, gpointer *data)
   if (ev->keyval == GDK_Return)
     {
       const char *t = gtk_entry_get_text (GTK_ENTRY (widget));
+
+      if(search_string) { free(search_string); search_string = NULL; }
       if (t == NULL || *t == 0)
 	{
 	}
       else
         { 
-        /* regex_compile( on *t ) */
+	search_string = strdup(t);
         }
-    /* do regex compare here */
+
+    search_forward(NULL, NULL);
     }
   return FALSE;
 }
@@ -63,7 +72,9 @@ GdkEventKey ev;
 
 ev.keyval = GDK_Return;
 
+forward_noskip = TRUE;
 find_edit_cb (widget, &ev, data);
+forward_noskip = FALSE;
 }
 #endif
 
@@ -243,7 +254,6 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     gtk_container_add (GTK_CONTAINER (frameh), hbox);
 #else
 
-if(0) /* XXX : search toolbar goes here */
     {
     GtkWidget *find_label;
     GtkWidget *find_entry;
@@ -266,7 +276,7 @@ if(0) /* XXX : search toolbar goes here */
     find_entry = gtk_entry_new ();
     gtk_widget_show (find_entry);
     
-    gtk_signal_connect(GTK_OBJECT(find_entry), "activate", GTK_SIGNAL_FUNC(press_callback), NULL);
+    gtk_signal_connect(GTK_OBJECT(find_entry), "changed", GTK_SIGNAL_FUNC(press_callback), NULL);
     gtk_signal_connect(GTK_OBJECT (find_entry), "key_press_event", (GtkSignalFunc) find_edit_cb, NULL);
     gtk_box_pack_start (GTK_BOX (hbox), find_entry, FALSE, FALSE, 1);
 
@@ -318,6 +328,9 @@ if(0) /* XXX : search toolbar goes here */
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/11/17 22:36:14  gtkwave
+ * adding find widgets
+ *
  * Revision 1.4  2008/11/16 02:17:47  gtkwave
  * rtlbrowse updates for single integrated window
  *

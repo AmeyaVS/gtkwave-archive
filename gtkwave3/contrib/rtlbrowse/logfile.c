@@ -51,6 +51,9 @@ struct text_find_t *next;
 GtkWidget *text, *window, *button;
 struct logfile_context_t *ctx;
 
+gint line, offs;	/* of insert marker */
+gint srch_line, srch_offs; /* for search, to avoid duplication */
+
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 GtkTextTag *bold_tag;
 GtkTextTag *dgray_tag, *lgray_tag;
@@ -75,7 +78,6 @@ realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
 
 static GdkFont *font = NULL;
-
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 static GtkTextIter iter;
@@ -119,6 +121,140 @@ while(tr)
 selected_text_via_tab = NULL;
 
 return(FALSE);
+}
+
+void read_insert_position(struct text_find_t *tr)
+{
+GtkTextBuffer *tb = GTK_TEXT_VIEW(tr->text)->buffer;
+GtkTextMark *tm = gtk_text_buffer_get_insert(tb);
+GtkTextIter iter;
+
+gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+
+tr->line = gtk_text_iter_get_line(&iter);
+tr->offs = gtk_text_iter_get_line_offset(&iter);
+}
+
+void set_insert_position(struct text_find_t *tr)
+{
+GtkTextBuffer *tb = GTK_TEXT_VIEW(tr->text)->buffer;
+GtkTextMark *tm = gtk_text_buffer_get_insert(tb);
+GtkTextIter iter;
+gint llen;
+
+gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+gtk_text_iter_set_line(&iter, tr->line);
+llen = gtk_text_iter_get_chars_in_line (&iter);
+tr->offs = (tr->offs > llen) ? llen : tr->offs;
+gtk_text_iter_set_line_offset(&iter, tr->offs);
+
+gtk_text_buffer_place_cursor(tb, &iter);
+}
+
+void tr_search_forward(char *str, gboolean noskip)
+{
+struct text_find_t *tr = selected_text_via_tab;
+GtkTextIter iter;
+
+if(tr)
+	{
+	GtkTextBuffer *tb = GTK_TEXT_VIEW(tr->text)->buffer;
+	GtkTextMark *tm = gtk_text_buffer_get_insert(tb);
+	GtkTextIter iter;
+	gboolean found = FALSE;
+	GtkTextIter match_start;
+	GtkTextIter match_end;
+
+	gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+
+	tr->line = gtk_text_iter_get_line(&iter);
+	tr->offs = gtk_text_iter_get_line_offset(&iter);
+
+	if(!noskip)
+	if((tr->line == tr->srch_line) && (tr->offs == tr->srch_offs))
+		{
+		gtk_text_iter_forward_char(&iter);
+		}
+
+
+	if(str) 
+		{
+		found = gtk_text_iter_forward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);
+		if(!found)
+			{
+			gtk_text_buffer_get_start_iter(tb, &iter);
+			found = gtk_text_iter_forward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);		
+			}
+		}
+
+	if(found)
+		{
+		gtk_text_buffer_select_range(tb, &match_start, &match_end);
+		read_insert_position(tr);
+		tr->srch_line = tr->line;
+		tr->srch_offs = tr->offs;		
+
+		tm = gtk_text_buffer_get_insert(tb);
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(tr->text), tm);
+		}
+		else
+		{
+		gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+		gtk_text_buffer_select_range(tb, &iter, &iter);
+		}
+	}
+}
+
+void tr_search_backward(char *str)
+{
+struct text_find_t *tr = selected_text_via_tab;
+GtkTextIter iter;
+
+if(tr)
+	{
+	GtkTextBuffer *tb = GTK_TEXT_VIEW(tr->text)->buffer;
+	GtkTextMark *tm = gtk_text_buffer_get_insert(tb);
+	GtkTextIter iter;
+	gboolean found = FALSE;
+	GtkTextIter match_start;
+	GtkTextIter match_end;
+
+	gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+
+	tr->line = gtk_text_iter_get_line(&iter);
+	tr->offs = gtk_text_iter_get_line_offset(&iter);
+
+	if((tr->line == tr->srch_line) && (tr->offs == tr->srch_offs))
+		{
+		gtk_text_iter_backward_char(&iter);
+		}
+
+	if(str) 
+		{
+		found = gtk_text_iter_backward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);
+		if(!found)
+			{
+			gtk_text_buffer_get_end_iter(tb, &iter);
+			found = gtk_text_iter_backward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);		
+			}
+		}
+
+	if(found)
+		{
+		gtk_text_buffer_select_range(tb, &match_start, &match_end);
+		read_insert_position(tr);
+		tr->srch_line = tr->line;
+		tr->srch_offs = tr->offs;		
+
+		tm = gtk_text_buffer_get_insert(tb);
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(tr->text), tm);
+		}
+		else
+		{
+		gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+		gtk_text_buffer_select_range(tb, &iter, &iter);
+		}
+	}
 }
 
 #endif
@@ -897,12 +1033,12 @@ while(t)
 			GtkAdjustment *vadj = GTK_TEXT_VIEW (t->text)->vadjustment;
 			gdouble vvalue = vadj->value;
 
+			read_insert_position(t);
 			gtk_text_buffer_get_start_iter(GTK_TEXT_VIEW (t->text)->buffer, &st_iter);
 			gtk_text_buffer_get_end_iter(GTK_TEXT_VIEW (t->text)->buffer, &en_iter);
 			gtk_text_buffer_delete(GTK_TEXT_VIEW (t->text)->buffer, &st_iter, &en_iter);
 
 			gtk_text_buffer_get_start_iter (GTK_TEXT_VIEW (t->text)->buffer, &iter);
-
 
 			bold_tag = t->bold_tag;
 			dgray_tag = t->dgray_tag;
@@ -913,6 +1049,7 @@ while(t)
 			size_tag = t->size_tag;
 
 			bwlogbox_2(t->ctx, NULL, t->button, t->text);
+			set_insert_position(t);
 
 			vadj->value = vvalue;
 			gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
@@ -1912,6 +2049,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/11/17 22:36:14  gtkwave
+ * adding find widgets
+ *
  * Revision 1.14  2008/11/16 02:40:05  gtkwave
  * do bounds checking for close button release in bounds for tabs
  *

@@ -515,3 +515,4 @@
 		integrated window.
 		Adjust xthickness/ythickness in toolbars to make images
 		take up less space.
+		Preliminary support for text searching in rtlbrowse.
