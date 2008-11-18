@@ -9,8 +9,8 @@
 
 #include <config.h>
 #include <gtk/gtk.h>
-#include <string.h>
 #include <gdk/gdkkeysyms.h>
+#include <string.h>
 #include "splay.h"
 #include "vlex.h"
 #include "jrb.h"
@@ -69,9 +69,11 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
 void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *button, GtkWidget *text);
 
 
-struct text_find_t *text_root = NULL;
-struct text_find_t *selected_text_via_tab = NULL;
-char *fontname_logfile = NULL;
+static struct text_find_t *text_root = NULL;
+static struct text_find_t *selected_text_via_tab = NULL;
+static GtkWidget *matchcase_checkbutton = NULL;
+static gboolean matchcase_active = FALSE;
+static char *fontname_logfile = NULL;
 
 /* Add some text to our text widget - this is a callback that is invoked
 when our window is realized. We could also force our window to be
@@ -100,7 +102,6 @@ pressY = event->y;
 
 return(FALSE);
 }
-
 
 
 static gint expose_event_local(GtkWidget *widget, GdkEventExpose *event)
@@ -153,6 +154,101 @@ gtk_text_iter_set_line_offset(&iter, tr->offs);
 gtk_text_buffer_place_cursor(tb, &iter);
 }
 
+
+static gchar *
+rtlbrowse_strcasestr (gchar *haystack, gchar *needle)
+{
+	char *p, *startn = NULL, *np = NULL;
+
+	for (p = haystack; *p; p++) {
+		if (np) {
+			if (toupper(*p) == toupper(*np)) {
+				if (!*++np)
+					return(startn);
+			} else
+				np = 0;
+		} else if (toupper(*p) == toupper(*needle)) {
+			np = needle + 1;
+			startn = p;
+		}
+	}
+	return(NULL);
+}
+
+
+static void
+forward_chars_with_skipping (GtkTextIter *iter,
+                             gint         count)
+{
+     
+  gint i;
+
+  g_return_if_fail (count >= 0);
+  
+  i = count;
+        
+  while (i > 0)
+    {
+      gboolean ignored = FALSE;
+
+      if (gtk_text_iter_get_char (iter) == 0xFFFC)
+        ignored = TRUE;
+             
+      gtk_text_iter_forward_char (iter);
+  
+      if (!ignored)
+        --i;
+    }
+}     
+
+static gboolean iter_forward_search_caseins(
+                              const GtkTextIter *iter,
+                              gchar             *str,
+                              GtkTextIter       *match_start,
+                              GtkTextIter       *match_end)
+{
+GtkTextIter start = *iter;
+GtkTextIter next;
+gchar *line_text, *found;
+gint offset;
+
+for(;;)
+	{
+	next = start;
+	gtk_text_iter_forward_line (&next);
+
+	/* No more text in buffer */
+	if (gtk_text_iter_equal (&start, &next))
+		{
+	      	return(FALSE);
+	    	}
+
+	line_text = gtk_text_iter_get_visible_text (&start, &next);
+	found = rtlbrowse_strcasestr(line_text, str);
+	if(found)
+		{
+		gchar cached = *found; 
+		*found = 0;
+		offset = g_utf8_strlen (line_text, -1);
+		*found = cached;
+		break;
+		}
+	g_free (line_text);
+
+	start = next;
+	} 
+
+*match_start = start;
+forward_chars_with_skipping (match_start, offset);
+
+offset = g_utf8_strlen (str, -1);
+*match_end = *match_start;
+forward_chars_with_skipping (match_end, offset);
+
+return(TRUE);
+}
+
+
 void tr_search_forward(char *str, gboolean noskip)
 {
 struct text_find_t *tr = selected_text_via_tab;
@@ -181,11 +277,25 @@ if(tr)
 
 	if(str) 
 		{
-		found = gtk_text_iter_forward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);
+		if(!matchcase_active)
+			{
+			found = iter_forward_search_caseins(&iter, str, &match_start, &match_end);
+			}
+			else
+			{
+			found = gtk_text_iter_forward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);
+			}
 		if(!found)
 			{
 			gtk_text_buffer_get_start_iter(tb, &iter);
-			found = gtk_text_iter_forward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);		
+			if(!matchcase_active)
+				{
+				found = iter_forward_search_caseins(&iter, str, &match_start, &match_end);
+				}
+				else
+				{
+				found = gtk_text_iter_forward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);
+				}
 			}
 		}
 
@@ -197,7 +307,8 @@ if(tr)
 		tr->srch_offs = tr->offs;		
 
 		tm = gtk_text_buffer_get_insert(tb);
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(tr->text), tm);
+
+		gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(tr->text), &match_start, 0.0, TRUE, 0.0, 0.5);
 		}
 		else
 		{
@@ -206,6 +317,47 @@ if(tr)
 		}
 	}
 }
+
+
+static gboolean iter_backward_search_caseins(
+                              const GtkTextIter *iter,
+                              gchar             *str,
+                              GtkTextIter       *match_start,
+                              GtkTextIter       *match_end)
+{
+GtkTextIter start = *iter;
+GtkTextIter next;
+gchar *line_text;
+int offset;
+int cmpval;
+
+offset = g_utf8_strlen (str, -1);
+
+for(;;)
+	{
+	if(gtk_text_iter_is_start(&start))
+		{
+		break;
+		}
+
+	next = start;
+	forward_chars_with_skipping (&next, offset);
+        line_text = gtk_text_iter_get_visible_text (&start, &next);
+	cmpval = strcasecmp(str, line_text);
+	g_free(line_text);
+        if(!cmpval)
+		{
+		*match_start = start;
+		*match_end = next;
+		return(TRUE);
+		}
+
+	gtk_text_iter_backward_char(&start);
+	}
+
+return(FALSE);
+}
+
 
 void tr_search_backward(char *str)
 {
@@ -233,11 +385,25 @@ if(tr)
 
 	if(str) 
 		{
-		found = gtk_text_iter_backward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);
+		if(!matchcase_active)
+			{
+			found = iter_backward_search_caseins(&iter, str, &match_start, &match_end);
+			}
+			else
+			{
+			found = gtk_text_iter_backward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);
+			}
 		if(!found)
 			{
 			gtk_text_buffer_get_end_iter(tb, &iter);
-			found = gtk_text_iter_backward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);		
+			if(!matchcase_active)
+				{
+				found = iter_backward_search_caseins(&iter, str, &match_start, &match_end);
+				}
+				else
+				{
+				found = gtk_text_iter_backward_search(&iter, str, GTK_TEXT_SEARCH_TEXT_ONLY, &match_start, &match_end, NULL);		
+				}
 			}
 		}
 
@@ -249,7 +415,7 @@ if(tr)
 		tr->srch_offs = tr->offs;		
 
 		tm = gtk_text_buffer_get_insert(tb);
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(tr->text), tm);
+		gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(tr->text), &match_start, 0.0, TRUE, 0.0, 0.5);
 		}
 		else
 		{
@@ -296,6 +462,13 @@ gboolean find_edit_cb (GtkWidget *widget, GdkEventKey *ev, gpointer *data)
     }
   return FALSE;
 }
+
+static void toggle_callback(GtkWidget *widget, GtkWidget *nothing)
+{
+matchcase_active = (GTK_TOGGLE_BUTTON(widget)->active != 0);
+tr_search_forward(search_string, TRUE);
+}
+
  
 static
 void press_callback (GtkWidget *widget, gpointer *data)
@@ -329,14 +502,14 @@ void create_toolbar(GtkWidget *table)
 
     find_label = gtk_label_new ("Find:");
     gtk_widget_show (find_label);
-    gtk_box_pack_start (GTK_BOX (hbox), find_label, FALSE, FALSE, 1);
+    gtk_box_pack_start (GTK_BOX (hbox), find_label, FALSE, FALSE, 0);
     
     find_entry = gtk_entry_new ();
     gtk_widget_show (find_entry);
     
     gtk_signal_connect(GTK_OBJECT(find_entry), "changed", GTK_SIGNAL_FUNC(press_callback), NULL);
     gtk_signal_connect(GTK_OBJECT (find_entry), "key_press_event", (GtkSignalFunc) find_edit_cb, NULL);
-    gtk_box_pack_start (GTK_BOX (hbox), find_entry, FALSE, FALSE, 1);
+    gtk_box_pack_start (GTK_BOX (hbox), find_entry, FALSE, FALSE, 0);
 
     tb = gtk_toolbar_new();
     style = gtk_widget_get_style(tb);
@@ -371,7 +544,13 @@ void create_toolbar(GtkWidget *table)
     gtk_widget_set_style (stock, style);
     gtk_widget_show(stock);
 
-    gtk_box_pack_start (GTK_BOX (hbox), tb, FALSE, FALSE, 1);
+    gtk_box_pack_start (GTK_BOX (hbox), tb, FALSE, FALSE, 0);
+
+    matchcase_checkbutton = gtk_check_button_new_with_label("Match case");
+    gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(matchcase_checkbutton), matchcase_active);
+    gtk_signal_connect (GTK_OBJECT (matchcase_checkbutton), "toggled", GTK_SIGNAL_FUNC(toggle_callback), NULL);
+    gtk_widget_show(matchcase_checkbutton);
+    gtk_box_pack_start (GTK_BOX (hbox), matchcase_checkbutton, FALSE, FALSE, 0);
     }
 
 #endif
@@ -2170,6 +2349,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/11/18 06:40:35  gtkwave
+ * removed unnecessary buffer deletion
+ *
  * Revision 1.17  2008/11/18 05:37:34  gtkwave
  * code cleanups
  *
