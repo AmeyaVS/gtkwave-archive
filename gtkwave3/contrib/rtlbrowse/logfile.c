@@ -154,28 +154,6 @@ gtk_text_iter_set_line_offset(&iter, tr->offs);
 gtk_text_buffer_place_cursor(tb, &iter);
 }
 
-
-static gchar *
-rtlbrowse_strcasestr (gchar *haystack, gchar *needle)
-{
-	char *p, *startn = NULL, *np = NULL;
-
-	for (p = haystack; *p; p++) {
-		if (np) {
-			if (toupper(*p) == toupper(*np)) {
-				if (!*++np)
-					return(startn);
-			} else
-				np = 0;
-		} else if (toupper(*p) == toupper(*needle)) {
-			np = needle + 1;
-			startn = p;
-		}
-	}
-	return(NULL);
-}
-
-
 static void
 forward_chars_with_skipping (GtkTextIter *iter,
                              gint         count)
@@ -209,8 +187,18 @@ static gboolean iter_forward_search_caseins(
 {
 GtkTextIter start = *iter;
 GtkTextIter next;
-gchar *line_text, *found;
+gchar *line_text, *found, *pnt;
 gint offset;
+gchar *strcaseins;
+
+if(!str) return(FALSE);
+
+pnt = strcaseins = strdup(str);
+while(*pnt)
+	{
+	*pnt = toupper(*pnt);
+	pnt++;
+	}
 
 for(;;)
 	{
@@ -220,11 +208,17 @@ for(;;)
 	/* No more text in buffer */
 	if (gtk_text_iter_equal (&start, &next))
 		{
+		free(strcaseins);
 	      	return(FALSE);
 	    	}
 
-	line_text = gtk_text_iter_get_visible_text (&start, &next);
-	found = rtlbrowse_strcasestr(line_text, str);
+	pnt = line_text = gtk_text_iter_get_visible_text (&start, &next);
+	while(*pnt)
+		{
+		*pnt = toupper(*pnt);
+		pnt++;
+		}
+	found = strstr(line_text, strcaseins);
 	if(found)
 		{
 		gchar cached = *found; 
@@ -245,6 +239,7 @@ offset = g_utf8_strlen (str, -1);
 *match_end = *match_start;
 forward_chars_with_skipping (match_end, offset);
 
+free(strcaseins);
 return(TRUE);
 }
 
@@ -331,6 +326,7 @@ gchar *line_text;
 int offset;
 int cmpval;
 
+if(!str) return(FALSE);
 offset = g_utf8_strlen (str, -1);
 
 for(;;)
@@ -2349,6 +2345,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/11/18 23:23:08  gtkwave
+ * added search capability to rtlbrowse
+ *
  * Revision 1.18  2008/11/18 06:40:35  gtkwave
  * removed unnecessary buffer deletion
  *
