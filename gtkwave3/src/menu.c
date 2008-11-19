@@ -4600,7 +4600,7 @@ if(!f)
 
 if((nlen > 4) && (!strcasecmp(".tcl", name + nlen - 4)))
 	{
-#ifdef HAVE_TCL_H
+#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
 	int tclrc;
 	char *tcl_cmd = malloc_2(7 + nlen + 1);
 	strcpy(tcl_cmd, "source ");
@@ -4819,6 +4819,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2008/10/14 00:53:46  gtkwave
+ * enabled tcl scripts to call existing gtkwave style scripted menu functions
+ *
  * Revision 1.39  2008/10/02 00:52:25  gtkwave
  * added dnd of external filetypes into viewer
  *

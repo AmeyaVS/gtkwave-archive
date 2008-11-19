@@ -36,7 +36,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_TCL_H
+#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
 #include <tcl.h>
 #endif
 
@@ -2294,7 +2294,7 @@ return(is_url);
 /* XXX functions for embedding TCL interpreter XXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
-#if HAVE_TCL_H
+#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
 
 static int menu_func(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
@@ -2405,6 +2405,10 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2008/11/17 16:49:38  gtkwave
+ * convert net object to netBus when encountering stranded bits in
+ * signal search and tree search window
+ *
  * Revision 1.30  2008/11/13 19:13:39  gtkwave
  * fixes for bitblasted nets in DnD
  *
