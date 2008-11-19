@@ -481,6 +481,7 @@ struct TraceEnt *trace_to_alias_menu_c_1; /* from menu.c 260 */
 struct TraceEnt *showchangeall_menu_c_1; /* from menu.c 261 */
 char *filesel_newviewer_menu_c_1; /* from menu.c 262 */
 char *filesel_logfile_menu_c_1; /* from menu.c 263 */
+char *filesel_scriptfile_menu; /* from menu.c */
 char *filesel_writesave; /* from menu.c 264 */
 char save_success_menu_c_1; /* from menu.c 265 */
 char *filesel_vcd_writesave; /* from menu.c 266 */

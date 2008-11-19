@@ -517,3 +517,6 @@
 		take up less space.
 		Preliminary support for text searching in rtlbrowse.
 		Added rtlbrowse case (in)sensitive searching both directions.
+		Fix re-entrancy on file names for file.c file requester in
+		gtkwave.
+

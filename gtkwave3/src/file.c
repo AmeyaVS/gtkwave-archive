@@ -159,6 +159,13 @@ if(*GLOBALS->fileselbox_text && (!g_path_is_absolute(*GLOBALS->fileselbox_text))
 #endif
 #endif
 	}
+	else
+	{
+	if(*GLOBALS->fileselbox_text)
+		{
+		can_set_filename = 1;
+		}
+	}
 
 if(is_writemode)
 	{
@@ -279,6 +286,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/02/27 16:23:00  gtkwave
+ * fixed potential file chooser crash
+ *
  * Revision 1.8  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *

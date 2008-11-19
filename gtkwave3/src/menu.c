@@ -3090,7 +3090,7 @@ if(GLOBALS->filesel_ok)
 	char *wname;
 
 	DEBUG(printf("Read Save Fini: %s\n", *fileselbox_text));
-        
+
         wname=*GLOBALS->fileselbox_text;
         read_save_helper(wname);
   }
@@ -3204,6 +3204,41 @@ if(GLOBALS->helpbox_is_active)
 	}
 
 fileselbox("Read Logfile",&GLOBALS->filesel_logfile_menu_c_1,GTK_SIGNAL_FUNC(menu_read_log_cleanup), GTK_SIGNAL_FUNC(NULL), NULL, 0);
+}
+
+/**/
+void
+menu_read_script_cleanup(GtkWidget *widget, gpointer data)
+{
+char *fname ;
+
+if(GLOBALS->filesel_ok)
+	{
+	DEBUG(printf("Read Script Fini: %s\n", *fileselbox_text));
+        
+        fname=*GLOBALS->fileselbox_text;
+	if((fname)&&strlen(fname))
+		{
+		execute_script(fname);
+		}
+	}
+}
+/**/
+void
+menu_read_script_file(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+	{
+	help_text_bold("\n\nRead Script File");
+	help_text(
+		" will open a file requester that will ask for the name"
+		" of a TCL script to run.  This menu option itself is not callable"
+		" by TCL scripts."
+	);
+	return;
+	}
+
+fileselbox("Read Script File",&GLOBALS->filesel_scriptfile_menu,GTK_SIGNAL_FUNC(menu_read_script_cleanup), GTK_SIGNAL_FUNC(NULL), "*.tcl", 0);
 }
 
 /**/
@@ -4330,6 +4365,10 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Read Verilog Stemsfile", NULL, menu_read_stems_file, WV_MENU_FRSTMF, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2STMF, "<Separator>"),
 #endif
+#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+    WAVE_GTKIFE("/File/Read Tcl Script File", NULL, menu_read_script_file, WV_MENU_TCLSCR, "<Item>"),
+    WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_TCLSEP, "<Separator>"),
+#endif
     WAVE_GTKIFE("/File/Quit/Yes, Quit", "<Alt>Q", menu_quit, WV_MENU_FQY, "<Item>"),
     WAVE_GTKIFE("/File/Quit/Don't Quit", NULL, NULL, WV_MENU_FQN, "<Item>"),
 
@@ -4586,10 +4625,20 @@ return(TRUE); /* keeps "delete_event" from happening...we'll manually destory la
  */
 int execute_script(char *name)
 {
-FILE *f = fopen(name, "rb");
+FILE *f;
 int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
 int i;
 int nlen = strlen(name);
+static int running = 0;
+
+if(running)
+	{
+	fprintf(stderr, "Could not run script file '%s', as one is already running.\n", name);
+	return(0);	
+	}
+
+running = 1;
+f = fopen(name, "rb");
 
 if(!f)
 	{
@@ -4656,6 +4705,7 @@ for(i=0;i<GLOBALS->num_notebook_pages;i++)
         (*GLOBALS->contexts)[i]->script_handle = NULL;	/* just in case there was a CTX swap */
 	}
 
+running = 0;
 return(0);
 }
 
@@ -4819,6 +4869,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2008/11/19 18:15:35  gtkwave
+ * add HAVE_LIBTCL to ifdefs which have HAVE_TCL_H
+ *
  * Revision 1.40  2008/10/14 00:53:46  gtkwave
  * enabled tcl scripts to call existing gtkwave style scripted menu functions
  *

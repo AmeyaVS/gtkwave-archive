@@ -485,6 +485,7 @@ NULL, /* trace_to_alias_menu_c_1 243 */
 NULL, /* showchangeall_menu_c_1 244 */
 NULL, /* filesel_newviewer_menu_c_1 245 */
 NULL, /* filesel_logfile_menu_c_1 246 */
+NULL, /* filesel_scriptfile_menu */
 NULL, /* filesel_writesave 247 */
 0, /* save_success_menu_c_1 248 */
 NULL, /* filesel_vcd_writesave 249 */
