@@ -10,6 +10,9 @@ AM_MAINTAINER_MODE
 
 # Checks for build options
 
+SC_PATH_TCLCONFIG
+SC_LOAD_TCLCONFIG
+
 AC_MSG_CHECKING([if gtk1 or gtk2 should be used])
 
 GTK1=no
