@@ -4661,7 +4661,7 @@ if((nlen > 4) && (!strcasecmp(".tcl", name + nlen - 4)))
 
 	free_2(tcl_cmd);
 #else
-	fprintf(stderr, "GTKWAVE | Tcl support not compiled into gtkwave, exiting.");
+	fprintf(stderr, "GTKWAVE | Tcl support not compiled into gtkwave, exiting.\n");
 	gtk_exit(255);
 #endif
 	}
@@ -4869,6 +4869,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2008/11/19 19:08:34  gtkwave
+ * add tcl menu option, update file requester name reentrancy code
+ *
  * Revision 1.41  2008/11/19 18:15:35  gtkwave
  * add HAVE_LIBTCL to ifdefs which have HAVE_TCL_H
  *
