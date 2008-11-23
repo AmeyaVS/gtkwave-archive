@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	18nov08	Fix for strings ('s' type) in recoder.  
+3.2.0	23nov08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -519,4 +519,5 @@
 		Added rtlbrowse case (in)sensitive searching both directions.
 		Fix re-entrancy on file names for file.c file requester in
 		gtkwave.
-
+		Add --with-tcl to configure script via tcl.m4 macro.
+		Cut down on visual noise during reload.

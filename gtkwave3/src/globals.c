@@ -1285,6 +1285,13 @@ void reload_into_new_context(void)
  (*new_globals->contexts)[new_globals->this_context_page] = new_globals;
  new_globals->dead_context = GLOBALS->dead_context; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
 
+ /* to cut down on temporary visual noise from incorrect zoom factor on reload */
+ new_globals->pixelsperframe = GLOBALS->pixelsperframe;
+ new_globals->pxns = GLOBALS->pxns;
+ new_globals->nspx = GLOBALS->nspx;
+ new_globals->nspx = GLOBALS->nspx;
+ new_globals->zoom = GLOBALS->zoom;
+
  /* Default colors, X contexts, pixmaps, drawables, etc from signalwindow.c and wavewindow.c */
  new_globals->signalarea_event_box = GLOBALS->signalarea_event_box;
  new_globals->keypress_handler_id = GLOBALS->keypress_handler_id;
