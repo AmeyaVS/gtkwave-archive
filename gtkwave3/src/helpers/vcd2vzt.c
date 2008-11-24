@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999-2007 Tony Bybell.
+ * Copyright (c) 1999-2008 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1835,7 +1835,7 @@ printf(
 "  -r, --rle                  use bitwise RLE compression on value table\n"
 "  -h, --help                 display this help then exit\n\n"
 
-"VCD files may be compressed with zip or gzip.  Note that VCDFILE and LXTFILE\n"
+"VCD files may be compressed with zip or gzip.  Note that VCDFILE and VZTFILE\n"
 "are optional provided the --vcdname and --vztname options are specified.\n"
 "Use \"-\" as a VCD filename to accept uncompressed input from stdin.\n\n"
 "Report bugs to <bybell@nc.rr.com>.\n",nam);
@@ -1852,7 +1852,7 @@ printf(
 "  -r                         use bitwise RLE compression on value table\n"
 "  -h                         display this help then exit\n\n"
 
-"VCD files may be compressed with zip or gzip.  Note that VCDFILE and LXTFILE\n"
+"VCD files may be compressed with zip or gzip.  Note that VCDFILE and VZTFILE\n"
 "are optional provided the --vcdname and --vztname options are specified.\n"
 "Use \"-\" as a VCD filename to accept uncompressed input from stdin.\n\n"
 "Report bugs to <bybell@nc.rr.com>.\n",nam);
@@ -1989,6 +1989,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/06/01 21:13:41  gtkwave
+ * regenerate configure for cygwin with proper flags, add missing files
+ *
  * Revision 1.3  2007/04/29 06:07:28  gtkwave
  * fixed memory leaks in vcd parser
  *
