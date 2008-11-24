@@ -1267,6 +1267,9 @@ void reload_into_new_context(void)
  free(new_globals->gtk_context_bridge_ptr); /* don't need this one as we're copying over the old one... */
  new_globals->gtk_context_bridge_ptr = GLOBALS->gtk_context_bridge_ptr;
 
+ /* SMP */
+ new_globals->num_cpus = GLOBALS->num_cpus;
+
  /* tcl interpreter */
 #if defined(HAVE_LIBTCL)
  new_globals->interp = GLOBALS->interp;
