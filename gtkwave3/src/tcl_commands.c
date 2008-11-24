@@ -36,7 +36,7 @@
 #include <unistd.h>
 #endif
 
-#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+#if defined(HAVE_LIBTCL)
 #include <tcl.h>
 #endif
 
@@ -49,7 +49,7 @@
 /* XXX functions for embedding TCL interpreter XXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
-#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+#if defined(HAVE_LIBTCL)
 
 static int gtkwavetcl_badNumArgs(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], int expected)
 {
@@ -929,6 +929,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/11/19 18:15:35  gtkwave
+ * add HAVE_LIBTCL to ifdefs which have HAVE_TCL_H
+ *
  * Revision 1.3  2008/11/17 16:49:38  gtkwave
  * convert net object to netBus when encountering stranded bits in
  * signal search and tree search window

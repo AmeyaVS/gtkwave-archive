@@ -395,7 +395,7 @@ NULL, /* lt_buf_lxt_c_1 183 */
 /* 
  * main.c
  */
-#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+#if defined(HAVE_LIBTCL)
 NULL, /* interp */
 #endif
 0, /* block_xy_update */
@@ -1268,7 +1268,7 @@ void reload_into_new_context(void)
  new_globals->gtk_context_bridge_ptr = GLOBALS->gtk_context_bridge_ptr;
 
  /* tcl interpreter */
-#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+#if defined(HAVE_LIBTCL)
  new_globals->interp = GLOBALS->interp;
 #endif
  

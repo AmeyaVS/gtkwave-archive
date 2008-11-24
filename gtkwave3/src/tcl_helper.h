@@ -12,7 +12,7 @@
 
 #include <config.h>
 
-#ifdef HAVE_TCL_H
+#ifdef HAVE_LIBTCL
 
 typedef struct
         {
@@ -65,6 +65,10 @@ void make_tcl_interpreter(char *argv[]);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.9  2008/11/17 16:49:38  gtkwave
+ * convert net object to netBus when encountering stranded bits in
+ * signal search and tree search window
+ *
  * Revision 1.8  2008/10/26 02:36:06  gtkwave
  * added netValue and netBusValue tcl list values from sigwin drag
  *

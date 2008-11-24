@@ -64,7 +64,7 @@ WV_MENU_SEP2LF,
 WV_MENU_FRSTMF,
 WV_MENU_SEP2STMF,
 #endif
-#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+#if defined(HAVE_LIBTCL)
 WV_MENU_TCLSCR,
 WV_MENU_TCLSEP,
 #endif
@@ -314,6 +314,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/11/19 19:08:34  gtkwave
+ * add tcl menu option, update file requester name reentrancy code
+ *
  * Revision 1.14  2008/10/14 00:53:46  gtkwave
  * enabled tcl scripts to call existing gtkwave style scripted menu functions
  *

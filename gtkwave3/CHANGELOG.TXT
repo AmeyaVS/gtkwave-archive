@@ -521,3 +521,5 @@
 		gtkwave.
 		Add --with-tcl to configure script via tcl.m4 macro.
 		Cut down on visual noise during reload.
+		Added fix using TCL_INCLUDE_SPEC to get to compile under
+		Ubuntu.

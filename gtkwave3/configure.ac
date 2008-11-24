@@ -13,6 +13,8 @@ AM_MAINTAINER_MODE
 SC_PATH_TCLCONFIG
 SC_LOAD_TCLCONFIG
 
+AC_SUBST(TCL_INCLUDE_SPEC)
+
 AC_MSG_CHECKING([if gtk1 or gtk2 should be used])
 
 GTK1=no
@@ -238,7 +240,7 @@ AC_FUNC_ALLOCA
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h tcl.h])
+AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h])
 
 # rpc workaround for cygwin
 AC_CHECK_HEADERS([rpc/types.h rpc/xdr.h], [], [],
@@ -314,23 +316,25 @@ AC_MSG_NOTICE([
 --------------------------------------------
   Configuration summary:
 
-  gtk1          : $GTK1
-  gtk version   : $GTK_VER
-  GTK_CFLAGS    : $GTK_CFLAGS
-  GTK_LIBS      : $GTK_LIBS
+  gtk1             : $GTK1
+  gtk version      : $GTK_VER
+  GTK_CFLAGS       : $GTK_CFLAGS
+  GTK_LIBS         : $GTK_LIBS
 
-  LIBZ_CFLAGS   : $LIBZ_CFLAGS
-  LIBZ_LDADD    : $LIBZ_LDADD
+  LIBZ_CFLAGS      : $LIBZ_CFLAGS
+  LIBZ_LDADD       : $LIBZ_LDADD
 
-  LIBBZ2_CFLAGS : $LIBBZ2_CFLAGS
-  LIBBZ2_LDADD  : $LIBBZ2_LDADD
+  LIBBZ2_CFLAGS    : $LIBBZ2_CFLAGS
+  LIBBZ2_LDADD     : $LIBBZ2_LDADD
 
-  AET2_CFLAGS   : $AET2_CFLAGS
-  AET2_LDADD    : $AET2_LDADD
+  AET2_CFLAGS      : $AET2_CFLAGS
+  AET2_LDADD       : $AET2_LDADD
 
-  CPPFLAGS      : $CPPFLAGS
-  CFLAGS        : $CFLAGS
-  LIBS          : $LIBS
+  TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+
+  CPPFLAGS         : $CPPFLAGS
+  CFLAGS           : $CFLAGS
+  LIBS             : $LIBS
 --------------------------------------------
 ])
 

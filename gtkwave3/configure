@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_INCLUDE_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1991,6 +1991,8 @@ echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
     eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
     eval "TCL_STUB_LIB_FLAG=\"${TCL_STUB_LIB_FLAG}\""
     eval "TCL_STUB_LIB_SPEC=\"${TCL_STUB_LIB_SPEC}\""
+
+
 
 
 
@@ -5760,8 +5762,7 @@ done
 
 
 
-
-for ac_header in fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h tcl.h
+for ac_header in fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -10139,46 +10140,50 @@ fi
 --------------------------------------------
   Configuration summary:
 
-  gtk1          : $GTK1
-  gtk version   : $GTK_VER
-  GTK_CFLAGS    : $GTK_CFLAGS
-  GTK_LIBS      : $GTK_LIBS
+  gtk1             : $GTK1
+  gtk version      : $GTK_VER
+  GTK_CFLAGS       : $GTK_CFLAGS
+  GTK_LIBS         : $GTK_LIBS
 
-  LIBZ_CFLAGS   : $LIBZ_CFLAGS
-  LIBZ_LDADD    : $LIBZ_LDADD
+  LIBZ_CFLAGS      : $LIBZ_CFLAGS
+  LIBZ_LDADD       : $LIBZ_LDADD
 
-  LIBBZ2_CFLAGS : $LIBBZ2_CFLAGS
-  LIBBZ2_LDADD  : $LIBBZ2_LDADD
+  LIBBZ2_CFLAGS    : $LIBBZ2_CFLAGS
+  LIBBZ2_LDADD     : $LIBBZ2_LDADD
 
-  AET2_CFLAGS   : $AET2_CFLAGS
-  AET2_LDADD    : $AET2_LDADD
+  AET2_CFLAGS      : $AET2_CFLAGS
+  AET2_LDADD       : $AET2_LDADD
 
-  CPPFLAGS      : $CPPFLAGS
-  CFLAGS        : $CFLAGS
-  LIBS          : $LIBS
+  TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+
+  CPPFLAGS         : $CPPFLAGS
+  CFLAGS           : $CFLAGS
+  LIBS             : $LIBS
 --------------------------------------------
 " >&5
 echo "$as_me:
 --------------------------------------------
   Configuration summary:
 
-  gtk1          : $GTK1
-  gtk version   : $GTK_VER
-  GTK_CFLAGS    : $GTK_CFLAGS
-  GTK_LIBS      : $GTK_LIBS
+  gtk1             : $GTK1
+  gtk version      : $GTK_VER
+  GTK_CFLAGS       : $GTK_CFLAGS
+  GTK_LIBS         : $GTK_LIBS
 
-  LIBZ_CFLAGS   : $LIBZ_CFLAGS
-  LIBZ_LDADD    : $LIBZ_LDADD
+  LIBZ_CFLAGS      : $LIBZ_CFLAGS
+  LIBZ_LDADD       : $LIBZ_LDADD
 
-  LIBBZ2_CFLAGS : $LIBBZ2_CFLAGS
-  LIBBZ2_LDADD  : $LIBBZ2_LDADD
+  LIBBZ2_CFLAGS    : $LIBBZ2_CFLAGS
+  LIBBZ2_LDADD     : $LIBBZ2_LDADD
 
-  AET2_CFLAGS   : $AET2_CFLAGS
-  AET2_LDADD    : $AET2_LDADD
+  AET2_CFLAGS      : $AET2_CFLAGS
+  AET2_LDADD       : $AET2_LDADD
 
-  CPPFLAGS      : $CPPFLAGS
-  CFLAGS        : $CFLAGS
-  LIBS          : $LIBS
+  TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+
+  CPPFLAGS         : $CPPFLAGS
+  CFLAGS           : $CFLAGS
+  LIBS             : $LIBS
 --------------------------------------------
 " >&6;}
 
@@ -10889,6 +10894,7 @@ s,@TCL_LIB_SPEC@,$TCL_LIB_SPEC,;t t
 s,@TCL_STUB_LIB_FILE@,$TCL_STUB_LIB_FILE,;t t
 s,@TCL_STUB_LIB_FLAG@,$TCL_STUB_LIB_FLAG,;t t
 s,@TCL_STUB_LIB_SPEC@,$TCL_STUB_LIB_SPEC,;t t
+s,@TCL_INCLUDE_SPEC@,$TCL_INCLUDE_SPEC,;t t
 s,@AET2_CFLAGS@,$AET2_CFLAGS,;t t
 s,@AET2_LDADD@,$AET2_LDADD,;t t
 s,@CC@,$CC,;t t

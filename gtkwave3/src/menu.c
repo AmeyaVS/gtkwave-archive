@@ -4365,7 +4365,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Read Verilog Stemsfile", NULL, menu_read_stems_file, WV_MENU_FRSTMF, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2STMF, "<Separator>"),
 #endif
-#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+#if defined(HAVE_LIBTCL)
     WAVE_GTKIFE("/File/Read Tcl Script File", NULL, menu_read_script_file, WV_MENU_TCLSCR, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_TCLSEP, "<Separator>"),
 #endif
@@ -4649,7 +4649,7 @@ if(!f)
 
 if((nlen > 4) && (!strcasecmp(".tcl", name + nlen - 4)))
 	{
-#if defined(HAVE_TCL_H) && defined(HAVE_LIBTCL)
+#if defined(HAVE_LIBTCL)
 	int tclrc;
 	char *tcl_cmd = malloc_2(7 + nlen + 1);
 	strcpy(tcl_cmd, "source ");
@@ -4869,6 +4869,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2008/11/23 05:51:51  gtkwave
+ * fixed missing carriage return in error message for Tcl
+ *
  * Revision 1.42  2008/11/19 19:08:34  gtkwave
  * add tcl menu option, update file requester name reentrancy code
  *
