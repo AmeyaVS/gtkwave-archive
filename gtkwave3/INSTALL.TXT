@@ -52,7 +52,7 @@ The 1.3 series has been promoted to 3.x in order to prevent confusion over
 what version of the viewer is the latest.  Starting with 3.x, the viewer
 supports source code annotation.
 
--030406ajb  bybell2nc.rr.com
+-030406ajb  bybell@nc.rr.com
 
 
 Add these flags to your compile for new warnings on AMD64:

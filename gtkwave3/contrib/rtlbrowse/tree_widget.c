@@ -87,9 +87,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 {
     GtkWidget *scrolled_win;
-    GtkWidget *hbox;
-    GtkWidget *button5;
-    GtkWidget *frame2, *frameh;
+    GtkWidget *frame2;
     GtkWidget *table;
     GtkCList  *clist;
 
@@ -206,6 +204,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/11/18 05:37:34  gtkwave
+ * code cleanups
+ *
  * Revision 1.6  2008/11/18 04:15:26  gtkwave
  * prelim support for text searching in rtlbrowse
  *

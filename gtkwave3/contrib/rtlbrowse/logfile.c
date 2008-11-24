@@ -67,7 +67,7 @@ GtkTextTag *size_tag;
 
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
 void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *button, GtkWidget *text);
-
+gboolean update_ctx_when_idle(gpointer textview_or_dummy);
 
 static struct text_find_t *text_root = NULL;
 static struct text_find_t *selected_text_via_tab = NULL;
@@ -247,7 +247,6 @@ return(TRUE);
 void tr_search_forward(char *str, gboolean noskip)
 {
 struct text_find_t *tr = selected_text_via_tab;
-GtkTextIter iter;
 
 if(tr)
 	{
@@ -358,7 +357,6 @@ return(FALSE);
 void tr_search_backward(char *str)
 {
 struct text_find_t *tr = selected_text_via_tab;
-GtkTextIter iter;
 
 if(tr)
 	{
@@ -766,8 +764,6 @@ if(ok)
        	{
        	if(gtk_text_iter_compare (&start, &end) < 0)
                	{
-		gint offs = gtk_text_iter_get_offset(&start);
-
                	sel = gtk_text_buffer_get_text(GTK_TEXT_VIEW(text)->buffer,
                                               &start, &end, FALSE);
 
@@ -1290,21 +1286,23 @@ gboolean update_ctx_when_idle(gpointer textview_or_dummy)
 struct text_find_t *t;
 
 if(textview_or_dummy == NULL)
-if(anno_ctx)
 	{
-	if((anno_ctx->marker_set != old_marker_set) || (old_marker != anno_ctx->marker))
+	if(anno_ctx)
 		{
-		old_marker_set = anno_ctx->marker_set;
-		old_marker = anno_ctx->marker;
-		}	
+		if((anno_ctx->marker_set != old_marker_set) || (old_marker != anno_ctx->marker))
+			{
+			old_marker_set = anno_ctx->marker_set;
+			old_marker = anno_ctx->marker;
+			}	
+			else
+			{
+			return(TRUE);
+			}
+		}
 		else
 		{
 		return(TRUE);
 		}
-	}
-	else
-	{
-	return(TRUE);
 	}
 
 t = text_root;
@@ -1444,7 +1442,7 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     GtkWidget *ctext;
     GtkWidget *text;
     GtkWidget *close_button = NULL;
-    gint pagenum;
+    gint pagenum = 0;
     FILE *handle;
     struct logfile_context_t *ctx;
     char *default_text = t->filename;
@@ -2345,6 +2343,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/11/19 16:34:26  gtkwave
+ * removed strcasestr and use strstr with toupper()
+ *
  * Revision 1.19  2008/11/18 23:23:08  gtkwave
  * added search capability to rtlbrowse
  *

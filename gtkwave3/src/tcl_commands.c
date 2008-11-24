@@ -256,8 +256,6 @@ return(TCL_OK);
 
 static int gtkwavetcl_getNamedMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-Tcl_Obj *aobj;
-
 if(objc == 2)
 	{
 	char *s = Tcl_GetString(objv[1]);
@@ -340,8 +338,6 @@ return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
 
 static int gtkwavetcl_getTraceNameFromIndex(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-Tcl_Obj *aobj;
-
 if(objc == 2)
 	{
 	char *s = Tcl_GetString(objv[1]);
@@ -380,8 +376,6 @@ return(TCL_OK);
 
 static int gtkwavetcl_getTraceFlagsFromIndex(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-Tcl_Obj *aobj;
-
 if(objc == 2)
 	{
 	char *s = Tcl_GetString(objv[1]);
@@ -413,8 +407,6 @@ return(TCL_OK);
 
 static int gtkwavetcl_getTraceValueAtMarkerFromIndex(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-Tcl_Obj *aobj;
-
 if(objc == 2)
 	{
 	char *s = Tcl_GetString(objv[1]);
@@ -545,7 +537,6 @@ if(objc == 2)
 	if(s)
 	        {
 	        TimeType gt;
-	        char update_string[128];
 	        char timval[40];
 	        GtkAdjustment *hadj;
 	        TimeType pageinc;
@@ -929,6 +920,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/11/24 02:55:10  gtkwave
+ * use TCL_INCLUDE_SPEC to fix ubuntu compiles
+ *
  * Revision 1.4  2008/11/19 18:15:35  gtkwave
  * add HAVE_LIBTCL to ifdefs which have HAVE_TCL_H
  *
