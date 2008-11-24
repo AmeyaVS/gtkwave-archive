@@ -1287,6 +1287,7 @@ void reload_into_new_context(void)
 
  /* to cut down on temporary visual noise from incorrect zoom factor on reload */
  new_globals->pixelsperframe = GLOBALS->pixelsperframe;
+ new_globals->nsperframe = GLOBALS->nsperframe;
  new_globals->pxns = GLOBALS->pxns;
  new_globals->nspx = GLOBALS->nspx;
  new_globals->nspx = GLOBALS->nspx;
