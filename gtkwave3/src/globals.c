@@ -1010,6 +1010,7 @@ NULL, /* mvlfacs_vzt_c_3 587 */
 /*
  * wavewindow.c
  */
+0, /* use_scrollwheel_as_y */
 0, /* m1x_wavewindow_c_1 589 */
 0, /* m2x */
 1, /* signalwindow_width_dirty 590 */
@@ -1433,6 +1434,7 @@ void reload_into_new_context(void)
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
 
  /* rc.c */
+ new_globals->use_scrollwheel_as_y = GLOBALS->use_scrollwheel_as_y;
  new_globals->context_tabposition = GLOBALS->context_tabposition;
  new_globals->use_standard_clicking = GLOBALS->use_standard_clicking;
 

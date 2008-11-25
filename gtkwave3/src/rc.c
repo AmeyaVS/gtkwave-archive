@@ -460,6 +460,13 @@ GLOBALS->use_scrollbar_only=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_use_scrollwheel_as_y(char *str)
+{
+DEBUG(printf("f_use_scrollwheel_as_y(\"%s\")\n",str));
+GLOBALS->use_scrollwheel_as_y=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_use_standard_clicking(char *str)
 {
 DEBUG(printf("f_use_standard_clicking(\"%s\")\n",str));
@@ -701,6 +708,7 @@ static struct rc_entry rcitems[]=
 { "use_pango_fonts", f_use_pango_fonts },
 { "use_roundcaps", f_use_roundcaps },
 { "use_scrollbar_only", f_use_scrollbar_only },
+{ "use_scrollwheel_as_y", f_use_scrollwheel_as_y },
 { "use_standard_clicking", f_use_standard_clicking },
 { "use_toolbutton_interface", f_use_toolbutton_interface },
 { "vcd_explicit_zero_subscripts", f_vcd_explicit_zero_subscripts },
@@ -883,6 +891,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/02/21 04:14:21  gtkwave
+ * default color for X is red now
+ *
  * Revision 1.10  2008/02/08 15:29:19  gtkwave
  * enabled pango font support for gtk2
  *

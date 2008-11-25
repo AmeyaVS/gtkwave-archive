@@ -860,27 +860,76 @@ return(TRUE);
 }
 
 #ifdef WAVE_USE_GTK2
+static void alternate_y_scroll(int delta)
+{
+GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+int value = (int)wadj->value;
+int target = value + delta;
+                
+int num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
+num_traces_displayable--;   /* for the time trace that is always there */
+                
+if(target > GLOBALS->traces.visible - num_traces_displayable) target = GLOBALS->traces.visible - num_traces_displayable;
+
+if(target < 0) target = 0;
+         
+wadj->value = target;
+         
+gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
+gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
+}
+
 static        gint
 scroll_event( GtkWidget * widget, GdkEventScroll * event )
 {
+int num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
+num_traces_displayable--;
+
   DEBUG(printf("Mouse Scroll Event\n"));
   switch ( event->direction )
   {
     case GDK_SCROLL_UP:
-      if ( event->state & GDK_CONTROL_MASK )
-        service_left_shift(NULL, 0);
-      else if ( event->state & GDK_MOD1_MASK )
-	service_zoom_out(NULL, 0);
-      else
-        service_left_page(NULL, 0);
+      if (GLOBALS->use_scrollwheel_as_y)
+	{
+	if(event->state & GDK_SHIFT_MASK)
+		{
+		alternate_y_scroll(-num_traces_displayable);
+		}
+		else
+		{
+		alternate_y_scroll(-1);
+		}
+	}
+	else
+	{
+      	if ( event->state & GDK_CONTROL_MASK )
+        	service_left_shift(NULL, 0);
+      	else if ( event->state & GDK_MOD1_MASK )
+		service_zoom_out(NULL, 0);
+      	else
+        	service_left_page(NULL, 0);
+	}
       break;
     case GDK_SCROLL_DOWN:
-      if ( event->state & GDK_CONTROL_MASK )
-        service_right_shift(NULL, 0);
-      else if ( event->state & GDK_MOD1_MASK )
-	service_zoom_in(NULL, 0);
-      else
-        service_right_page(NULL, 0);
+      if (GLOBALS->use_scrollwheel_as_y)
+	{
+	if(event->state & GDK_SHIFT_MASK)
+		{
+		alternate_y_scroll(num_traces_displayable);
+		}
+		else
+		{
+		alternate_y_scroll(1);
+		}
+	}
+	{
+      	if ( event->state & GDK_CONTROL_MASK )
+        	service_right_shift(NULL, 0);
+      	else if ( event->state & GDK_MOD1_MASK )
+		service_zoom_in(NULL, 0);
+      	else
+        	service_right_page(NULL, 0);
+	}
       break;
 
     default:
@@ -3775,6 +3824,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2008/11/14 18:32:23  gtkwave
+ * added check on GLOBALS->signalwindow pointer validity for set_usize op
+ *
  * Revision 1.38  2008/10/12 02:56:20  gtkwave
  * fix for blackout regions
  *

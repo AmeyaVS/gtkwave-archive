@@ -1008,6 +1008,7 @@ int busycnt_vzt_c_2; /* from vzt.c 641 */
 /*
  * wavewindow.c
  */
+char use_scrollwheel_as_y; /* fromwavewindow.c */
 int m1x_wavewindow_c_1; /* from wavewindow.c 642 */
 int m2x_wavewindow_c_1; /* from wavewindow.c 643 */
 char signalwindow_width_dirty; /* from wavewindow.c 644 */
