@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	23nov08	Fix for strings ('s' type) in recoder.  
+3.2.0	25nov08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -524,3 +524,6 @@
 		Added fix using TCL_INCLUDE_SPEC to get to compile under
 		Ubuntu.
 		Fixed lost num_cpus variable that wasn't passing through reload.
+		Added Cut/Copy/Paste functionality that allows multiple pastes
+		rather than destroying the cut buffer on paste.  Cut buffer
+		contents will survive after a reload operation.

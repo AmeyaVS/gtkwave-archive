@@ -1816,7 +1816,7 @@ else if(widget == GLOBALS->signalarea)
 	char *text = add_dnd_from_signal_window();
 	if(text)
 		{
-		char *text2 = emit_gtkwave_savefile_formatted_entries_in_tcl_list();
+		char *text2 = emit_gtkwave_savefile_formatted_entries_in_tcl_list(GLOBALS->traces.first, TRUE);
 		if(text2)
 			{
 			int textlen = strlen(text);
@@ -1922,7 +1922,7 @@ static void DNDDataReceivedCB(
     /* printf("XXX %08x '%s'\n", selection_data->data, selection_data->data); */
     if(!(num_found = process_url_list((char *)selection_data->data)))
 	{
-    	num_found = process_tcl_list((char *)selection_data->data);
+    	num_found = process_tcl_list((char *)selection_data->data, TRUE);
 	}
 	
     if(num_found)
@@ -2019,6 +2019,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2008/10/02 00:52:25  gtkwave
+ * added dnd of external filetypes into viewer
+ *
  * Revision 1.27  2008/10/01 01:31:38  gtkwave
  * more dnd fixes
  *

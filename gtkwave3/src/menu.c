@@ -25,6 +25,7 @@
 #include "ptranslate.h"
 #include "lx2.h"
 #include "hierpack.h"
+#include "tcl_helper.h"
 
 #if !defined __MINGW32__ && !defined _MSC_VER
 #include <unistd.h>
@@ -4159,13 +4160,15 @@ if((t=GLOBALS->traces.first))
 void
 menu_cut_traces(GtkWidget *widget, gpointer data)
 {
+Trptr cutbuffer = NULL;
+
 if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nCut");
         help_text(
                 " removes highlighted signals from the display and places them" 
-		" in an offscreen cut buffer for later Paste operations. "
-		" Cut implicitly destroys the previous contents of the cut buffer."
+		" in an offscreen cut/copy buffer for later Paste operations. "
+		" Cut implicitly destroys the previous contents of the cut/copy buffer."
         );
         return;
         }                
@@ -4174,8 +4177,16 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 
 DEBUG(printf("Cut Traces\n"));
 
-if(CutBuffer())
+cutbuffer = CutBuffer();
+if(cutbuffer)
 	{
+	if(GLOBALS->cutcopylist)
+		{
+		free_2(GLOBALS->cutcopylist);
+		}
+	GLOBALS->cutcopylist = emit_gtkwave_savefile_formatted_entries_in_tcl_list(cutbuffer, FALSE);
+	/* printf("Cutlist: '%s'\n", GLOBALS->cutcopylist); */
+
 	MaxSignalLength();
 	signalarea_configure_event(GLOBALS->signalarea, NULL);
 	wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -4187,6 +4198,54 @@ if(CutBuffer())
 }
 
 void
+menu_copy_traces(GtkWidget *widget, gpointer data)
+{
+Trptr t = GLOBALS->traces.first;
+gboolean highlighted = FALSE;
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nCopy");
+        help_text(
+                " copies highlighted signals from the display and places them" 
+		" in an offscreen cut/copy buffer for later Paste operations. "
+		" Copy implicitly destroys the previous contents of the cut/copy buffer."
+        );
+        return;
+        }                
+
+if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+
+DEBUG(printf("Copy Traces\n"));
+
+while(t)
+	{
+	if(t->flags & TR_HIGHLIGHT)
+		{
+		highlighted = TRUE;
+		break;
+		}
+	t = t->t_next;
+	}
+
+if(!highlighted)
+	{
+	must_sel();
+	}
+	else
+	{
+	if(GLOBALS->cutcopylist)
+		{
+		free_2(GLOBALS->cutcopylist);
+		}
+	GLOBALS->cutcopylist = emit_gtkwave_savefile_formatted_entries_in_tcl_list(GLOBALS->traces.first, TRUE);
+	/* printf("Copylist: '%s'\n", GLOBALS->cutcopylist); */
+
+	FreeCutBuffer();
+	}
+}
+
+void
 menu_paste_traces(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
@@ -4194,10 +4253,9 @@ if(GLOBALS->helpbox_is_active)
         help_text_bold("\n\nPaste");
         help_text(
                 " pastes signals from"       
-                " an offscreen cut buffer and places them in a group after"
+                " an offscreen cut/copy buffer and places them in a group after"
 		" the last highlighted signal, or at the end of the display"
 		" if no signal is highlighted."
-                " Paste implicitly destroys the previous contents of the cut buffer."
         );
         return;
         }
@@ -4212,6 +4270,19 @@ if(PasteBuffer())
 	MaxSignalLength();
 	signalarea_configure_event(GLOBALS->signalarea, NULL);
 	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+	else
+	{
+	if(GLOBALS->cutcopylist)
+		{
+		int num_traces = process_tcl_list(GLOBALS->cutcopylist, FALSE);
+		/* printf("Pastelist: %d '%s'\n", num_traces, GLOBALS->cutcopylist); */
+
+	        GLOBALS->signalwindow_width_dirty=1;
+	        MaxSignalLength();
+	        signalarea_configure_event(GLOBALS->signalarea, NULL);
+	        wavearea_configure_event(GLOBALS->wavearea, NULL);
+		}
 	}
 
 }
@@ -4381,6 +4452,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Remove Highlighted Aliases", "<Shift><Alt>A", menu_remove_aliases, WV_MENU_ERHA, "<Item>"),
       /* 20 */
     WAVE_GTKIFE("/Edit/Cut", "<Control>X", menu_cut_traces, WV_MENU_EC, "<Item>"),
+    WAVE_GTKIFE("/Edit/Copy", "<Control>C", menu_copy_traces, WV_MENU_ECY, "<Item>"),
     WAVE_GTKIFE("/Edit/Paste", "<Control>V", menu_paste_traces, WV_MENU_EP, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP4, "<Separator>"),
     WAVE_GTKIFE("/Edit/Expand", "F3", menu_expand, WV_MENU_EE, "<Item>"),
@@ -4869,6 +4941,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2008/11/24 02:55:10  gtkwave
+ * use TCL_INCLUDE_SPEC to fix ubuntu compiles
+ *
  * Revision 1.43  2008/11/23 05:51:51  gtkwave
  * fixed missing carriage return in error message for Tcl
  *

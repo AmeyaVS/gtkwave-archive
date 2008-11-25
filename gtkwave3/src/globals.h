@@ -471,6 +471,7 @@ TimeType shadow_markers_markerbox_c_1[26]; /* from markerbox.c 252 */
 /*
  * menu.c
  */
+char *cutcopylist; /* from menu.c */
 char enable_fast_exit; /* from menu.c 253 */
 FILE *script_handle; /* from menu.c 254 */
 char ignore_savefile_pos; /* from menu.c 255 */

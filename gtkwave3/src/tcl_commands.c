@@ -728,7 +728,7 @@ if(objc==2)
 			}
                 free_2(elem);
                 elem = NULL;
-		num_found = process_tcl_list(mult_entry);
+		num_found = process_tcl_list(mult_entry, FALSE);
 		free_2(mult_entry);
 		if(num_found)
         		{
@@ -920,6 +920,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/11/24 03:26:52  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.5  2008/11/24 02:55:10  gtkwave
  * use TCL_INCLUDE_SPEC to fix ubuntu compiles
  *

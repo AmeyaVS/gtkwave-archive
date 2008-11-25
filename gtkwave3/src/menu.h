@@ -78,6 +78,7 @@ WV_MENU_EIA,
 WV_MENU_EAHT,
 WV_MENU_ERHA,
 WV_MENU_EC,
+WV_MENU_ECY,
 WV_MENU_EP,
 WV_MENU_SEP4,
 WV_MENU_EE,
@@ -314,6 +315,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/11/24 02:55:10  gtkwave
+ * use TCL_INCLUDE_SPEC to fix ubuntu compiles
+ *
  * Revision 1.15  2008/11/19 19:08:34  gtkwave
  * add tcl menu option, update file requester name reentrancy code
  *

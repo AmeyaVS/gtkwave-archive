@@ -850,7 +850,7 @@ return(s_new);
  * ----------------------------------------------------------------------------
  */     
 
-int process_tcl_list(char *s)
+int process_tcl_list(char *s, gboolean track_mouse_y)
 {
 char *s_new = NULL;
 char *this_regex = "\\(\\[.*\\]\\)*$";
@@ -926,13 +926,16 @@ for(ii=0;ii<c;ii++)
 										{
 										lx2_import_masked();
 										}
-
-									t = determine_trace_from_y();
-									if(t)
+									
+									if(track_mouse_y)
 										{
-										t->flags |=  TR_HIGHLIGHT;
-										}
-	
+										t = determine_trace_from_y();
+										if(t)
+											{
+											t->flags |=  TR_HIGHLIGHT;
+											}
+										}	
+
 									memcpy(&GLOBALS->tcache_treesearch_gtk2_c_2,&GLOBALS->traces,sizeof(Traces));
 									GLOBALS->traces.total=0;
 									GLOBALS->traces.first=GLOBALS->traces.last=NULL;
@@ -1121,10 +1124,13 @@ if(GLOBALS->is_lx2)
 	lx2_import_masked();
 	}
 
-t = determine_trace_from_y();
-if(t)
+if(track_mouse_y)
 	{
-	t->flags |=  TR_HIGHLIGHT;
+	t = determine_trace_from_y();
+	if(t)
+		{
+		t->flags |=  TR_HIGHLIGHT;
+		}
 	}
 
 memcpy(&GLOBALS->tcache_treesearch_gtk2_c_2,&GLOBALS->traces,sizeof(Traces));
@@ -1198,7 +1204,7 @@ GLOBALS->traces.first=GLOBALS->tcache_treesearch_gtk2_c_2.first;
 GLOBALS->traces.last=GLOBALS->tcache_treesearch_gtk2_c_2.last;
 GLOBALS->traces.total=GLOBALS->tcache_treesearch_gtk2_c_2.total;
                                 
-if(t)
+if((t) || (!track_mouse_y))
 	{
 	PasteBuffer();
 	}
@@ -1211,9 +1217,12 @@ GLOBALS->traces.buffercount=GLOBALS->tcache_treesearch_gtk2_c_2.buffercount;
 GLOBALS->traces.buffer=GLOBALS->tcache_treesearch_gtk2_c_2.buffer;
 GLOBALS->traces.bufferlast=GLOBALS->tcache_treesearch_gtk2_c_2.bufferlast;
 
-if(t)
+if(track_mouse_y)
 	{
-	t->flags &= ~TR_HIGHLIGHT;
+	if(t)
+		{
+		t->flags &= ~TR_HIGHLIGHT;
+		}
 	}
 
 cleanup:
@@ -1914,42 +1923,43 @@ static char *make_message (const char *fmt, ...)
  * ----------------------------------------------------------------------------
  */
 
-char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(void) {
+char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_tcl_mode) {
 	char *one_entry, *mult_entry = NULL;
 	unsigned int mult_len = 0;
 	unsigned int prev_flags = 0;
 
-	Trptr t;
 	unsigned int def=0;
 	TimeType prevshift=LLDescriptor(0);
 	char is_first = 1;
 	char collapsed_state = 0, flag_skip;
 
-	t=GLOBALS->traces.first;
 	while(t)
 		{
 		flag_skip = 0;
 
-		if((t->flags & (TR_HIGHLIGHT|TR_COLLAPSED)) == (TR_HIGHLIGHT|TR_COLLAPSED)) 
+		if(use_tcl_mode)
 			{
-			collapsed_state = 1;
-			}
-		else
-		if((t->flags & TR_BLANK) && collapsed_state)
-			{
-			collapsed_state = 0;
-			}
-		else
-		if(!(t->flags & TR_HIGHLIGHT))
-			{
-			if((prev_flags & TR_ANALOGMASK) && (t->flags &TR_ANALOG_BLANK_STRETCH))
+			if((t->flags & (TR_HIGHLIGHT|TR_COLLAPSED)) == (TR_HIGHLIGHT|TR_COLLAPSED)) 
 				{
-				flag_skip = 1;
+				collapsed_state = 1;
 				}
 			else
+			if((t->flags & TR_BLANK) && collapsed_state)
 				{
-				t = t->t_next;
-				continue;
+				collapsed_state = 0;
+				}
+			else
+			if(!(t->flags & TR_HIGHLIGHT))
+				{
+				if((prev_flags & TR_ANALOGMASK) && (t->flags &TR_ANALOG_BLANK_STRETCH))
+					{
+					flag_skip = 1;
+					}
+				else
+					{
+					t = t->t_next;
+					continue;
+					}
 				}
 			}
 
@@ -2405,6 +2415,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2008/11/24 02:55:10  gtkwave
+ * use TCL_INCLUDE_SPEC to fix ubuntu compiles
+ *
  * Revision 1.32  2008/11/19 18:15:35  gtkwave
  * add HAVE_LIBTCL to ifdefs which have HAVE_TCL_H
  *

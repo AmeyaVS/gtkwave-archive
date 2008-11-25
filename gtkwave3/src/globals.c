@@ -475,6 +475,7 @@ NULL, /* cleanup_markerbox_c_4 233 */
 /*
  * menu.c
  */ 
+NULL, /* cutcopylist */
 0, /* enable_fast_exit 236 */
 NULL, /* script_handle 237 */
 0, /* ignore_savefile_pos 238 */
@@ -1529,6 +1530,7 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->fontname_logfile, &GLOBALS->fontname_logfile);
  strcpy2_into_new_context(new_globals, &new_globals->fontname_signals, &GLOBALS->fontname_signals); 
  strcpy2_into_new_context(new_globals, &new_globals->fontname_waves, &GLOBALS->fontname_waves);
+ strcpy2_into_new_context(new_globals, &new_globals->cutcopylist, &GLOBALS->cutcopylist);
 
  /* hierarchy handling from vcd.c */
  if(GLOBALS->hier_pfx) { jrb_free_tree(GLOBALS->hier_pfx); GLOBALS->hier_pfx = NULL; }
