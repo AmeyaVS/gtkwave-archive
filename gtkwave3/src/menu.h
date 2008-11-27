@@ -110,8 +110,10 @@ WV_MENU_RFILL1,
 WV_MENU_RFILLOFF,
 WV_MENU_XLF_0,
 WV_MENU_XLF_1,
+#if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_XLP_0,
 WV_MENU_XLP_1,
+#endif
 WV_MENU_ESCAH,
 WV_MENU_ESCFH,
 WV_MENU_SEP6,
@@ -315,6 +317,10 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/11/25 18:07:32  gtkwave
+ * added cut copy paste functionality that survives reload and can do
+ * multiple pastes on the same cut buffer
+ *
  * Revision 1.16  2008/11/24 02:55:10  gtkwave
  * use TCL_INCLUDE_SPEC to fix ubuntu compiles
  *
