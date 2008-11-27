@@ -6,6 +6,7 @@ sst_dynamic_filter on
 use_standard_clicking on
 use_toolbutton_interface on
 use_pango_fonts on
+use_scrollwheel_as_y off
 
 vlist_spill off
 vlist_prepack off
