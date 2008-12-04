@@ -247,6 +247,7 @@ if(ctree)
 				depth++;
 
 				node = gctr->children;
+				if(!node) break;
 				gctr = GTK_CTREE_ROW(node);
 				if(!gctr) break;
 
@@ -2019,6 +2020,10 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2008/11/25 18:07:32  gtkwave
+ * added cut copy paste functionality that survives reload and can do
+ * multiple pastes on the same cut buffer
+ *
  * Revision 1.28  2008/10/02 00:52:25  gtkwave
  * added dnd of external filetypes into viewer
  *
