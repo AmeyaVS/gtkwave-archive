@@ -197,6 +197,7 @@ for(;;)
  */
 int main(int argc, char **argv)
 {
+int buf_strlen = 0;
 int consuming = 0;
 int shmid = shmget(0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE, IPC_CREAT | 0600 );
 struct shmid_ds ds;
@@ -235,6 +236,36 @@ if(shmid >= 0)
 
 	consume_ptr = buf;
 
+	/* this loop never exits */
+	for(;;)
+		{
+		char *s = fgets(l_buf+buf_strlen, 32768-buf_strlen, f);
+		
+		if(!s)
+			{
+	                struct timeval tv;
+         
+	                tv.tv_sec = 0;
+	                tv.tv_usec = 1000000 / 5;
+	                select(0, NULL, NULL, NULL, &tv);
+			continue;
+			}
+
+		if(strchr(l_buf+buf_strlen, '\n') || strchr(l_buf+buf_strlen, '\r'))
+			{
+			emit_string((old_buf = l_buf));
+			buf_strlen = 0;
+			}
+			else
+			{
+			buf_strlen += strlen(l_buf+buf_strlen);
+			/* fprintf(stderr, "update len to: %d\n", buf_strlen); */
+			}
+		}
+
+#if 0
+/* this old ifdef'd out section is the previous version which couldn't restart properly... */
+
 	while(fgets(l_buf, 32768, f))
 		{
 		/* all writes must have an end of line character for gtkwave's VCD reader */
@@ -252,7 +283,7 @@ if(shmid >= 0)
 
 		if((!*buf)||(!*old_buf)) { consuming = 1; }
 		}
-
+#endif
 
 #ifndef __linux__
 	shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
@@ -281,6 +312,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.3  2008/02/12 16:24:05  gtkwave
  * mingw fixes
  *

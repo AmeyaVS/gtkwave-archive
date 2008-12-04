@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	27nov08	Fix for strings ('s' type) in recoder.  
+3.2.0	04dec08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -529,3 +529,6 @@
 		contents will survive after a reload operation.
 		Removed translate filter process from mingw32 menu as it
 		is disabled in the compile by #ifdef'ing in empty functions.
+		Updated shmidcat so it restarts properly when VCD is being
+		looked at while sim is running and gtkwave gets ahead of
+		the generated VCD.
