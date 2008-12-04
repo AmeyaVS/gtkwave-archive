@@ -2371,8 +2371,16 @@ if(GLOBALS->partial_vcd)
 		t = GLOBALS->traces.first; while(t) { regen_trace_sweep(t); t = t->t_next; }
 		t = GLOBALS->traces.buffer; while(t) { regen_trace_sweep(t); t = t->t_next; }
 	
-	        signalarea_configure_event(GLOBALS->signalarea, NULL);
-	        wavearea_configure_event(GLOBALS->wavearea, NULL);
+		if ((GLOBALS->zoom_dyn) && (!GLOBALS->helpbox_is_active)) 
+			{
+			service_zoom_full(NULL, NULL);
+			}
+			else
+			{
+		        signalarea_configure_event(GLOBALS->signalarea, NULL);
+		        wavearea_configure_event(GLOBALS->wavearea, NULL);
+			}
+
 		gtkwave_gtk_main_iteration();
 		}
 	}
@@ -2385,6 +2393,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/10/12 02:56:20  gtkwave
+ * fix for blackout regions
+ *
  * Revision 1.8  2008/09/17 04:33:38  gtkwave
  * support for smaller timescales in VCD files
  *

@@ -195,6 +195,7 @@ WV_MENU_VLJS,
 WV_MENU_VRJS,
 WV_MENU_SEP16,
 WV_MENU_VZPS,
+WV_MENU_VZDYN,
 WV_MENU_VFTP,
 WV_MENU_SEP17,
 WV_MENU_RMRKS,
@@ -317,6 +318,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/11/27 19:37:38  gtkwave
+ * disable filter process in windows compiles
+ *
  * Revision 1.17  2008/11/25 18:07:32  gtkwave
  * added cut copy paste functionality that survives reload and can do
  * multiple pastes on the same cut buffer

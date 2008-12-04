@@ -7,6 +7,7 @@ use_standard_clicking on
 use_toolbutton_interface on
 use_pango_fonts on
 use_scrollwheel_as_y off
+dynamic_zoom 0
 
 vlist_spill off
 vlist_prepack off
@@ -185,6 +186,7 @@ accel "/View/Draw Roundcapped Vectors" <Alt>F2
 accel "/View/Left Justified Signals" <Shift>Home
 accel "/View/Right Justified Signals" <Shift>End
 accel "/View/Zoom Pow10 Snap" <Shift>Pause
+accel "/View/Partial VCD Dynamic Zoom" (null)
 accel "/View/Full Precision" <Alt>Pause
 accel "/View/Remove Pattern Marks" (null)
 accel "/View/Use Color" (null)

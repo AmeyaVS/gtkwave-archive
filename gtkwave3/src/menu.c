@@ -865,6 +865,34 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 }
 
 /**/
+void menu_zoom_dyn(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nPartial VCD Dynamic Zoom");
+        help_text(
+		" causes the screen to be in full zoom mode while a VCD file is loading"
+		" incrementally."
+        );
+        }
+	else
+	{
+	if(GLOBALS->zoom_dyn)
+		{
+		GLOBALS->zoom_dyn=0;
+		status_text("Dynamic Zoom Off.\n");
+		}
+		else
+		{
+		GLOBALS->zoom_dyn=1;
+		status_text("Dynamic Zoom On.\n");
+		}
+	}
+
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYN].path))->active=(GLOBALS->zoom_dyn)?TRUE:FALSE;
+}
+
+/**/
 void menu_left_justify(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
@@ -4581,6 +4609,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/View/Right Justified Signals", "<Shift>End", menu_right_justify, WV_MENU_VRJS, "<Item>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP16, "<Separator>"),
     WAVE_GTKIFE("/View/Zoom Pow10 Snap", "<Shift>Pause", menu_zoom10_snap, WV_MENU_VZPS, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Partial VCD Dynamic Zoom", NULL, menu_zoom_dyn, WV_MENU_VZDYN, "<ToggleItem>"),
     WAVE_GTKIFE("/View/Full Precision", "<Alt>Pause", menu_use_full_precision, WV_MENU_VFTP, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP17, "<Separator>"),
     WAVE_GTKIFE("/View/Remove Pattern Marks", NULL, menu_remove_marked, WV_MENU_RMRKS, "<Item>"),
@@ -4630,6 +4659,11 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_ACOLR].path))->active=(GLOBALS->autocoalesce_reversal)?TRUE:FALSE;
 
+if(GLOBALS->partial_vcd)
+	{
+	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYN].path))->active=(GLOBALS->zoom_dyn)?TRUE:FALSE;
+	}
+
 if(GLOBALS->loaded_file_type == LXT_FILE)
 	{
 	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path))->active=(GLOBALS->lxt_clock_compress_to_z)?TRUE:FALSE;
@@ -4654,6 +4688,11 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
     if((GLOBALS->socket_xid)||(GLOBALS->partial_vcd))
 	{
 	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_FONVT].path);
+	}
+
+    if(!GLOBALS->partial_vcd)
+	{
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYN].path);
 	}
 
     if(GLOBALS->loaded_file_type == NO_FILE)
@@ -4946,6 +4985,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2008/11/27 19:37:38  gtkwave
+ * disable filter process in windows compiles
+ *
  * Revision 1.45  2008/11/25 18:07:32  gtkwave
  * added cut copy paste functionality that survives reload and can do
  * multiple pastes on the same cut buffer

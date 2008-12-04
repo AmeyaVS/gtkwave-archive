@@ -1028,6 +1028,7 @@ NULL, /* mvlfacs_vzt_c_3 587 */
 0, /* in_button_press_wavewindow_c_1 601 */
 0, /* left_justify_sigs 602 */
 0, /* zoom_pow10_snap 603 */
+0, /* zoom_dyn */
 0, /* cursor_snap 604 */
 -1.0, /* old_wvalue 605 */
 NULL, /* blackout_regions 606 */
@@ -1434,6 +1435,7 @@ void reload_into_new_context(void)
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
 
  /* rc.c */
+ new_globals->zoom_dyn = GLOBALS->zoom_dyn;
  new_globals->use_scrollwheel_as_y = GLOBALS->use_scrollwheel_as_y;
  new_globals->context_tabposition = GLOBALS->context_tabposition;
  new_globals->use_standard_clicking = GLOBALS->use_standard_clicking;

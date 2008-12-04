@@ -532,3 +532,6 @@
 		Updated shmidcat so it restarts properly when VCD is being
 		looked at while sim is running and gtkwave gets ahead of
 		the generated VCD.
+		Fix crash on invalid node for force tree open during load.
+		Added Partial VCD Dynamic Zoom and related zoom_dynamic
+		rc variables.

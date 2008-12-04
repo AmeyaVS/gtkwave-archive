@@ -560,6 +560,13 @@ GLOBALS->do_zoom_center=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_zoom_dynamic(char *str)
+{
+DEBUG(printf("f_zoom_dynamic(\"%s\")\n",str));
+GLOBALS->zoom_dyn=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_zoom_pow10_snap(char *str)
 {
 DEBUG(printf("f_zoom_pow10_snap(\"%s\")\n",str));
@@ -721,6 +728,7 @@ static struct rc_entry rcitems[]=
 { "wave_scrolling", f_wave_scrolling },
 { "zoom_base", f_zoom_base },
 { "zoom_center", f_zoom_center },
+{ "zoom_dynamic", f_zoom_dynamic },
 { "zoom_pow10_snap", f_zoom_pow10_snap }
 };
 
@@ -891,6 +899,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/11/25 20:00:54  gtkwave
+ * added use_scrollwheel_as_y rc variable
+ *
  * Revision 1.11  2008/02/21 04:14:21  gtkwave
  * default color for X is red now
  *
