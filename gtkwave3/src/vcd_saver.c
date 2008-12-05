@@ -233,7 +233,7 @@ else
 }
 
 
-void recurse_build(vcdsav_Tree *vt, vcdsav_Tree ***hp)
+static void recurse_build(vcdsav_Tree *vt, vcdsav_Tree ***hp)
 {
 if(vt->left) recurse_build(vt->left, hp);
 
@@ -316,6 +316,11 @@ int max_len = 1;
 char *row_data = NULL;
 struct lt_trace *lt = NULL;
 int lxt = (export_typ == WAVE_EXPORT_LXT);
+
+if(export_typ == WAVE_EXPORT_TIM)
+	{
+	return(do_timfile_save(fname));
+	}
 
 errno = 0;
 if(lxt)
@@ -854,9 +859,487 @@ if(*nh_curr->name == '\\')
 return(nh_curr->name);
 }
 
+
+/****************************************/
+/***                                  ***/
+/*** output in timing analyzer format ***/
+/***                                  ***/
+/****************************************/
+
+static void write_hptr_trace(Trptr t, int *whichptr)
+{
+nptr n = t->n.nd;
+hptr *ha = n->harray;
+int numhist = n->numhist;
+int i;
+unsigned char h_val = AN_X;
+gboolean first;
+gboolean invert = ((t->flags&TR_INVERT) != 0);
+int edges = 0;
+
+first = TRUE;
+for(i=0;i<numhist;i++)
+	{
+	if(ha[i]->time < GLOBALS->min_time)
+		{
+		}
+	else
+	if(ha[i]->time > GLOBALS->max_time)
+		{
+		break;
+		}
+	else
+		{
+		if((ha[i]->time != GLOBALS->min_time) || (!first))
+			{
+			edges++;
+			}
+
+		first = FALSE;
+		}
+	}
+
+
+first = TRUE;
+for(i=0;i<numhist;i++)
+	{
+	if(ha[i]->time < GLOBALS->min_time)
+		{
+		h_val = invert ? AN_STR_INV[ha[i]->v.h_val] : AN_STR[ha[i]->v.h_val];	
+		}
+	else
+	if(ha[i]->time > GLOBALS->max_time)
+		{
+		break;
+		}
+	else
+		{
+		if(first)
+			{
+			gboolean skip_this = (ha[i]->time == GLOBALS->min_time);
+
+			if(skip_this)
+				{
+				h_val = invert ? AN_STR_INV[ha[i]->v.h_val] : AN_STR[ha[i]->v.h_val];
+				}
+
+			fprintf(GLOBALS->f_vcd_saver_c_1,
+				"Digital_Signal\n"
+				"     Position:          %d\n"
+				"     Height:            24\n"
+				"     Space_Above:       24\n"
+				"     Name:              %s\n"
+				"     Start_State:       %c\n"
+				"     Number_Edges:      %d\n"
+				"     Rise_Time:         0.2\n"
+				"     Fall_Time:         0.2\n",
+					*whichptr,
+					t->name,
+					h_val,
+					edges);
+			first = FALSE;			
+
+			if(skip_this) 
+				{
+				continue;
+				}
+			}
+
+		h_val = invert ? AN_STR_INV[ha[i]->v.h_val] : AN_STR[ha[i]->v.h_val];
+		fprintf(GLOBALS->f_vcd_saver_c_1, "          Edge:               "TTFormat".0 %c\n", ha[i]->time, h_val);
+		}
+	}		
+
+if(first)
+	{
+	/* need to emit blank trace */
+	fprintf(GLOBALS->f_vcd_saver_c_1,
+		"Digital_Signal\n"
+		"     Position:          %d\n"
+		"     Height:            24\n"
+		"     Space_Above:       24\n"
+		"     Name:              %s\n"
+		"     Start_State:       %c\n"
+		"     Number_Edges:      %d\n"
+		"     Rise_Time:         10.0\n"
+		"     Fall_Time:         10.0\n",
+			*whichptr,
+			t->name,
+			h_val,
+			edges);
+	}
+
+(*whichptr)++;
+}
+
+/***/
+
+static void remove_spaces_in_string(char *s)
+{
+if(s)
+	{
+	while(*s)
+		{
+		if(isspace(*s)) *s='_';
+		s++;
+		}
+	}
+}
+
+static char *get_hptr_vector_val(Trptr t, hptr h)
+{
+char *ascii = NULL;
+
+if(h->time < GLOBALS->min_time) 
+	{
+	ascii=strdup_2("X");
+	}
+else
+if(h->flags&HIST_REAL)
+	{
+        if(!(h->flags&HIST_STRING))
+        	{               
+                ascii=convert_ascii_real((double *)h->v.h_vector);
+                }
+                else
+                {
+                ascii=convert_ascii_string((char *)h->v.h_vector);
+                }        
+	}
+        else
+        {
+        ascii=convert_ascii_vec(t,h->v.h_vector);
+        }
+
+remove_spaces_in_string(ascii);
+return(ascii);
+}
+
+
+static void write_hptr_trace_vector(Trptr t, int *whichptr)
+{
+nptr n = t->n.nd;
+hptr *ha = n->harray;
+int numhist = n->numhist;
+int i;
+char *h_val = NULL;
+gboolean first;
+gboolean invert = ((t->flags&TR_INVERT) != 0);
+int edges = 0;
+
+first = TRUE;
+for(i=0;i<numhist;i++)
+	{
+	if(ha[i]->time < GLOBALS->min_time)
+		{
+		}
+	else
+	if(ha[i]->time > GLOBALS->max_time)
+		{
+		break;
+		}
+	else
+		{
+		if((ha[i]->time != GLOBALS->min_time) || (!first))
+			{
+			edges++;
+			}
+
+		first = FALSE;
+		}
+	}
+
+
+first = TRUE;
+for(i=0;i<numhist;i++)
+	{
+	if(ha[i]->time < GLOBALS->min_time)
+		{
+		if(h_val) free_2(h_val); 
+		h_val = get_hptr_vector_val(t, ha[i]);
+		}
+	else
+	if(ha[i]->time > GLOBALS->max_time)
+		{
+		break;
+		}
+	else
+		{
+		if(first)
+			{
+			gboolean skip_this = (ha[i]->time == GLOBALS->min_time);
+
+			if(skip_this)
+				{
+				if(h_val) free_2(h_val); 
+				h_val = get_hptr_vector_val(t, ha[i]);
+				}
+
+			fprintf(GLOBALS->f_vcd_saver_c_1,
+				"Digital_Bus\n"
+				"     Position:          %d\n"
+				"     Height:            24\n"
+				"     Space_Above:       24\n"
+				"     Name:              %s\n"
+				"     Start_State:       %s\n"
+				"     State_Format:      Text\n"
+				"     Number_Edges:      %d\n"
+				"     Rise_Time:         0.2\n"
+				"     Fall_Time:         0.2\n",
+					*whichptr,
+					t->name,
+					h_val,
+					edges);
+			first = FALSE;			
+
+			if(skip_this) 
+				{
+				continue;
+				}
+			}
+
+		if(h_val) free_2(h_val); 
+		h_val = get_hptr_vector_val(t, ha[i]);
+		fprintf(GLOBALS->f_vcd_saver_c_1, "          Edge:               "TTFormat".0 %s\n", ha[i]->time, h_val);
+		}
+	}		
+
+if(first)
+	{
+	/* need to emit blank trace */
+	fprintf(GLOBALS->f_vcd_saver_c_1,
+		"Digital_Bus\n"
+		"     Position:          %d\n"
+		"     Height:            24\n"
+		"     Space_Above:       24\n"
+		"     Name:              %s\n"
+		"     Start_State:       %s\n"
+		"     State_Format:      Text\n"
+		"     Number_Edges:      %d\n"
+		"     Rise_Time:         10.0\n"
+		"     Fall_Time:         10.0\n",
+			*whichptr,
+			t->name,
+			h_val,
+			edges);
+	}
+
+if(h_val) free_2(h_val); 
+(*whichptr)++;
+}
+
+/***/
+
+static char *get_vptr_vector_val(Trptr t, vptr v)
+{
+char *ascii = NULL;
+
+if(v->time < GLOBALS->min_time) 
+	{
+	ascii=strdup_2("X");
+	}
+else
+        {
+        ascii=convert_ascii(t,v);
+        }
+
+if(!ascii)
+	{
+	ascii=strdup_2("X");
+	}
+
+remove_spaces_in_string(ascii);
+return(ascii);
+}
+
+
+static void write_vptr_trace(Trptr t, int *whichptr)
+{
+vptr *ha = t->n.vec->vectors;
+int numhist = t->n.vec->numregions;
+int i;
+char *h_val = NULL;
+gboolean first;
+gboolean invert = ((t->flags&TR_INVERT) != 0);
+int edges = 0;
+
+first = TRUE;
+for(i=0;i<numhist;i++)
+	{
+	if(ha[i]->time < GLOBALS->min_time)
+		{
+		}
+	else
+	if(ha[i]->time > GLOBALS->max_time)
+		{
+		break;
+		}
+	else
+		{
+		if((ha[i]->time != GLOBALS->min_time) || (!first))
+			{
+			edges++;
+			}
+
+		first = FALSE;
+		}
+	}
+
+
+first = TRUE;
+for(i=0;i<numhist;i++)
+	{
+	if(ha[i]->time < GLOBALS->min_time)
+		{
+		if(h_val) free_2(h_val); 
+		h_val = get_vptr_vector_val(t, ha[i]);
+		}
+	else
+	if(ha[i]->time > GLOBALS->max_time)
+		{
+		break;
+		}
+	else
+		{
+		if(first)
+			{
+			gboolean skip_this = (ha[i]->time == GLOBALS->min_time);
+
+			if(skip_this)
+				{
+				if(h_val) free_2(h_val); 
+				h_val = get_vptr_vector_val(t, ha[i]);
+				}
+
+			fprintf(GLOBALS->f_vcd_saver_c_1,
+				"Digital_Bus\n"
+				"     Position:          %d\n"
+				"     Height:            24\n"
+				"     Space_Above:       24\n"
+				"     Name:              %s\n"
+				"     Start_State:       %s\n"
+				"     State_Format:      Text\n"
+				"     Number_Edges:      %d\n"
+				"     Rise_Time:         0.2\n"
+				"     Fall_Time:         0.2\n",
+					*whichptr,
+					t->name,
+					h_val,
+					edges);
+			first = FALSE;			
+
+			if(skip_this) 
+				{
+				continue;
+				}
+			}
+
+		if(h_val) free_2(h_val); 
+		h_val = get_vptr_vector_val(t, ha[i]);
+		fprintf(GLOBALS->f_vcd_saver_c_1, "          Edge:               "TTFormat".0 %s\n", ha[i]->time, h_val);
+		}
+	}		
+
+if(first)
+	{
+	/* need to emit blank trace */
+	fprintf(GLOBALS->f_vcd_saver_c_1,
+		"Digital_Bus\n"
+		"     Position:          %d\n"
+		"     Height:            24\n"
+		"     Space_Above:       24\n"
+		"     Name:              %s\n"
+		"     Start_State:       %s\n"
+		"     State_Format:      Text\n"
+		"     Number_Edges:      %d\n"
+		"     Rise_Time:         10.0\n"
+		"     Fall_Time:         10.0\n",
+			*whichptr,
+			t->name,
+			h_val,
+			edges);
+	}
+
+if(h_val) free_2(h_val); 
+(*whichptr)++;
+}
+
+
+static void write_tim_tracedata(Trptr t, int *whichptr)
+{
+if(!(t->flags&(TR_EXCLUDE|TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+	{
+        GLOBALS->shift_timebase=t->shift;
+        if(!t->vector)
+        	{
+                if(!t->n.nd->ext)
+                	{
+			write_hptr_trace(t, whichptr); /* single-bit */
+                        }
+                        else
+                        {
+			write_hptr_trace_vector(t, whichptr); /* multi-bit */
+                        }
+		}
+                else
+                {
+		write_vptr_trace(t, whichptr); /* synthesized/concatenated vector */
+                }
+	}
+}
+
+
+int do_timfile_save(const char *fname)
+{
+const char *time_prefix=WAVE_SI_UNITS;
+const double negpow[] = { 1.0, 1.0e-3, 1.0e-6, 1.0e-9, 1.0e-12, 1.0e-15, 1.0e-18, 1.0e-21 };
+char *pnt;        
+int offset;
+Trptr t = GLOBALS->traces.first;
+int i = 1; /* trace index in the .tim file */
+
+errno = 0;
+
+GLOBALS->f_vcd_saver_c_1 = fopen(fname, "wb");
+if(!GLOBALS->f_vcd_saver_c_1)
+	{
+        return(VCDSAV_FILE_ERROR);
+        }
+
+pnt=strchr(time_prefix, (int)GLOBALS->time_dimension);
+if(pnt) { offset=pnt-time_prefix; } else offset=0;
+
+fprintf(GLOBALS->f_vcd_saver_c_1,
+	"Timing Analyzer Settings\n"
+	"     Time_Scale:        %E\n"
+	"     Time_Per_Division: 100.0\n"
+	"     NumberDivisions:   50\n"
+	"     Start_Time:        "TTFormat".0\n"
+	"     End_Time:          "TTFormat".0\n",
+
+	negpow[offset],
+	GLOBALS->min_time,
+	GLOBALS->max_time
+	);
+
+while(t)
+	{
+	write_tim_tracedata(t, &i);
+        t = GiveNextTrace(t);
+	}
+
+fclose(GLOBALS->f_vcd_saver_c_1);
+GLOBALS->f_vcd_saver_c_1 = NULL;
+
+return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
+}
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

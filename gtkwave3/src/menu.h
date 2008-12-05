@@ -50,6 +50,7 @@ WV_MENU_FONVT,
 WV_MENU_FRW,
 WV_MENU_WRVCD,
 WV_MENU_WRLXT,
+WV_MENU_WRTIM,
 WV_MENU_WCLOSE,
 WV_MENU_SEP2VCD,
 WV_MENU_FPTF,
@@ -318,6 +319,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/12/04 19:21:00  gtkwave
+ * added zoom_dynamic option for partial VCD loading
+ *
  * Revision 1.18  2008/11/27 19:37:38  gtkwave
  * disable filter process in windows compiles
  *

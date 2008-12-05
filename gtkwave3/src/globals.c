@@ -491,6 +491,7 @@ NULL, /* filesel_writesave 247 */
 0, /* save_success_menu_c_1 248 */
 NULL, /* filesel_vcd_writesave 249 */
 NULL, /* filesel_lxt_writesave 250 */
+NULL, /* filesel_tim_writesave */
 0, /* lock_menu_c_1 251 */
 0, /* lock_menu_c_2 252 */
 NULL, /* buf_menu_c_1 253 128 */
@@ -1565,6 +1566,10 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->filesel_writesave, &GLOBALS->filesel_writesave);
  new_globals->save_success_menu_c_1 = GLOBALS->save_success_menu_c_1; 
  new_globals->signal_popup_menu = GLOBALS->signal_popup_menu;
+
+ strcpy2_into_new_context(new_globals, &new_globals->filesel_vcd_writesave, &GLOBALS->filesel_vcd_writesave);
+ strcpy2_into_new_context(new_globals, &new_globals->filesel_lxt_writesave, &GLOBALS->filesel_lxt_writesave);
+ strcpy2_into_new_context(new_globals, &new_globals->filesel_tim_writesave, &GLOBALS->filesel_tim_writesave);
 
  /* status.c */
  new_globals->text_status_c_2 = GLOBALS->text_status_c_2;

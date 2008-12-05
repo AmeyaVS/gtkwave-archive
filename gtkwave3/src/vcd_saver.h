@@ -15,10 +15,11 @@
 #include "vcd.h"
 #include "strace.h"
 
-enum vcd_export_typ { WAVE_EXPORT_VCD, WAVE_EXPORT_LXT };
+enum vcd_export_typ { WAVE_EXPORT_VCD, WAVE_EXPORT_LXT, WAVE_EXPORT_TIM };
 enum vcd_saver_rc { VCDSAV_OK, VCDSAV_EMPTY, VCDSAV_FILE_ERROR };
 
 int save_nodes_to_export(const char *fname, int export_typ);
+int do_timfile_save(const char *fname);
 
 /* from helpers/scopenav.c */
 extern void free_hier(void);
@@ -29,6 +30,9 @@ extern char *output_hier(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

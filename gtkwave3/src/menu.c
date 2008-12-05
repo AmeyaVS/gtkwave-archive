@@ -137,7 +137,6 @@ switch(rc)
 
 	case VCDSAV_FILE_ERROR:	status_text("Problem writing LXT: ");
 				status_text(strerror(errno));
-				status_text(".\n");
 				break;
 
 	case VCDSAV_OK:		status_text("LXT written successfully.\n");
@@ -208,7 +207,6 @@ switch(rc)
 
 	case VCDSAV_FILE_ERROR:	status_text("Problem writing VCD: ");
 				status_text(strerror(errno));
-				status_text(".\n");
 				break;
 
 	case VCDSAV_OK:		status_text("VCD written successfully.\n");
@@ -236,6 +234,65 @@ if(GLOBALS->helpbox_is_active)
 if(GLOBALS->traces.first)
 	{
 	fileselbox("Write VCD File As",&GLOBALS->filesel_vcd_writesave,GTK_SIGNAL_FUNC(menu_write_vcd_file_cleanup), GTK_SIGNAL_FUNC(NULL),"*.vcd", 1);
+	}
+	else
+	{
+	status_text("No traces onscreen to save!\n");
+	}
+}
+
+/******************************************************************/
+
+void menu_write_tim_file_cleanup(GtkWidget *widget, gpointer data)
+{
+int rc;
+
+if(!GLOBALS->filesel_ok)
+        {
+        return;
+        }               
+                                
+if(GLOBALS->lock_menu_c_2 == 1) return; /* avoid recursion */
+GLOBALS->lock_menu_c_2 = 1;
+
+status_text("Saving TIM...\n");
+gtkwave_gtk_main_iteration(); /* make requester disappear requester */
+
+rc = save_nodes_to_export(*GLOBALS->fileselbox_text, WAVE_EXPORT_TIM);
+
+GLOBALS->lock_menu_c_2 = 0;
+
+switch(rc)
+	{
+	case VCDSAV_EMPTY:	status_text("No traces onscreen to save!\n");
+				break;
+
+	case VCDSAV_FILE_ERROR:	status_text("Problem writing TIM: ");
+				status_text(strerror(errno));
+				break;
+
+	case VCDSAV_OK:		status_text("TIM written successfully.\n");
+	default:		break;
+	}
+}
+
+void
+menu_write_tim_file(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+	{
+	help_text_bold("\n\nWrite TIM File As");
+	help_text(
+		" will open a file requester that will ask for the name"
+		" of a TimingAnalyzer .tim file.  The contents of the file"
+		" generated will be the representation of the traces onscreen."
+	);
+	return;
+	}
+
+if(GLOBALS->traces.first)
+	{
+	fileselbox("Write TIM File As",&GLOBALS->filesel_tim_writesave,GTK_SIGNAL_FUNC(menu_write_tim_file_cleanup), GTK_SIGNAL_FUNC(NULL),"*.tim", 1);
 	}
 	else
 	{
@@ -4450,6 +4507,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Reload Waveform", "<Shift><Control>R", menu_reload_waveform, WV_MENU_FRW, "<Item>"),    
     WAVE_GTKIFE("/File/Export/Write VCD File As", NULL, menu_write_vcd_file, WV_MENU_WRVCD, "<Item>"),
     WAVE_GTKIFE("/File/Export/Write LXT File As", NULL, menu_write_lxt_file, WV_MENU_WRLXT, "<Item>"),
+    WAVE_GTKIFE("/File/Export/Write TIM File As", NULL, menu_write_tim_file, WV_MENU_WRTIM, "<Item>"),
     WAVE_GTKIFE("/File/Close", "<Control>W", menu_quit_close, WV_MENU_WCLOSE, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2VCD, "<Separator>"),
     WAVE_GTKIFE("/File/Print To File", "<Control>P", menu_print, WV_MENU_FPTF, "<Item>"),
@@ -4985,6 +5043,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2008/12/04 19:21:00  gtkwave
+ * added zoom_dynamic option for partial VCD loading
+ *
  * Revision 1.46  2008/11/27 19:37:38  gtkwave
  * disable filter process in windows compiles
  *

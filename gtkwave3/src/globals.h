@@ -487,6 +487,7 @@ char *filesel_writesave; /* from menu.c 264 */
 char save_success_menu_c_1; /* from menu.c 265 */
 char *filesel_vcd_writesave; /* from menu.c 266 */
 char *filesel_lxt_writesave; /* from menu.c 267 */
+char *filesel_tim_writesave; /* from menu.c */
 int lock_menu_c_1; /* from menu.c 268 */
 int lock_menu_c_2; /* from menu.c 269 */
 char *buf_menu_c_1; /* from menu.c 270 */
