@@ -990,7 +990,7 @@ static char *get_hptr_vector_val(Trptr t, hptr h)
 {
 char *ascii = NULL;
 
-if(h->time < GLOBALS->min_time) 
+if(h->time < LLDescriptor(0)) 
 	{
 	ascii=strdup_2("X");
 	}
@@ -1134,7 +1134,7 @@ static char *get_vptr_vector_val(Trptr t, vptr v)
 {
 char *ascii = NULL;
 
-if(v->time < GLOBALS->min_time) 
+if(v->time < LLDescriptor(0)) 
 	{
 	ascii=strdup_2("X");
 	}
@@ -1337,6 +1337,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/12/05 19:44:08  gtkwave
+ * prelim support for timinganalyzer file format export
+ *
  * Revision 1.3  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *
