@@ -286,6 +286,9 @@ if(GLOBALS->helpbox_is_active)
 		" will open a file requester that will ask for the name"
 		" of a TimingAnalyzer .tim file.  The contents of the file"
 		" generated will be the representation of the traces onscreen."
+		" If the baseline and primary marker are set, the time range"
+		" written to the file will be between the two markers, otherwise"
+		" it will be the entire time range."
 	);
 	return;
 	}
@@ -5043,6 +5046,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2008/12/05 19:44:08  gtkwave
+ * prelim support for timinganalyzer file format export
+ *
  * Revision 1.47  2008/12/04 19:21:00  gtkwave
  * added zoom_dynamic option for partial VCD loading
  *

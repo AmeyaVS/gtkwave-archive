@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005-7.
+ * Copyright (c) Tony Bybell 2005-8.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -866,7 +866,7 @@ return(nh_curr->name);
 /***                                  ***/
 /****************************************/
 
-static void write_hptr_trace(Trptr t, int *whichptr)
+static void write_hptr_trace(Trptr t, int *whichptr, TimeType tmin, TimeType tmax)
 {
 nptr n = t->n.nd;
 hptr *ha = n->harray;
@@ -880,17 +880,17 @@ int edges = 0;
 first = TRUE;
 for(i=0;i<numhist;i++)
 	{
-	if(ha[i]->time < GLOBALS->min_time)
+	if(ha[i]->time < tmin)
 		{
 		}
 	else
-	if(ha[i]->time > GLOBALS->max_time)
+	if(ha[i]->time > tmax)
 		{
 		break;
 		}
 	else
 		{
-		if((ha[i]->time != GLOBALS->min_time) || (!first))
+		if((ha[i]->time != tmin) || (!first))
 			{
 			edges++;
 			}
@@ -903,12 +903,12 @@ for(i=0;i<numhist;i++)
 first = TRUE;
 for(i=0;i<numhist;i++)
 	{
-	if(ha[i]->time < GLOBALS->min_time)
+	if(ha[i]->time < tmin)
 		{
 		h_val = invert ? AN_STR_INV[ha[i]->v.h_val] : AN_STR[ha[i]->v.h_val];	
 		}
 	else
-	if(ha[i]->time > GLOBALS->max_time)
+	if(ha[i]->time > tmax)
 		{
 		break;
 		}
@@ -916,7 +916,7 @@ for(i=0;i<numhist;i++)
 		{
 		if(first)
 			{
-			gboolean skip_this = (ha[i]->time == GLOBALS->min_time);
+			gboolean skip_this = (ha[i]->time == tmin);
 
 			if(skip_this)
 				{
@@ -974,14 +974,40 @@ if(first)
 
 /***/
 
-static void remove_spaces_in_string(char *s)
+static void format_value_string(char *s)
 {
-if(s)
+char *s_orig = s;
+
+if((s)&&(*s))
 	{
+	gboolean is_all_z = TRUE;
+	gboolean is_all_x = TRUE;
+
 	while(*s)
 		{
-		if(isspace(*s)) *s='_';
+		if((*s != 'z') && (*s != 'Z'))
+			{
+			is_all_z = FALSE;
+			}
+		if((*s != 'x') && (*s != 'X'))
+			{
+			is_all_x = FALSE;
+			}
+
+		/* if(isspace(*s)) *s='_'; ...not needed */
 		s++;
+		}
+	
+	if(is_all_z)
+		{
+		*(s_orig++) = 'Z';		
+		*(s_orig) = 0;		
+		}
+	else
+	if(is_all_x)
+		{
+		*(s_orig++) = 'X';		
+		*(s_orig) = 0;		
 		}
 	}
 }
@@ -1011,12 +1037,44 @@ if(h->flags&HIST_REAL)
         ascii=convert_ascii_vec(t,h->v.h_vector);
         }
 
-remove_spaces_in_string(ascii);
+format_value_string(ascii);
 return(ascii);
 }
 
+static const char *vcdsav_dtypes[] = { "Bin", "Hex", "Text" };
 
-static void write_hptr_trace_vector(Trptr t, int *whichptr)
+static int determine_trace_data_type(char *s, int curtype)
+{
+int i;
+
+if((s) && (curtype != VCDSAV_IS_TEXT))
+	{
+	int len = strlen(s);
+	for(i=0;i<len;i++)
+		{
+		int ch = (int)((unsigned char)s[i]);
+
+		if(strchr("01xXzZhHuUwWlL-?_", ch))
+			{
+			/* nothing */
+			}
+		else if(strchr("23456789aAbBcCdDeEfF", ch))
+			{
+			curtype = VCDSAV_IS_HEX;
+			}
+		else
+			{
+			curtype = VCDSAV_IS_TEXT;
+			break;
+			}
+		}
+	}
+
+return(curtype);
+}
+
+
+static void write_hptr_trace_vector(Trptr t, int *whichptr, TimeType tmin, TimeType tmax)
 {
 nptr n = t->n.nd;
 hptr *ha = n->harray;
@@ -1026,21 +1084,29 @@ char *h_val = NULL;
 gboolean first;
 gboolean invert = ((t->flags&TR_INVERT) != 0);
 int edges = 0;
+int curtype = VCDSAV_IS_BIN;
 
 first = TRUE;
 for(i=0;i<numhist;i++)
 	{
-	if(ha[i]->time < GLOBALS->min_time)
+	if(ha[i]->time < tmin)
 		{
 		}
 	else
-	if(ha[i]->time > GLOBALS->max_time)
+	if(ha[i]->time > tmax)
 		{
 		break;
 		}
 	else
 		{
-		if((ha[i]->time != GLOBALS->min_time) || (!first))
+		char *s = get_hptr_vector_val(t, ha[i]);
+		if(s)
+			{
+			curtype = determine_trace_data_type(s, curtype);
+			free_2(s);
+			}
+
+		if((ha[i]->time != tmin) || (!first))
 			{
 			edges++;
 			}
@@ -1053,13 +1119,13 @@ for(i=0;i<numhist;i++)
 first = TRUE;
 for(i=0;i<numhist;i++)
 	{
-	if(ha[i]->time < GLOBALS->min_time)
+	if(ha[i]->time < tmin)
 		{
 		if(h_val) free_2(h_val); 
 		h_val = get_hptr_vector_val(t, ha[i]);
 		}
 	else
-	if(ha[i]->time > GLOBALS->max_time)
+	if(ha[i]->time > tmax)
 		{
 		break;
 		}
@@ -1067,7 +1133,7 @@ for(i=0;i<numhist;i++)
 		{
 		if(first)
 			{
-			gboolean skip_this = (ha[i]->time == GLOBALS->min_time);
+			gboolean skip_this = (ha[i]->time == tmin);
 
 			if(skip_this)
 				{
@@ -1082,13 +1148,14 @@ for(i=0;i<numhist;i++)
 				"     Space_Above:       24\n"
 				"     Name:              %s\n"
 				"     Start_State:       %s\n"
-				"     State_Format:      Text\n"
+				"     State_Format:      %s\n"
 				"     Number_Edges:      %d\n"
 				"     Rise_Time:         0.2\n"
 				"     Fall_Time:         0.2\n",
 					*whichptr,
 					t->name,
 					h_val,
+					vcdsav_dtypes[curtype],
 					edges);
 			first = FALSE;			
 
@@ -1114,13 +1181,14 @@ if(first)
 		"     Space_Above:       24\n"
 		"     Name:              %s\n"
 		"     Start_State:       %s\n"
-		"     State_Format:      Text\n"
+		"     State_Format:      %s\n"
 		"     Number_Edges:      %d\n"
 		"     Rise_Time:         10.0\n"
 		"     Fall_Time:         10.0\n",
 			*whichptr,
 			t->name,
 			h_val,
+			vcdsav_dtypes[curtype],
 			edges);
 	}
 
@@ -1148,12 +1216,12 @@ if(!ascii)
 	ascii=strdup_2("X");
 	}
 
-remove_spaces_in_string(ascii);
+format_value_string(ascii);
 return(ascii);
 }
 
 
-static void write_vptr_trace(Trptr t, int *whichptr)
+static void write_vptr_trace(Trptr t, int *whichptr, TimeType tmin, TimeType tmax)
 {
 vptr *ha = t->n.vec->vectors;
 int numhist = t->n.vec->numregions;
@@ -1162,21 +1230,29 @@ char *h_val = NULL;
 gboolean first;
 gboolean invert = ((t->flags&TR_INVERT) != 0);
 int edges = 0;
+int curtype = VCDSAV_IS_BIN;
 
 first = TRUE;
 for(i=0;i<numhist;i++)
 	{
-	if(ha[i]->time < GLOBALS->min_time)
+	if(ha[i]->time < tmin)
 		{
 		}
 	else
-	if(ha[i]->time > GLOBALS->max_time)
+	if(ha[i]->time > tmax)
 		{
 		break;
 		}
 	else
 		{
-		if((ha[i]->time != GLOBALS->min_time) || (!first))
+		char *s = get_vptr_vector_val(t, ha[i]);
+		if(s)
+			{
+			curtype = determine_trace_data_type(s, curtype);
+			free_2(s);
+			}
+
+		if((ha[i]->time != tmin) || (!first))
 			{
 			edges++;
 			}
@@ -1189,13 +1265,13 @@ for(i=0;i<numhist;i++)
 first = TRUE;
 for(i=0;i<numhist;i++)
 	{
-	if(ha[i]->time < GLOBALS->min_time)
+	if(ha[i]->time < tmin)
 		{
 		if(h_val) free_2(h_val); 
 		h_val = get_vptr_vector_val(t, ha[i]);
 		}
 	else
-	if(ha[i]->time > GLOBALS->max_time)
+	if(ha[i]->time > tmax)
 		{
 		break;
 		}
@@ -1203,7 +1279,7 @@ for(i=0;i<numhist;i++)
 		{
 		if(first)
 			{
-			gboolean skip_this = (ha[i]->time == GLOBALS->min_time);
+			gboolean skip_this = (ha[i]->time == tmin);
 
 			if(skip_this)
 				{
@@ -1218,13 +1294,14 @@ for(i=0;i<numhist;i++)
 				"     Space_Above:       24\n"
 				"     Name:              %s\n"
 				"     Start_State:       %s\n"
-				"     State_Format:      Text\n"
+				"     State_Format:      %s\n"
 				"     Number_Edges:      %d\n"
 				"     Rise_Time:         0.2\n"
 				"     Fall_Time:         0.2\n",
 					*whichptr,
 					t->name,
 					h_val,
+					vcdsav_dtypes[curtype],
 					edges);
 			first = FALSE;			
 
@@ -1250,13 +1327,14 @@ if(first)
 		"     Space_Above:       24\n"
 		"     Name:              %s\n"
 		"     Start_State:       %s\n"
-		"     State_Format:      Text\n"
+		"     State_Format:      %s\n"
 		"     Number_Edges:      %d\n"
 		"     Rise_Time:         10.0\n"
 		"     Fall_Time:         10.0\n",
 			*whichptr,
 			t->name,
 			h_val,
+			vcdsav_dtypes[curtype],
 			edges);
 	}
 
@@ -1265,7 +1343,7 @@ if(h_val) free_2(h_val);
 }
 
 
-static void write_tim_tracedata(Trptr t, int *whichptr)
+static void write_tim_tracedata(Trptr t, int *whichptr, TimeType tmin, TimeType tmax)
 {
 if(!(t->flags&(TR_EXCLUDE|TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 	{
@@ -1274,16 +1352,16 @@ if(!(t->flags&(TR_EXCLUDE|TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
         	{
                 if(!t->n.nd->ext)
                 	{
-			write_hptr_trace(t, whichptr); /* single-bit */
+			write_hptr_trace(t, whichptr, tmin, tmax); /* single-bit */
                         }
                         else
                         {
-			write_hptr_trace_vector(t, whichptr); /* multi-bit */
+			write_hptr_trace_vector(t, whichptr, tmin, tmax); /* multi-bit */
                         }
 		}
                 else
                 {
-		write_vptr_trace(t, whichptr); /* synthesized/concatenated vector */
+		write_vptr_trace(t, whichptr, tmin, tmax); /* synthesized/concatenated vector */
                 }
 	}
 }
@@ -1297,8 +1375,28 @@ char *pnt;
 int offset;
 Trptr t = GLOBALS->traces.first;
 int i = 1; /* trace index in the .tim file */
+TimeType tmin, tmax;
 
 errno = 0;
+
+if((GLOBALS->tims.marker > LLDescriptor(0)) && (GLOBALS->tims.baseline > LLDescriptor(0)))
+	{
+	if(GLOBALS->tims.marker < GLOBALS->tims.baseline)
+		{
+	        tmin = GLOBALS->tims.marker;
+	        tmax = GLOBALS->tims.baseline;
+		}
+		else
+		{
+	        tmax = GLOBALS->tims.marker;
+	        tmin = GLOBALS->tims.baseline;
+		}
+	}
+	else
+	{
+        tmin = GLOBALS->min_time;
+        tmax = GLOBALS->max_time;
+	}
 
 GLOBALS->f_vcd_saver_c_1 = fopen(fname, "wb");
 if(!GLOBALS->f_vcd_saver_c_1)
@@ -1312,19 +1410,20 @@ if(pnt) { offset=pnt-time_prefix; } else offset=0;
 fprintf(GLOBALS->f_vcd_saver_c_1,
 	"Timing Analyzer Settings\n"
 	"     Time_Scale:        %E\n"
-	"     Time_Per_Division: 100.0\n"
-	"     NumberDivisions:   50\n"
+	"     Time_Per_Division: %E\n"
+	"     NumberDivisions:   10\n"
 	"     Start_Time:        "TTFormat".0\n"
 	"     End_Time:          "TTFormat".0\n",
 
 	negpow[offset],
-	GLOBALS->min_time,
-	GLOBALS->max_time
+	(tmax-tmin) / 10.0,
+	tmin,
+	tmax
 	);
 
 while(t)
 	{
-	write_tim_tracedata(t, &i);
+	write_tim_tracedata(t, &i, tmin, tmax);
         t = GiveNextTrace(t);
 	}
 
@@ -1337,6 +1436,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/12/05 21:05:19  gtkwave
+ * changed lower limit for time compare in "X" generation
+ *
  * Revision 1.4  2008/12/05 19:44:08  gtkwave
  * prelim support for timinganalyzer file format export
  *

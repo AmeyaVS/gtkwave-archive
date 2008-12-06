@@ -15,8 +15,9 @@
 #include "vcd.h"
 #include "strace.h"
 
-enum vcd_export_typ { WAVE_EXPORT_VCD, WAVE_EXPORT_LXT, WAVE_EXPORT_TIM };
-enum vcd_saver_rc { VCDSAV_OK, VCDSAV_EMPTY, VCDSAV_FILE_ERROR };
+enum vcd_export_typ 		{ WAVE_EXPORT_VCD, WAVE_EXPORT_LXT, WAVE_EXPORT_TIM };
+enum vcd_saver_rc 		{ VCDSAV_OK, VCDSAV_EMPTY, VCDSAV_FILE_ERROR };
+enum vcd_saver_tr_datatype	{ VCDSAV_IS_BIN, VCDSAV_IS_HEX,  VCDSAV_IS_TEXT };
 
 int save_nodes_to_export(const char *fname, int export_typ);
 int do_timfile_save(const char *fname);
@@ -30,6 +31,9 @@ extern char *output_hier(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/12/05 19:44:08  gtkwave
+ * prelim support for timinganalyzer file format export
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
