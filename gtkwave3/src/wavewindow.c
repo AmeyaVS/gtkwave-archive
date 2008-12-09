@@ -288,6 +288,7 @@ if(closest_which >= 0)
 	}
 
 xit:
+GLOBALS->mouseover_counter = -1;
 move_mouseover(t, xold, yold, marker);
 return(marker);
 }
@@ -1061,6 +1062,7 @@ if((event->button)&&(event->button==GLOBALS->in_button_press_wavewindow_c_1))
 	update_markertime(GLOBALS->tims.marker);
 	}
 
+GLOBALS->mouseover_counter = 11;
 move_mouseover(NULL, 0, 0, LLDescriptor(0));
 GLOBALS->tims.timecache=0;
 
@@ -3824,6 +3826,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2008/11/25 20:00:54  gtkwave
+ * added use_scrollwheel_as_y rc variable
+ *
  * Revision 1.39  2008/11/14 18:32:23  gtkwave
  * added check on GLOBALS->signalwindow pointer validity for set_usize op
  *

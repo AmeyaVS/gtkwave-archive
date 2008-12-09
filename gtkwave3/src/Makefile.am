@@ -24,7 +24,7 @@ gtkwave_SOURCES= \
 	hierpack.c hierpack.h jrb.c jrb.h help.c helpers/lxt2_read.c \
 	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c interp.c \
 	logfile.c lx2.c lx2.h lxt.c lxt.h main.c main.h markerbox.c menu.c menu.h mouseover.c \
-	pagebuttons.c pipeio.c pipeio.h pixmaps.c pixmaps.h print.c print.h \
+	mouseover_sigs.c pagebuttons.c pipeio.c pipeio.h pixmaps.c pixmaps.h print.c print.h \
 	ptranslate.c ptranslate.h rc.c rc.h \
 	regex.c regex_wave.h renderopt.c rgb.c search.c shiftbuttons.c showchange.c \
 	signalwindow.c simplereq.c splash.c status.c strace.c strace.h symbol.c symbol.h \

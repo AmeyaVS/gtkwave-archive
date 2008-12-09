@@ -155,6 +155,7 @@ void update_endcap_times_for_partial_vcd(void);
 
 /* mouseover support */
 void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim);
+void move_mouseover_sigs(Trptr t, gint xin, gint yin, TimeType tim);
 
 /* session swapping */
 gint install_keypress_handler(void);
@@ -171,6 +172,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2008/10/21 04:04:28  gtkwave
+ * getting ready for version bump
+ *
  * Revision 1.48  2008/09/17 04:33:38  gtkwave
  * support for smaller timescales in VCD files
  *

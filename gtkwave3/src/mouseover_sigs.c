@@ -22,8 +22,33 @@
 #include "currenttime.h"
 #include "color.h"
 #include "bsearch.h"
+#include "hierpack.h"
 
 /************************************************************************************************/
+
+static char *get_fullname(Trptr t)
+{
+char *s = NULL;
+if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+	{
+	if(t->vector==TRUE)
+		{
+		s = strdup_2(t->n.vec->name);
+		}
+		else 
+		{
+		if(!t->is_alias)
+			{
+			int flagged;
+	                s = hier_decompress_flagged(t->n.nd->nname, &flagged);
+			if(!flagged) s = strdup_2(s);
+			}
+		}
+	}
+
+return(s);
+}
+
 
 static int determine_trace_flags(unsigned int flags, char *ch)
 {
@@ -72,14 +97,14 @@ return(pos);
 
 /************************************************************************************************/
 
-static void local_trace_asciival(Trptr t, TimeType tim, int *nmaxlen, int *vmaxlen, char **asciivalue)
+static void local_trace_asciival(Trptr t, char *tname, TimeType tim, int *nmaxlen, int *vmaxlen, char **asciivalue)
 {
 int len=0;
 int vlen=0;
 
-if(t->name)
+if(tname)
 	{
-	len=font_engine_string_measure(GLOBALS->wavefont, t->name);
+	len=font_engine_string_measure(GLOBALS->wavefont, tname);
 
 	if((tim!=-1)&&(!(t->flags&TR_EXCLUDE)))
 		{
@@ -181,7 +206,7 @@ return(FALSE);
 }
 
 
-static void create_mouseover(gint x, gint y, gint width, gint height)
+static void create_mouseover_sigs(gint x, gint y, gint width, gint height)
 {
 GLOBALS->mo_width_mouseover_c_1 = width;
 GLOBALS->mo_height_mouseover_c_1 = height;
@@ -221,9 +246,9 @@ gdk_draw_rectangle(GLOBALS->mo_pixmap_mouseover_c_1, GLOBALS->mo_black_mouseover
 gtkwave_signal_connect(GTK_OBJECT(GLOBALS->mo_area_mouseover_c_1), "expose_event",GTK_SIGNAL_FUNC(expose_event), NULL);
 }
 
-#define MOUSEOVER_BREAKSIZE (32)
+#define MOUSEOVER_BREAKSIZE (100)
 
-void move_mouseover(Trptr t, gint xin, gint yin, TimeType tim)
+void move_mouseover_sigs(Trptr t, gint xin, gint yin, TimeType tim)
 {
 #if defined _MSC_VER || defined __MINGW32__
 
@@ -241,6 +266,7 @@ char *flagged_name = NULL;
 char *alternate_name = NULL;
 int fh;
 char flag_string[9];
+char *tname = NULL;
 
 if(GLOBALS->disable_mouseover)
 	{
@@ -256,16 +282,17 @@ fh = GLOBALS->wavefont->ascent+GLOBALS->wavefont->descent;
 
 if(t)
 	{
-	local_trace_asciival(t, tim, &nmaxlen, &vmaxlen, &asciivalue);
+	tname = get_fullname(t);
+	local_trace_asciival(t, tname, tim, &nmaxlen, &vmaxlen, &asciivalue);
 
 	value_charlen = asciivalue ? strlen(asciivalue) : 0;
 
-	name_charlen = t->name ? strlen(t->name) : 0;
+	name_charlen = tname ? strlen(tname) : 0;
 	if(name_charlen)
 		{
 		int len = determine_trace_flags(t->flags, flag_string);
 		flagged_name = malloc_2(name_charlen + 1 + len + 1);
-		memcpy(flagged_name, t->name, name_charlen);
+		memcpy(flagged_name, tname, name_charlen);
 		flagged_name[name_charlen] = ' ';
 		strcpy(flagged_name+name_charlen+1, flag_string);
 		name_charlen += (len + 1);
@@ -327,19 +354,19 @@ if((!t)||(yin<0)||(yin>GLOBALS->waveheight))
 if(!GLOBALS->mouseover_mouseover_c_1)
 	{
 #ifdef WAVE_USE_GTK2
-	gdk_window_get_origin(GLOBALS->wavearea->window, &xd, &yd);
+	gdk_window_get_origin(GLOBALS->signalarea->window, &xd, &yd);
 #else
-	gdk_window_get_deskrelative_origin(GLOBALS->wavearea->window, &xd, &yd);
+	gdk_window_get_deskrelative_origin(GLOBALS->signalarea->window, &xd, &yd);
 #endif
-	create_mouseover(xin + xd + 8, yin + yd + 20, totalmax, num_info_rows * fh + 7);
+	create_mouseover_sigs(xin + xd + 8, yin + yd + 20, totalmax, num_info_rows * fh + 7);
 	}
 	else
 	{
 #ifdef WAVE_USE_GTK2
-	gdk_window_get_origin(GLOBALS->wavearea->window, &xd, &yd);
+	gdk_window_get_origin(GLOBALS->signalarea->window, &xd, &yd);
         gtk_window_move(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
 #else
-	gdk_window_get_deskrelative_origin(GLOBALS->wavearea->window, &xd, &yd);
+	gdk_window_get_deskrelative_origin(GLOBALS->signalarea->window, &xd, &yd);
         gtk_window_reposition(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
 #endif
 	}
@@ -381,56 +408,14 @@ bot:
 if(asciivalue) { free_2(asciivalue); }
 if(alternate_name) { free_2(alternate_name); }
 if(flagged_name) { free_2(flagged_name); }
+if(tname) { free_2(tname); }
 #endif
 }
 
 /*
  * $Id$
  * $Log$
- * Revision 1.9  2008/07/01 18:51:07  gtkwave
- * compiler warning fixes for amd64
- *
- * Revision 1.8  2008/04/25 21:31:10  gtkwave
- * added missing t->shift in mouseover time calculation
- *
- * Revision 1.7  2008/03/25 03:22:11  gtkwave
- * expanded zero fill to include also a one fill (for pre-inverted nets)
- *
- * Revision 1.6  2008/03/24 21:50:03  gtkwave
- * added trace flags display to mouseover window
- *
- * Revision 1.5  2008/02/12 23:35:42  gtkwave
- * preparing for 3.1.5 revision bump
- *
- * Revision 1.4  2008/02/08 02:26:36  gtkwave
- * anti-aliased font support add
- *
- * Revision 1.3  2007/09/12 17:26:45  gtkwave
- * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
- *
- * Revision 1.2  2007/08/26 21:35:43  gtkwave
- * integrated global context management from SystemOfCode2007 branch
- *
- * Revision 1.1.1.1.2.6  2007/08/07 03:18:55  kermin
- * Changed to pointer based GLOBAL structure and added initialization function
- *
- * Revision 1.1.1.1.2.5  2007/08/06 03:50:48  gtkwave
- * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
- * generated structs, etc.
- *
- * Revision 1.1.1.1.2.4  2007/08/05 02:27:21  kermin
- * Semi working global struct
- *
- * Revision 1.1.1.1.2.3  2007/07/31 03:18:01  kermin
- * Merge Complete - I hope
- *
- * Revision 1.1.1.1.2.2  2007/07/28 19:50:40  kermin
- * Merged in the main line
- *
- * Revision 1.1.1.1  2007/05/30 04:27:26  gtkwave
- * Imported sources
- *
- * Revision 1.2  2007/04/20 02:08:13  gtkwave
+ * Revision 1.0  2008/12/08 02:08:13  gtkwave
  * initial release
  *
  */

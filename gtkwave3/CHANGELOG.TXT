@@ -536,3 +536,5 @@
 		Added Partial VCD Dynamic Zoom and related zoom_dynamic
 		rc variables.
 		Added prelim support for export to TimingAnalyzer file format.
+		Added mouseover support in signal window which shows full
+		facility name.

@@ -585,6 +585,88 @@ scroll_event( GtkWidget * widget, GdkEventScroll * event )
 #endif
 
 
+static gboolean mouseover_timer(gpointer dummy)
+{
+gdouble x,y;
+GdkModifierType state;
+                 
+#ifdef WAVE_USE_GTK2
+gint xi, yi;
+#endif
+
+if(GLOBALS->mouseover_counter < 0) return(TRUE); /* mouseover is up in wave window so don't bother */
+                 
+WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
+WAVE_GDK_GET_POINTER_COPY;
+
+GLOBALS->mouseover_counter++;
+
+if(!((x>=0)&&(x<GLOBALS->signalarea->allocation.width)&&(y>=0)&&(y<GLOBALS->signalarea->allocation.height)))
+	{
+	move_mouseover_sigs(NULL, 0, 0, LLDescriptor(0));
+	}
+else
+if(GLOBALS->mouseover_counter == 10)
+	{
+	int num_traces_displayable=GLOBALS->wavearea->allocation.height/(GLOBALS->fontheight);
+	int yr = GLOBALS->cached_mouseover_y;
+	int i;
+	Trptr t=NULL;
+
+	num_traces_displayable--;   /* for the time trace that is always there */
+
+	yr-=GLOBALS->fontheight;
+	if(yr<0) goto bot;
+	yr/=GLOBALS->fontheight;             /* y now indicates the trace in question */
+	if(yr>num_traces_displayable) goto bot;
+
+	t=GLOBALS->topmost_trace;
+
+	for(i=0;i<yr;i++)
+	        {
+	        if(!t) goto bot;
+	        t=GiveNextTrace(t);
+	        }
+         
+	if(!t) goto bot;
+	if((t->flags&(TR_BLANK|TR_EXCLUDE)))
+	        {
+	        t = NULL;
+	        goto bot; 
+	        }
+	         
+	if(t->flags & TR_ANALOG_BLANK_STRETCH)  /* seek to real analog trace is present... */
+	        {
+	        while((t) && (t = t->t_prev))
+	                {
+	                if(!(t->flags & TR_ANALOG_BLANK_STRETCH))
+	                        {
+	                        if(t->flags & TR_ANALOGMASK)
+	                                {
+	                                break; /* found it */
+	                                }
+	                                else
+	                                {   
+	                                t = NULL;
+	                                }
+	                        }
+	                }
+	        }
+
+bot:
+	if(t)
+		{
+		move_mouseover_sigs(t, GLOBALS->cached_mouseover_x, GLOBALS->cached_mouseover_y, GLOBALS->tims.marker);
+		}
+		else
+		{
+		move_mouseover_sigs(NULL, 0, 0, LLDescriptor(0));
+		}
+	}
+
+return(TRUE);
+}
+
 static gint motion_notify_event_std(GtkWidget *widget, GdkEventMotion *event)
 {
 gdouble x,y;
@@ -605,6 +687,12 @@ if(event->is_hint)
 	y = event->y;
 	state = event->state;
 	}
+
+GLOBALS->cached_mouseover_x = x;
+GLOBALS->cached_mouseover_y = y;
+GLOBALS->mouseover_counter = 0;
+
+move_mouseover_sigs(NULL, 0, 0, LLDescriptor(0));
 
 return(TRUE);
 }
@@ -1416,6 +1504,7 @@ if(GLOBALS->use_standard_clicking)
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_press_event",GTK_SIGNAL_FUNC(button_press_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "button_release_event", GTK_SIGNAL_FUNC(button_release_event_std), NULL);
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "motion_notify_event",GTK_SIGNAL_FUNC(motion_notify_event_std), NULL);
+	g_timeout_add(100, mouseover_timer, NULL);
 
 #ifdef WAVE_USE_GTK2
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "scroll_event",GTK_SIGNAL_FUNC(scroll_event), NULL);
@@ -1496,6 +1585,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2008/08/18 16:10:54  gtkwave
+ * adding sticky click semantics on already selected entries
+ *
  * Revision 1.32  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

@@ -674,6 +674,9 @@ NULL, /* starting_unshifted_trace */
 0, /* signalarea_has_focus */
 NULL, /* signalarea_event_box */
 0, /* keypress_handler_id */
+0, /* cached_mouseover_x */
+0, /* cached_mouseover_y */
+0, /* mouseover_counter */
 
 /*
  * simplereq.c
