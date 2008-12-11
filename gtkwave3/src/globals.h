@@ -466,7 +466,8 @@ GtkWidget *entries_markerbox_c_1[26]; /* from markerbox.c 249 */
 void (*cleanup_markerbox_c_4)(); /* from markerbox.c 250 */
 int dirty_markerbox_c_1; /* from markerbox.c 251 */
 TimeType shadow_markers_markerbox_c_1[26]; /* from markerbox.c 252 */
-
+char *marker_names[26]; /* from markerbox.c */
+char *shadow_marker_names[26]; /* from markerbox.c */
 
 /*
  * menu.c

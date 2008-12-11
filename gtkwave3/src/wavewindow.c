@@ -325,10 +325,20 @@ if((t=GLOBALS->named_markers[i])!=-1)
         	        		xl, y, xl, y+5);
 				}
 
-			font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->wavefont_smaller,
-				GLOBALS->gc_mark_wavewindow_c_1,
-				xl-(font_engine_string_measure(GLOBALS->wavefont_smaller, nbuff)>>1), 
-				GLOBALS->fontheight-2, nbuff);
+			if((!GLOBALS->marker_names[i])||(!GLOBALS->marker_names[i][0]))
+				{
+				font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->wavefont_smaller,
+					GLOBALS->gc_mark_wavewindow_c_1,
+					xl-(font_engine_string_measure(GLOBALS->wavefont_smaller, nbuff)>>1), 
+					GLOBALS->fontheight-2, nbuff);
+				}
+				else
+				{
+				font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->wavefont_smaller,
+					GLOBALS->gc_mark_wavewindow_c_1,
+					xl-(font_engine_string_measure(GLOBALS->wavefont_smaller, GLOBALS->marker_names[i])>>1), 
+					GLOBALS->fontheight-2, GLOBALS->marker_names[i]);
+				}
 			}
 		}
 	}
@@ -3826,6 +3836,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2008/12/09 00:36:42  gtkwave
+ * added mouseover support for signal window
+ *
  * Revision 1.40  2008/11/25 20:00:54  gtkwave
  * added use_scrollwheel_as_y rc variable
  *

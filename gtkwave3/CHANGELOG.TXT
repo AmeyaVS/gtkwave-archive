@@ -540,3 +540,5 @@
 		facility name.
 		Added dynamic update on strings for marker values which keeps
 		user from having to press enter explicitly for each one.
+		Now allow support for named markers using optional user names
+		rather than just 'A'-'Z' labels.

@@ -2489,6 +2489,28 @@ else if (*w2 == '[')
 		}
 	}
 #endif
+    else if (strcmp (w2, "markername") == 0)
+	{
+	char *pnt = w;
+	int which;
+
+	if((*pnt) && (isspace(*pnt))) pnt++;
+
+	if(*pnt)
+		{
+		which = (*pnt) - 'A';
+		if((which >=0) && (which <= 25))
+			{
+			pnt++;
+
+			if(*pnt)
+				{
+				if(GLOBALS->marker_names[which]) free_2(GLOBALS->marker_names[which]);
+				GLOBALS->marker_names[which] = strdup_2(pnt);
+				}
+			}
+		}
+	}
     else
       {
 	/* Unknown attribute.  Forget it.  */
@@ -2889,6 +2911,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/10/02 00:52:24  gtkwave
+ * added dnd of external filetypes into viewer
+ *
  * Revision 1.9  2008/09/30 00:27:22  gtkwave
  * fixed ExtractNodeSingleBit for vectors which do not have a zero for msb+lsb
  *

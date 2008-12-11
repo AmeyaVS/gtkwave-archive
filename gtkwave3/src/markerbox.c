@@ -16,6 +16,66 @@
 #include "analyzer.h"
 #include "currenttime.h"
 
+static void str_change_callback(GtkWidget *entry, gpointer which)
+{
+G_CONST_RETURN gchar *entry_text;
+int i;
+
+i = ((int) (((long) which) & 31L)) % 26;
+GLOBALS->dirty_markerbox_c_1 = 1;
+ 
+entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+if(strlen(entry_text))
+	{
+	if(GLOBALS->shadow_marker_names[i])
+		{
+		free_2(GLOBALS->shadow_marker_names[i]); 
+		}
+
+	GLOBALS->shadow_marker_names[i] = strdup_2(entry_text);
+	}
+	else
+	{
+	if(GLOBALS->shadow_marker_names[i])
+		{
+		free_2(GLOBALS->shadow_marker_names[i]); 
+		GLOBALS->shadow_marker_names[i] = NULL;
+		}
+	}
+}
+
+static void str_enter_callback(GtkWidget *entry, gpointer which)
+{
+G_CONST_RETURN gchar *entry_text;
+int i;
+
+i = ((int) (((long) which) & 31L)) % 26;
+GLOBALS->dirty_markerbox_c_1 = 1;
+ 
+entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+if(strlen(entry_text))
+	{
+	if(GLOBALS->shadow_marker_names[i])
+		{
+		free_2(GLOBALS->shadow_marker_names[i]); 
+		}
+
+	GLOBALS->shadow_marker_names[i] = strdup_2(entry_text);
+	gtk_entry_select_region (GTK_ENTRY (entry),
+                             0, GTK_ENTRY(entry)->text_length);
+
+	}
+	else
+	{
+	if(GLOBALS->shadow_marker_names[i])
+		{
+		free_2(GLOBALS->shadow_marker_names[i]); 
+		GLOBALS->shadow_marker_names[i] = NULL;
+		}
+	}
+}
+
+
 
 
 static void change_callback(GtkWidget *widget, gpointer which)
@@ -112,7 +172,13 @@ static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 if(GLOBALS->dirty_markerbox_c_1)
 	{
 	int i;
-	for(i=0;i<26;i++) GLOBALS->named_markers[i]=GLOBALS->shadow_markers_markerbox_c_1[i];
+	for(i=0;i<26;i++) 
+		{
+		GLOBALS->named_markers[i]=GLOBALS->shadow_markers_markerbox_c_1[i];
+		if(GLOBALS->marker_names[i]) free_2(GLOBALS->marker_names[i]);
+		GLOBALS->marker_names[i] = GLOBALS->shadow_marker_names[i];
+		GLOBALS->shadow_marker_names[i] = NULL;
+		}
         MaxSignalLength();
         signalarea_configure_event(GLOBALS->signalarea, NULL);
         wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -127,6 +193,14 @@ if(GLOBALS->dirty_markerbox_c_1)
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
+int i;
+  for(i=0;i<26;i++)
+	{
+	if(GLOBALS->marker_names[i]) free_2(GLOBALS->marker_names[i]);
+  	GLOBALS->marker_names[i] = GLOBALS->shadow_marker_names[i];
+  	GLOBALS->shadow_marker_names[i] = NULL;
+	}
+
   gtk_grab_remove(GLOBALS->window_markerbox_c_4);
   gtk_widget_destroy(GLOBALS->window_markerbox_c_4);
   GLOBALS->window_markerbox_c_4 = NULL;
@@ -144,7 +218,11 @@ void markerbox(char *title, GtkSignalFunc func)
     GLOBALS->cleanup_markerbox_c_4=func;
     GLOBALS->dirty_markerbox_c_1=0;
 
-    for(i=0;i<26;i++) GLOBALS->shadow_markers_markerbox_c_1[i]=GLOBALS->named_markers[i];
+    for(i=0;i<26;i++) 
+	{
+	GLOBALS->shadow_markers_markerbox_c_1[i] = GLOBALS->named_markers[i];
+	GLOBALS->shadow_marker_names[i] = strdup_2(GLOBALS->marker_names[i]);
+	}
 
     /* create a new modal window */
     GLOBALS->window_markerbox_c_4 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
@@ -172,7 +250,7 @@ void markerbox(char *title, GtkSignalFunc func)
     gtk_widget_show(frame);
 
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
-    gtk_widget_set_usize( GTK_WIDGET (scrolled_win), -1, 300);
+    gtk_widget_set_usize( GTK_WIDGET (scrolled_win), 400, 300);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
                                       GTK_POLICY_AUTOMATIC,
                                       GTK_POLICY_AUTOMATIC);
@@ -196,6 +274,9 @@ void markerbox(char *title, GtkSignalFunc func)
     gtk_widget_show (label);
     gtk_box_pack_start (GTK_BOX (vbox_g), label, TRUE, TRUE, 0);
 
+    hbox = gtk_hbox_new(FALSE, 0);
+    gtk_widget_show (hbox);
+
     GLOBALS->entries_markerbox_c_1[i]=entry = gtk_entry_new_with_max_length (48);
     gtkwave_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(enter_callback), (void *)((long) i));
     gtkwave_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(change_callback), (void *)((long) i));
@@ -209,8 +290,20 @@ void markerbox(char *title, GtkSignalFunc func)
 	}
 
     gtk_entry_set_text (GTK_ENTRY (entry), buf);
-    gtk_box_pack_start (GTK_BOX (vbox_g), entry, TRUE, TRUE, 0);
     gtk_widget_show (entry);
+    gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+
+    /* string part */
+    entry = gtk_entry_new_with_max_length (48);
+    if(GLOBALS->shadow_marker_names[i]) gtk_entry_set_text (GTK_ENTRY (entry), GLOBALS->shadow_marker_names[i]);
+    gtk_widget_show (entry);
+    gtkwave_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(str_enter_callback), (void *)((long) i));
+    gtkwave_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(str_change_callback), (void *)((long) i));
+
+    gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+
+
+    gtk_box_pack_start (GTK_BOX (vbox_g), hbox, TRUE, TRUE, 0);
     }
 
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_win), vbox_g);
@@ -245,6 +338,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/12/11 19:55:03  gtkwave
+ * dynamic updates for string names in markerbox
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

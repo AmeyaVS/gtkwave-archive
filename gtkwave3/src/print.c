@@ -1039,15 +1039,30 @@ pr_draw_named_markers (pr_context * prc)
 		      pr_draw_line (prc, xl, y, xl, y + 5);
 		    }
 
-		  xsize = font_engine_string_measure (GLOBALS->wavefont, nbuff);
-		  pr_setgray (prc, 0.00);
-		  pr_draw_string (prc,
+		  if((!GLOBALS->marker_names[i])||(!GLOBALS->marker_names[i][0]))
+			{
+		  	xsize = font_engine_string_measure (GLOBALS->wavefont, nbuff);
+		  	pr_setgray (prc, 0.00);
+		  	pr_draw_string (prc,
 				  xl - (xsize >> 1) + 1,
 				  GLOBALS->fontheight - 1, nbuff,
 				  xsize,
 				  (prc->gpd ==
 				   &ps_print_device) ? GLOBALS->wavefont->
 				  ascent / 2 : GLOBALS->wavefont->ascent);
+			}
+			else
+			{
+		  	xsize = font_engine_string_measure (GLOBALS->wavefont, GLOBALS->marker_names[i]);
+		  	pr_setgray (prc, 0.00);
+		  	pr_draw_string (prc,
+				  xl - (xsize >> 1) + 1,
+				  GLOBALS->fontheight - 1, GLOBALS->marker_names[i],
+				  xsize,
+				  (prc->gpd ==
+				   &ps_print_device) ? GLOBALS->wavefont->
+				  ascent / 2 : GLOBALS->wavefont->ascent);
+			}
 		}
 	    }
 	}
@@ -2855,6 +2870,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2008/10/12 02:56:20  gtkwave
+ * fix for blackout regions
+ *
  * Revision 1.15  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *

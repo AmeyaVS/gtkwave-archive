@@ -470,6 +470,8 @@ NULL, /* window_markerbox_c_4 231 */
 NULL, /* cleanup_markerbox_c_4 233 */
 0, /* dirty_markerbox_c_1 234 */
 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, /* shadow_markers_markerbox_c_1 235 */
+{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}, /* marker_names */
+{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}, /* shadow_marker_names */
 
 
 /*

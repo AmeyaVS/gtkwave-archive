@@ -2104,8 +2104,9 @@ if(GLOBALS->helpbox_is_active)
         help_text_bold("\n\nShow-Change Marker Data");
         help_text(
                 " displays and allows the modification of the times for"
-		" all 26 named markers.  The time for each marker must"
-		" be unique."
+		" all 26 named markers by filling in the leftmost entry boxes.  In addition, optional marker text"
+		" rather than a generic single letter name may be specified by filling in the rightmost entry boxes."
+		" Note that the time for each marker must be unique."
         );
         return;
         }
@@ -2719,6 +2720,14 @@ void write_save_helper(FILE *wave) {
 		fprintf(wave," "TTFormat,nm);
 		}
 	fprintf(wave,"\n");
+
+	for(i=0;i<26;i++)
+		{
+		if(GLOBALS->marker_names[i])
+			{
+			fprintf(wave, "[markername] %c%s\n", 'A'+i, GLOBALS->marker_names[i]);
+			}	
+		}
 
 #if WAVE_USE_GTK2
 	if(GLOBALS->open_tree_nodes)
@@ -5046,6 +5055,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2008/12/06 19:55:53  gtkwave
+ * more adds to the timinganalyzer output writer
+ *
  * Revision 1.48  2008/12/05 19:44:08  gtkwave
  * prelim support for timinganalyzer file format export
  *
