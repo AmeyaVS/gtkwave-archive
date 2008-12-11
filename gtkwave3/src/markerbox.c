@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +17,48 @@
 #include "currenttime.h"
 
 
+
+static void change_callback(GtkWidget *widget, gpointer which)
+{
+GtkWidget *entry;
+TimeType *modify;
+TimeType temp;
+G_CONST_RETURN gchar *entry_text;
+char buf[49];
+int len, i;
+int ent_idx;
+
+ent_idx = ((int) (((long) which) & 31L)) % 26;
+ 
+entry=GLOBALS->entries_markerbox_c_1[ent_idx];
+
+entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+if(!(len=strlen(entry_text))) goto failure;
+if(!isdigit(entry_text[0])) goto failure;
+
+temp=unformat_time(entry_text, GLOBALS->time_dimension);
+if((temp<GLOBALS->tims.start)||(temp>GLOBALS->tims.last)) goto failure;
+
+for(i=0;i<26;i++)
+        {
+        if(temp==GLOBALS->shadow_markers_markerbox_c_1[i]) 
+		{
+		if(i!=ent_idx)
+			{
+			GLOBALS->shadow_markers_markerbox_c_1[ent_idx] = -1;
+			}
+		goto failure;
+		}
+        }
+
+reformat_time(buf, temp, GLOBALS->time_dimension);
+
+GLOBALS->shadow_markers_markerbox_c_1[ent_idx]=temp;
+GLOBALS->dirty_markerbox_c_1=1;
+
+failure:
+return;
+}
 
 static void enter_callback(GtkWidget *widget, gpointer which)
 {
@@ -39,9 +81,9 @@ temp=unformat_time(entry_text, GLOBALS->time_dimension);
 if((temp<GLOBALS->tims.start)||(temp>GLOBALS->tims.last)) goto failure;
 
 for(i=0;i<26;i++)
-	{
-	if(temp==GLOBALS->shadow_markers_markerbox_c_1[i]) goto failure;
-	}
+        {
+        if(temp==GLOBALS->shadow_markers_markerbox_c_1[i]) goto failure;
+        }
 
 reformat_time(buf, temp, GLOBALS->time_dimension);
 gtk_entry_set_text (GTK_ENTRY (entry), buf);
@@ -156,6 +198,7 @@ void markerbox(char *title, GtkSignalFunc func)
 
     GLOBALS->entries_markerbox_c_1[i]=entry = gtk_entry_new_with_max_length (48);
     gtkwave_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(enter_callback), (void *)((long) i));
+    gtkwave_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(change_callback), (void *)((long) i));
     if(GLOBALS->shadow_markers_markerbox_c_1[i]==-1)
 	{
 	sprintf(buf,"<None>");
@@ -202,6 +245,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *
