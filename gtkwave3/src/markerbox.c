@@ -81,7 +81,6 @@ if(strlen(entry_text))
 static void change_callback(GtkWidget *widget, gpointer which)
 {
 GtkWidget *entry;
-TimeType *modify;
 TimeType temp;
 G_CONST_RETURN gchar *entry_text;
 char buf[49];
@@ -338,6 +337,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/12/11 21:08:15  gtkwave
+ * allow support for marker names which are strings
+ *
  * Revision 1.5  2008/12/11 19:55:03  gtkwave
  * dynamic updates for string names in markerbox
  *

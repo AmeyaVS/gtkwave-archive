@@ -1493,7 +1493,6 @@ unsigned int mult_len = 0;
 
 for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
         {
-        int len;
         struct symbol *s, *t;
         s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
         if(s->selected)
@@ -1581,7 +1580,7 @@ while(t)
                         int i;
                         nptr *nodes;
                         vptr v = (GLOBALS->tims.marker != -1) ? bsearch_vector(t->n.vec, GLOBALS->tims.marker) : NULL;
-			char *bits = v ? (v->v) : NULL;
+			unsigned char *bits = v ? (v->v) : NULL;
 			char *first_str = NULL;
 			int coalesce_pass = 1;
                                         
@@ -1691,7 +1690,7 @@ while(t)
 						if(bitnum < 0) bitnum = AN_DASH;
 						else if(bitnum >= AN_COUNT) bitnum = AN_DASH;
 
-						trace_val_vec_single[0] = AN_STR[xfwd[bits[i]]];
+						trace_val_vec_single[0] = AN_STR[(unsigned int)xfwd[(unsigned int)bits[i]]];
 						one_entry = make_single_tcl_list_name(str, trace_val_vec_single, 0);
 						WAVE_OE_ME
 						}
@@ -2415,6 +2414,10 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2008/11/25 18:07:32  gtkwave
+ * added cut copy paste functionality that survives reload and can do
+ * multiple pastes on the same cut buffer
+ *
  * Revision 1.33  2008/11/24 02:55:10  gtkwave
  * use TCL_INCLUDE_SPEC to fix ubuntu compiles
  *

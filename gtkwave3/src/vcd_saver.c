@@ -1082,7 +1082,6 @@ int numhist = n->numhist;
 int i;
 char *h_val = NULL;
 gboolean first;
-gboolean invert = ((t->flags&TR_INVERT) != 0);
 int edges = 0;
 int curtype = VCDSAV_IS_BIN;
 
@@ -1228,7 +1227,6 @@ int numhist = t->n.vec->numregions;
 int i;
 char *h_val = NULL;
 gboolean first;
-gboolean invert = ((t->flags&TR_INVERT) != 0);
 int edges = 0;
 int curtype = VCDSAV_IS_BIN;
 
@@ -1436,6 +1434,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/12/06 19:55:53  gtkwave
+ * more adds to the timinganalyzer output writer
+ *
  * Revision 1.5  2008/12/05 21:05:19  gtkwave
  * changed lower limit for time compare in "X" generation
  *

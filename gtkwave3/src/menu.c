@@ -4373,7 +4373,7 @@ if(PasteBuffer())
 	{
 	if(GLOBALS->cutcopylist)
 		{
-		int num_traces = process_tcl_list(GLOBALS->cutcopylist, FALSE);
+		/*int num_traces =*/ process_tcl_list(GLOBALS->cutcopylist, FALSE);
 		/* printf("Pastelist: %d '%s'\n", num_traces, GLOBALS->cutcopylist); */
 
 	        GLOBALS->signalwindow_width_dirty=1;
@@ -5055,6 +5055,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2008/12/11 21:08:15  gtkwave
+ * allow support for marker names which are strings
+ *
  * Revision 1.49  2008/12/06 19:55:53  gtkwave
  * more adds to the timinganalyzer output writer
  *

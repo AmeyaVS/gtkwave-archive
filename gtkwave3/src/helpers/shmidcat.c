@@ -198,7 +198,10 @@ for(;;)
 int main(int argc, char **argv)
 {
 int buf_strlen = 0;
+#if 0
+/* obsolete code (see below) */
 int consuming = 0;
+#endif
 int shmid = shmget(0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE, IPC_CREAT | 0600 );
 struct shmid_ds ds;
 char l_buf[32769];
@@ -312,6 +315,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/12/04 16:42:33  gtkwave
+ * restart fix for shmidcat
+ *
  * Revision 1.4  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *

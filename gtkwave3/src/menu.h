@@ -309,6 +309,8 @@ void menu_version(GtkWidget *widget, gpointer data);
 
 GtkItemFactoryEntry *retrieve_menu_items_array(int *num_items);
 
+void menu_read_stems_cleanup(GtkWidget *widget, gpointer data);
+void menu_new_viewer_tab_cleanup(GtkWidget *widget, gpointer data);
 
 /* These should eventually have error values */
 void write_save_helper(FILE *file);
@@ -319,6 +321,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2008/12/05 19:44:08  gtkwave
+ * prelim support for timinganalyzer file format export
+ *
  * Revision 1.19  2008/12/04 19:21:00  gtkwave
  * added zoom_dynamic option for partial VCD loading
  *
