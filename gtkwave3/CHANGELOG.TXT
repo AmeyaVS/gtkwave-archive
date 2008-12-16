@@ -544,4 +544,5 @@
 		rather than just 'A'-'Z' labels.
 		Added countdown timer to remove dnd cursor if it is onscreen
 		longer than 5 seconds.
-
+		Added support for setting optional user names for named markers
+		via Tcl scripts.

@@ -39,6 +39,7 @@ gtkwave::/Edit/Set_Trace_Max_Hier 0
 gtkwave::/Time/Zoom/Zoom_Full
 
 gtkwave::setMarker 128
+gtkwave::setNamedMarker A 400 "Example Named Marker"
 
 gtkwave::/File/Print_To_File PS {Letter (8.5" x 11")} Full $dumpname.ps
 gtkwave::/File/Quit/Yes,_Quit

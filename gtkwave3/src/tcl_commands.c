@@ -634,7 +634,7 @@ return(TCL_OK);
 
 static int gtkwavetcl_setNamedMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-if(objc == 3)
+if((objc == 3)||(objc == 4))
         {
         char *s = Tcl_GetString(objv[1]);
 	int which = -1;
@@ -659,6 +659,15 @@ if(objc == 3)
 		TimeType gt=unformat_time(t, GLOBALS->time_dimension);
 
                 GLOBALS->named_markers[which] = gt;
+
+		if(objc == 4)
+			{
+			char *u = Tcl_GetString(objv[3]);
+
+			if(GLOBALS->marker_names[which]) free_2(GLOBALS->marker_names[which]);
+			GLOBALS->marker_names[which] = strdup_2(u);
+			}
+
 	        wavearea_configure_event(GLOBALS->wavearea, NULL);
 		gtkwave_gtk_main_iteration();
                 } 
@@ -920,6 +929,10 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/11/25 18:07:32  gtkwave
+ * added cut copy paste functionality that survives reload and can do
+ * multiple pastes on the same cut buffer
+ *
  * Revision 1.6  2008/11/24 03:26:52  gtkwave
  * warnings cleanups
  *
