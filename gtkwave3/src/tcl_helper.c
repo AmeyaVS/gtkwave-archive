@@ -1690,7 +1690,7 @@ while(t)
 						if(bitnum < 0) bitnum = AN_DASH;
 						else if(bitnum >= AN_COUNT) bitnum = AN_DASH;
 
-						trace_val_vec_single[0] = AN_STR[(unsigned int)xfwd[(unsigned int)bits[i]]];
+						trace_val_vec_single[0] = AN_STR[(int)xfwd[bitnum]];
 						one_entry = make_single_tcl_list_name(str, trace_val_vec_single, 0);
 						WAVE_OE_ME
 						}
@@ -2414,6 +2414,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2008/12/16 19:28:20  gtkwave
+ * more warnings cleanups
+ *
  * Revision 1.34  2008/11/25 18:07:32  gtkwave
  * added cut copy paste functionality that survives reload and can do
  * multiple pastes on the same cut buffer
