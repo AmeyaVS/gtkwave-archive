@@ -198,6 +198,7 @@ if(must_update_screen)
         wavearea_configure_event(GLOBALS->wavearea, NULL);
 	}
 
+GLOBALS->dnd_cursor_timer = 0;
 GLOBALS->dnd_state = 0;
 }
 
@@ -338,6 +339,7 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 
 		RenderSigs(rsig_trtarget, 0);
 
+		GLOBALS->dnd_cursor_timer = 1;
 		if((t)&&(which >= -1))
 			{
 			if(which >= GLOBALS->traces.total) { which = GLOBALS->traces.total-1; } 
@@ -593,6 +595,17 @@ GdkModifierType state;
 #ifdef WAVE_USE_GTK2
 gint xi, yi;
 #endif
+
+if(GLOBALS->dnd_cursor_timer)
+	{
+	GLOBALS->dnd_cursor_timer++;
+	if(GLOBALS->dnd_cursor_timer == 50)
+		{
+		GLOBALS->dnd_cursor_timer = 0;
+	        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        	wavearea_configure_event(GLOBALS->wavearea, NULL);
+		}
+	}
 
 if(GLOBALS->mouseover_counter < 0) return(TRUE); /* mouseover is up in wave window so don't bother */
                  
@@ -1585,6 +1598,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2008/12/09 00:36:42  gtkwave
+ * added mouseover support for signal window
+ *
  * Revision 1.33  2008/08/18 16:10:54  gtkwave
  * adding sticky click semantics on already selected entries
  *

@@ -657,6 +657,7 @@ int old_signal_fill_width; /* from signalwindow.c 402 */
 int old_signal_fill_height; /* from signalwindow.c 403 */
 int fontheight; /* from signalwindow.c 404 */
 char dnd_state; /* from signalwindow.c 405 */
+unsigned int dnd_cursor_timer; /* from signalwindow.c */
 GtkWidget *hscroll_signalwindow_c_1; /* from signalwindow.c 406 */
 GtkObject *signal_hslider; /* from signalwindow.c 407 */
 unsigned int cachedhiflag_signalwindow_c_1; /* from signalwindow.c 408 */

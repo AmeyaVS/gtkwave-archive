@@ -661,6 +661,7 @@ NULL, /* signalpixmap 371 */
 0, /* old_signal_fill_height */
 1, /* fontheight 376 */
 0, /* dnd_state 377 */
+0, /* dnd_cursor_timer */
 NULL, /* hscroll_signalwindow_c_1 378 */
 NULL, /* signal_hslider 379 */
 0, /* cachedhiflag_signalwindow_c_1 380 */

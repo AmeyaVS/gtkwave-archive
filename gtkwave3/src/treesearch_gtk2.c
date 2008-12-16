@@ -1701,7 +1701,10 @@ if((widget == NULL) || (dc == NULL))
 	return;
 	}
 
-if(GLOBALS->tree_dnd_begin == VIEW_DRAG_INACTIVE) return; /* to keep cut and paste in signalwindow from conflicting */
+if(GLOBALS->tree_dnd_begin == VIEW_DRAG_INACTIVE) 
+	{
+	return; /* to keep cut and paste in signalwindow from conflicting */
+	}
 
 if(GLOBALS->tree_dnd_requested)
 	{
@@ -1718,6 +1721,7 @@ if(GLOBALS->tree_dnd_requested)
 		}
 	}
 
+GLOBALS->dnd_cursor_timer = 0;
 GLOBALS->tree_dnd_begin = VIEW_DRAG_INACTIVE;
 }
 
@@ -2020,6 +2024,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2008/12/04 17:22:33  gtkwave
+ * fix crash on invalid node for force tree open
+ *
  * Revision 1.29  2008/11/25 18:07:32  gtkwave
  * added cut copy paste functionality that survives reload and can do
  * multiple pastes on the same cut buffer
