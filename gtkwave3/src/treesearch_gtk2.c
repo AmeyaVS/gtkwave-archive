@@ -1721,7 +1721,6 @@ if(GLOBALS->tree_dnd_requested)
 		}
 	}
 
-GLOBALS->dnd_cursor_timer = 0;
 GLOBALS->tree_dnd_begin = VIEW_DRAG_INACTIVE;
 }
 
@@ -2024,6 +2023,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2008/12/16 18:09:49  gtkwave
+ * add countdown timer to remove dnd cursor in signalwindow
+ *
  * Revision 1.30  2008/12/04 17:22:33  gtkwave
  * fix crash on invalid node for force tree open
  *

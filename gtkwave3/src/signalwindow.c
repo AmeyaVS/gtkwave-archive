@@ -603,7 +603,6 @@ if(GLOBALS->dnd_cursor_timer)
 		{
 		GLOBALS->dnd_cursor_timer = 0;
 	        signalarea_configure_event(GLOBALS->signalarea, NULL);
-        	wavearea_configure_event(GLOBALS->wavearea, NULL);
 		}
 	}
 
@@ -1598,6 +1597,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2008/12/16 18:09:49  gtkwave
+ * add countdown timer to remove dnd cursor in signalwindow
+ *
  * Revision 1.34  2008/12/09 00:36:42  gtkwave
  * added mouseover support for signal window
  *
