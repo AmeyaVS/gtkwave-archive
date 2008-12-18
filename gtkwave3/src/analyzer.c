@@ -690,6 +690,9 @@ if(!tinsertnext)
 	tinsertnext->t_prev=GLOBALS->traces.bufferlast;
 	}
 
+GLOBALS->traces.scroll_top = GLOBALS->traces.buffer;
+GLOBALS->traces.scroll_bottom = GLOBALS->traces.bufferlast;
+
 GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
 GLOBALS->traces.buffercount=0;
 
@@ -1105,6 +1108,9 @@ UpdateTracesVisible();
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/08/05 17:49:39  gtkwave
+ * comment trace dnd fix
+ *
  * Revision 1.5  2008/07/18 17:27:00  gtkwave
  * adding hierpack code
  *

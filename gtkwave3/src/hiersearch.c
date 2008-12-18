@@ -390,6 +390,7 @@ for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBA
 
 set_window_idle(widget);
 
+GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = GLOBALS->traces.last;
 MaxSignalLength();
 signalarea_configure_event(GLOBALS->signalarea, NULL);
 wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -980,6 +981,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.5  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *

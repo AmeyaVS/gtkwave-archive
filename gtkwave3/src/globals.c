@@ -90,7 +90,7 @@ NULL, /* ae2_regex_head */
  */
 TR_RJUSTIFY, /* default_flags 5 */
 {0, 0, 0, 0, 0, 0, 0}, /* tims 6 */
-{0, 0, NULL, NULL, NULL, NULL, 0}, /* traces 7 */
+{0, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL}, /* traces 9 */
 0, /* hier_max_level 8 */
 0, /* timestart_from_savefile */
 0, /* timestart_from_savefile_valid */

@@ -203,6 +203,9 @@ typedef struct
     Trptr    buffer;		/* cut/copy buffer of traces */
     Trptr    bufferlast;	/* last element of bufferchain */
     int      buffercount;	/* number of traces in buffer */
+
+    Trptr    scroll_top;	/* for autoscrolling */
+    Trptr    scroll_bottom;
   } Traces;
 
 
@@ -331,6 +334,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/07/18 17:27:00  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.7  2008/03/25 03:22:05  gtkwave
  * expanded zero fill to include also a one fill (for pre-inverted nets)
  *

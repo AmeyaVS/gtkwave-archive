@@ -966,6 +966,10 @@ action_callback(enum cb_action action)
 
   sig_selection_foreach_finalize((void *)action);
 
+  if(action == ACTION_APPEND)
+	{
+	GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = GLOBALS->traces.last;
+	}
   MaxSignalLength();
   signalarea_configure_event(GLOBALS->signalarea, NULL);
   wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -2023,6 +2027,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2008/12/17 16:22:31  gtkwave
+ * removed clearing of dnd timer in tree drag code
+ *
  * Revision 1.31  2008/12/16 18:09:49  gtkwave
  * add countdown timer to remove dnd cursor in signalwindow
  *

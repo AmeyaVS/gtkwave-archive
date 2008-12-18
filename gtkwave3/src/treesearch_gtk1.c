@@ -646,6 +646,7 @@ for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOB
 
 set_window_idle(widget);
 
+GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = GLOBALS->traces.last;
 MaxSignalLength();
 signalarea_configure_event(GLOBALS->signalarea, NULL);
 wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -814,6 +815,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/10/04 15:15:20  gtkwave
+ * gtk1 compatibility fixes
+ *
  * Revision 1.10  2008/09/16 00:01:27  gtkwave
  * prelim drag and drop from external apps (now disabled)
  *

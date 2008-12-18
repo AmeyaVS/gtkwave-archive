@@ -654,6 +654,7 @@ while(symc)
 	free_2(symc_current);
 	}
 
+GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = GLOBALS->traces.last;
 MaxSignalLength();
 signalarea_configure_event(GLOBALS->signalarea, NULL);
 wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -1110,6 +1111,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/09/24 15:37:38  gtkwave
+ * move "selected" to top bit on blasted vector selection w/coalesce
+ *
  * Revision 1.11  2008/09/24 02:22:49  gtkwave
  * added (commented out) prelim support for dragging names from viewer
  *

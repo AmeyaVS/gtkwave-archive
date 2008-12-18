@@ -1348,6 +1348,73 @@ wadj->step_increment=(gfloat)1.0;
 wadj->lower=(gfloat)0.0;
 wadj->upper=(gfloat)(GLOBALS->traces.visible ? GLOBALS->traces.visible : 1);
 
+if(GLOBALS->traces.scroll_bottom)
+	{
+	Trptr t = GLOBALS->traces.first;
+	int which = 0;
+	int scroll_top = -1, scroll_bottom = -1;
+	int cur_top = wadj->value;
+	int cur_bottom = cur_top + num_traces_displayable - 1;
+
+	while(t)
+		{
+		if(t == GLOBALS->traces.scroll_top)
+			{
+			scroll_top = which;
+			}
+
+		if(t == GLOBALS->traces.scroll_bottom)
+			{
+			scroll_bottom = which;
+			break;
+			}
+
+		t = GiveNextTrace(t);
+		which++;
+		}
+
+	GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = NULL;
+
+	if((scroll_top >= 0) && (scroll_bottom >= 0))
+		{
+		if((scroll_top > cur_top) && (scroll_bottom <= cur_bottom))
+			{
+			/* nothing */
+			}	
+			else
+			{
+			if((scroll_bottom - scroll_top + 1) >= num_traces_displayable)			
+				{
+				wadj->value=(gfloat)(scroll_bottom - num_traces_displayable + 1);
+				}
+				else
+				{
+				int midpoint = (cur_top + cur_bottom) / 2;
+
+				if(scroll_top <= cur_top)
+					{
+					wadj->value=(gfloat)scroll_top-1;
+					}
+				else if(scroll_top >= cur_bottom)
+					{
+					wadj->value=(gfloat)(scroll_bottom - num_traces_displayable + 1);
+					}
+				else
+				if(scroll_top < midpoint)
+					{
+					wadj->value=(gfloat)scroll_top-1;
+					}
+				else
+					{
+					wadj->value=(gfloat)(scroll_bottom - num_traces_displayable + 1);
+					}
+				}
+
+			if(wadj->value < 0.0) wadj->value = 0.0;
+			}
+		}
+	}
+
 if(num_traces_displayable>GLOBALS->traces.visible)
 	{
 	wadj->value=(gfloat)(GLOBALS->trtarget_signalwindow_c_1=0);
@@ -1597,6 +1664,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2008/12/17 16:22:31  gtkwave
+ * removed clearing of dnd timer in tree drag code
+ *
  * Revision 1.35  2008/12/16 18:09:49  gtkwave
  * add countdown timer to remove dnd cursor in signalwindow
  *
