@@ -62,3 +62,11 @@ on i386:
 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m32 -march=i386 -mtune=generic -fasynchronous-unwind-tables
 
 -150407ajb
+
+
+For cvs access to the experimental, pre-release sourcetree on Sourceforge:
+cvs -d:pserver:anonymous@gtkwave.cvs.sourceforge.net:/cvsroot/gtkwave login
+[press enter]
+cvs -z3 -d:pserver:anonymous@gtkwave.cvs.sourceforge.net:/cvsroot/gtkwave co -P gtkwave3
+
+-191208ajb  bybell@nc.rr.com
