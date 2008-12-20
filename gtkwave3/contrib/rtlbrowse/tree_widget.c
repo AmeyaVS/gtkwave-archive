@@ -90,6 +90,11 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     GtkWidget *frame2;
     GtkWidget *table;
     GtkCList  *clist;
+#ifndef WAVE_USE_GTK2
+    GtkWidget *frameh;
+    GtkWidget *button5;
+    GtkWidget *hbox;
+#endif
 
     if(is_active) 
 	{
@@ -204,6 +209,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/11/24 03:26:52  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.7  2008/11/18 05:37:34  gtkwave
  * code cleanups
  *

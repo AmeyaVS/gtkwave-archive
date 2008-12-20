@@ -10,20 +10,20 @@
 #if HAVE_SETENV && HAVE_UNSETENV
 #define WAVE_LOCALE_FIX \
 { \
-char *e = getenv("LANG"); \
-if(e) \
+char *wlve = getenv("LANG"); \
+if(wlve) \
         { \
-        if(strcmp(e, "C")) \
+        if(strcmp(wlve, "C")) \
                 { \
                 setenv("LC_NUMERIC", "C", 1); \
                 setenv("LC_COLLATE", "C", 1); \
                 setenv("LC_CTYPE", "C", 1); \
                 } \
         } \
-e = getenv("LC_ALL"); \
-if(e) \
+wlve = getenv("LC_ALL"); \
+if(wlve) \
         { \
-        if(strcmp(e, "C")) \
+        if(strcmp(wlve, "C")) \
                 { \
                 unsetenv("LC_ALL"); \
                 } \

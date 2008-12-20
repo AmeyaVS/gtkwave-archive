@@ -594,6 +594,9 @@ GdkModifierType state;
                  
 #ifdef WAVE_USE_GTK2
 gint xi, yi;
+#else
+GdkEventMotion event[1];
+event[0].deviceid = GDK_CORE_POINTER;  
 #endif
 
 if(GLOBALS->dnd_cursor_timer)
@@ -1664,6 +1667,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2008/12/18 01:31:30  gtkwave
+ * integrated experimental autoscroll code on signal adds
+ *
  * Revision 1.36  2008/12/17 16:22:31  gtkwave
  * removed clearing of dnd timer in tree drag code
  *

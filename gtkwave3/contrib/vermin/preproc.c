@@ -256,12 +256,12 @@ return(cpylen);
  */
 int mgetchar2(void)
 {
-unsigned char buf[2];
+unsigned char cbuf[2];
 
 if(preproc_buff_head)
 	{
-	mgetstr((char *)buf, 1);
-	return(buf[0]);
+	mgetstr((char *)cbuf, 1);
+	return(cbuf[0]);
 	}
 
 if(fh)
@@ -994,6 +994,9 @@ if(ics)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/11/11 15:30:26  gtkwave
+ * carriage return in defines fix
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:46  gtkwave
  * Imported sources
  *

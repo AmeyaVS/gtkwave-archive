@@ -80,10 +80,10 @@ when our window is realized. We could also force our window to be
 realized with gtk_widget_realize, but it would have to be part of
 a hierarchy first */
 
-static GdkFont *font = NULL;
+static GdkFont *fontx = NULL;
 
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-static GtkTextIter iter;
+static GtkTextIter iterx;
 static GtkTextTag *bold_tag = NULL;
 static GtkTextTag *dgray_tag = NULL, *lgray_tag = NULL;
 static GtkTextTag *blue_tag = NULL, *fwht_tag = NULL;
@@ -946,7 +946,7 @@ if(sel)
 void log_text(GtkWidget *text, GdkFont *font, char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iter,  
+gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iterx,  
                                  str, -1, mono_tag, size_tag, NULL);
 #else
 gtk_text_insert (GTK_TEXT (text), font, &text->style->black, NULL, str, -1);
@@ -956,7 +956,7 @@ gtk_text_insert (GTK_TEXT (text), font, &text->style->black, NULL, str, -1);
 void log_text_bold(GtkWidget *text, GdkFont *font, char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iter,  
+gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iterx,  
                                  str, -1, bold_tag, mono_tag, size_tag, fwht_tag, blue_tag, NULL);
 #else
 gtk_text_insert (GTK_TEXT (text), font, &text->style->fg[GTK_STATE_SELECTED], &text->style->bg[GTK_STATE_SELECTED], str, -1);
@@ -966,7 +966,7 @@ gtk_text_insert (GTK_TEXT (text), font, &text->style->fg[GTK_STATE_SELECTED], &t
 void log_text_active(GtkWidget *text, GdkFont *font, char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iter,
+gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iterx,
                                  str, -1, dgray_tag, mono_tag, size_tag, NULL);
 #else
 gtk_text_insert (GTK_TEXT (text), font, &text->style->fg[GTK_STATE_ACTIVE], &text->style->bg[GTK_STATE_ACTIVE], str, -1);
@@ -976,7 +976,7 @@ gtk_text_insert (GTK_TEXT (text), font, &text->style->fg[GTK_STATE_ACTIVE], &tex
 void log_text_prelight(GtkWidget *text, GdkFont *font, char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
-gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iter,
+gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (text)->buffer, &iterx,
                                  str, -1, lgray_tag, mono_tag, size_tag, NULL);
 #else
 gtk_text_insert (GTK_TEXT (text), font, &text->style->fg[GTK_STATE_PRELIGHT], &text->style->bg[GTK_STATE_PRELIGHT], str, -1);
@@ -1212,7 +1212,7 @@ table = gtk_table_new (1, 16, FALSE);
 * GTK_SHRINK in the y direction */
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 text = gtk_text_view_new ();
-gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (text)), &iter);
+gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (text)), &iterx);
 bold_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "bold",
                                       	"weight", PANGO_WEIGHT_BOLD, NULL);
 dgray_tag = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (text)->buffer, "dk_gray_background",
@@ -1332,7 +1332,7 @@ while(t)
 			gtk_text_buffer_get_end_iter(GTK_TEXT_VIEW (t->text)->buffer, &en_iter);
 			gtk_text_buffer_delete(GTK_TEXT_VIEW (t->text)->buffer, &st_iter, &en_iter);
 
-			gtk_text_buffer_get_start_iter (GTK_TEXT_VIEW (t->text)->buffer, &iter);
+			gtk_text_buffer_get_start_iter (GTK_TEXT_VIEW (t->text)->buffer, &iterx);
 
 			bold_tag = t->bold_tag;
 			dgray_tag = t->dgray_tag;
@@ -1458,19 +1458,19 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 /* nothing */
 #else
-    if(!font) 
+    if(!fontx) 
 	{
 	if(fontname_logfile)
 		{
-		font=gdk_font_load(fontname_logfile);
+		fontx=gdk_font_load(fontname_logfile);
 		}
 
-	if(!font)
+	if(!fontx)
 		{
 #ifndef __CYGWIN__
-		font=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
+		fontx=gdk_font_load("-*-courier-*-r-*-*-10-*-*-*-*-*-*-*");
 #else
-		font=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
+		fontx=gdk_font_load("-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*");
 #endif
 		}
 	}
@@ -1898,8 +1898,8 @@ resolved_vzt:		free(pfx);
 	
 							while(jvc)
 								{
-								char *rc = vzt_rd_value(vzt, anno_ctx->marker, jvc->val.i);
-								rc2[pos++] = *rc;
+								char *rcv = vzt_rd_value(vzt, anno_ctx->marker, jvc->val.i);
+								rc2[pos++] = *rcv;
 								jvc = jvc->next;
 								}		
 
@@ -2232,10 +2232,10 @@ resolved_ae2:		free(pfx);
 							node = jrb_find_str(varnames, w->text);
 							if((node)&&(node->val.v))
 								{
-								log_text(text, font, w->text);
-								log_text_bold(text, font, "[");
-								log_text_bold(text, font, node->val.v);
-								log_text_bold(text, font, "]");
+								log_text(text, fontx, w->text);
+								log_text_bold(text, fontx, "[");
+								log_text_bold(text, fontx, node->val.v);
+								log_text_bold(text, fontx, "]");
 								goto iter_free;
 								}
 							}
@@ -2243,14 +2243,14 @@ resolved_ae2:		free(pfx);
 
 					switch(w->tok)
 						{
-						case V_CMT:	log_text_active(text, font, w->text); break;
+						case V_CMT:	log_text_active(text, fontx, w->text); break;
 
 						case V_STRING:	
 						case V_PREPROC:	
 						case V_PREPROC_WS:	
-						case V_MACRO:	log_text_prelight(text, font, w->text); break;
+						case V_MACRO:	log_text_prelight(text, fontx, w->text); break;
 
-						default:	log_text(text, font, w->text); break;
+						default:	log_text(text, fontx, w->text); break;
 						}
 					}
 
@@ -2288,7 +2288,7 @@ iter_free:			free(w->text);
 		}
 	wlog_head = wlog_curr = NULL;
 	*pnt2 = 0;
-	log_text(text, font, pnt);
+	log_text(text, fontx, pnt);
 	free(pnt);
 
 free_vars:
@@ -2343,6 +2343,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2008/11/24 03:26:52  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.20  2008/11/19 16:34:26  gtkwave
  * removed strcasestr and use strstr with toupper()
  *
