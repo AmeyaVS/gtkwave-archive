@@ -559,15 +559,15 @@ ghw_read_type (struct ghw_handler *h)
 	      ph->nbr_units = 0;
 	    else
 	      {
-		int i;
+		int ix;
 
 		if (ghw_read_uleb128 (h, &ph->nbr_units) != 0)
 		  return -1;
 		ph->units = calloc (ph->nbr_units, sizeof (struct ghw_unit));
-		for (i = 0; i < ph->nbr_units; i++)
+		for (ix = 0; ix < ph->nbr_units; ix++)
 		  {
-		    ph->units[i].name = ghw_read_strid (h);
-		    if (ghw_read_lsleb128 (h, &ph->units[i].val) < 0)
+		    ph->units[ix].name = ghw_read_strid (h);
+		    if (ghw_read_lsleb128 (h, &ph->units[ix].val) < 0)
 		      return -1;
 		  }
 	      }
@@ -959,9 +959,9 @@ ghw_read_hie (struct ghw_handler *h)
 	      return -1;
 	    if (h->flag_verbose > 1)
 	      {
-		int i;
-		for (i = 0; i < nbr_el; i++)
-		  printf (" #%u", sigs[i]);
+		int ix;
+		for (ix = 0; ix < nbr_el; ix++)
+		  printf (" #%u", sigs[ix]);
 		printf ("]\n");
 	      }
 	  }
@@ -1806,6 +1806,9 @@ ghw_disp_types (struct ghw_handler *h)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/07/01 18:51:06  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.2  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

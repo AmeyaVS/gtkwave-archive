@@ -1244,15 +1244,15 @@ if(lt)
 
 	if(lt->symchain)
 		{
-		struct lt_symbol *s = lt->symchain;
+		struct lt_symbol *sc = lt->symchain;
 		struct lt_symbol *s2;
 		
-		while(s)
+		while(sc)
 			{
-			free(s->name);
-			s2=s->symchain;
-			free(s);
-			s=s2;
+			free(sc->name);
+			s2=sc->symchain;
+			free(sc);
+			sc=s2;
 			}
 		}
 	
@@ -2288,16 +2288,16 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 		int legal = 0;
 		int ivalue = 0;
 		int i;
-		char *pnt = value;
+		char *pntv = value;
 		int delta1, delta2;
 
 		for(i=0;i<len;i++)
 			{
-			if((*pnt!='0')&&(*pnt!='1'))
+			if((*pntv!='0')&&(*pntv!='1'))
 				{
-				if((!*pnt)&&(i>0))
+				if((!*pntv)&&(i>0))
 					{
-					pnt--;
+					pntv--;
 					}
 					else
 					{
@@ -2307,9 +2307,9 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 				}
 
 			ivalue = (((unsigned int)ivalue) << 1);
-			ivalue |= (*pnt & 1);
+			ivalue |= (*pntv & 1);
 			legal = 1;
-			pnt++;
+			pntv++;
 			}
 		s->clk_mask <<= 1;
 		s->clk_mask |= legal;
@@ -2585,7 +2585,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 
 		if(!tagadd)
 			{
-			int len = ((s->flags)&LT_SYM_F_INTEGER) ? 32 : s->len;
+			int len2 = ((s->flags)&LT_SYM_F_INTEGER) ? 32 : s->len;
 			if((mvl & (LT_MVL_2|LT_MVL_4|LT_MVL_9)) == LT_MVL_2)
 				{
 				int i;
@@ -2595,7 +2595,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 
 				pnt = value;				
 
-				if((lt->dictmode)&&(len>lt->mindictwidth))
+				if((lt->dictmode)&&(len2>lt->mindictwidth))
 					{
 					char *vpnt = value;
 					while ( (*vpnt == '0') && (*(vpnt+1)) ) vpnt++;
@@ -2652,7 +2652,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 						}
 					}
 				else
-				for(i=0;i<len;i++)
+				for(i=0;i<len2;i++)
 					{
 					if(*pnt)
 						{
@@ -2661,7 +2661,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 						}
 					outval |= (thisval<<bitpos);
 					bitpos--;
-					if((bitpos==-1)||(i==len-1))
+					if((bitpos==-1)||(i==len2-1))
 						{					
 						lt->lt_emit_u8(lt, outval); 
 						outval = 0;
@@ -2679,7 +2679,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 
 				pnt = value;				
 
-				for(i=0;i<len;i++)
+				for(i=0;i<len2;i++)
 					{
 					if(*pnt)
 						{
@@ -2695,7 +2695,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 						}
 					outval |= (thisval<<bitpos);
 					bitpos-=2;
-					if((bitpos==-2)||(i==len-1))
+					if((bitpos==-2)||(i==len2-1))
 						{					
 						lt->lt_emit_u8(lt, outval); 
 						outval = 0;
@@ -2713,7 +2713,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 
 				pnt = value;				
 
-				for(i=0;i<len;i++)
+				for(i=0;i<len2;i++)
 					{
 					if(*pnt)
 						{
@@ -2739,7 +2739,7 @@ if(!(s->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 						}
 					outval |= (thisval<<bitpos);
 					bitpos-=4;
-					if((bitpos==-4)||(i==len-1))
+					if((bitpos==-4)||(i==len2-1))
 						{					
 						lt->lt_emit_u8(lt, outval); 
 						outval = 0;
@@ -2816,6 +2816,9 @@ if((lt)&&(lt->dumpoff_active))
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:14  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

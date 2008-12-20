@@ -1,5 +1,5 @@
 /*  Display a GHDL Wavefile for debugging.
-    Copyright (C) 2005 Tristan Gingold
+    Copyright (C) 2005-2008 Tristan Gingold
 
     GHDL is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -155,11 +155,11 @@ main (int argc, char **argv)
 	    }
 	  if (0)
 	    {
-	      int i;
+	      int ix;
 	      printf ("String table:\n");
 	      
-	      for (i = 1; i < hp->nbr_str; i++)
-		printf (" %s\n", hp->str_table[i]);
+	      for (ix = 1; ix < hp->nbr_str; ix++)
+		printf (" %s\n", hp->str_table[ix]);
 	    }
 	  if (flag_disp_types)
 	    ghw_disp_types (hp);
@@ -204,6 +204,9 @@ main (int argc, char **argv)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:15  gtkwave
  * Imported sources
  *

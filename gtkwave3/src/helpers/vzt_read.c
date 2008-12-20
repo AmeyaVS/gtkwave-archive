@@ -950,15 +950,15 @@ for(i = 1; i < b->num_time_ticks; i++)
  
                         if(i2!=i)
                                 {
-                                struct vzt_ncycle_autosort *t = autosort[i2];
+                                struct vzt_ncycle_autosort *ta = autosort[i2];
                         
-                                autofacs[idx].next = t;
+                                autofacs[idx].next = ta;
                                 autosort[i2] = autofacs+idx;
                                 }
                                 else
                                 {
-                                struct vzt_ncycle_autosort *t = deadlist;
-                                autofacs[idx].next = t;
+                                struct vzt_ncycle_autosort *ta = deadlist;
+                                autofacs[idx].next = ta;
                                 deadlist = autofacs+idx;   
                                 }
          
@@ -1131,7 +1131,7 @@ return(lt ? lt->timescale : 0);
 char *vzt_rd_get_facname(struct vzt_rd_trace *lt, vztint32_t facidx)
 {
 char *pnt;
-int clone, j;
+int clonecnt, j;
 
 if(lt)
 	{
@@ -1150,10 +1150,10 @@ if(lt)
 			lt->faccache->bufcurr = lt->faccache->bufprev;
 			lt->faccache->bufprev = pnt;
 
-			clone=vzt_rd_get_16(lt->faccache->n, 0);  lt->faccache->n+=2;
+			clonecnt=vzt_rd_get_16(lt->faccache->n, 0);  lt->faccache->n+=2;
 			pnt=lt->faccache->bufcurr;
 
-			for(j=0;j<clone;j++)
+			for(j=0;j<clonecnt;j++)
 				{
 				*(pnt++) = lt->faccache->bufprev[j];
 				}
@@ -1868,8 +1868,6 @@ if(!(lt->handle=fopen(name, "rb")))
 
 		for(;;)
 			{
-			size_t rcf;
-
 			fseeko(lt->handle, 0L, SEEK_END);
 			fend=ftello(lt->handle);
 			if(pos>=fend) break;
@@ -1888,9 +1886,9 @@ if(!(lt->handle=fopen(name, "rb")))
 
 			if((b->rle = (b->start > b->end)))
 				{
-				vztint64_t t = b->start;
+				vztint64_t tb = b->start;
 				b->start = b->end;
-				b->end = t;
+				b->end = tb;
 				}
 
 			b->ztype = vzt_rd_is_gzip_type(lt->handle);
@@ -1976,7 +1974,7 @@ if((!lt)||(lt->vectorize))
 	char *pbuff = malloc(pmxlen+1);
 	char *pname;
 	int plen, plen2;
-	int i, j;	
+	int i;	
 	int pidx;
 	int num_after_combine = lt->numfacs;
 	int num_synvecs = 0;
@@ -1985,6 +1983,8 @@ if((!lt)||(lt->vectorize))
 
 	for(i=0;i<lt->numfacs-1;i++)
 		{
+		int j;
+
 		if(lt->len[i] != 1) continue;
 
 		pname = vzt_rd_get_facname(lt, i);
@@ -2350,6 +2350,9 @@ return(rcval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/11/13 22:52:25  gtkwave
+ * x86_64 fix on xchgb
+ *
  * Revision 1.2  2008/07/19 23:26:49  gtkwave
  * fixed buffer overflow in vectorization code
  *

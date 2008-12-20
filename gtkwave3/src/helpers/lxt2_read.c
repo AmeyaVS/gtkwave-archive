@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004 Tony Bybell.
+ * Copyright (c) 2003-2008 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1480,8 +1480,6 @@ if(lt)
 		{
 		if((!b->mem)&&(!b->short_read_ignore)&&(!b->exclude_block))
 			{
-			int rc;
-
 			if(processed<5)
 				{
 				int gate = (processed==4) && b->next;
@@ -1568,6 +1566,8 @@ if(lt)
 				}
 				else
 				{
+				int rc;
+
 				b->mem = malloc(b->uncompressed_siz);
 				lt->zhandle = gzdopen(dup(fileno(lt->handle)), "rb");
 				rc=gzread(lt->zhandle, b->mem, b->uncompressed_siz);
@@ -1731,6 +1731,9 @@ return(blk);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/11/13 22:52:25  gtkwave
+ * x86_64 fix on xchgb
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:17  gtkwave
  * Imported sources
  *
