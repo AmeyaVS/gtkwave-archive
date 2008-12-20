@@ -589,6 +589,7 @@ scroll_event( GtkWidget * widget, GdkEventScroll * event )
 
 static gboolean mouseover_timer(gpointer dummy)
 {
+static gboolean run_once = FALSE;
 gdouble x,y;
 GdkModifierType state;
                  
@@ -598,6 +599,12 @@ gint xi, yi;
 GdkEventMotion event[1];
 event[0].deviceid = GDK_CORE_POINTER;  
 #endif
+
+if(run_once == FALSE) /* avoid any race conditions with the toolkit for uninitialized data */
+	{
+	run_once = TRUE;
+	return(TRUE);
+	}
 
 if(GLOBALS->dnd_cursor_timer)
 	{
@@ -1667,6 +1674,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2008/12/20 05:45:03  gtkwave
+ * gtk1 compatibility and -Wshadow warning fixes
+ *
  * Revision 1.37  2008/12/18 01:31:30  gtkwave
  * integrated experimental autoscroll code on signal adds
  *

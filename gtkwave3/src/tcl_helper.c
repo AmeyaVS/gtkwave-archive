@@ -2354,6 +2354,14 @@ return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewString
 
 static gboolean repscript_timer(gpointer dummy)
 {
+static gboolean run_once = FALSE;
+
+if(run_once == FALSE) /* avoid any race conditions with the toolkit for uninitialized data */
+        {
+        run_once = TRUE;
+        return(TRUE);
+        }
+
 if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 	{
 	int tclrc;
@@ -2454,6 +2462,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2008/12/20 07:44:22  gtkwave
+ * experimental support for Tcl repscripts
+ *
  * Revision 1.36  2008/12/16 19:35:22  gtkwave
  * fixed missing bounds checking
  *
