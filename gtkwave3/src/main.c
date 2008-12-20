@@ -172,11 +172,17 @@ static void print_help(char *nam)
 #define INTR_GETOPT
 #endif
 
-
 #ifdef WAVE_USE_XID
 #define XID_GETOPT 	 "  -X, --xid=XID              specify XID of window for GtkPlug to connect to\n"
 #else
 #define XID_GETOPT
+#endif
+
+#if defined(HAVE_LIBTCL)
+#define REPSCRIPT_GETOPT "  -R, --repscript=FILE       specify timer-driven Tcl command script file\n"\
+                         "  -P, --repperiod=VALUE      specify repscript period in msec (default: 500)\n"
+#else
+#define REPSCRIPT_GETOPT
 #endif
 
 printf(
@@ -198,6 +204,7 @@ WAVE_GETOPT_CPUS
 "  -N, --nowm                 disable window manager for most windows\n"
 "  -M, --nomenus              do not render menubar (for making applets)\n"
 "  -S, --script=FILE          specify GUI command script file for execution\n"
+REPSCRIPT_GETOPT
 XID_GETOPT
 INTR_GETOPT
 "  -C, --comphier             use compressed hierarchy names (slower)\n"
@@ -513,10 +520,12 @@ while (1)
 		{"giga", 0, 0, 'g'},
 		{"comphier", 0, 0, 'C'},
                 {"legacy", 0, 0, 'L'},  
+		{"repscript", 1, 0, 'R'},
+		{"repperiod", 1, 0, 'P'},
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCL", long_options, &option_index);
+        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -717,6 +726,22 @@ while (1)
 
 		case 'C':
 			GLOBALS->do_hier_compress = 1;
+			break;
+
+                case 'R':
+			if(GLOBALS->repscript_name) free_2(GLOBALS->repscript_name);
+			GLOBALS->repscript_name = malloc_2(strlen(optarg)+1);
+			strcpy(GLOBALS->repscript_name, optarg);
+			break;
+
+                case 'P':
+			{
+			int pd = atoi(optarg);
+			if(pd > 0)
+				{
+				GLOBALS->repscript_period = pd;	
+				}
+			}
 			break;
 
                 case '?':
@@ -2129,6 +2154,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2008/11/17 23:08:54  gtkwave
+ * make images in toolbars smaller by removing border space
+ *
  * Revision 1.38  2008/10/21 04:03:01  gtkwave
  * setlocale disable for mingw on gtk init
  *

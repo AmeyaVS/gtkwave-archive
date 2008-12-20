@@ -4813,15 +4813,14 @@ FILE *f;
 int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
 int i;
 int nlen = strlen(name);
-static int running = 0;
 
-if(running)
+if(GLOBALS->tcl_running)
 	{
 	fprintf(stderr, "Could not run script file '%s', as one is already running.\n", name);
 	return(0);	
 	}
 
-running = 1;
+GLOBALS->tcl_running = 1;
 f = fopen(name, "rb");
 
 if(!f)
@@ -4889,7 +4888,7 @@ for(i=0;i<GLOBALS->num_notebook_pages;i++)
         (*GLOBALS->contexts)[i]->script_handle = NULL;	/* just in case there was a CTX swap */
 	}
 
-running = 0;
+GLOBALS->tcl_running = 0;
 return(0);
 }
 
@@ -5055,6 +5054,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.51  2008/12/16 19:28:20  gtkwave
+ * more warnings cleanups
+ *
  * Revision 1.50  2008/12/11 21:08:15  gtkwave
  * allow support for marker names which are strings
  *

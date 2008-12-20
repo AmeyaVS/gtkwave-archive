@@ -2352,6 +2352,30 @@ return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewString
 }
 
 
+static gboolean repscript_timer(gpointer dummy)
+{
+if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
+	{
+	int tclrc;
+	int nlen = strlen(GLOBALS->repscript_name);
+	char *tcl_cmd = malloc_2(7 + nlen + 1);
+	strcpy(tcl_cmd, "source ");
+	strcpy(tcl_cmd+7, GLOBALS->repscript_name);
+
+	GLOBALS->tcl_running = 1;
+	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
+	GLOBALS->tcl_running = 0;
+	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
+
+	free_2(tcl_cmd);
+	return(TRUE);
+	}
+	else
+	{
+	return(FALSE);
+	}
+}
+
 void make_tcl_interpreter(char *argv[])
 {
 int i;
@@ -2399,6 +2423,22 @@ for (i = 0; gtkwave_commands[i].func != NULL; i++)
                 (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
                 (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
    	}
+
+if(GLOBALS->repscript_name)
+	{
+	FILE *f = fopen(GLOBALS->repscript_name, "rb");
+	if(f)
+		{
+		fclose(f);
+		g_timeout_add(GLOBALS->repscript_period, repscript_timer, NULL);
+		}
+		else
+		{
+		fprintf(stderr, "GTKWAVE | Could not open repscript '%s', exiting.\n", GLOBALS->repscript_name);
+		perror("Why");
+		exit(255);
+		}
+	}
 }
 
 #else
@@ -2414,6 +2454,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2008/12/16 19:35:22  gtkwave
+ * fixed missing bounds checking
+ *
  * Revision 1.35  2008/12/16 19:28:20  gtkwave
  * more warnings cleanups
  *

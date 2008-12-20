@@ -76,7 +76,14 @@ Specify GUI command script file for execution.  Comments are indicated by the '#
 full menu pathname including the first forward slash.  Arguments for an option (such as a filename) will follow with one
 argument each on its own separate line.  Menu options that bring up complex requesters (e.g., search) will hang in the
 GUI waiting for user intervention.  The intended use of this option is to allow automated subset extraction to VCD as well
-as automated Postscript file generation.
+as automated Postscript file generation.  If the script filename is suffixed with .tcl, then the script will be considered
+to be Tcl.
+.TP
+\fB\-R\fR,\fB\-\-repscript\fR <\fIfilename\fP>
+Specify Tcl command script for periodic execution.
+.TP
+\fB\-P\fR,\fB\-\-repperiod\fR <\fIvalue\fP>
+Specifies delay in milliseconds between successive executions of the repscript.  Default is 500.
 .TP 
 \fB\-X\fR,\fB\-\-xid\fR <\fIXID\fP>
 Specify XID of window for a GtkPlug to connect to.  GTKWave does not directly render to a window but instead renders into a 

@@ -25,7 +25,7 @@
 
 #include "ghwlib.h"
 
-#if HAVE_TRIO
+#ifdef HAVE_TRIO
 #include <trio.h>
 #define snprintf trio_snprintf
 #define printf trio_printf
@@ -1806,6 +1806,9 @@ ghw_disp_types (struct ghw_handler *h)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/12/20 05:08:26  gtkwave
+ * -Wshadow warning cleanups
+ *
  * Revision 1.3  2008/07/01 18:51:06  gtkwave
  * compiler warning fixes for amd64
  *
