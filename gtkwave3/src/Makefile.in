@@ -75,7 +75,8 @@ am_gtkwave_OBJECTS = globals.$(OBJEXT) ae2.$(OBJEXT) \
 gtkwave_OBJECTS = $(am_gtkwave_OBJECTS)
 am__DEPENDENCIES_1 =
 gtkwave_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_twinwave_OBJECTS = twinwave.$(OBJEXT)
 twinwave_OBJECTS = $(am_twinwave_OBJECTS)
 twinwave_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -160,7 +161,9 @@ RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TCL_DEFADD = @TCL_DEFADD@
 TCL_INCLUDE_SPEC = @TCL_INCLUDE_SPEC@
+TCL_LDADD = @TCL_LDADD@
 VERSION = @VERSION@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_RANLIB = @ac_ct_RANLIB@
@@ -197,7 +200,7 @@ SUBDIRS = $(LIBZ_DIR) $(LIBBZ2_DIR) helpers
 DIST_SUBDIRS = libz libbz2 helpers
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC)
+AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD)
 gtkwave_SOURCES = \
 	globals.c globals.h ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
 	bsearch.c bsearch.h busy.c busy.h \
@@ -217,7 +220,7 @@ gtkwave_SOURCES = \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c
 
-gtkwave_LDADD = $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD)
+gtkwave_LDADD = $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD) $(TCL_LDADD)
 twinwave_SOURCES = twinwave.c
 twinwave_LDADD = $(GTK_LIBS)
 BUILT_SOURCES = vcd_keywords.c

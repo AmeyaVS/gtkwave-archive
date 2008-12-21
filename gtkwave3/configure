@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_INCLUDE_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_INCLUDE_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB TCL_LDADD TCL_DEFADD LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -10057,14 +10057,14 @@ _ACEOF
 
 fi
 
-
-echo "$as_me:$LINENO: checking for Tcl_CreateInterp in -ltcl" >&5
-echo $ECHO_N "checking for Tcl_CreateInterp in -ltcl... $ECHO_C" >&6
-if test "${ac_cv_lib_tcl_Tcl_CreateInterp+set}" = set; then
+as_ac_Lib=`echo "ac_cv_lib_tcl${TCL_VERSION}''_Tcl_CreateInterp" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}" >&5
+echo $ECHO_N "checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Lib+set}\" = set"; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-ltcl  $LIBS"
+LIBS="-ltcl${TCL_VERSION}  $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -10109,27 +10109,35 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  ac_cv_lib_tcl_Tcl_CreateInterp=yes
+  eval "$as_ac_Lib=yes"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-ac_cv_lib_tcl_Tcl_CreateInterp=no
+eval "$as_ac_Lib=no"
 fi
 rm -f conftest.err conftest.$ac_objext \
       conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_tcl_Tcl_CreateInterp" >&5
-echo "${ECHO_T}$ac_cv_lib_tcl_Tcl_CreateInterp" >&6
-if test $ac_cv_lib_tcl_Tcl_CreateInterp = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBTCL 1
-_ACEOF
-
-  LIBS="-ltcl $LIBS"
-
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Lib'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Lib'}'`" >&6
+if test `eval echo '${'$as_ac_Lib'}'` = yes; then
+  TCL_LDADD=-ltcl${TCL_VERSION}
+else
+  need_tcl=yes
 fi
+
+if test "$need_tcl" = "yes" ; then
+                { echo "$as_me:$LINENO: WARNING:
+Tcl support not enabled." >&5
+echo "$as_me: WARNING:
+Tcl support not enabled." >&2;}
+else
+	TCL_DEFADD=-DHAVE_LIBTCL
+	fi
+
+
 
 
                                                                                                                                                                                                                                                                                                   ac_config_files="$ac_config_files Makefile doc/Makefile contrib/Makefile contrib/pccts/IBM_VISUAL_AGE_PROJECTS/Makefile contrib/pccts/Makefile contrib/pccts/antlr/Makefile contrib/pccts/dlg/Makefile contrib/pccts/h/Makefile contrib/pccts/sorcerer/Makefile contrib/pccts/sorcerer/h/Makefile contrib/pccts/sorcerer/lib/Makefile contrib/pccts/sorcerer/test/Makefile contrib/pccts/sorcerer/test/test7/Makefile contrib/pccts/sorcerer/testcpp/Makefile contrib/pccts/support/DECmms/Makefile contrib/pccts/support/Makefile contrib/pccts/support/genmk/Makefile contrib/pccts/support/rexpr/Makefile contrib/pccts/support/set/Makefile contrib/pccts/support/sym/Makefile contrib/pccts/testcpp/Makefile contrib/rtlbrowse/Makefile contrib/vermin/Makefile examples/Makefile man/Makefile src/Makefile src/helpers/Makefile src/libbz2/Makefile src/libz/Makefile"
@@ -10155,6 +10163,8 @@ fi
   AET2_LDADD       : $AET2_LDADD
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+  TCL_LDADD        : $TCL_LDADD
+  TCL_DEFADD       : $TCL_DEFADD
 
   CPPFLAGS         : $CPPFLAGS
   CFLAGS           : $CFLAGS
@@ -10180,6 +10190,8 @@ echo "$as_me:
   AET2_LDADD       : $AET2_LDADD
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+  TCL_LDADD        : $TCL_LDADD
+  TCL_DEFADD       : $TCL_DEFADD
 
   CPPFLAGS         : $CPPFLAGS
   CFLAGS           : $CFLAGS
@@ -10935,6 +10947,8 @@ s,@CPP@,$CPP,;t t
 s,@EGREP@,$EGREP,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@POW_LIB@,$POW_LIB,;t t
+s,@TCL_LDADD@,$TCL_LDADD,;t t
+s,@TCL_DEFADD@,$TCL_DEFADD,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
 

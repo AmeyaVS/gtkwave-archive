@@ -278,7 +278,16 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([atexit btowc bzero dup2 memmove memset munmap pow putenv re_comp realpath regcomp select setenv strcasecmp strchr strdup strerror strncasecmp strrchr strstr getopt_long setenv unsetenv])
 AC_CHECK_LIB(nsl,xdrmem_create)
 AC_CHECK_LIB(rpc,xdrmem_create)
-AC_CHECK_LIB(tcl,Tcl_CreateInterp)
+AC_CHECK_LIB(tcl${TCL_VERSION},Tcl_CreateInterp, [TCL_LDADD=-ltcl${TCL_VERSION}], [need_tcl=yes])
+if test "$need_tcl" = "yes" ; then
+                AC_MSG_WARN([
+Tcl support not enabled.])
+else
+	TCL_DEFADD=-DHAVE_LIBTCL
+	fi
+
+AC_SUBST(TCL_LDADD)
+AC_SUBST(TCL_DEFADD)
 
 AC_CONFIG_FILES([Makefile
 		doc/Makefile
@@ -331,6 +340,8 @@ AC_MSG_NOTICE([
   AET2_LDADD       : $AET2_LDADD
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+  TCL_LDADD        : $TCL_LDADD
+  TCL_DEFADD       : $TCL_DEFADD  
 
   CPPFLAGS         : $CPPFLAGS
   CFLAGS           : $CFLAGS

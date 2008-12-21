@@ -70,9 +70,6 @@
 /* Define to 1 if you have the `rpc' library (-lrpc). */
 #undef HAVE_LIBRPC
 
-/* Define to 1 if you have the `tcl' library (-ltcl). */
-#undef HAVE_LIBTCL
-
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
