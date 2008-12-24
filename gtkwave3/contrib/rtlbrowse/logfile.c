@@ -1500,23 +1500,36 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	GtkWidget *tbox = gtk_hbox_new(FALSE, 0);
 	GtkWidget *l1;
 	GtkWidget *image;
+	GtkRcStyle *rcstyle;
 	
 	l1 = gtk_label_new(title);
 
-	image  = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtk_widget_show(image);
-
-        close_button = gtk_event_box_new();
-	gtk_widget_set_events(close_button, GDK_BUTTON_RELEASE_MASK);
-
+	/* code from gedit... */
+        /* setup close button */
+        close_button = gtk_button_new ();
+        gtk_button_set_relief (GTK_BUTTON (close_button),
+                               GTK_RELIEF_NONE);
+        /* don't allow focus on the close button */
+        gtk_button_set_focus_on_click (GTK_BUTTON (close_button), FALSE);
+        
+        /* make it as small as possible */
+        rcstyle = gtk_rc_style_new ();
+        rcstyle->xthickness = rcstyle->ythickness = 0;
+        gtk_widget_modify_style (close_button, rcstyle);
+        gtk_rc_style_unref (rcstyle),
+        
+        image = gtk_image_new_from_stock (GTK_STOCK_CLOSE,
+                                          GTK_ICON_SIZE_MENU);
         gtk_container_add (GTK_CONTAINER (close_button), image);
+	/* ...code from gedit */
+
+	gtk_widget_show(image);
         gtk_widget_show(close_button);
 
 	gtk_box_pack_start(GTK_BOX (tbox), l1, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX (tbox), close_button, FALSE, FALSE, 0);
 
 	gtk_widget_show(l1);
-	gtk_widget_show(close_button);
 	gtk_widget_show(tbox);
 
         pagenum = gtk_notebook_append_page_menu  (GTK_NOTEBOOK(notebook), window, tbox, gtk_label_new(title));
@@ -2343,6 +2356,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/12/20 05:45:03  gtkwave
+ * gtk1 compatibility and -Wshadow warning fixes
+ *
  * Revision 1.21  2008/11/24 03:26:52  gtkwave
  * warnings cleanups
  *
