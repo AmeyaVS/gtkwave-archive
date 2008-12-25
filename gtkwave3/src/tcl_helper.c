@@ -850,7 +850,7 @@ return(s_new);
  * ----------------------------------------------------------------------------
  */     
 
-int process_tcl_list(char *s, gboolean track_mouse_y)
+int process_tcl_list(char *sl, gboolean track_mouse_y)
 {
 char *s_new = NULL;
 char *this_regex = "\\(\\[.*\\]\\)*$";
@@ -869,7 +869,7 @@ int unesc_len;
 int curr_srch_idx = 0;
 char *unescaped_str = NULL;
 
-list = zSplitTclList(s, &c);
+list = zSplitTclList(sl, &c);
 if(!list)
 	{
 	return(0);
@@ -2462,6 +2462,10 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2008/12/20 19:42:11  gtkwave
+ * add static initializer to timer functions to avoid non-initialized viewer
+ * state when first starting (if timer interrupt fires)
+ *
  * Revision 1.37  2008/12/20 07:44:22  gtkwave
  * experimental support for Tcl repscripts
  *

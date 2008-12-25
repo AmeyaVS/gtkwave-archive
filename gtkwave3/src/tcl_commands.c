@@ -768,8 +768,8 @@ if(objc == 3)
 	{
 	char *s = Tcl_GetString(objv[1]);
 	int which = atoi(s);
-	char *t = Tcl_GetString(objv[2]);
-	int onoff = atoi_64(t);
+	char *ts = Tcl_GetString(objv[2]);
+	int onoff = atoi_64(ts);
 
 	if((which >= 0) && (which < GLOBALS->traces.total))
 		{
@@ -929,6 +929,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/12/16 18:21:02  gtkwave
+ * can now set named marker user names through Tcl scripts
+ *
  * Revision 1.7  2008/11/25 18:07:32  gtkwave
  * added cut copy paste functionality that survives reload and can do
  * multiple pastes on the same cut buffer

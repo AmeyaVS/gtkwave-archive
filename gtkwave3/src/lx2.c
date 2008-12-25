@@ -393,9 +393,9 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 	init_tree();		
 	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
-		char *n = GLOBALS->facs[i]->name;
+		char *nf = GLOBALS->facs[i]->name;
 		int was_packed;
-		char *recon = hier_decompress_flagged(n, &was_packed);
+		char *recon = hier_decompress_flagged(nf, &was_packed);
                 
 		if(was_packed)   
 		        {
@@ -404,7 +404,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		        }
 		        else
 		        {
-		        build_tree_from_name(n, i);
+		        build_tree_from_name(nf, i);
 		        }
 		}
 /* SPLASH */                            splash_sync(5, 5);
@@ -460,7 +460,7 @@ return(GLOBALS->max_time);
 /*
  * lx2 callback (only does bits for now)
  */
-static void lx2_callback(struct lxt2_rd_trace **lt, lxtint64_t *time, lxtint32_t *facidx, char **value)
+static void lx2_callback(struct lxt2_rd_trace **lt, lxtint64_t *tim, lxtint32_t *facidx, char **value)
 {
 struct HistEnt *htemp = histent_calloc();
 struct lx2_entry *l2e = GLOBALS->lx2_table_lx2_c_1+(*facidx);
@@ -474,7 +474,7 @@ if(GLOBALS->busycnt_lx2_c_1==WAVE_BUSY_ITER)
         GLOBALS->busycnt_lx2_c_1 = 0;
         }
 
-/* fprintf(stderr, "%lld %d %s\n", *time, *facidx, *value); */
+/* fprintf(stderr, "%lld %d %s\n", *tim, *facidx, *value); */
 
 if(!(f->flags&(LXT2_RD_SYM_F_DOUBLE|LXT2_RD_SYM_F_STRING)))
 	{
@@ -511,7 +511,7 @@ else	/* string */
 	}
 
 
-htemp->time = (*time) * (GLOBALS->time_scale);
+htemp->time = (*tim) * (GLOBALS->time_scale);
 
 if(l2e->histent_head)
 	{
@@ -834,6 +834,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/07/20 20:48:08  gtkwave
+ * compressed hierarchy support
+ *
  * Revision 1.3  2008/06/15 21:26:45  gtkwave
  * time -1 endcap add for LXT2 + VZT loaders
  *
