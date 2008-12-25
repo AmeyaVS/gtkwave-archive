@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	19dec08	Fix for strings ('s' type) in recoder.  
+3.2.0	24dec08	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -548,3 +548,4 @@
 		via Tcl scripts.
 		Added prelim auto-scrolling code for trace adds/copies.
 		Added support for Tcl repscripts.
+		Removed warnings found when compiling with -Wshadow.
