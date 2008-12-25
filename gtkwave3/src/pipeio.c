@@ -34,9 +34,9 @@ pid_t pid, wave_pid;
 int filedes_w[2];
 int filedes_r[2];
 struct pipe_ctx *p;
-int stat;
+int mystat;
 
-FILE *sin=NULL, *sout = NULL;
+FILE *fsin=NULL, *fsout = NULL;
 
 rc1 = pipe(filedes_r);
 if(rc1) return(NULL);
@@ -48,8 +48,8 @@ wave_pid = getpid();
 
 if((pid=fork()))
 	{
-	sout = fdopen(filedes_w[1], "wb");
-	sin = fdopen(filedes_r[0], "rb");
+	fsout = fdopen(filedes_w[1], "wb");
+	fsin = fdopen(filedes_r[0], "rb");
 	close(filedes_w[0]);
 	close(filedes_r[1]);
 	}
@@ -73,7 +73,7 @@ if((pid=fork()))
 			} while(wave_pid == getppid()); /* inherited by init yet? */
 
 		kill(pid, SIGKILL);
-		waitpid(pid, &stat, 0);
+		waitpid(pid, &mystat, 0);
 
 		exit(0);
 		}
@@ -87,8 +87,8 @@ if((pid=fork()))
 
 p = malloc_2(sizeof(struct pipe_ctx));
 p->pid = pid;
-p->sin = sin;
-p->sout = sout;
+p->sin = fsin;
+p->sout = fsout;
 p->fd0 = filedes_r[0]; /* for potential select() ops */
 p->fd1 = filedes_w[1]; /* ditto */
 
@@ -99,9 +99,9 @@ return(p);
 void pipeio_destroy(struct pipe_ctx *p)
 {
 #ifdef _AIX
-int stat;
+int mystat;
 kill(p->pid, SIGKILL);
-waitpid(p->pid, &stat, 0);
+waitpid(p->pid, &mystat, 0);
 #endif
 
 fclose(p->sout);
@@ -114,6 +114,9 @@ free_2(p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:43  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:48  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

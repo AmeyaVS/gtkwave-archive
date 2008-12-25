@@ -1499,7 +1499,7 @@ if(GLOBALS->use_toolbutton_interface)
 		if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
 			{
 			GtkWidget *r_pixmap = gtk_pixmap_new(GLOBALS->redo_pixmap, GLOBALS->redo_mask);
-			GtkWidget *main_vbox;
+			GtkWidget *main_vbox1;
 			GtkWidget *table, *table2;
 			GtkWidget *b1, *frame;
 			GtkTooltips *tooltips;
@@ -1511,15 +1511,15 @@ if(GLOBALS->use_toolbutton_interface)
 
 			table = gtk_table_new (1, 1, FALSE);
 		
-			main_vbox = gtk_vbox_new (FALSE, 1);
-			gtk_container_border_width (GTK_CONTAINER (main_vbox), 1);
-			gtk_container_add (GTK_CONTAINER (table), main_vbox);
+			main_vbox1 = gtk_vbox_new (FALSE, 1);
+			gtk_container_border_width (GTK_CONTAINER (main_vbox1), 1);
+			gtk_container_add (GTK_CONTAINER (table), main_vbox1);
 	
 			frame = gtk_frame_new ("Reload ");
-			gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
+			gtk_box_pack_start (GTK_BOX (main_vbox1), frame, TRUE, TRUE, 0);
 	
 			gtk_widget_show (frame);
-			gtk_widget_show (main_vbox);
+			gtk_widget_show (main_vbox1);
 
 			table2 = gtk_table_new (2, 1, FALSE);
 	
@@ -1665,7 +1665,7 @@ if(!GLOBALS->notebook)
 	}
 	else
 	{
-	unsigned int i;
+	unsigned int ix;
 
 	GLOBALS->this_context_page = GLOBALS->num_notebook_pages;
 	GLOBALS->num_notebook_pages++;
@@ -1673,11 +1673,11 @@ if(!GLOBALS->notebook)
 	*GLOBALS->contexts = realloc(*GLOBALS->contexts, GLOBALS->num_notebook_pages * sizeof(struct Globals *)); /* realloc is deliberate! */
 	(*GLOBALS->contexts)[GLOBALS->this_context_page] = GLOBALS;
 
-	for(i=0;i<GLOBALS->num_notebook_pages;i++)
+	for(ix=0;ix<GLOBALS->num_notebook_pages;ix++)
 		{
-		(*GLOBALS->contexts)[i]->num_notebook_pages = GLOBALS->num_notebook_pages;
-		(*GLOBALS->contexts)[i]->num_notebook_pages_cumulative = GLOBALS->num_notebook_pages_cumulative;
-		(*GLOBALS->contexts)[i]->dead_context = (*GLOBALS->contexts)[0]->dead_context;	/* mirroring this is OK as page 0 always has value! */
+		(*GLOBALS->contexts)[ix]->num_notebook_pages = GLOBALS->num_notebook_pages;
+		(*GLOBALS->contexts)[ix]->num_notebook_pages_cumulative = GLOBALS->num_notebook_pages_cumulative;
+		(*GLOBALS->contexts)[ix]->dead_context = (*GLOBALS->contexts)[0]->dead_context;	/* mirroring this is OK as page 0 always has value! */
 		}
 
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(GLOBALS->notebook), ~0); /* then appear */
@@ -1992,8 +1992,8 @@ int stems_are_active(void)
 {
 if(GLOBALS->anno_ctx && GLOBALS->anno_ctx->browser_process)
 	{
-	int stat =0;
-	pid_t pid = waitpid(GLOBALS->anno_ctx->browser_process, &stat, WNOHANG);
+	int mystat =0;
+	pid_t pid = waitpid(GLOBALS->anno_ctx->browser_process, &mystat, WNOHANG);
 	if(!pid)
 		{
 		status_text("Stems reader already active.\n");
@@ -2112,8 +2112,8 @@ void optimize_vcd_file(void) {
     }
     else {
       if(pid) {
-        int stat;
-        int rc = waitpid(pid, &stat, 0);
+        int mystat;
+        int rc = waitpid(pid, &mystat, 0);
 	if(rc > 0) {
 	  free_2(GLOBALS->loaded_file_name);
 	  GLOBALS->loaded_file_name = buf;
@@ -2135,8 +2135,8 @@ void optimize_vcd_file(void) {
     }
     else {
       if(pid) {
-	int stat;
-	int rc = waitpid(pid, &stat, 0);
+	int mystat;
+	int rc = waitpid(pid, &mystat, 0);
         if(rc > 0) {
           free_2(GLOBALS->loaded_file_name);
 	  GLOBALS->loaded_file_name = buf;
@@ -2154,6 +2154,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2008/12/20 07:44:22  gtkwave
+ * experimental support for Tcl repscripts
+ *
  * Revision 1.39  2008/11/17 23:08:54  gtkwave
  * make images in toolbars smaller by removing border space
  *

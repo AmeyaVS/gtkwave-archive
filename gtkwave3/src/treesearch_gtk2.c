@@ -200,11 +200,11 @@ if(ctree)
 			if(zap == name_end)
 				{
 				GtkCTreeNode **nodehist = wave_alloca(depth * sizeof(GtkCTreeNode *));
-				int *exp = wave_alloca(depth * sizeof(int));
+				int *exp1 = wave_alloca(depth * sizeof(int));
 				int i = depth-1;
 
 				nodehist[i] = node;
-				exp[i--] = 1;
+				exp1[i--] = 1;
 				/* now work backwards up to parent getting the node open/close history*/
 				gctr = GTK_CTREE_ROW(node);
 				while(gctr->parent)
@@ -212,7 +212,7 @@ if(ctree)
 					node = gctr->parent;
 				        gctr = GTK_CTREE_ROW(node);
 					nodehist[i] = node;
-					exp[i--] = gctr->expanded;
+					exp1[i--] = gctr->expanded;
 				        }        
 
 				gtk_clist_freeze(GTK_CLIST(ctree));
@@ -226,7 +226,7 @@ if(ctree)
 				/* work backwards and close up nodes that were originally closed */
 				for(i=depth-1;i>=0;i--)
 					{
-					if(exp[i])
+					if(exp1[i])
 						{
 						gtk_ctree_expand(ctree, nodehist[i]);
 						}
@@ -426,7 +426,6 @@ if(node)
          
 	for(i=depth-1;i>=0;i--)
 	        {
-	        struct tree *t;
 	        gctr[i] = GTK_CTREE_ROW(node);
 	        t = gctr[i]->row.data;
 	        len += (strlen(t->name) + 1);
@@ -438,7 +437,7 @@ if(node)
 
 	for(i=0;i<depth;i++)
 	        {
-	        struct tree *t = gctr[i]->row.data;
+	        t = gctr[i]->row.data;
 	        strcat(tstring, t->name);
 	        strcat(tstring, hier_suffix);
 	        }
@@ -2027,6 +2026,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2008/12/18 01:31:30  gtkwave
+ * integrated experimental autoscroll code on signal adds
+ *
  * Revision 1.32  2008/12/17 16:22:31  gtkwave
  * removed clearing of dnd timer in tree drag code
  *

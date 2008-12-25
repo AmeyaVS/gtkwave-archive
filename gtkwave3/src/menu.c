@@ -1459,7 +1459,7 @@ if(dirty>512)
 				{
 				if(t->vector)
 					{
-					int i;
+					int ix;
 					bptr bits = t->n.vec->bits;	
 					baptr oldba = bits ? bits->attribs : NULL;
 
@@ -1467,29 +1467,29 @@ if(dirty>512)
 
 					if(!(t->flags&TR_REVERSE))
 						{
-						for(i=0;i<bits->nbits;i++)
+						for(ix=0;ix<bits->nbits;ix++)
 							{
-							if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
-							ba[nodepnt].shift = t->shift + (oldba ? oldba[i].shift : 0);
-							ba[nodepnt].flags = t->flags ^ (oldba ? oldba[i].flags&TR_INVERT : 0);
-							n[nodepnt++]=bits->nodes[i];
+							if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
+							ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
+							ba[nodepnt].flags = t->flags ^ (oldba ? oldba[ix].flags&TR_INVERT : 0);
+							n[nodepnt++]=bits->nodes[ix];
 							}
 						}
 						else
 						{
-						for(i=(bits->nbits-1);i>-1;i--)
+						for(ix=(bits->nbits-1);ix>-1;ix--)
 							{
-							if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
-							ba[nodepnt].shift = t->shift + (oldba ? oldba[i].shift : 0);
-							ba[nodepnt].flags = t->flags ^ (oldba ? oldba[i].flags&TR_INVERT : 0);
-							n[nodepnt++]=bits->nodes[i];
+							if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
+							ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
+							ba[nodepnt].flags = t->flags ^ (oldba ? oldba[ix].flags&TR_INVERT : 0);
+							n[nodepnt++]=bits->nodes[ix];
 							}
 						}
 					}
 					else
 					{
 					eptr e=ExpandNode(t->n.nd);
-					int i;
+					int ix;
 					if(!e)
 						{
 						if(t->n.nd->expansion) t->n.nd->expansion->refcnt++;
@@ -1499,12 +1499,12 @@ if(dirty>512)
 						}
 						else
 						{
-						for(i=0;i<e->width;i++)
+						for(ix=0;ix<e->width;ix++)
 							{
 							ba[nodepnt].shift = t->shift;
 							ba[nodepnt].flags = t->flags;
-							n[nodepnt++]=e->narray[i];	
-							e->narray[i]->expansion->refcnt++;
+							n[nodepnt++]=e->narray[ix];	
+							e->narray[ix]->expansion->refcnt++;
 							}
 						free_2(e->narray);
 						free_2(e);
@@ -1635,11 +1635,11 @@ if(dirty>512)
 
 		if(aname)
 			{
-			int i;
+			int ix;
 
-			for(i=0;i<nodepnt-1;i++)
+			for(ix=0;ix<nodepnt-1;ix++)
 				{
-				char *mat = attempt_vecmatch(n[0]->nname, n[i]->nname);
+				char *mat = attempt_vecmatch(n[0]->nname, n[ix]->nname);
 				if(!mat) { match_iter = 0; break; } else { free_2(mat); }
 				}
 			}
@@ -1675,15 +1675,15 @@ if(dirty>512)
 		}
 		else
 		{
-		int i, offset;
+		int ix, offset;
 		char *nam;
 
 	        offset = strlen(n[0]->nname);
-	        for(i=offset-1;i>=0;i--)
+	        for(ix=offset-1;ix>=0;ix--)
 	                {
-	                if(n[0]->nname[i]=='[') break;
+	                if(n[0]->nname[ix]=='[') break;
 	                }
-	        if(i>-1) offset=i;
+	        if(ix>-1) offset=ix;
 	
 	        nam=(char *)wave_alloca(offset+40);
 	        memcpy(nam, n[0]->nname, offset);
@@ -2780,7 +2780,7 @@ void write_save_helper(FILE *wave) {
 
 			if(t->vector)
 				{
-				int i;
+				int ix;
 				nptr *nodes;
 				bptr bits = t->n.vec->bits;
 				baptr ba = bits ? bits->attribs : NULL;
@@ -2788,19 +2788,19 @@ void write_save_helper(FILE *wave) {
 				fprintf(wave,"%c%s", ba ? ':' : '#', t->name);
 
 				nodes=t->n.vec->bits->nodes;
-				for(i=0;i<t->n.vec->nbits;i++)
+				for(ix=0;ix<t->n.vec->nbits;ix++)
 					{
-					if(nodes[i]->expansion)
+					if(nodes[ix]->expansion)
 						{
-						fprintf(wave," (%d)%s",nodes[i]->expansion->parentbit, append_array_row(nodes[i]->expansion->parent));
+						fprintf(wave," (%d)%s",nodes[ix]->expansion->parentbit, append_array_row(nodes[ix]->expansion->parent));
 						}
 						else
 						{
-						fprintf(wave," %s",append_array_row(nodes[i]));
+						fprintf(wave," %s",append_array_row(nodes[ix]));
 						}
 					if(ba)
 						{
-						fprintf(wave, " "TTFormat" %x", ba[i].shift, ba[i].flags);
+						fprintf(wave, " "TTFormat" %x", ba[ix].shift, ba[ix].flags);
 						}
 					}
 				fprintf(wave,"\n");
@@ -2905,7 +2905,7 @@ void write_save_helper(FILE *wave) {
 
 					if(t->vector)
 						{
-						int i;
+						int ix;
 						nptr *nodes;
 						bptr bits = t->n.vec->bits;
 						baptr ba = bits ? bits->attribs : NULL;
@@ -2913,19 +2913,19 @@ void write_save_helper(FILE *wave) {
 						fprintf(wave,"%c%s", ba ? ':' : '#', t->name);
 
 						nodes=t->n.vec->bits->nodes;
-						for(i=0;i<t->n.vec->nbits;i++)
+						for(ix=0;ix<t->n.vec->nbits;ix++)
 							{
-							if(nodes[i]->expansion)
+							if(nodes[ix]->expansion)
 								{
-								fprintf(wave," (%d)%s",nodes[i]->expansion->parentbit, append_array_row(nodes[i]->expansion->parent));
+								fprintf(wave," (%d)%s",nodes[ix]->expansion->parentbit, append_array_row(nodes[ix]->expansion->parent));
 								}
 								else
 								{
-								fprintf(wave," %s",append_array_row(nodes[i]));
+								fprintf(wave," %s",append_array_row(nodes[ix]));
 								}
 							if(ba)
 								{
-								fprintf(wave, " "TTFormat" %x", ba[i].shift, ba[i].flags);
+								fprintf(wave, " "TTFormat" %x", ba[ix].shift, ba[ix].flags);
 								}
 							}
 						fprintf(wave,"\n");
@@ -5054,6 +5054,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.52  2008/12/20 07:44:22  gtkwave
+ * experimental support for Tcl repscripts
+ *
  * Revision 1.51  2008/12/16 19:28:20  gtkwave
  * more warnings cleanups
  *
