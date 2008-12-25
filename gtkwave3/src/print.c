@@ -101,16 +101,16 @@ pr_setgray (pr_context * prc, gdouble gray)
 }
 
 void
-pr_draw_line (pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
+pr_draw_line (pr_context * prc, gdouble _x1, gdouble _y1, gdouble x2,
 	      gdouble y2)
 {
-  (*prc->gpd->gpd_draw_line) (prc, x1, y1, x2, y2);
+  (*prc->gpd->gpd_draw_line) (prc, _x1, _y1, x2, y2);
 }
 
 void
-pr_draw_box (pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
+pr_draw_box (pr_context * prc, gdouble _x1, gdouble _y1, gdouble x2, gdouble y2)
 {
-  (*prc->gpd->gpd_draw_box) (prc, x1, y1, x2, y2);
+  (*prc->gpd->gpd_draw_box) (prc, _x1, _y1, x2, y2);
 }
 
 void
@@ -138,25 +138,25 @@ ps_setgray (pr_context * prc, gdouble gray)
  * Create a rectangular path 
  */
 void
-ps_box (pr_context * prc, gdouble tx1, gdouble ty1, gdouble tx2, gdouble ty2)
+ps_box (pr_context * prc, gdouble t_x1, gdouble t_y1, gdouble tx2, gdouble ty2)
 {
-  fprintf (prc->handle, "%f %f %f %f box\n", ty1, tx1, ty2, tx2);
+  fprintf (prc->handle, "%f %f %f %f box\n", t_y1, t_x1, ty2, tx2);
 }
 
 /*
  * Draw a box 
  */
 void
-ps_draw_box (pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
+ps_draw_box (pr_context * prc, gdouble _x1, gdouble _y1, gdouble x2, gdouble y2)
 {
-  gdouble tx1, ty1, tx2, ty2;
+  gdouble t_x1, t_y1, tx2, ty2;
 
-  tx1 = x1 * prc->xscale;
-  ty1 = y1 * prc->yscale;
+  t_x1 = _x1 * prc->xscale;
+  t_y1 = _y1 * prc->yscale;
   tx2 = x2 * prc->xscale;
   ty2 = y2 * prc->yscale;
 
-  ps_box (prc, tx1, ty1, tx2, ty2);
+  ps_box (prc, t_x1, t_y1, tx2, ty2);
   fprintf (prc->handle, "fill\n");
 }
 
@@ -194,16 +194,16 @@ ps_header (pr_context * prc)
   fprintf (prc->handle,
 	   "%%!PS-Adobe-2.0 EPSF-1.2\n"
 	   "%%%%BoundingBox: %d %d %d %d\n"
-	   "/box { %% stack: x1 y1 x2 y2\n"
+	   "/box { %% stack: _x1 _y1 x2 y2\n"
 	   "\tnewpath\n"
 	   "\t2 copy moveto %% x2 y2\n"
-	   "\t3 index 1 index lineto %% x1 y2\n"
-	   "\t3 index 3 index lineto %% x1 y1\n"
-	   "\t1 index 3 index lineto %% x2 y1\n"
+	   "\t3 index 1 index lineto %% _x1 y2\n"
+	   "\t3 index 3 index lineto %% _x1 _y1\n"
+	   "\t1 index 3 index lineto %% x2 _y1\n"
 	   "\tpop pop pop pop\n"
 	   "\tclosepath\n"
 	   "} def\n"
-	   "/l { %% stack: x1 y1 x2 y2\n"
+	   "/l { %% stack: _x1 _y1 x2 y2\n"
 	   "\tnewpath moveto lineto closepath stroke\n"
 	   "} def\n", prc->MinY, prc->MinX,
 	   (int) (prc->fullpage ? prc->MaxY : GLOBALS->ybound_print_c_1),
@@ -227,26 +227,26 @@ ps_header (pr_context * prc)
 
 
 void
-ps_draw_line (pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
+ps_draw_line (pr_context * prc, gdouble _x1, gdouble _y1, gdouble x2,
 	      gdouble y2)
 {
-  gdouble tx1, ty1, tx2, ty2;
+  gdouble t_x1, t_y1, tx2, ty2;
 
-  if (x1 < -1.0)
-    x1 = -1.0;
+  if (_x1 < -1.0)
+    _x1 = -1.0;
   if (x2 < -1.0)
     x2 = -1.0;
-  if (x1 > 10000.0)
-    x1 = 10000.0;
+  if (_x1 > 10000.0)
+    _x1 = 10000.0;
   if (x2 > 10000.0)
     x2 = 10000.0;
 
-  tx1 = x1 * prc->xscale;
-  ty1 = y1 * prc->yscale;
+  t_x1 = _x1 * prc->xscale;
+  t_y1 = _y1 * prc->yscale;
   tx2 = x2 * prc->xscale;
   ty2 = y2 * prc->yscale;
 
-  fprintf (prc->handle, "%f %f %f %f l\n", ty1, tx1, ty2, tx2);
+  fprintf (prc->handle, "%f %f %f %f l\n", t_y1, t_x1, ty2, tx2);
 }
 
 
@@ -337,7 +337,7 @@ mif_translate (pr_context * prc, gdouble x, gdouble y)
  * Draw an empty box 
  */
 void
-mif_box (pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
+mif_box (pr_context * prc, gdouble _x1, gdouble _y1, gdouble x2, gdouble y2)
 {
   fprintf (prc->handle,
 	   " <Rectangle\n"
@@ -351,9 +351,9 @@ mif_box (pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
 	   "   <BRect %d pt %d pt %d pt %d pt>\n"
 	   " > # end of Rectangle\n",
 	   (int) (10000 * (1 - prc->gray)),
-	   (int) (y1), (int) (x1),
-	   abs ((int) (y2 - y1)), abs ((int) (x2 - x1)), (int) (y1),
-	   (int) (x1), abs ((int) (y2 - y1)), abs ((int) (x2 - x1)));
+	   (int) (_y1), (int) (_x1),
+	   abs ((int) (y2 - _y1)), abs ((int) (x2 - _x1)), (int) (_y1),
+	   (int) (_x1), abs ((int) (y2 - _y1)), abs ((int) (x2 - _x1)));
 }
 
 /*
@@ -361,23 +361,23 @@ mif_box (pr_context * prc, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
  */
 
 void
-mif_draw_box (pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
+mif_draw_box (pr_context * prc, gdouble _x1, gdouble _y1, gdouble x2,
 	      gdouble y2)
 {
-  gdouble tx1, ty1, tx2, ty2;
+  gdouble t_x1, t_y1, tx2, ty2;
   int rx, ry, rw, rh;
 
-  tx1 = x1 * prc->xscale + prc->tr_x;
-  ty1 = y1 * prc->yscale + prc->tr_y;
+  t_x1 = _x1 * prc->xscale + prc->tr_x;
+  t_y1 = _y1 * prc->yscale + prc->tr_y;
   tx2 = x2 * prc->xscale + prc->tr_x;
   ty2 = y2 * prc->yscale + prc->tr_y;
 
   /* The exprssion below is derived from: */
-  /* rx = mindbl((prc->PageX * inch - tx1), (prc->PageX * inch - tx2)) */
-  rx = (int) (prc->PageX * GLOBALS->inch_print_c_1 - maxdbl (tx2, tx1));
-  ry = (int) mindbl (ty1, ty2);
-  rw = abs ((int) (tx2 - tx1));
-  rh = abs ((int) (ty2 - ty1));
+  /* rx = mindbl((prc->PageX * inch - t_x1), (prc->PageX * inch - tx2)) */
+  rx = (int) (prc->PageX * GLOBALS->inch_print_c_1 - maxdbl (tx2, t_x1));
+  ry = (int) mindbl (t_y1, ty2);
+  rw = abs ((int) (tx2 - t_x1));
+  rh = abs ((int) (ty2 - t_y1));
 
 
   fprintf (prc->handle,
@@ -429,22 +429,22 @@ mif_header (pr_context * prc)
 
 
 void
-mif_draw_line (pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
+mif_draw_line (pr_context * prc, gdouble _x1, gdouble _y1, gdouble x2,
 	       gdouble y2)
 {
-  gdouble tx1, ty1, tx2, ty2;
+  gdouble t_x1, t_y1, tx2, ty2;
 
-  if (x1 < -1.0)
-    x1 = -1.0;
+  if (_x1 < -1.0)
+    _x1 = -1.0;
   if (x2 < -1.0)
     x2 = -1.0;
-  if (x1 > 10000.0)
-    x1 = 10000.0;
+  if (_x1 > 10000.0)
+    _x1 = 10000.0;
   if (x2 > 10000.0)
     x2 = 10000.0;
 
-  tx1 = x1 * prc->xscale + prc->tr_x;
-  ty1 = y1 * prc->yscale + prc->tr_y;
+  t_x1 = _x1 * prc->xscale + prc->tr_x;
+  t_y1 = _y1 * prc->yscale + prc->tr_y;
   tx2 = x2 * prc->xscale + prc->tr_x;
   ty2 = y2 * prc->yscale + prc->tr_y;
 
@@ -460,7 +460,7 @@ mif_draw_line (pr_context * prc, gdouble x1, gdouble y1, gdouble x2,
 	   "   <Point  %d pt %d pt>\n"
 	   " > # end of PolyLine\n",
 	   (int) (10000 * (1 - prc->gray)),
-	   (int) (ty1), (int) (prc->PageX * GLOBALS->inch_print_c_1 - tx1),
+	   (int) (t_y1), (int) (prc->PageX * GLOBALS->inch_print_c_1 - t_x1),
 	   (int) (ty2), (int) (prc->PageX * GLOBALS->inch_print_c_1 - tx2));
 }
 
@@ -1125,8 +1125,8 @@ static void
 pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 		    int kill_grid)
 {
-  TimeType x0, x1, newtime;
-  int y0, y1, yu, liney, ytext, ysiz;
+  TimeType _x0, _x1, newtime;
+  int _y0, _y1, yu, liney, ytext, ysiz;
   TimeType tim, h2tim;
   hptr h2, h3;
   char hval, h2val;
@@ -1138,16 +1138,16 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
   liney = ((which + 2) * GLOBALS->fontheight) - 2;
   if (t && (t->flags & TR_INVERT))
     {
-      y0 = ((which + 1) * GLOBALS->fontheight) + 2;
-      y1 = liney - 2;
+      _y0 = ((which + 1) * GLOBALS->fontheight) + 2;
+      _y1 = liney - 2;
     }
   else
     {
-      y1 = ((which + 1) * GLOBALS->fontheight) + 2;
-      y0 = liney - 2;
+      _y1 = ((which + 1) * GLOBALS->fontheight) + 2;
+      _y0 = liney - 2;
     }
 
-  yu = (y0 + y1) / 2;
+  yu = (_y0 + _y1) / 2;
   ytext = yu - (GLOBALS->wavefont->ascent / 2) + GLOBALS->wavefont->ascent;
   ysiz = GLOBALS->wavefont->ascent - 1;
 
@@ -1167,7 +1167,7 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
   pr_setgray (prc, 0.0);
   if ((h) && (GLOBALS->tims.start == h->time))
     {
-      pr_draw_line (prc, 0, y0, 0, y1);
+      pr_draw_line (prc, 0, _y0, 0, _y1);
     }
   if (dodraw)
     for (;;)
@@ -1178,12 +1178,12 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	if ((tim > GLOBALS->tims.end) || (tim > GLOBALS->tims.last))
 	  break;
 
-	x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-	if (x0 < -1)
+	_x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	if (_x0 < -1)
 	  {
-	    x0 = -1;
+	    _x0 = -1;
 	  }
-	else if (x0 > GLOBALS->wavewidth)
+	else if (_x0 > GLOBALS->wavewidth)
 	  {
 	    break;
 	  }
@@ -1195,16 +1195,16 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	  tim = GLOBALS->tims.last;
 	else if (tim > GLOBALS->tims.end + 1)
 	  tim = GLOBALS->tims.end + 1;
-	x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-	if (x1 < -1)
+	_x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	if (_x1 < -1)
 	  {
-	    x1 = -1;
+	    _x1 = -1;
 	  }
-	else if (x1 > GLOBALS->wavewidth)
+	else if (_x1 > GLOBALS->wavewidth)
 	  {
-	    x1 = GLOBALS->wavewidth;
+	    _x1 = GLOBALS->wavewidth;
 	  }
-	if (x0 != x1)
+	if (_x0 != _x1)
 	  {
 	    hval = h->v.h_val;
 	    h2val = h2->v.h_val;
@@ -1213,7 +1213,7 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	      {
 	      case AN_0:	/* 0 */
 	      case AN_L:	/* 0 */
-		pr_draw_line (prc, x0, y0, x1, y0);
+		pr_draw_line (prc, _x0, _y0, _x1, _y0);
 
 		if (h2tim <= GLOBALS->tims.end)
 		  switch (h2val)
@@ -1223,10 +1223,10 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 		      break;
 
 		    case AN_Z:
-		      pr_draw_line (prc, x1, y0, x1, yu);
+		      pr_draw_line (prc, _x1, _y0, _x1, yu);
 		      break;
 		    default:
-		      pr_draw_line (prc, x1, y0, x1, y1);
+		      pr_draw_line (prc, _x1, _y0, _x1, _y1);
 		      break;
 		    }
 		break;
@@ -1236,7 +1236,7 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	      case AN_U:	/* X */
 	      case AN_DASH:	/* X */
 		pr_setgray (prc, 0.70);
-		pr_draw_box (prc, x0, y0, x1, y1);
+		pr_draw_box (prc, _x0, _y0, _x1, _y1);
 		pr_setgray (prc, 0.0);
 
 		identifier_str[1] = 0;
@@ -1258,56 +1258,56 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 
 		if (identifier_str[0])
 		  {
-		    int x0_new = (x0 >= 0) ? x0 : 0;
+		    int _x0_new = (_x0 >= 0) ? _x0 : 0;
 		    int width;
 		    int pixlen = 0;
 
-		    if ((width = x1 - x0_new) > GLOBALS->vector_padding)
+		    if ((width = _x1 - _x0_new) > GLOBALS->vector_padding)
 		      {
-			if ((x1 >= GLOBALS->wavewidth)
+			if ((_x1 >= GLOBALS->wavewidth)
 			    ||
 			    ((pixlen =
 			      font_engine_string_measure (GLOBALS->wavefont,
 						  identifier_str)) +
 			     GLOBALS->vector_padding <= width))
 			  {
-			    pr_draw_string (prc, x0 + 2, ytext,
+			    pr_draw_string (prc, _x0 + 2, ytext,
 					    identifier_str, pixlen, ysiz);
 			  }
 		      }
 		  }
 
-		if (x0 >= 0)
-		  pr_draw_line (prc, x0, y0, x0, y1);
+		if (_x0 >= 0)
+		  pr_draw_line (prc, _x0, _y0, _x0, _y1);
 
-		pr_draw_line (prc, x0, y0, x1, y0);
-		pr_draw_line (prc, x0, y1, x1, y1);
+		pr_draw_line (prc, _x0, _y0, _x1, _y0);
+		pr_draw_line (prc, _x0, _y1, _x1, _y1);
 		if (h2tim <= GLOBALS->tims.end)
-		  pr_draw_line (prc, x1, y0, x1, y1);
+		  pr_draw_line (prc, _x1, _y0, _x1, _y1);
 		break;
 
 	      case AN_Z:	/* Z */
-		pr_draw_line (prc, x0, yu, x1, yu);
+		pr_draw_line (prc, _x0, yu, _x1, yu);
 		if (h2tim <= GLOBALS->tims.end)
 		  switch (h2val)
 		    {
 		    case AN_0:
 		    case AN_L:
-		      pr_draw_line (prc, x1, yu, x1, y0);
+		      pr_draw_line (prc, _x1, yu, _x1, _y0);
 		      break;
 		    case AN_1:
 		    case AN_H:
-		      pr_draw_line (prc, x1, yu, x1, y1);
+		      pr_draw_line (prc, _x1, yu, _x1, _y1);
 		      break;
 		    default:
-		      pr_draw_line (prc, x1, y0, x1, y1);
+		      pr_draw_line (prc, _x1, _y0, _x1, _y1);
 		      break;
 		    }
 		break;
 
 	      case AN_1:	/* 1 */
 	      case AN_H:	/* 1 */
-		pr_draw_line (prc, x0, y1, x1, y1);
+		pr_draw_line (prc, _x0, _y1, _x1, _y1);
 		if (h2tim <= GLOBALS->tims.end)
 		  switch (h2val)
 		    {
@@ -1317,13 +1317,13 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 
 		    case AN_0:
 		    case AN_L:
-		      pr_draw_line (prc, x1, y1, x1, y0);
+		      pr_draw_line (prc, _x1, _y1, _x1, _y0);
 		      break;
 		    case AN_Z:
-		      pr_draw_line (prc, x1, y1, x1, yu);
+		      pr_draw_line (prc, _x1, _y1, _x1, yu);
 		      break;
 		    default:
-		      pr_draw_line (prc, x1, y0, x1, y1);
+		      pr_draw_line (prc, _x1, _y0, _x1, _y1);
 		      break;
 		    }
 		break;
@@ -1334,8 +1334,8 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	  }
 	else
 	  {
-	    pr_draw_line (prc, x1, y0, x1, y1);
-	    newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
+	    pr_draw_line (prc, _x1, _y0, _x1, _y1);
+	    newtime = (((gdouble) (_x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
 	    h3 = bsearch_node (t->n.nd, newtime);
 	    if (h3->time > h->time)
 	      {
@@ -1359,8 +1359,8 @@ static void
 pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 				  int which, int num_extension)
 {
-  TimeType x0, x1, newtime;
-  int y0, y1, yu, liney, ytext, yt0, yt1;
+  TimeType _x0, _x1, newtime;
+  int _y0, _y1, yu, liney, ytext, yt0, yt1;
   TimeType tim, h2tim;
   hptr h2, h3;
   int endcnt = 0;
@@ -1373,9 +1373,9 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
   int any_infs = 0, any_infp = 0, any_infm = 0;
 
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
-  y1 = ((which + 1) * GLOBALS->fontheight) + 2;
-  y0 = liney - 2;
-  yu = (y0 + y1) / 2;
+  _y1 = ((which + 1) * GLOBALS->fontheight) + 2;
+  _y0 = liney - 2;
+  yu = (_y0 + _y1) / 2;
   ytext = yu - (GLOBALS->wavefont->ascent / 2) + GLOBALS->wavefont->ascent;
 
   ysiz = GLOBALS->wavefont->ascent - 1;
@@ -1446,11 +1446,11 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	  if ((tmax - tmin) < 1e-20)
 	    {
 	      tmax = 1;
-	      tmin -= 0.5 * (y1 - y0);
+	      tmin -= 0.5 * (_y1 - _y0);
 	    }
 	  else
 	    {
-	      tmax = (y1 - y0) / (tmax - tmin);
+	      tmax = (_y1 - _y0) / (tmax - tmin);
 	    }
 
 	  t->minmax_valid = 1;
@@ -1479,8 +1479,8 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	    }
 	  if (tim > GLOBALS->tims.last)
 	    break;
-	  x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-	  if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
+	  _x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	  if ((_x0 > GLOBALS->wavewidth) && (endcnt == 2))
 	    break;
 
 	  tv = mynan;
@@ -1532,11 +1532,11 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
       if ((tmax - tmin) < 1e-20)
 	{
 	  tmax = 1;
-	  tmin -= 0.5 * (y1 - y0);
+	  tmin -= 0.5 * (_y1 - _y0);
 	}
       else
 	{
-	  tmax = (y1 - y0) / (tmax - tmin);
+	  tmax = (_y1 - _y0) / (tmax - tmin);
 	}
     }
 
@@ -1549,11 +1549,11 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
       if ((tim > GLOBALS->tims.end) || (tim > GLOBALS->tims.last))
 	break;
 
-      x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      _x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
       /*
-         if (x0 < -1)
-         x0 = -1;
-         else if (x0 > GLOBALS->wavewidth)
+         if (_x0 < -1)
+         _x0 = -1;
+         else if (_x0 > GLOBALS->wavewidth)
          break;
        */
 
@@ -1565,12 +1565,12 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	tim = GLOBALS->tims.last;
       /* else if (tim > GLOBALS->tims.end + 1)
          tim = GLOBALS->tims.end + 1; */
-      x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      _x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
       /*
-         if (x1 < -1)
-         x1 = -1;
-         else if (x1 > GLOBALS->wavewidth)
-         x1 = GLOBALS->wavewidth;
+         if (_x1 < -1)
+         _x1 = -1;
+         else if (_x1 > GLOBALS->wavewidth)
+         _x1 = GLOBALS->wavewidth;
        */
 
       /* draw trans */
@@ -1604,11 +1604,11 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	{
 	  if (tv < 0)
 	    {
-	      yt0 = y0;
+	      yt0 = _y0;
 	    }
 	  else
 	    {
-	      yt0 = y1;
+	      yt0 = _y1;
 	    }
 	}
       else if ((is_nan = isnan (tv)))
@@ -1617,18 +1617,18 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	}
       else
 	{
-	  yt0 = y0 + (tv - tmin) * tmax;
+	  yt0 = _y0 + (tv - tmin) * tmax;
 	}
 
       if ((is_inf2 = isinf (tv2)))
 	{
 	  if (tv2 < 0)
 	    {
-	      yt1 = y0;
+	      yt1 = _y0;
 	    }
 	  else
 	    {
-	      yt1 = y1;
+	      yt1 = _y1;
 	    }
 	}
       else if ((is_nan2 = isnan (tv2)))
@@ -1637,10 +1637,10 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	}
       else
 	{
-	  yt1 = y0 + (tv2 - tmin) * tmax;
+	  yt1 = _y0 + (tv2 - tmin) * tmax;
 	}
 
-      if (x0 != x1)
+      if (_x0 != _x1)
 	{
 	  if (h->next)
 	    {
@@ -1658,68 +1658,68 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	      if (is_nan)
 		{
 		  pr_setgray (prc, 0.70);
-		  pr_draw_box (prc, x0, y1, x1, y0);
+		  pr_draw_box (prc, _x0, _y1, _x1, _y0);
 		  pr_setgray (prc, 0.0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		    {
-		      pr_draw_line (prc, x1 - 1, yt1, x1 + 1, yt1);
-		      pr_draw_line (prc, x1, yt1 - 1, x1, yt1 + 1);
+		      pr_draw_line (prc, _x1 - 1, yt1, _x1 + 1, yt1);
+		      pr_draw_line (prc, _x1, yt1 - 1, _x1, yt1 + 1);
 
-		      pr_draw_line (prc, x0 - 1, y0, x0 + 1, y0);
-		      pr_draw_line (prc, x0, y0 - 1, x0, y0 + 1);
+		      pr_draw_line (prc, _x0 - 1, _y0, _x0 + 1, _y0);
+		      pr_draw_line (prc, _x0, _y0 - 1, _x0, _y0 + 1);
 
-		      pr_draw_line (prc, x0 - 1, y1, x0 + 1, y1);
-		      pr_draw_line (prc, x0, y1 - 1, x0, y1 + 1);
+		      pr_draw_line (prc, _x0 - 1, _y1, _x0 + 1, _y1);
+		      pr_draw_line (prc, _x0, _y1 - 1, _x0, _y1 + 1);
 		    }
 		}
 	      if (is_nan2)
 		{
-		  pr_draw_line (prc, x0, yt0, x1, yt0);
+		  pr_draw_line (prc, _x0, yt0, _x1, yt0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		    {
 		      pr_setgray (prc, 0.70);
-		      pr_draw_line (prc, x1, y1, x1, y0);
+		      pr_draw_line (prc, _x1, _y1, _x1, _y0);
 		      pr_setgray (prc, 0.0);
 
-		      pr_draw_line (prc, x1 - 1, y0, x1 + 1, y0);
-		      pr_draw_line (prc, x1, y0 - 1, x1, y0 + 1);
+		      pr_draw_line (prc, _x1 - 1, _y0, _x1 + 1, _y0);
+		      pr_draw_line (prc, _x1, _y0 - 1, _x1, _y0 + 1);
 
-		      pr_draw_line (prc, x1 - 1, y1, x1 + 1, y1);
-		      pr_draw_line (prc, x1, y1 - 1, x1, y1 + 1);
+		      pr_draw_line (prc, _x1 - 1, _y1, _x1 + 1, _y1);
+		      pr_draw_line (prc, _x1, _y1 - 1, _x1, _y1 + 1);
 		    }
 		}
 	    }
 	  else if (t->flags & TR_ANALOG_INTERPOLATED && !is_inf && !is_inf2)
 	    {
-	      pr_draw_line (prc, x0, yt0, x1, yt1);
+	      pr_draw_line (prc, _x0, yt0, _x1, yt1);
 	      if (t->flags & TR_ANALOG_STEP)
 		{
-		  pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
-		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		  pr_draw_line (prc, _x0 - 1, yt0, _x0 + 1, yt0);
+		  pr_draw_line (prc, _x0, yt0 - 1, _x0, yt0 + 1);
 		}
 	    }
 	  else			/* if (t->flags & TR_ANALOG_STEP) */
 	    {
-	      pr_draw_line (prc, x0, yt0, x1, yt0);
-	      pr_draw_line (prc, x1, yt0, x1, yt1);
+	      pr_draw_line (prc, _x0, yt0, _x1, yt0);
+	      pr_draw_line (prc, _x1, yt0, _x1, yt1);
 
 	      if ((t->flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		  (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		{
-		  pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
-		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		  pr_draw_line (prc, _x0 - 1, yt0, _x0 + 1, yt0);
+		  pr_draw_line (prc, _x0, yt0 - 1, _x0, yt0 + 1);
 		}
 	    }
 	}
       else
 	{
-	  newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
+	  newtime = (((gdouble) (_x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
 	  h3 = bsearch_node (t->n.nd, newtime);
 	  if (h3->time > h->time)
 	    {
@@ -1740,8 +1740,8 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 static void
 pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 {
-  TimeType x0, x1, newtime, width;
-  int y0, y1, yu, liney, ytext;
+  TimeType _x0, _x1, newtime, width;
+  int _y0, _y1, yu, liney, ytext;
   TimeType tim, h2tim;
   hptr h2, h3;
   char *ascii = NULL;
@@ -1753,9 +1753,9 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
   GLOBALS->tims.end -= GLOBALS->shift_timebase;
 
   liney = ((which + 2) * GLOBALS->fontheight) - 2;
-  y1 = ((which + 1) * GLOBALS->fontheight) + 2;
-  y0 = liney - 2;
-  yu = (y0 + y1) / 2;
+  _y1 = ((which + 1) * GLOBALS->fontheight) + 2;
+  _y0 = liney - 2;
+  yu = (_y0 + _y1) / 2;
   ytext = yu - (GLOBALS->wavefont->ascent / 2) + GLOBALS->wavefont->ascent;
 
   ysiz = GLOBALS->wavefont->ascent - 1;
@@ -1825,10 +1825,10 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
       if ((tim > GLOBALS->tims.end) || (tim > GLOBALS->tims.last))
 	break;
 
-      x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x0 < -1)
-	x0 = -1;
-      else if (x0 > GLOBALS->wavewidth)
+      _x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      if (_x0 < -1)
+	_x0 = -1;
+      else if (_x0 > GLOBALS->wavewidth)
 	break;
 
       h2 = h->next;
@@ -1839,19 +1839,19 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 	tim = GLOBALS->tims.last;
       else if (tim > GLOBALS->tims.end + 1)
 	tim = GLOBALS->tims.end + 1;
-      x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      _x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
 
-      if (x1 < -1)
-	x1 = -1;
-      else if (x1 > GLOBALS->wavewidth)
-	x1 = GLOBALS->wavewidth;
+      if (_x1 < -1)
+	_x1 = -1;
+      else if (_x1 > GLOBALS->wavewidth)
+	_x1 = GLOBALS->wavewidth;
 
       /* draw trans */
       type =
 	(!(h->flags & (HIST_REAL | HIST_STRING))) ? vtype (t,
 							   h->v.
 							   h_vector) : AN_0;
-      if (x0 > -1)
+      if (_x0 > -1)
 	{
 	  if (GLOBALS->use_roundcaps)
 	    {
@@ -1859,48 +1859,48 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 		{
 		  if (lasttype != -1)
 		    {
-		      pr_draw_line (prc, x0 - 1, y0, x0, yu);
-		      pr_draw_line (prc, x0, yu, x0 - 1, y1);
+		      pr_draw_line (prc, _x0 - 1, _y0, _x0, yu);
+		      pr_draw_line (prc, _x0, yu, _x0 - 1, _y1);
 		    }
 		}
 	      else if (lasttype == AN_Z)
 		{
-		  pr_draw_line (prc, x0 + 1, y0, x0, yu);
-		  pr_draw_line (prc, x0, yu, x0 + 1, y1);
+		  pr_draw_line (prc, _x0 + 1, _y0, _x0, yu);
+		  pr_draw_line (prc, _x0, yu, _x0 + 1, _y1);
 		}
 	      else
 		{
 		  if (lasttype != type)
 		    {
-		      pr_draw_line (prc, x0 - 1, y0, x0, yu);
-		      pr_draw_line (prc, x0, yu, x0 - 1, y1);
-		      pr_draw_line (prc, x0 + 1, y0, x0, yu);
-		      pr_draw_line (prc, x0, yu, x0 + 1, y1);
+		      pr_draw_line (prc, _x0 - 1, _y0, _x0, yu);
+		      pr_draw_line (prc, _x0, yu, _x0 - 1, _y1);
+		      pr_draw_line (prc, _x0 + 1, _y0, _x0, yu);
+		      pr_draw_line (prc, _x0, yu, _x0 + 1, _y1);
 		    }
 		  else
 		    {
-		      pr_draw_line (prc, x0 - 2, y0, x0 + 2, y1);
-		      pr_draw_line (prc, x0 + 2, y0, x0 - 2, y1);
+		      pr_draw_line (prc, _x0 - 2, _y0, _x0 + 2, _y1);
+		      pr_draw_line (prc, _x0 + 2, _y0, _x0 - 2, _y1);
 		    }
 		}
 	    }
 	  else
 	    {
-	      pr_draw_line (prc, x0, y0, x0, y1);
+	      pr_draw_line (prc, _x0, _y0, _x0, _y1);
 	    }
 	}
 
-      if (x0 != x1)
+      if (_x0 != _x1)
 	{
 	  if (type == AN_Z)
 	    {
 	      if (GLOBALS->use_roundcaps)
 		{
-		  pr_draw_line (prc, x0 + 1, yu, x1 - 1, yu);
+		  pr_draw_line (prc, _x0 + 1, yu, _x1 - 1, yu);
 		}
 	      else
 		{
-		  pr_draw_line (prc, x0, yu, x1, yu);
+		  pr_draw_line (prc, _x0, yu, _x1, yu);
 		}
 	    }
 	  else
@@ -1908,20 +1908,20 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 
 	      if (GLOBALS->use_roundcaps)
 		{
-		  pr_draw_line (prc, x0 + 2, y0, x1 - 2, y0);
-		  pr_draw_line (prc, x0 + 2, y1, x1 - 2, y1);
+		  pr_draw_line (prc, _x0 + 2, _y0, _x1 - 2, _y0);
+		  pr_draw_line (prc, _x0 + 2, _y1, _x1 - 2, _y1);
 		}
 	      else
 		{
-		  pr_draw_line (prc, x0, y0, x1, y0);
-		  pr_draw_line (prc, x0, y1, x1, y1);
+		  pr_draw_line (prc, _x0, _y0, _x1, _y0);
+		  pr_draw_line (prc, _x0, _y1, _x1, _y1);
 		}
 
 
-	      if (x0 < 0)
-		x0 = 0;		/* fixup left margin */
+	      if (_x0 < 0)
+		_x0 = 0;		/* fixup left margin */
 
-	      width = ((prc->gpd == &ps_print_device) || (x1 < GLOBALS->wavewidth)) ? x1 - x0 : GLOBALS->wavewidth - x0;	/* truncate render
+	      width = ((prc->gpd == &ps_print_device) || (_x1 < GLOBALS->wavewidth)) ? _x1 - _x0 : GLOBALS->wavewidth - _x0;	/* truncate render
 																 * window for non-ps */
 
 	      if (width > GLOBALS->vector_padding)
@@ -1949,10 +1949,10 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 			font_engine_string_measure (GLOBALS->wavefont,
 					    ascii)) +
 		       GLOBALS->vector_padding <= width)
-		      || ((x1 >= GLOBALS->wavewidth)
+		      || ((_x1 >= GLOBALS->wavewidth)
 			  && (prc->gpd == &ps_print_device)))
 		    {
-		      pr_draw_string (prc, x0 + 2, ytext, ascii, pixlen,
+		      pr_draw_string (prc, _x0 + 2, ytext, ascii, pixlen,
 				      ysiz);
 		    }
 		  else
@@ -1966,7 +1966,7 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 			{
 			  *mod = '+';
 			  *(mod + 1) = 0;
-			  pr_draw_string (prc, x0 + 2, ytext, ascii,
+			  pr_draw_string (prc, _x0 + 2, ytext, ascii,
 					  GLOBALS->maxlen_trunc, ysiz);
 			}
 		    }
@@ -1975,7 +1975,7 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 	}
       else
 	{
-	  newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
+	  newtime = (((gdouble) (_x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
 	  h3 = bsearch_node (t->n.nd, newtime);
 	  if (h3->time > h->time)
 	    {
@@ -2006,8 +2006,8 @@ static void
 pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 			   int num_extension)
 {
-  TimeType x0, x1, newtime;
-  int y0, y1, yu, liney, ytext, yt0, yt1;
+  TimeType _x0, _x1, newtime;
+  int _y0, _y1, yu, liney, ytext, yt0, yt1;
   TimeType tim, h2tim;
   vptr h, h2, h3;
   int endcnt = 0;
@@ -2021,9 +2021,9 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 
   h = v;
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
-  y1 = ((which + 1) * GLOBALS->fontheight) + 2;
-  y0 = liney - 2;
-  yu = (y0 + y1) / 2;
+  _y1 = ((which + 1) * GLOBALS->fontheight) + 2;
+  _y0 = liney - 2;
+  yu = (_y0 + _y1) / 2;
   ytext = yu - (GLOBALS->wavefont->ascent / 2) + GLOBALS->wavefont->ascent;
 
   ysiz = GLOBALS->wavefont->ascent - 1;
@@ -2087,11 +2087,11 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	  if ((tmax - tmin) < 1e-20)
 	    {
 	      tmax = 1;
-	      tmin -= 0.5 * (y1 - y0);
+	      tmin -= 0.5 * (_y1 - _y0);
 	    }
 	  else
 	    {
-	      tmax = (y1 - y0) / (tmax - tmin);
+	      tmax = (_y1 - _y0) / (tmax - tmin);
 	    }
 
 	  t->minmax_valid = 1;
@@ -2122,8 +2122,8 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	  if (tim > GLOBALS->tims.last)
 	    break;
 
-	  x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-	  if ((x0 > GLOBALS->wavewidth) && (endcnt == 2))
+	  _x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+	  if ((_x0 > GLOBALS->wavewidth) && (endcnt == 2))
 	    {
 	      break;
 	    }
@@ -2167,11 +2167,11 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
       if ((tmax - tmin) < 1e-20)
 	{
 	  tmax = 1;
-	  tmin -= 0.5 * (y1 - y0);
+	  tmin -= 0.5 * (_y1 - _y0);
 	}
       else
 	{
-	  tmax = (y1 - y0) / (tmax - tmin);
+	  tmax = (_y1 - _y0) / (tmax - tmin);
 	}
     }
 
@@ -2184,11 +2184,11 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
       if ((tim > GLOBALS->tims.end) || (tim > GLOBALS->tims.last))
 	break;
 
-      x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      _x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
       /*
-         if (x0 < -1)
-         x0 = -1;
-         else if (x0 > GLOBALS->wavewidth)
+         if (_x0 < -1)
+         _x0 = -1;
+         else if (_x0 > GLOBALS->wavewidth)
          break;
        */
 
@@ -2200,12 +2200,12 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	tim = GLOBALS->tims.last;
       /* else if (tim > GLOBALS->tims.end + 1)
          tim = GLOBALS->tims.end + 1; */
-      x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      _x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
       /*
-         if (x1 < -1)
-         x1 = -1;
-         else if (x1 > GLOBALS->wavewidth)
-         x1 = GLOBALS->wavewidth;
+         if (_x1 < -1)
+         _x1 = -1;
+         else if (_x1 > GLOBALS->wavewidth)
+         _x1 = GLOBALS->wavewidth;
        */
 
       /* draw trans */
@@ -2217,11 +2217,11 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	{
 	  if (tv < 0)
 	    {
-	      yt0 = y0;
+	      yt0 = _y0;
 	    }
 	  else
 	    {
-	      yt0 = y1;
+	      yt0 = _y1;
 	    }
 	}
       else if ((is_nan = isnan (tv)))
@@ -2230,18 +2230,18 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	}
       else
 	{
-	  yt0 = y0 + (tv - tmin) * tmax;
+	  yt0 = _y0 + (tv - tmin) * tmax;
 	}
 
       if ((is_inf2 = isinf (tv2)))
 	{
 	  if (tv2 < 0)
 	    {
-	      yt1 = y0;
+	      yt1 = _y0;
 	    }
 	  else
 	    {
-	      yt1 = y1;
+	      yt1 = _y1;
 	    }
 	}
       else if ((is_nan2 = isnan (tv2)))
@@ -2250,10 +2250,10 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	}
       else
 	{
-	  yt1 = y0 + (tv2 - tmin) * tmax;
+	  yt1 = _y0 + (tv2 - tmin) * tmax;
 	}
 
-      if (x0 != x1)
+      if (_x0 != _x1)
 	{
 	  if (h->next)
 	    {
@@ -2271,68 +2271,68 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 	      if (is_nan)
 		{
 		  pr_setgray (prc, 0.70);
-		  pr_draw_box (prc, x0, y1, x1, y0);
+		  pr_draw_box (prc, _x0, _y1, _x1, _y0);
 		  pr_setgray (prc, 0.0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		    {
-		      pr_draw_line (prc, x1 - 1, yt1, x1 + 1, yt1);
-		      pr_draw_line (prc, x1, yt1 - 1, x1, yt1 + 1);
+		      pr_draw_line (prc, _x1 - 1, yt1, _x1 + 1, yt1);
+		      pr_draw_line (prc, _x1, yt1 - 1, _x1, yt1 + 1);
 
-		      pr_draw_line (prc, x0 - 1, y0, x0 + 1, y0);
-		      pr_draw_line (prc, x0, y0 - 1, x0, y0 + 1);
+		      pr_draw_line (prc, _x0 - 1, _y0, _x0 + 1, _y0);
+		      pr_draw_line (prc, _x0, _y0 - 1, _x0, _y0 + 1);
 
-		      pr_draw_line (prc, x0 - 1, y1, x0 + 1, y1);
-		      pr_draw_line (prc, x0, y1 - 1, x0, y1 + 1);
+		      pr_draw_line (prc, _x0 - 1, _y1, _x0 + 1, _y1);
+		      pr_draw_line (prc, _x0, _y1 - 1, _x0, _y1 + 1);
 		    }
 		}
 	      if (is_nan2)
 		{
-		  pr_draw_line (prc, x0, yt0, x1, yt0);
+		  pr_draw_line (prc, _x0, yt0, _x1, yt0);
 
 		  if ((t->
 		       flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		      (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		    {
 		      pr_setgray (prc, 0.70);
-		      pr_draw_line (prc, x1, y1, x1, y0);
+		      pr_draw_line (prc, _x1, _y1, _x1, _y0);
 		      pr_setgray (prc, 0.0);
 
-		      pr_draw_line (prc, x1 - 1, y0, x1 + 1, y0);
-		      pr_draw_line (prc, x1, y0 - 1, x1, y0 + 1);
+		      pr_draw_line (prc, _x1 - 1, _y0, _x1 + 1, _y0);
+		      pr_draw_line (prc, _x1, _y0 - 1, _x1, _y0 + 1);
 
-		      pr_draw_line (prc, x1 - 1, y1, x1 + 1, y1);
-		      pr_draw_line (prc, x1, y1 - 1, x1, y1 + 1);
+		      pr_draw_line (prc, _x1 - 1, _y1, _x1 + 1, _y1);
+		      pr_draw_line (prc, _x1, _y1 - 1, _x1, _y1 + 1);
 		    }
 		}
 	    }
 	  else if ((t->flags & TR_ANALOG_INTERPOLATED) && !is_inf && !is_inf2)
 	    {
-	      pr_draw_line (prc, x0, yt0, x1, yt1);
+	      pr_draw_line (prc, _x0, yt0, _x1, yt1);
 	      if (t->flags & TR_ANALOG_STEP)
 		{
-		  pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
-		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		  pr_draw_line (prc, _x0 - 1, yt0, _x0 + 1, yt0);
+		  pr_draw_line (prc, _x0, yt0 - 1, _x0, yt0 + 1);
 		}
 	    }
 	  else			/* if (t->flags & TR_ANALOG_STEP) */
 	    {
-	      pr_draw_line (prc, x0, yt0, x1, yt0);
-	      pr_draw_line (prc, x1, yt0, x1, yt1);
+	      pr_draw_line (prc, _x0, yt0, _x1, yt0);
+	      pr_draw_line (prc, _x1, yt0, _x1, yt1);
 
 	      if ((t->flags & (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP)) ==
 		  (TR_ANALOG_INTERPOLATED | TR_ANALOG_STEP))
 		{
-		  pr_draw_line (prc, x0 - 1, yt0, x0 + 1, yt0);
-		  pr_draw_line (prc, x0, yt0 - 1, x0, yt0 + 1);
+		  pr_draw_line (prc, _x0 - 1, yt0, _x0 + 1, yt0);
+		  pr_draw_line (prc, _x0, yt0 - 1, _x0, yt0 + 1);
 		}
 	    }
 	}
       else
 	{
-	  newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
+	  newtime = (((gdouble) (_x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
 	  h3 = bsearch_vector (t->n.vec, newtime);
 	  if (h3->time > h->time)
 	    {
@@ -2353,8 +2353,8 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 static void
 pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 {
-  TimeType x0, x1, newtime, width;
-  int y0, y1, yu, liney, ytext;
+  TimeType _x0, _x1, newtime, width;
+  int _y0, _y1, yu, liney, ytext;
   TimeType tim, h2tim;
   vptr h, h2, h3;
   char *ascii = NULL;
@@ -2367,9 +2367,9 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 
   h = v;
   liney = ((which + 2) * GLOBALS->fontheight) - 2;
-  y1 = ((which + 1) * GLOBALS->fontheight) + 2;
-  y0 = liney - 2;
-  yu = (y0 + y1) / 2;
+  _y1 = ((which + 1) * GLOBALS->fontheight) + 2;
+  _y0 = liney - 2;
+  yu = (_y0 + _y1) / 2;
   ytext = yu - (GLOBALS->wavefont->ascent / 2) + GLOBALS->wavefont->ascent;
 
   ysiz = GLOBALS->wavefont->ascent - 1;
@@ -2428,10 +2428,10 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
       if ((tim > GLOBALS->tims.end) || (tim > GLOBALS->tims.last))
 	break;
 
-      x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x0 < -1)
-	x0 = -1;
-      else if (x0 > GLOBALS->wavewidth)
+      _x0 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      if (_x0 < -1)
+	_x0 = -1;
+      else if (_x0 > GLOBALS->wavewidth)
 	break;
 
       h2 = h->next;
@@ -2442,15 +2442,15 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 	tim = GLOBALS->tims.last;
       else if (tim > GLOBALS->tims.end + 1)
 	tim = GLOBALS->tims.end + 1;
-      x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
-      if (x1 < -1)
-	x1 = -1;
-      else if (x1 > GLOBALS->wavewidth)
-	x1 = GLOBALS->wavewidth;
+      _x1 = (tim - GLOBALS->tims.start) * GLOBALS->pxns;
+      if (_x1 < -1)
+	_x1 = -1;
+      else if (_x1 > GLOBALS->wavewidth)
+	_x1 = GLOBALS->wavewidth;
 
       /* draw trans */
       type = vtype2 (t, h);
-      if (x0 > -1)
+      if (_x0 > -1)
 	{
 	  if (GLOBALS->use_roundcaps)
 	    {
@@ -2458,48 +2458,48 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 		{
 		  if (lasttype != -1)
 		    {
-		      pr_draw_line (prc, x0 - 1, y0, x0, yu);
-		      pr_draw_line (prc, x0, yu, x0 - 1, y1);
+		      pr_draw_line (prc, _x0 - 1, _y0, _x0, yu);
+		      pr_draw_line (prc, _x0, yu, _x0 - 1, _y1);
 		    }
 		}
 	      else if (lasttype == 2)
 		{
-		  pr_draw_line (prc, x0 + 1, y0, x0, yu);
-		  pr_draw_line (prc, x0, yu, x0 + 1, y1);
+		  pr_draw_line (prc, _x0 + 1, _y0, _x0, yu);
+		  pr_draw_line (prc, _x0, yu, _x0 + 1, _y1);
 		}
 	      else
 		{
 		  if (lasttype != type)
 		    {
-		      pr_draw_line (prc, x0 - 1, y0, x0, yu);
-		      pr_draw_line (prc, x0, yu, x0 - 1, y1);
-		      pr_draw_line (prc, x0 + 1, y0, x0, yu);
-		      pr_draw_line (prc, x0, yu, x0 + 1, y1);
+		      pr_draw_line (prc, _x0 - 1, _y0, _x0, yu);
+		      pr_draw_line (prc, _x0, yu, _x0 - 1, _y1);
+		      pr_draw_line (prc, _x0 + 1, _y0, _x0, yu);
+		      pr_draw_line (prc, _x0, yu, _x0 + 1, _y1);
 		    }
 		  else
 		    {
-		      pr_draw_line (prc, x0 - 2, y0, x0 + 2, y1);
-		      pr_draw_line (prc, x0 + 2, y0, x0 - 2, y1);
+		      pr_draw_line (prc, _x0 - 2, _y0, _x0 + 2, _y1);
+		      pr_draw_line (prc, _x0 + 2, _y0, _x0 - 2, _y1);
 		    }
 		}
 	    }
 	  else
 	    {
-	      pr_draw_line (prc, x0, y0, x0, y1);
+	      pr_draw_line (prc, _x0, _y0, _x0, _y1);
 	    }
 	}
 
-      if (x0 != x1)
+      if (_x0 != _x1)
 	{
 	  if (type == 2)
 	    {
 	      if (GLOBALS->use_roundcaps)
 		{
-		  pr_draw_line (prc, x0 + 1, yu, x1 - 1, yu);
+		  pr_draw_line (prc, _x0 + 1, yu, _x1 - 1, yu);
 		}
 	      else
 		{
-		  pr_draw_line (prc, x0, yu, x1, yu);
+		  pr_draw_line (prc, _x0, yu, _x1, yu);
 		}
 	    }
 	  else
@@ -2507,19 +2507,19 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 
 	      if (GLOBALS->use_roundcaps)
 		{
-		  pr_draw_line (prc, x0 + 2, y0, x1 - 2, y0);
-		  pr_draw_line (prc, x0 + 2, y1, x1 - 2, y1);
+		  pr_draw_line (prc, _x0 + 2, _y0, _x1 - 2, _y0);
+		  pr_draw_line (prc, _x0 + 2, _y1, _x1 - 2, _y1);
 		}
 	      else
 		{
-		  pr_draw_line (prc, x0, y0, x1, y0);
-		  pr_draw_line (prc, x0, y1, x1, y1);
+		  pr_draw_line (prc, _x0, _y0, _x1, _y0);
+		  pr_draw_line (prc, _x0, _y1, _x1, _y1);
 		}
 
-	      if (x0 < 0)
-		x0 = 0;		/* fixup left margin */
+	      if (_x0 < 0)
+		_x0 = 0;		/* fixup left margin */
 
-	      width = ((prc->gpd == &ps_print_device) || (x1 < GLOBALS->wavewidth)) ? x1 - x0 : GLOBALS->wavewidth - x0;	/* truncate render
+	      width = ((prc->gpd == &ps_print_device) || (_x1 < GLOBALS->wavewidth)) ? _x1 - _x0 : GLOBALS->wavewidth - _x0;	/* truncate render
 																 * window for non-ps */
 
 	      if (width > GLOBALS->vector_padding)
@@ -2530,10 +2530,10 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 			font_engine_string_measure (GLOBALS->wavefont,
 					    ascii)) +
 		       GLOBALS->vector_padding <= width)
-		      || ((x1 >= GLOBALS->wavewidth)
+		      || ((_x1 >= GLOBALS->wavewidth)
 			  && (prc->gpd == &ps_print_device)))
 		    {
-		      pr_draw_string (prc, x0 + 2, ytext, ascii, pixlen,
+		      pr_draw_string (prc, _x0 + 2, ytext, ascii, pixlen,
 				      ysiz);
 		    }
 		  else
@@ -2548,7 +2548,7 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 			  *mod = '+';
 			  *(mod + 1) = 0;
 
-			  pr_draw_string (prc, x0 + 2, ytext, ascii,
+			  pr_draw_string (prc, _x0 + 2, ytext, ascii,
 					  GLOBALS->maxlen_trunc, ysiz);
 			}
 		    }
@@ -2557,7 +2557,7 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 	}
       else
 	{
-	  newtime = (((gdouble) (x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
+	  newtime = (((gdouble) (_x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
 	  h3 = bsearch_vector (t->n.vec, newtime);
 	  if (h3->time > h->time)
 	    {
@@ -2870,6 +2870,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2008/12/11 21:08:15  gtkwave
+ * allow support for marker names which are strings
+ *
  * Revision 1.16  2008/10/12 02:56:20  gtkwave
  * fix for blackout regions
  *
