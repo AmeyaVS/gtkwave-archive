@@ -711,11 +711,11 @@ gint splash_kill(gpointer dummy)
 {
 gulong usec;
 gint sec = (gint) g_timer_elapsed(GLOBALS->gt_splash_c_1, &usec);
-int kill = (sec>=2);
+int skill = (sec>=2);
 
 if(GLOBALS->cnt_splash_c_1) GLOBALS->cnt_splash_c_1 -= GLOBALS->load_complete_splash_c_1;
 
-if((!GLOBALS->cnt_splash_c_1)&&(kill))
+if((!GLOBALS->cnt_splash_c_1)&&(skill))
 	{
 	return(button_press_event(NULL,NULL));
 	}
@@ -811,6 +811,9 @@ void splash_sync(off_t current, off_t total)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

@@ -1576,17 +1576,17 @@ for(;;)
 				/* catchall for events when header over */
 				if(GLOBALS->yytext_vcd_c_1[0]=='#')
 					{
-					TimeType time;
-					time=atoi_64(GLOBALS->yytext_vcd_c_1+1);
+					TimeType tim;
+					tim=atoi_64(GLOBALS->yytext_vcd_c_1+1);
 					
 					if(GLOBALS->start_time_vcd_c_1<0)
 						{
-						GLOBALS->start_time_vcd_c_1=time;
+						GLOBALS->start_time_vcd_c_1=tim;
 						}
 
-					GLOBALS->current_time_vcd_c_1=time;
-					if(GLOBALS->end_time_vcd_c_1<time) GLOBALS->end_time_vcd_c_1=time;	/* in case of malformed vcd files */
-					DEBUG(fprintf(stderr,"#"TTFormat"\n",time));
+					GLOBALS->current_time_vcd_c_1=tim;
+					if(GLOBALS->end_time_vcd_c_1<tim) GLOBALS->end_time_vcd_c_1=tim;	/* in case of malformed vcd files */
+					DEBUG(fprintf(stderr,"#"TTFormat"\n",tim));
 					}
 					else
 					{
@@ -1644,7 +1644,7 @@ for(;;)
 
 /*******************************************************************************/
 
-void add_histent(TimeType time, struct Node *n, char ch, int regadd, char *vector)
+void add_histent(TimeType tim, struct Node *n, char ch, int regadd, char *vector)
 {
 struct HistEnt *he;
 char heval;
@@ -1660,11 +1660,11 @@ if(!n->curr)
 	n->curr=he;
 	n->head.next=he;
 
-	add_histent(time,n,ch,regadd, vector);
+	add_histent(tim,n,ch,regadd, vector);
 	}
 	else
 	{
-	if(regadd) { time*=(GLOBALS->time_scale); }
+	if(regadd) { tim*=(GLOBALS->time_scale); }
 
 	if(ch=='0')              heval=AN_0; else
 	if(ch=='1')              heval=AN_1; else
@@ -1676,12 +1676,12 @@ if(!n->curr)
         if((ch=='l')||(ch=='L')) heval=AN_L; else
         /* if(ch=='-') */        heval=AN_DASH;		/* default */
 	
-	if((n->curr->v.h_val!=heval)||(time==GLOBALS->start_time_vcd_c_1)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
+	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_c_1)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
         	{
-		if(n->curr->time==time)
+		if(n->curr->time==tim)
 			{
 			DEBUG(printf("Warning: Glitch at time ["TTFormat"] Signal [%p], Value [%c->%c].\n",
-				time, n, AN_STR[n->curr->v.h_val], ch));
+				tim, n, AN_STR[n->curr->v.h_val], ch));
 			n->curr->v.h_val=heval;		/* we have a glitch! */
 
 			GLOBALS->num_glitches_vcd_c_2++;
@@ -1694,7 +1694,7 @@ if(!n->curr)
 			else
 			{
                 	he=histent_calloc();
-                	he->time=time;
+                	he->time=tim;
                 	he->v.h_val=heval;
 
                 	n->curr->next=he;
@@ -1720,16 +1720,16 @@ switch(ch)
 		n->curr=he;
 		n->head.next=he;
 	
-		add_histent(time,n,ch,regadd, vector);
+		add_histent(tim,n,ch,regadd, vector);
 		}
 		else
 		{
-		if(regadd) { time*=(GLOBALS->time_scale); }
+		if(regadd) { tim*=(GLOBALS->time_scale); }
 	
-			if(n->curr->time==time)
+			if(n->curr->time==tim)
 				{
 				DEBUG(printf("Warning: String Glitch at time ["TTFormat"] Signal [%p].\n",
-					time, n));
+					tim, n));
 				if(n->curr->v.h_vector) free_2(n->curr->v.h_vector);
 				n->curr->v.h_vector=vector;		/* we have a glitch! */
 	
@@ -1744,7 +1744,7 @@ switch(ch)
 				{
 	                	he=histent_calloc();
 				he->flags=(HIST_STRING|HIST_REAL);
-	                	he->time=time;
+	                	he->time=tim;
 	                	he->v.h_vector=vector;
 	
 	                	n->curr->next=he;
@@ -1766,11 +1766,11 @@ switch(ch)
 		n->curr=he;
 		n->head.next=he;
 	
-		add_histent(time,n,ch,regadd, vector);
+		add_histent(tim,n,ch,regadd, vector);
 		}
 		else
 		{
-		if(regadd) { time*=(GLOBALS->time_scale); }
+		if(regadd) { tim*=(GLOBALS->time_scale); }
 	
 		if(
 #ifndef TRACK_AND_HOLD_FIX
@@ -1778,15 +1778,15 @@ switch(ch)
 #else
 		  (1)
 #endif
-			||(time==GLOBALS->start_time_vcd_c_1)
+			||(tim==GLOBALS->start_time_vcd_c_1)
 			||(!n->curr->v.h_vector)
 			||(GLOBALS->vcd_preserve_glitches)
 			) /* same region == go skip */ 
 	        	{
-			if(n->curr->time==time)
+			if(n->curr->time==tim)
 				{
 				DEBUG(printf("Warning: Real number Glitch at time ["TTFormat"] Signal [%p].\n",
-					time, n));
+					tim, n));
 				if(n->curr->v.h_vector) free_2(n->curr->v.h_vector);
 				n->curr->v.h_vector=vector;		/* we have a glitch! */
 	
@@ -1801,7 +1801,7 @@ switch(ch)
 				{
 	                	he=histent_calloc();
 				he->flags=HIST_REAL;
-	                	he->time=time;
+	                	he->time=tim;
 	                	he->v.h_vector=vector;
 	
 	                	n->curr->next=he;
@@ -1827,23 +1827,23 @@ switch(ch)
 		n->curr=he;
 		n->head.next=he;
 	
-		add_histent(time,n,ch,regadd, vector);
+		add_histent(tim,n,ch,regadd, vector);
 		}
 		else
 		{
-		if(regadd) { time*=(GLOBALS->time_scale); }
+		if(regadd) { tim*=(GLOBALS->time_scale); }
 	
 		if(
 		  (n->curr->v.h_vector&&vector&&(strcmp(n->curr->v.h_vector,vector)))
-			||(time==GLOBALS->start_time_vcd_c_1)
+			||(tim==GLOBALS->start_time_vcd_c_1)
 			||(!n->curr->v.h_vector)
 			||(GLOBALS->vcd_preserve_glitches)
 			) /* same region == go skip */ 
 	        	{
-			if(n->curr->time==time)
+			if(n->curr->time==tim)
 				{
 				DEBUG(printf("Warning: Glitch at time ["TTFormat"] Signal [%p], Value [%c->%c].\n",
-					time, n, AN_STR[n->curr->v.h_val], ch));
+					tim, n, AN_STR[n->curr->v.h_val], ch));
 				if(n->curr->v.h_vector) free_2(n->curr->v.h_vector);
 				n->curr->v.h_vector=vector;		/* we have a glitch! */
 	
@@ -1857,7 +1857,7 @@ switch(ch)
 				else
 				{
 	                	he=histent_calloc();
-	                	he->time=time;
+	                	he->time=tim;
 	                	he->v.h_vector=vector;
 	
 	                	n->curr->next=he;
@@ -2477,6 +2477,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/10/12 02:56:20  gtkwave
+ * fix for blackout regions
+ *
  * Revision 1.10  2008/09/17 04:33:38  gtkwave
  * support for smaller timescales in VCD files
  *

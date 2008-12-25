@@ -305,8 +305,8 @@ int nodecnt = 0;
 vcdsav_Tree *vt = NULL;
 vcdsav_Tree **hp_clone = GLOBALS->hp_vcd_saver_c_1;
 nptr n;
-ExtNode *e;
-int msi, lsi;
+/* ExtNode *e; */
+/* int msi, lsi; */
 int i;
 TimeType prevtime = LLDescriptor(-1);
 time_t walltime;
@@ -348,8 +348,8 @@ while(t)
 			{
 			n = t->n.nd;
 			if(n->expansion) n = n->expansion->parent;
-			e = n->ext;
-			if(e) { msi = e->msi; lsi = e->lsi; } else { msi = lsi = -1; }
+			/* e = n->ext; */
+			/* if(e) { msi = e->msi; lsi = e->lsi; } else { msi = lsi = -1; } */
 			vt = vcdsav_splay(n, vt);
 			if(!vt || vt->item != n)
 				{
@@ -380,8 +380,8 @@ while(t)
 						n = bt->nodes[i];
 	
 						if(n->expansion) n = n->expansion->parent;
-						e = n->ext;
-						if(e) { msi = e->msi; lsi = e->lsi; } else { msi = lsi = -1; }
+						/* e = n->ext; */
+						/* if(e) { msi = e->msi; lsi = e->lsi; } else { msi = lsi = -1; } */
 						vt = vcdsav_splay(n, vt);
 						if(!vt || vt->item != n)
 							{
@@ -1434,6 +1434,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/12/16 19:28:20  gtkwave
+ * more warnings cleanups
+ *
  * Revision 1.6  2008/12/06 19:55:53  gtkwave
  * more adds to the timinganalyzer output writer
  *
