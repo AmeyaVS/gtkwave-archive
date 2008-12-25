@@ -978,7 +978,6 @@ if(GLOBALS->zchg_size_lxt_c_1)
 if(!GLOBALS->sync_table_offset_lxt_c_1)
 	{
 	off_t vlen = GLOBALS->zchg_predec_size_lxt_c_1 ? GLOBALS->zchg_predec_size_lxt_c_1+4 : 0;
-	off_t offs = GLOBALS->zchg_predec_size_lxt_c_1 ? 4 : 0;
 	unsigned int numfacs_bytes;
 	unsigned int num_records = 0;
 	unsigned int last_change_delta, numbytes;
@@ -995,6 +994,7 @@ if(!GLOBALS->sync_table_offset_lxt_c_1)
 	int recfd;
 	int fd_dummy;
 	
+	offs = GLOBALS->zchg_predec_size_lxt_c_1 ? 4 : 0;
 	fprintf(stderr, LXTHDR"Linear LXT encountered...\n");
 
 	if(!GLOBALS->zchg_predec_size_lxt_c_1)
@@ -1525,13 +1525,13 @@ while((tag=get_byte(tagpnt))!=LT_SECTION_END)
 if(GLOBALS->exclude_offset_lxt_c_1)
 	{
 	off_t offset = GLOBALS->exclude_offset_lxt_c_1;
-	int i, num_blackouts = get_32(offset);
+	int ix, num_blackouts = get_32(offset);
 	TimeType bs, be;
 	struct blackout_region_t *bt;
 
 	offset+=4;
 
-	for(i=0;i<num_blackouts;i++)
+	for(ix=0;ix<num_blackouts;ix++)
 		{
 		bs = get_64(offset); offset+=8;
 		be = get_64(offset); offset+=8;
@@ -1789,9 +1789,9 @@ fprintf(stderr, LXTHDR"Building facility hierarchy tree...");
 init_tree();		
 for(i=0;i<GLOBALS->numfacs;i++)	
 {
-char *n = GLOBALS->facs[i]->name;
+char *nf = GLOBALS->facs[i]->name;
 int was_packed;
-char *recon = hier_decompress_flagged(n, &was_packed);
+char *recon = hier_decompress_flagged(nf, &was_packed);
 
 if(was_packed)
         {
@@ -1800,7 +1800,7 @@ if(was_packed)
         }
         else
         {
-        build_tree_from_name(n, i);
+        build_tree_from_name(nf, i);
         }
 }
 /* SPLASH */                            splash_sync(5, 5);
@@ -1999,16 +1999,16 @@ while(offs)
 
 			if(!GLOBALS->lxt_clock_compress_to_z)
 				{
-				int val = get_byte(offsminus1)&0xF;
+				int vval = get_byte(offsminus1)&0xF;
 				int reps = 0;
 				int rcnt;
 				unsigned int reconstructm1 = 0;
 				unsigned int reconstructm2 = 0;
 				unsigned int reconstructm3 = 0;
 				unsigned int rle_delta[2];
-				int i;
+				int ix;
 	
-				if((val!=0)&&(val!=3)&&(val!=4))
+				if((vval!=0)&&(vval!=3)&&(vval!=4))
 					{
 					fprintf(stderr, "Unexpected clk compress byte %02x at offset: %08x\n", get_byte(offsminus1), (unsigned int)offsminus1);
 					exit(0);
@@ -2027,19 +2027,19 @@ while(offs)
 				DEBUG(fprintf(stderr, "!!! reps = %d\n", reps));
 
 				parsed=parse_offset(f, offsminus1);
-				for(i=0;i<len;i++)
+				for(ix=0;ix<len;ix++)
 					{
 					reconstructm1 <<= 1;
-					reconstructm1 |= (parsed[i]&1);
+					reconstructm1 |= (parsed[ix]&1);
 					}
 
 				DEBUG(fprintf(stderr, "!!! M1 = '%08x'\n", reconstructm1));
 
 				parsed=parse_offset(f, offsminus2);
-				for(i=0;i<len;i++)
+				for(ix=0;ix<len;ix++)
 					{
 					reconstructm2 <<= 1;
-					reconstructm2 |= (parsed[i]&1);
+					reconstructm2 |= (parsed[ix]&1);
 					}
 
 				DEBUG(fprintf(stderr, "!!! M2 = '%08x'\n", reconstructm2));
@@ -2065,10 +2065,10 @@ while(offs)
 				offsminus3 = offsminus2-offsdelta-2;
 
 				parsed=parse_offset(f, offsminus3);
-				for(i=0;i<len;i++)
+				for(ix=0;ix<len;ix++)
 					{
 					reconstructm3 <<= 1;
-					reconstructm3 |= (parsed[i]&1);
+					reconstructm3 |= (parsed[ix]&1);
 					}
 
 				DEBUG(fprintf(stderr, "!!! M3 = '%08x'\n", reconstructm3));
@@ -2085,10 +2085,10 @@ while(offs)
 				for(rcnt=0;rcnt<reps;rcnt++)
 					{
 					int k;
-					int j = (reps - rcnt);
+					int jx = (reps - rcnt);
 					unsigned int res = reconstructm1 +
-						((j/2)+(j&0))*rle_delta[1] + 
-						((j/2)+(j&1))*rle_delta[0];
+						((jx/2)+(jx&0))*rle_delta[1] + 
+						((jx/2)+(jx&1))*rle_delta[0];
 
 					DEBUG(fprintf(stderr, "!!! %lld -> '%08x'\n", tmval, res));
 
@@ -2110,11 +2110,11 @@ while(offs)
 				}
 				else	/* compress to z on multibit */
 				{
-				int i;	
+				int ix;	
 
 				htemp = histent_calloc();
 				htemp->v.h_vector = (char *)malloc_2(len);
-				for(i=0;i<len;i++) { htemp->v.h_vector[i] = 'z'; }
+				for(ix=0;ix<len;ix++) { htemp->v.h_vector[ix] = 'z'; }
 				tmval = time_offsminus1 + delta;
 				htemp->time = tmval;
 				htemp->next = histent_head;
@@ -2129,11 +2129,11 @@ while(offs)
 			{
 			if(!GLOBALS->lxt_clock_compress_to_z)
 				{
-				int val = get_byte(offsminus1)&0xF;
+				int vval = get_byte(offsminus1)&0xF;
 				int reps = 0;
 				int rcnt;
 	
-				if((val<3)||(val>4))
+				if((vval<3)||(vval>4))
 					{
 					fprintf(stderr, "Unexpected clk compress byte %02x at offset: %08x\n", get_byte(offsminus1), (unsigned int)offsminus1);
 					exit(0);
@@ -2148,16 +2148,16 @@ while(offs)
 					}
 	
 				reps++;
-				val = (reps & 1) ^ (val==4);	/* because x3='0', x4='1' */
-				val = (val==0) ? AN_0 : AN_1;
+				vval = (reps & 1) ^ (vval==4);	/* because x3='0', x4='1' */
+				vval = (vval==0) ? AN_0 : AN_1;
 	
 				tmval = time_offsminus1 + (delta * reps);
 				for(rcnt=0;rcnt<reps;rcnt++)
 					{
-					if(val!=histent_head->v.h_val)
+					if(vval!=histent_head->v.h_val)
 						{
 						htemp = histent_calloc();
-						htemp->v.h_val = val;
+						htemp->v.h_val = vval;
 						htemp->time = tmval;
 						htemp->next = histent_head;
 						histent_head = htemp;
@@ -2169,17 +2169,17 @@ while(offs)
 						}
 	
 					tmval-=delta;
-					val= (val==AN_0) ? AN_1: AN_0;
+					vval= (val==AN_0) ? AN_1: AN_0;
 					}
 				}
 				else
 				{
-				int val=AN_Z;
+				int vval=AN_Z;
 	
-				if(val!=histent_head->v.h_val)
+				if(vval!=histent_head->v.h_val)
 					{
 					htemp = histent_calloc();
-					htemp->v.h_val = val;
+					htemp->v.h_val = vval;
 					htemp->time = time_offsminus1 + delta;
 					htemp->next = histent_head;
 					histent_head = htemp;
@@ -2338,8 +2338,8 @@ for(j=0;j>-2;j--)
 			if(len>1)
 				{
 				char *pnt = htemp->v.h_vector = (char *)malloc_2(len);	/* zeros */
-				int i;
-				for(i=0;i<len;i++)
+				int ix;
+				for(ix=0;ix<len;ix++)
 					{
 					*(pnt++) = init;
 					}
@@ -2390,6 +2390,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/10/12 02:56:20  gtkwave
+ * fix for blackout regions
+ *
  * Revision 1.6  2008/09/27 19:08:39  gtkwave
  * compiler warning fixes
  *
