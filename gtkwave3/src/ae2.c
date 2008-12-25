@@ -280,12 +280,12 @@ if(indirect_fname)
 		fprintf(stderr, AET2_RDLOAD"Using indirect file '%s' for facility selection...\n", indirect_fname);
 		while(!feof(ind_h))
 			{
-			char *exp, *exp2, *exp3;
+			char *exp1, *exp2, *exp3;
 			void *regex;
 		
-			exp = fgetmalloc(ind_h);
-			if(!exp) continue;
-			exp2 = exp;
+			exp1 = fgetmalloc(ind_h);
+			if(!exp1) continue;
+			exp2 = exp1;
 			while(isspace(*exp2)) exp2++;
 
 			exp3 = exp2 + strlen(exp2) - 1;
@@ -323,7 +323,7 @@ if(indirect_fname)
 					}
 				}
 
-			free_2(exp);
+			free_2(exp1);
 			}
 	
 		fclose(ind_h); ind_h = NULL;
@@ -694,7 +694,7 @@ return(GLOBALS->max_time);
 /*
  * ae2 callback
  */
-static void ae2_callback(uint64_t *time, unsigned int *facidx, char **value, unsigned int row)
+static void ae2_callback(uint64_t *tim, unsigned int *facidx, char **value, unsigned int row)
 {
 struct HistEnt *htemp = histent_calloc();
 struct lx2_entry *l2e = &GLOBALS->ae2_lx2_table[*facidx][row];
@@ -709,7 +709,7 @@ if(busycnt==WAVE_BUSY_ITER)
         busycnt = 0;
         }
 
-/* fprintf(stderr, "%lld %d %d %s\n", *time, *facidx, row, *value); */
+/* fprintf(stderr, "%lld %d %d %s\n", *tim, *facidx, row, *value); */
 
 if(f->length>1)        
         {
@@ -731,11 +731,11 @@ if(f->length>1)
 
 if(!GLOBALS->ae2_time_xlate)
 	{
-	htemp->time = (*time);
+	htemp->time = (*tim);
 	}
 	else
 	{
-	htemp->time = GLOBALS->ae2_time_xlate[(*time) - GLOBALS->ae2_start_cyc];
+	htemp->time = GLOBALS->ae2_time_xlate[(*tim) - GLOBALS->ae2_start_cyc];
 	}
 
 if(l2e->histent_head)
@@ -861,11 +861,11 @@ for(j=0;j<GLOBALS->ae2_num_sections;j++)
 
                         for(r=1;r<rows+1;r++)
                                 {
-				nptr np; 
+				/* nptr np; */
                                 uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc, r);
 
                                 GLOBALS->ae2_fr[i].row = row;
-				np = GLOBALS->ae2_lx2_table[i][row].np;
+				/* np = GLOBALS->ae2_lx2_table[i][row].np; */
 				ncyc =	ae2_read_next_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, cyc, buf);
 
 				if((ncyc > cyc) && (ncyc < mxcyc)) mxcyc = ncyc;
@@ -931,17 +931,17 @@ for(j=0;j<GLOBALS->ae2_num_sections;j++)
 
 		                        for(r=1;r<rows+1;r++)
 	        	                        {
-						nptr np; 
+						nptr npr; 
 		                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, step_cyc, r);
 
 		                                GLOBALS->ae2_fr[i].row = row;
-						np = GLOBALS->ae2_lx2_table[i][row].np;
+						npr = GLOBALS->ae2_lx2_table[i][row].np;
 
 						ae2_read_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, step_cyc, buf);
-						if(strcmp(buf, np->mv.value))
+						if(strcmp(buf, npr->mv.value))
 							{
-							strcpy(np->mv.value, buf);
-							ae2_callback(&step_cyc, &i, &np->mv.value, row);
+							strcpy(npr->mv.value, buf);
+							ae2_callback(&step_cyc, &i, &npr->mv.value, row);
 							}
 
 						ncyc =	ae2_read_next_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, step_cyc, buf);
@@ -961,15 +961,15 @@ for(j=0;j<GLOBALS->ae2_num_sections;j++)
 				if(ncyc!=step_cyc)
 					{
 					int offset2 = ncyc-cyc;
-					struct ae2_ncycle_autosort *t = autosort[offset2];
+					struct ae2_ncycle_autosort *ta = autosort[offset2];
 				
-					autofacs[i].next = t;
+					autofacs[i].next = ta;
 					autosort[offset2] = autofacs+i; 
 					}
 					else
 					{
-					struct ae2_ncycle_autosort *t = deadlist;
-					autofacs[i].next = t;
+					struct ae2_ncycle_autosort *ta = deadlist;
+					autofacs[i].next = ta;
 					deadlist = autofacs+i;
 					}
 				t = tn;
@@ -1266,6 +1266,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.7  2008/06/17 18:03:45  gtkwave
  * added time = -1 endcaps
  *

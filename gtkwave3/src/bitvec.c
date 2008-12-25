@@ -874,7 +874,7 @@ if(nodepnt)
 		else
 		{
 		char *s1, *s2;
-		int i, root1len=0, root2len=0;
+		int root1len=0, root2len=0;
 		int l1, l2;
 
 		s1=symhi->n->nname;
@@ -1072,7 +1072,7 @@ if(nodepnt)
 		else
 		{
 		char *s1, *s2;
-		int i, root1len=0, root2len=0;
+		int root1len=0, root2len=0;
 		int l1, l2;
 
 		if(!direction)
@@ -1620,7 +1620,7 @@ nptr *narray;
 char *nam;
 int offset, len;
 eptr rc=NULL;
-exptr exp;
+exptr exp1;
 
 if(n->mv.mvlfac) import_trace(n);
 
@@ -1718,12 +1718,12 @@ if(!n->ext)
 		narray[i]->nname = (char *)malloc_2(len+1);
 		strcpy(narray[i]->nname, nam);
 
-		exp = (exptr) calloc_2(1, sizeof(struct ExpandReferences));
-		exp->parent=n;							/* point to parent */
-		exp->parentbit=i;
-		exp->actual = actual;
+		exp1 = (exptr) calloc_2(1, sizeof(struct ExpandReferences));
+		exp1->parent=n;							/* point to parent */
+		exp1->parentbit=i;
+		exp1->actual = actual;
 		actual += delta;
-		narray[i]->expansion = exp;					/* can be safely deleted if expansion set like here */
+		narray[i]->expansion = exp1;					/* can be safely deleted if expansion set like here */
 		}
 
 	for(i=0;i<n->numhist;i++)
@@ -1810,7 +1810,7 @@ int actual;
 nptr np;
 char *nam;
 int offset, len;
-exptr exp;
+exptr exp1;
 
 if(n->mv.mvlfac) import_trace(n);
 
@@ -1904,11 +1904,11 @@ if(!n->ext)
 	np->nname = (char *)malloc_2(len+1);
 	strcpy(np->nname, nam);
 
-	exp = (exptr) calloc_2(1, sizeof(struct ExpandReferences));
-	exp->parent=n;							/* point to parent */
-	exp->parentbit=bit;
-	exp->actual=actual;						/* actual bitnum in [] */
-	np->expansion = exp;						/* can be safely deleted if expansion set like here */
+	exp1 = (exptr) calloc_2(1, sizeof(struct ExpandReferences));
+	exp1->parent=n;							/* point to parent */
+	exp1->parentbit=bit;
+	exp1->actual=actual;						/* actual bitnum in [] */
+	np->expansion = exp1;						/* can be safely deleted if expansion set like here */
 
 	for(i=0;i<n->numhist;i++)
 		{
@@ -2165,8 +2165,8 @@ if(*w2=='-')
 else
 if(*w2=='>')
 	{
-	char *nptr=(*(w2+1)!=0)?(w2+1):NULL;
-	GLOBALS->shift_timebase_default_for_add=nptr?atoi_64(nptr):LLDescriptor(0);
+	char *wnptr=(*(w2+1)!=0)?(w2+1):NULL;
+	GLOBALS->shift_timebase_default_for_add=wnptr?atoi_64(wnptr):LLDescriptor(0);
 	}
 else
 if(*w2=='@')
@@ -2305,7 +2305,6 @@ else
 if(*w2=='!')
 	{
 	/* fill logical_mutex */
-	int i;
 	char ch;
 
 	for(i=0;i<6;i++)
@@ -2361,13 +2360,13 @@ if(*w2=='?')
 	/* fill st->type */
 	if(*(w2+1)=='\"')
 		{
-		int len = strlen(w2+2);
+		int lens = strlen(w2+2);
 		if(GLOBALS->shadow_string) free_2(GLOBALS->shadow_string);
 		GLOBALS->shadow_string=NULL;
 
-		if(len)
+		if(lens)
 			{
-			GLOBALS->shadow_string = malloc_2(len+1);		
+			GLOBALS->shadow_string = malloc_2(lens+1);		
 			strcpy(GLOBALS->shadow_string, w2+2);
 			}
 
@@ -2911,6 +2910,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/12/11 21:08:15  gtkwave
+ * allow support for marker names which are strings
+ *
  * Revision 1.10  2008/10/02 00:52:24  gtkwave
  * added dnd of external filetypes into viewer
  *

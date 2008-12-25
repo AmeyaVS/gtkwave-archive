@@ -342,7 +342,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
     case ghdl_rtik_type_i32:
       {
 	int32_t v;
-	char *name;
+	char *nam;
 	struct ghw_range_i32 *r;
 	struct tree *last;
 	
@@ -352,9 +352,9 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	while (1)
 	  {
 	    sprintf(GLOBALS->asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup_2(GLOBALS->asbuf);
-	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
-	    free_2(name);
+            nam = strdup_2(GLOBALS->asbuf);
+	    build_hierarchy_array (h, arr, dim + 1, nam, res, sig);
+	    free_2(nam);
 	    if (v == r->right)
 	      break;
 	    if (r->dir == 0)
@@ -368,7 +368,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
     case ghdl_rtik_type_e8:
       {
 	int32_t v;
-	char *name;
+	char *nam;
 	struct ghw_range_e8 *r;
 	struct tree *last;
 	
@@ -378,9 +378,9 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	while (1)
 	  {
 	    sprintf(GLOBALS->asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
-            name = strdup_2(GLOBALS->asbuf);
-	    build_hierarchy_array (h, arr, dim + 1, name, res, sig);
-	    free_2(name);
+            nam = strdup_2(GLOBALS->asbuf);
+	    build_hierarchy_array (h, arr, dim + 1, nam, res, sig);
+	    free_2(nam);
 	    if (v == r->right)
 	      break;
 	    if (r->dir == 0)
@@ -1064,6 +1064,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.2.2.5  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

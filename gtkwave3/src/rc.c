@@ -838,7 +838,7 @@ while(!feof(handle))
 	GLOBALS->rc_line_no++;
 	if((str=fgetmalloc(handle)))
 		{
-		int i, len;
+		int len;
 		len=strlen(str);
 		if(len)
 			{
@@ -899,6 +899,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/12/04 19:21:00  gtkwave
+ * added zoom_dynamic option for partial VCD loading
+ *
  * Revision 1.12  2008/11/25 20:00:54  gtkwave
  * added use_scrollwheel_as_y rc variable
  *

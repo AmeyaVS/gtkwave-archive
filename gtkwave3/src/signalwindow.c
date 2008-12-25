@@ -208,7 +208,7 @@ GLOBALS->dnd_state = 0;
  */
 static gboolean DNDDragMotionCB(
         GtkWidget *widget, GdkDragContext *dc,
-        gint x, gint y, guint t,
+        gint xx, gint yy, guint tt,
         gpointer data
 )
 {
@@ -245,19 +245,19 @@ static gboolean DNDDragMotionCB(
 
         /* Only move? */
         if(dc->actions == GDK_ACTION_MOVE)
-            gdk_drag_status(dc, GDK_ACTION_MOVE, t);
+            gdk_drag_status(dc, GDK_ACTION_MOVE, tt);
         /* Only copy? */
         else if(dc->actions == GDK_ACTION_COPY)
-            gdk_drag_status(dc, GDK_ACTION_COPY, t);
+            gdk_drag_status(dc, GDK_ACTION_COPY, tt);
         /* Only link? */
         else if(dc->actions == GDK_ACTION_LINK)
-            gdk_drag_status(dc, GDK_ACTION_LINK, t);
+            gdk_drag_status(dc, GDK_ACTION_LINK, tt);
         /* Other action, check if listed in our actions list? */
         else if(dc->actions & suggested_action)
-            gdk_drag_status(dc, suggested_action, t);
+            gdk_drag_status(dc, suggested_action, tt);
         /* All else respond with 0. */
         else
-            gdk_drag_status(dc, 0, t);
+            gdk_drag_status(dc, 0, tt);
 #endif
 
 if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
@@ -1674,6 +1674,10 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2008/12/20 19:42:11  gtkwave
+ * add static initializer to timer functions to avoid non-initialized viewer
+ * state when first starting (if timer interrupt fires)
+ *
  * Revision 1.38  2008/12/20 05:45:03  gtkwave
  * gtk1 compatibility and -Wshadow warning fixes
  *
