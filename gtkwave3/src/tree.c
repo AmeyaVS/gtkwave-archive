@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006.
+ * Copyright (c) Tony Bybell 1999-2008.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -297,7 +297,7 @@ if(t->next)
 		it=it->next;
 		} while(it);
 	
-	srt = wave_alloca(cnt * sizeof(struct tree *));
+	srt = malloc_2(cnt * sizeof(struct tree *)); /* was previously wave_alloca but with too many signals the stack overflows */
 	for(i=0;i<cnt;i++)
 		{
 		srt[i] = t;
@@ -328,6 +328,8 @@ if(t->next)
 		{
 		treesort(srt[i]->child, srt[i]);
 		}
+
+	free_2(srt);
 	}
 else if (t->child)
 	{
@@ -599,6 +601,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.5  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *
