@@ -10,6 +10,14 @@
 #include <config.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+
+#if GTK_CHECK_VERSION(2, 6, 0)
+#define WAVE_USE_GTK_2CURRENT
+#else
+#warning There will be some reduced functionality in rtlbrowse
+#warning as level 2.6.0 of the GTK toolkit is required.
+#endif
+
 #include <string.h>
 #include "splay.h"
 #include "vlex.h"
@@ -295,7 +303,11 @@ if(tr)
 
 	if(found)
 		{
+#ifdef WAVE_USE_GTK_2CURRENT
 		gtk_text_buffer_select_range(tb, &match_start, &match_end);
+#else
+		gtk_text_buffer_place_cursor (tb, &match_start);
+#endif
 		read_insert_position(tr);
 		tr->srch_line = tr->line;
 		tr->srch_offs = tr->offs;		
@@ -307,7 +319,9 @@ if(tr)
 		else
 		{
 		gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+#ifdef WAVE_USE_GTK_2CURRENT
 		gtk_text_buffer_select_range(tb, &iter, &iter);
+#endif
 		}
 	}
 }
@@ -403,7 +417,11 @@ if(tr)
 
 	if(found)
 		{
+#ifdef WAVE_USE_GTK_2CURRENT
 		gtk_text_buffer_select_range(tb, &match_start, &match_end);
+#else
+		gtk_text_buffer_place_cursor (tb, &match_start);
+#endif
 		read_insert_position(tr);
 		tr->srch_line = tr->line;
 		tr->srch_offs = tr->offs;		
@@ -414,7 +432,9 @@ if(tr)
 		else
 		{
 		gtk_text_buffer_get_iter_at_mark(tb, &iter, tm);
+#ifdef WAVE_USE_GTK_2CURRENT
 		gtk_text_buffer_select_range(tb, &iter, &iter);
+#endif
 		}
 	}
 }
@@ -746,6 +766,7 @@ if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer, &start, &
 else
 if(((void *)widget->window) == pressWindow)
 	{
+#ifdef WAVE_USE_GTK_2CURRENT
 	GtkTextView *text_view = GTK_TEXT_VIEW(text);
 	gint buffer_x, buffer_y;
 	gint s_trailing, e_trailing;
@@ -756,6 +777,7 @@ if(((void *)widget->window) == pressWindow)
 	gtk_text_view_get_iter_at_position  (text_view, &end,   &e_trailing, buffer_x, buffer_y);
 	gtk_text_iter_forward_char(&end);
 	ok = 1;
+#endif
 	} 
    
 pressWindow = NULL;     
@@ -1442,7 +1464,9 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     GtkWidget *ctext;
     GtkWidget *text;
     GtkWidget *close_button = NULL;
+#ifdef WAVE_USE_GTK_2CURRENT
     gint pagenum = 0;
+#endif
     FILE *handle;
     struct logfile_context_t *ctx;
     char *default_text = t->filename;
@@ -1510,8 +1534,10 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         gtk_button_set_relief (GTK_BUTTON (close_button),
                                GTK_RELIEF_NONE);
         /* don't allow focus on the close button */
+#ifdef WAVE_USE_GTK_2CURRENT
         gtk_button_set_focus_on_click (GTK_BUTTON (close_button), FALSE);
-        
+#endif        
+
         /* make it as small as possible */
         rcstyle = gtk_rc_style_new ();
         rcstyle->xthickness = rcstyle->ythickness = 0;
@@ -1532,7 +1558,10 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	gtk_widget_show(l1);
 	gtk_widget_show(tbox);
 
-        pagenum = gtk_notebook_append_page_menu  (GTK_NOTEBOOK(notebook), window, tbox, gtk_label_new(title));
+#ifdef WAVE_USE_GTK_2CURRENT
+        pagenum = 
+#endif
+		gtk_notebook_append_page_menu  (GTK_NOTEBOOK(notebook), window, tbox, gtk_label_new(title));
 
 	gtk_signal_connect (GTK_OBJECT (close_button), "button_release_event",
 	                        GTK_SIGNAL_FUNC (destroy_via_closebutton_release), NULL); /* this will destroy the tab by destroying the parent container */
@@ -1630,10 +1659,12 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         }
 
 #ifdef WAVE_USE_GTK2
+#ifdef WAVE_USE_GTK_2CURRENT
     if(notebook)
 	{
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), pagenum);
 	}
+#endif
 #endif
 }
 
@@ -2356,6 +2387,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2008/12/24 04:17:09  gtkwave
+ * added highlighting to tab close buttons in rtlbrowse
+ *
  * Revision 1.22  2008/12/20 05:45:03  gtkwave
  * gtk1 compatibility and -Wshadow warning fixes
  *

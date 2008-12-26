@@ -551,3 +551,4 @@
 		Removed warnings found when compiling with -Wshadow.
 		Fix for stack crash in treesort() on dumpfiles with an 
 		extremely large number of signals (e.g., 5 million).
+		Compile fixes for rtlbrowse in older versions of GTK2.
