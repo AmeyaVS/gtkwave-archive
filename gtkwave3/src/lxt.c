@@ -2169,7 +2169,7 @@ while(offs)
 						}
 	
 					tmval-=delta;
-					vval= (val==AN_0) ? AN_1: AN_0;
+					vval= (vval==AN_0) ? AN_1: AN_0;
 					}
 				}
 				else
@@ -2390,6 +2390,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/12/25 04:28:47  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.7  2008/10/12 02:56:20  gtkwave
  * fix for blackout regions
  *

@@ -385,7 +385,7 @@ NULL, /* dict_string_mem_array_lxt_c_1 181 */
 0, /* exclude_offset_lxt_c_1 182 */
 NULL, /* lt_buf_lxt_c_1 183 */
 0, /* lt_len_lxt_c_1 184 */
-0, /* fd_lxt_c_1 185 */
+-1, /* fd_lxt_c_1 185 */
 {0,0,0,0,0,0,0,0}, /* double_mask_lxt_c_1 186 */
 0, /* double_is_native_lxt_c_1 187 */
 0, /* max_compare_time_tc_lxt_c_2 189 */
@@ -1287,6 +1287,13 @@ void reload_into_new_context(void)
 #if defined(HAVE_LIBTCL)
  new_globals->interp = GLOBALS->interp;
 #endif
+
+ /* lxt.c */
+ if(GLOBALS->fd_lxt_c_1 >= 0)
+	{
+	close(GLOBALS->fd_lxt_c_1);
+	GLOBALS->fd_lxt_c_1 = -1;
+	}
  
  /* Marker positions */
  memcpy(new_globals->named_markers, GLOBALS->named_markers, sizeof(GLOBALS->named_markers));
