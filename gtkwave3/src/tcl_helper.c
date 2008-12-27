@@ -2331,13 +2331,17 @@ if(objc > 1)
 		GLOBALS->script_handle = fopen(fnam, "rb");
 		ife->callback();
 		gtkwave_gtk_main_iteration();
+		if(fd>-1) 
+			{
+			close(fd);
+			}
+		fclose(GLOBALS->script_handle);
+		GLOBALS->script_handle = NULL;
 		unlink(fnam);
 		if(fd>-1) 
 			{
 			free_2(fnam);
-			close(fd);
 			}
-		GLOBALS->script_handle = NULL;
 		}
 	}
 	else
@@ -2462,6 +2466,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2008/12/25 03:28:55  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.38  2008/12/20 19:42:11  gtkwave
  * add static initializer to timer functions to avoid non-initialized viewer
  * state when first starting (if timer interrupt fires)

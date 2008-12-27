@@ -31,6 +31,11 @@
 
 void vlist_init_spillfile(void)
 {
+#if defined _MSC_VER || defined __MINGW32__
+GLOBALS->vlist_handle = tmpfile();
+fputc('!', GLOBALS->vlist_handle);
+GLOBALS->vlist_bytes_written = 1;
+#else
 int fd_dummy;
 char *nam = tmpnam_2(NULL, &fd_dummy);
 
@@ -44,6 +49,7 @@ if(nam)
 	fputc('!', GLOBALS->vlist_handle);
 	GLOBALS->vlist_bytes_written = 1;
 	}
+#endif
 }
 
 void vlist_kill_spillfile(void)
@@ -776,6 +782,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/10/14 00:53:46  gtkwave
+ * enabled tcl scripts to call existing gtkwave style scripted menu functions
+ *
  * Revision 1.12  2008/07/13 00:15:41  gtkwave
  * fix for short reads when --giga option is enabled
  *
