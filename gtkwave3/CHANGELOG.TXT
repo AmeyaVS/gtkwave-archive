@@ -553,3 +553,5 @@
 		extremely large number of signals (e.g., 5 million).
 		Compile fixes for rtlbrowse in older versions of GTK2.
 		Remove stray tempfiles created by --giga writer under MinGW.
+		Removed stray file descriptor from lxt on reload.
+		Fixed repeat error problem in lxt.c introduced by -Wshadow fix.
