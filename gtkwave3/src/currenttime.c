@@ -224,11 +224,11 @@ if(GLOBALS->scale_to_time_dimension)
 
 			if(GLOBALS->scale_to_time_dimension == 's')
 				{
-				sprintf(buf, "%g sec", gval);
+				sprintf(buf, "%.9g sec", gval);
 				}
 				else
 				{
-				sprintf(buf, "%g %cs", gval, GLOBALS->scale_to_time_dimension);
+				sprintf(buf, "%.9g %cs", gval, GLOBALS->scale_to_time_dimension);
 				}
 
 			return; 
@@ -338,11 +338,11 @@ if(GLOBALS->scale_to_time_dimension)
 
 			if(GLOBALS->scale_to_time_dimension == 's')
 				{
-				sprintf(buf, "%g%csec", gval, blackout);
+				sprintf(buf, "%.9g%csec", gval, blackout);
 				}
 				else
 				{
-				sprintf(buf, "%g%c%cs", gval, blackout, GLOBALS->scale_to_time_dimension);
+				sprintf(buf, "%.9g%c%cs", gval, blackout, GLOBALS->scale_to_time_dimension);
 				}
 
 			return; 
@@ -672,6 +672,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/12/28 03:03:33  gtkwave
+ * Added scale_to_time_dimension rc variable and menu options.
+ *
  * Revision 1.10  2008/10/14 20:44:39  gtkwave
  * fixed unformat time bug when base time is in seconds
  *
