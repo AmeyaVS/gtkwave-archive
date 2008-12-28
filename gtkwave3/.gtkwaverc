@@ -8,6 +8,7 @@ use_toolbutton_interface on
 use_pango_fonts on
 use_scrollwheel_as_y off
 dynamic_zoom 0
+scale_to_time_dimension *
 
 vlist_spill off
 vlist_prepack off
@@ -192,5 +193,13 @@ accel "/View/Remove Pattern Marks" (null)
 accel "/View/Use Color" (null)
 accel "/View/Use Black and White" (null)
 accel "/View/LXT Clock Compress to Z" (null)
+accel "/View/Scale To Time Dimension/None" (null)
+accel "/View/Scale To Time Dimension/sec" (null)
+accel "/View/Scale To Time Dimension/ms" (null)
+accel "/View/Scale To Time Dimension/us" (null)
+accel "/View/Scale To Time Dimension/ns" (null)
+accel "/View/Scale To Time Dimension/ps" (null)
+accel "/View/Scale To Time Dimension/fs" (null)
 accel "/Help/WAVE Help" <Control>H
 accel "/Help/Wave Version" (null)
+
