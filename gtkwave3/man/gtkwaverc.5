@@ -225,6 +225,9 @@ Sets the scroll amount for page left and right operations. (The buttons, not the
 \fBps_maxveclen\fR <\fIvalue\fP>
 sets the maximum number of characters that can be printed for a value in the signal window portion of a postscript file (not including the net name itself). Legal values are 4 through 66 (default).
 .TP 
+\fBscale_to_time_dimension\fR <\fIvalue\fP>
+The value can be any of the characters m, u, n, f, p, or s, which indicates which time dimension to convert the time values to. The default for this is * which means that time dimension conversion is disabled.
+.TP
 \fBshow_base_symbols\fR <\fIvalue\fP>
 A nonzero value (default) indicates that the numeric base symbols for hexadecimal ('$'), binary ('%'), and octal ('#') should be rendered. Otherwise they will be omitted.
 .TP 

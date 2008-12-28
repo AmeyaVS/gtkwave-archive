@@ -43,6 +43,153 @@
 static GtkItemFactoryEntry menu_items[WV_MENU_NUMITEMS];
 
 
+/* toggles for time dimension conversion */
+
+void menu_scale_to_td_x(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nScale To Time Dimension: None");
+        help_text(
+		" turns off time dimension conversion."
+        );
+
+	set_scale_to_time_dimension_toggles();
+        }
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 0;
+	set_scale_to_time_dimension_toggles();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+void menu_scale_to_td_s(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nScale To Time Dimension: sec");
+        help_text(
+		" changes the time dimension conversion value to seconds."
+        );
+
+	set_scale_to_time_dimension_toggles();
+        }
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 's';
+	set_scale_to_time_dimension_toggles();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+void menu_scale_to_td_m(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nScale To Time Dimension: ms");
+        help_text(
+		" changes the time dimension conversion value to milliseconds."
+        );
+
+	set_scale_to_time_dimension_toggles();
+        }
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 'm';
+	set_scale_to_time_dimension_toggles();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+
+void menu_scale_to_td_u(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nScale To Time Dimension: us");
+        help_text(
+		" changes the time dimension conversion value to microseconds."
+        );
+
+	set_scale_to_time_dimension_toggles();
+        }
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 'u';
+	set_scale_to_time_dimension_toggles();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+
+void menu_scale_to_td_n(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nScale To Time Dimension: ns");
+        help_text(
+		" changes the time dimension conversion value to nanoseconds."
+        );
+
+	set_scale_to_time_dimension_toggles();
+        }
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 'n';
+	set_scale_to_time_dimension_toggles();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+
+void menu_scale_to_td_p(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nScale To Time Dimension: ps");
+        help_text(
+		" changes the time dimension conversion value to picoseconds."
+        );
+
+	set_scale_to_time_dimension_toggles();
+        }
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 'p';
+	set_scale_to_time_dimension_toggles();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+
+void menu_scale_to_td_f(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nScale To Time Dimension: fs");
+        help_text(
+		" changes the time dimension conversion value to femtoseconds."
+        );
+
+	set_scale_to_time_dimension_toggles();
+        }
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 'f';
+	set_scale_to_time_dimension_toggles();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+
 /********** procsel filter install ********/
 
 #if !defined __MINGW32__ && !defined _MSC_VER
@@ -4688,10 +4835,44 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/View/Use Black and White", NULL, menu_use_bw, WV_MENU_USEBW, "<Item>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP18, "<Separator>"),
     WAVE_GTKIFE("/View/LXT Clock Compress to Z", NULL, menu_lxt_clk_compress, WV_MENU_LXTCC2Z, "<ToggleItem>"),
+
+    WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP19, "<Separator>"),
+    WAVE_GTKIFE("/View/Scale To Time Dimension/None", NULL, menu_scale_to_td_x, WV_MENU_TDSCALEX, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Scale To Time Dimension/sec",  NULL, menu_scale_to_td_s, WV_MENU_TDSCALES, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Scale To Time Dimension/ms",   NULL, menu_scale_to_td_m, WV_MENU_TDSCALEM, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Scale To Time Dimension/us",   NULL, menu_scale_to_td_u, WV_MENU_TDSCALEU, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Scale To Time Dimension/ns",   NULL, menu_scale_to_td_n, WV_MENU_TDSCALEN, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Scale To Time Dimension/ps",   NULL, menu_scale_to_td_p, WV_MENU_TDSCALEP, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Scale To Time Dimension/fs",   NULL, menu_scale_to_td_f, WV_MENU_TDSCALEF, "<ToggleItem>"),
+
       /* 130 */
     WAVE_GTKIFE("/Help/WAVE Help", "<Control>H", menu_help, WV_MENU_HWH, "<Item>"),
     WAVE_GTKIFE("/Help/Wave Version", NULL, menu_version, WV_MENU_HWV, "<Item>"),
 };
+
+
+void set_scale_to_time_dimension_toggles(void)
+{
+int i;
+
+for(i = WV_MENU_TDSCALEX; i<= WV_MENU_TDSCALEF; i++)
+	{
+	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[i].path))->active=FALSE;
+	}
+
+switch(GLOBALS->scale_to_time_dimension)
+	{
+	case 's':	i = WV_MENU_TDSCALES; break;
+	case 'm':	i = WV_MENU_TDSCALEM; break;
+	case 'u':	i = WV_MENU_TDSCALEU; break;
+	case 'n':	i = WV_MENU_TDSCALEN; break;
+	case 'p':	i = WV_MENU_TDSCALEP; break;
+	case 'f':	i = WV_MENU_TDSCALEF; break;
+	default: 	i = WV_MENU_TDSCALEX; break;
+	}
+
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[i].path))->active=TRUE;
+}
 
 
 /*
@@ -4738,6 +4919,8 @@ if(GLOBALS->loaded_file_type == LXT_FILE)
 	{
 	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path))->active=(GLOBALS->lxt_clock_compress_to_z)?TRUE:FALSE;
 	}
+
+set_scale_to_time_dimension_toggles();
 }
 
 
@@ -5054,6 +5237,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.53  2008/12/25 04:07:29  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.52  2008/12/20 07:44:22  gtkwave
  * experimental support for Tcl repscripts
  *

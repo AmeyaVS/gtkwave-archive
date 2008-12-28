@@ -205,12 +205,18 @@ WV_MENU_USECOLOR,
 WV_MENU_USEBW,
 WV_MENU_SEP18,
 WV_MENU_LXTCC2Z,
+WV_MENU_SEP19,
+WV_MENU_TDSCALEX,
+WV_MENU_TDSCALES,
+WV_MENU_TDSCALEM,
+WV_MENU_TDSCALEU,
+WV_MENU_TDSCALEN,
+WV_MENU_TDSCALEP,
+WV_MENU_TDSCALEF,
 WV_MENU_HWH,
 WV_MENU_HWV,
-
 WV_MENU_NUMITEMS
 };
-
 
 void menu_new_viewer(GtkWidget *widget, gpointer data);
 void menu_write_vcd_file(GtkWidget *widget, gpointer data);
@@ -312,6 +318,8 @@ GtkItemFactoryEntry *retrieve_menu_items_array(int *num_items);
 void menu_read_stems_cleanup(GtkWidget *widget, gpointer data);
 void menu_new_viewer_tab_cleanup(GtkWidget *widget, gpointer data);
 
+void set_scale_to_time_dimension_toggles(void);
+
 /* These should eventually have error values */
 void write_save_helper(FILE *file);
 void read_save_helper(char *wname);
@@ -321,6 +329,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2008/12/16 19:28:20  gtkwave
+ * more warnings cleanups
+ *
  * Revision 1.20  2008/12/05 19:44:08  gtkwave
  * prelim support for timinganalyzer file format export
  *

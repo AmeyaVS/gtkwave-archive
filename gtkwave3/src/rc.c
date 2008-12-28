@@ -383,6 +383,23 @@ if(GLOBALS->ps_maxveclen>66)
 return(0);
 }
 
+int f_scale_to_time_dimension(char *str)
+{
+int which = tolower((int)(*str));
+DEBUG(printf("f_scale_to_time_dimension(\"%s\")\n",str));
+
+if(strchr(WAVE_SI_UNITS, which) || (which == 's'))
+	{
+	GLOBALS->scale_to_time_dimension = which;
+	}
+	else
+	{
+	GLOBALS->scale_to_time_dimension = 0;	/* also covers '*' case as not found above */
+	}
+
+return(0);
+}
+
 int f_show_base_symbols(char *str)
 {
 DEBUG(printf("f_show_base_symbols(\"%s\")\n",str));
@@ -702,6 +719,7 @@ static struct rc_entry rcitems[]=
 { "lxt_clock_compress_to_z", f_lxt_clock_compress_to_z },
 { "page_divisor", f_page_divisor },
 { "ps_maxveclen", f_ps_maxveclen },
+{ "scale_to_time_dimension", f_scale_to_time_dimension },
 { "show_base_symbols", f_show_base_symbols },
 { "show_grid", f_show_grid },
 { "splash_disable", f_splash_disable },
@@ -899,6 +917,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/12/25 03:21:57  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.13  2008/12/04 19:21:00  gtkwave
  * added zoom_dynamic option for partial VCD loading
  *

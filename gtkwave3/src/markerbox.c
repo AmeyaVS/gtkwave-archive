@@ -110,7 +110,7 @@ for(i=0;i<26;i++)
 		}
         }
 
-reformat_time(buf, temp, GLOBALS->time_dimension);
+reformat_time_simple(buf, temp, GLOBALS->time_dimension);
 
 GLOBALS->shadow_markers_markerbox_c_1[ent_idx]=temp;
 GLOBALS->dirty_markerbox_c_1=1;
@@ -144,7 +144,7 @@ for(i=0;i<26;i++)
         if(temp==GLOBALS->shadow_markers_markerbox_c_1[i]) goto failure;
         }
 
-reformat_time(buf, temp, GLOBALS->time_dimension);
+reformat_time_simple(buf, temp, GLOBALS->time_dimension);
 gtk_entry_set_text (GTK_ENTRY (entry), buf);
 
 GLOBALS->shadow_markers_markerbox_c_1[ent_idx]=temp;
@@ -161,7 +161,7 @@ if(GLOBALS->shadow_markers_markerbox_c_1[ent_idx]==-1)
 	}
 	else
 	{
-	reformat_time(buf, GLOBALS->shadow_markers_markerbox_c_1[ent_idx], GLOBALS->time_dimension);
+	reformat_time_simple(buf, GLOBALS->shadow_markers_markerbox_c_1[ent_idx], GLOBALS->time_dimension);
 	}
 gtk_entry_set_text (GTK_ENTRY (entry), buf);
 }
@@ -285,7 +285,7 @@ void markerbox(char *title, GtkSignalFunc func)
 	}
 	else
 	{
-	reformat_time(buf, GLOBALS->shadow_markers_markerbox_c_1[i], GLOBALS->time_dimension);
+	reformat_time_simple(buf, GLOBALS->shadow_markers_markerbox_c_1[i], GLOBALS->time_dimension);
 	}
 
     gtk_entry_set_text (GTK_ENTRY (entry), buf);
@@ -337,6 +337,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/12/16 19:28:20  gtkwave
+ * more warnings cleanups
+ *
  * Revision 1.6  2008/12/11 21:08:15  gtkwave
  * allow support for marker names which are strings
  *

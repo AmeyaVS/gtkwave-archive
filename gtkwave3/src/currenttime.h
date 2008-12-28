@@ -140,6 +140,7 @@ void help_text_bold(char *str);
 void dnd_error(void);
 
 void reformat_time(char *buf, TimeType val, char dim);
+void reformat_time_simple(char *buf, TimeType val, char dim);
 TimeType unformat_time(const char *buf, char dim);
 void time_trunc_set(void);
 TimeType time_trunc(TimeType t);
@@ -172,6 +173,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2008/12/09 00:36:42  gtkwave
+ * added mouseover support for signal window
+ *
  * Revision 1.49  2008/10/21 04:04:28  gtkwave
  * getting ready for version bump
  *

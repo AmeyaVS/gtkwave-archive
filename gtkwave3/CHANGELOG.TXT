@@ -555,3 +555,5 @@
 		Remove stray tempfiles created by --giga writer under MinGW.
 		Removed stray file descriptor from lxt on reload.
 		Fixed repeat error problem in lxt.c introduced by -Wshadow fix.
+		Added prelim version of scale_to_time_dimension rc variable and 
+		appropriate menu options.

@@ -179,6 +179,7 @@ NULL, /* base_or_curtime_label_currenttime_c_1 60 */
 ~0, /* display_grid 65 */
 1, /* time_scale 66 */
 'n', /* time_dimension 67 */
+0,   /* scale_to_time_dimension */
 0, /* maxtimewid_currenttime_c_1 69 */
 0, /* curtimewid_currenttime_c_1 70 */
 0, /* maxtext_currenttime_c_1 71 */
@@ -1452,6 +1453,7 @@ void reload_into_new_context(void)
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
 
  /* rc.c */
+ new_globals->scale_to_time_dimension = GLOBALS->scale_to_time_dimension;
  new_globals->zoom_dyn = GLOBALS->zoom_dyn;
  new_globals->use_scrollwheel_as_y = GLOBALS->use_scrollwheel_as_y;
  new_globals->context_tabposition = GLOBALS->context_tabposition;

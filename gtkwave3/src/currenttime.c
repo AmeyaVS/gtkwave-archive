@@ -147,7 +147,7 @@ if(delta<0)
 return(rval);
 }
 
-void reformat_time(char *buf, TimeType val, char dim)
+void reformat_time_simple(char *buf, TimeType val, char dim)
 {
 char *pnt;
 int i, offset;
@@ -159,6 +159,81 @@ for(i=offset; i>0; i--)
 	{
 	if(val%1000) break;
 	val=val/1000;
+	}
+
+if(i)
+	{
+	sprintf(buf, TTFormat" %cs", val, time_prefix[i]);
+	}
+	else
+	{
+	sprintf(buf, TTFormat" sec", val);
+	}
+}
+
+void reformat_time(char *buf, TimeType val, char dim)
+{
+char *pnt;
+int i, offset, offsetfix;
+
+pnt=strchr(time_prefix, (int)dim);
+if(pnt) { offset=pnt-time_prefix; } else offset=0;
+
+for(i=offset; i>0; i--)
+	{
+	if(val%1000) break;
+	val=val/1000;
+	}
+
+if(GLOBALS->scale_to_time_dimension)
+	{
+	if(GLOBALS->scale_to_time_dimension == 's')
+		{
+		pnt = time_prefix;
+		}
+		else
+		{
+		pnt=strchr(time_prefix, (int)GLOBALS->scale_to_time_dimension);
+		}
+	if(pnt) 
+		{
+		offsetfix = pnt-time_prefix;
+		if(offsetfix != i)
+			{
+			int j;
+			int deltaexp = (offsetfix - i);
+			gdouble gval = (gdouble)val;
+			gdouble mypow = 1.0;
+
+			if(deltaexp > 0)
+				{
+				for(j=0;j<deltaexp;j++)
+					{
+					mypow *= 1000.0;
+					}
+				}
+			else
+				{
+				for(j=0;j>deltaexp;j--)
+					{
+					mypow /= 1000.0;
+					}
+				}
+
+			gval *= mypow;
+
+			if(GLOBALS->scale_to_time_dimension == 's')
+				{
+				sprintf(buf, "%g sec", gval);
+				}
+				else
+				{
+				sprintf(buf, "%g %cs", gval, GLOBALS->scale_to_time_dimension);
+				}
+
+			return; 
+			}
+		}
 	}
 
 if(i)
@@ -200,7 +275,7 @@ if(val)
 void reformat_time_blackout(char *buf, TimeType val, char dim)
 {
 char *pnt;
-int i, offset;
+int i, offset, offsetfix;
 struct blackout_region_t *bt = GLOBALS->blackout_regions;
 char blackout = ' ';
 
@@ -222,6 +297,57 @@ for(i=offset; i>0; i--)
 	{
 	if(val%1000) break;
 	val=val/1000;
+	}
+
+if(GLOBALS->scale_to_time_dimension)
+	{
+	if(GLOBALS->scale_to_time_dimension == 's')
+		{
+		pnt = time_prefix;
+		}
+		else
+		{
+		pnt=strchr(time_prefix, (int)GLOBALS->scale_to_time_dimension);
+		}
+	if(pnt) 
+		{
+		offsetfix = pnt-time_prefix;
+		if(offsetfix != i)
+			{
+			int j;
+			int deltaexp = (offsetfix - i);
+			gdouble gval = (gdouble)val;
+			gdouble mypow = 1.0;
+
+			if(deltaexp > 0)
+				{
+				for(j=0;j<deltaexp;j++)
+					{
+					mypow *= 1000.0;
+					}
+				}
+			else
+				{
+				for(j=0;j>deltaexp;j--)
+					{
+					mypow /= 1000.0;
+					}
+				}
+
+			gval *= mypow;
+
+			if(GLOBALS->scale_to_time_dimension == 's')
+				{
+				sprintf(buf, "%g%csec", gval, blackout);
+				}
+				else
+				{
+				sprintf(buf, "%g%c%cs", gval, blackout, GLOBALS->scale_to_time_dimension);
+				}
+
+			return; 
+			}
+		}
 	}
 
 if(i)
@@ -546,6 +672,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/10/14 20:44:39  gtkwave
+ * fixed unformat time bug when base time is in seconds
+ *
  * Revision 1.9  2008/09/27 19:08:39  gtkwave
  * compiler warning fixes
  *

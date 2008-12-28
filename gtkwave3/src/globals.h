@@ -177,6 +177,7 @@ TimeType min_time; /* from currenttime.c 65 */
 char display_grid; /* from currenttime.c 66 */
 TimeType time_scale; /* from currenttime.c 67 */
 char time_dimension; /* from currenttime.c 68 */
+char scale_to_time_dimension; /* from currenttime.c */
 GtkWidget *maxtimewid_currenttime_c_1; /* from currenttime.c 70 */
 GtkWidget *curtimewid_currenttime_c_1; /* from currenttime.c 71 */
 char *maxtext_currenttime_c_1; /* from currenttime.c 72 */

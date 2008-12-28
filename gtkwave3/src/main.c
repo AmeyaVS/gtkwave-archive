@@ -87,6 +87,7 @@ GLOBALS->constant_marker_update = g_old->constant_marker_update;
 GLOBALS->do_zoom_center = g_old->do_zoom_center;
 GLOBALS->use_roundcaps = g_old->use_roundcaps;
 GLOBALS->do_resize_signals = g_old->do_resize_signals;
+GLOBALS->scale_to_time_dimension = g_old->scale_to_time_dimension;
 GLOBALS->use_full_precision = g_old->use_full_precision;
 GLOBALS->show_base = g_old->show_base;
 GLOBALS->display_grid = g_old->display_grid;
@@ -408,6 +409,7 @@ if(!GLOBALS)
 	GLOBALS->disable_tooltips = old_g->disable_tooltips;
 	GLOBALS->do_initial_zoom_fit = old_g->do_initial_zoom_fit;
 	GLOBALS->do_resize_signals = old_g->do_resize_signals;
+	GLOBALS->scale_to_time_dimension = old_g->scale_to_time_dimension;
 	GLOBALS->enable_fast_exit = old_g->enable_fast_exit;
 	GLOBALS->enable_ghost_marker = old_g->enable_ghost_marker;
 	GLOBALS->enable_horiz_grid = old_g->enable_horiz_grid;
@@ -2154,6 +2156,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2008/12/25 04:07:29  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.40  2008/12/20 07:44:22  gtkwave
  * experimental support for Tcl repscripts
  *
