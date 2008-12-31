@@ -243,7 +243,7 @@ typedef struct TraceEnt
     unsigned minmax_valid : 1;	/* for d_minval, d_maxval */
 
     unsigned int flags;		/* see def below in TraceEntFlagBits */
-    unsigned int cached_flags;	/* used for analog to determine if need to recalculate */
+    unsigned int cached_flags;	/* used for tcl for saving flags during cut and paste */
 
     union
       {
@@ -334,6 +334,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/12/18 01:31:30  gtkwave
+ * integrated experimental autoscroll code on signal adds
+ *
  * Revision 1.8  2008/07/18 17:27:00  gtkwave
  * adding hierpack code
  *

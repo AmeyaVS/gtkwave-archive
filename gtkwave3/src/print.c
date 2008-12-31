@@ -1384,7 +1384,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 
   if (t->flags & TR_ANALOG_FULLSCALE)	/* otherwise use dynamic */
     {
-      if ((t->flags != t->cached_flags) || (!t->minmax_valid))
+      if (!t->minmax_valid)
 	{
 	  h3 = &t->n.nd->head;
 	  for (;;)
@@ -2032,7 +2032,7 @@ pr_draw_vptr_trace_analog (pr_context * prc, Trptr t, vptr v, int which,
 
   if (t->flags & TR_ANALOG_FULLSCALE)	/* otherwise use dynamic */
     {
-      if ((t->flags != t->cached_flags) || (!t->minmax_valid))
+      if (!t->minmax_valid)
 	{
 	  h3 = t->n.vec->vectors[0];
 	  for (;;)
@@ -2870,6 +2870,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2008/12/25 04:14:11  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.17  2008/12/11 21:08:15  gtkwave
  * allow support for marker names which are strings
  *

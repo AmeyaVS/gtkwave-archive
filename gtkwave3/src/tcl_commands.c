@@ -611,6 +611,34 @@ if(objc == 2)
 return(TCL_OK);
 }
 
+static int gtkwavetcl_setZoomRangeTimes(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 3)
+        {
+        char *s, *t;
+	TimeType time1, time2;
+
+	s = Tcl_GetString(objv[1]);
+	time1 = unformat_time(s, GLOBALS->time_dimension);
+        t = Tcl_GetString(objv[2]);
+	time2 = unformat_time(t, GLOBALS->time_dimension);
+
+	if(time1 < GLOBALS->tims.first) { time1 = GLOBALS->tims.first; }
+	if(time1 > GLOBALS->tims.last)  { time1 = GLOBALS->tims.last; }
+	if(time2 < GLOBALS->tims.first) { time2 = GLOBALS->tims.first; }
+	if(time2 > GLOBALS->tims.last)  { time2 = GLOBALS->tims.last; }
+
+	service_dragzoom(time1, time2);
+	gtkwave_gtk_main_iteration();
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
 static int gtkwavetcl_setLeftJustifySigs(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 if(objc == 2)
@@ -762,6 +790,253 @@ return(TCL_OK);
 }
 
 
+static char *extractFullTraceName(Trptr t)
+{
+char *name = NULL;
+
+if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+	{
+	if(t->vector==TRUE)
+		{
+		name = strdup_2(t->n.vec->name);
+		}
+		else 
+		{
+		if(!t->is_alias)
+			{
+	                int flagged = 0;
+
+	                name = hier_decompress_flagged(t->n.nd->nname, &flagged);
+			if(!flagged)
+				{
+				name = strdup_2(name);
+				}
+       			}
+       			else
+       			{
+			name = strdup_2(t->name);
+       			} 
+		}
+	}
+return(name);
+}
+
+
+static int gtkwavetcl_deleteSignalsFromList(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+int i;
+int num_found = 0;
+char reportString[33];
+Tcl_Obj *aobj;
+
+if(objc==2)
+	{
+        char *s = Tcl_GetString(objv[1]);
+	char** elem = NULL;
+	int l = 0;
+
+	elem = zSplitTclList(s, &l);
+ 
+	if(elem)
+        	{
+		Trptr t = GLOBALS->traces.first;
+		while(t)
+			{
+			t->cached_flags = t->flags;
+			t->flags &= (~TR_HIGHLIGHT);	
+		
+			if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+				{
+				char *name = extractFullTraceName(t);
+				if(name)
+					{
+					for(i=0;i<l;i++)
+						{
+						if(!strcmp(name, elem[i]))
+							{
+							t->flags |= TR_HIGHLIGHT;
+							num_found++;
+							break;
+							}
+						}
+					free_2(name);
+					}
+				}
+
+			t = t-> t_next;
+			}
+
+                free_2(elem);
+                elem = NULL;
+
+		if(num_found)
+        		{
+			CutBuffer();
+			}
+
+		t = GLOBALS->traces.first;
+		while(t)
+			{
+			t->flags = t->cached_flags;
+			t->cached_flags = 0;
+			t = t-> t_next;
+			}
+
+		if(num_found)
+        		{
+        		MaxSignalLength();
+        		signalarea_configure_event(GLOBALS->signalarea, NULL);
+        		wavearea_configure_event(GLOBALS->wavearea, NULL);
+			gtkwave_gtk_main_iteration();
+        		}
+                }
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+sprintf(reportString, "%d", num_found);
+
+aobj = Tcl_NewStringObj(reportString, -1);
+Tcl_SetObjResult(interp, aobj);
+
+return(TCL_OK);
+}
+
+static int gtkwavetcl_highlightSignalsFromList(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+int i;
+int num_found = 0;
+char reportString[33];
+Tcl_Obj *aobj;
+
+if(objc==2)
+	{
+        char *s = Tcl_GetString(objv[1]);
+	char** elem = NULL;
+	int l = 0;
+
+	elem = zSplitTclList(s, &l);
+ 
+	if(elem)
+        	{
+		Trptr t = GLOBALS->traces.first;
+		while(t)
+			{
+			if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+				{
+				char *name = extractFullTraceName(t);
+				if(name)
+					{
+					for(i=0;i<l;i++)
+						{
+						if(!strcmp(name, elem[i]))
+							{
+							t->flags |= TR_HIGHLIGHT;
+							num_found++;
+							break;
+							}
+						}
+					free_2(name);
+					}
+				}
+
+			t = t-> t_next;
+			}
+
+                free_2(elem);
+                elem = NULL;
+
+		if(num_found)
+        		{
+        		MaxSignalLength();
+        		signalarea_configure_event(GLOBALS->signalarea, NULL);
+        		wavearea_configure_event(GLOBALS->wavearea, NULL);
+			gtkwave_gtk_main_iteration();
+        		}
+                }
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+sprintf(reportString, "%d", num_found);
+
+aobj = Tcl_NewStringObj(reportString, -1);
+Tcl_SetObjResult(interp, aobj);
+
+return(TCL_OK);
+}
+
+static int gtkwavetcl_unhighlightSignalsFromList(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+int i;
+int num_found = 0;
+char reportString[33];
+Tcl_Obj *aobj;
+
+if(objc==2)
+	{
+        char *s = Tcl_GetString(objv[1]);
+	char** elem = NULL;
+	int l = 0;
+
+	elem = zSplitTclList(s, &l);
+ 
+	if(elem)
+        	{
+		Trptr t = GLOBALS->traces.first;
+		while(t)
+			{
+			if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+				{
+				char *name = extractFullTraceName(t);
+				if(name)
+					{
+					for(i=0;i<l;i++)
+						{
+						if(!strcmp(name, elem[i]))
+							{
+							t->flags &= (~TR_HIGHLIGHT);
+							num_found++;
+							break;
+							}
+						}
+					free_2(name);
+					}
+				}
+
+			t = t-> t_next;
+			}
+
+                free_2(elem);
+                elem = NULL;
+
+		if(num_found)
+        		{
+        		MaxSignalLength();
+        		signalarea_configure_event(GLOBALS->signalarea, NULL);
+        		wavearea_configure_event(GLOBALS->wavearea, NULL);
+			gtkwave_gtk_main_iteration();
+        		}
+                }
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+sprintf(reportString, "%d", num_found);
+
+aobj = Tcl_NewStringObj(reportString, -1);
+Tcl_SetObjResult(interp, aobj);
+
+return(TCL_OK);
+}
+
+
 static int gtkwavetcl_setTraceHighlightFromIndex(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 if(objc == 3)
@@ -873,6 +1148,7 @@ return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
 tcl_cmdstruct gtkwave_commands[] =
 	{
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
+	{"deleteSignalsFromList",		gtkwavetcl_deleteSignalsFromList},
 	{"findNextEdge",			gtkwavetcl_findNextEdge},
 	{"findPrevEdge",			gtkwavetcl_findPrevEdge},
 	{"getBaselineMarker",			gtkwavetcl_getBaselineMarker},
@@ -904,6 +1180,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getWindowEndTime", 			gtkwavetcl_getWindowEndTime},
 	{"getWindowStartTime", 			gtkwavetcl_getWindowStartTime},
 	{"getZoomFactor",			gtkwavetcl_getZoomFactor},
+	{"highlightSignalsFromList",		gtkwavetcl_highlightSignalsFromList},
    	{"nop", 				gtkwavetcl_nop},
 	{"setLeftJustifySigs",			gtkwavetcl_setLeftJustifySigs},
 	{"setMarker",				gtkwavetcl_setMarker},
@@ -913,6 +1190,8 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"setTraceScrollbarRowValue", 		gtkwavetcl_setTraceScrollbarRowValue},
 	{"setWindowStartTime",			gtkwavetcl_setWindowStartTime},
 	{"setZoomFactor",			gtkwavetcl_setZoomFactor},
+	{"setZoomRangeTimes",			gtkwavetcl_setZoomRangeTimes},
+	{"unhighlightSignalsFromList",		gtkwavetcl_unhighlightSignalsFromList},
    	{"", 					NULL} /* sentinel */
 	};
 
@@ -929,6 +1208,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/12/25 03:28:55  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.8  2008/12/16 18:21:02  gtkwave
  * can now set named marker user names through Tcl scripts
  *

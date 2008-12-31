@@ -2500,7 +2500,7 @@ yu=(_y0+_y1)/2;
 
 if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 	{
-	if((t->flags != t->cached_flags) || (!t->minmax_valid))
+	if(!t->minmax_valid)
 		{
 		h3 = &t->n.nd->head;
 		for(;;)
@@ -3212,7 +3212,7 @@ yu=(_y0+_y1)/2;
 
 if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
         {
-        if((t->flags != t->cached_flags) || (!t->minmax_valid))
+        if(!t->minmax_valid)
                 { 
                 h3 = t->n.vec->vectors[0];
                 for(;;)
@@ -3836,6 +3836,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2008/12/25 04:14:11  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.42  2008/12/11 21:08:15  gtkwave
  * allow support for marker names which are strings
  *
