@@ -119,6 +119,38 @@ Tcl_SetObjResult(interp, aobj);
 return(TCL_OK);
 }
 
+static char *extractFullTraceName(Trptr t)
+{
+char *name = NULL;
+
+if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+	{
+	if(t->vector==TRUE)
+		{
+		name = strdup_2(t->n.vec->name);
+		}
+		else 
+		{
+		if(!t->is_alias)
+			{
+	                int flagged = 0;
+
+	                name = hier_decompress_flagged(t->n.nd->nname, &flagged);
+			if(!flagged)
+				{
+				name = strdup_2(name);
+				}
+       			}
+       			else
+       			{
+			name = strdup_2(t->name);
+       			} 
+		}
+	}
+return(name);
+}
+
+
 /* tcl interface functions */
 
 static int gtkwavetcl_getNumFacs(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -446,6 +478,139 @@ if(objc == 2)
 return(TCL_OK);
 }
 
+static int gtkwavetcl_getTraceValueAtMarkerFromName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+	{
+	char *s = Tcl_GetString(objv[1]);
+	Trptr t = GLOBALS->traces.first;
+
+	while(t)
+		{
+		if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+			{
+			char *name = extractFullTraceName(t);
+			if(!strcmp(name, s))
+				{
+				free_2(name);
+				break;
+				}
+			free_2(name);
+			}
+		t = t-> t_next;
+		}
+
+	if(t)
+		{
+		if(t->asciivalue)
+			{
+			char *pnt = t->asciivalue;
+			if(*pnt == '=') pnt++;
+			return(gtkwavetcl_printString(clientData, interp, objc, objv, pnt));
+			}
+		}
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
+
+static int gtkwavetcl_getTraceValueAtNamedMarkerFromName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 3)
+	{
+	char *sv = Tcl_GetString(objv[1]);
+	int which = -1;
+	TimeType oldmarker = GLOBALS->tims.marker;
+	TimeType value = LLDescriptor(-1);
+
+	if((sv[0]>='A')&&(sv[0]<='Z'))
+		{
+		which = sv[0] - 'A';
+		}
+	else
+	if((sv[0]>='a')&&(sv[0]<='z'))
+		{
+		which = sv[0] - 'a';
+		}
+	else
+		{
+		which = atoi(sv);
+		}
+
+	if((which >= 0) && (which < 26))
+		{
+		char *s = Tcl_GetString(objv[2]);
+		Trptr t = GLOBALS->traces.first;
+
+		value = GLOBALS->named_markers[which];
+
+		while(t)
+			{
+			if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+				{
+				char *name = extractFullTraceName(t);
+				if(!strcmp(name, s))
+					{
+					free_2(name);
+					break;
+					}
+				free_2(name);
+				}
+			t = t-> t_next;
+			}
+
+		if(t && (value >= LLDescriptor(0)))
+			{
+			GLOBALS->tims.marker = value;
+		        GLOBALS->signalwindow_width_dirty=1;
+		        MaxSignalLength();
+		        signalarea_configure_event(GLOBALS->signalarea, NULL);
+		        wavearea_configure_event(GLOBALS->wavearea, NULL);
+			gtkwave_gtk_main_iteration();
+
+			if(t->asciivalue)
+				{
+				Tcl_Obj *aobj;
+				char *pnt = t->asciivalue;
+				if(*pnt == '=') pnt++;
+
+				aobj = Tcl_NewStringObj(pnt, -1); 
+				Tcl_SetObjResult(interp, aobj);
+
+				GLOBALS->tims.marker = oldmarker;
+				update_markertime(GLOBALS->tims.marker);
+			        GLOBALS->signalwindow_width_dirty=1;
+			        MaxSignalLength();
+			        signalarea_configure_event(GLOBALS->signalarea, NULL);
+			        wavearea_configure_event(GLOBALS->wavearea, NULL);
+				gtkwave_gtk_main_iteration();
+
+				return(TCL_OK);
+				}
+
+			GLOBALS->tims.marker = oldmarker;
+			update_markertime(GLOBALS->tims.marker);
+		        GLOBALS->signalwindow_width_dirty=1;
+		        MaxSignalLength();
+		        signalarea_configure_event(GLOBALS->signalarea, NULL);
+		        wavearea_configure_event(GLOBALS->wavearea, NULL);
+			gtkwave_gtk_main_iteration();
+			}
+		}
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
 static int gtkwavetcl_getHierMaxLevel(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 int value = GLOBALS->hier_max_level;
@@ -617,6 +782,7 @@ if(objc == 3)
         {
         char *s, *t;
 	TimeType time1, time2;
+	TimeType oldmarker = GLOBALS->tims.marker;
 
 	s = Tcl_GetString(objv[1]);
 	time1 = unformat_time(s, GLOBALS->time_dimension);
@@ -629,6 +795,13 @@ if(objc == 3)
 	if(time2 > GLOBALS->tims.last)  { time2 = GLOBALS->tims.last; }
 
 	service_dragzoom(time1, time2);
+	GLOBALS->tims.marker = oldmarker;
+
+        GLOBALS->signalwindow_width_dirty=1;
+        MaxSignalLength();
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        wavearea_configure_event(GLOBALS->wavearea, NULL);
+
 	gtkwave_gtk_main_iteration();
 	}
         else  
@@ -788,39 +961,6 @@ Tcl_SetObjResult(interp, aobj);
 
 return(TCL_OK);
 }
-
-
-static char *extractFullTraceName(Trptr t)
-{
-char *name = NULL;
-
-if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
-	{
-	if(t->vector==TRUE)
-		{
-		name = strdup_2(t->n.vec->name);
-		}
-		else 
-		{
-		if(!t->is_alias)
-			{
-	                int flagged = 0;
-
-	                name = hier_decompress_flagged(t->n.nd->nname, &flagged);
-			if(!flagged)
-				{
-				name = strdup_2(name);
-				}
-       			}
-       			else
-       			{
-			name = strdup_2(t->name);
-       			} 
-		}
-	}
-return(name);
-}
-
 
 static int gtkwavetcl_deleteSignalsFromList(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
@@ -1173,6 +1313,8 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getTraceNameFromIndex", 		gtkwavetcl_getTraceNameFromIndex},
 	{"getTraceScrollbarRowValue", 		gtkwavetcl_getTraceScrollbarRowValue},
 	{"getTraceValueAtMarkerFromIndex", 	gtkwavetcl_getTraceValueAtMarkerFromIndex},
+	{"getTraceValueAtMarkerFromName",	gtkwavetcl_getTraceValueAtMarkerFromName},
+	{"getTraceValueAtNamedMarkerFromName",	gtkwavetcl_getTraceValueAtNamedMarkerFromName},
 	{"getUnitTimePixels", 			gtkwavetcl_getUnitTimePixels},
 	{"getVisibleNumTraces", 		gtkwavetcl_getVisibleNumTraces},
 	{"getWaveHeight", 			gtkwavetcl_getWaveHeight},
@@ -1208,6 +1350,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/12/31 22:20:12  gtkwave
+ * adding more tcl commands
+ *
  * Revision 1.9  2008/12/25 03:28:55  gtkwave
  * -Wshadow warning fixes
  *
