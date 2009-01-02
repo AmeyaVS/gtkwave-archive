@@ -217,6 +217,14 @@ Tcl_SetObjResult(interp, aobj);
 return(TCL_OK);
 }
 
+static int gtkwavetcl_getArgv(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+Tcl_Obj *aobj = Tcl_NewStringObj(GLOBALS->argvlist, -1);
+Tcl_SetObjResult(interp, aobj);
+
+return(TCL_OK);
+}
+
 static int gtkwavetcl_getBaselineMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 TimeType value = GLOBALS->tims.baseline;
@@ -1291,6 +1299,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"deleteSignalsFromList",		gtkwavetcl_deleteSignalsFromList},
 	{"findNextEdge",			gtkwavetcl_findNextEdge},
 	{"findPrevEdge",			gtkwavetcl_findPrevEdge},
+	{"getArgv",				gtkwavetcl_getArgv},
 	{"getBaselineMarker",			gtkwavetcl_getBaselineMarker},
 	{"getDumpFileName",			gtkwavetcl_getDumpFileName},
 	{"getDumpType", 			gtkwavetcl_getDumpType},
@@ -1350,6 +1359,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/01/01 03:55:12  gtkwave
+ * more tcl command adds...value retrieval
+ *
  * Revision 1.10  2008/12/31 22:20:12  gtkwave
  * adding more tcl commands
  *

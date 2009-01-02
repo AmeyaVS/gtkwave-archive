@@ -462,6 +462,7 @@ if(!GLOBALS)
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_logfile, &old_g->fontname_logfile);
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_signals, &old_g->fontname_signals); 
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_waves, &old_g->fontname_waves);
+        strcpy2_into_new_context(GLOBALS, &GLOBALS->argvlist, &old_g->argvlist);
 
 	mainwindow_already_built = 1;
 	}
@@ -801,6 +802,7 @@ if(is_giga)
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
 if(tcl_interpreter_needs_making)
 	{
+	GLOBALS->argvlist = zMergeTclList(argc, (const char**)argv);
 	make_tcl_interpreter(argv);
 	}
 
@@ -2156,6 +2158,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2008/12/28 03:03:33  gtkwave
+ * Added scale_to_time_dimension rc variable and menu options.
+ *
  * Revision 1.41  2008/12/25 04:07:29  gtkwave
  * -Wshadow warning fixes
  *

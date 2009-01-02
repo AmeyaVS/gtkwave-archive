@@ -395,6 +395,7 @@ int max_compare_pos_tc_lxt_c_2; /* from lxt.c 200 */
 /*
  * main.c
  */
+char *argvlist;
 #ifdef HAVE_LIBTCL
 Tcl_Interp *interp;
 #endif

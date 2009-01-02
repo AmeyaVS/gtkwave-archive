@@ -396,6 +396,7 @@ NULL, /* lt_buf_lxt_c_1 183 */
 /* 
  * main.c
  */
+NULL, /* argvlist */
 #if defined(HAVE_LIBTCL)
 NULL, /* interp */
 #endif
@@ -1550,6 +1551,7 @@ void reload_into_new_context(void)
 
  new_globals->logfiles = GLOBALS->logfiles; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
 
+ strcpy2_into_new_context(new_globals, &new_globals->argvlist, &GLOBALS->argvlist);
  strcpy2_into_new_context(new_globals, &new_globals->fontname_logfile, &GLOBALS->fontname_logfile);
  strcpy2_into_new_context(new_globals, &new_globals->fontname_signals, &GLOBALS->fontname_signals); 
  strcpy2_into_new_context(new_globals, &new_globals->fontname_waves, &GLOBALS->fontname_waves);

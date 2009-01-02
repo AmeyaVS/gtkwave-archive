@@ -609,7 +609,7 @@ static int tclConvertElement(const char* src, char* dst, int flags)
  *      The return value is the address of a dynamically-allocated string.
  * ============================================================================
  */
-static char* zMergeTclList(int argc, const char** argv) {
+char* zMergeTclList(int argc, const char** argv) {
     enum  {LOCAL_SIZE = 20};
     int   localFlags[LOCAL_SIZE];
     int*  flagPtr;
@@ -2466,6 +2466,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2008/12/27 19:55:06  gtkwave
+ * remove stray tempfiles under MinGW
+ *
  * Revision 1.39  2008/12/25 03:28:55  gtkwave
  * -Wshadow warning fixes
  *

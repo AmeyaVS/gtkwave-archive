@@ -56,6 +56,7 @@ char *add_dnd_from_signal_window(void);
 char *add_dnd_from_tree_window(void);
 char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr trhead, gboolean use_tcl_mode);
 
+char* zMergeTclList(int argc, const char** argv);
 char** zSplitTclList(const char* list, int* argcPtr);
 char *make_single_tcl_list_name(char *s, char *opt_value, int promote_to_bus);
 void make_tcl_interpreter(char *argv[]);
@@ -65,6 +66,10 @@ void make_tcl_interpreter(char *argv[]);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.11  2008/11/25 18:07:32  gtkwave
+ * added cut copy paste functionality that survives reload and can do
+ * multiple pastes on the same cut buffer
+ *
  * Revision 1.10  2008/11/24 02:55:10  gtkwave
  * use TCL_INCLUDE_SPEC to fix ubuntu compiles
  *
