@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2161,6 +2161,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2009/01/02 06:12:48  gtkwave
+ * needed check for TCL presence for GLOBALS->interp cloning
+ *
  * Revision 1.44  2009/01/02 06:11:00  gtkwave
  * needed to clone GLOBALS->interp from one instance to the next in maketabs
  *

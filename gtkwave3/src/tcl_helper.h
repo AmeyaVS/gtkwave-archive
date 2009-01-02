@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell and Concept Engineering GmbH 2008.
+ * Copyright (c) Tony Bybell and Concept Engineering GmbH 2008-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,6 +66,9 @@ void make_tcl_interpreter(char *argv[]);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.12  2009/01/02 06:01:51  gtkwave
+ * added getArgv for tcl commands
+ *
  * Revision 1.11  2008/11/25 18:07:32  gtkwave
  * added cut copy paste functionality that survives reload and can do
  * multiple pastes on the same cut buffer

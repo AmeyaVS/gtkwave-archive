@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2008.
+ * Copyright (c) Tony Bybell 2008-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1362,6 +1362,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/01/02 06:11:00  gtkwave
+ * needed to clone GLOBALS->interp from one instance to the next in maketabs
+ *
  * Revision 1.12  2009/01/02 06:01:51  gtkwave
  * added getArgv for tcl commands
  *
