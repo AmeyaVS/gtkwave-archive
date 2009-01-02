@@ -340,7 +340,9 @@ if(!GLOBALS)
 	GLOBALS->logfiles = old_g->logfiles;
 
 	/* menu.c */
+#if defined(HAVE_LIBTCL)
 	GLOBALS->interp = old_g->interp;
+#endif
 	GLOBALS->item_factory_menu_c_1 = old_g->item_factory_menu_c_1;
 	GLOBALS->vcd_jmp_buf = old_g->vcd_jmp_buf;
 
@@ -2159,6 +2161,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2009/01/02 06:11:00  gtkwave
+ * needed to clone GLOBALS->interp from one instance to the next in maketabs
+ *
  * Revision 1.43  2009/01/02 06:01:51  gtkwave
  * added getArgv for tcl commands
  *
