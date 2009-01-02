@@ -340,6 +340,7 @@ if(!GLOBALS)
 	GLOBALS->logfiles = old_g->logfiles;
 
 	/* menu.c */
+	GLOBALS->interp = old_g->interp;
 	GLOBALS->item_factory_menu_c_1 = old_g->item_factory_menu_c_1;
 	GLOBALS->vcd_jmp_buf = old_g->vcd_jmp_buf;
 
@@ -2158,6 +2159,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2009/01/02 06:01:51  gtkwave
+ * added getArgv for tcl commands
+ *
  * Revision 1.42  2008/12/28 03:03:33  gtkwave
  * Added scale_to_time_dimension rc variable and menu options.
  *

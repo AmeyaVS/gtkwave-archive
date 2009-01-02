@@ -219,8 +219,11 @@ return(TCL_OK);
 
 static int gtkwavetcl_getArgv(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-Tcl_Obj *aobj = Tcl_NewStringObj(GLOBALS->argvlist, -1);
-Tcl_SetObjResult(interp, aobj);
+if(GLOBALS->argvlist)
+	{
+	Tcl_Obj *aobj = Tcl_NewStringObj(GLOBALS->argvlist, -1);
+	Tcl_SetObjResult(interp, aobj);
+	}
 
 return(TCL_OK);
 }
@@ -1359,6 +1362,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/01/02 06:01:51  gtkwave
+ * added getArgv for tcl commands
+ *
  * Revision 1.11  2009/01/01 03:55:12  gtkwave
  * more tcl command adds...value retrieval
  *
