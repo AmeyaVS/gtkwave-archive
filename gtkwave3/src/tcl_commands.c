@@ -872,11 +872,16 @@ if((objc == 3)||(objc == 4))
 
                 GLOBALS->named_markers[which] = gt;
 
+		if(GLOBALS->marker_names[which]) 
+			{
+			free_2(GLOBALS->marker_names[which]);
+			GLOBALS->marker_names[which] = NULL;
+			}
+
 		if(objc == 4)
 			{
 			char *u = Tcl_GetString(objv[3]);
 
-			if(GLOBALS->marker_names[which]) free_2(GLOBALS->marker_names[which]);
 			GLOBALS->marker_names[which] = strdup_2(u);
 			}
 
@@ -1362,6 +1367,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/01/02 06:24:28  gtkwave
+ * bumped copyright to 2009
+ *
  * Revision 1.13  2009/01/02 06:11:00  gtkwave
  * needed to clone GLOBALS->interp from one instance to the next in maketabs
  *
