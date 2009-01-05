@@ -1218,6 +1218,7 @@ if(objc == 3)
 					{
 					t->flags &= (~TR_HIGHLIGHT);
 					}
+	        		signalarea_configure_event(GLOBALS->signalarea, NULL);
 				gtkwave_gtk_main_iteration();
 				break;
 				}
@@ -1270,6 +1271,7 @@ if(objc == 3)
 
 		if(mat)
 			{
+        		signalarea_configure_event(GLOBALS->signalarea, NULL);
 			gtkwave_gtk_main_iteration();
 			}
 
@@ -1367,6 +1369,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2009/01/04 21:48:24  gtkwave
+ * setNamedMarker fix for a string set followed by a non-string one
+ *
  * Revision 1.14  2009/01/02 06:24:28  gtkwave
  * bumped copyright to 2009
  *
