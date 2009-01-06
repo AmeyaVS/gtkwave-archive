@@ -5193,6 +5193,7 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Remove Highlighted Aliases", NULL, menu_remove_aliases, WV_MENU_ERHA, "<Item>"),
     WAVE_GTKIFE("/<separator>", NULL, NULL, WV_MENU_SEP3, "<Separator>"),
     WAVE_GTKIFE("/Cut", NULL, menu_cut_traces, WV_MENU_EC, "<Item>"),
+    WAVE_GTKIFE("/Copy", NULL, menu_copy_traces, WV_MENU_ECY, "<Item>"),
     WAVE_GTKIFE("/Paste", NULL, menu_paste_traces, WV_MENU_EP, "<Item>")
 };
 
@@ -5237,6 +5238,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.54  2008/12/28 03:03:34  gtkwave
+ * Added scale_to_time_dimension rc variable and menu options.
+ *
  * Revision 1.53  2008/12/25 04:07:29  gtkwave
  * -Wshadow warning fixes
  *
