@@ -2321,13 +2321,14 @@ if(objc > 1)
 	char *fnam = tmpnam_2("tclwave", &fd);
 	if(fnam)
 		{
-		GLOBALS->script_handle = fopen(fnam, "wb");
+		FILE *local_script_handle = GLOBALS->script_handle = fopen(fnam, "wb");
 		for(i=1;i<objc;i++)
 			{
 			char *s = Tcl_GetString(objv[i]);
 			fprintf(GLOBALS->script_handle,"%s\n", s);
 			}
 		fclose(GLOBALS->script_handle);
+
 		GLOBALS->script_handle = fopen(fnam, "rb");
 		ife->callback();
 		gtkwave_gtk_main_iteration();
@@ -2335,8 +2336,10 @@ if(objc > 1)
 			{
 			close(fd);
 			}
-		fclose(GLOBALS->script_handle);
+
+		fclose(local_script_handle);
 		GLOBALS->script_handle = NULL;
+
 		unlink(fnam);
 		if(fd>-1) 
 			{
@@ -2466,6 +2469,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2009/01/02 06:24:28  gtkwave
+ * bumped copyright to 2009
+ *
  * Revision 1.41  2009/01/02 06:01:51  gtkwave
  * added getArgv for tcl commands
  *
