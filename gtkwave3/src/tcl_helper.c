@@ -2321,7 +2321,9 @@ if(objc > 1)
 	char *fnam = tmpnam_2("tclwave", &fd);
 	if(fnam)
 		{
-		FILE *local_script_handle = GLOBALS->script_handle = fopen(fnam, "wb");
+		FILE *local_script_handle;
+
+		GLOBALS->script_handle = fopen(fnam, "wb");
 		for(i=1;i<objc;i++)
 			{
 			char *s = Tcl_GetString(objv[i]);
@@ -2329,7 +2331,7 @@ if(objc > 1)
 			}
 		fclose(GLOBALS->script_handle);
 
-		GLOBALS->script_handle = fopen(fnam, "rb");
+		local_script_handle = GLOBALS->script_handle = fopen(fnam, "rb");
 		ife->callback();
 		gtkwave_gtk_main_iteration();
 		if(fd>-1) 
@@ -2469,6 +2471,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2009/01/07 17:29:51  gtkwave
+ * keep local version of script handle for executing menu ops
+ *
  * Revision 1.42  2009/01/02 06:24:28  gtkwave
  * bumped copyright to 2009
  *
