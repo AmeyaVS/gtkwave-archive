@@ -186,6 +186,10 @@ static void print_help(char *nam)
 #define REPSCRIPT_GETOPT
 #endif
 
+#if !defined _MSC_VER && !defined __MINGW32__
+#define OUTPUT_GETOPT "  -O, --output=FILE          specify filename for stdout/stderr redirect\n"
+#endif
+
 printf(
 "Usage: %s [OPTION]... [DUMPFILE] [SAVEFILE] [RCFILE]\n\n"
 "  -n, --nocli=DIRPATH        use file requester for dumpfile name\n"
@@ -212,6 +216,7 @@ INTR_GETOPT
 "  -g, --giga                 use gigabyte mempacking when recoding (slower)\n"
 "  -L, --legacy               use legacy VCD mode rather than the VCD recoder\n" 
 "  -v, --vcd                  use stdin as a VCD dumpfile\n"
+OUTPUT_GETOPT
 "  -V, --version              display version banner then exit\n"
 "  -h, --help                 display this help then exit\n"
 "  -x, --exit                 exit after loading trace (for loader benchmarks)\n\n"
@@ -270,6 +275,7 @@ int main_2(int argc, char *argv[])
 static char *winprefix="GTKWave - ";
 static char *winstd="GTKWave (stdio) ";
 static char *vcd_autosave_name="vcd_autosave.sav";
+char *output_name = NULL;
 
 int i;
 int c;
@@ -528,10 +534,11 @@ while (1)
                 {"legacy", 0, 0, 'L'},  
 		{"repscript", 1, 0, 'R'},
 		{"repperiod", 1, 0, 'P'},
+		{"output", 1, 0, 'O' },
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:", long_options, &option_index);
+        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -740,6 +747,12 @@ while (1)
 			strcpy(GLOBALS->repscript_name, optarg);
 			break;
 
+                case 'O':
+			if(output_name) free_2(output_name);
+			output_name = malloc_2(strlen(optarg)+1);
+			strcpy(output_name, optarg);
+			break;
+
                 case 'P':
 			{
 			int pd = atoi(optarg);
@@ -800,6 +813,39 @@ if(is_giga)
 	{
 	GLOBALS->vlist_spill_to_disk = 1;
 	GLOBALS->vlist_prepack = 1;
+	}
+
+if(output_name)
+	{
+#if !defined _MSC_VER && !defined __MINGW32__
+	int iarg;
+	time_t walltime;
+	int fd_replace = open(output_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR);
+	if(fd_replace<0)
+		{
+		fprintf(stderr, "Could not open redirect file, exiting.\n");
+		perror("Why");
+		exit(255);
+		}
+
+	dup2(fd_replace, 1);
+	dup2(fd_replace, 2);
+
+        time(&walltime);
+        printf(WAVE_VERSION_INFO"\nDate: %s\n\n",asctime(localtime(&walltime)));
+
+	for(iarg=0;iarg<argc;iarg++)
+		{
+		if(iarg) printf("\t");
+		printf("%s\n", argv[iarg]);
+		}
+
+	printf("\n\n");
+	fflush(stdout);
+
+#endif
+	free_2(output_name);
+	output_name = NULL;
 	}
 
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
@@ -2161,6 +2207,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2009/01/02 06:24:28  gtkwave
+ * bumped copyright to 2009
+ *
  * Revision 1.45  2009/01/02 06:12:48  gtkwave
  * needed check for TCL presence for GLOBALS->interp cloning
  *
