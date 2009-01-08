@@ -877,6 +877,7 @@ Optional Features:
                           first look for an installed libbz2 and fall back to
                           using the bundled one.
   --disable-largefile     omit support for large files
+  --disable-tcl           Disables Tcl if found
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -2034,7 +2035,7 @@ echo "${ECHO_T}gtk1" >&6
 else
 	echo "$as_me:$LINENO: result: gtk2" >&5
 echo "${ECHO_T}gtk2" >&6
-	CPPFLAGS="$CPPFLAGS -DWAVE_USE_GTK2"
+	CPPFLAGS="-DWAVE_USE_GTK2 $CPPFLAGS"
 fi
 
 
@@ -10057,6 +10058,33 @@ _ACEOF
 
 fi
 
+
+echo "$as_me:$LINENO: checking if Tcl usage should be disabled" >&5
+echo $ECHO_N "checking if Tcl usage should be disabled... $ECHO_C" >&6
+
+ETCL=yes
+DTCL=no
+# Check whether --enable-tcl or --disable-tcl was given.
+if test "${enable_tcl+set}" = set; then
+  enableval="$enable_tcl"
+
+if test "X$enable_tcl" = "Xno" ; then
+	ETCL=no
+	DTCL=yes
+else
+	ETCL=yes
+	DTCL=no
+fi
+
+else
+
+ETCL=yes
+
+fi;
+echo "$as_me:$LINENO: result: $DTCL" >&5
+echo "${ECHO_T}$DTCL" >&6
+
+if test "X$ETCL" = "Xyes" ; then
 as_ac_Lib=`echo "ac_cv_lib_tcl${TCL_VERSION}''_Tcl_CreateInterp" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}" >&5
 echo $ECHO_N "checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}... $ECHO_C" >&6
@@ -10136,6 +10164,7 @@ Tcl support not enabled." >&2;}
 else
 	TCL_DEFADD=-DHAVE_LIBTCL
 	fi
+fi
 
 
 
