@@ -36,7 +36,7 @@ lxt2miner_SOURCES= lxt2miner.c lxt2_read.c lxt2_read.h
 lxt2miner_LDADD= $(LIBZ_LDADD)
 
 tla2vcd_SOURCES= tla2vcd.c $(srcdir)/../gnu_regex.c $(srcdir)/../gnu_regex.h
-tla2vcd_LDADD= $(LIBZ_LDADD)
+tla2vcd_LDADD= $(LIBZ_LDADD) $(GTK_LIBS)
 
 ghwdump_SOURCES= ghwdump.c $(srcdir)/../ghwlib.c
 

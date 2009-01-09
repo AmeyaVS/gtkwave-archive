@@ -76,7 +76,7 @@ tex2vcd_OBJECTS = tex2vcd.$(OBJEXT)
 tex2vcd_LDADD = $(LDADD)
 am_tla2vcd_OBJECTS = tla2vcd.$(OBJEXT) gnu_regex.$(OBJEXT)
 tla2vcd_OBJECTS = $(am_tla2vcd_OBJECTS)
-tla2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1)
+tla2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_vcd2lxt_OBJECTS = vcd2lxt.$(OBJEXT) lxt_write.$(OBJEXT) \
 	v2l_debug.$(OBJEXT)
 vcd2lxt_OBJECTS = $(am_vcd2lxt_OBJECTS)
@@ -233,7 +233,7 @@ vztminer_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD)
 lxt2miner_SOURCES = lxt2miner.c lxt2_read.c lxt2_read.h
 lxt2miner_LDADD = $(LIBZ_LDADD)
 tla2vcd_SOURCES = tla2vcd.c $(srcdir)/../gnu_regex.c $(srcdir)/../gnu_regex.h
-tla2vcd_LDADD = $(LIBZ_LDADD)
+tla2vcd_LDADD = $(LIBZ_LDADD) $(GTK_LIBS)
 ghwdump_SOURCES = ghwdump.c $(srcdir)/../ghwlib.c
 all: all-am
 
