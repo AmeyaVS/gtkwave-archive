@@ -380,9 +380,6 @@ init_syntax_once ()
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-#ifndef __MINGW32__
-typedef char boolean;
-#endif
 #define false 0
 #define true 1
 
@@ -1572,9 +1569,9 @@ static void insert_op1 _RE_ARGS ((re_opcode_t op, unsigned char *loc,
 				  int arg, unsigned char *end));
 static void insert_op2 _RE_ARGS ((re_opcode_t op, unsigned char *loc,
 				  int arg1, int arg2, unsigned char *end));
-static boolean at_begline_loc_p _RE_ARGS ((const char *pattern, const char *p,
+static char at_begline_loc_p _RE_ARGS ((const char *pattern, const char *p,
 					   reg_syntax_t syntax));
-static boolean at_endline_loc_p _RE_ARGS ((const char *p, const char *pend,
+static char at_endline_loc_p _RE_ARGS ((const char *p, const char *pend,
 					   reg_syntax_t syntax));
 static reg_errcode_t compile_range _RE_ARGS ((const char **p_ptr,
 					      const char *pend,
@@ -1862,7 +1859,7 @@ regex_grow_registers (num_regs)
 
 #endif /* not MATCH_MAY_ALLOCATE */
 
-static boolean group_in_compile_stack _RE_ARGS ((compile_stack_type
+static char group_in_compile_stack _RE_ARGS ((compile_stack_type
 						 compile_stack,
 						 regnum_t regnum));
 
@@ -2056,7 +2053,7 @@ regex_compile (pattern, size, syntax, bufp)
 
           {
             /* Are we optimizing this jump?  */
-            boolean keep_string_p = false;
+            char keep_string_p = false;
 
             /* 1 means zero (many) matches is allowed.  */
             char zero_times_ok = 0, many_times_ok = 0;
@@ -2179,7 +2176,7 @@ regex_compile (pattern, size, syntax, bufp)
 
         case '[':
           {
-            boolean had_char_class = false;
+            char had_char_class = false;
 
             if (p == pend) FREE_STACK_RETURN (REG_EBRACK);
 
@@ -2294,8 +2291,8 @@ regex_compile (pattern, size, syntax, bufp)
                     if (c == ':' && *p == ']')
                       {
 #if defined _LIBC || WIDE_CHAR_SUPPORT
-                        boolean is_lower = STREQ (str, "lower");
-                        boolean is_upper = STREQ (str, "upper");
+                        char is_lower = STREQ (str, "lower");
+                        char is_upper = STREQ (str, "upper");
 			wctype_t wt;
                         int ch;
 
@@ -2327,18 +2324,18 @@ regex_compile (pattern, size, syntax, bufp)
                         had_char_class = true;
 #else
                         int ch;
-                        boolean is_alnum = STREQ (str, "alnum");
-                        boolean is_alpha = STREQ (str, "alpha");
-                        boolean is_blank = STREQ (str, "blank");
-                        boolean is_cntrl = STREQ (str, "cntrl");
-                        boolean is_digit = STREQ (str, "digit");
-                        boolean is_graph = STREQ (str, "graph");
-                        boolean is_lower = STREQ (str, "lower");
-                        boolean is_print = STREQ (str, "print");
-                        boolean is_punct = STREQ (str, "punct");
-                        boolean is_space = STREQ (str, "space");
-                        boolean is_upper = STREQ (str, "upper");
-                        boolean is_xdigit = STREQ (str, "xdigit");
+                        char is_alnum = STREQ (str, "alnum");
+                        char is_alpha = STREQ (str, "alpha");
+                        char is_blank = STREQ (str, "blank");
+                        char is_cntrl = STREQ (str, "cntrl");
+                        char is_digit = STREQ (str, "digit");
+                        char is_graph = STREQ (str, "graph");
+                        char is_lower = STREQ (str, "lower");
+                        char is_print = STREQ (str, "print");
+                        char is_punct = STREQ (str, "punct");
+                        char is_space = STREQ (str, "space");
+                        char is_upper = STREQ (str, "upper");
+                        char is_xdigit = STREQ (str, "xdigit");
 
                         if (!IS_CHAR_CLASS (str))
 			  FREE_STACK_RETURN (REG_ECTYPE);
@@ -3068,13 +3065,13 @@ insert_op2 (op, loc, arg1, arg2, end)
    after an alternative or a begin-subexpression.  We assume there is at
    least one character before the ^.  */
 
-static boolean
+static char
 at_begline_loc_p (pattern, p, syntax)
     const char *pattern, *p;
     reg_syntax_t syntax;
 {
   const char *prev = p - 2;
-  boolean prev_prev_backslash = prev > pattern && prev[-1] == '\\';
+  char prev_prev_backslash = prev > pattern && prev[-1] == '\\';
 
   return
        /* After a subexpression?  */
@@ -3087,13 +3084,13 @@ at_begline_loc_p (pattern, p, syntax)
 /* The dual of at_begline_loc_p.  This one is for $.  We assume there is
    at least one character after the $, i.e., `P < PEND'.  */
 
-static boolean
+static char
 at_endline_loc_p (p, pend, syntax)
     const char *p, *pend;
     reg_syntax_t syntax;
 {
   const char *next = p;
-  boolean next_backslash = *next == '\\';
+  char next_backslash = *next == '\\';
   const char *next_next = p + 1 < pend ? p + 1 : 0;
 
   return
@@ -3109,7 +3106,7 @@ at_endline_loc_p (p, pend, syntax)
 /* Returns true if REGNUM is in one of COMPILE_STACK's elements and
    false if it's not.  */
 
-static boolean
+static char
 group_in_compile_stack (compile_stack, regnum)
     compile_stack_type compile_stack;
     regnum_t regnum;
@@ -3223,10 +3220,10 @@ re_compile_fastmap (bufp)
      proven otherwise.  We set this false at the bottom of switch
      statement, to which we get only if a particular path doesn't
      match the empty string.  */
-  boolean path_can_be_null = true;
+  char path_can_be_null = true;
 
   /* We aren't doing a `succeed_n' to begin with.  */
-  boolean succeed_n_p = false;
+  char succeed_n_p = false;
 
   assert (fastmap != NULL && p != NULL);
 
@@ -3814,13 +3811,13 @@ weak_alias (__re_match, re_match)
 # endif
 #endif /* not emacs */
 
-static boolean group_match_null_string_p _RE_ARGS ((unsigned char **p,
+static char group_match_null_string_p _RE_ARGS ((unsigned char **p,
 						    unsigned char *end,
 						register_info_type *reg_info));
-static boolean alt_match_null_string_p _RE_ARGS ((unsigned char *p,
+static char alt_match_null_string_p _RE_ARGS ((unsigned char *p,
 						  unsigned char *end,
 						register_info_type *reg_info));
-static boolean common_op_match_null_string_p _RE_ARGS ((unsigned char **p,
+static char common_op_match_null_string_p _RE_ARGS ((unsigned char **p,
 							unsigned char *end,
 						register_info_type *reg_info));
 static int bcmp_translate _RE_ARGS ((const char *s1, const char *s2,
@@ -4120,10 +4117,10 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 	    {
 	      /* 1 if this match ends in the same string (string1 or string2)
 		 as the best previous match.  */
-	      boolean same_str_p = (FIRST_STRING_P (match_end)
+	      char same_str_p = (FIRST_STRING_P (match_end)
 				    == MATCHING_IN_FIRST_STRING);
 	      /* 1 if this match is the best seen so far.  */
-	      boolean best_match_p;
+	      char best_match_p;
 
 	      /* AIX compiler got confused when this was combined
 		 with the previous declaration.  */
@@ -4340,7 +4337,7 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 	case charset_not:
 	  {
 	    register unsigned char c;
-	    boolean not = (re_opcode_t) *(p - 1) == charset_not;
+	    char not = (re_opcode_t) *(p - 1) == charset_not;
 
             DEBUG_PRINT2 ("EXECUTING charset%s.\n", not ? "_not" : "");
 
@@ -4480,7 +4477,7 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
                || just_past_start_mem == p - 1)
 	      && (p + 2) < pend)
             {
-              boolean is_a_jump_n = false;
+              char is_a_jump_n = false;
 
               p1 = p + 2;
               mcnt = 0;
@@ -5064,7 +5061,7 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 #else
 	case wordbound:
 	{
-	  boolean prevchar, thischar;
+	  char prevchar, thischar;
 
 	  DEBUG_PRINT1 ("EXECUTING wordbound.\n");
 	  if (AT_STRINGS_BEG (d) || AT_STRINGS_END (d))
@@ -5079,7 +5076,7 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 
       case notwordbound:
 	{
-	  boolean prevchar, thischar;
+	  char prevchar, thischar;
 
 	  DEBUG_PRINT1 ("EXECUTING notwordbound.\n");
 	  if (AT_STRINGS_BEG (d) || AT_STRINGS_END (d))
@@ -5202,7 +5199,7 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 	  assert (p <= pend);
           if (p < pend)
             {
-              boolean is_a_jump_n = false;
+              char is_a_jump_n = false;
 
               /* If failed to a backwards jump that's part of a repetition
                  loop, need to pop this failure point and use the next one.  */
@@ -5255,7 +5252,7 @@ re_match_2_internal (bufp, string1, size1, string2, size2, pos, regs, stop)
 
    We don't handle duplicates properly (yet).  */
 
-static boolean
+static char
 group_match_null_string_p (p, end, reg_info)
     unsigned char **p, *end;
     register_info_type *reg_info;
@@ -5364,7 +5361,7 @@ group_match_null_string_p (p, end, reg_info)
    It expects P to be the first byte of a single alternative and END one
    byte past the last. The alternative can contain groups.  */
 
-static boolean
+static char
 alt_match_null_string_p (p, end, reg_info)
     unsigned char *p, *end;
     register_info_type *reg_info;
@@ -5401,13 +5398,13 @@ alt_match_null_string_p (p, end, reg_info)
 
    Sets P to one after the op and its arguments, if any.  */
 
-static boolean
+static char
 common_op_match_null_string_p (p, end, reg_info)
     unsigned char **p, *end;
     register_info_type *reg_info;
 {
   int mcnt;
-  boolean ret;
+  char ret;
   int reg_no;
   unsigned char *p1 = *p;
 
@@ -5759,7 +5756,7 @@ regexec (preg, string, nmatch, pmatch, eflags)
   struct re_registers regs;
   regex_t private_preg;
   int len = strlen (string);
-  boolean want_reg_info = !preg->no_sub && nmatch > 0;
+  char want_reg_info = !preg->no_sub && nmatch > 0;
 
   private_preg = *preg;
 
@@ -5896,6 +5893,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/02/12 16:24:05  gtkwave
+ * mingw fixes
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:35  gtkwave
  * Imported sources
  *
