@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,7 +62,7 @@ static int seg_trans_cnt=0, seg_low_cnt=0, seg_high_cnt=0, seg_mid_cnt=0;
 static GdkSegment seg_trans[WAVE_SEG_BUF_CNT], seg_low[WAVE_SEG_BUF_CNT], seg_high[WAVE_SEG_BUF_CNT], seg_mid[WAVE_SEG_BUF_CNT];
 
 
-static void wave_gdk_draw_line(GdkDrawable *drawable, GdkGC *gc, gint _x1, gint _y1, gint x2, gint y2)
+static void wave_gdk_draw_line(GdkDrawable *drawable, GdkGC *gc, gint x1, gint y1, gint x2, gint y2)
 {
 GdkSegment *seg;
 int *seg_cnt;
@@ -71,10 +71,10 @@ if(gc==GLOBALS->gc_trans_wavewindow_c_1) 	{ seg = seg_trans; seg_cnt = &seg_tran
 else if(gc==GLOBALS->gc_low_wavewindow_c_1) 	{ seg = seg_low; seg_cnt = &seg_low_cnt; }
 else if(gc==GLOBALS->gc_high_wavewindow_c_1) 	{ seg = seg_high; seg_cnt = &seg_high_cnt; }
 else if(gc==GLOBALS->gc_mid_wavewindow_c_1) 	{ seg = seg_mid; seg_cnt = &seg_mid_cnt; }
-else 			{ gdk_draw_line(drawable, gc, _x1, _y1, x2, y2); return; }
+else 			{ gdk_draw_line(drawable, gc, x1, y1, x2, y2); return; }
 
-seg[*seg_cnt]._x1 = _x1;
-seg[*seg_cnt]._y1 = _y1;
+seg[*seg_cnt].x1 = x1;
+seg[*seg_cnt].y1 = y1;
 seg[*seg_cnt].x2 = x2;
 seg[*seg_cnt].y2 = y2;
 (*seg_cnt)++;
@@ -3836,6 +3836,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2008/12/31 22:20:12  gtkwave
+ * adding more tcl commands
+ *
  * Revision 1.43  2008/12/25 04:14:11  gtkwave
  * -Wshadow warning fixes
  *
