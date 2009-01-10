@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.0_pre (w)1999-2008 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.0_pre (w)1999-2009 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -173,6 +173,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.51  2008/12/28 03:03:33  gtkwave
+ * Added scale_to_time_dimension rc variable and menu options.
+ *
  * Revision 1.50  2008/12/09 00:36:42  gtkwave
  * added mouseover support for signal window
  *
