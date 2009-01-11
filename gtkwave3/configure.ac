@@ -14,6 +14,7 @@ SC_PATH_TCLCONFIG
 SC_LOAD_TCLCONFIG
 
 AC_SUBST(TCL_INCLUDE_SPEC)
+AC_SUBST(TCL_LIB_SPEC)
 
 AC_MSG_CHECKING([if gtk1 or gtk2 should be used])
 
@@ -300,13 +301,16 @@ ETCL=yes
 AC_MSG_RESULT([$DTCL])
 
 if test "X$ETCL" = "Xyes" ; then
-AC_CHECK_LIB(tcl${TCL_VERSION},Tcl_CreateInterp, [TCL_LDADD=-ltcl${TCL_VERSION}], [need_tcl=yes])
+OLD_LDFLAGS="${LDFLAGS}"
+LDFLAGS="${LDFLAGS} ${TCL_LIB_SPEC}"
+AC_CHECK_LIB(tcl${TCL_VERSION},Tcl_CreateInterp, [TCL_LDADD=${TCL_LIB_SPEC}], [need_tcl=yes])
 if test "$need_tcl" = "yes" ; then
                 AC_MSG_WARN([
 Tcl support not enabled.])
 else
 	TCL_DEFADD=-DHAVE_LIBTCL
 	fi
+LDFLAGS="${OLD_LDFLAGS}"
 fi
 
 AC_SUBST(TCL_LDADD)

@@ -2009,6 +2009,7 @@ echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
 
 
 
+
 echo "$as_me:$LINENO: checking if gtk1 or gtk2 should be used" >&5
 echo $ECHO_N "checking if gtk1 or gtk2 should be used... $ECHO_C" >&6
 
@@ -10085,6 +10086,8 @@ echo "$as_me:$LINENO: result: $DTCL" >&5
 echo "${ECHO_T}$DTCL" >&6
 
 if test "X$ETCL" = "Xyes" ; then
+OLD_LDFLAGS="${LDFLAGS}"
+LDFLAGS="${LDFLAGS} ${TCL_LIB_SPEC}"
 as_ac_Lib=`echo "ac_cv_lib_tcl${TCL_VERSION}''_Tcl_CreateInterp" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}" >&5
 echo $ECHO_N "checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}... $ECHO_C" >&6
@@ -10151,7 +10154,7 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Lib'}'`" >&5
 echo "${ECHO_T}`eval echo '${'$as_ac_Lib'}'`" >&6
 if test `eval echo '${'$as_ac_Lib'}'` = yes; then
-  TCL_LDADD=-ltcl${TCL_VERSION}
+  TCL_LDADD=${TCL_LIB_SPEC}
 else
   need_tcl=yes
 fi
@@ -10164,6 +10167,7 @@ Tcl support not enabled." >&2;}
 else
 	TCL_DEFADD=-DHAVE_LIBTCL
 	fi
+LDFLAGS="${OLD_LDFLAGS}"
 fi
 
 
