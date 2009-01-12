@@ -197,6 +197,7 @@ WV_MENU_VRJS,
 WV_MENU_SEP16,
 WV_MENU_VZPS,
 WV_MENU_VZDYN,
+WV_MENU_VZDYNE,
 WV_MENU_VFTP,
 WV_MENU_SEP17,
 WV_MENU_RMRKS,
@@ -329,6 +330,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2008/12/28 03:03:34  gtkwave
+ * Added scale_to_time_dimension rc variable and menu options.
+ *
  * Revision 1.21  2008/12/16 19:28:20  gtkwave
  * more warnings cleanups
  *

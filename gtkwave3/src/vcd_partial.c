@@ -2375,6 +2375,10 @@ if(GLOBALS->partial_vcd)
 			{
 			service_zoom_full(NULL, NULL);
 			}
+		else if ((GLOBALS->zoom_dyne) && (!GLOBALS->helpbox_is_active)) 
+			{
+			service_zoom_right(NULL, NULL);
+			}
 			else
 			{
 		        signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -2393,6 +2397,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2008/12/25 03:52:32  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.10  2008/12/04 19:21:00  gtkwave
  * added zoom_dynamic option for partial VCD loading
  *

@@ -93,6 +93,8 @@ GLOBALS->show_base = g_old->show_base;
 GLOBALS->display_grid = g_old->display_grid;
 GLOBALS->disable_mouseover = g_old->disable_mouseover;
 GLOBALS->zoom_pow10_snap = g_old->zoom_pow10_snap;
+GLOBALS->zoom_dyn = g_old->zoom_dyn;
+GLOBALS->zoom_dyne = g_old->zoom_dyne;
 
 reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
@@ -450,6 +452,8 @@ if(!GLOBALS)
 	GLOBALS->wave_scrolling = old_g->wave_scrolling;
 	GLOBALS->do_zoom_center = old_g->do_zoom_center;
 	GLOBALS->zoom_pow10_snap = old_g->zoom_pow10_snap;
+	GLOBALS->zoom_dyn = old_g->zoom_dyn;
+	GLOBALS->zoom_dyne = old_g->zoom_dyne;
 	GLOBALS->alt_hier_delimeter = old_g->alt_hier_delimeter;
 	GLOBALS->cursor_snap = old_g->cursor_snap;
 	GLOBALS->hier_delimeter = old_g->hier_delimeter;
@@ -2207,6 +2211,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2009/01/08 16:58:22  gtkwave
+ * added --output command line flag
+ *
  * Revision 1.46  2009/01/02 06:24:28  gtkwave
  * bumped copyright to 2009
  *

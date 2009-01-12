@@ -584,6 +584,13 @@ GLOBALS->zoom_dyn=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_zoom_dynamic_end(char *str)
+{
+DEBUG(printf("f_zoom_dynamic_end(\"%s\")\n",str));
+GLOBALS->zoom_dyne=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_zoom_pow10_snap(char *str)
 {
 DEBUG(printf("f_zoom_pow10_snap(\"%s\")\n",str));
@@ -747,6 +754,7 @@ static struct rc_entry rcitems[]=
 { "zoom_base", f_zoom_base },
 { "zoom_center", f_zoom_center },
 { "zoom_dynamic", f_zoom_dynamic },
+{ "zoom_dynamic_end", f_zoom_dynamic_end },
 { "zoom_pow10_snap", f_zoom_pow10_snap }
 };
 
@@ -917,6 +925,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2008/12/28 03:03:34  gtkwave
+ * Added scale_to_time_dimension rc variable and menu options.
+ *
  * Revision 1.14  2008/12/25 03:21:57  gtkwave
  * -Wshadow warning fixes
  *

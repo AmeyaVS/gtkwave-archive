@@ -1041,6 +1041,7 @@ NULL, /* mvlfacs_vzt_c_3 587 */
 0, /* left_justify_sigs 602 */
 0, /* zoom_pow10_snap 603 */
 0, /* zoom_dyn */
+0, /* zoom_dyne */
 0, /* cursor_snap 604 */
 -1.0, /* old_wvalue 605 */
 NULL, /* blackout_regions 606 */
@@ -1456,6 +1457,7 @@ void reload_into_new_context(void)
  /* rc.c */
  new_globals->scale_to_time_dimension = GLOBALS->scale_to_time_dimension;
  new_globals->zoom_dyn = GLOBALS->zoom_dyn;
+ new_globals->zoom_dyne = GLOBALS->zoom_dyne;
  new_globals->use_scrollwheel_as_y = GLOBALS->use_scrollwheel_as_y;
  new_globals->context_tabposition = GLOBALS->context_tabposition;
  new_globals->use_standard_clicking = GLOBALS->use_standard_clicking;

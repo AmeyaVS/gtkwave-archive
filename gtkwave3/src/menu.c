@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1072,11 +1072,11 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 }
 
 /**/
-void menu_zoom_dyn(GtkWidget *widget, gpointer data)
+void menu_zoom_dynf(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nPartial VCD Dynamic Zoom");
+        help_text_bold("\n\nPartial VCD Dynamic Zoom Full");
         help_text(
 		" causes the screen to be in full zoom mode while a VCD file is loading"
 		" incrementally."
@@ -1087,16 +1087,44 @@ if(GLOBALS->helpbox_is_active)
 	if(GLOBALS->zoom_dyn)
 		{
 		GLOBALS->zoom_dyn=0;
-		status_text("Dynamic Zoom Off.\n");
+		status_text("Dynamic Zoom Full Off.\n");
 		}
 		else
 		{
 		GLOBALS->zoom_dyn=1;
-		status_text("Dynamic Zoom On.\n");
+		status_text("Dynamic Zoom Full On.\n");
 		}
 	}
 
 GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYN].path))->active=(GLOBALS->zoom_dyn)?TRUE:FALSE;
+}
+
+/**/
+void menu_zoom_dyne(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nPartial VCD Dynamic Zoom To End");
+        help_text(
+		" causes the screen to zoom to the end while a VCD file is loading"
+		" incrementally."
+        );
+        }
+	else
+	{
+	if(GLOBALS->zoom_dyne)
+		{
+		GLOBALS->zoom_dyne=0;
+		status_text("Dynamic Zoom To End Off.\n");
+		}
+		else
+		{
+		GLOBALS->zoom_dyne=1;
+		status_text("Dynamic Zoom To End On.\n");
+		}
+	}
+
+GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYNE].path))->active=(GLOBALS->zoom_dyne)?TRUE:FALSE;
 }
 
 /**/
@@ -4826,7 +4854,8 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/View/Right Justified Signals", "<Shift>End", menu_right_justify, WV_MENU_VRJS, "<Item>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP16, "<Separator>"),
     WAVE_GTKIFE("/View/Zoom Pow10 Snap", "<Shift>Pause", menu_zoom10_snap, WV_MENU_VZPS, "<ToggleItem>"),
-    WAVE_GTKIFE("/View/Partial VCD Dynamic Zoom", NULL, menu_zoom_dyn, WV_MENU_VZDYN, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Partial VCD Dynamic Zoom Full", NULL, menu_zoom_dynf, WV_MENU_VZDYN, "<ToggleItem>"),
+    WAVE_GTKIFE("/View/Partial VCD Dynamic Zoom To End", NULL, menu_zoom_dyne, WV_MENU_VZDYNE, "<ToggleItem>"),
     WAVE_GTKIFE("/View/Full Precision", "<Alt>Pause", menu_use_full_precision, WV_MENU_VFTP, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP17, "<Separator>"),
     WAVE_GTKIFE("/View/Remove Pattern Marks", NULL, menu_remove_marked, WV_MENU_RMRKS, "<Item>"),
@@ -4913,6 +4942,7 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 if(GLOBALS->partial_vcd)
 	{
 	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYN].path))->active=(GLOBALS->zoom_dyn)?TRUE:FALSE;
+	GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYNE].path))->active=(GLOBALS->zoom_dyne)?TRUE:FALSE;
 	}
 
 if(GLOBALS->loaded_file_type == LXT_FILE)
@@ -4946,6 +4976,7 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
     if(!GLOBALS->partial_vcd)
 	{
 	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYN].path);
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYNE].path);
 	}
 
     if(GLOBALS->loaded_file_type == NO_FILE)
@@ -5238,6 +5269,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.55  2009/01/06 20:04:58  gtkwave
+ * added copy to right click menu
+ *
  * Revision 1.54  2008/12/28 03:03:34  gtkwave
  * Added scale_to_time_dimension rc variable and menu options.
  *
