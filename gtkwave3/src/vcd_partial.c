@@ -2373,17 +2373,29 @@ if(GLOBALS->partial_vcd)
 	
 		if ((GLOBALS->zoom_dyn) && (!GLOBALS->helpbox_is_active)) 
 			{
+			GLOBALS->tims.marker = GLOBALS->tims.last;
 			service_zoom_full(NULL, NULL);
+
+		        GLOBALS->signalwindow_width_dirty=1;
+		        MaxSignalLength();
+		        signalarea_configure_event(GLOBALS->signalarea, NULL);
 			}
 		else if ((GLOBALS->zoom_dyne) && (!GLOBALS->helpbox_is_active)) 
 			{
+			GLOBALS->tims.marker = GLOBALS->tims.last;
 			service_zoom_right(NULL, NULL);
+
+		        GLOBALS->signalwindow_width_dirty=1;
+		        MaxSignalLength();
+		        signalarea_configure_event(GLOBALS->signalarea, NULL);
 			}
 			else
 			{
 		        signalarea_configure_event(GLOBALS->signalarea, NULL);
 		        wavearea_configure_event(GLOBALS->wavearea, NULL);
 			}
+
+		update_maxmarker_labels();
 
 		gtkwave_gtk_main_iteration();
 		}
@@ -2397,6 +2409,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/01/12 04:17:39  gtkwave
+ * added dynamic zoom for end for partial vcd
+ *
  * Revision 1.11  2008/12/25 03:52:32  gtkwave
  * -Wshadow warning fixes
  *
