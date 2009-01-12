@@ -190,6 +190,8 @@ static void print_help(char *nam)
 
 #if !defined _MSC_VER && !defined __MINGW32__
 #define OUTPUT_GETOPT "  -O, --output=FILE          specify filename for stdout/stderr redirect\n"
+#else
+#define OUTPUT_GETOPT
 #endif
 
 printf(
@@ -2211,6 +2213,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2009/01/12 04:17:39  gtkwave
+ * added dynamic zoom for end for partial vcd
+ *
  * Revision 1.47  2009/01/08 16:58:22  gtkwave
  * added --output command line flag
  *
