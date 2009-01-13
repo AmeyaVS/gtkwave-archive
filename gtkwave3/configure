@@ -863,6 +863,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
+  --disable-tcl           Disables Tcl if found
   --enable-gtk1           Causes the GTK+ frontend to be built with gtk1
                           instead of gtk2.
   --enable-ae2            Compiles in support for AE2 files via simarama.
@@ -877,7 +878,6 @@ Optional Features:
                           first look for an installed libbz2 and fall back to
                           using the bundled one.
   --disable-largefile     omit support for large files
-  --disable-tcl           Disables Tcl if found
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1813,6 +1813,33 @@ fi
 
 # Checks for build options
 
+echo "$as_me:$LINENO: checking if Tcl usage should be disabled" >&5
+echo $ECHO_N "checking if Tcl usage should be disabled... $ECHO_C" >&6
+
+ETCL=yes
+DTCL=no
+# Check whether --enable-tcl or --disable-tcl was given.
+if test "${enable_tcl+set}" = set; then
+  enableval="$enable_tcl"
+
+if test "X$enable_tcl" = "Xno" ; then
+	ETCL=no
+	DTCL=yes
+else
+	ETCL=yes
+	DTCL=no
+fi
+
+else
+
+ETCL=yes
+
+fi;
+echo "$as_me:$LINENO: result: $DTCL" >&5
+echo "${ECHO_T}$DTCL" >&6
+
+
+if test "X$ETCL" = "Xyes" ; then
 
     #
     # Ok, lets find the tcl configuration
@@ -1925,10 +1952,9 @@ fi
 
 
 	if test x"${ac_cv_c_tclconfig}" = x ; then
-	    TCL_BIN_DIR="# no Tcl configs found"
-	    { echo "$as_me:$LINENO: WARNING: Can't find Tcl configuration definitions" >&5
-echo "$as_me: WARNING: Can't find Tcl configuration definitions" >&2;}
-	    exit 0
+	    TCL_BIN_DIR="# no Tcl configs found" 		      # (patch for gtkwave)
+	    # AC_MSG_WARN([Can't find Tcl configuration definitions]) 	(patch for gtkwave)
+	    # exit 0 							(patch for gtkwave)
 	else
 	    no_tcl=
 	    TCL_BIN_DIR="${ac_cv_c_tclconfig}"
@@ -1937,6 +1963,12 @@ echo "${ECHO_T}found ${TCL_BIN_DIR}/tclConfig.sh" >&6
 	fi
     fi
 
+	if test "X$TCL_BIN_DIR" = "X# no Tcl configs found" ; then
+		{ echo "$as_me:$LINENO: WARNING: Tcl not found, skipping." >&5
+echo "$as_me: WARNING: Tcl not found, skipping." >&2;}
+		ETCL=no
+	        DTCL=yes
+	else
 
     echo "$as_me:$LINENO: checking for existence of ${TCL_BIN_DIR}/tclConfig.sh" >&5
 echo $ECHO_N "checking for existence of ${TCL_BIN_DIR}/tclConfig.sh... $ECHO_C" >&6
@@ -2008,7 +2040,8 @@ echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
 
 
 
-
+	fi
+fi
 
 echo "$as_me:$LINENO: checking if gtk1 or gtk2 should be used" >&5
 echo $ECHO_N "checking if gtk1 or gtk2 should be used... $ECHO_C" >&6
@@ -10059,31 +10092,6 @@ _ACEOF
 
 fi
 
-
-echo "$as_me:$LINENO: checking if Tcl usage should be disabled" >&5
-echo $ECHO_N "checking if Tcl usage should be disabled... $ECHO_C" >&6
-
-ETCL=yes
-DTCL=no
-# Check whether --enable-tcl or --disable-tcl was given.
-if test "${enable_tcl+set}" = set; then
-  enableval="$enable_tcl"
-
-if test "X$enable_tcl" = "Xno" ; then
-	ETCL=no
-	DTCL=yes
-else
-	ETCL=yes
-	DTCL=no
-fi
-
-else
-
-ETCL=yes
-
-fi;
-echo "$as_me:$LINENO: result: $DTCL" >&5
-echo "${ECHO_T}$DTCL" >&6
 
 if test "X$ETCL" = "Xyes" ; then
 OLD_LDFLAGS="${LDFLAGS}"

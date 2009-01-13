@@ -10,11 +10,39 @@ AM_MAINTAINER_MODE
 
 # Checks for build options
 
-SC_PATH_TCLCONFIG
-SC_LOAD_TCLCONFIG
+AC_MSG_CHECKING([if Tcl usage should be disabled])
 
-AC_SUBST(TCL_INCLUDE_SPEC)
-AC_SUBST(TCL_LIB_SPEC)
+ETCL=yes
+DTCL=no
+AC_ARG_ENABLE([tcl],
+[  --disable-tcl           Disables Tcl if found],
+[
+if test "X$enable_tcl" = "Xno" ; then
+	ETCL=no
+	DTCL=yes
+else
+	ETCL=yes
+	DTCL=no
+fi
+],
+[
+ETCL=yes
+])
+AC_MSG_RESULT([$DTCL])
+
+
+if test "X$ETCL" = "Xyes" ; then
+	SC_PATH_TCLCONFIG
+	if test "X$TCL_BIN_DIR" = "X# no Tcl configs found" ; then
+		AC_MSG_WARN([Tcl not found, skipping.])
+		ETCL=no
+	        DTCL=yes
+	else
+		SC_LOAD_TCLCONFIG
+		AC_SUBST(TCL_INCLUDE_SPEC)
+		AC_SUBST(TCL_LIB_SPEC)
+	fi
+fi
 
 AC_MSG_CHECKING([if gtk1 or gtk2 should be used])
 
@@ -279,26 +307,6 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([atexit btowc bzero dup2 memmove memset munmap pow putenv re_comp realpath regcomp select setenv strcasecmp strchr strdup strerror strncasecmp strrchr strstr getopt_long setenv unsetenv])
 AC_CHECK_LIB(nsl,xdrmem_create)
 AC_CHECK_LIB(rpc,xdrmem_create)
-
-AC_MSG_CHECKING([if Tcl usage should be disabled])
-
-ETCL=yes
-DTCL=no
-AC_ARG_ENABLE([tcl],
-[  --disable-tcl           Disables Tcl if found],
-[
-if test "X$enable_tcl" = "Xno" ; then
-	ETCL=no
-	DTCL=yes
-else
-	ETCL=yes
-	DTCL=no
-fi
-],
-[
-ETCL=yes
-])
-AC_MSG_RESULT([$DTCL])
 
 if test "X$ETCL" = "Xyes" ; then
 OLD_LDFLAGS="${LDFLAGS}"
