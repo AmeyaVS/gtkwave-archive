@@ -563,3 +563,5 @@
 		More mingw compile fixes: the whole tarball compiles now.
 		Use old file chooser (for now) in mingw as the new one seems
 		not to be re-sizeable.
+		Added "copy traces" to toolbar in gtkwave as copy function now
+		exists.

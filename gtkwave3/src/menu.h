@@ -236,6 +236,7 @@ void menu_insert_analog_height_extension(GtkWidget *widget, gpointer data);
 void menu_alias(GtkWidget *widget, gpointer data);
 void menu_remove_aliases(GtkWidget *widget, gpointer data);
 void menu_cut_traces(GtkWidget *widget, gpointer data);
+void menu_copy_traces(GtkWidget *widget, gpointer data);
 void menu_paste_traces(GtkWidget *widget, gpointer data);
 void menu_expand(GtkWidget *widget, gpointer data);
 void menu_combine_down(GtkWidget *widget, gpointer data);
@@ -330,6 +331,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2009/01/12 04:17:39  gtkwave
+ * added dynamic zoom for end for partial vcd
+ *
  * Revision 1.22  2008/12/28 03:03:34  gtkwave
  * Added scale_to_time_dimension rc variable and menu options.
  *

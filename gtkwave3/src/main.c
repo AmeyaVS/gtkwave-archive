@@ -1297,6 +1297,18 @@ if(GLOBALS->use_toolbutton_interface)
 		gtk_widget_show(stock);
 
 		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         GTK_STOCK_COPY,
+						 "Copy Traces",
+						 NULL,
+						 GTK_SIGNAL_FUNC(menu_copy_traces),
+						 NULL,
+						 tb_pos++);
+		style = gtk_widget_get_style(stock);
+		style->xthickness = style->ythickness = 0;
+		gtk_widget_set_style (stock, style);
+		gtk_widget_show(stock);
+
+		stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         GTK_STOCK_PASTE,
 						 "Paste Traces",
 						 NULL,
@@ -2213,6 +2225,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2009/01/12 16:01:45  gtkwave
+ * fixed OUTPUT_GETOPT for mingw
+ *
  * Revision 1.48  2009/01/12 04:17:39  gtkwave
  * added dynamic zoom for end for partial vcd
  *
