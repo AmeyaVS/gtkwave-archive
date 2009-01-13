@@ -114,7 +114,7 @@ if(GLOBALS->script_handle)
 	}
 
 
-#if !GTK_CHECK_VERSION(2,4,0)
+#if defined __MINGW32__ || !GTK_CHECK_VERSION(2,4,0)
 
 fileselbox_old(title, filesel_path, ok_func, notok_func, pattn);
 return;
@@ -286,6 +286,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/11/19 19:08:34  gtkwave
+ * add tcl menu option, update file requester name reentrancy code
+ *
  * Revision 1.9  2008/02/27 16:23:00  gtkwave
  * fixed potential file chooser crash
  *

@@ -561,4 +561,5 @@
 		Added Partial VCD Dynamic Zoom To End and related 
 		zoom_dynamic_end rc variables.
 		More mingw compile fixes: the whole tarball compiles now.
-
+		Use old file chooser (for now) in mingw as the new one seems
+		not to be re-sizeable.
