@@ -163,6 +163,9 @@ char stems_name[PATH_MAX+1];
 
 struct gtkwave_annotate_ipc_t
 {
+char matchword[4];			/* match against WAVE_MATCHWORD string */
+char time_string[40];			/* formatted marker time */
+
 TimeType marker;
 unsigned marker_set : 1;
 
@@ -193,6 +196,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/07/01 18:51:06  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.3  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

@@ -20,6 +20,11 @@
 
 #include "wave_locale.h"
 
+#if defined _MSC_VER || defined __MINGW32__
+#define shmat(a,b,c) NULL
+#define shmdt(a)
+#endif
+
 extern GtkCTree *ctree_main;
 void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
 gboolean update_ctx_when_idle(gpointer dummy);
@@ -496,6 +501,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/02/05 07:20:24  gtkwave
+ * added realtime rtlbrowse updates (follows marker at 100ms intervals)
+ *
  * Revision 1.3  2007/09/23 18:33:53  gtkwave
  * warnings cleanups from sun compile
  *

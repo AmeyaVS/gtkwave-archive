@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#if !defined __MINGW32__ && !defined _MSC_VER
 #include <sys/errno.h>
-
+#endif
 #include "attrib.h"
 #include "antlr.h"   
 #include "keyword_tokens.h"
@@ -175,6 +176,10 @@ void print_concat(struct i_primary *c, struct i_explist *e);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/11/25 01:42:36  gtkwave
+ * added named parameter support to module instantiations in the vermin
+ * parser.  (this is a verilog 2001 feature.)
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:52  gtkwave
  * Imported sources
  *

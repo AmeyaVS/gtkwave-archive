@@ -3,6 +3,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/11/12 19:49:42  gtkwave
+ * changed usage of usize
+ *
  * Revision 1.4  2008/11/10 13:46:07  gtkwave
  * update to task enable in vermin grammar to handle hierarchical identifiers
  *
@@ -26,6 +29,10 @@
 
 #include "attrib.h"
 #include "vpp_common.h"
+
+#if defined __MINGW32__ || defined _MSC_VER
+#define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#endif
 
 int zzcr_attr(Attrib *attr, int token, char *text);
 void vpp_update_yyfilename(const char *str);

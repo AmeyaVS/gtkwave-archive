@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	12jan09	Fix for strings ('s' type) in recoder.  
+3.2.0	13jan09	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -560,4 +560,5 @@
 		Beginning to update user manual to reflect new 3.2 features.
 		Added Partial VCD Dynamic Zoom To End and related 
 		zoom_dynamic_end rc variables.
+		More mingw compile fixes: the whole tarball compiles now.
 
