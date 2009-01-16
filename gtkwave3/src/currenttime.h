@@ -146,6 +146,9 @@ void time_trunc_set(void);
 TimeType time_trunc(TimeType t);
 void exponent_to_time_scale(signed char scale);
 
+void from_entry_callback(GtkWidget *widget, GtkWidget *entry);
+void to_entry_callback(GtkWidget *widget, GtkWidget *entry);
+
 void load_all_fonts(void);
 
 /* logfile adds */
@@ -173,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.52  2009/01/10 19:53:52  gtkwave
+ * documentation updates
+ *
  * Revision 1.51  2008/12/28 03:03:33  gtkwave
  * Added scale_to_time_dimension rc variable and menu options.
  *

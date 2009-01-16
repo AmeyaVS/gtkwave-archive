@@ -43,8 +43,7 @@ gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "va
 }
 
    
-static void
-callback(GtkWidget *widget, GtkWidget *entry)
+void from_entry_callback(GtkWidget *widget, GtkWidget *entry)
 {
 G_CONST_RETURN gchar *entry_text;
 TimeType newlo;
@@ -79,8 +78,7 @@ if(newlo<(GLOBALS->tims.last))
 	}
 }
 
-static void
-callback2(GtkWidget *widget, GtkWidget *entry)
+void to_entry_callback(GtkWidget *widget, GtkWidget *entry)
 {
 G_CONST_RETURN gchar *entry_text;
 TimeType newhi;
@@ -133,7 +131,7 @@ GLOBALS->from_entry=gtk_entry_new_with_max_length(40);
 reformat_time(fromstr, GLOBALS->min_time, GLOBALS->time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),fromstr);
-gtk_signal_connect (GTK_OBJECT (GLOBALS->from_entry), "activate",GTK_SIGNAL_FUNC (callback), GLOBALS->from_entry);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->from_entry), "activate",GTK_SIGNAL_FUNC (from_entry_callback), GLOBALS->from_entry);
 box=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0); 
 gtk_widget_show(label);
@@ -149,7 +147,7 @@ GLOBALS->to_entry=gtk_entry_new_with_max_length(40);
 reformat_time(tostr, GLOBALS->max_time, GLOBALS->time_dimension);
 
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),tostr);
-gtk_signal_connect (GTK_OBJECT (GLOBALS->to_entry), "activate",GTK_SIGNAL_FUNC (callback2), GLOBALS->to_entry);
+gtk_signal_connect (GTK_OBJECT (GLOBALS->to_entry), "activate",GTK_SIGNAL_FUNC (to_entry_callback), GLOBALS->to_entry);
 box2=gtk_hbox_new(FALSE, 0);
 gtk_box_pack_start(GTK_BOX(box2), label2, TRUE, TRUE, 0); 
 gtk_widget_show(label2);
@@ -178,6 +176,9 @@ return(mainbox);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/01/09 08:06:17  gtkwave
+ * remove context swap signal handler as it doesn't allow ctx > 0 to update
+ *
  * Revision 1.4  2008/01/08 23:03:36  gtkwave
  * added toolbar using use_toolbutton_interface rc variable
  *

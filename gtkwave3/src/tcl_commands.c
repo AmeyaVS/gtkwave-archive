@@ -109,7 +109,7 @@ Tcl_SetObjResult(interp, aobj);
 return(TCL_OK);
 }
 
-static int gtkwavetcl_printString(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], char *reportString)
+static int gtkwavetcl_printString(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], const char *reportString)
 {
 Tcl_Obj *aobj;
 
@@ -1303,18 +1303,125 @@ return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
 }
 
 
+static int gtkwavetcl_forceOpenTreeNode(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+
+	if(s)
+		{
+		int len = strlen(s);
+		if(s[len-1]!=GLOBALS->hier_delimeter)
+			{
+			char *s2 = calloc_2(1, len+2);
+			strcpy(s2, s);
+			s2[len] = GLOBALS->hier_delimeter;
+			force_open_tree_node(s2);
+			free_2(s2);
+			}
+			else
+			{
+			force_open_tree_node(s);
+			}
+		}
+
+	gtkwave_gtk_main_iteration();
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
+
+static int gtkwavetcl_setFromEntry(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+
+	if(s)
+		{
+		gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),s);
+		from_entry_callback(NULL, GLOBALS->from_entry);		
+		}
+
+	gtkwave_gtk_main_iteration();
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
+
+static int gtkwavetcl_setToEntry(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+
+	if(s)
+		{
+		gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),s);
+		to_entry_callback(NULL, GLOBALS->to_entry);		
+		}
+
+	gtkwave_gtk_main_iteration();
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
+
+static int gtkwavetcl_getFromEntry(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+const char *value = gtk_entry_get_text(GTK_ENTRY(GLOBALS->from_entry));
+if(value)
+        {
+        return(gtkwavetcl_printString(clientData, interp, objc, objv, value));
+        }
+
+return(TCL_OK);
+}       
+
+
+static int gtkwavetcl_getToEntry(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+const char *value = gtk_entry_get_text(GTK_ENTRY(GLOBALS->to_entry));
+if(value)
+        {
+        return(gtkwavetcl_printString(clientData, interp, objc, objv, value));
+        }
+
+return(TCL_OK);
+}       
+
+
+
 tcl_cmdstruct gtkwave_commands[] =
 	{
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
 	{"deleteSignalsFromList",		gtkwavetcl_deleteSignalsFromList},
 	{"findNextEdge",			gtkwavetcl_findNextEdge},
 	{"findPrevEdge",			gtkwavetcl_findPrevEdge},
+	{"forceOpenTreeNode",			gtkwavetcl_forceOpenTreeNode},
 	{"getArgv",				gtkwavetcl_getArgv},
 	{"getBaselineMarker",			gtkwavetcl_getBaselineMarker},
 	{"getDumpFileName",			gtkwavetcl_getDumpFileName},
 	{"getDumpType", 			gtkwavetcl_getDumpType},
 	{"getFacName", 				gtkwavetcl_getFacName},
 	{"getFontHeight",			gtkwavetcl_getFontHeight},
+	{"getFromEntry",			gtkwavetcl_getFromEntry},
 	{"getHierMaxLevel",			gtkwavetcl_getHierMaxLevel},
 	{"getLeftJustifySigs",			gtkwavetcl_getLeftJustifySigs},
 	{"getLongestName", 			gtkwavetcl_getLongestName},
@@ -1327,6 +1434,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getSaveFileName",			gtkwavetcl_getSaveFileName},
 	{"getStemsFileName",			gtkwavetcl_getStemsFileName},
 	{"getTimeDimension", 			gtkwavetcl_getTimeDimension},
+	{"getToEntry",				gtkwavetcl_getToEntry},
 	{"getTotalNumTraces",  			gtkwavetcl_getTotalNumTraces},
 	{"getTraceFlagsFromIndex", 		gtkwavetcl_getTraceFlagsFromIndex},
 	{"getTraceNameFromIndex", 		gtkwavetcl_getTraceNameFromIndex},
@@ -1343,9 +1451,11 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getZoomFactor",			gtkwavetcl_getZoomFactor},
 	{"highlightSignalsFromList",		gtkwavetcl_highlightSignalsFromList},
    	{"nop", 				gtkwavetcl_nop},
+	{"setFromEntry",			gtkwavetcl_setFromEntry},
 	{"setLeftJustifySigs",			gtkwavetcl_setLeftJustifySigs},
 	{"setMarker",				gtkwavetcl_setMarker},
 	{"setNamedMarker",			gtkwavetcl_setNamedMarker},
+	{"setToEntry",				gtkwavetcl_setToEntry},
 	{"setTraceHighlightFromIndex",		gtkwavetcl_setTraceHighlightFromIndex},
 	{"setTraceHighlightFromNameMatch",	gtkwavetcl_setTraceHighlightFromNameMatch},
 	{"setTraceScrollbarRowValue", 		gtkwavetcl_setTraceScrollbarRowValue},
@@ -1369,6 +1479,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/01/05 03:24:02  gtkwave
+ * fixes for calling configure for updated areas
+ *
  * Revision 1.15  2009/01/04 21:48:24  gtkwave
  * setNamedMarker fix for a string set followed by a non-string one
  *
