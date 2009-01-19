@@ -2081,6 +2081,7 @@ return(0);
 }
 #endif
 
+
 void activate_stems_reader(char *stems_name)
 {
 #if !defined _MSC_VER && !defined __MINGW32__
@@ -2097,8 +2098,19 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 	{
 	if(!cyg_called)
 		{
-		fprintf(stderr, "GTKWAVE | If the viewer crashes with a Bad system call error,\n");
-		fprintf(stderr, "GTKWAVE | make sure that Cygserver is enabled.\n");
+		char *cygserver_env = getenv("CYGWIN");
+		gboolean found = cygserver_env && (strstr(cygserver_env, "server") != NULL);
+
+		if(!found)
+			{
+			fprintf(stderr, "GTKWAVE | =================================================================\n");
+			fprintf(stderr, "GTKWAVE | If the viewer crashes with a Bad system call error,\n");
+			fprintf(stderr, "GTKWAVE | make sure that Cygserver is enabled.\n");
+			fprintf(stderr, "GTKWAVE | The Cygserver services are used by Cygwin applications only\n");
+			fprintf(stderr, "GTKWAVE | if you set the environment variable CYGWIN to contain the\n");
+			fprintf(stderr, "GTKWAVE | string \"server\". You must do this before starting this program.\n");
+			fprintf(stderr, "GTKWAVE | =================================================================\n");
+			}
 		cyg_called = 1;
 		}
 	}
@@ -2225,6 +2237,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2009/01/13 23:09:12  gtkwave
+ * added copy traces button to toolbar in gtkwave
+ *
  * Revision 1.49  2009/01/12 16:01:45  gtkwave
  * fixed OUTPUT_GETOPT for mingw
  *
