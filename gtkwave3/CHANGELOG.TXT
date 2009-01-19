@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	13jan09	Fix for strings ('s' type) in recoder.  
+3.2.0	19jan09	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -565,3 +565,5 @@
 		not to be re-sizeable.
 		Added "copy traces" to toolbar in gtkwave as copy function now
 		exists.
+		Added check for "server" in env var CYGWIN before printing warning
+		out about using shared memory.
