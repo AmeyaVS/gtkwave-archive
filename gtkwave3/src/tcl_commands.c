@@ -1407,6 +1407,22 @@ return(TCL_OK);
 }       
 
 
+static int gtkwavetcl_getDisplayedSignals(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 1)
+        {
+	char *rv = add_traces_from_signal_window(TRUE);
+	int rc = gtkwavetcl_printString(clientData, interp, objc, objv, rv);
+
+	free_2(rv);
+	return(rc);
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+}
+
 
 tcl_cmdstruct gtkwave_commands[] =
 	{
@@ -1417,6 +1433,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"forceOpenTreeNode",			gtkwavetcl_forceOpenTreeNode},
 	{"getArgv",				gtkwavetcl_getArgv},
 	{"getBaselineMarker",			gtkwavetcl_getBaselineMarker},
+	{"getDisplayedSignals",			gtkwavetcl_getDisplayedSignals},
 	{"getDumpFileName",			gtkwavetcl_getDumpFileName},
 	{"getDumpType", 			gtkwavetcl_getDumpType},
 	{"getFacName", 				gtkwavetcl_getFacName},
@@ -1479,6 +1496,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2009/01/16 19:27:00  gtkwave
+ * added more tcl commands
+ *
  * Revision 1.16  2009/01/05 03:24:02  gtkwave
  * fixes for calling configure for updated areas
  *

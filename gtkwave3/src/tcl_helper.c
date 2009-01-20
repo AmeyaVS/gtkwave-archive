@@ -1559,8 +1559,22 @@ return(mult_entry);
  *      tcl list containing all generated names
  * ----------------------------------------------------------------------------
  */
-
 char *add_dnd_from_signal_window(void)
+{
+return(add_traces_from_signal_window(FALSE));
+}
+
+
+/* ----------------------------------------------------------------------------
+ * add_traces_from_signal_window - generates tcl names from all sigwin ones
+ *
+ * Results:
+ *      tcl list containing all generated names, does not contain 
+ *      {gtkwave NET OFF} directive as this is intended for tcl program usage.
+ * ----------------------------------------------------------------------------
+ */
+
+char *add_traces_from_signal_window(gboolean is_from_tcl_command)
 {
 Trptr t;
 char *one_entry = NULL, *mult_entry = NULL;
@@ -1570,10 +1584,15 @@ char *trace_val = NULL;
 const char xfwd[AN_COUNT]= AN_NORMAL;
 char trace_val_vec_single[2] = { 0, 0 };
 
+if(is_from_tcl_command)
+	{
+	mult_entry = strdup_2("");
+	}
+
 t=GLOBALS->traces.first;
 while(t)
 	{
-        if( (!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))) && (t->flags & TR_HIGHLIGHT) )
+        if( (!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))) && ((t->flags & TR_HIGHLIGHT)||is_from_tcl_command) )
 		{
                 if(t->vector)
                         {
@@ -1634,14 +1653,17 @@ while(t)
 					sprintf(newname, "%s[%d:%d]", first_str, lidx, ridx); /* this disappears in make_single_tcl_list_name() but might be used in future code */
 
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-					one_entry = make_single_tcl_list_name(newname, NULL, 0);
+					one_entry = is_from_tcl_command ? strdup_2s(newname) : make_single_tcl_list_name(newname, NULL, 0);
 					WAVE_OE_ME
-					trace_val = give_value_string(t);
-					if(trace_val)
+					if(!is_from_tcl_command)
 						{
-						one_entry = make_single_tcl_list_name(newname, trace_val, 0);
-						WAVE_OE_ME
-						free_2(trace_val);
+						trace_val = give_value_string(t);
+						if(trace_val)
+							{
+							one_entry = make_single_tcl_list_name(newname, trace_val, 0);
+							WAVE_OE_ME
+							free_2(trace_val);
+							}
 						}
 
 					free_2(newname);
@@ -1680,10 +1702,10 @@ while(t)
 
 					sprintf(str+strlen(str), "[%d]", which);
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME }
-					one_entry = make_single_tcl_list_name(str, NULL, 0);
+					one_entry = is_from_tcl_command ? strdup_2s(str) : make_single_tcl_list_name(str, NULL, 0);
 					WAVE_OE_ME
 
-					if(bits)
+					if((bits)&&(!is_from_tcl_command))
 						{
 						int bitnum = bits[i];
 
@@ -1698,14 +1720,17 @@ while(t)
                                         else
                                         {
 					if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-					one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), NULL, 0);
+					one_entry = is_from_tcl_command ? strdup_2s(append_array_row(nodes[i])) : make_single_tcl_list_name(append_array_row(nodes[i]), NULL, 0);
 					WAVE_OE_ME
-					trace_val = give_value_string(t);
-					if(trace_val)
+					if(!is_from_tcl_command)
 						{
-						one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), trace_val, 0);
-						WAVE_OE_ME
-						free_2(trace_val);
+						trace_val = give_value_string(t);
+						if(trace_val)
+							{
+							one_entry = make_single_tcl_list_name(append_array_row(nodes[i]), trace_val, 0);
+							WAVE_OE_ME
+							free_2(trace_val);
+							}
 						}
                                         }
                                 }
@@ -1738,27 +1763,33 @@ while(t)
 
 				sprintf(str+strlen(str), "[%d]", which);
 				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-				one_entry = make_single_tcl_list_name(str, NULL, 0);
+				one_entry = is_from_tcl_command ? strdup_2s(str) : make_single_tcl_list_name(str, NULL, 0);
 				WAVE_OE_ME
-				trace_val = give_value_string(t);
-				if(trace_val)
+				if(!is_from_tcl_command)
 					{
-					one_entry = make_single_tcl_list_name(str, trace_val, 0);
-					WAVE_OE_ME
-					free_2(trace_val);
+					trace_val = give_value_string(t);
+					if(trace_val)
+						{
+						one_entry = make_single_tcl_list_name(str, trace_val, 0);
+						WAVE_OE_ME
+						free_2(trace_val);
+						}
 					}
 				}
 				else
 				{
 				if(!mult_entry) { one_entry = make_gtkwave_pid(); WAVE_OE_ME one_entry = strdup_2(netoff); WAVE_OE_ME}
-				one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), NULL, 0);
+				one_entry = is_from_tcl_command ? strdup_2s(append_array_row(t->n.nd)) : make_single_tcl_list_name(append_array_row(t->n.nd), NULL, 0);
 				WAVE_OE_ME
-				trace_val = give_value_string(t);
-				if(trace_val)
+				if(!is_from_tcl_command)
 					{
-					one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), trace_val, 0);
-					WAVE_OE_ME
-					free_2(trace_val);
+					trace_val = give_value_string(t);
+					if(trace_val)
+						{
+						one_entry = make_single_tcl_list_name(append_array_row(t->n.nd), trace_val, 0);
+						WAVE_OE_ME
+						free_2(trace_val);
+						}
 					}
 				}
 			}
@@ -2471,6 +2502,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2009/01/07 18:53:10  gtkwave
+ * move when local_script_handle is set...original was incorrect
+ *
  * Revision 1.43  2009/01/07 17:29:51  gtkwave
  * keep local version of script handle for executing menu ops
  *

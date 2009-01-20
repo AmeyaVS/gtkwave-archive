@@ -113,6 +113,7 @@ void *malloc_2(size_t size);
 void *realloc_2(void *ptr, size_t size);
 void *calloc_2(size_t nmemb, size_t size);
 char *strdup_2(const char *s);
+char *strdup_2s(const char *s);
 
 char *tmpnam_2(char *s, int *fd);  /* mimic functionality of tmpnam() */
 
@@ -196,6 +197,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/01/13 22:39:24  gtkwave
+ * compile fixes for mingw
+ *
  * Revision 1.4  2008/07/01 18:51:06  gtkwave
  * compiler warning fixes for amd64
  *

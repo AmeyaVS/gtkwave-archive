@@ -203,6 +203,21 @@ if(s)
 return(s2);
 }
 
+char *strdup_2s(const char *s)
+{
+char *s2 = NULL;
+
+if(s)
+	{
+	int len = strlen(s);
+	s2 = malloc_2(len+2);
+	strcpy(s2, s); 
+	strcat(s2+len, " ");
+	}
+
+return(s2);
+}
+
 
 /*
  * atoi 64-bit version..
@@ -338,6 +353,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2007/09/23 18:33:54  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.6  2007/09/18 16:17:06  gtkwave
  * hiding of debug messages
  *

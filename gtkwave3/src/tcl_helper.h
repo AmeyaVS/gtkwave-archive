@@ -53,6 +53,7 @@ int process_url_list(char *s);
 int process_tcl_list(char *s, gboolean track_mouse_y);
 char *add_dnd_from_searchbox(void);
 char *add_dnd_from_signal_window(void);
+char *add_traces_from_signal_window(gboolean is_from_tcl_command);
 char *add_dnd_from_tree_window(void);
 char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr trhead, gboolean use_tcl_mode);
 
@@ -66,6 +67,9 @@ void make_tcl_interpreter(char *argv[]);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.13  2009/01/02 06:24:28  gtkwave
+ * bumped copyright to 2009
+ *
  * Revision 1.12  2009/01/02 06:01:51  gtkwave
  * added getArgv for tcl commands
  *
