@@ -1013,7 +1013,12 @@ if(objc==2)
 					char *name = extractFullTraceName(t);
 					if(name)
 						{
-						if(!strcmp(name, elem[i]))
+						int len_name = strlen(name);
+						int len_elem = strlen(elem[i]);
+						int brackmatch = (len_name > len_elem) && (name[len_elem] == '[');
+
+						if(((len_name == len_elem) && (!strcmp(name, elem[i])))
+							|| (brackmatch && !strncmp(name, elem[i], len_elem)))
 							{
 							t->flags |= TR_HIGHLIGHT;
 							num_found++;
@@ -1094,7 +1099,12 @@ if(objc==2)
 					{
 					for(i=0;i<l;i++)
 						{
-						if(!strcmp(name, elem[i]))
+						int len_name = strlen(name);
+						int len_elem = strlen(elem[i]);
+						int brackmatch = (len_name > len_elem) && (name[len_elem] == '[');
+
+						if(((len_name == len_elem) && (!strcmp(name, elem[i])))
+							|| (brackmatch && !strncmp(name, elem[i], len_elem)))
 							{
 							t->flags |= TR_HIGHLIGHT;
 							num_found++;
@@ -1587,6 +1597,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2009/01/21 16:23:25  gtkwave
+ * fixed delete behavior so it deletes only the 1st instance appropriately
+ *
  * Revision 1.19  2009/01/21 02:24:15  gtkwave
  * gtk1 compile fixes, ensure ctree_main is available for force_open_tree_node
  *
