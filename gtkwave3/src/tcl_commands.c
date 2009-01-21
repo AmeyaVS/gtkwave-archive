@@ -1317,12 +1317,16 @@ if(objc == 2)
 			char *s2 = calloc_2(1, len+2);
 			strcpy(s2, s);
 			s2[len] = GLOBALS->hier_delimeter;
+#ifdef WAVE_USE_GTK2
 			force_open_tree_node(s2);
+#endif
 			free_2(s2);
 			}
 			else
 			{
+#ifdef WAVE_USE_GTK2
 			force_open_tree_node(s);
+#endif
 			}
 		}
 
@@ -1496,6 +1500,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2009/01/20 06:11:48  gtkwave
+ * added gtkwave::getDisplayedSignals command
+ *
  * Revision 1.17  2009/01/16 19:27:00  gtkwave
  * added more tcl commands
  *

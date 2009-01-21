@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tristan Gingold and Tony Bybell 2006-2008.
+ * Copyright (c) Tristan Gingold and Tony Bybell 2006-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1003,6 +1003,7 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->window_treesearch_gtk2_c_12 = NULL;
   GLOBALS->dnd_sigview = NULL;
   GLOBALS->gtk2_tree_frame = NULL;
+  GLOBALS->ctree_main = NULL;
   free_afl();
 
   if(GLOBALS->selected_hierarchy_name)
@@ -2026,6 +2027,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2008/12/25 04:07:29  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.33  2008/12/18 01:31:30  gtkwave
  * integrated experimental autoscroll code on signal adds
  *
