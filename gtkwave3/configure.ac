@@ -310,7 +310,9 @@ AC_CHECK_LIB(rpc,xdrmem_create)
 
 if test "X$ETCL" = "Xyes" ; then
 OLD_LDFLAGS="${LDFLAGS}"
-LDFLAGS="${LDFLAGS} ${TCL_LIB_SPEC}"
+TCLSPEC_LHS="${TCL_LIB_SPEC% *}"
+LDFLAGS="${LDFLAGS} ${TCLSPEC_LHS}"
+# LDFLAGS="${LDFLAGS} ${TCL_LIB_SPEC}"
 AC_CHECK_LIB(tcl${TCL_VERSION},Tcl_CreateInterp, [TCL_LDADD=${TCL_LIB_SPEC}], [need_tcl=yes])
 if test "$need_tcl" = "yes" ; then
                 AC_MSG_WARN([
