@@ -14,6 +14,8 @@
 
 #ifdef HAVE_LIBTCL
 
+#include <tcl.h>
+
 typedef struct
         {
         const char *cmdstr;
@@ -67,6 +69,9 @@ void make_tcl_interpreter(char *argv[]);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.14  2009/01/20 06:11:48  gtkwave
+ * added gtkwave::getDisplayedSignals command
+ *
  * Revision 1.13  2009/01/02 06:24:28  gtkwave
  * bumped copyright to 2009
  *

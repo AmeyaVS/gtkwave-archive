@@ -36,10 +36,6 @@
 #include <unistd.h>
 #endif
 
-#if defined(HAVE_LIBTCL)
-#include <tcl.h>
-#endif
-
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
 #endif
@@ -2502,6 +2498,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2009/01/20 06:11:48  gtkwave
+ * added gtkwave::getDisplayedSignals command
+ *
  * Revision 1.44  2009/01/07 18:53:10  gtkwave
  * move when local_script_handle is set...original was incorrect
  *
