@@ -52,14 +52,14 @@ am_gtkwave_OBJECTS = globals.$(OBJEXT) ae2.$(OBJEXT) \
 	bsearch.$(OBJEXT) busy.$(OBJEXT) clipping.$(OBJEXT) \
 	color.$(OBJEXT) currenttime.$(OBJEXT) debug.$(OBJEXT) \
 	discardbuttons.$(OBJEXT) edgebuttons.$(OBJEXT) entry.$(OBJEXT) \
-	fetchbuttons.$(OBJEXT) fgetdynamic.$(OBJEXT) file.$(OBJEXT) \
-	fonts.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
-	ghw.$(OBJEXT) ghwlib.$(OBJEXT) hierpack.$(OBJEXT) \
-	jrb.$(OBJEXT) help.$(OBJEXT) lxt2_read.$(OBJEXT) \
-	lxt_write.$(OBJEXT) vzt_read.$(OBJEXT) hiersearch.$(OBJEXT) \
-	interp.$(OBJEXT) logfile.$(OBJEXT) lx2.$(OBJEXT) lxt.$(OBJEXT) \
-	main.$(OBJEXT) markerbox.$(OBJEXT) menu.$(OBJEXT) \
-	mouseover.$(OBJEXT) mouseover_sigs.$(OBJEXT) \
+	extload.$(OBJEXT) fetchbuttons.$(OBJEXT) fgetdynamic.$(OBJEXT) \
+	file.$(OBJEXT) fonts.$(OBJEXT) getopt.$(OBJEXT) \
+	getopt1.$(OBJEXT) ghw.$(OBJEXT) ghwlib.$(OBJEXT) \
+	hierpack.$(OBJEXT) jrb.$(OBJEXT) help.$(OBJEXT) \
+	lxt2_read.$(OBJEXT) lxt_write.$(OBJEXT) vzt_read.$(OBJEXT) \
+	hiersearch.$(OBJEXT) interp.$(OBJEXT) logfile.$(OBJEXT) \
+	lx2.$(OBJEXT) lxt.$(OBJEXT) main.$(OBJEXT) markerbox.$(OBJEXT) \
+	menu.$(OBJEXT) mouseover.$(OBJEXT) mouseover_sigs.$(OBJEXT) \
 	pagebuttons.$(OBJEXT) pipeio.$(OBJEXT) pixmaps.$(OBJEXT) \
 	print.$(OBJEXT) ptranslate.$(OBJEXT) rc.$(OBJEXT) \
 	regex.$(OBJEXT) renderopt.$(OBJEXT) rgb.$(OBJEXT) \
@@ -122,6 +122,8 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+EXTDEBUG = @EXTDEBUG@
+EXTLOAD_CFLAGS = @EXTLOAD_CFLAGS@
 GPERF = @GPERF@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_CONFIG = @GTK_CONFIG@
@@ -201,13 +203,13 @@ SUBDIRS = $(LIBZ_DIR) $(LIBBZ2_DIR) helpers
 DIST_SUBDIRS = libz libbz2 helpers
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD)
+AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD) $(EXTLOAD_CFLAGS)
 gtkwave_SOURCES = \
 	globals.c globals.h ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
 	bsearch.c bsearch.h busy.c busy.h \
 	clipping.c clipping.h color.c color.h currenttime.c currenttime.h \
 	debug.c debug.h discardbuttons.c edgebuttons.c \
-	entry.c fetchbuttons.c fgetdynamic.c fgetdynamic.h file.c fonts.c fonts.h getopt.c \
+	entry.c extload.c extload.h fetchbuttons.c fgetdynamic.c fgetdynamic.h file.c fonts.c fonts.h getopt.c \
 	getopt1.c ghw.c ghw.h ghwlib.c ghwlib.h gnu-getopt.h gnu_regex.h gtk12compat.h \
 	hierpack.c hierpack.h jrb.c jrb.h help.c helpers/lxt2_read.c \
 	helpers/lxt_write.c helpers/vzt_read.c hiersearch.c interp.c \
@@ -312,6 +314,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/discardbuttons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/edgebuttons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/entry.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/extload.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fetchbuttons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fgetdynamic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file.Po@am__quote@

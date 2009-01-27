@@ -123,6 +123,18 @@ AC_PROG_LEX
 AC_PROG_RANLIB
 
 #
+# only needed if user wishes to process various files with an external reader
+#
+AC_PATH_PROG(EXTDEBUG, [fsdbdebug], [notfound])
+if test "$EXTDEBUG" = "notfound" ; then
+	EXTLOAD_CFLAGS=
+else
+	EXTLOAD_CFLAGS="-DEXTLOAD_PATH=\\\"$EXTDEBUG\\\" -DEXTLOAD_SUFFIX=\\\"fsdb\\\""
+fi
+
+AC_SUBST(EXTLOAD_CFLAGS)
+
+#
 # gperf only needed if the user updates the gperf data
 # files which only developers will be doing...
 #
@@ -375,6 +387,8 @@ AC_MSG_NOTICE([
 
   AET2_CFLAGS      : $AET2_CFLAGS
   AET2_LDADD       : $AET2_LDADD
+
+  EXTLOAD_CFLAGS   : $EXTLOAD_CFLAGS
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
   TCL_LDADD        : $TCL_LDADD

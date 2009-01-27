@@ -20,6 +20,7 @@
 #include "lx2.h"
 #include "lxt2_read.h"
 #include "vcd.h"
+#include "extload.h"
 #include "debug.h"
 #include "bsearch.h"
 #include "strace.h"
@@ -209,6 +210,11 @@ else
 if(GLOBALS->is_lx2)
 	{
 	import_lx2_trace(np);
+	}
+else
+if(GLOBALS->extload)
+	{
+	import_extload_trace(np);
 	}
 else
 	{
@@ -2910,6 +2916,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/12/25 03:21:57  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.11  2008/12/11 21:08:15  gtkwave
  * allow support for marker names which are strings
  *

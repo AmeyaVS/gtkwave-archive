@@ -66,16 +66,20 @@ enum FileType {
   GHW_FILE,
   VCD_FILE,
   VCD_RECODER_FILE,
+#ifdef EXTLOAD_SUFFIX
+  EXTLOAD_FILE,
+#endif
   NO_FILE
 };
-
-
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.3  2007/12/30 04:27:39  gtkwave
  * added edge buttons to main window
  *

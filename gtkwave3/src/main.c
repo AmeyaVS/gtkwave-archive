@@ -895,6 +895,20 @@ strcat(GLOBALS->winname,GLOBALS->loaded_file_name);
 
 loader_check_head:
 
+#ifdef EXTLOAD_SUFFIX
+if( (strlen(GLOBALS->loaded_file_name)>strlen(EXTLOAD_SUFFIX))&&
+	((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-strlen(EXTLOAD_SUFFIX),EXTLOAD_SUFFIX))) )
+	{
+	GLOBALS->loaded_file_type = EXTLOAD_FILE;
+	extload_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+	if(!GLOBALS->extload)
+		{
+		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
+		exit(255);
+		}
+	}
+else
+#endif
 if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lxt"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lx2"))))
 	{
 	FILE *f = fopen(GLOBALS->loaded_file_name, "rb");
@@ -2237,6 +2251,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.51  2009/01/19 07:13:11  gtkwave
+ * examine CYGWIN env var for "server" before printing warning for rtlbrowse
+ *
  * Revision 1.50  2009/01/13 23:09:12  gtkwave
  * added copy traces button to toolbar in gtkwave
  *

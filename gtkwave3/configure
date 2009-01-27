@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_INCLUDE_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB TCL_LDADD TCL_DEFADD LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_INCLUDE_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB EXTDEBUG EXTLOAD_CFLAGS GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB TCL_LDADD TCL_DEFADD LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -3697,6 +3697,57 @@ fi
 else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
+
+
+#
+# only needed if user wishes to process various files with an external reader
+#
+# Extract the first word of "fsdbdebug", so it can be a program name with args.
+set dummy fsdbdebug; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_EXTDEBUG+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $EXTDEBUG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_EXTDEBUG="$EXTDEBUG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_EXTDEBUG="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_EXTDEBUG" && ac_cv_path_EXTDEBUG="notfound"
+  ;;
+esac
+fi
+EXTDEBUG=$ac_cv_path_EXTDEBUG
+
+if test -n "$EXTDEBUG"; then
+  echo "$as_me:$LINENO: result: $EXTDEBUG" >&5
+echo "${ECHO_T}$EXTDEBUG" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+if test "$EXTDEBUG" = "notfound" ; then
+	EXTLOAD_CFLAGS=
+else
+	EXTLOAD_CFLAGS="-DEXTLOAD_PATH=\\\"$EXTDEBUG\\\" -DEXTLOAD_SUFFIX=\\\"fsdb\\\""
+fi
+
 
 
 #
@@ -10205,6 +10256,8 @@ fi
   AET2_CFLAGS      : $AET2_CFLAGS
   AET2_LDADD       : $AET2_LDADD
 
+  EXTLOAD_CFLAGS   : $EXTLOAD_CFLAGS
+
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
   TCL_LDADD        : $TCL_LDADD
   TCL_DEFADD       : $TCL_DEFADD
@@ -10231,6 +10284,8 @@ echo "$as_me:
 
   AET2_CFLAGS      : $AET2_CFLAGS
   AET2_LDADD       : $AET2_LDADD
+
+  EXTLOAD_CFLAGS   : $EXTLOAD_CFLAGS
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
   TCL_LDADD        : $TCL_LDADD
@@ -10973,6 +11028,8 @@ s,@LEXLIB@,$LEXLIB,;t t
 s,@LEX_OUTPUT_ROOT@,$LEX_OUTPUT_ROOT,;t t
 s,@RANLIB@,$RANLIB,;t t
 s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
+s,@EXTDEBUG@,$EXTDEBUG,;t t
+s,@EXTLOAD_CFLAGS@,$EXTLOAD_CFLAGS,;t t
 s,@GPERF@,$GPERF,;t t
 s,@LIBZ_CFLAGS@,$LIBZ_CFLAGS,;t t
 s,@LIBZ_LDADD@,$LIBZ_LDADD,;t t

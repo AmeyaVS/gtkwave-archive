@@ -54,6 +54,7 @@
 #include "vzt.h"
 #include "wavealloca.h"
 #include "jrb.h"
+#include "extload.h"
 
 struct Global{ 
 
@@ -199,6 +200,16 @@ GtkWidget *window_entry_c_1; /* from entry.c 81 */
 GtkWidget *entry_entry_c_1; /* from entry.c 82 */
 char *entrybox_text; /* from entry.c 83 */
 void (*cleanup_entry_c_1)(); /* from entry.c 84 */
+
+
+/* extload.c */
+FILE *extload; /* from extload.c */
+unsigned int *extload_idcodes; /* from extload.c */
+int *extload_inv_idcodes; /* from extload.c */
+#if !defined __MINGW32__ && !defined _MSC_VER
+time_t extload_lastmod; /* from extload.c */
+char extload_already_errored; /* from extload.c */
+#endif
 
 
 /*

@@ -206,6 +206,17 @@ NULL, /* entrybox_text 82 */
 0, /* cleanup_entry_c_1 83 */
 
 
+/* 
+ * extload.c 
+ */
+NULL, /* extload */
+NULL, /* extload_idcodes */
+NULL, /* extload_inv_idcodes */
+#if !defined __MINGW32__ && !defined _MSC_VER
+0, /* extload_lastmod */
+0, /* extload_already_errored */
+#endif
+
 /*
  * fetchbuttons.c
  */
@@ -1666,7 +1677,11 @@ void reload_into_new_context(void)
    case NO_FILE:
    case GHW_FILE:
    case VCD_FILE:
-   case VCD_RECODER_FILE: /* do nothing */ break;
+   case VCD_RECODER_FILE: 
+#ifdef EXTLOAD_SUFFIX
+   case EXTLOAD_FILE:
+#endif
+	/* do nothing */ break;
  }
 
 
@@ -1809,6 +1824,13 @@ void reload_into_new_context(void)
 	/* Load new file from disk, no reload on partial vcd or vcd from stdin. */
 	switch(GLOBALS->loaded_file_type) 
 		{
+#ifdef EXTLOAD_SUFFIX   
+   		case EXTLOAD_FILE: 
+			extload_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+			load_was_success = (GLOBALS->extload != NULL);
+			break;
+#endif
+
    		case LX2_FILE: 
 			lx2_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end);
 			load_was_success = (GLOBALS->lx2_lx2_c_1 != NULL);
@@ -2165,7 +2187,11 @@ void free_and_destroy_page_context(void)
    case NO_FILE:
    case GHW_FILE:
    case VCD_FILE:
-   case VCD_RECODER_FILE: /* do nothing */ break;
+   case VCD_RECODER_FILE: 
+#ifdef EXTLOAD_SUFFIX   
+   case EXTLOAD_FILE:
+#endif          
+	/* do nothing */ break;
  }
 
  /* window destruction (of windows that aren't the parent window) */
