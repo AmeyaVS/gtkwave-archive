@@ -30,6 +30,26 @@
 #include "busy.h"
 #include "hierpack.h"
 
+#ifndef EXTLOAD_SUFFIX
+
+const char *extload_loader_fail_msg = "Sorry, EXTLOAD support was not compiled into this executable, exiting.\n\n";
+
+TimeType extload_main(char *fname, char *skip_start, char *skip_end)
+{
+fprintf(stderr, extload_loader_fail_msg);
+exit(255);
+
+return(0); /* for vc++ */
+}
+
+void import_extload_trace(nptr np)
+{
+fprintf(stderr, extload_loader_fail_msg);
+exit(255);
+}
+
+#else
+
 static int last_modification_check(void)
 {
 #if !defined __MINGW32__ && !defined _MSC_VER
@@ -179,7 +199,7 @@ for(;;)
 				{
 				char *pnt = rc+20;
 
-				GLOBALS->time_scale = atoi_64(rc+20);
+				GLOBALS->time_scale = atoi(rc+20);
 				GLOBALS->time_dimension = 'n';
 				while(*pnt)
 					{
@@ -343,10 +363,10 @@ for(;;)
 
 					if(esc && lb && rb)
 						{
-						GLOBALS->mvlfacs_vzt_c_3[i].msb = atoi_64(lb+1);
+						GLOBALS->mvlfacs_vzt_c_3[i].msb = atoi(lb+1);
 						if(colon)
 							{
-							GLOBALS->mvlfacs_vzt_c_3[i].lsb = atoi_64(colon+1);
+							GLOBALS->mvlfacs_vzt_c_3[i].lsb = atoi(colon+1);
 							}
 							else
 							{
@@ -963,9 +983,13 @@ if(nold!=np)
 	}
 }
 
+#endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/01/27 07:04:28  gtkwave
+ * added extload external process loader capability
+ *
  *
  */
