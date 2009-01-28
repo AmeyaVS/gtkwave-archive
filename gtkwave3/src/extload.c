@@ -764,7 +764,6 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 			{
 			case '0':	htemp->v.h_val = AN_0; break;
 			case '1':	htemp->v.h_val = AN_1; break;
-			case 'Z':
 			case 'z':	htemp->v.h_val = AN_Z; break;
 			default:	htemp->v.h_val = AN_X; break;
 			}
@@ -868,6 +867,7 @@ if((f->array_height <= 1)&&(last_modification_check())) /* sorry, arrays not sup
 	                {
 	                break;
 	                }
+
 		if(isdigit(rc[0]))
 			{
 			rc = strchr(rc, '(');
@@ -883,7 +883,7 @@ if((f->array_height <= 1)&&(last_modification_check())) /* sorry, arrays not sup
 					rc = strchr(rc+1, ':');
 					if(rc)
 						{
-						char *rtn;
+						char *rtn, *pnt;
 						rc += 2;
 
 						rtn = rc;
@@ -891,6 +891,23 @@ if((f->array_height <= 1)&&(last_modification_check())) /* sorry, arrays not sup
 							{
 							if(isspace(*rtn)) { *rtn = 0; break; }
 							rtn++;
+							}
+
+						pnt = rc;
+						while(*pnt)
+							{
+							switch(*pnt)
+								{
+								case 'Z':
+								case '3': *pnt = 'z'; break;
+
+								case 'X':
+								case '2': *pnt = 'x'; break;
+
+								default: break;
+								}
+
+							pnt++;
 							}
 
 						extload_callback(&tim, &txidx, &rc);
@@ -988,6 +1005,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/01/27 07:34:42  gtkwave
+ * use atoi rather than atoi64
+ *
  * Revision 1.1  2009/01/27 07:04:28  gtkwave
  * added extload external process loader capability
  *
