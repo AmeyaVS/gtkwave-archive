@@ -790,7 +790,7 @@ if (optind < argc)
 		{
                 if(argv[optind][0] == '-')
                         {
-                        if(!strcasecmp(argv[optind], "-ignore"))
+                        if(!strcmp(argv[optind], "--"))
                                 {
                                 break;
                                 }
@@ -2259,6 +2259,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.53  2009/01/28 16:28:58  gtkwave
+ * added -- -ignore passthrough processing for argv list in main.c
+ *
  * Revision 1.52  2009/01/27 07:04:31  gtkwave
  * added extload external process loader capability
  *
