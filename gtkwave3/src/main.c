@@ -788,6 +788,14 @@ if (optind < argc)
         {
         while (optind < argc)
 		{
+                if(argv[optind][0] == '-')
+                        {
+                        if(!strcasecmp(argv[optind], "-ignore"))
+                                {
+                                break;
+                                }
+                        }   
+
 		if(!GLOBALS->loaded_file_name)
 			{
 			is_vcd = 0;
@@ -2251,6 +2259,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.52  2009/01/27 07:04:31  gtkwave
+ * added extload external process loader capability
+ *
  * Revision 1.51  2009/01/19 07:13:11  gtkwave
  * examine CYGWIN env var for "server" before printing warning for rtlbrowse
  *
