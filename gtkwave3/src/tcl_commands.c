@@ -1524,6 +1524,42 @@ if(objc == 1)
 }
 
 
+static int gtkwavetcl_getTraceFlagsFromName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+	{
+	char *s = Tcl_GetString(objv[1]);
+	Trptr t = GLOBALS->traces.first;
+
+	while(t)
+		{
+		if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+			{
+			char *name = extractFullTraceName(t);
+			if(!strcmp(name, s))
+				{
+				free_2(name);
+				break;
+				}
+			free_2(name);
+			}
+		t = t-> t_next;
+		}
+
+	if(t)
+		{
+		return(gtkwavetcl_printInteger(clientData, interp, objc, objv, t->flags));
+		}
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
+
 tcl_cmdstruct gtkwave_commands[] =
 	{
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
@@ -1555,6 +1591,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getToEntry",				gtkwavetcl_getToEntry},
 	{"getTotalNumTraces",  			gtkwavetcl_getTotalNumTraces},
 	{"getTraceFlagsFromIndex", 		gtkwavetcl_getTraceFlagsFromIndex},
+	{"getTraceFlagsFromName",		gtkwavetcl_getTraceFlagsFromName},
 	{"getTraceNameFromIndex", 		gtkwavetcl_getTraceNameFromIndex},
 	{"getTraceScrollbarRowValue", 		gtkwavetcl_getTraceScrollbarRowValue},
 	{"getTraceValueAtMarkerFromIndex", 	gtkwavetcl_getTraceValueAtMarkerFromIndex},
@@ -1597,6 +1634,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2009/01/21 19:52:13  gtkwave
+ * allow brackets to be optional on signal delete
+ *
  * Revision 1.20  2009/01/21 16:23:25  gtkwave
  * fixed delete behavior so it deletes only the 1st instance appropriately
  *
