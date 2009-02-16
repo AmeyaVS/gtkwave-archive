@@ -469,7 +469,7 @@
 		will require some additional future work with 
 		view_selection_func() and/or signal handling and
 		trapping.
-3.2.0	27jan09	Fix for strings ('s' type) in recoder.  
+3.2.0	16feb09	Fix for strings ('s' type) in recoder.  
 		Added timestart command to savefiles which indicates
 		what the leftmost position should be on reload.
 		Added support for as/zs small timescales as well as
@@ -572,3 +572,4 @@
 		Compatibility fix for gcc 3.x.
 		Added extload capability which grabs data via popen().  This 
 		allows adding loaders for unsupported formats via data mining.
+		Added Tcl command setBaselineMarker.

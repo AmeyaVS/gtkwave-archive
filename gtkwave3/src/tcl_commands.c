@@ -704,6 +704,40 @@ if(objc == 2)
 return(TCL_OK);
 }
 
+
+static int gtkwavetcl_setBaselineMarker(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {
+        char *s = Tcl_GetString(objv[1]);
+        TimeType mrk = unformat_time(s, GLOBALS->time_dimension);
+
+	if((mrk >= GLOBALS->min_time) && (mrk <= GLOBALS->max_time))
+		{
+		GLOBALS->tims.baseline = mrk;
+		}
+		else
+		{
+		GLOBALS->tims.baseline = LLDescriptor(-1);
+		}
+
+        update_markertime(GLOBALS->tims.marker);
+        GLOBALS->signalwindow_width_dirty=1;
+        MaxSignalLength();
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        wavearea_configure_event(GLOBALS->wavearea, NULL);
+
+	gtkwave_gtk_main_iteration();
+	}
+        else  
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+
+return(TCL_OK);
+}
+
+
 static int gtkwavetcl_setWindowStartTime(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 if(objc == 2)
@@ -1606,6 +1640,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getZoomFactor",			gtkwavetcl_getZoomFactor},
 	{"highlightSignalsFromList",		gtkwavetcl_highlightSignalsFromList},
    	{"nop", 				gtkwavetcl_nop},
+	{"setBaselineMarker",			gtkwavetcl_setBaselineMarker},
 	{"setFromEntry",			gtkwavetcl_setFromEntry},
 	{"setLeftJustifySigs",			gtkwavetcl_setLeftJustifySigs},
 	{"setMarker",				gtkwavetcl_setMarker},
@@ -1634,6 +1669,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2009/02/02 16:10:42  gtkwave
+ * added gtkwavetcl_getTraceFlagsFromName
+ *
  * Revision 1.21  2009/01/21 19:52:13  gtkwave
  * allow brackets to be optional on signal delete
  *
