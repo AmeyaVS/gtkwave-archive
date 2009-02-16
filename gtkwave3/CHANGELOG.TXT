@@ -573,3 +573,4 @@
 		Added extload capability which grabs data via popen().  This 
 		allows adding loaders for unsupported formats via data mining.
 		Added Tcl command setBaselineMarker.
+		Extload hardening on reload.

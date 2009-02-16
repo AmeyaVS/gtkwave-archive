@@ -178,6 +178,7 @@ JRB ptr, lst;
 
 if(!(GLOBALS->extload=fopen(fname, "rb")))
 	{
+	GLOBALS->extload_already_errored = 1;
 	return(LLDescriptor(0)); 	/* look at GLOBALS->vzt_vzt_c_1 in caller for success status... */
 	}
 fclose(GLOBALS->extload);
@@ -251,15 +252,28 @@ for(;;)
 				msk |= 16;
 				}
 
+		case 'f':
+			if(!strncmp("file status        : finished", rc, 29))
+				{
+				msk |= 32;
+				}
+			break;
+
 		default:
 			break;
 		}
 	}
 pclose(GLOBALS->extload);
 
-if(msk != (1+2+4+8+16))
+if(msk != (1+2+4+8+16+32))
 	{
-	fprintf(stderr, EXTLOAD"Could not initialize '%s' properly, exiting.\n", fname);
+	fprintf(stderr, EXTLOAD"Could not initialize '%s' properly.\n", fname);
+	if((msk & (1+2+4+8+16+32)) == (1+2+4+8+16))
+		{
+		fprintf(stderr, EXTLOAD"File is not finished dumping.\n");
+		}
+	GLOBALS->extload_already_errored = 1;
+	return(LLDescriptor(0));
 	}
 
 GLOBALS->min_time *= GLOBALS->time_scale;
@@ -272,7 +286,7 @@ node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 GLOBALS->extload_idcodes=(unsigned int *)calloc_2(GLOBALS->numfacs, sizeof(unsigned int));
 GLOBALS->extload_inv_idcodes=(int *)calloc_2(max_idcode+1, sizeof(int));
 
-if(!last_modification_check()) { return(LLDescriptor(0)); }
+if(!last_modification_check()) { GLOBALS->extload_already_errored = 1; return(LLDescriptor(0)); }
 sprintf(sbuff, "%s -hier_tree %s 2>&1", EXTLOAD_PATH, fname);
 GLOBALS->extload = popen(sbuff, "r");
 i = 0;
@@ -408,11 +422,12 @@ if(i==GLOBALS->numfacs)
 	else
 	{
 	fprintf(stderr, EXTLOAD"Fac count mismatch: %d expected vs %d found, exiting.\n", GLOBALS->numfacs, i);
-	exit(255);
+	GLOBALS->extload_already_errored = 1;
+	return(LLDescriptor(0));
 	}
 /* SPLASH */                            splash_sync(1, 5);
 
-if(!last_modification_check()) { return(LLDescriptor(0)); }
+if(!last_modification_check()) { GLOBALS->extload_already_errored = 1; return(LLDescriptor(0)); }
 sprintf(sbuff, "%s -hier_tree %s 2>&1", EXTLOAD_PATH, fname);
 GLOBALS->extload = popen(sbuff, "r");
 
@@ -1005,6 +1020,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/01/28 20:36:56  gtkwave
+ * convert 3 value to z in value changes, likewise 2 to x
+ *
  * Revision 1.2  2009/01/27 07:34:42  gtkwave
  * use atoi rather than atoi64
  *

@@ -1827,7 +1827,9 @@ void reload_into_new_context(void)
 #ifdef EXTLOAD_SUFFIX   
    		case EXTLOAD_FILE: 
 			extload_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
-			load_was_success = (GLOBALS->extload != NULL);
+			load_was_success = (GLOBALS->extload != NULL) && (!GLOBALS->extload_already_errored);
+			GLOBALS->extload_already_errored = 0;
+			GLOBALS->extload_lastmod = 0;
 			break;
 #endif
 

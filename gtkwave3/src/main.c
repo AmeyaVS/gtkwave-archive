@@ -907,9 +907,11 @@ loader_check_head:
 if( (strlen(GLOBALS->loaded_file_name)>strlen(EXTLOAD_SUFFIX))&&
 	((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-strlen(EXTLOAD_SUFFIX),EXTLOAD_SUFFIX))) )
 	{
+	TimeType extload_max;
+
 	GLOBALS->loaded_file_type = EXTLOAD_FILE;
-	extload_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
-	if(!GLOBALS->extload)
+	extload_max = extload_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+	if((!GLOBALS->extload) || (GLOBALS->extload_already_errored) || (!extload_max))
 		{
 		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
 		exit(255);
@@ -2259,6 +2261,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.54  2009/01/28 20:06:20  gtkwave
+ * changed -ignore to a second --
+ *
  * Revision 1.53  2009/01/28 16:28:58  gtkwave
  * added -- -ignore passthrough processing for argv list in main.c
  *
