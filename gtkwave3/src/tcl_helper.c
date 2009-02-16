@@ -2168,6 +2168,9 @@ if(dot)
 		}
 	else /* detect dumpfile type */
 	if	(
+#ifdef EXTLOAD_SUFFIX
+                (!strcasecmp(EXTLOAD_SUFFIX, dot+1)) ||
+#endif
 		(!strcasecmp("vcd", dot+1)) ||
 		(!strcasecmp("dmp", dot+1)) ||
 		(!strcasecmp("lxt", dot+1)) ||
@@ -2498,6 +2501,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2009/01/23 19:23:10  gtkwave
+ * compatibility fix for gcc 3.x
+ *
  * Revision 1.45  2009/01/20 06:11:48  gtkwave
  * added gtkwave::getDisplayedSignals command
  *

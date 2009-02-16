@@ -574,3 +574,6 @@
 		allows adding loaders for unsupported formats via data mining.
 		Added Tcl command setBaselineMarker.
 		Extload hardening on reload.
+		Added extload filetype to DnD.
+		Fixed window close when tabs active so it would update the
+		titlebar, times, etc., to the current tab.

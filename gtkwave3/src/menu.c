@@ -1340,6 +1340,7 @@ unsigned np = GLOBALS->num_notebook_pages;
 unsigned int new_page = (this_page != np-1) ? this_page : (this_page-1);
 GtkWidget *n = GLOBALS->notebook;
 struct Global *old_g = NULL, *saved_g;
+char timestr[32];
 
 dead_context_sweep();
 
@@ -1374,6 +1375,21 @@ gtkwave_gtk_main_iteration();
 set_GLOBALS(old_g);
 free_and_destroy_page_context();
 set_GLOBALS(saved_g);
+
+/* need to do this if 2 pages -> 1 */
+reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
+reformat_time(timestr, GLOBALS->tims.last, GLOBALS->time_dimension);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),timestr);
+
+update_maxmarker_labels();
+update_basetime(GLOBALS->tims.baseline);
+
+gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->winname);
+ 
+MaxSignalLength();   
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 void menu_quit_close(GtkWidget *widget, gpointer data)
@@ -5269,6 +5285,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.56  2009/01/12 04:17:39  gtkwave
+ * added dynamic zoom for end for partial vcd
+ *
  * Revision 1.55  2009/01/06 20:04:58  gtkwave
  * added copy to right click menu
  *
