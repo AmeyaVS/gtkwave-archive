@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008
+ * Copyright (c) Tony Bybell 1999-2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.0_pre (w)1999-2009 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.0 (w)1999-2009 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -176,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.53  2009/01/16 19:27:00  gtkwave
+ * added more tcl commands
+ *
  * Revision 1.52  2009/01/10 19:53:52  gtkwave
  * documentation updates
  *
