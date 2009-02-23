@@ -492,10 +492,26 @@ if(!mainwindow_already_built)
 #endif
 	if(!gtk_init_check(&argc, &argv))
 		{
-		printf("Could not initialize GTK!  Is DISPLAY env var/xhost set?\n\n");
+#if defined(__APPLE__)
+		if(!getenv("DISPLAY"))
+			{
+			fprintf(stderr, "DISPLAY environment variable is not set.  Have you ensured\n");
+			fprintf(stderr, "that x11 has been initialized through open-x11, launching\n");
+			fprintf(stderr, "gtkwave in an xterm or x11 window, etc?\n\n");
+			fprintf(stderr, "Attempting to initialize using DISPLAY=:0.0 value...\n\n");
+			setenv("DISPLAY", ":0.0", 0);
+			if(gtk_init_check(&argc, &argv))
+				{
+				goto do_primary_inits;
+				}
+			}
+#endif
+		fprintf(stderr, "Could not initialize GTK!  Is DISPLAY env var/xhost set?\n\n");
 		print_help(argv[0]);
 		}
 	}
+
+do_primary_inits:
 
 init_filetrans_data(); /* for file translation splay trees */
 init_proctrans_data(); /* for proc translation structs */
@@ -2261,6 +2277,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.55  2009/02/16 17:16:05  gtkwave
+ * extload error hardening and recovery
+ *
  * Revision 1.54  2009/01/28 20:06:20  gtkwave
  * changed -ignore to a second --
  *
