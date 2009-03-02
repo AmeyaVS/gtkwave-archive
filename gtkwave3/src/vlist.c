@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2006-8.
+ * Copyright (c) Tony Bybell 2006-9.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,11 @@
 #include "vlist.h"
 #include <zlib.h>
 #include <string.h>
+
+
+/* currently unused: this is to allow migration of the 
+ * spill file across machines of different architectures */
+#undef  VLIST_MACHINE_IND
 
 
 void vlist_init_spillfile(void)
@@ -60,6 +65,136 @@ if(GLOBALS->vlist_handle)
 	GLOBALS->vlist_handle = NULL;
 	}
 }
+
+
+#ifdef VLIST_MACHINE_IND
+/* machine-independent header i/o 
+ */
+static int vlist_fread_hdr(struct vlist_t *vl, FILE *f)
+{
+unsigned long val; 
+unsigned int vali;
+int ch, shamt, rc = 0;
+
+val = 0; shamt = 0;
+do
+	{
+	ch = fgetc(f);
+	if(ch == EOF) goto bail;	
+
+	val |= ((unsigned long)(ch & 0x7f)) << shamt;
+	shamt += 7;
+	} while(!(ch & 0x80));
+vl->next = (struct vlist_t *)val;
+
+vali = 0; shamt = 0;
+do
+	{
+	ch = fgetc(f);
+	if(ch == EOF) goto bail;	
+
+	vali |= ((unsigned int)(ch & 0x7f)) << shamt;
+	shamt += 7;
+	} while(!(ch & 0x80));
+vl->siz = (unsigned int)vali;
+
+vali = 0; shamt = 0;
+do
+	{
+	ch = fgetc(f);
+	if(ch == EOF) goto bail;	
+
+	vali |= ((unsigned int)(ch & 0x7f)) << shamt;
+	shamt += 7;
+	} while(!(ch & 0x80));
+vl->offs = (vali & 1) ? (unsigned int)(-(int)(vali >> 1)) : (vali >> 1);
+
+vali = 0; shamt = 0;
+do
+	{
+	ch = fgetc(f);
+	if(ch == EOF) goto bail;	
+
+	vali |= ((unsigned int)(ch & 0x7f)) << shamt;
+	shamt += 7;
+	} while(!(ch & 0x80));
+vl->elem_siz = (unsigned int)vali;
+
+rc = 1;
+
+bail: 
+return(rc);
+}
+
+
+static int vlist_fwrite(struct vlist_t *vl, unsigned int rsiz, FILE *f)
+{
+unsigned char mem[ 4 * sizeof(long) * 2];
+unsigned char *pnt = mem;
+unsigned long val, nxt;
+unsigned int vali, nxti;
+int offs_as_int;
+int rc;
+int len = 0;
+
+val = (unsigned long)(vl->next);
+while((nxt = val>>7))
+        {
+        *(pnt++) = (val&0x7f);
+        val = nxt;
+        }           
+*(pnt++) = (val&0x7f) | 0x80;
+
+
+vali = (vl->siz);
+while((nxti = vali>>7))
+        {
+        *(pnt++) = (vali&0x7f);
+        vali = nxti;
+        }           
+*(pnt++) = (vali&0x7f) | 0x80;
+
+offs_as_int = (int)(vl->offs);
+if(offs_as_int < 0)
+	{
+	offs_as_int = -offs_as_int;	/* reduce number of one bits propagating left by making sign bit the lsb */
+	offs_as_int <<= 1;
+	offs_as_int |= 1;
+	}
+	else
+	{
+	offs_as_int <<= 1;
+	}
+
+vali = (unsigned int)(offs_as_int);
+while((nxti = vali>>7))
+        {
+        *(pnt++) = (vali&0x7f);
+        vali = nxti;
+        }           
+*(pnt++) = (vali&0x7f) | 0x80;
+
+vali = (unsigned int)(vl->elem_siz);
+while((nxti = vali>>7))
+        {
+        *(pnt++) = (vali&0x7f);
+        vali = nxti;
+        }           
+*(pnt++) = (vali&0x7f) | 0x80;
+
+rc = fwrite(mem, 1, (len = (pnt - mem)), f);
+if(rc)
+	{
+	rc = fwrite(vl + 1, 1, (len += (rsiz - sizeof(struct vlist_t))), f);
+	if(rc)
+		{
+		rc = len;
+		}
+	}
+
+return(rc);
+}
+#endif
 
 
 /* create / destroy
@@ -143,7 +278,11 @@ if(GLOBALS->vlist_handle)
 		off_t seekpos = (off_t) vl_offs;	/* possible overflow conflicts were already handled in the writer */
 
 		fseeko(GLOBALS->vlist_handle, seekpos, SEEK_SET);
+#ifdef VLIST_MACHINE_IND
+		rc = vlist_fread_hdr(&vhdr, GLOBALS->vlist_handle);
+#else
 		rc = fread(&vhdr, sizeof(struct vlist_t), 1, GLOBALS->vlist_handle);
+#endif
 		if(!rc)
 			{
 			printf("Error in reading from VList spill file!\n");
@@ -252,7 +391,11 @@ if(vl->offs == vl->siz)
 		long write_cnt;
 
 		fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
+#ifdef VLIST_MACHINE_IND
+		rc = vlist_fwrite(vl, rsiz, GLOBALS->vlist_handle);
+#else
 		rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
+#endif
 		if(!rc)
 			{
 			fprintf(stderr, "Error in writing to VList spill file!\n");
@@ -279,7 +422,11 @@ if(vl->offs == vl->siz)
 		*v = v2;
 		vl = *v;
 
+#ifdef VLIST_MACHINE_IND
+		GLOBALS->vlist_bytes_written += rc;
+#else
 		GLOBALS->vlist_bytes_written += rsiz;
+#endif
 		}
 		else
 		{
@@ -377,7 +524,11 @@ if(GLOBALS->vlist_handle)
 
 	vl = *v;
 	fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
+#ifdef VLIST_MACHINE_IND
+	rc = vlist_fwrite(vl, rsiz, GLOBALS->vlist_handle);
+#else
 	rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
+#endif
 	if(!rc)
 		{
 		fprintf(stderr, "Error in writing to VList spill file!\n");
@@ -396,7 +547,11 @@ if(GLOBALS->vlist_handle)
 		}
 
 	*v = (struct vlist_t *)write_cnt;
+#ifdef VLIST_MACHINE_IND
+	GLOBALS->vlist_bytes_written += rc;
+#else
 	GLOBALS->vlist_bytes_written += rsiz;
+#endif
 
 	free_2(vl);
 	}
@@ -782,6 +937,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2008/12/27 19:55:06  gtkwave
+ * remove stray tempfiles under MinGW
+ *
  * Revision 1.13  2008/10/14 00:53:46  gtkwave
  * enabled tcl scripts to call existing gtkwave style scripted menu functions
  *

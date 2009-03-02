@@ -577,4 +577,6 @@
 		Added extload filetype to DnD.
 		Fixed window close when tabs active so it would update the
 		titlebar, times, etc., to the current tab.
-3.2.1	23feb09 Add more information for users if gtk can't initialize on MacOS.
+3.2.1	02mar09 Add more information for users if gtk can't initialize on MacOS.
+		Added possibility for vlist.c to write out the spill file in a
+		machine independent fashion.  This is currently disabled.
