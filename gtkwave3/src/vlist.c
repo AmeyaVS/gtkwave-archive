@@ -191,7 +191,10 @@ while((nxti = vali>>7))
 rc = fwrite(mem, 1, (len = (pnt - mem)), f);
 if(rc)
 	{
-	rc = fwrite(vl + 1, 1, (len += (rsiz - sizeof(struct vlist_t))), f);
+        unsigned int wrlen = (rsiz - sizeof(struct vlist_t));
+        len += wrlen;
+
+	rc = fwrite(vl + 1, 1, wrlen, f);
 	if(rc)
 		{
 		rc = len;
@@ -964,6 +967,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/03/05 16:17:56  gtkwave
+ * added fastload option
+ *
  * Revision 1.15  2009/03/02 23:31:09  gtkwave
  * added ability to generate spillfiles in machine independent format
  *
