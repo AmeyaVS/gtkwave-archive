@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,6 +60,9 @@ enum VarTypes { V_EVENT, V_PARAMETER,
                 V_END, V_LB, V_COLON, V_RB, V_STRING };
 #endif
 
+/* for vcd_recoder.c */
+enum FastloadState  { VCD_FSL_NONE, VCD_FSL_WRITE, VCD_FSL_READ };
+
 TimeType vcd_main(char *fname);
 TimeType vcd_recoder_main(char *fname);
 
@@ -109,8 +112,6 @@ TimeType last_event_time;    /* make +1 == 0 if there's not an event there too *
 };
 
 
-
-
 char *build_slisthier(void);
 void append_vcd_slisthier(char *str);
 
@@ -131,6 +132,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/07/18 17:27:01  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

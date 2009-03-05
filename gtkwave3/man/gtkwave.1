@@ -1,4 +1,4 @@
-.TH "GTKWAVE" "1" "3.2.0" "Anthony Bybell" "Simulation Wave Viewer"
+.TH "GTKWAVE" "1" "3.2.1" "Anthony Bybell" "Simulation Wave Viewer"
 .SH "NAME"
 .LP 
 gtkwave \- Visualization tool for VCD, LXT, and VZT files
@@ -23,6 +23,13 @@ Use file requester for dumpfile name.
 \fB\-f\fR,\fB\-\-dump\fR <\fIfilename\fP>
 Specify dumpfile name.
 .TP 
+\fB\-F\fR,\fB\-\-fastload\fR
+generate/use VCD recoder fastload files.  This is similar to the \fB\-g\fR,\fB\-\-giga\fR option, however the spill file generated is not deleted.
+Reloading the VCD file another time (either through pressing the reload button or by re-invoking gtkwave at a later time) will use this generated spill file
+rather than read the value change section of the VCD file.  This will speed up reloads on large files greatly as only the variable declaration section needs to 
+be parsed.  Note that the spill file contains the file size and modification date of the VCD file in order to detect if it is stale and needs to
+be regenerated.
+.TP
 \fB\-o\fR,\fB\-\-optimize\fR
 optimize VCD to LXT2.  This will automatically call \fIvcd2lxt2\fP(1) to perform the file conversion.  This
 option is highly recommended with large VCD files in order to cut down on the memory usage required for

@@ -29,23 +29,30 @@
 #include <string.h>
 
 
-/* currently unused: this is to allow migration of the 
- * spill file across machines of different architectures */
-#undef  VLIST_MACHINE_IND
-
-
 void vlist_init_spillfile(void)
 {
-#if defined _MSC_VER || defined __MINGW32__
-GLOBALS->vlist_handle = tmpfile();
-fputc('!', GLOBALS->vlist_handle);
-GLOBALS->vlist_bytes_written = 1;
-#else
-int fd_dummy;
-char *nam = tmpnam_2(NULL, &fd_dummy);
-
-if(nam)
+if(GLOBALS->use_fastload)
 	{
+	char *fname = malloc_2(strlen(GLOBALS->loaded_file_name) + 4 + 1);
+	sprintf(fname, "%s.idx", GLOBALS->loaded_file_name);
+		
+	GLOBALS->vlist_handle = fopen(fname, "w+b");
+
+	free_2(fname);
+
+	fputc('!', GLOBALS->vlist_handle);
+	GLOBALS->vlist_bytes_written = 1;
+	}
+else
+	{
+#if defined _MSC_VER || defined __MINGW32__
+	GLOBALS->vlist_handle = tmpfile();
+	fputc('!', GLOBALS->vlist_handle);
+	GLOBALS->vlist_bytes_written = 1;
+#else
+	int fd_dummy;
+	char *nam = tmpnam_2(NULL, &fd_dummy);
+
 	GLOBALS->vlist_handle = fopen(nam, "w+b");
 	
 	unlink(nam);
@@ -53,8 +60,8 @@ if(nam)
 
 	fputc('!', GLOBALS->vlist_handle);
 	GLOBALS->vlist_bytes_written = 1;
-	}
 #endif
+	}
 }
 
 void vlist_kill_spillfile(void)
@@ -67,7 +74,6 @@ if(GLOBALS->vlist_handle)
 }
 
 
-#ifdef VLIST_MACHINE_IND
 /* machine-independent header i/o 
  */
 static int vlist_fread_hdr(struct vlist_t *vl, FILE *f)
@@ -194,7 +200,6 @@ if(rc)
 
 return(rc);
 }
-#endif
 
 
 /* create / destroy
@@ -278,11 +283,16 @@ if(GLOBALS->vlist_handle)
 		off_t seekpos = (off_t) vl_offs;	/* possible overflow conflicts were already handled in the writer */
 
 		fseeko(GLOBALS->vlist_handle, seekpos, SEEK_SET);
-#ifdef VLIST_MACHINE_IND
-		rc = vlist_fread_hdr(&vhdr, GLOBALS->vlist_handle);
-#else
-		rc = fread(&vhdr, sizeof(struct vlist_t), 1, GLOBALS->vlist_handle);
-#endif
+
+		if(GLOBALS->use_fastload)
+			{
+			rc = vlist_fread_hdr(&vhdr, GLOBALS->vlist_handle);
+			}
+			else
+			{
+			rc = fread(&vhdr, sizeof(struct vlist_t), 1, GLOBALS->vlist_handle);
+			}
+
 		if(!rc)
 			{
 			printf("Error in reading from VList spill file!\n");
@@ -391,11 +401,16 @@ if(vl->offs == vl->siz)
 		long write_cnt;
 
 		fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
-#ifdef VLIST_MACHINE_IND
-		rc = vlist_fwrite(vl, rsiz, GLOBALS->vlist_handle);
-#else
-		rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
-#endif
+
+		if(GLOBALS->use_fastload)
+			{
+			rc = vlist_fwrite(vl, rsiz, GLOBALS->vlist_handle);
+			}
+			else
+			{
+			rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
+			}
+
 		if(!rc)
 			{
 			fprintf(stderr, "Error in writing to VList spill file!\n");
@@ -422,11 +437,14 @@ if(vl->offs == vl->siz)
 		*v = v2;
 		vl = *v;
 
-#ifdef VLIST_MACHINE_IND
-		GLOBALS->vlist_bytes_written += rc;
-#else
-		GLOBALS->vlist_bytes_written += rsiz;
-#endif
+		if(GLOBALS->use_fastload)
+			{
+			GLOBALS->vlist_bytes_written += rc;
+			}
+			else
+			{
+			GLOBALS->vlist_bytes_written += rsiz;
+			}
 		}
 		else
 		{
@@ -524,11 +542,16 @@ if(GLOBALS->vlist_handle)
 
 	vl = *v;
 	fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
-#ifdef VLIST_MACHINE_IND
-	rc = vlist_fwrite(vl, rsiz, GLOBALS->vlist_handle);
-#else
-	rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
-#endif
+
+	if(GLOBALS->use_fastload)
+		{
+		rc = vlist_fwrite(vl, rsiz, GLOBALS->vlist_handle);
+		}
+		else
+		{
+		rc = fwrite(vl, rsiz, 1, GLOBALS->vlist_handle);
+		}
+
 	if(!rc)
 		{
 		fprintf(stderr, "Error in writing to VList spill file!\n");
@@ -547,11 +570,15 @@ if(GLOBALS->vlist_handle)
 		}
 
 	*v = (struct vlist_t *)write_cnt;
-#ifdef VLIST_MACHINE_IND
-	GLOBALS->vlist_bytes_written += rc;
-#else
-	GLOBALS->vlist_bytes_written += rsiz;
-#endif
+
+	if(GLOBALS->use_fastload)
+		{
+		GLOBALS->vlist_bytes_written += rc;
+		}
+		else
+		{
+		GLOBALS->vlist_bytes_written += rsiz;
+		}
 
 	free_2(vl);
 	}
@@ -937,6 +964,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2009/03/02 23:31:09  gtkwave
+ * added ability to generate spillfiles in machine independent format
+ *
  * Revision 1.14  2008/12/27 19:55:06  gtkwave
  * remove stray tempfiles under MinGW
  *

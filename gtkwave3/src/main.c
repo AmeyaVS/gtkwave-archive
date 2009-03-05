@@ -198,6 +198,7 @@ printf(
 "Usage: %s [OPTION]... [DUMPFILE] [SAVEFILE] [RCFILE]\n\n"
 "  -n, --nocli=DIRPATH        use file requester for dumpfile name\n"
 "  -f, --dump=FILE            specify dumpfile name\n"
+"  -F, --fastload             generate/use VCD recoder fastload files\n"
 VCD_GETOPT
 "  -a, --save=FILE            specify savefile name\n"
 "  -A, --autosavename         assume savefile is suffix modified dumpfile name\n"
@@ -287,6 +288,7 @@ char is_vcd=0;
 char is_interactive=0;
 char is_smartsave = 0;
 char is_legacy = 0;
+char is_fastload = VCD_FSL_NONE;
 char is_giga = 0;
 char fast_exit=0;
 char opt_errors_encountered=0;
@@ -511,7 +513,9 @@ if(!mainwindow_already_built)
 		}
 	}
 
+#if defined(__APPLE__)
 do_primary_inits:
+#endif
 
 init_filetrans_data(); /* for file translation splay trees */
 init_proctrans_data(); /* for proc translation structs */
@@ -529,6 +533,7 @@ while (1)
         static struct option long_options[] =
                 {
                 {"dump", 1, 0, 'f'},
+		{"fastload", 0, 0, 'F'},
                 {"optimize", 0, 0, 'o'},
                 {"nocli", 1, 0, 'n'},
                 {"save", 1, 0, 'a'},
@@ -560,7 +565,7 @@ while (1)
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:on:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:", long_options, &option_index);
+        c = getopt_long (argc, argv, "f:Fon:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -678,6 +683,11 @@ while (1)
 			strcpy(GLOBALS->loaded_file_name, optarg);
 			break;
 
+		case 'F':
+			is_fastload = VCD_FSL_WRITE;
+			is_giga = 1;
+			break;
+			
                 case 'a':
 			if(wname) free_2(wname);
 			wname = malloc_2(strlen(optarg)+1);
@@ -1074,7 +1084,16 @@ load_vcd:
 			}
 			else
 			{
-			  GLOBALS->loaded_file_type = (strcmp(GLOBALS->loaded_file_name, "-vcd")) ? VCD_RECODER_FILE : NO_FILE;
+			  if(strcmp(GLOBALS->loaded_file_name, "-vcd"))
+				{
+				GLOBALS->loaded_file_type = VCD_RECODER_FILE;
+				GLOBALS->use_fastload = is_fastload;
+				}
+				else
+				{
+				GLOBALS->loaded_file_type = NO_FILE;
+				GLOBALS->use_fastload = VCD_FSL_NONE;
+				}
 			  vcd_recoder_main(GLOBALS->loaded_file_name);
 			}
 		}
@@ -2277,6 +2296,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.56  2009/02/23 18:29:50  gtkwave
+ * add more information on init failure for mac users
+ *
  * Revision 1.55  2009/02/16 17:16:05  gtkwave
  * extload error hardening and recovery
  *

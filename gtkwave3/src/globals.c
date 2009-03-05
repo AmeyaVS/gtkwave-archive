@@ -964,9 +964,13 @@ NULL, /* vsplitcurr */
  * vcd_recoder.c
  */
 NULL, /* time_vlist_vcd_recoder_c_1 548 */
+NULL, /* time_vlist_vcd_recoder_write */
+NULL, /* fastload_depacked */
+NULL, /* fastload_current */
 0, /* time_vlist_count_vcd_recoder_c_1 549 */
 NULL, /* vcd_handle_vcd_recoder_c_2 550 */
 0, /* vcd_is_compressed_vcd_recoder_c_2 551 */
+VCD_FSL_NONE, /* use_fastload */
 0, /* vcdbyteno_vcd_recoder_c_3 552 */
 0, /* error_count_vcd_recoder_c_3 553 */
 0, /* header_over_vcd_recoder_c_3 554 */
@@ -1580,9 +1584,7 @@ void reload_into_new_context(void)
  if(GLOBALS->vlist_handle)
 	{
 	vlist_kill_spillfile();
-	vlist_init_spillfile();
-	new_globals->vlist_handle = GLOBALS->vlist_handle;
-	new_globals->vlist_bytes_written = GLOBALS->vlist_bytes_written;
+	new_globals->use_fastload = (GLOBALS->use_fastload != VCD_FSL_NONE) ? VCD_FSL_WRITE : VCD_FSL_NONE;
 	}
 
  /* lxt2.c / vzt.c / ae2.c */
