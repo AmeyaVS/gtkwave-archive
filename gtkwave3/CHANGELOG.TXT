@@ -579,7 +579,8 @@
 		titlebar, times, etc., to the current tab.
 3.2.1	09mar09 Add more information for users if gtk can't initialize on MacOS.
 		Added possibility for vlist.c to write out the spill file in a
-		machine independent fashion.  This is currently disabled.
+		machine independent fashion.
 		Added --fastload option to gtkwave.
 		Fixed autoconf so Tcl works in cygwin.
-
+		Updated cygwin "Bad system call" warning text to include more
+		possible fixes.
