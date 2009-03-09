@@ -584,3 +584,10 @@
 		Fixed autoconf so Tcl works in cygwin.
 		Updated cygwin "Bad system call" warning text to include more
 		possible fixes.
+		Fixed warning message in strace.c ("Named Marker xx not in use")
+		which spanned multiple lines because of multiple status_text()
+		calls.
+		Fixed STATUS_ACCESS_VIOLATION in cygwin for both vztminer and
+		lxt2miner and added the --comprehensive option in each.  Also
+		added behavior that no search string specified matches all
+		value changes across all nets.

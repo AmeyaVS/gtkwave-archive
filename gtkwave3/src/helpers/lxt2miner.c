@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-7 Tony Bybell.
+ * Copyright (c) 2003-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -33,6 +33,7 @@ static char *match = NULL;
 static int matchlen = 0;
 static int names_only = 0;
 static char *killed_list = NULL;
+char killed_value = 1;
 
 extern void free_hier(void);
 extern char *output_hier(char *name);
@@ -68,7 +69,7 @@ if(g->len >= matchlen)
 	{
 	if(!killed_list[*pnt_facidx])
 		{
-		if(strstr(*pnt_value, match))
+		if((!match)|| (strstr(*pnt_value, match)))
 			{
 			if(g->len > 1)
 				{
@@ -106,8 +107,11 @@ if(g->len >= matchlen)
 						}
 					}
 				}
-			lxt2_rd_clr_fac_process_mask(*lt, *pnt_facidx);
-			killed_list[*pnt_facidx] = 1;
+			if(killed_value)
+				{
+				lxt2_rd_clr_fac_process_mask(*lt, *pnt_facidx);
+				killed_list[*pnt_facidx] = 1;
+				}
 			}
 		}
 	}
@@ -153,6 +157,7 @@ printf(
 "  -m, --match                bitwise match value\n"
 "  -x, --hex                  hex match value\n"
 "  -n, --namesonly            emit facsnames only (gtkwave savefile)\n"
+"  -c, --comprehensive        do not stop after first match\n"
 "  -h, --help                 display this help then exit\n\n"
 "First occurrence of facnames with times and matching values are emitted to\nstdout.  Using -n generates a gtkwave save file.\n\n"
 "Report bugs to <bybell@nc.rr.com>.\n",nam);
@@ -163,6 +168,7 @@ printf(
 "  -m                         bitwise match value\n"
 "  -x                         hex match value\n"
 "  -n                         emit facsnames only\n"
+"  -c                         do not stop after first match\n"
 "  -h                         display this help then exit (gtkwave savefile)\n\n"
 "First occurrence of facnames with times and matching values are emitted to\nstdout.  Using -n generates a gtkwave save file.\n\n"
 "Report bugs to <bybell@nc.rr.com>.\n",nam);
@@ -179,6 +185,7 @@ char *lxname=NULL;
 int c;
 int rc;
 int i, j, k;
+int comprehensive = 0;
 
 WAVE_LOCALE_FIX
 
@@ -189,6 +196,7 @@ while (1)
 #ifdef __linux__
         static struct option long_options[] =
                 {
+		{"comprehensive", 0, 0, 'c'},
 		{"dumpfile", 1, 0, 'd'},
 		{"match", 1, 0, 'm'},
 		{"hex", 1, 0, 'x'},
@@ -197,15 +205,19 @@ while (1)
                 {0, 0, 0, 0}  
                 };
                 
-        c = getopt_long (argc, argv, "d:m:x:nh", long_options, &option_index);
+        c = getopt_long (argc, argv, "d:m:x:nch", long_options, &option_index);
 #else
-        c = getopt      (argc, argv, "d:m:x:nh");
+        c = getopt      (argc, argv, "d:m:x:nch");
 #endif
                         
         if (c == -1) break;     /* no more args */
                         
         switch (c)
                 {
+		case 'c':
+			comprehensive = 1;
+			break;
+
 		case 'n':
 			names_only = 1;
 			break;
@@ -294,6 +306,11 @@ if (optind < argc)
                 }
         }
                         
+if(!names_only && comprehensive)
+	{
+	killed_value = 0;
+	}
+
 if(!lxname)
         {
         print_help(argv[0]);
@@ -308,6 +325,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:25  gtkwave
  * Imported sources
  *

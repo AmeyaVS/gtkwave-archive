@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1343,8 +1343,9 @@ if(GLOBALS->mark_idx_start>0)
 		basetime=GLOBALS->named_markers[GLOBALS->mark_idx_start-1];
 	else
 		{
-		status_text(item_mark_start_strings[(unsigned int)GLOBALS->mark_idx_start].str);
-		status_text(" not in use.\n");
+		char notused[129];
+		sprintf(notused, "%s not in use.\n", item_mark_start_strings[(unsigned int)GLOBALS->mark_idx_start].str);
+		status_text(notused);
 		}
 	}
 
@@ -1354,8 +1355,9 @@ if(GLOBALS->mark_idx_end>0)
 		endtime=GLOBALS->named_markers[GLOBALS->mark_idx_end-1];
 	else
 		{
-		status_text(item_mark_end_strings[(unsigned int)GLOBALS->mark_idx_end].str);
-		status_text(" not in use.\n");
+		char notused[129];
+		sprintf(notused, "%s not in use.\n", item_mark_end_strings[(unsigned int)GLOBALS->mark_idx_end].str);
+		status_text(notused);
 		}
 	}
 
@@ -1641,6 +1643,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.7  2007/12/31 17:11:58  gtkwave
  * fixed backward seek bug in pattern/edge search
  *

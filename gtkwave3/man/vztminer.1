@@ -1,4 +1,4 @@
-.TH "VZTMINER" "1" "3.0.24" "Anthony Bybell" "Dumpfile Data Mining"
+.TH "VZTMINER" "1" "3.2.1" "Anthony Bybell" "Dumpfile Data Mining"
 .SH "NAME"
 .LP 
 vztminer \- Data mining of VZT files
@@ -23,6 +23,9 @@ Specifies hexadecimal match data that will automatically be converted to binary 
 \fB\-n,\-\-namesonly\fR
 Indicates that only facnames should be printed in a gtkwave savefile compatible format.  By doing this, the file can be used to
 specify which traces are to be imported into gtkwave.
+.TP 
+\fB\-c,\-\-comprehensive\fR
+Indicates that results are not to stop after the first match.  This can be used to extract all the matching values in the trace.
 .TP 
 \fB\-h,\-\-help\fR
 Show help screen.
