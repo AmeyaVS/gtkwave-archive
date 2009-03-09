@@ -321,6 +321,11 @@ AC_CHECK_LIB(nsl,xdrmem_create)
 AC_CHECK_LIB(rpc,xdrmem_create)
 
 if test "X$ETCL" = "Xyes" ; then
+if test "X$OSTYPE" = "Xcygwin" ; then
+# skip Tcl_CreateInterp check on cygwin...
+	TCL_DEFADD=-DHAVE_LIBTCL
+	TCL_LDADD="${TCL_LIB_SPEC}"
+else
 OLD_LDFLAGS="${LDFLAGS}"
 TCLSPEC_LHS="${TCL_LIB_SPEC% *}"
 LDFLAGS="${LDFLAGS} ${TCLSPEC_LHS}"
@@ -333,6 +338,7 @@ else
 	TCL_DEFADD=-DHAVE_LIBTCL
 	fi
 LDFLAGS="${OLD_LDFLAGS}"
+fi
 fi
 
 AC_SUBST(TCL_LDADD)

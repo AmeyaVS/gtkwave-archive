@@ -2168,6 +2168,10 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 			fprintf(stderr, "GTKWAVE | The Cygserver services are used by Cygwin applications only\n");
 			fprintf(stderr, "GTKWAVE | if you set the environment variable CYGWIN to contain the\n");
 			fprintf(stderr, "GTKWAVE | string \"server\". You must do this before starting this program.\n");
+			fprintf(stderr, "GTKWAVE |\n");
+			fprintf(stderr, "GTKWAVE | If this still does not work, you may have to enable the cygserver\n");
+			fprintf(stderr, "GTKWAVE | by entering \"cygserver-config\" and answering \"yes\" followed by\n");
+			fprintf(stderr, "GTKWAVE | \"net start cygserver\".\n");
 			fprintf(stderr, "GTKWAVE | =================================================================\n");
 			}
 		cyg_called = 1;
@@ -2296,6 +2300,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.57  2009/03/05 16:17:56  gtkwave
+ * added fastload option
+ *
  * Revision 1.56  2009/02/23 18:29:50  gtkwave
  * add more information on init failure for mac users
  *
