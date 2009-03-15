@@ -565,8 +565,8 @@
 		not to be re-sizeable.
 		Added "copy traces" to toolbar in gtkwave as copy function now
 		exists.
-		Added check for "server" in env var CYGWIN before printing warning
-		out about using shared memory.
+		Added check for "server" in env var CYGWIN before printing 
+		warning about using shared memory.
 		Added vpi client lxt/lxt2/vzt writers in contrib/vpi, but these
 		currently are not built.
 		Compatibility fix for gcc 3.x.
