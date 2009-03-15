@@ -800,8 +800,8 @@ f_color_white		("ffffff");
 f_color_black		("000000");
 f_color_ltgray		("f5f5f5");
 f_color_normal		("e6e6e6");
-f_color_mdgray		("eeeeee");
-f_color_dkgray		("cccccc");
+f_color_mdgray		("cccccc");
+f_color_dkgray		("aaaaaa");
 f_color_dkblue		("4464ac");
 }
 
@@ -925,6 +925,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/01/12 04:17:39  gtkwave
+ * added dynamic zoom for end for partial vcd
+ *
  * Revision 1.15  2008/12/28 03:03:34  gtkwave
  * Added scale_to_time_dimension rc variable and menu options.
  *

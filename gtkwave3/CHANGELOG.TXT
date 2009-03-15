@@ -577,7 +577,7 @@
 		Added extload filetype to DnD.
 		Fixed window close when tabs active so it would update the
 		titlebar, times, etc., to the current tab.
-3.2.1	11mar09 Add more information for users if gtk can't initialize on MacOS.
+3.2.1	15mar09 Add more information for users if gtk can't initialize on MacOS.
 		Added possibility for vlist.c to write out the spill file in a
 		machine independent fashion.
 		Added --fastload option to gtkwave.
@@ -594,3 +594,5 @@
 		Updated documentation description for collapsible groups to
 		indicate that shift-control is required, not control
 		(as previously).
+		Adjusted brightnesses for mdgray and dkgray so collapsed
+		traces are visible on some monitors.
