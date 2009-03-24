@@ -596,5 +596,7 @@
 		(as previously).
 		Adjusted brightnesses for mdgray and dkgray so collapsed
 		traces are visible on some monitors.
+		Fixed dkgray->mdgray for "Time" background as brightnesses
+		have changes.
 		Made AN_NORMAL/AN_REVERSE const declarations also static in
 		order to avoid unnecessary stack pushing.

@@ -1411,7 +1411,7 @@ xsrc=(gint)hadj->value;
 num_traces_displayable=GLOBALS->signalarea->allocation.height/(GLOBALS->fontheight);
 num_traces_displayable--;   /* for the time trace that is always there */
 
-gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_dkgray, TRUE, 0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight); 
+gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_mdgray, TRUE, 0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight); 
 gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_white, 0, GLOBALS->fontheight-1, GLOBALS->signal_fill_width-1, GLOBALS->fontheight-1);
 font_engine_draw_string(GLOBALS->signalpixmap, GLOBALS->signalfont, GLOBALS->gc_black, 3+xsrc, GLOBALS->fontheight-4, "Time");
 
@@ -3836,6 +3836,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2009/01/09 16:18:53  gtkwave
+ * mingw compile fix for earlier -Wshadow patch
+ *
  * Revision 1.44  2008/12/31 22:20:12  gtkwave
  * adding more tcl commands
  *

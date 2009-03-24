@@ -39,7 +39,7 @@ if(GLOBALS->signalpixmap)
 	xsrc=(gint)hadj->value;
 	DEBUG(printf("Signal HSlider Moved to %d\n",xsrc));
 
-	gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_dkgray, TRUE,
+	gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_mdgray, TRUE,
 	        0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight);
 	gdk_draw_line(GLOBALS->signalpixmap, GLOBALS->gc_white,  
 	        0, GLOBALS->fontheight-1, GLOBALS->signal_fill_width-1, GLOBALS->fontheight-1);
@@ -1674,6 +1674,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2008/12/25 03:21:57  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.39  2008/12/20 19:42:11  gtkwave
  * add static initializer to timer functions to avoid non-initialized viewer
  * state when first starting (if timer interrupt fires)
