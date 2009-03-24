@@ -1577,7 +1577,7 @@ char *one_entry = NULL, *mult_entry = NULL;
 unsigned int mult_len = 0;
 char *netoff = "{gtkwave NET OFF} ";
 char *trace_val = NULL;
-const char xfwd[AN_COUNT]= AN_NORMAL;
+static const char xfwd[AN_COUNT]= AN_NORMAL;
 char trace_val_vec_single[2] = { 0, 0 };
 
 if(is_from_tcl_command)
@@ -2501,6 +2501,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2009/02/16 20:55:10  gtkwave
+ * added extload to dnd filetypes.  set window title on tab close
+ *
  * Revision 1.46  2009/01/23 19:23:10  gtkwave
  * compatibility fix for gcc 3.x
  *

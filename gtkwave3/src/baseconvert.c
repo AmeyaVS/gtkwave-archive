@@ -40,8 +40,8 @@ char *os, *pnt, *newbuff;
 int i, j, len;
 char xtab[AN_COUNT];
 
-const char xfwd[AN_COUNT]= AN_NORMAL  ;
-const char xrev[AN_COUNT]= AN_INVERSE ;
+static const char xfwd[AN_COUNT]= AN_NORMAL  ;
+static const char xrev[AN_COUNT]= AN_INVERSE ;
 
 flags=t->flags;
 nbits=t->n.vec->nbits;
@@ -620,8 +620,8 @@ char *os, *pnt, *newbuff;
 int i, j, len;
 char xtab[AN_COUNT];
 
-const char xfwd[AN_COUNT]= AN_NORMAL  ;
-const char xrev[AN_COUNT]= AN_INVERSE ;
+static const char xfwd[AN_COUNT]= AN_NORMAL  ;
+static const char xrev[AN_COUNT]= AN_INVERSE ;
 
 flags=t->flags;
 
@@ -1272,8 +1272,8 @@ char xtab[AN_COUNT];
 double mynan = strtod("NaN", NULL);
 double retval = mynan;
 
-const char xfwd[AN_COUNT]= AN_NORMAL  ;
-const char xrev[AN_COUNT]= AN_INVERSE ;
+static const char xfwd[AN_COUNT]= AN_NORMAL  ;
+static const char xrev[AN_COUNT]= AN_INVERSE ;
 
 flags=t->flags;
 
@@ -1424,8 +1424,8 @@ char xtab[AN_COUNT];
 double mynan = strtod("NaN", NULL);
 double retval = mynan;
 
-const char xfwd[AN_COUNT]= AN_NORMAL  ;
-const char xrev[AN_COUNT]= AN_INVERSE ;
+static const char xfwd[AN_COUNT]= AN_NORMAL  ;
+static const char xrev[AN_COUNT]= AN_INVERSE ;
 
 flags=t->flags;
 nbits=t->n.vec->nbits;
@@ -1528,6 +1528,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/06/11 08:01:42  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.7  2008/03/25 03:22:06  gtkwave
  * expanded zero fill to include also a one fill (for pre-inverted nets)
  *
