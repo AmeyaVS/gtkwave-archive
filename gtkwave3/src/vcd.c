@@ -2317,10 +2317,12 @@ GLOBALS->queuedevents_vcd_c_1=NULL; /* deallocated in the symbol stuff */
 if(GLOBALS->vcd_is_compressed_vcd_c_1)
 	{
 	pclose(GLOBALS->vcd_handle_vcd_c_1);
+	GLOBALS->vcd_handle_vcd_c_1 = NULL;
 	}
 	else
 	{
 	fclose(GLOBALS->vcd_handle_vcd_c_1);
+	GLOBALS->vcd_handle_vcd_c_1 = NULL;
 	}
 
 if(GLOBALS->yytext_vcd_c_1)
@@ -2441,12 +2443,6 @@ if(GLOBALS->vcd_is_compressed_vcd_c_1)
 	GLOBALS->vcd_fsiz_vcd_c_1 = 0;
 	}
 
-vcd_build_symbols();
-vcd_sortfacs();
-vcd_cleanup();
-
-getch_free();		/* free membuff for vcd getch buffer */
-
 GLOBALS->min_time=GLOBALS->start_time_vcd_c_1*GLOBALS->time_scale;
 GLOBALS->max_time=GLOBALS->end_time_vcd_c_1*GLOBALS->time_scale;
 
@@ -2455,6 +2451,12 @@ if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
         fprintf(stderr, "VCD times range is equal to zero.  Exiting.\n");
         vcd_exit(255);
         }
+
+vcd_build_symbols();
+vcd_sortfacs();
+vcd_cleanup();
+
+getch_free();		/* free membuff for vcd getch buffer */
 
 if(GLOBALS->blackout_regions)
         {
@@ -2477,6 +2479,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/12/25 03:52:32  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.11  2008/10/12 02:56:20  gtkwave
  * fix for blackout regions
  *

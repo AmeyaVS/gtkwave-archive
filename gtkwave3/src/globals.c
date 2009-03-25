@@ -1904,8 +1904,34 @@ void reload_into_new_context(void)
 				else
 				{
 				free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
-				if(GLOBALS->vcd_handle_vcd_c_1) { fclose(GLOBALS->vcd_handle_vcd_c_1); GLOBALS->vcd_handle_vcd_c_1 = NULL; }
-				if(GLOBALS->vcd_handle_vcd_recoder_c_2) { fclose(GLOBALS->vcd_handle_vcd_recoder_c_2); GLOBALS->vcd_handle_vcd_recoder_c_2 = NULL; }
+				if(GLOBALS->vcd_handle_vcd_c_1)
+					{
+					if(GLOBALS->vcd_is_compressed_vcd_c_1)
+					        {
+					        pclose(GLOBALS->vcd_handle_vcd_c_1);
+					        GLOBALS->vcd_handle_vcd_c_1 = NULL;
+					        }
+					        else
+					        {
+					        fclose(GLOBALS->vcd_handle_vcd_c_1);
+					        GLOBALS->vcd_handle_vcd_c_1 = NULL;
+					        }
+					}
+				if(GLOBALS->vcd_handle_vcd_recoder_c_2)
+					{
+					if(GLOBALS->vcd_is_compressed_vcd_recoder_c_2)
+	        				{
+	        				pclose(GLOBALS->vcd_handle_vcd_recoder_c_2);
+	        				GLOBALS->vcd_handle_vcd_recoder_c_2 = NULL;
+	        				}    
+	        				else
+	        				{
+	        				fclose(GLOBALS->vcd_handle_vcd_recoder_c_2);
+	        				GLOBALS->vcd_handle_vcd_recoder_c_2 = NULL;
+	        				}
+					}
+
+
 				if(GLOBALS->vlist_handle) { fclose(GLOBALS->vlist_handle); GLOBALS->vlist_handle = NULL; }
 				if(GLOBALS->mm_lxt_mmap_addr)
 					{                        

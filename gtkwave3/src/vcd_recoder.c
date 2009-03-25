@@ -2460,10 +2460,12 @@ GLOBALS->slistroot=GLOBALS->slistcurr=NULL; GLOBALS->slisthier_len=0;
 if(GLOBALS->vcd_is_compressed_vcd_recoder_c_2)
 	{
 	pclose(GLOBALS->vcd_handle_vcd_recoder_c_2);
+	GLOBALS->vcd_handle_vcd_recoder_c_2 = NULL;
 	}
 	else
 	{
 	fclose(GLOBALS->vcd_handle_vcd_recoder_c_2);
+	GLOBALS->vcd_handle_vcd_recoder_c_2 = NULL;
 	}
 
 if(GLOBALS->yytext_vcd_recoder_c_3)
@@ -2659,12 +2661,6 @@ if(GLOBALS->vcd_is_compressed_vcd_recoder_c_2)
 	GLOBALS->vcd_fsiz_vcd_recoder_c_2 = 0;
 	}
 
-vcd_build_symbols();
-vcd_sortfacs();
-vcd_cleanup();
-
-getch_free();		/* free membuff for vcd getch buffer */
-
 GLOBALS->min_time=GLOBALS->start_time_vcd_recoder_c_3*GLOBALS->time_scale;
 GLOBALS->max_time=GLOBALS->end_time_vcd_recoder_c_3*GLOBALS->time_scale;
 
@@ -2673,6 +2669,13 @@ if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
         fprintf(stderr, "VCD times range is equal to zero.  Exiting.\n");
         vcd_exit(255);
         }
+
+vcd_build_symbols();
+vcd_sortfacs();
+vcd_cleanup();
+
+getch_free();		/* free membuff for vcd getch buffer */
+
 
 if(GLOBALS->blackout_regions)
 	{
@@ -3116,6 +3119,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2009/03/05 16:17:56  gtkwave
+ * added fastload option
+ *
  * Revision 1.19  2008/12/25 03:52:32  gtkwave
  * -Wshadow warning fixes
  *

@@ -39,6 +39,9 @@ while(t)
 	ctr++;
 	}
 
+GLOBALS->alloc2_chain = NULL;
+GLOBALS->outstanding = 0;
+
 #ifdef DEBUG_PRINTF
 printf("Freed %d chunks\n", ctr);
 system("date");
@@ -353,6 +356,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/01/20 06:11:48  gtkwave
+ * added gtkwave::getDisplayedSignals command
+ *
  * Revision 1.7  2007/09/23 18:33:54  gtkwave
  * warnings cleanups from sun compile
  *

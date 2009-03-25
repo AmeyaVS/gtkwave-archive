@@ -577,7 +577,7 @@
 		Added extload filetype to DnD.
 		Fixed window close when tabs active so it would update the
 		titlebar, times, etc., to the current tab.
-3.2.1	24mar09 Add more information for users if gtk can't initialize on MacOS.
+3.2.1	25mar09 Add more information for users if gtk can't initialize on MacOS.
 		Added possibility for vlist.c to write out the spill file in a
 		machine independent fashion.
 		Added --fastload option to gtkwave.
@@ -600,3 +600,4 @@
 		have changes.
 		Made AN_NORMAL/AN_REVERSE const declarations also static in
 		order to avoid unnecessary stack pushing.
+		Fixing reloader crashes in vcd_build_symbols().
