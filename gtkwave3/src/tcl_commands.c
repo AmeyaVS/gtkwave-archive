@@ -988,8 +988,11 @@ if(objc==2)
 			}
                 free_2(elem);
                 elem = NULL;
-		num_found = process_tcl_list(mult_entry, FALSE);
-		free_2(mult_entry);
+		if(mult_entry)
+			{
+			num_found = process_tcl_list(mult_entry, FALSE);
+			free_2(mult_entry);
+			}
 		if(num_found)
         		{
         		MaxSignalLength();
@@ -1669,6 +1672,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2009/02/16 05:24:32  gtkwave
+ * added setBaselineMarker command
+ *
  * Revision 1.22  2009/02/02 16:10:42  gtkwave
  * added gtkwavetcl_getTraceFlagsFromName
  *

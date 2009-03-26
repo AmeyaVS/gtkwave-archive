@@ -428,7 +428,7 @@ NULL, /* unoptimized_vcd_file_name  */
 NULL, /* skip_start */
 NULL, /* skip_end */
 NULL, /* indirect_fname */
-NO_FILE, /* loaded_file_type */
+MISSING_FILE, /* loaded_file_type */
 NULL, /* whoami 190 */
 NULL, /* logfile 191 */
 NULL, /* stems_name 192 */
@@ -1243,6 +1243,12 @@ void reload_into_new_context(void)
  char cached_ignore_savefile_size = GLOBALS->ignore_savefile_size;
  char cached_splash_disable = GLOBALS->splash_disable;
 
+ if(GLOBALS->loaded_file_type == MISSING_FILE)
+	{
+	fprintf(stderr, "GTKWAVE | Nothing to reload!\n");
+	return;
+	}
+
  logbox_reload();
 
  /* let all GTK/X events spin through in order to keep menus from freezing open during reload */
@@ -1676,7 +1682,8 @@ void reload_into_new_context(void)
 #endif
 	break;
   
-   case NO_FILE:
+   case MISSING_FILE:
+   case DUMPLESS_FILE:
    case GHW_FILE:
    case VCD_FILE:
    case VCD_RECODER_FILE: 
@@ -2214,7 +2221,8 @@ void free_and_destroy_page_context(void)
 #endif
         break;
  
-   case NO_FILE:
+   case MISSING_FILE:
+   case DUMPLESS_FILE:
    case GHW_FILE:
    case VCD_FILE:
    case VCD_RECODER_FILE: 

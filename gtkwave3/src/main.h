@@ -59,6 +59,7 @@ void menu_reload_waveform(GtkWidget *widget, gpointer data);
 void optimize_vcd_file(void);
 
 enum FileType {
+  MISSING_FILE,
   LXT_FILE,
   LX2_FILE,
   VZT_FILE,
@@ -69,7 +70,7 @@ enum FileType {
 #ifdef EXTLOAD_SUFFIX
   EXTLOAD_FILE,
 #endif
-  NO_FILE
+  DUMPLESS_FILE
 };
 
 #endif
@@ -77,6 +78,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/01/27 07:04:31  gtkwave
+ * added extload external process loader capability
+ *
  * Revision 1.4  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

@@ -771,6 +771,11 @@ char** elem = NULL;
 char *pnt, *pnt2;
 int esc = 0;
 
+if(!s)
+	{
+	return(NULL);
+	}
+
 elem = zSplitTclList(s, &l);
 
 if(elem)
@@ -864,6 +869,11 @@ int net_processing_is_off = 0;
 int unesc_len;
 int curr_srch_idx = 0;
 char *unescaped_str = NULL;
+
+if(!sl)
+	{
+	return(0);
+	}
 
 list = zSplitTclList(sl, &c);
 if(!list)
@@ -2501,6 +2511,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2009/03/24 20:51:53  gtkwave
+ * add static to const qualifier for some declarations to avoid stack push
+ *
  * Revision 1.47  2009/02/16 20:55:10  gtkwave
  * added extload to dnd filetypes.  set window title on tab close
  *

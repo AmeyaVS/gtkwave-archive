@@ -292,6 +292,7 @@ char is_fastload = VCD_FSL_NONE;
 char is_giga = 0;
 char fast_exit=0;
 char opt_errors_encountered=0;
+char is_missing_file = 0;
 
 char *wname=NULL;
 char *override_rc=NULL;
@@ -842,12 +843,17 @@ if (optind < argc)
 		}
         }
 
-if(!GLOBALS->loaded_file_name)
-	{
-	print_help(argv[0]);
-	}
 read_rc_file(override_rc);
 GLOBALS->splash_disable |= splash_disable_rc_override;
+
+if(!GLOBALS->loaded_file_name)
+	{
+	/* if rc gates off gui, for now disable */
+	/* if(0) */
+		{
+		print_help(argv[0]);
+		}
+	}
 
 if(is_giga)
 	{
@@ -904,6 +910,15 @@ if((!wname)&&(GLOBALS->make_vcd_save_file))
 
 GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
+if(!GLOBALS->loaded_file_name)
+	{
+	GLOBALS->loaded_file_name = strdup_2("[no file loaded]");	
+	is_missing_file = 1;
+	GLOBALS->min_time=LLDescriptor(0);
+	GLOBALS->max_time=LLDescriptor(0);
+	fprintf(stderr, "GTKWAVE | Use -h, --help to display help.\n\n");
+	}
+	
 /* load either the vcd or aet file depending on suffix then mode setting */
 if(is_vcd)
 	{
@@ -929,6 +944,11 @@ strcat(GLOBALS->winname,GLOBALS->loaded_file_name);
 
 loader_check_head:
 
+if(is_missing_file)
+	{
+	GLOBALS->loaded_file_type = MISSING_FILE;
+	}
+else
 #ifdef EXTLOAD_SUFFIX
 if( (strlen(GLOBALS->loaded_file_name)>strlen(EXTLOAD_SUFFIX))&&
 	((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-strlen(EXTLOAD_SUFFIX),EXTLOAD_SUFFIX))) )
@@ -1071,7 +1091,7 @@ load_vcd:
 #if !defined _MSC_VER && !defined __MINGW32__
 	if(is_interactive)
 		{
-		GLOBALS->loaded_file_type = NO_FILE;
+		GLOBALS->loaded_file_type = DUMPLESS_FILE;
 		vcd_partial_main(GLOBALS->loaded_file_name);
 		}
 		else
@@ -1079,7 +1099,7 @@ load_vcd:
 		{
 		if(is_legacy)
 			{
-			  GLOBALS->loaded_file_type = (strcmp(GLOBALS->loaded_file_name, "-vcd")) ? VCD_FILE : NO_FILE;
+			  GLOBALS->loaded_file_type = (strcmp(GLOBALS->loaded_file_name, "-vcd")) ? VCD_FILE : DUMPLESS_FILE;
 			  vcd_main(GLOBALS->loaded_file_name);
 			}
 			else
@@ -1091,7 +1111,7 @@ load_vcd:
 				}
 				else
 				{
-				GLOBALS->loaded_file_type = NO_FILE;
+				GLOBALS->loaded_file_type = DUMPLESS_FILE;
 				GLOBALS->use_fastload = VCD_FSL_NONE;
 				}
 			  vcd_recoder_main(GLOBALS->loaded_file_name);
@@ -1491,7 +1511,7 @@ if(GLOBALS->use_toolbutton_interface)
 
 		gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
-		if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
+		if((GLOBALS->loaded_file_type != DUMPLESS_FILE)&&(!GLOBALS->disable_menus))
 			{
 			stock = gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         GTK_STOCK_REFRESH,
@@ -1626,7 +1646,7 @@ if(GLOBALS->use_toolbutton_interface)
 		                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 20, 0);
 		gtk_widget_show (timebox);
 
-		if((GLOBALS->loaded_file_type != NO_FILE)&&(!GLOBALS->disable_menus))
+		if((GLOBALS->loaded_file_type != DUMPLESS_FILE)&&(!GLOBALS->disable_menus))
 			{
 			GtkWidget *r_pixmap = gtk_pixmap_new(GLOBALS->redo_pixmap, GLOBALS->redo_mask);
 			GtkWidget *main_vbox1;
@@ -2300,6 +2320,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.58  2009/03/09 06:23:37  gtkwave
+ * cygwin tcl compatibility fix
+ *
  * Revision 1.57  2009/03/05 16:17:56  gtkwave
  * added fastload option
  *

@@ -2187,6 +2187,12 @@ if(GLOBALS->filesel_ok)
 		set_window_idle(NULL);
 		set_GLOBALS(g_now);
 		g_now->vcd_jmp_buf = NULL;
+
+		if(g_old->loaded_file_type == MISSING_FILE) /* remove original "blank" page */
+			{
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(g_old->notebook), g_old->this_context_page);
+			menu_quit_close_callback(NULL, NULL);
+			}
 		}
                 else
                 {
@@ -2253,8 +2259,8 @@ menu_reload_waveform(GtkWidget *widget, gpointer data)
 
  /* XXX if there's no file (for some reason), this function shouldn't occur
     we should probably gray it out. */
- if(GLOBALS->loaded_file_type == NO_FILE) {
-   printf("GTKWAVE | NO_FILE type cannot be reloaded\n");
+ if(GLOBALS->loaded_file_type == DUMPLESS_FILE) {
+   printf("GTKWAVE | DUMPLESS_FILE type cannot be reloaded\n");
    return;
  }
 
@@ -4995,7 +5001,7 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_VZDYNE].path);
 	}
 
-    if(GLOBALS->loaded_file_type == NO_FILE)
+    if(GLOBALS->loaded_file_type == DUMPLESS_FILE)
 	{
     	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_FRW].path);
 	}
@@ -5285,6 +5291,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.57  2009/02/16 20:55:10  gtkwave
+ * added extload to dnd filetypes.  set window title on tab close
+ *
  * Revision 1.56  2009/01/12 04:17:39  gtkwave
  * added dynamic zoom for end for partial vcd
  *
