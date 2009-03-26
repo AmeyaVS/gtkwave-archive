@@ -446,6 +446,7 @@ NULL, /* toppanedwindow 203 */
 NULL, /* sstpane 204 */
 NULL, /* expanderwindow 205 */
 0, /* disable_window_manager 206 */
+0, /* disable_empty_gui */
 1, /* paned_pack_semantics 207 */
 0, /* zoom_was_explicitly_set 208 */
 1000, /* initial_window_x 209 */

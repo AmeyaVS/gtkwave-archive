@@ -2144,20 +2144,22 @@ return(mult_entry);
 /* XXX functions for URL (not TCL list) handling XXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
+enum GtkwaveFtype { WAVE_FTYPE_UNKNOWN, WAVE_FTYPE_DUMPFILE, WAVE_FTYPE_STEMSFILE, WAVE_FTYPE_SAVEFILE };
+
 /* ----------------------------------------------------------------------------
- * process_url_file - examines filename and performs appropriate side-effect
+ * determine_ftype - examines filename (perhaps initial contents) and 
+ *      determines file type
  *
  * Results:
- *      Loads save file, new dump file, or stems file viewer
+ *      enum of ftype determination
  * ----------------------------------------------------------------------------
  */
-
-static int process_url_file(char *s)
+static int determine_ftype(char *s, char **dotpnt)
 {
 int rc = 0;
 char *pnt = s;
 char *dot = NULL, *dot2 = NULL;
-int ftype = 0;
+int ftype = WAVE_FTYPE_UNKNOWN;
 
 while(*pnt)
 	{
@@ -2165,16 +2167,18 @@ while(*pnt)
 	pnt++;
 	}
 
+*dotpnt = dot;
+
 if(dot)
 	{
 	if(!strcasecmp("sav", dot+1))
 		{
-		ftype = 1;
+		ftype = WAVE_FTYPE_SAVEFILE;
 		}
 	else
 	if(!strcasecmp("stems", dot+1))
 		{
-		ftype = 2;
+		ftype = WAVE_FTYPE_STEMSFILE;
 		}
 	else /* detect dumpfile type */
 	if	(
@@ -2191,7 +2195,7 @@ if(dot)
 		(!strcasecmp("ae2", dot+1))
 		)
 		{
-		ftype = 3;
+		ftype = WAVE_FTYPE_DUMPFILE;
 		}
 	else
 	if(dot2)
@@ -2204,7 +2208,7 @@ if(dot)
 			(!strcasecmp("vcd.zip", dot2+1)) 
 			)
 			{
-			ftype = 3;
+			ftype = WAVE_FTYPE_DUMPFILE;
 			}
 		}
 	}
@@ -2222,22 +2226,37 @@ if(dot)
 
 		if((ch0 == '+') && (ch1 == '+'))
 			{
-			ftype = 2; /* stems file */
+			ftype = WAVE_FTYPE_STEMSFILE; /* stems file */
 			}
 		else 
 		if(ch0 == '[')
 			{
-			ftype = 1; /* save file */
+			ftype = WAVE_FTYPE_SAVEFILE; /* save file */
 			}
 
 		fclose(f);
 		}
 	}
 
+return(ftype);
+}
+
+/* ----------------------------------------------------------------------------
+ * process_url_file - examines filename and performs appropriate side-effect
+ *
+ * Results:
+ *      Loads save file, new dump file, or stems file viewer
+ * ----------------------------------------------------------------------------
+ */
+static int process_url_file(char *s)
+{
+int rc = 0;
+char *dotpnt = NULL;
+int ftype = determine_ftype(s, &dotpnt);
 
 switch(ftype)
 	{
-	case 1:
+	case WAVE_FTYPE_SAVEFILE:
 		GLOBALS->fileselbox_text = &GLOBALS->filesel_writesave;
 	        GLOBALS->filesel_ok=1;
         	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
@@ -2249,7 +2268,7 @@ switch(ftype)
 		rc = 1;
 		break;
 
-	case 2:
+	case WAVE_FTYPE_STEMSFILE:
 #if !defined _MSC_VER && !defined __MINGW32__
 		GLOBALS->fileselbox_text = &GLOBALS->stems_name;
 	        GLOBALS->filesel_ok=1;
@@ -2261,7 +2280,7 @@ switch(ftype)
 		rc = 1;
 		break;
 
-	case 3:
+	case WAVE_FTYPE_DUMPFILE:
 		GLOBALS->fileselbox_text = &GLOBALS->filesel_newviewer_menu_c_1;
 	        GLOBALS->filesel_ok=1;
         	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text);
@@ -2278,9 +2297,44 @@ switch(ftype)
 return(rc);
 }
 
+/* ----------------------------------------------------------------------------
+ * uri_cmp - qsort compare function that ensures save files and stems are
+ *      ordered after their respective dumpfiles
+ *
+ * Results:
+ *      returns correct sort order for processing (based on name and
+ *      GtkwaveFtype
+ * ----------------------------------------------------------------------------
+ */
+static int uri_cmp(const void *v1, const void *v2)
+{
+char *s1 = *(char **)v1;
+char *s2 = *(char **)v2;
+char *d1, *d2;
+int typ1 = determine_ftype(s1, &d1);
+int typ2 = determine_ftype(s2, &d2);
+int rc;
+
+if(!d1 || !d2)
+	{
+	return(strcmp(s1, s2));
+	}
+
+*d1 = 0; *d2 = 0;
+
+rc = strcmp(s1, s2);
+if(!rc)
+	{
+	rc = (typ1 - typ2); /* use suffix ftype to manipulate sort */
+	}
+
+*d1 = '.'; *d2 = '.';
+
+return(rc);
+}
 
 /* ----------------------------------------------------------------------------
- * process_url_list - examines list of URLs and 
+ * process_url_list - examines list of URLs and processes if valid files
  *
  * Results:
  *      Indicates if any URLs were processed
@@ -2291,11 +2345,14 @@ int process_url_list(char *s)
 {
 int is_url = 0;
 #if WAVE_USE_GTK2
+int i;
+int url_cnt = 0;
 char pch = 0;
 
 char *nxt_hd = s;
 char *pnt = s;
 char *path;
+char **url_list = calloc_2(1, sizeof(gchar *));
 
 if(*pnt == '{') return(0); /* exit early if tcl list */
 
@@ -2309,7 +2366,7 @@ for(;;)
 			}
 
 		path = g_filename_from_uri(nxt_hd, NULL, NULL);
-		if(path) { is_url += process_url_file(path); }
+		if(path) { url_list[url_cnt++] = path; url_list = realloc_2(url_list, (url_cnt+1) * sizeof(gchar *)); }
 		break;
 		}
 	else
@@ -2321,7 +2378,7 @@ for(;;)
 			*pnt = 0;
 
 			path = g_filename_from_uri(nxt_hd, NULL, NULL);
-			if(path) { is_url += process_url_file(path); }
+			if(path) { url_list[url_cnt++] = path; url_list = realloc_2(url_list, (url_cnt+1) * sizeof(gchar *)); }
 			*pnt = sav;
 			}
 		pch = *pnt;
@@ -2333,6 +2390,22 @@ for(;;)
 		pch = *pnt;
 		pnt++;
 		}
+	}
+
+if(url_list)
+	{
+	if(url_cnt > 1) 
+		{
+		qsort(url_list, url_cnt, sizeof(struct gchar *), uri_cmp);
+		}
+
+	for(i=0;i<url_cnt;i++)
+		{
+		is_url += process_url_file(url_list[i]);
+		g_free(url_list[i]);
+		}
+
+	free_2(url_list);
 	}
 
 #endif
@@ -2511,6 +2584,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2009/03/26 20:57:42  gtkwave
+ * added MISSING_FILE support for bringing up gtkwave without a dumpfile
+ *
  * Revision 1.48  2009/03/24 20:51:53  gtkwave
  * add static to const qualifier for some declarations to avoid stack push
  *

@@ -604,3 +604,8 @@
 		Adding experimental support for bringing up gtkwave without a
 		trace like "every other" GUI app.  This is currently disabled 
 		pending more testing.
+		Sort filename lists from DnD in order to allow both a
+		dumpfile and a savefile to be dragged into the viewer and
+		processed in a logical order (i.e., the dumpfile before
+		the save file.)
+		Added disable_empty_gui rc file variable.

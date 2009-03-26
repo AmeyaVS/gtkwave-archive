@@ -135,6 +135,13 @@ GLOBALS->cursor_snap=(val<=0)?0:val;
 return(0);
 }
 
+int f_disable_empty_gui(char *str)
+{
+DEBUG(printf("f_disable_empty_gui(\"%s\")\n",str));
+GLOBALS->disable_empty_gui=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_disable_mouseover(char *str)
 {
 DEBUG(printf("f_disable_mouseover(\"%s\")\n",str));
@@ -698,6 +705,7 @@ static struct rc_entry rcitems[]=
 { "context_tabposition", f_context_tabposition },
 { "convert_to_reals", f_convert_to_reals },
 { "cursor_snap", f_cursor_snap },
+{ "disable_empty_gui", f_disable_empty_gui },
 { "disable_mouseover", f_disable_mouseover },
 { "disable_tooltips", f_disable_tooltips },
 { "do_initial_zoom_fit", f_do_initial_zoom_fit },
@@ -925,6 +933,10 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2009/03/15 17:34:03  gtkwave
+ * adjusted mdgray and dkgray brightness for better visibility when using
+ * collapsed traces
+ *
  * Revision 1.16  2009/01/12 04:17:39  gtkwave
  * added dynamic zoom for end for partial vcd
  *

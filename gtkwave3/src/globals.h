@@ -442,6 +442,7 @@ GtkWidget *toppanedwindow; /* from main.c 214 */
 GtkWidget *sstpane; /* from main.c 215 */
 GtkWidget *expanderwindow; /* from main.c 216 */
 char disable_window_manager; /* from main.c 217 */
+char disable_empty_gui; /* from main.c */
 char paned_pack_semantics; /* from main.c 218 */
 char zoom_was_explicitly_set; /* from main.c 219 */
 int initial_window_x; /* from main.c 220 */
