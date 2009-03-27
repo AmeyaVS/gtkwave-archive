@@ -916,7 +916,7 @@ if(!GLOBALS->loaded_file_name)
 	is_missing_file = 1;
 	GLOBALS->min_time=LLDescriptor(0);
 	GLOBALS->max_time=LLDescriptor(0);
-	fprintf(stderr, "GTKWAVE | Use -h, --help command line flags to display help.\n\n");
+	fprintf(stderr, "GTKWAVE | Use the -h, --help command line flags to display help.\n\n");
 	}
 	
 /* load either the vcd or aet file depending on suffix then mode setting */
@@ -2320,6 +2320,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.60  2009/03/26 23:53:22  gtkwave
+ * added disable_empty_gui rc variable which reverts to old behavior
+ *
  * Revision 1.59  2009/03/26 20:57:41  gtkwave
  * added MISSING_FILE support for bringing up gtkwave without a dumpfile
  *
