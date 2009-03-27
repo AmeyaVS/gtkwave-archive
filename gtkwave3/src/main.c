@@ -344,7 +344,7 @@ if(!GLOBALS)
 	GLOBALS->contexts = old_g->contexts;
 
 	GLOBALS->mainwindow = old_g->mainwindow;
-	splash_disable_rc_override = (old_g->loaded_file_type != MISSING_FILE);
+	splash_disable_rc_override = 1;
 
 	/* busy.c */
 	GLOBALS->busycursor_busy_c_1 = old_g->busycursor_busy_c_1;
@@ -2323,6 +2323,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.63  2009/03/27 04:58:14  gtkwave
+ * enable splash screen during empty gui handling / load dumpfile
+ *
  * Revision 1.62  2009/03/27 04:38:05  gtkwave
  * working on ergonomics of drag and drop into an empty gui
  *
