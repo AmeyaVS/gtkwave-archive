@@ -600,9 +600,19 @@ GdkEventMotion event[1];
 event[0].deviceid = GDK_CORE_POINTER;  
 #endif
 
+if(GLOBALS->loaded_file_type == MISSING_FILE)
+	{
+	return(TRUE);
+	}
+
 if(run_once == FALSE) /* avoid any race conditions with the toolkit for uninitialized data */
 	{
 	run_once = TRUE;
+	return(TRUE);
+	}
+
+if((!GLOBALS) || (!GLOBALS->signalarea) || (!GLOBALS->signalarea->window))                 
+	{
 	return(TRUE);
 	}
 
@@ -617,7 +627,7 @@ if(GLOBALS->dnd_cursor_timer)
 	}
 
 if(GLOBALS->mouseover_counter < 0) return(TRUE); /* mouseover is up in wave window so don't bother */
-                 
+
 WAVE_GDK_GET_POINTER(GLOBALS->signalarea->window, &x, &y, &xi, &yi, &state);
 WAVE_GDK_GET_POINTER_COPY;
 
@@ -1674,6 +1684,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2009/03/24 21:31:34  gtkwave
+ * changed dkgray to mdgray for "Time" background as intensity changed
+ *
  * Revision 1.40  2008/12/25 03:21:57  gtkwave
  * -Wshadow warning fixes
  *

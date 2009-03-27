@@ -610,3 +610,4 @@
 		the save file.)
 		Added disable_empty_gui rc file variable.
 		Working with ergonomic features of empty gui handling.
+		Enable splash screen during empty gui handling.

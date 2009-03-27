@@ -1572,6 +1572,7 @@ void reload_into_new_context(void)
  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
  new_globals->vector_padding = GLOBALS->vector_padding;
  new_globals->zoombase = GLOBALS->zoombase;
+
  new_globals->splash_disable = 1; /* to disable splash for reload */
 
  new_globals->logfiles = GLOBALS->logfiles; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */

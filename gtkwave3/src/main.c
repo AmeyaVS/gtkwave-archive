@@ -344,7 +344,7 @@ if(!GLOBALS)
 	GLOBALS->contexts = old_g->contexts;
 
 	GLOBALS->mainwindow = old_g->mainwindow;
-	splash_disable_rc_override = 1;
+	splash_disable_rc_override = (old_g->loaded_file_type != MISSING_FILE);
 
 	/* busy.c */
 	GLOBALS->busycursor_busy_c_1 = old_g->busycursor_busy_c_1;
@@ -2323,6 +2323,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.62  2009/03/27 04:38:05  gtkwave
+ * working on ergonomics of drag and drop into an empty gui
+ *
  * Revision 1.61  2009/03/27 00:11:01  gtkwave
  * minor change in -h, --help text when gui enabled
  *
