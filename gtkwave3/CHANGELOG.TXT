@@ -609,3 +609,4 @@
 		processed in a logical order (i.e., the dumpfile before
 		the save file.)
 		Added disable_empty_gui rc file variable.
+		Working with ergonomic features of empty gui handling.

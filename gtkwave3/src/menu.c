@@ -2190,6 +2190,7 @@ if(GLOBALS->filesel_ok)
 
 		if(g_old->loaded_file_type == MISSING_FILE) /* remove original "blank" page */
 			{
+                        if(g_old->missing_file_toolbar) gtk_widget_set_sensitive(g_old->missing_file_toolbar, TRUE);
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(g_old->notebook), g_old->this_context_page);
 			menu_quit_close_callback(NULL, NULL);
 			}
@@ -5291,6 +5292,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.58  2009/03/26 20:57:41  gtkwave
+ * added MISSING_FILE support for bringing up gtkwave without a dumpfile
+ *
  * Revision 1.57  2009/02/16 20:55:10  gtkwave
  * added extload to dnd filetypes.  set window title on tab close
  *

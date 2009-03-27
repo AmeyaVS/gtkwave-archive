@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
@@ -916,7 +916,7 @@ if(!GLOBALS->loaded_file_name)
 	is_missing_file = 1;
 	GLOBALS->min_time=LLDescriptor(0);
 	GLOBALS->max_time=LLDescriptor(0);
-	fprintf(stderr, "GTKWAVE | Use the -h, --help command line flags to display help.\n\n");
+	fprintf(stderr, "GTKWAVE | Use the -h, --help command line flags to display help.\n");
 	}
 	
 /* load either the vcd or aet file depending on suffix then mode setting */
@@ -1536,6 +1536,11 @@ if(GLOBALS->use_toolbutton_interface)
 					  NULL,
 					  tb_pos++);
 
+		GLOBALS->missing_file_toolbar = tb;
+		if(GLOBALS->loaded_file_type == MISSING_FILE)
+			{
+			gtk_widget_set_sensitive(GLOBALS->missing_file_toolbar, FALSE);
+			}
 		} /* of ...if(mainwindow_already_built) */
 	}
 	else
@@ -1712,11 +1717,10 @@ if(GLOBALS->do_resize_signals)
 gtk_widget_show(GLOBALS->signalwindow);
 
 #if GTK_CHECK_VERSION(2,4,0)
-if(!GLOBALS->hide_sst)
+if((!GLOBALS->hide_sst)&&(GLOBALS->loaded_file_type != MISSING_FILE))
 	{
 	GLOBALS->toppanedwindow = gtk_hpaned_new();
 	GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
- 
 	GLOBALS->expanderwindow = gtk_expander_new_with_mnemonic("_SST");
 	gtk_expander_set_expanded(GTK_EXPANDER(GLOBALS->expanderwindow), (GLOBALS->sst_expanded==TRUE));
 	gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
@@ -1753,7 +1757,7 @@ if(GLOBALS->dnd_sigview)
 dnd_setup(GLOBALS->signalarea, GLOBALS->wavearea, 1);
 
 #if GTK_CHECK_VERSION(2,4,0)
-if(!GLOBALS->hide_sst)
+if((!GLOBALS->hide_sst)&&(GLOBALS->loaded_file_type != MISSING_FILE))
 	{
 	gtk_paned_pack1(GTK_PANED(GLOBALS->toppanedwindow), GLOBALS->expanderwindow, 0, 0);
 	gtk_paned_pack2(GTK_PANED(GLOBALS->toppanedwindow), panedwindow, ~0, 0);
@@ -1786,7 +1790,6 @@ if(GLOBALS->treeopen_chain_head)
 if(!mainwindow_already_built)
 	{
 	gtk_widget_show(top_table);
-
 	gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
 	                      	GTK_FILL | GTK_EXPAND,
 	                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
@@ -2320,6 +2323,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.61  2009/03/27 00:11:01  gtkwave
+ * minor change in -h, --help text when gui enabled
+ *
  * Revision 1.60  2009/03/26 23:53:22  gtkwave
  * added disable_empty_gui rc variable which reverts to old behavior
  *

@@ -407,6 +407,7 @@ NULL, /* lt_buf_lxt_c_1 183 */
 /* 
  * main.c
  */
+NULL, /* missing_file_toolbar */
 NULL, /* argvlist */
 #if defined(HAVE_LIBTCL)
 NULL, /* interp */

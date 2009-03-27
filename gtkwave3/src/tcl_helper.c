@@ -2394,9 +2394,23 @@ for(;;)
 
 if(url_list)
 	{
-	if(url_cnt > 1) 
+	if(url_cnt > 2) 
 		{
 		qsort(url_list, url_cnt, sizeof(struct gchar *), uri_cmp);
+		}
+	else
+	if(url_cnt == 2) /* in case there are only 2 files, make the savefile last */
+		{
+		char *d1, *d2;
+		int typ1 = determine_ftype(url_list[0], &d1);
+		int typ2 = determine_ftype(url_list[1], &d2);
+
+		if(typ1 > typ2)
+			{
+			char *tmp_swap = url_list[0];
+			url_list[0] = url_list[1];
+			url_list[1] = tmp_swap;
+			}
 		}
 
 	for(i=0;i<url_cnt;i++)
@@ -2584,6 +2598,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2009/03/26 23:53:22  gtkwave
+ * added disable_empty_gui rc variable which reverts to old behavior
+ *
  * Revision 1.49  2009/03/26 20:57:42  gtkwave
  * added MISSING_FILE support for bringing up gtkwave without a dumpfile
  *
