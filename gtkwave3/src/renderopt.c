@@ -179,7 +179,7 @@ static void ok_callback(void)
 GLOBALS->ps_fullpage=GLOBALS->render_mutex_renderopt_c_1[0];
 if(GLOBALS->target_mutex_renderopt_c_1[0])
 	{
-	fileselbox("Print To PDF File",&GLOBALS->filesel_print_ps_renderopt_c_1,GTK_SIGNAL_FUNC(pdf_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.pdf", 1);
+	fileselbox("Print To PDF File",&GLOBALS->filesel_print_pdf_renderopt_c_1,GTK_SIGNAL_FUNC(pdf_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.pdf", 1);
 	}
 else
 if(GLOBALS->target_mutex_renderopt_c_1[1])
@@ -382,6 +382,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/03/29 02:08:36  gtkwave
+ * added support for PDF file generation via ps2pdf
+ *
  * Revision 1.6  2008/06/11 08:01:53  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

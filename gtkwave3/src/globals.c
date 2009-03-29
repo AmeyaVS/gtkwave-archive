@@ -613,6 +613,7 @@ NULL, /* regex_ok_regex_c_1 322 */
  */
 0, /* is_active_renderopt_c_3 323 */
 0, /* window_renderopt_c_6 324 */
+NULL, /* filesel_print_pdf_renderopt_c_1 */
 NULL, /* filesel_print_ps_renderopt_c_1 325 */
 NULL, /* filesel_print_mif_renderopt_c_1 326 */
 {0,0,0}, /* target_mutex_renderopt_c_1 328 */
@@ -1767,6 +1768,7 @@ void reload_into_new_context(void)
 	memcpy(new_globals->page_mutex_renderopt_c_1, GLOBALS->page_mutex_renderopt_c_1, sizeof(GLOBALS->page_mutex_renderopt_c_1));
 	memcpy(new_globals->render_mutex_renderopt_c_1, GLOBALS->render_mutex_renderopt_c_1, sizeof(GLOBALS->render_mutex_renderopt_c_1));
 
+	strcpy2_into_new_context(new_globals, &new_globals->filesel_print_pdf_renderopt_c_1, &GLOBALS->filesel_print_pdf_renderopt_c_1);
 	strcpy2_into_new_context(new_globals, &new_globals->filesel_print_ps_renderopt_c_1, &GLOBALS->filesel_print_ps_renderopt_c_1);
 	strcpy2_into_new_context(new_globals, &new_globals->filesel_print_mif_renderopt_c_1, &GLOBALS->filesel_print_mif_renderopt_c_1);
 
