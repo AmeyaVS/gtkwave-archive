@@ -611,3 +611,4 @@
 		Added disable_empty_gui rc file variable.
 		Working with ergonomic features of empty gui handling.
 		Fixed & to && in if() comparison in lxt_write.c
+		Added support for PDF output via ps2pdf.

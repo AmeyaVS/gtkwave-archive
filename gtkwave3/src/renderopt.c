@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006
+ * Copyright (c) Tony Bybell 1999-2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,7 @@
 #include <errno.h>
 
 static char *render_targets[]=
-        {"PS", "MIF"};
+        {"PDF", "PS", "MIF"};
 
 static char *page_size[]=
         {"Letter (8.5\" x 11\")", "A4 (11.68\" x 8.26\")", "Legal (14\" x 8.5\")", "Letter Prop (6.57\" x 8.5\")", "A4 Prop (8.26\" x 5.84\")"};
@@ -34,7 +34,7 @@ static void render_clicked(GtkWidget *widget, gpointer which)
 {
 int i;
 
-for(i=0;i<2;i++) GLOBALS->target_mutex_renderopt_c_1[i]=0;
+for(i=0;i<3;i++) GLOBALS->target_mutex_renderopt_c_1[i]=0;
 
 i = (int)((long)which);
 GLOBALS->target_mutex_renderopt_c_1[i] = 1; /* mark our choice */
@@ -58,7 +58,7 @@ static void rendertype_clicked(GtkWidget *widget, gpointer which)
 {
 int i;
 
-for(i=0;i<2;i++) GLOBALS->render_mutex_renderopt_c_1[i]=0;
+for(i=0;i<3;i++) GLOBALS->render_mutex_renderopt_c_1[i]=0;
 
 i = (int)((long)which);
 GLOBALS->render_mutex_renderopt_c_1[i] = 1; /* mark our choice */
@@ -86,6 +86,66 @@ if(GLOBALS->filesel_ok)
                 {
                 print_ps_image(wave,px[GLOBALS->page_size_type_renderopt_c_1],py[GLOBALS->page_size_type_renderopt_c_1]);
                 fclose(wave);
+                }
+        }  
+}
+
+static void
+pdf_print_cleanup(GtkWidget *widget, gpointer data)
+{
+FILE *wave;
+FILE *wave2;
+
+if(GLOBALS->filesel_ok)
+        {
+        DEBUG(printf("PDF Print Fini: %s\n", *fileselbox_text));
+                
+        if(!(wave=fopen(*GLOBALS->fileselbox_text,"wb")))
+                {
+                fprintf(stderr, "Error opening PDF output file '%s' for writing.\n",*GLOBALS->fileselbox_text);
+                perror("Why");
+                errno=0;
+                }
+                else
+                {
+		int len = strlen(*GLOBALS->fileselbox_text) ;
+		char *zname = malloc_2(len + 4);
+		strcpy(zname, *GLOBALS->fileselbox_text);
+		strcpy(zname+len, ".ps");
+
+		if(!(wave2=fopen(zname,"wb")))		
+			{
+	                fprintf(stderr, "Error opening PS output tempfile '%s' for writing.\n",zname);
+	                perror("Why");
+			fclose(wave);
+			unlink(*GLOBALS->fileselbox_text);			
+	                errno=0;
+			}
+			else
+			{
+			char *sysname = malloc_2(5 + 1 + len + 3 + 1 + len + 1);
+			int rc;	
+
+			sprintf(sysname, "ps2pdf"	/* 5 */
+					 " "		/* 1 */
+					 "%s"		/* len + 3 */
+					 " "		/* 1 */
+					 "%s"		/* len */
+					 , zname, *GLOBALS->fileselbox_text);
+	                print_ps_image(wave2,px[GLOBALS->page_size_type_renderopt_c_1],py[GLOBALS->page_size_type_renderopt_c_1]);
+	                fclose(wave2);
+			fclose(wave);
+			rc = system(sysname);
+			if(rc)
+				{
+				printf("GTKWAVE | ERROR: rc for '%s' = %d\n", sysname, rc);
+				unlink(*GLOBALS->fileselbox_text);
+				}
+			free_2(sysname);
+			unlink(zname);
+			}
+
+		free_2(zname);
                 }
         }  
 }
@@ -119,11 +179,17 @@ static void ok_callback(void)
 GLOBALS->ps_fullpage=GLOBALS->render_mutex_renderopt_c_1[0];
 if(GLOBALS->target_mutex_renderopt_c_1[0])
 	{
+	fileselbox("Print To PDF File",&GLOBALS->filesel_print_ps_renderopt_c_1,GTK_SIGNAL_FUNC(pdf_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.pdf", 1);
+	}
+else
+if(GLOBALS->target_mutex_renderopt_c_1[1])
+	{
 	fileselbox("Print To PS File",&GLOBALS->filesel_print_ps_renderopt_c_1,GTK_SIGNAL_FUNC(ps_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.ps", 1);
 	}
-	else
+else
+/* if(GLOBALS->target_mutex_renderopt_c_1[2]) */
 	{
-	fileselbox("Print To MIF File (experimental)",&GLOBALS->filesel_print_mif_renderopt_c_1,GTK_SIGNAL_FUNC(mif_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.fm", 1);
+	fileselbox("Print To MIF File",&GLOBALS->filesel_print_mif_renderopt_c_1,GTK_SIGNAL_FUNC(mif_print_cleanup), GTK_SIGNAL_FUNC(NULL), "*.fm", 1);
 	}
 }
 
@@ -142,6 +208,7 @@ void renderbox(char *title)
     GtkWidget *vbox, *hbox, *small_hbox;
     GtkWidget *button1, *button2;
     int i;
+    FILE *sysfile = NULL;
 
     if(GLOBALS->script_handle)
         {
@@ -156,12 +223,12 @@ void renderbox(char *title)
         if(s1 && s2 && s3)
                 {
 		memset(GLOBALS->target_mutex_renderopt_c_1, 0, 2); GLOBALS->target_mutex_renderopt_c_1[0] = 1; /* PS */
-		for(i=0;i<2;i++)
+		for(i=0;i<3;i++)
 			{
 			if(!strcmp(s1, render_targets[i]))
 				{
 				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  render_targets[i]);
-				memset(GLOBALS->target_mutex_renderopt_c_1, 0, 2); GLOBALS->target_mutex_renderopt_c_1[i] = 1; break;
+				memset(GLOBALS->target_mutex_renderopt_c_1, 0, 3); GLOBALS->target_mutex_renderopt_c_1[i] = 1; break;
 				}
 			}
 
@@ -178,13 +245,13 @@ void renderbox(char *title)
 				}
 			}
 
-		memset(GLOBALS->render_mutex_renderopt_c_1, 0, 2); GLOBALS->render_mutex_renderopt_c_1[0] = 1; /* Full */
-		for(i=0;i<2;i++)
+		memset(GLOBALS->render_mutex_renderopt_c_1, 0, 3); GLOBALS->render_mutex_renderopt_c_1[0] = 1; /* Full */
+		for(i=0;i<3;i++)
 			{
 			if(!strcmp(s3, render_type[i]))
 				{
 				fprintf(stderr, "GTKWAVE | Print using '%s'\n",  render_type[i]);
-				memset(GLOBALS->render_mutex_renderopt_c_1, 0, 2); GLOBALS->render_mutex_renderopt_c_1[i] = 1; break;
+				memset(GLOBALS->render_mutex_renderopt_c_1, 0, 3); GLOBALS->render_mutex_renderopt_c_1[i] = 1; break;
 				}
 			}
 
@@ -228,7 +295,7 @@ void renderbox(char *title)
     menu = gtk_menu_new ();
     group=NULL;
 
-    for(i=0;i<2;i++)
+    for(i=0;i<3;i++)
 	{
     	menuitem = gtk_radio_menu_item_new_with_label (group, render_targets[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
@@ -271,7 +338,7 @@ void renderbox(char *title)
     menu = gtk_menu_new ();
     group=NULL;
 
-    for(i=0;i<2;i++)
+    for(i=0;i<3;i++)
 	{
     	menuitem = gtk_radio_menu_item_new_with_label (group, render_type[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
@@ -315,6 +382,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/06/11 08:01:53  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.5  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
@@ -357,4 +427,3 @@ void renderbox(char *title)
  * initial release
  *
  */
-

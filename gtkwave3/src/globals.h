@@ -608,7 +608,7 @@ char is_active_renderopt_c_3; /* from renderopt.c 341 */
 GtkWidget *window_renderopt_c_6; /* from renderopt.c 342 */
 char *filesel_print_ps_renderopt_c_1; /* from renderopt.c 343 */
 char *filesel_print_mif_renderopt_c_1; /* from renderopt.c 344 */
-char target_mutex_renderopt_c_1[2]; /* from renderopt.c 346 */
+char target_mutex_renderopt_c_1[3]; /* from renderopt.c 346 */
 char page_mutex_renderopt_c_1[5]; /* from renderopt.c 348 */
 char render_mutex_renderopt_c_1[2]; /* from renderopt.c 350 */
 int page_size_type_renderopt_c_1; /* from renderopt.c 351 */

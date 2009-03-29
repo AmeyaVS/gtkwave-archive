@@ -615,7 +615,7 @@ NULL, /* regex_ok_regex_c_1 322 */
 0, /* window_renderopt_c_6 324 */
 NULL, /* filesel_print_ps_renderopt_c_1 325 */
 NULL, /* filesel_print_mif_renderopt_c_1 326 */
-{0,0}, /* target_mutex_renderopt_c_1 328 */
+{0,0,0}, /* target_mutex_renderopt_c_1 328 */
 {0,0,0,0,0}, /* page_mutex_renderopt_c_1 330 */
 {0,0}, /* render_mutex_renderopt_c_1 332 */
 0, /* page_size_type_renderopt_c_1 333 */
