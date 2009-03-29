@@ -577,7 +577,7 @@
 		Added extload filetype to DnD.
 		Fixed window close when tabs active so it would update the
 		titlebar, times, etc., to the current tab.
-3.2.1	26mar09 Add more information for users if gtk can't initialize on MacOS.
+3.2.1	28mar09 Add more information for users if gtk can't initialize on MacOS.
 		Added possibility for vlist.c to write out the spill file in a
 		machine independent fashion.
 		Added --fastload option to gtkwave.
@@ -610,3 +610,4 @@
 		the save file.)
 		Added disable_empty_gui rc file variable.
 		Working with ergonomic features of empty gui handling.
+		Fixed & to && in if() comparison in lxt_write.c

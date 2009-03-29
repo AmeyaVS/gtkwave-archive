@@ -1214,30 +1214,30 @@ if(lt)
 	lt_emit_u8(lt, LT_SECTION_END);
 
 	/* Version 1 */
-	if(lt->change_field_offset) { lt_emit_u32(lt, lt->change_field_offset); lt_emit_u8(lt, LT_SECTION_CHG); }
-	if(lt->sync_table_offset) { lt_emit_u32(lt, lt->sync_table_offset); lt_emit_u8(lt, LT_SECTION_SYNC_TABLE); }
-	if(lt->facname_offset) { lt_emit_u32(lt, lt->facname_offset); lt_emit_u8(lt, LT_SECTION_FACNAME); }
-	if(lt->facgeometry_offset) { lt_emit_u32(lt, lt->facgeometry_offset); lt_emit_u8(lt, LT_SECTION_FACNAME_GEOMETRY); }
-	if(lt->timescale_offset) { lt_emit_u32(lt, lt->timescale_offset); lt_emit_u8(lt, LT_SECTION_TIMESCALE); }
-	if(lt->time_table_offset) { lt_emit_u32(lt, lt->time_table_offset); lt_emit_u8(lt, is64 ? LT_SECTION_TIME_TABLE64 : LT_SECTION_TIME_TABLE); }
-	if(lt->initial_value_offset) { lt_emit_u32(lt, lt->initial_value_offset); lt_emit_u8(lt, LT_SECTION_INITIAL_VALUE); }
-	if(lt->double_test_offset) { lt_emit_u32(lt, lt->double_test_offset); lt_emit_u8(lt, LT_SECTION_DOUBLE_TEST); }
+	if(lt->change_field_offset) { lt_emit_u32(lt, lt->change_field_offset); lt_emit_u8(lt, LT_SECTION_CHG); lt->change_field_offset = 0; }
+	if(lt->sync_table_offset) { lt_emit_u32(lt, lt->sync_table_offset); lt_emit_u8(lt, LT_SECTION_SYNC_TABLE); lt->sync_table_offset = 0; }
+	if(lt->facname_offset) { lt_emit_u32(lt, lt->facname_offset); lt_emit_u8(lt, LT_SECTION_FACNAME); lt->facname_offset = 0; }
+	if(lt->facgeometry_offset) { lt_emit_u32(lt, lt->facgeometry_offset); lt_emit_u8(lt, LT_SECTION_FACNAME_GEOMETRY); lt->facgeometry_offset = 0; }
+	if(lt->timescale_offset) { lt_emit_u32(lt, lt->timescale_offset); lt_emit_u8(lt, LT_SECTION_TIMESCALE); lt->timescale_offset = 0; }
+	if(lt->time_table_offset) { lt_emit_u32(lt, lt->time_table_offset); lt_emit_u8(lt, is64 ? LT_SECTION_TIME_TABLE64 : LT_SECTION_TIME_TABLE); lt->time_table_offset = 0; }
+	if(lt->initial_value_offset) { lt_emit_u32(lt, lt->initial_value_offset); lt_emit_u8(lt, LT_SECTION_INITIAL_VALUE); lt->initial_value_offset = 0; }
+	if(lt->double_test_offset) { lt_emit_u32(lt, lt->double_test_offset); lt_emit_u8(lt, LT_SECTION_DOUBLE_TEST); lt->double_test_offset = 0; }
 
 	/* Version 2 adds */
-	if(lt->zfacname_predec_size) { lt_emit_u32(lt, lt->zfacname_predec_size); lt_emit_u8(lt, LT_SECTION_ZFACNAME_PREDEC_SIZE); }
-	if(lt->zfacname_size) { lt_emit_u32(lt, lt->zfacname_size); lt_emit_u8(lt, LT_SECTION_ZFACNAME_SIZE); }
-	if(lt->zfacgeometry_size) { lt_emit_u32(lt, lt->zfacgeometry_size); lt_emit_u8(lt, LT_SECTION_ZFACNAME_GEOMETRY_SIZE); }
-	if(lt->zsync_table_size) { lt_emit_u32(lt, lt->zsync_table_size); lt_emit_u8(lt, LT_SECTION_ZSYNC_SIZE); }
-	if(lt->ztime_table_size) { lt_emit_u32(lt, lt->ztime_table_size); lt_emit_u8(lt, LT_SECTION_ZTIME_TABLE_SIZE); }
-	if(lt->chg_table_size) { lt_emit_u32(lt, lt->chg_table_size); lt_emit_u8(lt, LT_SECTION_ZCHG_PREDEC_SIZE); }
-	if(lt->zchg_table_size) { lt_emit_u32(lt, lt->zchg_table_size); lt_emit_u8(lt, LT_SECTION_ZCHG_SIZE); }
+	if(lt->zfacname_predec_size) { lt_emit_u32(lt, lt->zfacname_predec_size); lt_emit_u8(lt, LT_SECTION_ZFACNAME_PREDEC_SIZE); lt->zfacname_predec_size = 0; }
+	if(lt->zfacname_size) { lt_emit_u32(lt, lt->zfacname_size); lt_emit_u8(lt, LT_SECTION_ZFACNAME_SIZE); lt->zfacname_size = 0; }
+	if(lt->zfacgeometry_size) { lt_emit_u32(lt, lt->zfacgeometry_size); lt_emit_u8(lt, LT_SECTION_ZFACNAME_GEOMETRY_SIZE); lt->zfacgeometry_size = 0; }
+	if(lt->zsync_table_size) { lt_emit_u32(lt, lt->zsync_table_size); lt_emit_u8(lt, LT_SECTION_ZSYNC_SIZE); lt->zsync_table_size = 0; }
+	if(lt->ztime_table_size) { lt_emit_u32(lt, lt->ztime_table_size); lt_emit_u8(lt, LT_SECTION_ZTIME_TABLE_SIZE); lt->ztime_table_size = 0; }
+	if(lt->chg_table_size) { lt_emit_u32(lt, lt->chg_table_size); lt_emit_u8(lt, LT_SECTION_ZCHG_PREDEC_SIZE); lt->chg_table_size = 0; }
+	if(lt->zchg_table_size) { lt_emit_u32(lt, lt->zchg_table_size); lt_emit_u8(lt, LT_SECTION_ZCHG_SIZE); lt->zchg_table_size = 0; }
 
 	/* Version 4 adds */
-	if(lt->dictionary_offset) { lt_emit_u32(lt, lt->dictionary_offset); lt_emit_u8(lt, LT_SECTION_ZDICTIONARY); }
-	if(lt->zdictionary_size) { lt_emit_u32(lt, lt->zdictionary_size); lt_emit_u8(lt, LT_SECTION_ZDICTIONARY_SIZE); }
+	if(lt->dictionary_offset) { lt_emit_u32(lt, lt->dictionary_offset); lt_emit_u8(lt, LT_SECTION_ZDICTIONARY); lt->dictionary_offset = 0; }
+	if(lt->zdictionary_size) { lt_emit_u32(lt, lt->zdictionary_size); lt_emit_u8(lt, LT_SECTION_ZDICTIONARY_SIZE); lt->zdictionary_size = 0; }
 
 	/* Version 5 adds */
-	if(lt->exclude_offset) { lt_emit_u32(lt, lt->exclude_offset); lt_emit_u8(lt, LT_SECTION_EXCLUDE_TABLE); }
+	if(lt->exclude_offset) { lt_emit_u32(lt, lt->exclude_offset); lt_emit_u8(lt, LT_SECTION_EXCLUDE_TABLE); lt->exclude_offset = 0; }
 
 	/* suffix */
 	lt_emit_u8(lt, LT_TRLID);
@@ -2816,6 +2816,9 @@ if((lt)&&(lt->dumpoff_active))
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/03/29 00:05:23  gtkwave
+ * fixed & to && in if() comparison
+ *
  * Revision 1.2  2008/12/20 05:08:26  gtkwave
  * -Wshadow warning cleanups
  *
