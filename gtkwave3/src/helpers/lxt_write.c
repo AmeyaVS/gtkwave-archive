@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-7 Tony Bybell.
+ * Copyright (c) 2001-9 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1178,7 +1178,7 @@ if(lt)
 		lt_emit_u8(lt, lt->initial_value);
 		}
 
-	if((lt->timescale>-129)&(lt->timescale<128))
+	if((lt->timescale>-129)&&(lt->timescale<128))
 		{
 		lt->timescale_offset = lt->position;
 		lt_emit_u8(lt, lt->timescale);
@@ -2816,6 +2816,9 @@ if((lt)&&(lt->dumpoff_active))
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/12/20 05:08:26  gtkwave
+ * -Wshadow warning cleanups
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:14  gtkwave
  * Imported sources
  *
@@ -2823,4 +2826,3 @@ if((lt)&&(lt->dumpoff_active))
  * initial release
  *
  */
-
