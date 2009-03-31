@@ -46,9 +46,8 @@ int fd;
 unsigned int offs, blklen;
 unsigned int depth;
 enum lzma_state_t state;
-
-char mem[LZMA_BLOCK_LEN];
-char dmem[LZMA_PROPS_SIZE + LZMA_BLOCK_LEN];
+unsigned int blksiz;
+char *mem, *dmem;
 };
 
 
@@ -96,14 +95,14 @@ return(rc);
 static size_t LZMA_write_compress(struct lzma_handle_t *h, unsigned char *mem, size_t len)
 {
 size_t srclen = len;
-size_t destlen = LZMA_BLOCK_LEN;
+size_t destlen = h->blksiz;
 size_t outPropsSize = LZMA_PROPS_SIZE;
 int rc;
 
 CLzmaEncProps props;
 LzmaEncProps_Init(&props);
 props.level = h->depth;
-props.dictSize = LZMA_BLOCK_LEN;
+props.dictSize = h->blksiz;
 
 rc = LzmaEncode(h->dmem + LZMA_PROPS_SIZE, &destlen,
 	mem, len,
@@ -130,43 +129,52 @@ if(rc == SZ_OK)
 void *LZMA_fdopen(int fd, const char *mode)
 {
 static const char z7[] = "z7";
-struct lzma_handle_t *p = MyAlloc(sizeof(struct lzma_handle_t));
+struct lzma_handle_t *h = MyAlloc(sizeof(struct lzma_handle_t));
 
-p->fd = fd;
-p->offs = 0;
-p->depth = 4;
+h->fd = fd;
+h->offs = 0;
+h->depth = 4;
 
 if(mode[0] == 'w')
 	{
+	h->blksiz = LZMA_BLOCK_LEN;
+	h->mem = MyAlloc(h->blksiz);
+	h->dmem = MyAlloc (LZMA_PROPS_SIZE + h->blksiz);
+
 	if(mode[1])
 		{
 		if(isdigit(mode[1]))
 			{
-			p->depth = mode[1] - '0';
+			h->depth = mode[1] - '0';
 			}
 		else if(mode[2])
 			{
 			if(isdigit(mode[2]))
 				{
-				p->depth = mode[2] - '0';
+				h->depth = mode[2] - '0';
 				}
 			}
 		}
 
-	p->state = LZMA_STATE_WRITE;
-	write(p->fd, z7, 2);
-	return(p);
+	h->state = LZMA_STATE_WRITE;
+	write(h->fd, z7, 2);
+	return(h);
 	}
 else
 if(mode[0] == 'r')
 	{
-	p->state = LZMA_STATE_READ_INIT;
-	return(p);
+	h->blksiz = 0; /* allocate as needed in the reader */
+	h->mem = NULL;
+	h->dmem = NULL;
+	h->state = LZMA_STATE_READ_INIT;
+	return(h);
 	}
 else
 	{
-	close(p->fd);
-	MyFree(p);
+	close(h->fd);
+	MyFree(h->dmem);
+	MyFree(h->mem);
+	MyFree(h);
 	return(NULL);
 	}
 }
@@ -194,6 +202,14 @@ if(h)
 		LZMA_flush(h);
 		LZMA_write_varint(h, 0);
 		}
+	if(h->dmem)
+		{
+		MyFree(h->dmem);
+		}
+	if(h->mem)
+		{
+		MyFree(h->mem);
+		}
 	close(h->fd);
 	MyFree(h);
 	}
@@ -209,7 +225,7 @@ if(h->state == LZMA_STATE_WRITE)
 	{
 	while((h)&&(len))
 		{
-		if((h->offs + len) <= LZMA_BLOCK_LEN)
+		if((h->offs + len) <= h->blksiz)
 			{
 			memcpy(h->mem + h->offs, mem, len);
 			h->offs += len;
@@ -217,12 +233,12 @@ if(h->state == LZMA_STATE_WRITE)
 			}
 			else
 			{
-			size_t new_len = LZMA_BLOCK_LEN - h->offs;
+			size_t new_len = h->blksiz - h->offs;
 			if(new_len)
 				{
 				memcpy(h->mem + h->offs, mem, new_len);
 				}
-			rc = LZMA_write_compress(h, h->mem, LZMA_BLOCK_LEN);
+			rc = LZMA_write_compress(h, h->mem, h->blksiz);
 			h->offs = 0;
 			len -= new_len;
 			mem = ((char *)mem) + new_len;
@@ -264,6 +280,21 @@ if(h)
 			if(!dstlen)
 				{
 				return(0);
+				}
+
+			if(dstlen > h->blksiz) /* reallocate buffers if ones in stream data are larger */
+				{
+				if(h->dmem)
+					{
+					MyFree(h->dmem);
+					}
+				if(h->mem)
+					{
+					MyFree(h->mem);
+					}
+				h->blksiz = dstlen; 
+				h->mem = MyAlloc(h->blksiz);
+				h->dmem = MyAlloc (LZMA_PROPS_SIZE + h->blksiz);
 				}
 
 			srclen = LZMA_read_varint(h);
