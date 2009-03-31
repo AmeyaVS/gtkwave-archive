@@ -166,6 +166,18 @@ else
 }
 
 
+size_t LZMA_flush(void *handle)
+{
+struct lzma_handle_t *h = (struct lzma_handle_t *)handle;
+if((h) && (h->offs))
+	{
+	LZMA_write_compress(h, h->mem, h->offs);
+	h->offs = 0;
+	}
+return(0);
+}
+
+
 void LZMA_close(void *handle)
 {
 struct lzma_handle_t *h = (struct lzma_handle_t *)handle;
@@ -173,23 +185,12 @@ if(h)
 	{
 	if(h->state == LZMA_STATE_WRITE)
 		{
-		if((h) && (h->offs))
-			{
-			LZMA_write_compress(h, h->mem, h->offs);
-			h->offs = 0;
-			}
-		
+		LZMA_flush(h);
 		LZMA_write_varint(h, 0);
 		}
 	close(h->fd);
 	MyFree(h);
 	}
-}
-
-
-size_t LZMA_flush(void *handle)
-{
-return(0);
 }
 
 

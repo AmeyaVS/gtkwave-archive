@@ -137,7 +137,7 @@ if(lt)
 		case VZT_WR_IS_BZ2:	return(BZ2_bzflush(file));
 		case VZT_WR_IS_LZMA:	
 		default:
-					return(LZMA_flush(file));
+					return(0); /* no real need to do a LZMA_flush(file) as the dictionary is so big */
 		}
 	}
 
@@ -1986,6 +1986,9 @@ if(lt)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/03/31 06:21:13  gtkwave
+ * added support for lzma
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:24  gtkwave
  * Imported sources
  *
