@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2007 Tony Bybell.
+ * Copyright (c) 2003-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1359,7 +1359,7 @@ return(blk);
 
 /****************************************************************************/
 
-static int vzt_rd_is_gzip_type(FILE *handle)
+static int vzt_rd_det_gzip_type(FILE *handle)
 {
 unsigned char cbuf[2] = { 0, 0 };
 
@@ -1367,7 +1367,17 @@ off_t off = ftello(handle);
 if(!fread(cbuf, 1, 2, handle)) { cbuf[0] = cbuf[1] = 0; }
 fseeko(handle, off, SEEK_SET);
 
-return((cbuf[0] == 0x1f) && (cbuf[1] == 0x8b));
+if((cbuf[0] == 0x1f) && (cbuf[1] == 0x8b))
+	{
+	return(VZT_RD_IS_GZ);
+	}
+
+if((cbuf[0] == 'z') && (cbuf[1] == '7'))
+	{
+	return(VZT_RD_IS_LZMA);
+	}
+
+return(VZT_RD_IS_BZ2);
 }
 
 /****************************************************************************/
@@ -1393,17 +1403,26 @@ if((!b->killed)&&(!b->mem))
 	{
 	b->mem = malloc(b->uncompressed_siz);
 
-	if(b->ztype)
+	switch(b->ztype)
 		{
-		zhandle = gzdopen(dup(fileno(handle)), "rb");
-		rc=gzread(zhandle, b->mem, b->uncompressed_siz);
-		gzclose(zhandle);
-		}
-		else
-		{
-		zhandle = BZ2_bzdopen(dup(fileno(handle)), "rb");
-		rc=BZ2_bzread(zhandle, b->mem, b->uncompressed_siz);
-		BZ2_bzclose(zhandle);
+		case VZT_RD_IS_GZ:
+			zhandle = gzdopen(dup(fileno(handle)), "rb");
+			rc=gzread(zhandle, b->mem, b->uncompressed_siz);
+			gzclose(zhandle);
+			break;
+
+		case VZT_RD_IS_BZ2:
+			zhandle = BZ2_bzdopen(dup(fileno(handle)), "rb");
+			rc=BZ2_bzread(zhandle, b->mem, b->uncompressed_siz);
+			BZ2_bzclose(zhandle);
+			break;
+
+		case VZT_RD_IS_LZMA:
+		default:
+			zhandle = LZMA_fdopen(dup(fileno(handle)), "rb");
+			rc=LZMA_read(zhandle, b->mem, b->uncompressed_siz);
+			LZMA_close(zhandle);
+			break;
 		}
 	if(rc!=b->uncompressed_siz)
 		{
@@ -1748,20 +1767,30 @@ if(!(lt->handle=fopen(name, "rb")))
 
 		lt->process_mask = calloc(1, lt->numfacs/8+1);
 
-		if(vzt_rd_is_gzip_type(lt->handle))
+		switch(vzt_rd_det_gzip_type(lt->handle))
 			{
-			lt->zhandle = gzdopen(dup(fileno(lt->handle)), "rb");
-			m=(char *)malloc(lt->zfacname_predec_size);
-			rc=gzread(lt->zhandle, m, lt->zfacname_predec_size);
-			gzclose(lt->zhandle); lt->zhandle=NULL;
-			}
-			else
-			{
-			lt->zhandle = BZ2_bzdopen(dup(fileno(lt->handle)), "rb");
-			m=(char *)malloc(lt->zfacname_predec_size);
-			rc=BZ2_bzread(lt->zhandle, m, lt->zfacname_predec_size);
-			BZ2_bzclose(lt->zhandle); lt->zhandle=NULL;
-			}
+			case VZT_RD_IS_GZ:
+				lt->zhandle = gzdopen(dup(fileno(lt->handle)), "rb");
+				m=(char *)malloc(lt->zfacname_predec_size);
+				rc=gzread(lt->zhandle, m, lt->zfacname_predec_size);
+				gzclose(lt->zhandle); lt->zhandle=NULL;
+				break;
+
+			case VZT_RD_IS_BZ2:
+				lt->zhandle = BZ2_bzdopen(dup(fileno(lt->handle)), "rb");
+				m=(char *)malloc(lt->zfacname_predec_size);
+				rc=BZ2_bzread(lt->zhandle, m, lt->zfacname_predec_size);
+				BZ2_bzclose(lt->zhandle); lt->zhandle=NULL;
+				break;
+
+			case VZT_RD_IS_LZMA:
+			default:
+				lt->zhandle = LZMA_fdopen(dup(fileno(lt->handle)), "rb");
+				m=(char *)malloc(lt->zfacname_predec_size);
+				rc=LZMA_read(lt->zhandle, m, lt->zfacname_predec_size);
+				LZMA_close(lt->zhandle); lt->zhandle=NULL;
+				break;
+			}  
 
 		if(rc!=lt->zfacname_predec_size)
 			{
@@ -1783,21 +1812,32 @@ if(!(lt->handle=fopen(name, "rb")))
 		fseeko(lt->handle, pos = pos+lt->zfacnamesize, SEEK_SET);
 		/* fprintf(stderr, VZT_RDLOAD"seeking to geometry at %d (0x%08x)\n", pos, pos); */
 
-		if(vzt_rd_is_gzip_type(lt->handle))
+		switch(vzt_rd_det_gzip_type(lt->handle))
 			{
-			lt->zhandle = gzdopen(dup(fileno(lt->handle)), "rb");
-			t = lt->numfacs * 4 * sizeof(vztint32_t);
-			m=(char *)malloc(t);				
-			rc=gzread(lt->zhandle, m, t);
-			gzclose(lt->zhandle); lt->zhandle=NULL;
-			}
-			else
-			{
-			lt->zhandle = BZ2_bzdopen(dup(fileno(lt->handle)), "rb");
-			t = lt->numfacs * 4 * sizeof(vztint32_t);
-			m=(char *)malloc(t);				
-			rc=BZ2_bzread(lt->zhandle, m, t);
-			BZ2_bzclose(lt->zhandle); lt->zhandle=NULL;
+			case VZT_RD_IS_GZ:
+				lt->zhandle = gzdopen(dup(fileno(lt->handle)), "rb");
+				t = lt->numfacs * 4 * sizeof(vztint32_t);
+				m=(char *)malloc(t);				
+				rc=gzread(lt->zhandle, m, t);
+				gzclose(lt->zhandle); lt->zhandle=NULL;
+				break;
+
+			case VZT_RD_IS_BZ2:
+				lt->zhandle = BZ2_bzdopen(dup(fileno(lt->handle)), "rb");
+				t = lt->numfacs * 4 * sizeof(vztint32_t);
+				m=(char *)malloc(t);				
+				rc=BZ2_bzread(lt->zhandle, m, t);
+				BZ2_bzclose(lt->zhandle); lt->zhandle=NULL;
+				break;
+
+			case VZT_RD_IS_LZMA:
+			default:
+				lt->zhandle = LZMA_fdopen(dup(fileno(lt->handle)), "rb");
+				t = lt->numfacs * 4 * sizeof(vztint32_t);
+				m=(char *)malloc(t);				
+				rc=LZMA_read(lt->zhandle, m, t);
+				LZMA_close(lt->zhandle); lt->zhandle=NULL;
+				break;
 			}
 
 		if(rc!=t)
@@ -1891,7 +1931,7 @@ if(!(lt->handle=fopen(name, "rb")))
 				b->end = tb;
 				}
 
-			b->ztype = vzt_rd_is_gzip_type(lt->handle);
+			b->ztype = vzt_rd_det_gzip_type(lt->handle);
 			/* fprintf(stderr, VZT_RDLOAD"block gzip start at pos %d (0x%08x)\n", pos, pos); */
 			if(pos>=fend)
 				{
@@ -2350,6 +2390,9 @@ return(rcval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/12/20 05:08:26  gtkwave
+ * -Wshadow warning cleanups
+ *
  * Revision 1.3  2008/11/13 22:52:25  gtkwave
  * x86_64 fix on xchgb
  *

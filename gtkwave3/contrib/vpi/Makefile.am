@@ -9,7 +9,8 @@
 ##
 ## Note that this explicitly uses the libz and libbz2 libraries found in this
 ## distro as this might be necessary if your simulator is not already linked
-## against those system libraries.
+## against those system libraries.  liblzma is specific to gtkwave as it
+## currently does not exist in the form required.
 ##
 ## 20jan09ajb
 ##
@@ -32,4 +33,4 @@ libsysvzt_la_SOURCES= ../../src/libz/adler32.c ../../src/libz/compress.c ../../s
 
 libsysvzt_la_LDFLAGS = -version-info 1:0:0
 	
-AM_CFLAGS= -I../../src/libz/ -I../../src/libbz2/ -I../../src/ -I../../src/helpers/ -I.
+AM_CFLAGS= -I../../src/libz/ -I../../src/libbz2/ -I../../src/liblzma -I../../src/ -I../../src/helpers/ -I.

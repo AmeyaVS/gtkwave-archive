@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-7 Tony Bybell.
+ * Copyright (c) 2004-9 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -32,7 +32,7 @@
 #include <inttypes.h>
 #include <zlib.h>
 #include <bzlib.h>
-
+#include <LzmaLib.h>
 
 #ifndef HAVE_FSEEKO
 #define fseeko fseek
@@ -156,8 +156,8 @@ unsigned granule_dirty : 1;		/* for flushing out final block */
 unsigned blackout : 1;			/* blackout on/off */
 unsigned multi_state : 1;		/* 2 or 4 state marker */
 unsigned use_multi_state : 1;		/* if zero, can shortcut to 2 state */
-unsigned ztype : 1;			/* 0: gzip (default), 1: bzip2 */
-unsigned ztype_cfg : 1;			/* 0: gzip (default), 1: bzip2 */
+unsigned ztype : 2;			/* 0: gzip (default), 1: bzip2, 2: lzma */
+unsigned ztype_cfg : 2;			/* 0: gzip (default), 1: bzip2, 2: lzma */
 unsigned rle : 1;			/* emit rle packed value section */
 unsigned rle_start : 1;			/* initial/previous rle value */
 
@@ -199,6 +199,10 @@ vzt_wr_dsvzt_Tree **prevx;		/* previous xchain (for len bits) */
 vztint32_t *chgx;			/* for len xbits */
 };
 
+
+#define VZT_WR_IS_GZ		  (0)
+#define VZT_WR_IS_BZ2		  (1)
+#define VZT_WR_IS_LZMA		  (2)
 
 #define VZT_WR_SYM_F_BITS         (0)
 #define VZT_WR_SYM_F_INTEGER      (1<<0)
@@ -285,6 +289,9 @@ int 			vzt_wr_emit_value_bit_string(struct vzt_wr_trace *lt, struct vzt_wr_symbo
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *

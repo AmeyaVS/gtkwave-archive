@@ -1830,7 +1830,7 @@ printf(
 "  -d, --depth=value          specify 0..9 compression depth (default = 4)\n"
 "  -m, --maxgranule=value     specify number of granules per section (def = 8)\n"
 "  -b, --break=value          specify break size (default = 0 = off)\n"
-"  -z, --ziptype=value        specify zip type (default = 0 gzip, 1 = bzip2)\n"
+"  -z, --ziptype=value        specify zip type (default: 0 gzip, 1 bzip2, 2 lzma)\n"
 "  -t, --twostate             force MVL2 twostate mode (default is MVL4)\n"
 "  -r, --rle                  use bitwise RLE compression on value table\n"
 "  -h, --help                 display this help then exit\n\n"
@@ -1847,7 +1847,7 @@ printf(
 "  -d value                   specify 0..9 compression depth (default = 4)\n"
 "  -m value                   specify number of granules per section (def = 8)\n"
 "  -b value                   specify break size (default = 0 = off)\n"
-"  -z value                   specify zip type (default = 0 gzip, 1 = bzip2)\n"
+"  -z value                   specify zip type (default: 0 gzip, 1 bzip2, 2 lzma)\n"
 "  -t                         force MVL2 twostate mode (default is MVL4)\n"
 "  -r                         use bitwise RLE compression on value table\n"
 "  -h                         display this help then exit\n\n"
@@ -1939,7 +1939,8 @@ while (1)
                         break;
                         
 		case 'z':
-			ziptype = (atoi(optarg) != 0);
+			ziptype = atoi(optarg);
+			if((ziptype < VZT_WR_IS_GZ) || (ziptype > VZT_WR_IS_LZMA)) ziptype = VZT_WR_IS_GZ;
 			break;
 
                 case '?':
@@ -1989,6 +1990,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/11/24 15:24:13  gtkwave
+ * fixed info banner that still had some LXT information
+ *
  * Revision 1.2  2007/06/01 21:13:41  gtkwave
  * regenerate configure for cygwin with proper flags, add missing files
  *

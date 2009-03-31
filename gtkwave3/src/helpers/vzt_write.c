@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2007 Tony Bybell.
+ * Copyright (c) 2003-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -97,13 +97,13 @@ if(lt)
 	{
 	lt->ztype = lt->ztype_cfg;	/* shadow config at file open */
 
-	if(!lt->ztype)
+	switch(lt->ztype)
 		{
-		return(gzdopen(fd, mode));
-		}
-		else
-		{
-		return(BZ2_bzdopen(fd, mode));
+		case VZT_WR_IS_GZ:	return(gzdopen(fd, mode));
+		case VZT_WR_IS_BZ2:	return(BZ2_bzdopen(fd, mode));
+		case VZT_WR_IS_LZMA:	
+		default:
+					return(LZMA_fdopen(fd, mode));
 		}
 	}
 
@@ -114,14 +114,13 @@ static _VZT_WR_INLINE int vzt_gzclose(struct vzt_wr_trace *lt, void *file)
 {
 if(lt)
 	{
-	if(!lt->ztype)
+	switch(lt->ztype)
 		{
-		return(gzclose(file));
-		}
-		else
-		{
-		BZ2_bzclose(file);
-		return(0);
+		case VZT_WR_IS_GZ:	return(gzclose(file));
+		case VZT_WR_IS_BZ2:	BZ2_bzclose(file); return(0);
+		case VZT_WR_IS_LZMA:	
+		default:
+					LZMA_close(file); return(0);
 		}
 	}
 
@@ -132,13 +131,13 @@ static _VZT_WR_INLINE int vzt_gzflush(struct vzt_wr_trace *lt, void *file, int f
 {
 if(lt)
 	{
-	if(!lt->ztype)
+	switch(lt->ztype)
 		{
-		return(gzflush(file, flush));
-		}
-		else
-		{
-		return(BZ2_bzflush(file));
+		case VZT_WR_IS_GZ:	return(gzflush(file, flush));
+		case VZT_WR_IS_BZ2:	return(BZ2_bzflush(file));
+		case VZT_WR_IS_LZMA:	
+		default:
+					return(LZMA_flush(file));
 		}
 	}
 
@@ -149,13 +148,13 @@ static _VZT_WR_INLINE int vzt_gzwrite(struct vzt_wr_trace *lt, void *file, void*
 {
 if(lt)
 	{
-	if(!lt->ztype)
+	switch(lt->ztype)
 		{
-		return(gzwrite(file, buf, len));
-		}
-		else
-		{
-		return(BZ2_bzwrite(file, buf, len));
+		case VZT_WR_IS_GZ:	return(gzwrite(file, buf, len));
+		case VZT_WR_IS_BZ2:	return(BZ2_bzwrite(file, buf, len));
+		case VZT_WR_IS_LZMA:	
+		default:
+					return(LZMA_write(file, buf, len));
 		}
 	}
 
@@ -1965,7 +1964,10 @@ void vzt_wr_set_compression_type(struct vzt_wr_trace *lt, unsigned int type)
 {
 if(lt)
 	{
-	lt->ztype_cfg = (type != 0);
+	if((type == VZT_WR_IS_GZ) || (type == VZT_WR_IS_BZ2) || (type == VZT_WR_IS_LZMA))
+		{
+		lt->ztype_cfg = type;
+		}
 	}
 }
 
@@ -1984,6 +1986,9 @@ if(lt)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:24  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *

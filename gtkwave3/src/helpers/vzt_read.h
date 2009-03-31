@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2007 Tony Bybell.
+ * Copyright (c) 2004-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -52,6 +52,7 @@ typedef int pthread_mutexattr_t;
 
 #include <zlib.h>
 #include <bzlib.h>
+#include <LzmaLib.h>
 
 #ifdef __GNUC__
 #define _VZT_RD_INLINE inline
@@ -94,6 +95,10 @@ typedef unsigned __int64	vztint64_t;
 #define VZT_RD_ULLDESC(x) x##i64
 #endif
 
+
+#define VZT_RD_IS_GZ              (0)
+#define VZT_RD_IS_BZ2             (1)
+#define VZT_RD_IS_LZMA            (2)
 
 #define VZT_RD_SYM_F_BITS      	(0)
 #define VZT_RD_SYM_F_INTEGER   	(1<<0)
@@ -148,7 +153,7 @@ unsigned short_read_ignore : 1;	/* tried to read once and it was corrupt so igno
 unsigned exclude_block : 1;	/* user marked this block off to be ignored */
 unsigned multi_state : 1;	/* not just two state value changes */
 unsigned killed : 1;		/* we're in vzt_close(), don't grab anymore blocks */
-unsigned ztype : 1;		/* 1: gzip, 0: bzip2 */
+unsigned ztype : 2;		/* 1: gzip, 0: bzip2, 2: lzma */
 unsigned rle : 1;		/* set when end < start which says that an rle depack is necessary */
 
 pthread_t pth;
@@ -275,6 +280,9 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
  * Imported sources
  *

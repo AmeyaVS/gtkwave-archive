@@ -7,6 +7,7 @@ GHW and additional GUI support is Copyright (C) 2005-2009 Tristan Gingold.
 Analog support is Copyright (C) 2005-2009 Thomas Sailer.
 External DnD support is Copyright (C) 2008-2009 Concept Engineering GmbH.
 tla2vcd is Copyright (C) 2005-2009 Emil.
+LZMA SDK was written and placed in the public domain by Igor Pavlov.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the Free
