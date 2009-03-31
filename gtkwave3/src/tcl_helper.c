@@ -2156,7 +2156,6 @@ enum GtkwaveFtype { WAVE_FTYPE_UNKNOWN, WAVE_FTYPE_DUMPFILE, WAVE_FTYPE_STEMSFIL
  */
 static int determine_ftype(char *s, char **dotpnt)
 {
-int rc = 0;
 char *pnt = s;
 char *dot = NULL, *dot2 = NULL;
 int ftype = WAVE_FTYPE_UNKNOWN;
@@ -2598,6 +2597,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.51  2009/03/27 04:38:05  gtkwave
+ * working on ergonomics of drag and drop into an empty gui
+ *
  * Revision 1.50  2009/03/26 23:53:22  gtkwave
  * added disable_empty_gui rc variable which reverts to old behavior
  *

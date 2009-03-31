@@ -320,9 +320,9 @@ WAVE_LOCALE_FIX
 
 while (1)
         {
+#ifdef __linux__
         int option_index = 0;
                         
-#ifdef __linux__
         static struct option long_options[] =
                 {
 		{"vztname", 1, 0, 'v'},
@@ -398,6 +398,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/07/19 23:26:49  gtkwave
+ * fixed buffer overflow in vectorization code
+ *
  * Revision 1.2  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

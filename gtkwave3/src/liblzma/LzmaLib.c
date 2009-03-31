@@ -24,6 +24,12 @@
 #include <Alloc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
 
 static void *SzAlloc(void *p, size_t size) { p = p; return MyAlloc(size); }
 static void SzFree(void *p, void *address) { p = p; MyFree(address); }
@@ -332,6 +338,7 @@ if(h)
 			break;
 
 		case LZMA_STATE_READ_ERROR:
+		default:
 			break;
 		}
 	}

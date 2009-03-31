@@ -1869,9 +1869,9 @@ WAVE_LOCALE_FIX
 
 while (1)
         {
+#ifdef __linux__
         int option_index = 0;
                         
-#ifdef __linux__
         static struct option long_options[] =
                 {
 		{"vcdname", 1, 0, 'v'},
@@ -1983,6 +1983,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/06/01 21:13:41  gtkwave
+ * regenerate configure for cygwin with proper flags, add missing files
+ *
  * Revision 1.3  2007/04/29 06:07:28  gtkwave
  * fixed memory leaks in vcd parser
  *

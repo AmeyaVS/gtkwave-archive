@@ -208,7 +208,6 @@ void renderbox(char *title)
     GtkWidget *vbox, *hbox, *small_hbox;
     GtkWidget *button1, *button2;
     int i;
-    FILE *sysfile = NULL;
 
     if(GLOBALS->script_handle)
         {
@@ -382,6 +381,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/03/29 02:45:41  gtkwave
+ * added missing savefile name for pdf (from invocation to invocation)
+ *
  * Revision 1.7  2009/03/29 02:08:36  gtkwave
  * added support for PDF file generation via ps2pdf
  *

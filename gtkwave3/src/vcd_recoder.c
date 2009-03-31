@@ -297,20 +297,20 @@ guint64 nval;
 char buf[33];
 char *pnt;
 
-vlist_packer_emit_uv64((struct vlist_packer_t **)&vlist_summary_index, (guint64)mystat->st_size);
-vlist_packer_emit_uv64((struct vlist_packer_t **)&vlist_summary_index, (guint64)mystat->st_mtime);
+vlist_packer_emit_uv64((struct vlist_packer_t **)(void *)&vlist_summary_index, (guint64)mystat->st_size);
+vlist_packer_emit_uv64((struct vlist_packer_t **)(void *)&vlist_summary_index, (guint64)mystat->st_mtime);
 
-vlist_packer_emit_uv32((struct vlist_packer_t **)&vlist_summary_index, finalize_cnt);
-vlist_packer_emit_uv64((struct vlist_packer_t **)&vlist_summary_index, GLOBALS->time_vlist_count_vcd_recoder_c_1);
+vlist_packer_emit_uv32((struct vlist_packer_t **)(void *)&vlist_summary_index, finalize_cnt);
+vlist_packer_emit_uv64((struct vlist_packer_t **)(void *)&vlist_summary_index, GLOBALS->time_vlist_count_vcd_recoder_c_1);
 
-vlist_packer_emit_uv64((struct vlist_packer_t **)&vlist_summary_index, val);
+vlist_packer_emit_uv64((struct vlist_packer_t **)(void *)&vlist_summary_index, val);
 val = 0;
 while(v)
 	{
 	nptr n = v->narray[0];
 	nval = (guint64)(unsigned long)n->mv.mvlfac_vlist;
 
-	vlist_packer_emit_uv64((struct vlist_packer_t **)&vlist_summary_index, nval - val);
+	vlist_packer_emit_uv64((struct vlist_packer_t **)(void *)&vlist_summary_index, nval - val);
 	val = nval;
 
 	v = v->next;
@@ -3119,6 +3119,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2009/03/25 09:20:26  gtkwave
+ * fixing reloader crashes in vcd_build_symbols if times is zero
+ *
  * Revision 1.20  2009/03/05 16:17:56  gtkwave
  * added fastload option
  *

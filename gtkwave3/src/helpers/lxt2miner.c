@@ -191,9 +191,9 @@ WAVE_LOCALE_FIX
 
 while (1)
         {
+#ifdef __linux__
         int option_index = 0;
                         
-#ifdef __linux__
         static struct option long_options[] =
                 {
 		{"comprehensive", 0, 0, 'c'},
@@ -325,6 +325,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/03/09 23:29:12  gtkwave
+ * fixed memory access violation and added comprehensive option.
+ *
  * Revision 1.2  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

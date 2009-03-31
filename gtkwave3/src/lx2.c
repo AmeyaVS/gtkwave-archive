@@ -88,7 +88,7 @@ if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
 if(GLOBALS->numfacs)
 	{
 	char *fnam = lxt2_rd_get_facname(GLOBALS->lx2_lx2_c_1, 0);
-        char *pnt;
+        char *pnt = NULL;
         int was_packed = 0;
 
         if(GLOBALS->do_hier_compress)
@@ -117,7 +117,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if(i!=(GLOBALS->numfacs-1))
 		{
 		char *fnam = lxt2_rd_get_facname(GLOBALS->lx2_lx2_c_1, i+1);
-	        char *pnt;
+	        char *pnt = NULL;
 	        int was_packed = 0;
 
 	        if(GLOBALS->do_hier_compress)
@@ -834,6 +834,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/12/25 03:28:55  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.4  2008/07/20 20:48:08  gtkwave
  * compressed hierarchy support
  *

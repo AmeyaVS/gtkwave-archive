@@ -1372,7 +1372,6 @@ static void heapify(int i, int heap_size)
 int l, r;
 unsigned int largest;
 struct symbol *t;
-int start=i;
 int maxele=heap_size/2-1;	/* points to where heapswaps don't matter anymore */
                 
 for(;;)
@@ -2916,6 +2915,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/01/27 07:04:28  gtkwave
+ * added extload external process loader capability
+ *
  * Revision 1.12  2008/12/25 03:21:57  gtkwave
  * -Wshadow warning fixes
  *

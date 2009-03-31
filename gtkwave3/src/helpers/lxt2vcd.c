@@ -309,9 +309,9 @@ WAVE_LOCALE_FIX
 
 while (1)
         {
+#ifdef __linux__
         int option_index = 0;
                         
-#ifdef __linux__
         static struct option long_options[] =
                 {
 		{"lxtname", 1, 0, 'l'},
@@ -383,6 +383,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:25  gtkwave
  * Imported sources
  *

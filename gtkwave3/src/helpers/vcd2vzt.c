@@ -1872,9 +1872,9 @@ WAVE_LOCALE_FIX
 
 while (1)
         {
+#ifdef __linux__
         int option_index = 0;
                         
-#ifdef __linux__
         static struct option long_options[] =
                 {
 		{"vcdname", 1, 0, 'v'},
@@ -1990,6 +1990,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/03/31 06:21:12  gtkwave
+ * added support for lzma
+ *
  * Revision 1.3  2008/11/24 15:24:13  gtkwave
  * fixed info banner that still had some LXT information
  *
