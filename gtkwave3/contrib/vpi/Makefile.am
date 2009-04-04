@@ -29,7 +29,13 @@ libsysvzt_la_SOURCES= ../../src/libz/adler32.c ../../src/libz/compress.c ../../s
 	../../src/helpers/lxt2_write.h ../../src/helpers/lxt2_write.c \
 	../../src/helpers/vzt_read.h ../../src/helpers/vzt_read.c \
 	../../src/helpers/vzt_write.h ../../src/helpers/vzt_write.c \
+	../../src/liblzma/Alloc.c ../../src/liblzma/Alloc.h \
+	../../src/liblzma/LzFind.c ../../src/liblzma/LzFind.h \
+	../../src/liblzma/LzHash.h ../../src/liblzma/LzmaDec.c ../../src/liblzma/LzmaDec.h \
+	../../src/liblzma/LzmaEnc.c ../../src/liblzma/LzmaEnc.h ../../src/liblzma/LzmaLib.c \
+	../../src/liblzma/LzmaLib.h ../../src/liblzma/Types.h \
 	sys_vzt.c sys_lxt2.c sys_lxt.c ../../src/wavealloca.h
+
 
 libsysvzt_la_LDFLAGS = -version-info 1:0:0
 	
