@@ -101,18 +101,10 @@ gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
 reformat_time(timestr, GLOBALS->tims.last, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),timestr);
 
-if(g_old->signalarea_event_box)
-	{
-	if(g_old->keypress_handler_id)
-		{
-		remove_keypress_handler(g_old->keypress_handler_id);
-		g_old->keypress_handler_id = 0;
-		}
-	GLOBALS->keypress_handler_id = install_keypress_handler();
-	}
-
 update_maxmarker_labels();
 update_basetime(GLOBALS->tims.baseline);
+
+GLOBALS->keypress_handler_id = g_old->keypress_handler_id;
 
 if(GLOBALS->second_page_created)
 	{
@@ -122,6 +114,7 @@ if(GLOBALS->second_page_created)
 	signalarea_configure_event(GLOBALS->signalarea, NULL);
 	wavearea_configure_event(GLOBALS->wavearea, NULL);
 	}
+
 }
 
 
@@ -2323,6 +2316,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.64  2009/03/27 05:08:56  gtkwave
+ * disable splash screen for now on empty gui due to undetermine conflicts
+ *
  * Revision 1.63  2009/03/27 04:58:14  gtkwave
  * enable splash screen during empty gui handling / load dumpfile
  *

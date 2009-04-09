@@ -613,3 +613,5 @@
 		Fixed & to && in if() comparison in lxt_write.c
 		Added support for PDF output via ps2pdf.
 		Added support in VZT file format for LZMA compression.
+		Fixed calling to install_keypress_handler() as it only needs
+		to be done once.

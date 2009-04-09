@@ -395,13 +395,6 @@ printf("focus: %d %08x %08x %08x\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_ev
 	GLOBALS->signalarea_event_box, widget, data);
 #endif
 
-if(GLOBALS->signalarea_event_box != data)
-	{
-#ifdef FOCUS_DEBUG_MSGS
-	printf("wrong session\n");
-#endif
-	}
-else
 if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 	{
 	switch(event->keyval)
@@ -1649,11 +1642,10 @@ if(do_focusing)
 
 	if(!GLOBALS->second_page_created)
 		{
-		GLOBALS->keypress_handler_id = install_keypress_handler();
-		}
-		else
-		{
-		GLOBALS->keypress_handler_id = 0;
+	        if(!GLOBALS->keypress_handler_id)
+	                {
+			GLOBALS->keypress_handler_id = install_keypress_handler();
+	                }
 		}
 
 	return(GLOBALS->signalarea_event_box);
@@ -1669,7 +1661,7 @@ gint install_keypress_handler(void)
 {
 gint rc = 
 	gtk_signal_connect(GTK_OBJECT(GLOBALS->mainwindow), 
-	"key_press_event",GTK_SIGNAL_FUNC(keypress_local), GLOBALS->signalarea_event_box);
+	"key_press_event",GTK_SIGNAL_FUNC(keypress_local), NULL);
 
 return(rc);
 }
@@ -1684,6 +1676,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2009/03/27 04:58:14  gtkwave
+ * enable splash screen during empty gui handling / load dumpfile
+ *
  * Revision 1.41  2009/03/24 21:31:34  gtkwave
  * changed dkgray to mdgray for "Time" background as intensity changed
  *
