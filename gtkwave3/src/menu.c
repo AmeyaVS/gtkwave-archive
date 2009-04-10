@@ -2191,6 +2191,7 @@ if(GLOBALS->filesel_ok)
 		if(g_old->loaded_file_type == MISSING_FILE) /* remove original "blank" page */
 			{
                         if(g_old->missing_file_toolbar) gtk_widget_set_sensitive(g_old->missing_file_toolbar, TRUE);
+			menu_set_sensitive();
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(g_old->notebook), g_old->this_context_page);
 			menu_quit_close_callback(NULL, NULL);
 			}
@@ -4708,6 +4709,8 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
  * powerful.  The only real difference is the final item which tells 
  * the itemfactory just what the item "is".
  */
+static const char *menu_blackouts[] = { "/Edit", "/Search", "/Time", "/Markers", "/View" };
+
 static GtkItemFactoryEntry menu_items[] =
 {
 #if !defined __MINGW32__ && !defined _MSC_VER 
@@ -4984,12 +4987,45 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 {
     int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
     GtkAccelGroup *global_accel;
+    int i;
+    GtkWidget *mw;
 
     GLOBALS->regexp_string_menu_c_1 = calloc_2(1, 129);
 
     global_accel = gtk_accel_group_new();
     GLOBALS->item_factory_menu_c_1 = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", global_accel);
     gtk_item_factory_create_items(GLOBALS->item_factory_menu_c_1, nmenu_items, menu_items, NULL);
+
+    if(GLOBALS->loaded_file_type == MISSING_FILE)
+	{
+	    for(i=0;i<nmenu_items;i++)
+		{
+		switch(i)
+			{
+			case WV_MENU_FONVT:
+			case WV_MENU_WCLOSE:
+#if defined(HAVE_LIBTCL)
+	    		case WV_MENU_TCLSCR:
+#endif
+			case WV_MENU_FQY:
+			case WV_MENU_FQN:
+			case WV_MENU_HWH:
+			case WV_MENU_HWV:
+				break;
+	
+			default: 
+				mw = gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[i].path);
+				if(mw) gtk_widget_set_sensitive(mw, FALSE);
+				break;
+			}
+		}
+	
+		for(i=0;i<(sizeof(menu_blackouts)/sizeof(char *));i++)
+			{
+			mw = gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_blackouts[i]);
+			if(mw) gtk_widget_set_sensitive(mw, FALSE);
+			}
+	}
 
     if((GLOBALS->socket_xid)||(GLOBALS->partial_vcd))
 	{
@@ -5021,6 +5057,41 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 	}
 }
 
+
+void menu_set_sensitive(void)
+{
+    int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
+    int i;
+    GtkWidget *mw;
+
+    for(i=0;i<(sizeof(menu_blackouts)/sizeof(char *));i++)
+	{
+	mw = gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_blackouts[i]);
+	if(mw) gtk_widget_set_sensitive(mw, TRUE);
+	}
+
+    for(i=0;i<nmenu_items;i++)
+        {
+        switch(i)
+                {
+                case WV_MENU_FONVT:
+                case WV_MENU_WCLOSE:
+#if defined(HAVE_LIBTCL)
+    		case WV_MENU_TCLSCR:
+#endif
+                case WV_MENU_FQY:
+                case WV_MENU_FQN:
+                case WV_MENU_HWH:
+                case WV_MENU_HWV:  
+                        break;
+
+                default:
+                        mw = gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_items[i].path);
+                        if(mw) gtk_widget_set_sensitive(mw, TRUE);
+                        break;
+                }
+        }
+}
 
 /*
  * bail out
@@ -5292,6 +5363,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.59  2009/03/27 04:38:05  gtkwave
+ * working on ergonomics of drag and drop into an empty gui
+ *
  * Revision 1.58  2009/03/26 20:57:41  gtkwave
  * added MISSING_FILE support for bringing up gtkwave without a dumpfile
  *

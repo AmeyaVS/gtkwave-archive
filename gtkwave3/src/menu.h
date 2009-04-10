@@ -30,6 +30,7 @@
 #include "main.h"
 
 void get_main_menu (GtkWidget *, GtkWidget **menubar);
+void menu_set_sensitive(void);
 int file_quit_cmd_callback (GtkWidget *widget, gpointer data);
 int set_wave_menu_accelerator(char *str);
 int execute_script(char *name);
@@ -331,6 +332,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2009/01/13 23:09:12  gtkwave
+ * added copy traces button to toolbar in gtkwave
+ *
  * Revision 1.23  2009/01/12 04:17:39  gtkwave
  * added dynamic zoom for end for partial vcd
  *

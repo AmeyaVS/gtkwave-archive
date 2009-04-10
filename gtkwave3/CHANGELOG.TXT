@@ -615,3 +615,4 @@
 		Added support in VZT file format for LZMA compression.
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
+		Add menu blackouts on empty gui.
