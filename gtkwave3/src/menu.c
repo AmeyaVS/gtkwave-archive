@@ -39,6 +39,7 @@
 #define strcasecmp _stricmp
 #endif
 
+#undef WAVE_USE_MENU_BLACKOUTS
 
 static GtkItemFactoryEntry menu_items[WV_MENU_NUMITEMS];
 
@@ -4709,7 +4710,9 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
  * powerful.  The only real difference is the final item which tells 
  * the itemfactory just what the item "is".
  */
+#ifdef WAVE_USE_MENU_BLACKOUTS
 static const char *menu_blackouts[] = { "/Edit", "/Search", "/Time", "/Markers", "/View" };
+#endif
 
 static GtkItemFactoryEntry menu_items[] =
 {
@@ -5020,11 +5023,13 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 			}
 		}
 	
+#ifdef WAVE_USE_MENU_BLACKOUTS
 		for(i=0;i<(sizeof(menu_blackouts)/sizeof(char *));i++)
 			{
 			mw = gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_blackouts[i]);
 			if(mw) gtk_widget_set_sensitive(mw, FALSE);
 			}
+#endif
 	}
 
     if((GLOBALS->socket_xid)||(GLOBALS->partial_vcd))
@@ -5064,11 +5069,13 @@ void menu_set_sensitive(void)
     int i;
     GtkWidget *mw;
 
+#ifdef WAVE_USE_MENU_BLACKOUTS
     for(i=0;i<(sizeof(menu_blackouts)/sizeof(char *));i++)
 	{
 	mw = gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, menu_blackouts[i]);
 	if(mw) gtk_widget_set_sensitive(mw, TRUE);
 	}
+#endif
 
     for(i=0;i<nmenu_items;i++)
         {
@@ -5363,6 +5370,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.60  2009/04/10 04:33:58  gtkwave
+ * added menu blackouts on empty gui
+ *
  * Revision 1.59  2009/03/27 04:38:05  gtkwave
  * working on ergonomics of drag and drop into an empty gui
  *
