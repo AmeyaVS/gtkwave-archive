@@ -952,8 +952,8 @@ if( (strlen(GLOBALS->loaded_file_name)>strlen(EXTLOAD_SUFFIX))&&
 	extload_max = extload_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
 	if((!GLOBALS->extload) || (GLOBALS->extload_already_errored) || (!extload_max))
 		{
-		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
-		exit(255);
+		fprintf(stderr, "GTKWAVE | Could not initialize '%s'%s.\n", GLOBALS->loaded_file_name, GLOBALS->vcd_jmp_buf ? "" : ", exiting");
+		vcd_exit(255);
 		}
 	}
 else
@@ -993,8 +993,8 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_nam
 		lx2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
 		if(!GLOBALS->lx2_lx2_c_1)
 			{
-			fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
-			exit(255);
+			fprintf(stderr, "GTKWAVE | Could not initialize '%s'%s.\n", GLOBALS->loaded_file_name, GLOBALS->vcd_jmp_buf ? "" : ", exiting");
+			vcd_exit(255);
 			}
 		}	
 	}
@@ -1010,8 +1010,8 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name
 	vzt_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
 	if(!GLOBALS->vzt_vzt_c_1)
 		{
-		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
-		exit(255);
+		fprintf(stderr, "GTKWAVE | Could not initialize '%s'%s.\n", GLOBALS->loaded_file_name, GLOBALS->vcd_jmp_buf ? "" : ", exiting");
+		vcd_exit(255);
 		}
 	}
 else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".aet"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ae2"))))
@@ -1025,8 +1025,8 @@ else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_fi
 	ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
 	if(!GLOBALS->ae2)
 		{
-		fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
-		exit(255);
+		fprintf(stderr, "GTKWAVE | Could not initialize '%s'%s.\n", GLOBALS->loaded_file_name, GLOBALS->vcd_jmp_buf ? "" : ", exiting");
+		vcd_exit(255);
 		}
 	}
 else if (
@@ -1039,7 +1039,7 @@ else if (
 	  if(!ghw_main(GLOBALS->loaded_file_name))
 		{
 		/* error message printed in ghw_main() */
-		exit(255);
+		vcd_exit(255);
 		}
 	}
 else if (strlen(GLOBALS->loaded_file_name)>4)	/* case for .aet? type filenames */
@@ -1058,8 +1058,8 @@ else if (strlen(GLOBALS->loaded_file_name)>4)	/* case for .aet? type filenames *
 		ae2_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end, GLOBALS->indirect_fname);
 		if(!GLOBALS->ae2)
 			{
-			fprintf(stderr, "Could not initialize '%s', exiting.\n", GLOBALS->loaded_file_name);
-			exit(255);
+			fprintf(stderr, "GTKWAVE | Could not initialize '%s'%s.\n", GLOBALS->loaded_file_name, GLOBALS->vcd_jmp_buf ? "" : ", exiting");
+			vcd_exit(255);
 			}
 		}
 		else
@@ -2316,6 +2316,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.65  2009/04/09 22:17:21  gtkwave
+ * install_keypress_handler() fixes
+ *
  * Revision 1.64  2009/03/27 05:08:56  gtkwave
  * disable splash screen for now on empty gui due to undetermine conflicts
  *
