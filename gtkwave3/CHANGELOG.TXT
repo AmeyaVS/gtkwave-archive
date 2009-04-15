@@ -616,6 +616,8 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	11apr09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	15apr09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
+		Update VCD ID generation in VCD writers to use XL-style
+		identifier sequencing.

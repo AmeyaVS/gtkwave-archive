@@ -157,17 +157,44 @@ return("01xz"[value&3]);
 static char *vcdid(int value)
 {
 static char buf[16];
+char *pnt = buf;
+int i, vmod;
+
+value++;
+for(i=0;;i++)
+        {
+        if((vmod = (value % 94)))
+                {
+                *(pnt++) = (char)(vmod + 32);
+                }   
+                else
+                {
+                *(pnt++) = '~'; value -= 94;
+                }
+        value = value / 94;  
+        if(!value) { break; }
+        }
+
+*pnt = 0;   
+return(buf);
+}
+
+/*
+static char *vcdid(int value)
+{
+static char buf[16];
 int i;
 
 for(i=0;i<15;i++)
 	{
-	buf[i]=(char)((value%94)+33); /* for range 33..126 */
+	buf[i]=(char)((value%94)+33);
 	value=value/94;
 	if(!value) {buf[i+1]=0; break;}
 	}
 
 return(buf);
 }
+*/
 
 
 /*
@@ -1442,6 +1469,9 @@ while(offs)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/31 22:42:44  gtkwave
+ * 3.1.0 RC3 updates
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:19  gtkwave
  * Imported sources
  *

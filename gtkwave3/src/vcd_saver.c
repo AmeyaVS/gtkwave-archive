@@ -51,17 +51,43 @@ else
  */
 static char *vcdid(int value)
 {
+char *pnt = GLOBALS->buf_vcd_saver_c_3;
+int i, vmod;
+
+value++;
+for(i=0;;i++)
+        {
+        if((vmod = (value % 94)))
+                {
+                *(pnt++) = (char)(vmod + 32);
+                }   
+                else
+                {
+                *(pnt++) = '~'; value -= 94;
+                }
+        value = value / 94;  
+        if(!value) { break; }
+        }
+
+*pnt = 0;   
+return(GLOBALS->buf_vcd_saver_c_3);
+}
+
+/*
+static char *vcdid(int value)
+{
 int i;
                                          
 for(i=0;i<15;i++)
         {
-        GLOBALS->buf_vcd_saver_c_3[i]=(char)((value%94)+33); /* for range 33..126 */
+        GLOBALS->buf_vcd_saver_c_3[i]=(char)((value%94)+33);
         value=value/94;
         if(!value) {GLOBALS->buf_vcd_saver_c_3[i+1]=0; break;}
         }
                     
 return(GLOBALS->buf_vcd_saver_c_3);
 }
+*/
 
 static char *vcd_truncate_bitvec(char *s)
 {
@@ -1434,6 +1460,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/12/25 03:52:32  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.7  2008/12/16 19:28:20  gtkwave
  * more warnings cleanups
  *

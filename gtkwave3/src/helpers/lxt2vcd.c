@@ -32,6 +32,7 @@
 #include "wave_locale.h"
 
 int flat_earth = 0;
+int notruncate = 0;
 extern void free_hier(void);
 extern char *output_hier(char *name);
 
@@ -42,21 +43,50 @@ extern char *output_hier(char *name);
 static char *vcdid(int value)
 {
 static char buf[16];
+char *pnt = buf;
+int i, vmod;
+
+value++;
+for(i=0;;i++)
+        {
+        if((vmod = (value % 94)))
+                {
+                *(pnt++) = (char)(vmod + 32);
+                }   
+                else
+                {
+                *(pnt++) = '~'; value -= 94;
+                }
+        value = value / 94;  
+        if(!value) { break; }
+        }
+
+*pnt = 0;   
+return(buf);
+}
+
+/*
+static char *vcdid(int value)
+{
+static char buf[16];
 int i;
 
 for(i=0;i<15;i++)
         {
-        buf[i]=(char)((value%94)+33); /* for range 33..126 */
+        buf[i]=(char)((value%94)+33);
         value=value/94;
         if(!value) {buf[i+1]=0; break;}
         }
 
 return(buf);
 }
+*/
 
 static char *vcd_truncate_bitvec(char *s)
 {
 char l, r;
+
+if(notruncate) return(s);
 
 r=*s;
 if(r=='1')
@@ -280,6 +310,7 @@ printf(
 "Usage: %s [OPTION]... [LXT2FILE]\n\n"
 "  -l, --lxtname=FILE         specify LXT2 input filename\n"
 "  -f, --flatearth            emit flattened hierarchies\n"
+"  -n, --notruncate           do not shorten bitvectors\n"
 "  -h, --help                 display this help then exit\n\n"
 "VCD is emitted to stdout.\n\n"
 "Report bugs to <bybell@nc.rr.com>.\n",nam);
@@ -288,6 +319,7 @@ printf(
 "Usage: %s [OPTION]... [LXT2FILE]\n\n"
 "  -l                         specify LXT2 input filename\n"
 "  -f                         emit flattened hierarchies\n"
+"  -n                         do not shorten bitvectors\n"
 "  -h                         display this help then exit\n\n"
 
 "VCD is emitted to stdout.\n\n"
@@ -316,13 +348,14 @@ while (1)
                 {
 		{"lxtname", 1, 0, 'l'},
 		{"flatearth", 0, 0, 'f'},
+		{"notruncate", 0, 0, 'n'},
                 {"help", 0, 0, 'h'},
                 {0, 0, 0, 0}  
                 };
                 
-        c = getopt_long (argc, argv, "l:fh", long_options, &option_index);
+        c = getopt_long (argc, argv, "l:fnh", long_options, &option_index);
 #else
-        c = getopt      (argc, argv, "l:fh");
+        c = getopt      (argc, argv, "l:fnh");
 #endif
                         
         if (c == -1) break;     /* no more args */
@@ -336,6 +369,9 @@ while (1)
 			break;
 
 		case 'f': flat_earth=1;
+			break;
+
+		case 'n': notruncate=1;
 			break;
 
                 case 'h':
@@ -383,6 +419,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.2  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

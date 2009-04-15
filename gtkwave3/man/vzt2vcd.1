@@ -1,4 +1,4 @@
-.TH "VZT2VCD" "1" "3.0.24" "Anthony Bybell" "Filetype Conversion"
+.TH "VZT2VCD" "1" "3.2.2" "Anthony Bybell" "Filetype Conversion"
 .SH "NAME"
 .LP 
 vzt2vcd \- Coverts VZT files to VCD
@@ -17,6 +17,9 @@ Specify VZT input filename.
 .TP
 \fB\-f,\-\-flatearth\fR
 Emit flattened hierarchies.
+.TP
+\fB\-n,\-\-notruncate\fR
+Emit bitvector values that do not have leading zeros and such removed.
 .TP
 \fB\-c,\-\-coalesce\fR
 Coalesce bitblasted vectors.
