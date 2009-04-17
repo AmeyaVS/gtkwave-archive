@@ -73,7 +73,7 @@ cvs -z3 -d:pserver:anonymous@gtkwave.cvs.sourceforge.net:/cvsroot/gtkwave co -P 
 
 ===============================================================================
 
-Note For Ubuntu users:
+Note (1) For Ubuntu users:
 
 I had to do the following to get it to install directly. Please
 include in INSTALL .txt as an option for ubuntu users. Other linux
@@ -84,5 +84,14 @@ sudo apt-get install libgtk2.0-dev
 
 -030109ajb  bybell@nc.rr.com
 
-===============================================================================
 
+Note (2) For Ubuntu users:
+
+If your compile fails because gzopen64 cannot be found, you will either have
+to fix your Ubuntu install or use the version of libz in gtkwave:
+
+./configure --enable-local-libz
+
+-140409ajb  bybell@nc.rr.com
+
+===============================================================================
