@@ -162,6 +162,7 @@ TimeType atoi_64(char *str)
 TimeType val=0;
 unsigned char ch, nflag=0;
 
+#if 0
 switch(*str)
 	{
 	case 'y':
@@ -184,6 +185,7 @@ switch(*str)
 	default:
 		break;
 	}
+#endif
 
 while((ch=*(str++)))
 	{
@@ -208,6 +210,9 @@ return(nflag?(-val):val);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:25  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *

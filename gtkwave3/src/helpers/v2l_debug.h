@@ -50,7 +50,11 @@ typedef guint64         UTimeType;
 #ifndef _MSC_VER
 #define LLDescriptor(x) x##LL
 #define ULLDescriptor(x) x##ULL
+#ifndef __MINGW32__
 #define TTFormat "%lld"
+#else
+#define TTFormat "%I64d"
+#endif
 #else
 #define LLDescriptor(x) x##i64
 #define ULLDescriptor(x) x##i64
@@ -108,6 +112,9 @@ TimeType atoi_64(char *str);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:19  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:19  gtkwave
  * initial release
  *
