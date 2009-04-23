@@ -18,6 +18,9 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __MINGW32__
+#include <windows.h>
+#endif
 
 #include "wave_locale.h"
 
@@ -118,16 +121,25 @@ if(GLOBALS->second_page_created)
 }
 
 
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 void kill_stems_browser(void)
 {
 if(GLOBALS->anno_ctx)
 	{
+#ifdef __MINGW32__
+	if(GLOBALS->anno_ctx->browser_process)
+		{
+		TerminateProcess(GLOBALS->anno_ctx->browser_process, 0);
+		CloseHandle(GLOBALS->anno_ctx->browser_process);
+		GLOBALS->anno_ctx->browser_process = 0;
+		}
+#else
 	if(GLOBALS->anno_ctx->browser_process)
 		{
 		kill(GLOBALS->anno_ctx->browser_process, SIGKILL);
 		GLOBALS->anno_ctx->browser_process = (pid_t)0;
 		}
+#endif
 	GLOBALS->anno_ctx = NULL;
 	}
 }
@@ -157,17 +169,17 @@ static void print_help(char *nam)
 #endif
 
 #if !defined _MSC_VER && !defined __MINGW32__
-#define STEMS_GETOPT	 "  -t, --stems=FILE           specify stems file for source code annotation\n"
 #define VCD_GETOPT       "  -o, --optimize             optimize VCD to LXT2\n"
 #else
-#define STEMS_GETOPT
 #define VCD_GETOPT
 #endif
 
 #if !defined _MSC_VER
+#define STEMS_GETOPT	 "  -t, --stems=FILE           specify stems file for source code annotation\n"
 #define DUAL_GETOPT      "  -D, --dualid=WHICH         specify multisession identifier\n"
 #define INTR_GETOPT      "  -I, --interactive          interactive VCD mode (filename is shared mem ID)\n"
 #else
+#define STEMS_GETOPT
 #define DUAL_GETOPT
 #define INTR_GETOPT
 #endif
@@ -717,7 +729,7 @@ while (1)
                         break;
 
 		case 't':
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 			if(GLOBALS->stems_name) free_2(GLOBALS->stems_name);
 			GLOBALS->stems_name = malloc_2(strlen(optarg)+1);
 			strcpy(GLOBALS->stems_name, optarg);
@@ -988,7 +1000,7 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_nam
 		}
 		else
 		{
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 		GLOBALS->stems_type = WAVE_ANNO_LXT2;
 		GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
 		strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
@@ -1005,7 +1017,7 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_nam
 else
 if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".vzt")))
 	{
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 	GLOBALS->stems_type = WAVE_ANNO_VZT;
 	GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
 	strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
@@ -1020,7 +1032,7 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name
 	}
 else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".aet"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ae2"))))
 	{
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 	GLOBALS->stems_type = WAVE_ANNO_AE2;
 	GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
 	strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
@@ -1053,7 +1065,7 @@ else if (strlen(GLOBALS->loaded_file_name)>4)	/* case for .aet? type filenames *
 	sufbuf[4] = 0;
 	if(!strcasecmp(sufbuf, ".aet"))	/* strncasecmp() in windows? */
 		{
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 		GLOBALS->stems_type = WAVE_ANNO_AE2;
 		GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
 		strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
@@ -2163,9 +2175,16 @@ if((GLOBALS->initial_window_xpos>=0)||(GLOBALS->initial_window_ypos>=0))
 /*
  * bring up stems browser
  */
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 int stems_are_active(void)
 {
+#ifdef __MINGW32__
+if(GLOBALS->anno_ctx && GLOBALS->anno_ctx->browser_process)
+	{
+	/* nothing */
+	return(1);
+	}
+#else
 if(GLOBALS->anno_ctx && GLOBALS->anno_ctx->browser_process)
 	{
 	int mystat =0;
@@ -2181,7 +2200,7 @@ if(GLOBALS->anno_ctx && GLOBALS->anno_ctx->browser_process)
 		GLOBALS->anno_ctx = NULL;
 		}
 	}
-
+#endif
 return(0);
 }
 #endif
@@ -2189,7 +2208,7 @@ return(0);
 
 void activate_stems_reader(char *stems_name)
 {
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 
 #ifdef __CYGWIN__
 /* ajb : ok static as this is a one-time warning message... */
@@ -2227,6 +2246,69 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 
 if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 	{
+#ifdef __MINGW32__
+	int shmid = getpid();
+	char mapName[257];
+	HANDLE hMapFile;
+        STARTUPINFO si;
+        PROCESS_INFORMATION pi;
+        BOOL rc;
+
+        memset(&si, 0, sizeof(STARTUPINFO));
+        memset(&pi, 0, sizeof(PROCESS_INFORMATION));
+	si.cb = sizeof(si);
+
+	sprintf(mapName, "rtlbrowse%d", shmid);
+	hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(struct gtkwave_annotate_ipc_t), mapName);
+	if(hMapFile != NULL)
+	        {
+	        GLOBALS->anno_ctx = MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(struct gtkwave_annotate_ipc_t));
+		if(GLOBALS->anno_ctx)
+			{
+			char mylist[257];
+
+                        sprintf(mylist, "rtlbrowse.exe %08x", shmid);
+
+			memset(GLOBALS->anno_ctx, 0, sizeof(struct gtkwave_annotate_ipc_t));
+
+			memcpy(GLOBALS->anno_ctx->matchword, WAVE_MATCHWORD, 4);
+			GLOBALS->anno_ctx->aet_type = GLOBALS->stems_type;			
+			strcpy(GLOBALS->anno_ctx->aet_name, GLOBALS->aet_name);
+			strcpy(GLOBALS->anno_ctx->stems_name, stems_name);
+
+			update_markertime(GLOBALS->tims.marker);
+
+                        rc = CreateProcess(
+                                        "rtlbrowse.exe",
+                                        mylist,
+                                        NULL,
+                                        NULL,
+                                        FALSE,
+                                        0,
+                                        NULL,
+                                        NULL,
+                                        &si,
+                                        &pi);
+                                        
+                        if(!rc)  
+                        	{
+				UnmapViewOfFile(GLOBALS->anno_ctx);
+				CloseHandle(hMapFile);
+				GLOBALS->anno_ctx = NULL;
+				GLOBALS->stems_type = WAVE_ANNO_NONE;
+                                }
+				else
+				{
+				GLOBALS->anno_ctx->browser_process = pi.hProcess;
+				}
+			}
+			else
+			{
+			CloseHandle(hMapFile);
+			GLOBALS->stems_type = WAVE_ANNO_NONE;
+			}
+		}
+#else
 	int shmid = shmget(0, sizeof(struct gtkwave_annotate_ipc_t), IPC_CREAT | 0600 );
 	if(shmid >=0)
 		{
@@ -2283,6 +2365,7 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 			GLOBALS->stems_type = WAVE_ANNO_NONE;
 			}
 		}
+#endif
 	}
 	else
 	{
@@ -2346,6 +2429,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.68  2009/04/23 19:38:50  gtkwave
+ * add mingw support to twinwave
+ *
  * Revision 1.67  2009/04/23 04:57:38  gtkwave
  * ported shmidcat and partial vcd loader function to mingw
  *

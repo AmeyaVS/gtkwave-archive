@@ -3421,7 +3421,7 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 fileselbox("Read Save File",&GLOBALS->filesel_writesave,GTK_SIGNAL_FUNC(menu_read_save_cleanup), GTK_SIGNAL_FUNC(NULL), "*.sav", 0);
 }
 
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 /**/
 void
 menu_read_stems_cleanup(GtkWidget *widget, gpointer data)
@@ -4735,7 +4735,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Read Sim Logfile", "<Control>L", menu_read_log_file, WV_MENU_FRLF, "<Item>"),
       /* 10 */
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2LF, "<Separator>"),
-#if !defined __MINGW32__ && !defined _MSC_VER
+#if !defined _MSC_VER
     WAVE_GTKIFE("/File/Read Verilog Stemsfile", NULL, menu_read_stems_file, WV_MENU_FRSTMF, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2STMF, "<Separator>"),
 #endif
@@ -5370,6 +5370,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.61  2009/04/10 16:24:35  gtkwave
+ * made blackouts ifdef'd out for now on menus
+ *
  * Revision 1.60  2009/04/10 04:33:58  gtkwave
  * added menu blackouts on empty gui
  *

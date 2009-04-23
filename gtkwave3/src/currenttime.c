@@ -363,7 +363,7 @@ if(i)
 
 void update_markertime(TimeType val)
 {
-#if !defined _MSC_VER && !defined __MINGW32__ 
+#if !defined _MSC_VER
 if(GLOBALS->anno_ctx)
 	{
 	if(val >= 0)
@@ -672,6 +672,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/12/28 03:12:27  gtkwave
+ * adjusted fractional part of %g
+ *
  * Revision 1.11  2008/12/28 03:03:33  gtkwave
  * Added scale_to_time_dimension rc variable and menu options.
  *

@@ -257,7 +257,28 @@ if(i==len)
 	int shmid;
 	
 	sscanf(id, "%x", &shmid);
+#ifdef __MINGW32__
+                {
+                HANDLE hMapFile;
+                char mapName[257];
+
+                sprintf(mapName, "rtlbrowse%d", shmid);
+                hMapFile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, mapName);
+                if(hMapFile == NULL)
+                        {
+                        fprintf(stderr, "Could not attach shared memory map name '%s', exiting.\n", mapName);
+                        exit(255);
+                        }
+                anno_ctx = MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(struct gtkwave_annotate_ipc_t));
+                if(anno_ctx == NULL)
+                        {
+                        fprintf(stderr, "Could not map view of file '%s', exiting.\n", mapName);
+                        exit(255);
+                        }
+                }
+#else
 	anno_ctx = shmat(shmid, NULL, 0);
+#endif
 	if(anno_ctx)
 		{
 		if((!memcmp(anno_ctx->matchword, WAVE_MATCHWORD, 4))&&(anno_ctx->aet_type > WAVE_ANNO_NONE)&&(anno_ctx->aet_type < WAVE_ANNO_MAX))
@@ -501,6 +522,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/01/13 22:39:24  gtkwave
+ * compile fixes for mingw
+ *
  * Revision 1.4  2008/02/05 07:20:24  gtkwave
  * added realtime rtlbrowse updates (follows marker at 100ms intervals)
  *

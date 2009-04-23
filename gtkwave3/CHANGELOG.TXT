@@ -626,3 +626,4 @@
 		Added twinwave support in MinGW.  This currently has some
 		problems with D&D as well as window decorations being
 		present due to various system incompatibilities.
+		Added rtlbrowse support in MinGW.

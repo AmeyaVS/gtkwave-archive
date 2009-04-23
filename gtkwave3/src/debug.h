@@ -18,6 +18,8 @@
 #ifndef _MSC_VER
 #ifndef __MINGW32__
 #include <stdint.h>
+#else
+#include <windows.h>
 #endif
 #endif
 
@@ -167,6 +169,10 @@ struct gtkwave_annotate_ipc_t
 char matchword[4];			/* match against WAVE_MATCHWORD string */
 char time_string[40];			/* formatted marker time */
 
+#ifdef __MINGW32__
+HANDLE browser_process;
+#endif
+
 TimeType marker;
 unsigned marker_set : 1;
 
@@ -197,6 +203,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/01/20 06:11:48  gtkwave
+ * added gtkwave::getDisplayedSignals command
+ *
  * Revision 1.5  2009/01/13 22:39:24  gtkwave
  * compile fixes for mingw
  *

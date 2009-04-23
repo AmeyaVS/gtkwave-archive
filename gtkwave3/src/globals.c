@@ -1700,7 +1700,7 @@ void reload_into_new_context(void)
 
  /* window destruction (of windows that aren't the parent window) */
 
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
  kill_stems_browser();	/* for now, need to rework the stems browser dumpfile access routines to support this properly */
 #endif
 

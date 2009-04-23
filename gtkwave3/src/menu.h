@@ -62,7 +62,7 @@ WV_MENU_FWSFAS,
 WV_MENU_SEP2,
 WV_MENU_FRLF,
 WV_MENU_SEP2LF,
-#if !defined __MINGW32__ && !defined _MSC_VER
+#if !defined _MSC_VER
 WV_MENU_FRSTMF,
 WV_MENU_SEP2STMF,
 #endif
@@ -332,6 +332,9 @@ void read_save_helper(char *wname);
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2009/04/10 04:33:58  gtkwave
+ * added menu blackouts on empty gui
+ *
  * Revision 1.24  2009/01/13 23:09:12  gtkwave
  * added copy traces button to toolbar in gtkwave
  *
