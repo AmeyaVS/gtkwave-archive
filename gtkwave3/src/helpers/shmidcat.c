@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2008 Tony Bybell.
+ * Copyright (c) 2006-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -28,13 +28,16 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #endif
+#ifdef __MINGW32__
+#include <windows.h>
+#endif
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "wave_locale.h"
 
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 
 /* size *must* match in gtkwave */
 #define WAVE_PARTIAL_VCD_RING_BUFFER_SIZE (1024*1024)
@@ -150,11 +153,15 @@ for(;;)
 	
 	if((consumed + len + 16) > WAVE_PARTIAL_VCD_RING_BUFFER_SIZE) /* just a guardband, it's oversized */
 		{
+#ifdef __MINGW32__
+		Sleep(10);
+#else
 		struct timeval tv;
 	
 	        tv.tv_sec = 0;
 	        tv.tv_usec = 1000000 / 100;
 	        select(0, NULL, NULL, NULL, &tv);
+#endif
 		continue;
 		}
 		else
@@ -198,15 +205,16 @@ for(;;)
 int main(int argc, char **argv)
 {
 int buf_strlen = 0;
-#if 0
-/* obsolete code (see below) */
-int consuming = 0;
-#endif
-int shmid = shmget(0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE, IPC_CREAT | 0600 );
-struct shmid_ds ds;
 char l_buf[32769];
 char *old_buf = "dummy";
 FILE *f;
+#ifdef __MINGW32__
+char mapName[65];
+HANDLE hMapFile;
+#else
+struct shmid_ds ds;
+#endif
+int shmid;
 
 WAVE_LOCALE_FIX
 
@@ -225,9 +233,19 @@ if(argc != 1)
 	f = stdin;
 	}
 
+#ifdef __MINGW32__
+shmid = getpid();
+sprintf(mapName, "shmidcat%d", shmid);
+hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE, mapName);
+if(hMapFile != NULL)
+	{
+	buf_top = buf_curr = buf = MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE);
+#else
+shmid = shmget(0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE, IPC_CREAT | 0600 );
 if(shmid >= 0)
 	{
 	buf_top = buf_curr = buf = shmat(shmid, NULL, 0);
+#endif
 	memset(buf, 0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE);
 
 #ifdef __linux__
@@ -246,11 +264,15 @@ if(shmid >= 0)
 		
 		if(!s)
 			{
+#ifdef __MINGW32__
+			Sleep(200);
+#else
 	                struct timeval tv;
          
 	                tv.tv_sec = 0;
 	                tv.tv_usec = 1000000 / 5;
 	                select(0, NULL, NULL, NULL, &tv);
+#endif
 			continue;
 			}
 
@@ -266,30 +288,13 @@ if(shmid >= 0)
 			}
 		}
 
-#if 0
-/* this old ifdef'd out section is the previous version which couldn't restart properly... */
-
-	while(fgets(l_buf, 32768, f))
-		{
-		/* all writes must have an end of line character for gtkwave's VCD reader */
-		emit_string((old_buf = l_buf));
-		if(!*buf) { consuming = 1; }
-		}
-
-	while(!consuming)
-		{
-                struct timeval tv;
-         
-                tv.tv_sec = 0;
-                tv.tv_usec = 1000000 / 5;
-                select(0, NULL, NULL, NULL, &tv);
-
-		if((!*buf)||(!*old_buf)) { consuming = 1; }
-		}
-#endif
-
 #ifndef __linux__
+#ifdef __MINGW32__
+	UnmapViewOfFile(buf);
+	CloseHandle(hMapFile);
+#else
 	shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
+#endif
 #endif
 	}
 
@@ -300,7 +305,7 @@ return(0);
 
 int main(int argc, char **argv)
 {
-#if defined _MSC_VER || defined __MINGW32__
+#if defined _MSC_VER
 fprintf(stderr, "Sorry, this doesn't run under Win32!\n");
 #endif
 
@@ -315,6 +320,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/12/16 19:28:20  gtkwave
+ * more warnings cleanups
+ *
  * Revision 1.5  2008/12/04 16:42:33  gtkwave
  * restart fix for shmidcat
  *

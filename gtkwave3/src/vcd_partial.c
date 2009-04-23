@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,10 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
+
+#ifdef __MINGW32__
+#include <windows.h>
 #endif
 
 #undef VCD_BSEARCH_IS_PERFECT		/* bsearch is imperfect under linux, but OK under AIX */
@@ -2157,7 +2161,27 @@ if(!strcmp(fname, "-vcd"))
 	sscanf(fname, "%x", &shmid);	/* passed as a filename */
 	}
 
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
+#ifdef __MINGW32__
+{
+HANDLE hMapFile;
+char mapName[257];
+
+sprintf(mapName, "shmidcat%d", shmid);
+hMapFile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, mapName);
+if(hMapFile == NULL)
+	{
+	fprintf(stderr, "Could not attach shared memory map name '%s', exiting.\n", mapName);
+	exit(255);
+	}
+GLOBALS->consume_ptr_vcd_partial_c_1 = GLOBALS->buf_vcd_partial_c_2 = MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, WAVE_PARTIAL_VCD_RING_BUFFER_SIZE);
+if(GLOBALS->consume_ptr_vcd_partial_c_1 == NULL)
+	{
+	fprintf(stderr, "Could not map view of file '%s', exiting.\n", mapName);
+	exit(255);
+	}
+}
+#else
 errno = 0;
 GLOBALS->consume_ptr_vcd_partial_c_1 = GLOBALS->buf_vcd_partial_c_2 = shmat(shmid, NULL, 0);
 if(errno)
@@ -2166,6 +2190,7 @@ if(errno)
 	perror("Why");
 	exit(255);
 	}
+#endif
 #else
 fprintf(stderr, "Interactive VCD mode does not work with Windows, exiting.\n");
 exit(255);
@@ -2334,15 +2359,19 @@ else if(t->interactive_vector_needs_regeneration)
 
 void kick_partial_vcd(void)
 {
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 
 if(GLOBALS->partial_vcd)
 	{
+#ifdef __MINGW32__
+	Sleep(10);
+#else
 	struct timeval tv;
 
 	tv.tv_sec = 0; 
 	tv.tv_usec = 1000000 / 100;
 	select(0, NULL, NULL, NULL, &tv);
+#endif
 
 	while(*GLOBALS->consume_ptr_vcd_partial_c_1)
 		{
@@ -2409,6 +2438,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/01/12 18:46:00  gtkwave
+ * added marker nail-down during partial vcd w dynamic zoom
+ *
  * Revision 1.12  2009/01/12 04:17:39  gtkwave
  * added dynamic zoom for end for partial vcd
  *

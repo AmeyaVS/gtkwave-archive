@@ -160,11 +160,15 @@ static void print_help(char *nam)
 #define STEMS_GETOPT	 "  -t, --stems=FILE           specify stems file for source code annotation\n"
 #define VCD_GETOPT       "  -o, --optimize             optimize VCD to LXT2\n"
 #define DUAL_GETOPT      "  -D, --dualid=WHICH         specify multisession identifier\n"
-#define INTR_GETOPT      "  -I, --interactive          interactive VCD mode (filename is shared mem ID)\n"
 #else
 #define STEMS_GETOPT
 #define VCD_GETOPT
 #define DUAL_GETOPT
+#endif
+
+#if !defined _MSC_VER
+#define INTR_GETOPT      "  -I, --interactive          interactive VCD mode (filename is shared mem ID)\n"
+#else
 #define INTR_GETOPT
 #endif
 
@@ -574,7 +578,7 @@ while (1)
 			exit(0);
 
 		case 'I':
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 			is_interactive = 1;
 #endif
 			break;
@@ -1081,7 +1085,7 @@ load_vcd:
 
 #endif
 
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER 
 	if(is_interactive)
 		{
 		GLOBALS->loaded_file_type = DUMPLESS_FILE;
@@ -2026,12 +2030,12 @@ if(GLOBALS->dual_attach_id_main_c_1)
 		}
 	}
 else
+#endif
 if(is_interactive)
 	{
 	for(;;) kick_partial_vcd();
 	}
 	else
-#endif
 	{
 	/* Jump in to the main program loop */
 	gtk_main();
@@ -2316,6 +2320,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.66  2009/04/11 21:57:53  gtkwave
+ * changed exit() to vcd_exit() in some instances for tab loader hardening
+ *
  * Revision 1.65  2009/04/09 22:17:21  gtkwave
  * install_keypress_handler() fixes
  *
