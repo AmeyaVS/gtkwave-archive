@@ -29,7 +29,7 @@
 #include <sys/types.h>
 #endif
 
-#if !defined _MSC_VER && !defined __MINGW32__ && !defined OS_X && defined WAVE_USE_GTK2
+#if !defined _MSC_VER && !defined OS_X && defined WAVE_USE_GTK2
 #define WAVE_USE_XID
 #else
 #undef WAVE_USE_XID
@@ -137,7 +137,7 @@ if(GLOBALS->anno_ctx)
 /* for XID plug handling... */
 #ifdef WAVE_USE_XID
 #else
-unsigned int socket_xid = 0;
+GdkNativeWindow socket_xid = 0;
 #endif
 
 static int plug_destroy (GtkWidget *widget, gpointer data)
@@ -159,16 +159,16 @@ static void print_help(char *nam)
 #if !defined _MSC_VER && !defined __MINGW32__
 #define STEMS_GETOPT	 "  -t, --stems=FILE           specify stems file for source code annotation\n"
 #define VCD_GETOPT       "  -o, --optimize             optimize VCD to LXT2\n"
-#define DUAL_GETOPT      "  -D, --dualid=WHICH         specify multisession identifier\n"
 #else
 #define STEMS_GETOPT
 #define VCD_GETOPT
-#define DUAL_GETOPT
 #endif
 
 #if !defined _MSC_VER
+#define DUAL_GETOPT      "  -D, --dualid=WHICH         specify multisession identifier\n"
 #define INTR_GETOPT      "  -I, --interactive          interactive VCD mode (filename is shared mem ID)\n"
 #else
+#define DUAL_GETOPT
 #define INTR_GETOPT
 #endif
 
@@ -588,7 +588,7 @@ while (1)
 			break;
 
 		case 'D':
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 			{
 			char *s = optarg;
 			char *plus = strchr(s, '+');
@@ -1905,12 +1905,33 @@ if(scriptfile)
 	free_2(scriptfile); scriptfile=NULL;
 	}
 
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 if(GLOBALS->dual_attach_id_main_c_1)
 	{
 	fprintf(stderr, "GTKWAVE | Attaching %08X as dual head session %d\n", GLOBALS->dual_attach_id_main_c_1, GLOBALS->dual_id);
 
+#ifdef __MINGW32__
+		{
+		HANDLE hMapFile;
+		char mapName[257];
+
+		sprintf(mapName, "twinwave%d", GLOBALS->dual_attach_id_main_c_1);
+		hMapFile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, mapName);
+		if(hMapFile == NULL)
+		        {
+		        fprintf(stderr, "Could not attach shared memory map name '%s', exiting.\n", mapName);
+		        exit(255);
+		        }
+		GLOBALS->dual_ctx = MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, 2 * sizeof(struct gtkwave_dual_ipc_t));
+		if(GLOBALS->dual_ctx == NULL)
+		        {
+		        fprintf(stderr, "Could not map view of file '%s', exiting.\n", mapName);
+		        exit(255);
+		        }
+		}
+#else
 	GLOBALS->dual_ctx = shmat(GLOBALS->dual_attach_id_main_c_1, NULL, 0);
+#endif
 	if(GLOBALS->dual_ctx)
 		{
 		if(memcmp(GLOBALS->dual_ctx[GLOBALS->dual_id].matchword, DUAL_MATCHWORD, 4))
@@ -1924,8 +1945,9 @@ if(GLOBALS->dual_attach_id_main_c_1)
 			{
 		        GtkAdjustment *hadj;
 		        TimeType pageinc, gt;
+#ifndef __MINGW32__
 			struct timeval tv;
-
+#endif
 			if(GLOBALS->dual_ctx[1-GLOBALS->dual_id].use_new_times)
 				{
 				GLOBALS->dual_race_lock = 1;
@@ -2018,9 +2040,13 @@ if(GLOBALS->dual_attach_id_main_c_1)
 
 			GLOBALS->dual_race_lock = 0;
 
+#ifdef __MINGW32__
+			Sleep(1000 / 25);
+#else
 			tv.tv_sec = 0;
        			tv.tv_usec = 1000000 / 25;
 			select(0, NULL, NULL, NULL, &tv);
+#endif
 			}
 		}
 		else
@@ -2320,6 +2346,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.67  2009/04/23 04:57:38  gtkwave
+ * ported shmidcat and partial vcd loader function to mingw
+ *
  * Revision 1.66  2009/04/11 21:57:53  gtkwave
  * changed exit() to vcd_exit() in some instances for tab loader hardening
  *

@@ -623,3 +623,6 @@
 		identifier sequencing.
 		Fix MinGW printf format strings for helper apps.
 		Ported shmidcat and partial VCD loader function to MinGW.
+		Added twinwave support in MinGW.  This currently has some
+		problems with D&D as well as window decorations being
+		present due to various system incompatibilities.
