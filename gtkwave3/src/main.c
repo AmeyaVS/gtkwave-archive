@@ -121,15 +121,10 @@ if(GLOBALS->second_page_created)
 }
 
 
-#if !defined _MSC_VER
-void kill_stems_browser(void)
+void kill_stems_browser_single(void *V)
 {
-int ix;
-
-for(ix=0;ix<GLOBALS->num_notebook_pages;ix++)
-	{
-        struct Global *G = (*GLOBALS->contexts)[ix];
-
+struct Global *G = (struct Global *)V;
+#if !defined _MSC_VER
 	if(G && G->anno_ctx)
 		{
 #ifdef __MINGW32__
@@ -152,6 +147,18 @@ for(ix=0;ix<GLOBALS->num_notebook_pages;ix++)
 #endif
 		G->anno_ctx = NULL;
 		}
+#endif
+}
+
+#if !defined _MSC_VER
+void kill_stems_browser(void)
+{
+int ix;
+
+for(ix=0;ix<GLOBALS->num_notebook_pages;ix++)
+	{
+        struct Global *G = (*GLOBALS->contexts)[ix];
+	kill_stems_browser_single(G);
 	}
 }
 #endif
@@ -2448,6 +2455,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.71  2009/04/24 19:47:15  gtkwave
+ * multiple rtlbrowse session kill on gtkwave exit with mult tabs active
+ *
  * Revision 1.70  2009/04/24 04:24:22  gtkwave
  * reload and cygwin fixes for rtlbrowse
  *

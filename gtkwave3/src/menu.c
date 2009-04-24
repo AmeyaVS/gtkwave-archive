@@ -1345,6 +1345,7 @@ GtkWidget *n = GLOBALS->notebook;
 struct Global *old_g = NULL, *saved_g;
 char timestr[32];
 
+kill_stems_browser_single(GLOBALS);
 dead_context_sweep();
 
 for(i=0;i<np;i++)
@@ -5376,6 +5377,10 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.64  2009/04/24 05:42:33  gtkwave
+ * clear out t->minmax_valid in dataformat() for sign changes on analog
+ * vectors that use full data range caching
+ *
  * Revision 1.63  2009/04/24 04:24:22  gtkwave
  * reload and cygwin fixes for rtlbrowse
  *

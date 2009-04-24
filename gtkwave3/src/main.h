@@ -47,9 +47,10 @@ void set_window_xypos(int root_x, int root_y);
 /* stems helper activation */
 int stems_are_active(void);
 void activate_stems_reader(char *stems_name);
-#if !defined _MSC_VER && !defined __MINGW32__
+#if !defined _MSC_VER
 void kill_stems_browser(void);
 #endif
+void kill_stems_browser_single(void *G);
 
 /* prototype only used in main.c */
 void menu_reload_waveform(GtkWidget *widget, gpointer data);
@@ -78,6 +79,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/03/26 20:57:41  gtkwave
+ * added MISSING_FILE support for bringing up gtkwave without a dumpfile
+ *
  * Revision 1.5  2009/01/27 07:04:31  gtkwave
  * added extload external process loader capability
  *
