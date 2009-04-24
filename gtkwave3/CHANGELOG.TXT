@@ -635,3 +635,5 @@
 		is in use.  This allows dynamically changing from/to "signed
 		decimal" and other modes and removes any y-scale artifacts
 		from having stale minmax data.
+		For rtlbrowse kill, step through all contexts in atexit()
+		handler.

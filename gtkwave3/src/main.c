@@ -124,27 +124,34 @@ if(GLOBALS->second_page_created)
 #if !defined _MSC_VER
 void kill_stems_browser(void)
 {
-if(GLOBALS->anno_ctx)
+int ix;
+
+for(ix=0;ix<GLOBALS->num_notebook_pages;ix++)
 	{
+        struct Global *G = (*GLOBALS->contexts)[ix];
+
+	if(G && G->anno_ctx)
+		{
 #ifdef __MINGW32__
-	if(GLOBALS->anno_ctx->browser_process)
-		{
-		TerminateProcess(GLOBALS->anno_ctx->browser_process, 0);
-		CloseHandle(GLOBALS->anno_ctx->browser_process);
-		GLOBALS->anno_ctx->browser_process = 0;
-		}
+		if(G->anno_ctx->browser_process)
+			{
+			TerminateProcess(G->anno_ctx->browser_process, 0);
+			CloseHandle(G->anno_ctx->browser_process);
+			G->anno_ctx->browser_process = 0;
+			}
 #else
-	if(GLOBALS->anno_ctx->browser_process)
-		{
+		if(G->anno_ctx->browser_process)
+			{
 #ifdef __CYGWIN__
-		GLOBALS->anno_ctx->cygwin_remote_kill = 1; /* let cygwin child exit() on its own */
+			G->anno_ctx->cygwin_remote_kill = 1; /* let cygwin child exit() on its own */
 #else
-		kill(GLOBALS->anno_ctx->browser_process, SIGKILL);
+			kill(G->anno_ctx->browser_process, SIGKILL);
 #endif
-		GLOBALS->anno_ctx->browser_process = (pid_t)0;
+			G->anno_ctx->browser_process = (pid_t)0;
+			}
+#endif
+		G->anno_ctx = NULL;
 		}
-#endif
-	GLOBALS->anno_ctx = NULL;
 	}
 }
 #endif
@@ -2441,6 +2448,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.70  2009/04/24 04:24:22  gtkwave
+ * reload and cygwin fixes for rtlbrowse
+ *
  * Revision 1.69  2009/04/23 21:57:53  gtkwave
  * added mingw support for rtlbrowse
  *
