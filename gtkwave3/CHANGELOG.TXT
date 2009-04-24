@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	23apr09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	24apr09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -630,3 +630,8 @@
 		Fixed rtlbrowse on reload, now allows to respawn.
 		Fixed rtlbrowse in cygwin as kill() does not work the same
 		as posix kill.
+		Added clearing of t->minmax_valid in dataformat() in case
+		sign bit changes for analog vectors when TR_ANALOG_FULLSCALE
+		is in use.  This allows dynamically changing from/to "signed
+		decimal" and other modes and removes any y-scale artifacts
+		from having stale minmax data.

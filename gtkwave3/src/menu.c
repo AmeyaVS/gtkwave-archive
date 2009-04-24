@@ -3834,6 +3834,7 @@ if((t=GLOBALS->traces.first))
 		{
 		if(t->flags&TR_HIGHLIGHT)
 			{
+			t->minmax_valid = 0; /* for analog in full trace minmax mode ... ensure recalc occurs if "signed" is flipped */
 			t->flags=((t->flags)&mask)|patch;
 			fix=1;
 			}
@@ -5375,6 +5376,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.63  2009/04/24 04:24:22  gtkwave
+ * reload and cygwin fixes for rtlbrowse
+ *
  * Revision 1.62  2009/04/23 21:57:53  gtkwave
  * added mingw support for rtlbrowse
  *
