@@ -136,7 +136,11 @@ if(GLOBALS->anno_ctx)
 #else
 	if(GLOBALS->anno_ctx->browser_process)
 		{
+#ifdef __CYGWIN__
+		GLOBALS->anno_ctx->cygwin_remote_kill = 1; /* let cygwin child exit() on its own */
+#else
 		kill(GLOBALS->anno_ctx->browser_process, SIGKILL);
+#endif
 		GLOBALS->anno_ctx->browser_process = (pid_t)0;
 		}
 #endif
@@ -2343,8 +2347,16 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 				{
 			        if(pid) /* parent==original server_pid */
 			                {
+#ifndef __CYGWIN__
+					static int kill_installed = 0;
+
+					if(!kill_installed)
+						{
+						kill_installed = 1;
+						atexit(kill_stems_browser);
+						}
+#endif
 					GLOBALS->anno_ctx->browser_process = pid;
-					atexit(kill_stems_browser);
 #ifndef __linux__
 					sleep(2);
 					shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
@@ -2429,6 +2441,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.69  2009/04/23 21:57:53  gtkwave
+ * added mingw support for rtlbrowse
+ *
  * Revision 1.68  2009/04/23 19:38:50  gtkwave
  * add mingw support to twinwave
  *

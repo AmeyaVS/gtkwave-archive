@@ -627,3 +627,6 @@
 		problems with D&D as well as window decorations being
 		present due to various system incompatibilities.
 		Added rtlbrowse support in MinGW.
+		Fixed rtlbrowse on reload, now allows to respawn.
+		Fixed rtlbrowse in cygwin as kill() does not work the same
+		as posix kill.

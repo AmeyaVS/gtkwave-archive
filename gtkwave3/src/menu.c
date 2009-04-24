@@ -1304,8 +1304,10 @@ void menu_quit_callback(GtkWidget *widget, gpointer data)
 {
 if(data)
 	{
+#ifdef __CYGWIN__
+	kill_stems_browser();
+#endif	
 	g_print("Exiting.\n");	
-
 	gtk_exit(0);
 	}
 }
@@ -5111,6 +5113,9 @@ if(!GLOBALS->enable_fast_exit)
 	}
 	else
 	{
+#ifdef __CYGWIN__
+	kill_stems_browser();
+#endif	
 	g_print ("WM Destroy\n");
 	gtk_exit(0);	
 	}
@@ -5370,6 +5375,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.62  2009/04/23 21:57:53  gtkwave
+ * added mingw support for rtlbrowse
+ *
  * Revision 1.61  2009/04/10 16:24:35  gtkwave
  * made blackouts ifdef'd out for now on menus
  *

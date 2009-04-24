@@ -1702,6 +1702,8 @@ void reload_into_new_context(void)
 
 #if !defined _MSC_VER
  kill_stems_browser();	/* for now, need to rework the stems browser dumpfile access routines to support this properly */
+ new_globals->stems_type = GLOBALS->stems_type;
+ strcpy2_into_new_context(new_globals, &new_globals->aet_name, &GLOBALS->aet_name);
 #endif
 
  /* remaining windows which are completely destroyed and haven't migrated over */

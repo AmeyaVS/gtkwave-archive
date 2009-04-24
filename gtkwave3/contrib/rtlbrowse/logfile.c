@@ -1307,6 +1307,12 @@ gboolean update_ctx_when_idle(gpointer textview_or_dummy)
 {
 struct text_find_t *t;
 
+if(anno_ctx->cygwin_remote_kill)
+	{
+	anno_ctx->cygwin_remote_kill = 0;
+	exit(0); /* remote kill command from gtkwave */
+	}
+
 if(textview_or_dummy == NULL)
 	{
 	if(anno_ctx)
@@ -1474,7 +1480,7 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     handle = fopen(default_text, "rb");
     if(!handle)
 	{
-	fprintf(stderr, "Could not open logfile '%s'\n", default_text);
+	fprintf(stderr, "Could not open sourcefile '%s'\n", default_text);
 	return;
 	}
     fclose(handle);
@@ -1696,7 +1702,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
     handle = fopen(default_text, "rb");
     if(!handle)
 	{
-	fprintf(stderr, "Could not open logfile '%s'\n", default_text);
+	fprintf(stderr, "Could not open sourcefile '%s'\n", default_text);
 	return;
 	}
     fclose(handle);
@@ -2387,6 +2393,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2008/12/26 22:15:42  gtkwave
+ * compile fixes for gtk+-2.0 (old versions of gtk2)
+ *
  * Revision 1.23  2008/12/24 04:17:09  gtkwave
  * added highlighting to tab close buttons in rtlbrowse
  *

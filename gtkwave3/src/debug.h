@@ -156,6 +156,7 @@ pid_t browser_process;
 
 TimeType marker;
 unsigned marker_set : 1;
+unsigned cygwin_remote_kill : 1;
 
 int aet_type;
 char aet_name[PATH_MAX+1];
@@ -175,6 +176,7 @@ HANDLE browser_process;
 
 TimeType marker;
 unsigned marker_set : 1;
+unsigned cygwin_remote_kill : 1;
 
 int aet_type;
 char aet_name[PATH_MAX+1];
@@ -203,6 +205,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/04/23 21:57:53  gtkwave
+ * added mingw support for rtlbrowse
+ *
  * Revision 1.6  2009/01/20 06:11:48  gtkwave
  * added gtkwave::getDisplayedSignals command
  *
