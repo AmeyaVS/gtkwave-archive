@@ -24,6 +24,12 @@ Emit bitvector values that do not have leading zeros and such removed.
 \fB\-c,\-\-coalesce\fR
 Coalesce bitblasted vectors.
 .TP
+\fB\-n,\-\-notruncate\fR
+Do not shorten bitvectors.  This disables binary value compression as
+described in the IEEE-1364 specification.  (i.e., all values except for '1'
+left propagate as a sign bit on vectors which do not fill up their entire
+declared width)
+.TP
 \fB\-h,\-\-help\fR
 Display help then exit.
 
