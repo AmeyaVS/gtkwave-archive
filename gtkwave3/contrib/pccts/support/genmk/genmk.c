@@ -11,6 +11,11 @@
 #include <string.h>
 #include "pcctscfg.h" /* be sensitive to what ANTLR/DLG call the files */
 
+#ifdef __STDC__
+void pclasses(char **classes, int n, char *suffix);
+#endif
+
+
 #ifdef VAXC
 #define DIE		return 0;
 #define DONE	return 1;
@@ -966,7 +971,7 @@ char *suffix;
 }
 
 #ifdef __STDC__
-pclasses(char **classes, int n, char *suffix)
+void pclasses(char **classes, int n, char *suffix)
 #else
 pclasses(classes, n, suffix)
 char **classes;
