@@ -77,11 +77,14 @@ typedef uint64_t	 	vztint64_t;
 #ifndef __MINGW32__
 #if __WORDSIZE == 64
         #define VZT_RD_LLD "%ld"      
+        #define VZT_RD_LD "%d"      
 #else
         #define VZT_RD_LLD "%lld"      
+        #define VZT_RD_LD "%ld"      
 #endif
 #else
 #define VZT_RD_LLD "%I64d"
+#define VZT_RD_LD "%d"
 #endif
 #define VZT_RD_LLDESC(x) x##LL
 #define VZT_RD_ULLDESC(x) x##ULL
@@ -91,6 +94,7 @@ typedef unsigned __int16	vztint16_t;
 typedef unsigned __int32	vztint32_t;
 typedef unsigned __int64	vztint64_t;
 #define VZT_RD_LLD "%I64d"
+#define VZT_RD_LD "%d"
 #define VZT_RD_LLDESC(x) x##i64
 #define VZT_RD_ULLDESC(x) x##i64
 #endif
@@ -280,6 +284,9 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/03/31 06:21:12  gtkwave
+ * added support for lzma
+ *
  * Revision 1.2  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

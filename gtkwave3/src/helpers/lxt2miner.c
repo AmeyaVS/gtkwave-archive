@@ -75,11 +75,11 @@ if(g->len >= matchlen)
 				{
 				if(!names_only)
 					{
-					printf("#"LXT2_RD_LLD" %s[%d:%d] %s\n", *pnt_time, lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb, *pnt_value);
+					printf("#"LXT2_RD_LLD" %s["LXT2_RD_LD":"LXT2_RD_LD"] %s\n", *pnt_time, lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb, *pnt_value);
 					}
 					else
 					{
-					printf("%s[%d:%d]\n", lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb);
+					printf("%s["LXT2_RD_LD":"LXT2_RD_LD"]\n", lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb);
 					}
 				}
 				else
@@ -99,11 +99,11 @@ if(g->len >= matchlen)
 					{
 					if(!names_only)
 						{
-						printf("#"LXT2_RD_LLD" %s[%d] %s\n", *pnt_time, lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb, *pnt_value);
+						printf("#"LXT2_RD_LLD" %s["LXT2_RD_LD"] %s\n", *pnt_time, lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb, *pnt_value);
 						}
 						else
 						{
-						printf("%s[%d]\n", lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb);
+						printf("%s["LXT2_RD_LD"]\n", lxt2_rd_get_facname(*lt, *pnt_facidx), g->msb);
 						}
 					}
 				}
@@ -325,6 +325,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.3  2009/03/09 23:29:12  gtkwave
  * fixed memory access violation and added comprehensive option.
  *

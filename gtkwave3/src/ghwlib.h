@@ -1,5 +1,5 @@
 /*  GHDL Wavefile reader library.
-    Copyright (C) 2005 Tristan Gingold
+    Copyright (C) 2005-2009 Tristan Gingold
 
     GHDL is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -24,24 +24,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#if HAVE_INTTYPES_H
+#include <inttypes.h>
+#define GHWLLD "%"PRId64
+#define GHWLD  "%"PRId32
+#endif
+
+
+#ifndef GHWLLD
 #if HAVE_STDINT_H
 #include <stdint.h>
 #if __WORDSIZE == 64
 	#define GHWLLD "%ld"
+	#define GHWLD "%d"
 #else
 	#define GHWLLD "%lld"
-#endif
-#endif
-#if HAVE_INTTYPES_H
-#include <inttypes.h>
-#ifndef GHWLLD
-#if __WORDSIZE == 64
 	#define GHWLLD "%ld"
-#else
-	#define GHWLLD "%lld"
 #endif
 #endif
 #endif
+
 
 enum ghdl_rtik {
   ghdl_rtik_top,		/* 0  */
@@ -419,6 +422,9 @@ void ghw_disp_types (struct ghw_handler *h);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/07/01 18:51:06  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.2  2007/08/26 21:35:41  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

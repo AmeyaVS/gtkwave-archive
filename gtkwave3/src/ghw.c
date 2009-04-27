@@ -351,7 +351,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS->asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
+	    sprintf(GLOBALS->asbuf, "%s%c"GHWLD, pfx, dim == 0 ? '[' : ',', v);
             nam = strdup_2(GLOBALS->asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, nam, res, sig);
 	    free_2(nam);
@@ -377,7 +377,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS->asbuf, "%s%c%d", pfx, dim == 0 ? '[' : ',', v);
+	    sprintf(GLOBALS->asbuf, "%s%c"GHWLD, pfx, dim == 0 ? '[' : ',', v);
             nam = strdup_2(GLOBALS->asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, nam, res, sig);
 	    free_2(nam);
@@ -579,7 +579,7 @@ facs_debug (void)
       if (n->ext)
 	printf ("  ext: %d - %d\n", n->ext->msi, n->ext->lsi);
       for (h = &n->head; h; h = h->next)
-	printf ("  time:"TTFormat" flags:%02x vect:%p\n",
+	printf ("  time:"GHWLLD" flags:%02x vect:%p\n",
 		h->time, h->flags, h->v.h_vector);
     }
 }
@@ -819,13 +819,13 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       break;
     case ghdl_rtik_type_i32:
     case ghdl_rtik_type_p32:
-      sprintf (GLOBALS->asbuf, "%d", sig->val->i32);
+      sprintf (GLOBALS->asbuf, GHWLD, sig->val->i32);
       he->v.h_vector = strdup_2(GLOBALS->asbuf);    
       is_vector = 1;
       break;
     case ghdl_rtik_type_i64:
     case ghdl_rtik_type_p64:
-      sprintf (GLOBALS->asbuf, TTFormat, sig->val->i64);
+      sprintf (GLOBALS->asbuf, GHWLLD, sig->val->i64);
       he->v.h_vector = strdup_2(GLOBALS->asbuf);    
       is_vector = 1;
       break;
@@ -925,7 +925,7 @@ read_traces (struct ghw_handler *h)
 	case ghw_res_snapshot:
 	  if (h->snap_time > GLOBALS->max_time)
 	    GLOBALS->max_time = h->snap_time;
-	  /* printf ("Time is "TTFormat"\n", h->snap_time); */
+	  /* printf ("Time is "GHWLLD"\n", h->snap_time); */
 
 	  for (i = 0; i < h->nbr_sigs; i++)
 	    add_history (h, GLOBALS->nxp_ghw_c_1[i], i);
@@ -935,7 +935,7 @@ read_traces (struct ghw_handler *h)
 	    {
 	      int sig;
 
-	      /* printf ("Time is "TTFormat"\n", h->snap_time); */
+	      /* printf ("Time is "GHWLLD"\n", h->snap_time); */
 	      if (h->snap_time < LLDescriptor(9223372036854775807))
 		{
 		  if (h->snap_time > GLOBALS->max_time)
@@ -1051,7 +1051,7 @@ ghw_main(char *fname)
 
   GLOBALS->is_ghw = 1;
 
-  fprintf(stderr, "["TTFormat"] start time.\n["TTFormat"] end time.\n", GLOBALS->min_time*GLOBALS->time_scale, GLOBALS->max_time*GLOBALS->time_scale);
+  fprintf(stderr, "["GHWLLD"] start time.\n["GHWLLD"] end time.\n", GLOBALS->min_time*GLOBALS->time_scale, GLOBALS->max_time*GLOBALS->time_scale);
   if(GLOBALS->num_glitches_ghw_c_1) fprintf(stderr, "Warning: encountered %d glitch%s across %d glitch region%s.\n",
                 GLOBALS->num_glitches_ghw_c_1, (GLOBALS->num_glitches_ghw_c_1!=1)?"es":"",
                 GLOBALS->num_glitch_regions_ghw_c_1, (GLOBALS->num_glitch_regions_ghw_c_1!=1)?"s":"");
@@ -1064,6 +1064,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/12/25 03:21:57  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.3  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

@@ -1,5 +1,5 @@
 /*  GHDL Wavefile reader library.
-    Copyright (C) 2005 Tristan Gingold
+    Copyright (C) 2005-2009 Tristan Gingold
 
     GHDL is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -1291,7 +1291,7 @@ ghw_disp_value (union ghw_val *val, union ghw_type *type)
       ghw_disp_lit (type, val->e8);
       break;
     case ghdl_rtik_type_i32:
-      printf ("%d", val->i32);
+      printf (GHWLD, val->i32);
       break;
     case ghdl_rtik_type_p64:
       printf (GHWLLD, val->i64);
@@ -1345,7 +1345,7 @@ ghw_get_value (char *buf, int len, union ghw_val *val, union ghw_type *type)
 	}
       break;
     case ghdl_rtik_type_i32:
-      snprintf (buf, len, "%d", val->i32);
+      snprintf (buf, len, GHWLD, val->i32);
       break;
     case ghdl_rtik_type_p64:
       snprintf (buf, len, GHWLLD, val->i64);
@@ -1665,7 +1665,7 @@ ghw_disp_range (union ghw_type *type, union ghw_range *rng)
       break;
     case ghdl_rtik_type_i32:
     case ghdl_rtik_type_p32:
-      printf ("%d %s %d",
+      printf (GHWLD" %s "GHWLD,
 	      rng->i32.left, ghw_get_dir (rng->i32.dir), rng->i32.right);
       break;
     case ghdl_rtik_type_i64:
@@ -1806,6 +1806,9 @@ ghw_disp_types (struct ghw_handler *h)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/12/20 07:44:22  gtkwave
+ * experimental support for Tcl repscripts
+ *
  * Revision 1.4  2008/12/20 05:08:26  gtkwave
  * -Wshadow warning cleanups
  *

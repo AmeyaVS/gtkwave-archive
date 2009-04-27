@@ -76,11 +76,11 @@ if(g->len >= matchlen)
 				{
 				if(!names_only)
 					{
-					printf("#"VZT_RD_LLD" %s[%d:%d] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb, *pnt_value);
+					printf("#"VZT_RD_LLD" %s["VZT_RD_LD":"VZT_RD_LD"] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb, *pnt_value);
 					}
 					else
 					{
-					printf("%s[%d:%d]\n", vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb);
+					printf("%s["VZT_RD_LD":"VZT_RD_LD"]\n", vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, g->lsb);
 					}
 				}
 				else
@@ -100,11 +100,11 @@ if(g->len >= matchlen)
 					{
 					if(!names_only)
 						{
-						printf("#"VZT_RD_LLD" %s[%d] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, *pnt_value);
+						printf("#"VZT_RD_LLD" %s["VZT_RD_LD"] %s\n", *pnt_time, vzt_rd_get_facname(*lt, *pnt_facidx), g->msb, *pnt_value);
 						}
 						else
 						{
-						printf("%s[%d]\n", vzt_rd_get_facname(*lt, *pnt_facidx), g->msb);
+						printf("%s["VZT_RD_LD"]\n", vzt_rd_get_facname(*lt, *pnt_facidx), g->msb);
 						}
 					}
 				}
@@ -329,6 +329,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.3  2009/03/09 23:29:12  gtkwave
  * fixed memory access violation and added comprehensive option.
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2007 Tony Bybell.
+ * Copyright (c) 2003-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -260,7 +260,7 @@ if(lt)
                        		{
                                 if(g->msb!=-1)
                                 	{
-                                        printf("$var wire 1 %s %s[%d] $end\n", vcdid(newindx), netname, g->msb);
+                                        printf("$var wire 1 %s %s["VZT_RD_LD"] $end\n", vcdid(newindx), netname, g->msb);
                                         }
                                         else
                                         {
@@ -271,11 +271,11 @@ if(lt)
                                 {
 				if(!(g->flags & VZT_RD_SYM_F_INTEGER))
 					{
-	                                if(g->len) printf("$var wire %d %s %s[%d:%d] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
+	                                if(g->len) printf("$var wire "VZT_RD_LD" %s %s["VZT_RD_LD":"VZT_RD_LD"] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
 					}
 					else
 					{
-	                                printf("$var integer %d %s %s $end\n", g->len, vcdid(newindx), netname);
+	                                printf("$var integer "VZT_RD_LD" %s %s $end\n", g->len, vcdid(newindx), netname);
 					}
                                 }
                         }
@@ -434,6 +434,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/04/15 21:39:50  gtkwave
+ * use XL-style identifier sequencing for VCD identifiers
+ *
  * Revision 1.4  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

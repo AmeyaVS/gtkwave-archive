@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004 Tony Bybell.
+ * Copyright (c) 2003-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -75,11 +75,14 @@ typedef uint64_t	 	lxtint64_t;
 #ifndef __MINGW32__
 #if __WORDSIZE == 64
         #define LXT2_RD_LLD "%ld"
+        #define LXT2_RD_LD  "%d"
 #else
         #define LXT2_RD_LLD "%lld"
+        #define LXT2_RD_LD "%ld"
 #endif
 #else
 #define LXT2_RD_LLD "%I64d"
+#define LXT2_RD_LD "%d"
 #endif
 #define LXT2_RD_LLDESC(x) x##LL
 #define LXT2_RD_ULLDESC(x) x##ULL
@@ -89,6 +92,7 @@ typedef unsigned __int16	lxtint16_t;
 typedef unsigned __int32	lxtint32_t;
 typedef unsigned __int64	lxtint64_t;
 #define LXT2_RD_LLD "%I64d"
+#define LXT2_RD_LD "%d"
 #define LXT2_RD_LLDESC(x) x##i64
 #define LXT2_RD_ULLDESC(x) x##i64
 #endif
@@ -289,6 +293,9 @@ unsigned int			lxt2_rd_unlimit_time_range(struct lxt2_rd_trace *lt);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/01 18:51:07  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
  * Imported sources
  *

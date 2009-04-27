@@ -1426,7 +1426,7 @@ if((!b->killed)&&(!b->mem))
 		}
 	if(rc!=b->uncompressed_siz)
 		{
-		fprintf(stderr, VZT_RDLOAD"short read on block %p %d vs %d (exp), ignoring\n", b, rc, b->uncompressed_siz);
+		fprintf(stderr, VZT_RDLOAD"short read on block %p %d vs "VZT_RD_LD" (exp), ignoring\n", b, rc, b->uncompressed_siz);
 		free(b->mem); b->mem=NULL;
 		b->short_read_ignore = 1;
 		}
@@ -1761,7 +1761,7 @@ if(!(lt->handle=fopen(name, "rb")))
 		rcf = fread(&lt->zfacgeometrysize, 4, 1, lt->handle);	lt->zfacgeometrysize = rcf ? vzt_rd_get_32(&lt->zfacgeometrysize,0) : 0;
 		rcf = fread(&lt->timescale, 1, 1, lt->handle);		if(!rcf) lt->timescale = 0; /* no swap necessary */
 
-		fprintf(stderr, VZT_RDLOAD"%d facilities\n", lt->numfacs);
+		fprintf(stderr, VZT_RDLOAD VZT_RD_LD" facilities\n", lt->numfacs);
 		pos = ftello(lt->handle);
 		/* fprintf(stderr, VZT_RDLOAD"gzip facnames start at pos %d (zsize=%d)\n", pos, lt->zfacnamesize); */
 
@@ -1794,7 +1794,7 @@ if(!(lt->handle=fopen(name, "rb")))
 
 		if(rc!=lt->zfacname_predec_size)
 			{
-			fprintf(stderr, VZT_RDLOAD"*** name section mangled %d (act) vs %d (exp)\n", rc, lt->zfacname_predec_size);
+			fprintf(stderr, VZT_RDLOAD"*** name section mangled %d (act) vs "VZT_RD_LD" (exp)\n", rc, lt->zfacname_predec_size);
 			free(m);
 
 			vzt_rd_close(lt);
@@ -1897,7 +1897,7 @@ if(!(lt->handle=fopen(name, "rb")))
 			vindex_offset += lt->len[lt->numrealfacs];
 			}
 		lt->total_values = vindex_offset;
-		fprintf(stderr, VZT_RDLOAD"Total value bits: %d\n", lt->total_values);
+		fprintf(stderr, VZT_RDLOAD"Total value bits: "VZT_RD_LD"\n", lt->total_values);
 
 		if(lt->numrealfacs > lt->numfacs) lt->numrealfacs = lt->numfacs;
 
@@ -2390,6 +2390,9 @@ return(rcval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/03/31 06:21:12  gtkwave
+ * added support for lzma
+ *
  * Revision 1.4  2008/12/20 05:08:26  gtkwave
  * -Wshadow warning cleanups
  *

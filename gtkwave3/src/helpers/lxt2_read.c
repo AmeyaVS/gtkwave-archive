@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2008 Tony Bybell.
+ * Copyright (c) 2003-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -283,7 +283,7 @@ while((top_elem = lt->radix_sort[which_time]))
 		default:		vch -= LXT2_RD_DICT_START;
 					if(vch >= b->num_dict_entries)
 						{
-						fprintf(stderr, LXT2_RDLOAD"Internal error: vch(%d) >= num_dict_entries(%d)\n", vch, b->num_dict_entries);
+						fprintf(stderr, LXT2_RDLOAD"Internal error: vch(%d) >= num_dict_entries("LXT2_RD_LD")\n", vch, b->num_dict_entries);
 						exit(255);
 						}
 
@@ -308,7 +308,7 @@ while((top_elem = lt->radix_sort[which_time]))
 						}
 					else
 						{
-						fprintf(stderr, LXT2_RDLOAD"Internal error %d ('%s') vs %d ('%s')\n", 
+						fprintf(stderr, LXT2_RDLOAD"Internal error "LXT2_RD_LD" ('%s') vs %d ('%s')\n", 
 							lt->len[idx], lt->value[idx], 
 							b->string_lens[vch], b->string_pointers[vch]);
 						exit(255);
@@ -426,7 +426,7 @@ void lxt2_rd_iter_radix0(struct lxt2_rd_trace *lt, struct lxt2_rd_block *b, lxti
 		default:		vch -= LXT2_RD_DICT_START;
 					if(vch >= b->num_dict_entries)
 						{
-						fprintf(stderr, LXT2_RDLOAD"Internal error: vch(%d) >= num_dict_entries(%d)\n", vch, b->num_dict_entries);
+						fprintf(stderr, LXT2_RDLOAD"Internal error: vch(%d) >= num_dict_entries("LXT2_RD_LD")\n", vch, b->num_dict_entries);
 						exit(255);
 						}
 
@@ -481,7 +481,7 @@ void lxt2_rd_iter_radix0(struct lxt2_rd_trace *lt, struct lxt2_rd_block *b, lxti
 						}
 					else
 						{
-						fprintf(stderr, LXT2_RDLOAD"Internal error %d ('%s') vs %d ('%s')\n", 
+						fprintf(stderr, LXT2_RDLOAD"Internal error "LXT2_RD_LD" ('%s') vs %d ('%s')\n", 
 							lt->len[idx], lt->value[idx], 
 							b->string_lens[vch], b->string_pointers[vch]);
 						exit(255);
@@ -851,7 +851,7 @@ if(!(lt->handle=fopen(name, "rb")))
 		rcf=fread(&lt->zfacgeometrysize, 4, 1, lt->handle);	lt->zfacgeometrysize = rcf ? lxt2_rd_get_32(&lt->zfacgeometrysize,0) : 0;
 		rcf=fread(&lt->timescale, 1, 1, lt->handle);		if(!rcf) lt->timescale = 0; /* no swap necessary */
 
-		fprintf(stderr, LXT2_RDLOAD"%d facilities\n", lt->numfacs);
+		fprintf(stderr, LXT2_RDLOAD LXT2_RD_LD" facilities\n", lt->numfacs);
 		pos = ftello(lt->handle);
 		/* fprintf(stderr, LXT2_RDLOAD"gzip facnames start at pos %d (zsize=%d)\n", pos, lt->zfacnamesize); */
 
@@ -865,7 +865,7 @@ if(!(lt->handle=fopen(name, "rb")))
 
 		if(rc!=lt->zfacname_predec_size)
 			{
-			fprintf(stderr, LXT2_RDLOAD"*** name section mangled %d (act) vs %d (exp)\n", rc, lt->zfacname_predec_size);
+			fprintf(stderr, LXT2_RDLOAD"*** name section mangled %d (act) vs "LXT2_RD_LD" (exp)\n", rc, lt->zfacname_predec_size);
 			free(m);
 
 			lxt2_rd_close(lt);
@@ -1543,7 +1543,7 @@ if(lt)
 						rc = inflateEnd(&strm);
 						if(strm.total_out!=unclen)
 							{
-							fprintf(stderr, LXT2_RDLOAD"short read on subblock %ld vs %d (exp), ignoring\n", strm.total_out, unclen);
+							fprintf(stderr, LXT2_RDLOAD"short read on subblock %ld vs "LXT2_RD_LD" (exp), ignoring\n", strm.total_out, unclen);
 							free(b->mem); b->mem=NULL;
 							b->short_read_ignore = 1;
 							b->uncompressed_siz = real_uncompressed_siz;
@@ -1574,7 +1574,7 @@ if(lt)
 				gzclose(lt->zhandle); lt->zhandle=NULL;
 				if(rc!=b->uncompressed_siz)
 					{
-					fprintf(stderr, LXT2_RDLOAD"short read on block %d vs %d (exp), ignoring\n", rc, b->uncompressed_siz);
+					fprintf(stderr, LXT2_RDLOAD"short read on block %d vs "LXT2_RD_LD" (exp), ignoring\n", rc, b->uncompressed_siz);
 					free(b->mem); b->mem=NULL;
 					b->short_read_ignore = 1;
 					}
@@ -1731,6 +1731,9 @@ return(blk);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/12/20 05:08:26  gtkwave
+ * -Wshadow warning cleanups
+ *
  * Revision 1.2  2008/11/13 22:52:25  gtkwave
  * x86_64 fix on xchgb
  *

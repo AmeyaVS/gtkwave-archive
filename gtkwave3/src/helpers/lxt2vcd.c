@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-7 Tony Bybell.
+ * Copyright (c) 2003-9 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -251,7 +251,7 @@ if(lt)
                        		{
                                 if(g->msb!=-1)
                                 	{
-                                        printf("$var wire 1 %s %s[%d] $end\n", vcdid(newindx), netname, g->msb);
+                                        printf("$var wire 1 %s %s["LXT2_RD_LD"] $end\n", vcdid(newindx), netname, g->msb);
                                         }
                                         else
                                         {
@@ -262,11 +262,11 @@ if(lt)
                                 {
                                 if(!(g->flags & LXT2_RD_SYM_F_INTEGER))
                                         {
-                                        printf("$var wire %d %s %s[%d:%d] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
+                                        printf("$var wire "LXT2_RD_LD" %s %s["LXT2_RD_LD":"LXT2_RD_LD"] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
                                         }
                                         else
                                         {
-                                        printf("$var integer %d %s %s $end\n", g->len, vcdid(newindx), netname);
+                                        printf("$var integer "LXT2_RD_LD" %s %s $end\n", g->len, vcdid(newindx), netname);
                                         }
                                 }
                         }
@@ -419,6 +419,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/04/15 21:39:50  gtkwave
+ * use XL-style identifier sequencing for VCD identifiers
+ *
  * Revision 1.3  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *
