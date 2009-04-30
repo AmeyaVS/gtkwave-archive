@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2003-2008.
+ * Copyright (c) Tony Bybell 2003-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -339,15 +339,44 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         init_tree();
         for(i=0;i<GLOBALS->numfacs;i++)
                 {
+                int esc = 0;
+                char *subst = GLOBALS->facs[i]->name;
+                char ch;
+                
+                while((ch=(*subst)))
+                        {
+                        if(ch==GLOBALS->hier_delimeter) { if(esc) *subst = VCDNAM_ESCAPE; }
+                        else if(ch=='\\') { esc = 1; GLOBALS->escaped_names_found_vcd_c_1 = 1; }
+                        subst++;
+                        }
+                
                 build_tree_from_name(GLOBALS->facs[i]->name, i);
                 }
 /* SPLASH */                            splash_sync(4, 5);
+	if(GLOBALS->escaped_names_found_vcd_c_1)
+	        {
+		for(i=0;i<GLOBALS->numfacs;i++)
+			{
+		        char *subst, ch;
+		        subst=GLOBALS->facs[i]->name;
+		        while((ch=(*subst)))
+		                {
+		                if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
+		                subst++;
+		                }
+			}
+	        }
         treegraft(GLOBALS->treeroot);
         
         fprintf(stderr, LXT2_RDLOAD"Sorting facility hierarchy tree.\n");
         treesort(GLOBALS->treeroot, NULL);
+
 /* SPLASH */                            splash_sync(5, 5);
         order_facs_from_treesort(GLOBALS->treeroot, &GLOBALS->facs);
+	if(GLOBALS->escaped_names_found_vcd_c_1)  
+	        {
+	        treenamefix(GLOBALS->treeroot);   
+	        }
                  
         GLOBALS->facs_are_sorted=1;
         }
@@ -358,14 +387,16 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		{
 		char *subst, ch;
 		int len;
+		int esc = 0;
 
 		GLOBALS->facs[i]=GLOBALS->curnode;
 	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
 		while((ch=(*subst)))
 			{	
-			if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
-			subst++;
+	                if(ch==GLOBALS->hier_delimeter) { *subst=(!esc) ? VCDNAM_HIERSORT : VCDNAM_ESCAPE; }    /* forces sort at hier boundaries */
+	                else if(ch=='\\') { esc = 1; GLOBALS->escaped_names_found_vcd_c_1 = 1; }
+	                subst++;
 			}
 		}
 
@@ -408,8 +439,25 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		        }
 		}
 /* SPLASH */                            splash_sync(5, 5);
+	if(GLOBALS->escaped_names_found_vcd_c_1)
+	        {
+		for(i=0;i<GLOBALS->numfacs;i++)
+			{
+		        char *subst, ch;
+		        subst=GLOBALS->facs[i]->name;
+		        while((ch=(*subst)))
+		                {
+		                if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
+		                subst++;
+		                }
+			}
+	        }
 	treegraft(GLOBALS->treeroot);
 	treesort(GLOBALS->treeroot, NULL);
+	if(GLOBALS->escaped_names_found_vcd_c_1)  
+	        {
+	        treenamefix(GLOBALS->treeroot);   
+	        }
 	}
 
 if(GLOBALS->prev_hier_uncompressed_name) 
@@ -834,6 +882,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.5  2008/12/25 03:28:55  gtkwave
  * -Wshadow warning fixes
  *

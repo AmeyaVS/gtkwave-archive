@@ -639,3 +639,4 @@
 		handler.  More exit fixes for rtlbrowse killing.
 		Warning fixes for printf format strings in lxt2/vzt/ghw.
 		Updated VCD parser to handle names like "a[1] [3:0]".
+		Added VCDNAM_ESCAPE cases in lxt, lxt2, and vzt loaders.

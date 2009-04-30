@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2001-2008.
+ * Copyright (c) Tony Bybell 2001-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1751,13 +1751,15 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	{
 	char *subst, ch;
 	int len;
+	int esc = 0;
 
 	GLOBALS->facs[i]=GLOBALS->curnode;
         if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 	GLOBALS->curnode=GLOBALS->curnode->nextinaet;
 	while((ch=(*subst)))
 		{	
-		if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
+		if(ch==GLOBALS->hier_delimeter) { *subst=(!esc) ? VCDNAM_HIERSORT : VCDNAM_ESCAPE; }	/* forces sort at hier boundaries */
+		else if(ch=='\\') { esc = 1; GLOBALS->escaped_names_found_vcd_c_1 = 1; }
 		subst++;
 		}
 	}
@@ -1804,8 +1806,34 @@ if(was_packed)
         }
 }
 /* SPLASH */                            splash_sync(5, 5);
+
+if(GLOBALS->escaped_names_found_vcd_c_1)
+	{
+	for(i=0;i<GLOBALS->numfacs;i++)
+		{
+		char *subst, ch;
+	
+		subst=GLOBALS->facs[i]->name;
+		while((ch=(*subst)))
+			{	
+			if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS->hier_delimeter; }	/* restore back to normal */
+			subst++;
+			}
+	
+#ifdef DEBUG_FACILITIES
+		printf("%-4d %s\n",i,facs[i]->name);
+#endif
+		}
+	}
+
 treegraft(GLOBALS->treeroot);
 treesort(GLOBALS->treeroot, NULL);
+
+if(GLOBALS->escaped_names_found_vcd_c_1)
+        {
+        treenamefix(GLOBALS->treeroot);
+        }
+
 fprintf(stderr, "built.\n\n");
 
 #ifdef DEBUG_FACILITIES
@@ -2390,6 +2418,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/12/27 23:29:42  gtkwave
+ * lxt files for stray file descriptor on reload + clock compress fix
+ *
  * Revision 1.8  2008/12/25 04:28:47  gtkwave
  * -Wshadow warning fixes
  *
