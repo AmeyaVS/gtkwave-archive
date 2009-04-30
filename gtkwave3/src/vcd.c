@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -334,12 +334,23 @@ if(GLOBALS->vcd_fsiz_vcd_c_1)
 	splash_sync(GLOBALS->vcdbyteno_vcd_c_1, GLOBALS->vcd_fsiz_vcd_c_1); /* gnome 2.18 seems to set errno so splash moved here... */
 	}
 
-return((int)(*(GLOBALS->vst_vcd_c_1++)));
+return((int)(*GLOBALS->vst_vcd_c_1));
 }
 
-static signed char getch() {
-  return ((GLOBALS->vst_vcd_c_1!=GLOBALS->vend_vcd_c_1)?((int)(*(GLOBALS->vst_vcd_c_1++))):(getch_fetch()));
+
+static signed char getch(void) {
+  signed char ch = ((GLOBALS->vst_vcd_c_1!=GLOBALS->vend_vcd_c_1)?((int)(*GLOBALS->vst_vcd_c_1)):(getch_fetch()));
+  GLOBALS->vst_vcd_c_1++;
+  return(ch);
 }
+
+static signed char getch_peek(void) {
+  signed char ch = ((GLOBALS->vst_vcd_c_1!=GLOBALS->vend_vcd_c_1)?((int)(*GLOBALS->vst_vcd_c_1)):(getch_fetch()));
+  /* no increment */
+  return(ch);
+}
+
+
 
 static int getch_patched(void)
 {
@@ -524,7 +535,20 @@ for(GLOBALS->yytext_vcd_c_1[len++]=ch;;GLOBALS->yytext_vcd_c_1[len++]=ch)
 		{
 		GLOBALS->yytext_vcd_c_1=(char *)realloc_2(GLOBALS->yytext_vcd_c_1, (GLOBALS->T_MAX_STR_vcd_c_1=GLOBALS->T_MAX_STR_vcd_c_1*2)+1);
 		}
-	ch=getch();
+
+        ch=getch();
+        if(ch==' ')
+                {
+                signed char ch2;
+                if(match_kw) break;
+                if((ch2 = getch_peek()) == '[')
+                        {
+                        ch = getch();
+                        GLOBALS->varsplit_vcd_c_1=GLOBALS->yytext_vcd_c_1+len;  /* keep looping so we get the *last* one */
+                        continue;
+                        }
+                }
+
 	if((ch==' ')||(ch=='\t')||(ch=='\n')||(ch=='\r')||(ch<0)) break;
 	if((ch=='[')&&(GLOBALS->yytext_vcd_c_1[0]!='\\'))
 		{
@@ -2479,6 +2503,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/03/25 09:20:26  gtkwave
+ * fixing reloader crashes in vcd_build_symbols if times is zero
+ *
  * Revision 1.12  2008/12/25 03:52:32  gtkwave
  * -Wshadow warning fixes
  *

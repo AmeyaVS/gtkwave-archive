@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999-2008 Tony Bybell.
+ * Copyright (c) 1999-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -366,6 +366,16 @@ if(ch=='\n') vcdlineno++;
 return(((ch==EOF)||(errno))?(-1):(ch));
 }
 
+static int getch_peek(void)
+{ 
+int ch;
+
+ch=fgetc(vcd_handle);
+ungetc(ch, vcd_handle);
+return(((ch==EOF)||(errno))?(-1):(ch));   
+}
+
+
 static char *varsplit=NULL, *vsplitcurr=NULL;
 static int getch_patched(void)
 {
@@ -552,7 +562,20 @@ for(yytext[len++]=ch;;yytext[len++]=ch)
                 {
                 yytext=(char *)realloc_2(yytext, (T_MAX_STR=T_MAX_STR*2)+1);
                 }
-        ch=getch();
+
+        ch=getch();  
+        if(ch==' ')
+                {
+                signed char ch2;
+                if(match_kw) break;
+                if((ch2 = getch_peek()) == '[')
+                        {
+                        ch = getch();
+                        varsplit=yytext+len; /* keep looping so we get the *last* one */
+                        continue;
+                        }
+                }
+
         if((ch==' ')||(ch=='\t')||(ch=='\n')||(ch=='\r')||(ch<0)) break;
         if((ch=='[')&&(yytext[0]!='\\'))
                 {
@@ -1990,6 +2013,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.4  2009/03/31 06:21:12  gtkwave
  * added support for lzma
  *

@@ -825,11 +825,19 @@ if(GLOBALS->vcd_fsiz_vcd_recoder_c_2)
 	splash_sync(GLOBALS->vcdbyteno_vcd_recoder_c_3, GLOBALS->vcd_fsiz_vcd_recoder_c_2); /* gnome 2.18 seems to set errno so splash moved here... */
 	}
 
-return((int)(*(GLOBALS->vst_vcd_recoder_c_3++)));
+return((int)(*GLOBALS->vst_vcd_recoder_c_3));
+}
+        
+static signed char getch(void) {
+  signed char ch = (GLOBALS->vst_vcd_recoder_c_3!=GLOBALS->vend_vcd_recoder_c_3)?((int)(*GLOBALS->vst_vcd_recoder_c_3)):(getch_fetch());
+  GLOBALS->vst_vcd_recoder_c_3++;
+  return(ch);
 }
 
-static signed char getch() {
-  return ((GLOBALS->vst_vcd_recoder_c_3!=GLOBALS->vend_vcd_recoder_c_3)?((int)(*(GLOBALS->vst_vcd_recoder_c_3++))):(getch_fetch()));
+static signed char getch_peek(void) {
+  signed char ch = (GLOBALS->vst_vcd_recoder_c_3!=GLOBALS->vend_vcd_recoder_c_3)?((int)(*GLOBALS->vst_vcd_recoder_c_3)):(getch_fetch());
+  /* no increment */
+  return(ch);
 }
 
 static int getch_patched(void)
@@ -1015,7 +1023,20 @@ for(GLOBALS->yytext_vcd_recoder_c_3[len++]=ch;;GLOBALS->yytext_vcd_recoder_c_3[l
 		{
 		GLOBALS->yytext_vcd_recoder_c_3=(char *)realloc_2(GLOBALS->yytext_vcd_recoder_c_3, (GLOBALS->T_MAX_STR_vcd_recoder_c_3=GLOBALS->T_MAX_STR_vcd_recoder_c_3*2)+1);
 		}
+
 	ch=getch();
+	if(ch==' ')
+		{
+		signed char ch2;
+		if(match_kw) break;
+		if((ch2 = getch_peek()) == '[')
+			{
+			ch = getch();
+			GLOBALS->varsplit_vcd_recoder_c_3=GLOBALS->yytext_vcd_recoder_c_3+len;	/* keep looping so we get the *last* one */
+			continue;
+			}
+		}
+
 	if((ch==' ')||(ch=='\t')||(ch=='\n')||(ch=='\r')||(ch<0)) break;
 	if((ch=='[')&&(GLOBALS->yytext_vcd_recoder_c_3[0]!='\\'))
 		{
@@ -1028,6 +1049,7 @@ for(GLOBALS->yytext_vcd_recoder_c_3[len++]=ch;;GLOBALS->yytext_vcd_recoder_c_3[l
 		break;
 		}
 	}
+
 GLOBALS->yytext_vcd_recoder_c_3[len]=0;	/* absolute terminator */
 if((GLOBALS->varsplit_vcd_recoder_c_3)&&(GLOBALS->yytext_vcd_recoder_c_3[len-1]==']'))
 	{
@@ -3119,6 +3141,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.21  2009/03/25 09:20:26  gtkwave
  * fixing reloader crashes in vcd_build_symbols if times is zero
  *

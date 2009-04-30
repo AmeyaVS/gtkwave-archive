@@ -342,11 +342,19 @@ GLOBALS->vend_vcd_partial_c_2=(GLOBALS->vst_vcd_partial_c_2=GLOBALS->vcdbuf_vcd_
 
 if(!rd) return(-1);
 
-return((int)(*(GLOBALS->vst_vcd_partial_c_2++)));
+return((int)(*GLOBALS->vst_vcd_partial_c_2));
 }
 
-static signed char getch() {
-  return ((GLOBALS->vst_vcd_partial_c_2!=GLOBALS->vend_vcd_partial_c_2)?((int)(*(GLOBALS->vst_vcd_partial_c_2++))):(getch_fetch()));
+static signed char getch(void) {
+  signed char ch = ((GLOBALS->vst_vcd_partial_c_2!=GLOBALS->vend_vcd_partial_c_2)?((int)(*GLOBALS->vst_vcd_partial_c_2)):(getch_fetch()));
+  if(ch>=0) { GLOBALS->vst_vcd_partial_c_2++; };
+  return(ch);
+}
+
+static signed char getch_peek(void) {
+  signed char ch = ((GLOBALS->vst_vcd_partial_c_2!=GLOBALS->vend_vcd_partial_c_2)?((int)(*GLOBALS->vst_vcd_partial_c_2)):(getch_fetch()));
+  /* no increment */
+  return(ch);
 }
 
 
@@ -533,7 +541,20 @@ for(GLOBALS->yytext_vcd_partial_c_2[len++]=ch;;GLOBALS->yytext_vcd_partial_c_2[l
 		{
 		GLOBALS->yytext_vcd_partial_c_2=(char *)realloc_2(GLOBALS->yytext_vcd_partial_c_2, (GLOBALS->T_MAX_STR_vcd_partial_c_2=GLOBALS->T_MAX_STR_vcd_partial_c_2*2)+1);
 		}
+
 	ch=getch();
+        if(ch==' ')
+                {
+                signed char ch2;
+                if(match_kw) break;
+                if((ch2 = getch_peek()) == '[')
+                        {
+                        ch = getch();
+                        GLOBALS->varsplit_vcd_partial_c_2=GLOBALS->yytext_vcd_partial_c_2+len; /* keep looping so we get the *last* one */
+                        continue;
+                        }
+                }
+
 	if((ch==' ')||(ch=='\t')||(ch=='\n')||(ch=='\r')||(ch<0)) break;
 	if((ch=='[')&&(GLOBALS->yytext_vcd_partial_c_2[0]!='\\'))
 		{
@@ -2438,6 +2459,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/04/23 04:57:38  gtkwave
+ * ported shmidcat and partial vcd loader function to mingw
+ *
  * Revision 1.13  2009/01/12 18:46:00  gtkwave
  * added marker nail-down during partial vcd w dynamic zoom
  *

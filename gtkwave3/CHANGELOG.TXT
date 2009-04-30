@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	27apr09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	29apr09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -638,4 +638,4 @@
 		For rtlbrowse kill, step through all contexts in atexit()
 		handler.  More exit fixes for rtlbrowse killing.
 		Warning fixes for printf format strings in lxt2/vzt/ghw.
-		
+		Updated VCD parser to handle names like "a[1] [3:0]".
