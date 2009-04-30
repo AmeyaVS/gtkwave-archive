@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005-8.
+ * Copyright (c) Tony Bybell 2005-9.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -862,7 +862,6 @@ diff_hier(nh_head, GLOBALS->nhold_vcd_saver_c_1);
 free_hier();
 GLOBALS->nhold_vcd_saver_c_1=nh_head;
 
-if(*nh_curr->name == '\\')
 	{
 	char *mti_sv_patch = strstr(nh_curr->name, "]["); 	/* case is: #implicit-var###VarElem:ram_di[0.0] [63:0] */
 	if(mti_sv_patch)
@@ -876,7 +875,7 @@ if(*nh_curr->name == '\\')
 		nh_curr->name = t;
 		}
 
-	if(nh_curr->name[1] == '#')
+	if((nh_curr->name[0] == '\\') && (nh_curr->name[1] == '#'))
 		{
 		return(nh_curr->name+1);
 		}
@@ -1460,6 +1459,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/04/15 21:39:50  gtkwave
+ * use XL-style identifier sequencing for VCD identifiers
+ *
  * Revision 1.8  2008/12/25 03:52:32  gtkwave
  * -Wshadow warning fixes
  *

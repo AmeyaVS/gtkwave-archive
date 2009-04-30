@@ -260,7 +260,7 @@ if(lt)
                        		{
                                 if(g->msb!=-1)
                                 	{
-                                        printf("$var wire 1 %s %s["VZT_RD_LD"] $end\n", vcdid(newindx), netname, g->msb);
+                                        printf("$var wire 1 %s %s ["VZT_RD_LD"] $end\n", vcdid(newindx), netname, g->msb);
                                         }
                                         else
                                         {
@@ -271,7 +271,7 @@ if(lt)
                                 {
 				if(!(g->flags & VZT_RD_SYM_F_INTEGER))
 					{
-	                                if(g->len) printf("$var wire "VZT_RD_LD" %s %s["VZT_RD_LD":"VZT_RD_LD"] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
+	                                if(g->len) printf("$var wire "VZT_RD_LD" %s %s ["VZT_RD_LD":"VZT_RD_LD"] $end\n", g->len, vcdid(newindx), netname, g->msb, g->lsb);
 					}
 					else
 					{
@@ -434,6 +434,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.5  2009/04/15 21:39:50  gtkwave
  * use XL-style identifier sequencing for VCD identifiers
  *

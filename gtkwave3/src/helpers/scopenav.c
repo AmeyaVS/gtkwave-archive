@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 Tony Bybell.
+ * Copyright (c) 2004-2009 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -128,12 +128,13 @@ char *pnt, *pnt2;
 char *s;
 int len;
 struct namehier *nh_head=NULL, *nh_curr=NULL, *nhtemp;
+char esc = '.';
 
 pnt=pnt2=name;
 
 for(;;)
 {
-while((*pnt2!='.')&&(*pnt2)) pnt2++;
+while((*pnt2!=esc)&&(*pnt2)) { if(*pnt2=='\\') { esc = 0; } pnt2++; }
 s=(char *)calloc(1,(len=pnt2-pnt)+1);
 memcpy(s, pnt, len);
 nhtemp=(struct namehier *)calloc(1,sizeof(struct namehier));
@@ -164,6 +165,9 @@ return(nh_curr->name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:19  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *
