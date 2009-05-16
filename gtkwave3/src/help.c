@@ -47,6 +47,17 @@ gdk_window_raise(GLOBALS->window_help_c_2->window);
 static void
 help_realize_text (GtkWidget *text, gpointer data)
 {
+if(GLOBALS->loaded_file_type == MISSING_FILE)
+	{
+	help_text("To load a dumpfile into the viewer, either drag the icon"
+		  " for it from the desktop or use the appropriate option(s)"
+		  " from the ");
+
+	help_text_bold("File");
+
+	help_text(" menu.\n\n");
+	}
+
 help_text("Click on any menu item or button that corresponds to a menu item"
 		" for its full description.  Pressing a hotkey for a menu item"
 		" is also allowed.");
@@ -171,6 +182,9 @@ void helpbox(char *title, int width, char *default_text)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/01/13 23:39:58  gtkwave
+ * help window ergonomics (auto click-to-front, not-editable status set)
+ *
  * Revision 1.4  2007/09/12 17:26:44  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *
