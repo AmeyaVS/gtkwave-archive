@@ -123,10 +123,10 @@ if(GLOBALS->filesel_ok)
 			}
 			else
 			{
-			char *sysname = malloc_2(5 + 1 + len + 3 + 1 + len + 1);
+			char *sysname = malloc_2(6 + 1 + len + 3 + 1 + len + 1);
 			int rc;	
 
-			sprintf(sysname, "ps2pdf"	/* 5 */
+			sprintf(sysname, "ps2pdf"	/* 6 */
 					 " "		/* 1 */
 					 "%s"		/* len + 3 */
 					 " "		/* 1 */
@@ -245,7 +245,7 @@ void renderbox(char *title)
 			}
 
 		memset(GLOBALS->render_mutex_renderopt_c_1, 0, 3); GLOBALS->render_mutex_renderopt_c_1[0] = 1; /* Full */
-		for(i=0;i<3;i++)
+		for(i=0;i<2;i++)
 			{
 			if(!strcmp(s3, render_type[i]))
 				{
@@ -337,7 +337,7 @@ void renderbox(char *title)
     menu = gtk_menu_new ();
     group=NULL;
 
-    for(i=0;i<3;i++)
+    for(i=0;i<2;i++)
 	{
     	menuitem = gtk_radio_menu_item_new_with_label (group, render_type[i]);
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
@@ -381,6 +381,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.8  2009/03/29 02:45:41  gtkwave
  * added missing savefile name for pdf (from invocation to invocation)
  *
