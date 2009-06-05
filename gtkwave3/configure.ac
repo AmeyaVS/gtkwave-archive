@@ -374,6 +374,7 @@ AC_CONFIG_FILES([Makefile
 		src/liblzma/Makefile
 		src/libbz2/Makefile
 		src/libz/Makefile
+		src/helpers/fst/Makefile
 ])
 
 

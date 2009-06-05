@@ -11139,7 +11139,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile doc/Makefile contrib/Makefile contrib/pccts/IBM_VISUAL_AGE_PROJECTS/Makefile contrib/pccts/Makefile contrib/pccts/antlr/Makefile contrib/pccts/dlg/Makefile contrib/pccts/h/Makefile contrib/pccts/sorcerer/Makefile contrib/pccts/sorcerer/h/Makefile contrib/pccts/sorcerer/lib/Makefile contrib/pccts/sorcerer/test/Makefile contrib/pccts/sorcerer/test/test7/Makefile contrib/pccts/sorcerer/testcpp/Makefile contrib/pccts/support/DECmms/Makefile contrib/pccts/support/Makefile contrib/pccts/support/genmk/Makefile contrib/pccts/support/rexpr/Makefile contrib/pccts/support/set/Makefile contrib/pccts/support/sym/Makefile contrib/pccts/testcpp/Makefile contrib/rtlbrowse/Makefile contrib/vermin/Makefile examples/Makefile man/Makefile src/Makefile src/helpers/Makefile src/liblzma/Makefile src/libbz2/Makefile src/libz/Makefile"
+ac_config_files="$ac_config_files Makefile doc/Makefile contrib/Makefile contrib/pccts/IBM_VISUAL_AGE_PROJECTS/Makefile contrib/pccts/Makefile contrib/pccts/antlr/Makefile contrib/pccts/dlg/Makefile contrib/pccts/h/Makefile contrib/pccts/sorcerer/Makefile contrib/pccts/sorcerer/h/Makefile contrib/pccts/sorcerer/lib/Makefile contrib/pccts/sorcerer/test/Makefile contrib/pccts/sorcerer/test/test7/Makefile contrib/pccts/sorcerer/testcpp/Makefile contrib/pccts/support/DECmms/Makefile contrib/pccts/support/Makefile contrib/pccts/support/genmk/Makefile contrib/pccts/support/rexpr/Makefile contrib/pccts/support/set/Makefile contrib/pccts/support/sym/Makefile contrib/pccts/testcpp/Makefile contrib/rtlbrowse/Makefile contrib/vermin/Makefile examples/Makefile man/Makefile src/Makefile src/helpers/Makefile src/liblzma/Makefile src/libbz2/Makefile src/libz/Makefile src/helpers/fst/Makefile"
 
 
 
@@ -11859,6 +11859,7 @@ do
     "src/liblzma/Makefile") CONFIG_FILES="$CONFIG_FILES src/liblzma/Makefile" ;;
     "src/libbz2/Makefile") CONFIG_FILES="$CONFIG_FILES src/libbz2/Makefile" ;;
     "src/libz/Makefile") CONFIG_FILES="$CONFIG_FILES src/libz/Makefile" ;;
+    "src/helpers/fst/Makefile") CONFIG_FILES="$CONFIG_FILES src/helpers/fst/Makefile" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 $as_echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

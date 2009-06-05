@@ -20,7 +20,7 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ../..
+top_builddir = ../../..
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
 install_sh_DATA = $(install_sh) -c -m 644
@@ -35,9 +35,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 LIBOBJDIR =
-bin_PROGRAMS = rtlbrowse$(EXEEXT)
-subdir = contrib/rtlbrowse
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in vlex.c
+subdir = src/helpers/fst
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -45,19 +44,13 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
-binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(bin_PROGRAMS)
-am_rtlbrowse_OBJECTS = definehash.$(OBJEXT) fgetdynamic.$(OBJEXT) \
-	logfile.$(OBJEXT) splay.$(OBJEXT) tree_widget.$(OBJEXT) \
-	stem_recurse.$(OBJEXT) jrb.$(OBJEXT) vzt_read.$(OBJEXT) \
-	lxt2_read.$(OBJEXT) vlex.$(OBJEXT)
-rtlbrowse_OBJECTS = $(am_rtlbrowse_OBJECTS)
-rtlbrowse_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
-rtlbrowse_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+LIBRARIES = $(noinst_LIBRARIES)
+AR = ar
+ARFLAGS = cru
+libfst_a_AR = $(AR) $(ARFLAGS)
+libfst_a_LIBADD =
+am_libfst_a_OBJECTS = fastlz.$(OBJEXT) fstapi.$(OBJEXT)
+libfst_a_OBJECTS = $(am_libfst_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -65,9 +58,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
-SOURCES = $(rtlbrowse_SOURCES)
-DIST_SOURCES = $(rtlbrowse_SOURCES)
+SOURCES = $(libfst_a_SOURCES)
+DIST_SOURCES = $(libfst_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -177,33 +169,13 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-
-# FIXME -- how to figure out automatically when we need these?
-# 
-AET2LIB = 
-AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
-BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-LIBFST_CFLAGS = -I../../src/helpers/fst
-LIBFST_LDADD = -L../../src/helpers/fst -lfst
-LIBLZMA_CFLAGS = -I../../src/liblzma
-LIBLZMA_LDADD = -L../../src/liblzma -llzma
-rtlbrowse_SOURCES = definehash.c fgetdynamic.c fgetdynamic.h \
-	logfile.c splay.c tree_widget.c \
-	stem_recurse.c jrb.c jrb.h $(srcdir)/../../src/helpers/vzt_read.c \
-	$(srcdir)/../../src/helpers/lxt2_read.c splay.h \
-	vlex.l vlex.h wavelink.h
-
-LDADD = $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD) $(LIBFST_LDADD) $(AET2_LDADD)
-AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src  -I$(top_srcdir)/src/helpers \
-	$(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBFST_CFLAGS) $(AET2_CFLAGS)
-
-BUILT_SOURCES = definehash.c
-EXTRA_DIST = vpp_keyword.gperf
-all: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+noinst_LIBRARIES = libfst.a
+libfst_a_SOURCES = fastlz.c fastlz.h fstapi.c fstapi.h
+EXTRA_DIST = README
+all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .l .o .obj
+.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -213,9 +185,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  contrib/rtlbrowse/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/helpers/fst/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  contrib/rtlbrowse/Makefile
+	  $(AUTOMAKE) --foreign  src/helpers/fst/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -233,32 +205,13 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(mkdir_p) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  if test -f $$p \
-	  ; then \
-	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
-	  else :; fi; \
-	done
 
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	done
-
-clean-binPROGRAMS:
-	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-rtlbrowse$(EXEEXT): $(rtlbrowse_OBJECTS) $(rtlbrowse_DEPENDENCIES) 
-	@rm -f rtlbrowse$(EXEEXT)
-	$(LINK) $(rtlbrowse_LDFLAGS) $(rtlbrowse_OBJECTS) $(rtlbrowse_LDADD) $(LIBS)
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+libfst.a: $(libfst_a_OBJECTS) $(libfst_a_DEPENDENCIES) 
+	-rm -f libfst.a
+	$(libfst_a_AR) libfst.a $(libfst_a_OBJECTS) $(libfst_a_LIBADD)
+	$(RANLIB) libfst.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -266,16 +219,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/definehash.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fgetdynamic.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jrb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2_read.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/splay.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stem_recurse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree_widget.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vlex.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vzt_read.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastlz.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fstapi.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -290,39 +235,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-vzt_read.o: $(srcdir)/../../src/helpers/vzt_read.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vzt_read.o -MD -MP -MF "$(DEPDIR)/vzt_read.Tpo" -c -o vzt_read.o `test -f '$(srcdir)/../../src/helpers/vzt_read.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/vzt_read.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/vzt_read.Tpo" "$(DEPDIR)/vzt_read.Po"; else rm -f "$(DEPDIR)/vzt_read.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/vzt_read.c' object='vzt_read.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o vzt_read.o `test -f '$(srcdir)/../../src/helpers/vzt_read.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/vzt_read.c
-
-vzt_read.obj: $(srcdir)/../../src/helpers/vzt_read.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vzt_read.obj -MD -MP -MF "$(DEPDIR)/vzt_read.Tpo" -c -o vzt_read.obj `if test -f '$(srcdir)/../../src/helpers/vzt_read.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/vzt_read.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/vzt_read.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/vzt_read.Tpo" "$(DEPDIR)/vzt_read.Po"; else rm -f "$(DEPDIR)/vzt_read.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/vzt_read.c' object='vzt_read.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o vzt_read.obj `if test -f '$(srcdir)/../../src/helpers/vzt_read.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/vzt_read.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/vzt_read.c'; fi`
-
-lxt2_read.o: $(srcdir)/../../src/helpers/lxt2_read.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lxt2_read.o -MD -MP -MF "$(DEPDIR)/lxt2_read.Tpo" -c -o lxt2_read.o `test -f '$(srcdir)/../../src/helpers/lxt2_read.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/lxt2_read.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/lxt2_read.Tpo" "$(DEPDIR)/lxt2_read.Po"; else rm -f "$(DEPDIR)/lxt2_read.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/lxt2_read.c' object='lxt2_read.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lxt2_read.o `test -f '$(srcdir)/../../src/helpers/lxt2_read.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/lxt2_read.c
-
-lxt2_read.obj: $(srcdir)/../../src/helpers/lxt2_read.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lxt2_read.obj -MD -MP -MF "$(DEPDIR)/lxt2_read.Tpo" -c -o lxt2_read.obj `if test -f '$(srcdir)/../../src/helpers/lxt2_read.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/lxt2_read.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/lxt2_read.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/lxt2_read.Tpo" "$(DEPDIR)/lxt2_read.Po"; else rm -f "$(DEPDIR)/lxt2_read.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/lxt2_read.c' object='lxt2_read.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lxt2_read.obj `if test -f '$(srcdir)/../../src/helpers/lxt2_read.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/lxt2_read.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/lxt2_read.c'; fi`
-
-.l.c:
-	$(LEXCOMPILE) $<
-	sed '/^#/ s|$(LEX_OUTPUT_ROOT)\.c|$@|' $(LEX_OUTPUT_ROOT).c >$@
-	rm -f $(LEX_OUTPUT_ROOT).c
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -401,15 +313,10 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(PROGRAMS)
+check: check-am
+all-am: Makefile $(LIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
-	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
-	done
-install: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) install-am
+install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -433,11 +340,9 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f vlex.c
-	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -457,7 +362,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am:
 
 install-info: install-info-am
 
@@ -482,22 +387,19 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-info-am
+uninstall-am: uninstall-info-am
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic ctags distclean distclean-compile \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-noinstLIBRARIES ctags distclean distclean-compile \
 	distclean-generic distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-exec install-exec-am \
-	install-info install-info-am install-man install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	html-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-info-am
+	uninstall-am uninstall-info-am
 
-
-definehash.c: vpp_keyword.gperf
-	$(GPERF) -C -I -N is_builtin_define $(srcdir)/vpp_keyword.gperf >definehash.c
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

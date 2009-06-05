@@ -1,9 +1,11 @@
 ## -*- makefile -*-
 ##
 
-SUBDIRS=	$(LIBZ_DIR) $(LIBBZ2_DIR) liblzma helpers
-DIST_SUBDIRS=	libz libbz2 liblzma helpers
+SUBDIRS=	$(LIBZ_DIR) $(LIBBZ2_DIR) liblzma helpers helpers/fst
+DIST_SUBDIRS=	libz libbz2 liblzma helpers helpers/fst
 
+LIBFST_CFLAGS  = -I./helpers/fst
+LIBFST_LDADD   = -L./helpers/fst -lfst
 LIBLZMA_CFLAGS = -I./liblzma
 LIBLZMA_LDADD  = -L./liblzma -llzma
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
@@ -12,7 +14,7 @@ BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 bin_PROGRAMS=	gtkwave twinwave
 
-AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD) $(EXTLOAD_CFLAGS)
+AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBFST_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD) $(EXTLOAD_CFLAGS)
 
 gtkwave_SOURCES= \
 	globals.c globals.h ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
@@ -33,7 +35,7 @@ gtkwave_SOURCES= \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c
 
-gtkwave_LDADD= $(GTK_LIBS) $(LIBLZMA_LDADD) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(AET2_LDADD) $(TCL_LDADD)
+gtkwave_LDADD= $(GTK_LIBS) $(LIBLZMA_LDADD) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBFST_LDADD) $(AET2_LDADD) $(TCL_LDADD)
 
 twinwave_SOURCES= twinwave.c
 twinwave_LDADD= $(GTK_LIBS)
