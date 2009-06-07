@@ -604,10 +604,11 @@ nptr nold = np;
 switch(GLOBALS->is_lx2)
 	{
 #ifdef AET2_IS_PRESENT
-	case LXT2_IS_AET2: import_ae2_trace(np); return;
+	case LXT2_IS_AET2: 	import_ae2_trace(np); return;
 #endif
-	case LXT2_IS_VZT:  import_vzt_trace(np); return;
-	case LXT2_IS_VLIST: import_vcd_trace(np); return;
+	case LXT2_IS_VZT:  	import_vzt_trace(np); return;
+	case LXT2_IS_VLIST: 	import_vcd_trace(np); return;
+	case LXT2_IS_FST: 	import_fst_trace(np); return;
 	default: break; /* fallthrough */
 	}
 
@@ -730,10 +731,11 @@ int txidx;
 switch(GLOBALS->is_lx2)
         {
 #ifdef AET2_IS_PRESENT
-        case LXT2_IS_AET2: ae2_set_fac_process_mask(np); return;
+        case LXT2_IS_AET2: 	ae2_set_fac_process_mask(np); return;
 #endif
-        case LXT2_IS_VZT:  vzt_set_fac_process_mask(np); return;
-	case LXT2_IS_VLIST: vcd_set_fac_process_mask(np); return;
+        case LXT2_IS_VZT:  	vzt_set_fac_process_mask(np); return;
+	case LXT2_IS_VLIST: 	vcd_set_fac_process_mask(np); return;
+	case LXT2_IS_FST: 	fst_set_fac_process_mask(np); return;
         default: break; /* fallthrough */
         }
 
@@ -764,10 +766,11 @@ int txidx, i, cnt;
 switch(GLOBALS->is_lx2)
         {
 #ifdef AET2_IS_PRESENT
-        case LXT2_IS_AET2: ae2_import_masked(); return;
+        case LXT2_IS_AET2: 	ae2_import_masked(); return;
 #endif
-        case LXT2_IS_VZT:  vzt_import_masked(); return;
-        case LXT2_IS_VLIST:  vcd_import_masked(); return;
+        case LXT2_IS_VZT:  	vzt_import_masked(); return;
+        case LXT2_IS_VLIST:  	vcd_import_masked(); return;
+        case LXT2_IS_FST:  	fst_import_masked(); return;
         default: break; /* fallthrough */
         }
 
@@ -882,6 +885,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/04/30 03:24:40  gtkwave
+ * added VCDNAM_ESCAPE cases to loader
+ *
  * Revision 1.6  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

@@ -71,6 +71,7 @@ enum FileType {
 #ifdef EXTLOAD_SUFFIX
   EXTLOAD_FILE,
 #endif
+  FST_FILE,
   DUMPLESS_FILE
 };
 
@@ -79,6 +80,9 @@ enum FileType {
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/04/24 20:00:03  gtkwave
+ * rtlbrowse exit kill mods
+ *
  * Revision 1.6  2009/03/26 20:57:41  gtkwave
  * added MISSING_FILE support for bringing up gtkwave without a dumpfile
  *

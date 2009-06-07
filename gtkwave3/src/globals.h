@@ -28,6 +28,7 @@
 #include "debug.h"
 #include "fgetdynamic.h"
 #include "fonts.h"
+#include "fstapi.h"
 #include "ghw.h"
 #include "globals.h"
 #include "gnu_regex.h"
@@ -247,6 +248,20 @@ PangoContext *fonts_context;
 PangoLayout *fonts_layout;
 #endif
 char use_pango_fonts;
+
+
+/*
+ * fst.c
+ */
+void *fst_fst_c_1; 
+const char *fst_scope_name;
+TimeType first_cycle_fst_c_3;
+TimeType last_cycle_fst_c_3; 
+TimeType total_cycles_fst_c_3;
+struct lx2_entry *fst_table_fst_c_1; 
+struct fac *mvlfacs_fst_c_3;
+fstHandle *mvlfacs_fst_alias;
+int busycnt_fst_c_2; 
 
 
 /*

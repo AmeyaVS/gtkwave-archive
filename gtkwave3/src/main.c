@@ -1033,6 +1033,22 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_nam
 		}	
 	}
 else
+if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".fst")))
+	{
+#if !defined _MSC_VER
+	GLOBALS->stems_type = WAVE_ANNO_FST;
+	GLOBALS->aet_name = malloc_2(strlen(GLOBALS->loaded_file_name)+1);
+	strcpy(GLOBALS->aet_name, GLOBALS->loaded_file_name);
+#endif
+        GLOBALS->loaded_file_type = FST_FILE;
+	fst_main(GLOBALS->loaded_file_name, GLOBALS->skip_start, GLOBALS->skip_end);
+	if(!GLOBALS->fst_fst_c_1)
+		{
+		fprintf(stderr, "GTKWAVE | Could not initialize '%s'%s.\n", GLOBALS->loaded_file_name, GLOBALS->vcd_jmp_buf ? "" : ", exiting");
+		vcd_exit(255);
+		}
+	}
+else
 if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".vzt")))
 	{
 #if !defined _MSC_VER
@@ -1243,6 +1259,7 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 				case LXT2_IS_AET2: ae2_import_masked(); break;
 				case LXT2_IS_VZT:  vzt_import_masked(); break;
 				case LXT2_IS_VLIST: vcd_import_masked(); break;
+				case LXT2_IS_FST: fst_import_masked(); break;
 				}
 
 			if(wave_is_compressed)
@@ -2455,6 +2472,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.72  2009/04/24 20:00:03  gtkwave
+ * rtlbrowse exit kill mods
+ *
  * Revision 1.71  2009/04/24 19:47:15  gtkwave
  * multiple rtlbrowse session kill on gtkwave exit with mult tabs active
  *

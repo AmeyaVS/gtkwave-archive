@@ -32,6 +32,8 @@
 #include <unistd.h>
 #include <time.h>
 
+#define FST_RDLOAD "FSTLOAD | "
+
 typedef uint32_t fstHandle;
 
 enum fstBlockType {

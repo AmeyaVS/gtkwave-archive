@@ -1571,8 +1571,8 @@ if(xc && xc->curr_hier)
 		{
 		*xc->curr_flat_hier_nam = 0;
 		}
-	free(ch);
 	xc->curr_hier = xc->curr_hier->prev;
+	free(ch);
 	return(xc->curr_flat_hier_nam ? xc->curr_flat_hier_nam : "");
 	}
 
@@ -1941,7 +1941,7 @@ void fstReaderIterateHierRewind(void *ctx)
 {
 struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
 
-if(!xc)
+if(xc)
 	{
 	if(!xc->fh)
 		{
@@ -1973,6 +1973,7 @@ if(xc->do_rewind)
 	xc->do_rewind = 0;
 	xc->current_handle = 0;
 	fseeko(xc->fh, 0, SEEK_SET);
+	clearerr(xc->fh);
 	}
 
 if(!(isfeof=feof(xc->fh)))

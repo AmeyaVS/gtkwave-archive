@@ -138,7 +138,7 @@ GtkTooltips* gtk_tooltips_new_2(void);
 #endif
 
 #define WAVE_MATCHWORD "WAVE"
-enum AnnotateAetType { WAVE_ANNO_NONE, WAVE_ANNO_AE2, WAVE_ANNO_VZT, WAVE_ANNO_LXT2, WAVE_ANNO_MAX };
+enum AnnotateAetType { WAVE_ANNO_NONE, WAVE_ANNO_AE2, WAVE_ANNO_VZT, WAVE_ANNO_LXT2, WAVE_ANNO_FST, WAVE_ANNO_MAX };
 
 
 #if !defined _MSC_VER && !defined __MINGW32__
@@ -205,6 +205,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/04/24 04:24:22  gtkwave
+ * reload and cygwin fixes for rtlbrowse
+ *
  * Revision 1.7  2009/04/23 21:57:53  gtkwave
  * added mingw support for rtlbrowse
  *

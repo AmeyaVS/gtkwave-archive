@@ -255,6 +255,20 @@ NULL, /* fonts_layout */
 
 
 /*
+ * fst.c
+ */
+NULL, /* fst_fst_c_1 */
+NULL, /* fst_scope_name */
+0, /* first_cycle_fst_c_3 */
+0, /* last_cycle_fst_c_3 */
+0, /* total_cycles_fst_c_3 */
+NULL, /* fst_table_fst_c_1 */
+NULL, /* mvlfacs_fst_c_3 */
+NULL, /* mvlfacs_fst_alias */
+0, /* busycnt_fst_c_2 */
+
+
+/*
  * ghw.c
  */
 0, /* nxp_ghw_c_1 93 */
@@ -1679,6 +1693,7 @@ void reload_into_new_context(void)
         
    case LX2_FILE: lxt2_rd_close(GLOBALS->lx2_lx2_c_1); break;
    case VZT_FILE: vzt_rd_close(GLOBALS->vzt_vzt_c_1); break;
+   case FST_FILE: fstReaderClose(GLOBALS->fst_fst_c_1); break;
    case AE2_FILE: 
 #ifdef AET2_IS_PRESENT
 	ae2_read_end(GLOBALS->ae2); fclose(GLOBALS->ae2_f); 
@@ -1857,6 +1872,11 @@ void reload_into_new_context(void)
    		case VZT_FILE: 
 			vzt_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); 
 			load_was_success = (GLOBALS->vzt_vzt_c_1 != NULL);
+			break;
+
+   		case FST_FILE: 
+			fst_main(GLOBALS->loaded_file_name,GLOBALS->skip_start,GLOBALS->skip_end); 
+			load_was_success = (GLOBALS->fst_fst_c_1 != NULL);
 			break;
 
    		case AE2_FILE: 
@@ -2222,6 +2242,7 @@ void free_and_destroy_page_context(void)
  
    case LX2_FILE: lxt2_rd_close(GLOBALS->lx2_lx2_c_1); break;
    case VZT_FILE: vzt_rd_close(GLOBALS->vzt_vzt_c_1); break;
+   case FST_FILE: fstReaderClose(GLOBALS->fst_fst_c_1); break;
    case AE2_FILE:
 #ifdef AET2_IS_PRESENT
         ae2_read_end(GLOBALS->ae2); fclose(GLOBALS->ae2_f);
