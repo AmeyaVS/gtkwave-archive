@@ -126,12 +126,15 @@ struct Node *n;
 struct symbol *s, *prevsymroot=NULL, *prevsym=NULL;
 signed char scale;
 unsigned int numalias = 0;
+unsigned int numvars = 0;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
 JRB ptr, lst;
 struct fstHier *h = NULL;
 int msb, lsb;
 char *nnam = NULL;
+uint32_t activity_idx, num_activity_changes;
+
 
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
 if(!GLOBALS->fst_fst_c_1)
@@ -150,12 +153,61 @@ sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 GLOBALS->mvlfacs_fst_alias = calloc_2(GLOBALS->numfacs,sizeof(fstHandle));
 
-fprintf(stderr, FST_RDLOAD"Preparing to build %d facs.\n", GLOBALS->numfacs);
+fprintf(stderr, FST_RDLOAD"Processing %d facs.\n", GLOBALS->numfacs);
 /* SPLASH */                            splash_sync(1, 5);
 
 GLOBALS->first_cycle_fst_c_3 = (TimeType) fstReaderGetStartTime(GLOBALS->fst_fst_c_1) * GLOBALS->time_scale;
 GLOBALS->last_cycle_fst_c_3 = (TimeType) fstReaderGetEndTime(GLOBALS->fst_fst_c_1) * GLOBALS->time_scale;
 GLOBALS->total_cycles_fst_c_3 = GLOBALS->last_cycle_fst_c_3 - GLOBALS->first_cycle_fst_c_3 + 1;
+
+/* blackout region processing */
+num_activity_changes = fstReaderGetNumberDumpActivityChanges(GLOBALS->fst_fst_c_1);
+for(activity_idx = 0; activity_idx < num_activity_changes; activity_idx++)
+	{
+	uint activity_idx2;
+	uint64_t ct = fstReaderGetDumpActivityChangeTime(GLOBALS->fst_fst_c_1, activity_idx);
+	unsigned char ac = fstReaderGetDumpActivityChangeValue(GLOBALS->fst_fst_c_1, activity_idx);
+
+	if(ac == 1) continue;
+	if((activity_idx+1) == num_activity_changes)
+		{
+		struct blackout_region_t *bt = calloc_2(1, sizeof(struct blackout_region_t));
+		bt->bstart = (TimeType)(ct * GLOBALS->time_scale);
+		bt->bend = (TimeType)(GLOBALS->last_cycle_fst_c_3 * GLOBALS->time_scale);
+                bt->next = GLOBALS->blackout_regions;
+  
+                GLOBALS->blackout_regions = bt;
+
+		activity_idx = activity_idx2;
+		break;
+		}
+
+	for(activity_idx2 = activity_idx+1; activity_idx2 < num_activity_changes; activity_idx2++)
+		{
+		uint64_t ct2 = fstReaderGetDumpActivityChangeTime(GLOBALS->fst_fst_c_1, activity_idx2);
+		ac = fstReaderGetDumpActivityChangeValue(GLOBALS->fst_fst_c_1, activity_idx2);		
+		if((ac == 0) && (activity_idx2 == (num_activity_changes-1)))
+			{
+			ac = 1;
+			ct2 = GLOBALS->last_cycle_fst_c_3;
+			}
+
+		if(ac == 1)
+			{
+			struct blackout_region_t *bt = calloc_2(1, sizeof(struct blackout_region_t));
+			bt->bstart = (TimeType)(ct * GLOBALS->time_scale);
+			bt->bend = (TimeType)(ct2 * GLOBALS->time_scale);
+	                bt->next = GLOBALS->blackout_regions;
+  
+	                GLOBALS->blackout_regions = bt;
+
+			activity_idx = activity_idx2;
+			break;
+			}
+		}	
+	
+	}
+
 
 /* do your stuff here..all useful info has been initialized by now */
 
@@ -206,233 +258,203 @@ if(GLOBALS->numfacs)
 	}
 
 
-i = 0;
-for(j=0;j<2;j++)
-	{
-	for(k=0;k<GLOBALS->numfacs;k++)
-	        {
-		char buf[65537];
-		char *str;	
-		struct fac *f;
-		int hier_len, name_len;
+for(i=0;i<GLOBALS->numfacs;i++)
+        {
+	char buf[65537];
+	char *str;	
+	struct fac *f;
+	int hier_len, name_len;
 
-		if(j == 0)
-			{
-			if(h->u.var.is_alias) 
-				{
-				h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
-				if(!h)
-					{
-					fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
-					h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
-					}
-				if(nnam) free_2(nnam);
-				continue;
-				}
-			}
-		else
-			{
-			if(!h->u.var.is_alias) 
-				{
-				h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
-				if(!h)
-					{
-					fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
-					h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
-					}
-				if(nnam) free_2(nnam);
-				continue;
-				}
+	GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
+	GLOBALS->mvlfacs_fst_c_3[i].msb = msb;
+	GLOBALS->mvlfacs_fst_c_3[i].lsb = lsb;
+	GLOBALS->mvlfacs_fst_c_3[i].len = h->u.var.length;
 
-			GLOBALS->mvlfacs_fst_alias[i] = h->u.var.handle - 1; /* subtract 1 to scale it with gtkwave-style numbering */
-			}
+	switch(h->u.var.typ)
+		{
+		case FST_VT_VCD_PARAMETER:
+		case FST_VT_VCD_INTEGER:
+			GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_INTEGER;
+			break;	
 
-		GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
-		GLOBALS->mvlfacs_fst_c_3[i].msb = msb;
-		GLOBALS->mvlfacs_fst_c_3[i].lsb = lsb;
-		GLOBALS->mvlfacs_fst_c_3[i].len = h->u.var.length;
+		case FST_VT_VCD_REAL:
+		case FST_VT_VCD_REAL_PARAMETER:
+			GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
+			break;
 
-		switch(h->u.var.typ)
-			{
-			case FST_VT_VCD_PARAMETER:
-			case FST_VT_VCD_INTEGER:
-				GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_INTEGER;
-				break;	
-
-			case FST_VT_VCD_REAL:
-			case FST_VT_VCD_REAL_PARAMETER:
-				GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
-				break;
-
-			default:
-				GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_BITS;
-				break;	
-			}
+		default:
+			GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_BITS;
+			break;	
+		}
 	
-		if(h->u.var.is_alias)
-			{
-			GLOBALS->mvlfacs_fst_c_3[i].flags |= VZT_RD_SYM_F_ALIAS;
-			numalias++;
-			}
+	if(h->u.var.is_alias)
+		{
+		GLOBALS->mvlfacs_fst_alias[i] = h->u.var.handle - 1; /* subtract 1 to scale it with gtkwave-style numbering */
+		GLOBALS->mvlfacs_fst_c_3[i].flags |= VZT_RD_SYM_F_ALIAS;
+		numalias++;
+		}
+	else
+		{
+		GLOBALS->mvlfacs_fst_alias[i] = numvars;
+		numvars++;
+		}
 
-		if(i!=(GLOBALS->numfacs-1))
-			{
-			char *fnam;
-			char *pnt = NULL;
-			int was_packed = 0;
 
+	if(i!=(GLOBALS->numfacs-1))
+		{
+		char *fnam;
+		char *pnt = NULL;
+		int was_packed = 0;
+
+		h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
+		if(!h)
+			{
+			/* this should never happen */
+			fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
 			h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
-			if(!h)
-				{
-				fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
-				h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
-				}
-			name_len = strlen(nnam);
-			hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
-			if(hier_len)
-				{
-				fnam = malloc(hier_len + 1 + name_len + 1);
-				memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
-				fnam[hier_len] = GLOBALS->hier_delimeter;
-				memcpy(fnam + hier_len + 1, nnam, name_len + 1);
-				}
-				else
-				{
-				fnam = malloc(name_len + 1);
-				memcpy(fnam, nnam, name_len + 1);
-				}
-			free_2(nnam);
-
-			if(GLOBALS->do_hier_compress)
-				{
-				pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
-				}
-
-			if(was_packed)
-				{
-				GLOBALS->mvlfacs_fst_c_3[i+1].name = pnt;
-				}
-				else
-				{
-				int flen = strlen(fnam);
-				GLOBALS->mvlfacs_fst_c_3[i+1].name=malloc_2(flen+1);
-				strcpy(GLOBALS->mvlfacs_fst_c_3[i+1].name, fnam);
-				}
 			}
-
-		if(i>1)
+		name_len = strlen(nnam);
+		hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
+		if(hier_len)
 			{
-			free_2(GLOBALS->mvlfacs_fst_c_3[i-2].name);
-			GLOBALS->mvlfacs_fst_c_3[i-2].name = NULL;
-			}
-
-		f=GLOBALS->mvlfacs_fst_c_3+i;
-
-		if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
-			{
-			int len=sprintf(buf, "%s[%d:%d]", GLOBALS->mvlfacs_fst_c_3[i].name,GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
-			str=malloc_2(len+1);
-
-			if(!GLOBALS->alt_hier_delimeter)
-				{
-				strcpy(str, buf);
-				}
-				else
-				{
-				strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
-				}
-			s=&sym_block[i];
-		        symadd_name_exists_sym_exists(s,str,0);
-			prevsymroot = prevsym = NULL;
-			}
-		else if ( 
-				((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
-				((i!=GLOBALS->numfacs-1)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i+1].name))))
-				||
-				(((i!=0)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i-1].name))) &&
-				(GLOBALS->mvlfacs_fst_c_3[i].msb!=-1)&&(GLOBALS->mvlfacs_fst_c_3[i].lsb!=-1))
-			)
-			{
-			int len = sprintf(buf, "%s[%d]", GLOBALS->mvlfacs_fst_c_3[i].name,GLOBALS->mvlfacs_fst_c_3[i].msb);
-			str=malloc_2(len+1);
-			if(!GLOBALS->alt_hier_delimeter)
-				{
-				strcpy(str, buf);
-				}
-				else
-				{
-				strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
-				}
-			s=&sym_block[i];
-		        symadd_name_exists_sym_exists(s,str,0);
-			if((prevsym)&&(i>0)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i-1].name)))	/* allow chaining for search functions.. */
-				{
-				prevsym->vec_root = prevsymroot;
-				prevsym->vec_chain = s;
-				s->vec_root = prevsymroot;
-				prevsym = s;
-				}
-				else
-				{
-				prevsymroot = prevsym = s;
-				}
+			fnam = malloc(hier_len + 1 + name_len + 1);
+			memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
+			fnam[hier_len] = GLOBALS->hier_delimeter;
+			memcpy(fnam + hier_len + 1, nnam, name_len + 1);
 			}
 			else
 			{
-			str=malloc_2(strlen(GLOBALS->mvlfacs_fst_c_3[i].name)+1);
-			if(!GLOBALS->alt_hier_delimeter)
-				{
-				strcpy(str, GLOBALS->mvlfacs_fst_c_3[i].name);
-				}
-				else
-				{
-				strcpy_vcdalt(str, GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->alt_hier_delimeter);
-				}
-			s=&sym_block[i];
-		        symadd_name_exists_sym_exists(s,str,0);
-			prevsymroot = prevsym = NULL;
-
-			if(f->flags&VZT_RD_SYM_F_INTEGER)
-				{
-				GLOBALS->mvlfacs_fst_c_3[i].msb=31;
-				GLOBALS->mvlfacs_fst_c_3[i].lsb=0;
-				GLOBALS->mvlfacs_fst_c_3[i].len=32;
-				}
+			fnam = malloc(name_len + 1);
+			memcpy(fnam, nnam, name_len + 1);
 			}
-		
-	        if(!GLOBALS->firstnode)
-	                {
-        	        GLOBALS->firstnode=GLOBALS->curnode=s;   
-	                }
-	                else
-	                {
-	                GLOBALS->curnode->nextinaet=s;
-	                GLOBALS->curnode=s;   
-	                }
+		free_2(nnam);
 
-	        n=&node_block[i];
-	        n->nname=s->name;
-	        n->mv.mvlfac = GLOBALS->mvlfacs_fst_c_3+i;
-		GLOBALS->mvlfacs_fst_c_3[i].working_node = n;
-
-		if((f->len>1)||(f->flags&&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
+		if(GLOBALS->do_hier_compress)
 			{
-			ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
-			ext->msi = GLOBALS->mvlfacs_fst_c_3[i].msb;
-			ext->lsi = GLOBALS->mvlfacs_fst_c_3[i].lsb;
-			n->ext = ext;
+			pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
 			}
+
+		if(was_packed)
+			{
+			GLOBALS->mvlfacs_fst_c_3[i+1].name = pnt;
+			}
+			else
+			{
+			int flen = strlen(fnam);
+			GLOBALS->mvlfacs_fst_c_3[i+1].name=malloc_2(flen+1);
+			strcpy(GLOBALS->mvlfacs_fst_c_3[i+1].name, fnam);
+			}
+		}
+
+	if(i>1)
+		{
+		free_2(GLOBALS->mvlfacs_fst_c_3[i-2].name);
+		GLOBALS->mvlfacs_fst_c_3[i-2].name = NULL;
+		}
+
+	f=GLOBALS->mvlfacs_fst_c_3+i;
+
+	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
+		{
+		int len=sprintf(buf, "%s[%d:%d]", GLOBALS->mvlfacs_fst_c_3[i].name,GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
+		str=malloc_2(len+1);
+
+		if(!GLOBALS->alt_hier_delimeter)
+			{
+			strcpy(str, buf);
+			}
+			else
+			{
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
+			}
+		s=&sym_block[i];
+	        symadd_name_exists_sym_exists(s,str,0);
+		prevsymroot = prevsym = NULL;
+		}
+	else if ( 
+			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
+			((i!=GLOBALS->numfacs-1)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i+1].name))))
+			||
+			(((i!=0)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i-1].name))) &&
+			(GLOBALS->mvlfacs_fst_c_3[i].msb!=-1)&&(GLOBALS->mvlfacs_fst_c_3[i].lsb!=-1))
+		)
+		{
+		int len = sprintf(buf, "%s[%d]", GLOBALS->mvlfacs_fst_c_3[i].name,GLOBALS->mvlfacs_fst_c_3[i].msb);
+		str=malloc_2(len+1);
+		if(!GLOBALS->alt_hier_delimeter)
+			{
+			strcpy(str, buf);
+			}
+			else
+			{
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
+			}
+		s=&sym_block[i];
+	        symadd_name_exists_sym_exists(s,str,0);
+		if((prevsym)&&(i>0)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i-1].name)))	/* allow chaining for search functions.. */
+			{
+			prevsym->vec_root = prevsymroot;
+			prevsym->vec_chain = s;
+			s->vec_root = prevsymroot;
+			prevsym = s;
+			}
+			else
+			{
+			prevsymroot = prevsym = s;
+			}
+		}
+		else
+		{
+		str=malloc_2(strlen(GLOBALS->mvlfacs_fst_c_3[i].name)+1);
+		if(!GLOBALS->alt_hier_delimeter)
+			{
+			strcpy(str, GLOBALS->mvlfacs_fst_c_3[i].name);
+			}
+			else
+			{
+			strcpy_vcdalt(str, GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->alt_hier_delimeter);
+			}
+		s=&sym_block[i];
+	        symadd_name_exists_sym_exists(s,str,0);
+		prevsymroot = prevsym = NULL;
+
+		if(f->flags&VZT_RD_SYM_F_INTEGER)
+			{
+			GLOBALS->mvlfacs_fst_c_3[i].msb=31;
+			GLOBALS->mvlfacs_fst_c_3[i].lsb=0;
+			GLOBALS->mvlfacs_fst_c_3[i].len=32;
+			}
+		}
+		
+        if(!GLOBALS->firstnode)
+                {
+       	        GLOBALS->firstnode=GLOBALS->curnode=s;   
+                }
+                else
+                {
+                GLOBALS->curnode->nextinaet=s;
+                GLOBALS->curnode=s;   
+                }
+
+        n=&node_block[i];
+        n->nname=s->name;
+        n->mv.mvlfac = GLOBALS->mvlfacs_fst_c_3+i;
+	GLOBALS->mvlfacs_fst_c_3[i].working_node = n;
+
+	if((f->len>1)||(f->flags&&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
+		{
+		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
+		ext->msi = GLOBALS->mvlfacs_fst_c_3[i].msb;
+		ext->lsi = GLOBALS->mvlfacs_fst_c_3[i].lsb;
+		n->ext = ext;
+		}
                  
-	        n->head.time=-1;        /* mark 1st node as negative time */
-	        n->head.v.h_val=AN_X;
-	        s->n=n;
+        n->head.time=-1;        /* mark 1st node as negative time */
+        n->head.v.h_val=AN_X;
+        s->n=n;
+        }			/* for(i) of facs parsing */
 
-		i++;			/* increment to next facility */
-		if(i == GLOBALS->numfacs) { goto have_all_facs; }
-	        }			/* for(k) */
-	} /* for(j) */
 
-have_all_facs:
 for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 	{
 	if(GLOBALS->mvlfacs_fst_c_3[i].name)
@@ -442,6 +464,9 @@ for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 		}
 	}
 
+fprintf(stderr, FST_RDLOAD"Built %d signal%s and %d alias%s.\n", 
+	numvars, (numvars == 1) ? "" : "s", 
+	numalias, (numalias == 1) ? "" : "es");
 
 /* SPLASH */                            splash_sync(2, 5);  
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
@@ -468,46 +493,6 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
                 GLOBALS->curnode=GLOBALS->curnode->nextinaet;
                 }
                                 
-        if(numalias)
-                {
-                unsigned int idx_lft = 0;
-                unsigned int idx_lftmax = GLOBALS->numfacs - numalias;
-                unsigned int idx_rgh = GLOBALS->numfacs - numalias;
-                struct symbol **facs_merge=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
-
-		fprintf(stderr, FST_RDLOAD"Merging in %d aliases.\n", numalias);
-
-                for(i=0;i<GLOBALS->numfacs;i++)  /* fix possible tail appended aliases by remerging in partial one pass merge sort */
-                        { 
-                        if(strcmp(GLOBALS->facs[idx_lft]->name, GLOBALS->facs[idx_rgh]->name) <= 0)
-                                {
-                                facs_merge[i] = GLOBALS->facs[idx_lft++];
-                
-                                if(idx_lft == idx_lftmax)
-                                        {
-                                        for(i++;i<GLOBALS->numfacs;i++)
-                                                {
-                                                facs_merge[i] = GLOBALS->facs[idx_rgh++];
-                                                }
-                                        }
-                                }
-                                else
-                                {
-                                facs_merge[i] = GLOBALS->facs[idx_rgh++];
-        
-                                if(idx_rgh == GLOBALS->numfacs)
-                                        {
-                                        for(i++;i<GLOBALS->numfacs;i++)
-                                                {
-                                                facs_merge[i] = GLOBALS->facs[idx_lft++];
-                                                }
-                                        }
-                                }
-                        } 
-                        
-                free_2(GLOBALS->facs); GLOBALS->facs = facs_merge;
-                }
-                
 /* SPLASH */                            splash_sync(3, 5);  
         fprintf(stderr, FST_RDLOAD"Building facility hierarchy tree.\n");
                                          
@@ -772,9 +757,9 @@ nptr nold = np;
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
 txidx = f - GLOBALS->mvlfacs_fst_c_3;
+txidx = GLOBALS->mvlfacs_fst_alias[txidx]; /* this is to map to fstHandles, so even non-aliased are remapped */
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = GLOBALS->mvlfacs_fst_alias[txidx];
 	np = GLOBALS->mvlfacs_fst_c_3[txidx].working_node;
 
 	if(!(f=np->mv.mvlfac)) 
@@ -888,10 +873,9 @@ int txidx;
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
 txidx = f-GLOBALS->mvlfacs_fst_c_3;
-
+txidx = GLOBALS->mvlfacs_fst_alias[txidx]; /* this is to map to fstHandles, so even non-aliased are remapped */
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = GLOBALS->mvlfacs_fst_alias[txidx];
 	np = GLOBALS->mvlfacs_fst_c_3[txidx].working_node;
 
 	if(!(np->mv.mvlfac)) return;	/* already imported */
@@ -1019,5 +1003,8 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/06/07 08:40:44  gtkwave
+ * adding FST support
+ *
  */
 
