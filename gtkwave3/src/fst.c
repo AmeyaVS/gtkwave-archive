@@ -135,7 +135,6 @@ int msb, lsb;
 char *nnam = NULL;
 uint32_t activity_idx, num_activity_changes;
 
-
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
 if(!GLOBALS->fst_fst_c_1)
         {
@@ -152,6 +151,7 @@ GLOBALS->fst_table_fst_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof
 sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 GLOBALS->mvlfacs_fst_alias = calloc_2(GLOBALS->numfacs,sizeof(fstHandle));
+GLOBALS->mvlfacs_fst_rvs_alias = calloc_2(GLOBALS->numfacs,sizeof(fstHandle));
 
 fprintf(stderr, FST_RDLOAD"Processing %d facs.\n", GLOBALS->numfacs);
 /* SPLASH */                            splash_sync(1, 5);
@@ -295,10 +295,10 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 	else
 		{
+		GLOBALS->mvlfacs_fst_rvs_alias[numvars] = i;
 		GLOBALS->mvlfacs_fst_alias[i] = numvars;
 		numvars++;
 		}
-
 
 	if(i!=(GLOBALS->numfacs-1))
 		{
@@ -468,6 +468,8 @@ fprintf(stderr, FST_RDLOAD"Built %d signal%s and %d alias%s.\n",
 	numvars, (numvars == 1) ? "" : "s", 
 	numalias, (numalias == 1) ? "" : "es");
 
+GLOBALS->fst_maxhandle = numvars;
+
 /* SPLASH */                            splash_sync(2, 5);  
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
@@ -626,6 +628,26 @@ if(GLOBALS->prev_hier_uncompressed_name)
 	GLOBALS->prev_hier_uncompressed_name = NULL; 
 	}
 
+#if 0
+{
+int num_dups = 0;
+for(i=0;i<GLOBALS->numfacs-1;i++)
+	{
+	if(!strcmp(GLOBALS->facs[i]->name, GLOBALS->facs[i+1]->name))
+		{
+		fprintf(stderr, FST_RDLOAD"DUPLICATE FAC: '%s'\n", GLOBALS->facs[i]->name);
+		num_dups++;
+		}
+	}
+
+if(num_dups)
+	{
+	fprintf(stderr, FST_RDLOAD"Exiting, %d duplicate signals are present.\n", num_dups);
+	exit(255);
+	}
+}
+#endif
+
 GLOBALS->min_time = GLOBALS->first_cycle_fst_c_3; GLOBALS->max_time=GLOBALS->last_cycle_fst_c_3;
 GLOBALS->is_lx2 = LXT2_IS_FST;
 
@@ -661,12 +683,12 @@ return(GLOBALS->max_time);
 /*
  * fst callback (only does bits for now)
  */
-static void fst_callback(void *user_callback_data_pointer, uint64_t tim, fstHandle facidx, const unsigned char *value)
+static void fst_callback(void *user_callback_data_pointer, uint64_t tim, fstHandle txidx, const unsigned char *value)
 {
+fstHandle facidx = GLOBALS->mvlfacs_fst_rvs_alias[--txidx];
 struct HistEnt *htemp = histent_calloc();
-struct lx2_entry *l2e = GLOBALS->fst_table_fst_c_1+(--facidx); /* adjust facidx to get in line with fst reader +1 bias */
+struct lx2_entry *l2e = GLOBALS->fst_table_fst_c_1+facidx;
 struct fac *f = GLOBALS->mvlfacs_fst_c_3+facidx;
-
 
 GLOBALS->busycnt_fst_c_2++; 
 if(GLOBALS->busycnt_fst_c_2==WAVE_BUSY_ITER)
@@ -757,9 +779,10 @@ nptr nold = np;
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
 txidx = f - GLOBALS->mvlfacs_fst_c_3;
-txidx = GLOBALS->mvlfacs_fst_alias[txidx]; /* this is to map to fstHandles, so even non-aliased are remapped */
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
+	txidx = GLOBALS->mvlfacs_fst_alias[txidx]; /* this is to map to fstHandles, so even non-aliased are remapped */
+	txidx = GLOBALS->mvlfacs_fst_rvs_alias[txidx];
 	np = GLOBALS->mvlfacs_fst_c_3[txidx].working_node;
 
 	if(!(f=np->mv.mvlfac)) 
@@ -776,9 +799,9 @@ len = np->mv.mvlfac->len;
 
 if(f->array_height <= 1) /* sorry, arrays not supported, but fst doesn't support them yet either */
 	{
-	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, txidx+1);
+	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
 	fstReaderIterBlocks(GLOBALS->fst_fst_c_1, fst_callback, NULL, NULL);
-	fstReaderClrFacProcessMask(GLOBALS->fst_fst_c_1, txidx+1);
+	fstReaderClrFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
 	}
 
 histent_tail = htemp = histent_calloc();
@@ -873,9 +896,10 @@ int txidx;
 if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
 txidx = f-GLOBALS->mvlfacs_fst_c_3;
-txidx = GLOBALS->mvlfacs_fst_alias[txidx]; /* this is to map to fstHandles, so even non-aliased are remapped */
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
+	txidx = GLOBALS->mvlfacs_fst_alias[txidx];
+	txidx = GLOBALS->mvlfacs_fst_rvs_alias[txidx]; 
 	np = GLOBALS->mvlfacs_fst_c_3[txidx].working_node;
 
 	if(!(np->mv.mvlfac)) return;	/* already imported */
@@ -883,7 +907,7 @@ if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS)
 
 if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but fst doesn't support them yet either */
 	{
-	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, txidx+1);
+	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
 	GLOBALS->fst_table_fst_c_1[txidx].np = np;
 	}
 }
@@ -891,18 +915,21 @@ if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but fst doe
 
 void fst_import_masked(void)
 {
-int txidx, i, cnt;
+int txidx, txidxi, i, cnt;
 
 cnt = 0;
-for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
+for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 	{
-	if(fstReaderGetFacProcessMask(GLOBALS->fst_fst_c_1, txidx+1))
+	if(fstReaderGetFacProcessMask(GLOBALS->fst_fst_c_1, txidxi+1))
 		{
 		cnt++;
 		}
 	}
 
-if(!cnt) return;
+if(!cnt) 
+	{
+	return;
+	}
 
 if(cnt>100)
 	{
@@ -913,10 +940,11 @@ set_window_busy(NULL);
 fstReaderIterBlocks(GLOBALS->fst_fst_c_1, fst_callback, NULL, NULL);
 set_window_idle(NULL);
 
-for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
+for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 	{
-	if(fstReaderGetFacProcessMask(GLOBALS->fst_fst_c_1, txidx+1))
+	if(fstReaderGetFacProcessMask(GLOBALS->fst_fst_c_1, txidxi+1))
 		{
+		int txidx = GLOBALS->mvlfacs_fst_rvs_alias[txidxi];
 		struct HistEnt *htemp, *histent_tail;
 		struct fac *f = GLOBALS->mvlfacs_fst_c_3+txidx;
 		int len = f->len;
@@ -995,7 +1023,7 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 
 		np->curr = histent_tail;
 		np->mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
-		fstReaderClrFacProcessMask(GLOBALS->fst_fst_c_1, txidx+1);
+		fstReaderClrFacProcessMask(GLOBALS->fst_fst_c_1, txidxi+1);
 		}
 	}
 }
@@ -1003,6 +1031,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/06/07 19:39:41  gtkwave
+ * move to one pass hier processing algorithm, add blackout region support
+ *
  * Revision 1.1  2009/06/07 08:40:44  gtkwave
  * adding FST support
  *

@@ -265,6 +265,8 @@ NULL, /* fst_scope_name */
 NULL, /* fst_table_fst_c_1 */
 NULL, /* mvlfacs_fst_c_3 */
 NULL, /* mvlfacs_fst_alias */
+NULL, /* mvlfacs_fst_rvs_alias */
+0, /* fst_maxhandle */
 0, /* busycnt_fst_c_2 */
 
 

@@ -261,6 +261,8 @@ TimeType total_cycles_fst_c_3;
 struct lx2_entry *fst_table_fst_c_1; 
 struct fac *mvlfacs_fst_c_3;
 fstHandle *mvlfacs_fst_alias;
+fstHandle *mvlfacs_fst_rvs_alias;
+fstHandle fst_maxhandle;
 int busycnt_fst_c_2; 
 
 
