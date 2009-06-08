@@ -2189,6 +2189,7 @@ if(dot)
 		(!strcasecmp("lxt", dot+1)) ||
 		(!strcasecmp("lx2", dot+1)) ||
 		(!strcasecmp("vzt", dot+1)) ||
+		(!strcasecmp("fst", dot+1)) ||
 		(!strcasecmp("ghw", dot+1)) ||
 		(!strcasecmp("aet", dot+1)) ||
 		(!strcasecmp("ae2", dot+1))
@@ -2597,6 +2598,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.52  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.51  2009/03/27 04:38:05  gtkwave
  * working on ergonomics of drag and drop into an empty gui
  *
