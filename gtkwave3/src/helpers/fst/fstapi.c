@@ -402,6 +402,7 @@ unsigned is_initial_time : 1;
 unsigned skip_writing_section_hdr : 1;
 unsigned compress_hier : 1;
 unsigned fastpack : 1;
+unsigned size_limit_locked : 1;
 off_t section_header_truncpos;
 uint32_t tchn_cnt, tchn_idx;
 uint64_t curtime;
@@ -417,6 +418,8 @@ double nan; /* nan value for uninitialized doubles */
 struct fstBlackoutChain *blackout_head;
 struct fstBlackoutChain *blackout_curr;
 uint32_t num_blackouts;
+
+uint64_t dump_size_limit;
 };
 
 
@@ -603,7 +606,10 @@ if(xc)
 	off_t fixup_offs, tlen, hlen;
 
 	xc->skip_writing_section_hdr = 1;
-	fstWriterFlushContext(xc);
+	if(!xc->size_limit_locked)
+		{
+		fstWriterFlushContext(xc);
+		}
 	fstDestroyMmaps(xc);
 
 	/* write out geom section */
@@ -1111,6 +1117,19 @@ fflush(xc->handle);
 fseeko(xc->handle, endpos, SEEK_SET);				/* seek to end of file */
 
 xc->section_header_truncpos = endpos;				/* cache in case of need to truncate */
+if(xc->dump_size_limit)
+	{
+	if(endpos >= xc->dump_size_limit)
+		{
+		xc->skip_writing_section_hdr = 1;
+		xc->size_limit_locked = 1;
+		xc->is_initial_time = 1; /* to trick emit value and emit time change */
+#ifdef FST_DEBUG
+		printf("<< dump file size limit reached, stopping dumping >>\n");
+#endif
+		}
+	}
+
 
 if(!xc->skip_writing_section_hdr)
 	{
@@ -1181,6 +1200,16 @@ struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 if(xc)
 	{
 	xc->fastpack = (typ != 0);
+	}
+}
+
+
+void fstWriterSetDumpSizeLimit(void *ctx, uint64_t numbytes)
+{
+struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
+if(xc)
+	{
+	xc->dump_size_limit = numbytes;
 	}
 }
 
@@ -1354,6 +1383,11 @@ if(xc)
 	{
 	if(xc->is_initial_time)
 		{
+		if(xc->size_limit_locked)	/* this resets xc->is_initial_time to one */
+			{
+			return;
+			}
+
 		if(!xc->valpos_mem)
 			{
 			fstWriterCreateMmaps(xc);

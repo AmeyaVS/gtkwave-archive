@@ -129,6 +129,7 @@ fstHandle fstWriterCreateVar(void *ctx, enum fstVarType vt, enum fstVarDir vd,
         uint32_t len, const char *nam, fstHandle aliasHandle);
 
 void fstWriterSetPackType(void *ctx, int typ); /* type = 0 (libz), 1 (fastlz) */
+void fstWriterSetDumpSizeLimit(void *ctx, uint64_t numbytes);
 
 void *fstWriterCreate(const char *nam, int use_compressed_hier);
 void fstWriterClose(void *ctx);
