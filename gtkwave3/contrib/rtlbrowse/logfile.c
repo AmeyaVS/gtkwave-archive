@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,6 +52,9 @@ ds_Tree *which;
 char *title;
 int display_mode;
 int width;
+
+JRB varnames;
+int resolved;
 };
 
 struct text_find_t
@@ -1439,7 +1442,31 @@ if(matched) gtk_widget_destroy(matched);
 
 if(ctx)
 	{
+	JRB node;
+	JRB varnames = ctx->varnames;
+
 	if(ctx->title) free(ctx->title);
+
+        /* free up variables list */
+        jrb_traverse(node, varnames)
+		{
+                if(node->val2.v) free(node->val2.v);
+                free(node->key.s);
+                }
+
+        jrb_traverse(node, varnames)
+                {
+                struct jrb_chain *jvc = node->jval_chain;
+                while(jvc)
+                        {
+                        struct jrb_chain *jvcn = jvc->next;
+                        free(jvc);
+                        jvc = jvcn;
+                        }
+                }
+
+        jrb_free_tree(varnames);
+
 	free(ctx);
 	}
 }
@@ -1779,33 +1806,36 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 	struct wave_logfile_lines_t *wt;
 	char *pnt = malloc(wlog_size + 1);
 	char *pnt2 = pnt;
-	JRB varnames = make_jrb();
+	JRB varnames = NULL;
 	JRB node;
 	int numvars = 0;
 
 	/* build up list of potential variables in this module */
-	if(!display_mode)
-	while(w)
+	if(!display_mode && !ctx->varnames) 
 		{
-		if(w->tok == V_ID)
+		varnames = make_jrb();
+		while(w)
 			{
-			if((w->line_no >= s_line) && (w->line_no <= e_line))
+			if(w->tok == V_ID)
 				{
-				if(strcmp(w->text, design_unit)) /* filter out design unit name */
+				if((w->line_no >= s_line) && (w->line_no <= e_line))
 					{
-					node = jrb_find_str(varnames, w->text);
-
-					if(!node)
+					if(strcmp(w->text, design_unit)) /* filter out design unit name */
 						{
-						Jval dummy;
-						dummy.v = NULL;
-						jrb_insert_str(varnames, strdup(w->text), dummy);
-						numvars++;
+						node = jrb_find_str(varnames, w->text);
+	
+						if(!node)
+							{
+							Jval dummy;
+							dummy.v = NULL;
+							jrb_insert_str(varnames, strdup(w->text), dummy);
+							numvars++;
+							}
 						}
 					}
 				}
+			w = w->next;
 			}
-		w = w->next;
 		}
 
 	if((anno_ctx)&&(anno_ctx->marker_set))
@@ -1817,8 +1847,11 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 			int numfacs=vzt_rd_get_num_facs(vzt);
 			int i;
 			int tlen;
-			char *pfx = malloc((tlen=strlen(title))+1+1);
-			
+			char *pfx = NULL;
+
+			if(ctx->varnames) goto skip_resolved_vzt;
+
+			pfx = malloc((tlen=strlen(title))+1+1);
 			strcpy(pfx, title);
 			strcat(pfx+tlen, ".");
 			tlen++;
@@ -1905,6 +1938,11 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 					}
 				}
 resolved_vzt:		free(pfx);
+			ctx->varnames = varnames;
+			ctx->resolved = resolved;
+skip_resolved_vzt:
+			varnames = ctx->varnames;
+			resolved = ctx->resolved;
 
 			jrb_traverse(node, varnames)
 				{
@@ -1918,11 +1956,11 @@ resolved_vzt:		free(pfx);
 						{
 						if(rc)
 							{
-							node->val.v = hexify(strdup(rc));
+							node->val2.v = hexify(strdup(rc));
 							}
 							else
 							{
-							node->val.v = NULL;
+							node->val2.v = NULL;
 							}
 						}
 						else
@@ -1953,18 +1991,18 @@ resolved_vzt:		free(pfx);
 								jvc = jvc->next;
 								}		
 
-							node->val.v = hexify(strdup(rc2));
+							node->val2.v = hexify(strdup(rc2));
 							free(rc2);
 							}
 							else
 							{
-							node->val.v = NULL;
+							node->val2.v = NULL;
 							}
 						}
 					}
 					else
 					{
-					node->val.v = NULL;
+					node->val2.v = NULL;
 					}
 				}
 			}
@@ -1974,8 +2012,11 @@ resolved_vzt:		free(pfx);
 			int numfacs=lxt2_rd_get_num_facs(lx2);
 			int i;
 			int tlen;
-			char *pfx = malloc((tlen=strlen(title))+1+1);
-			
+			char *pfx = NULL;
+
+			if(ctx->varnames) goto skip_resolved_lxt2;
+
+			pfx = malloc((tlen=strlen(title))+1+1);
 			strcpy(pfx, title);
 			strcat(pfx+tlen, ".");
 			tlen++;
@@ -2066,6 +2107,11 @@ resolved_vzt:		free(pfx);
 					}
 				}
 resolved_lxt2:		free(pfx);
+			ctx->varnames = varnames;
+			ctx->resolved = resolved;
+skip_resolved_lxt2:
+			varnames = ctx->varnames;
+			resolved = ctx->resolved;
 
 			lx2vals = make_jrb();
 			lxt2_rd_unlimit_time_range(lx2);
@@ -2086,11 +2132,11 @@ resolved_lxt2:		free(pfx);
 						{
 						if(rc)
 							{
-							node->val.v = hexify(strdup(rc));
+							node->val2.v = hexify(strdup(rc));
 							}
 							else
 							{
-							node->val.v = NULL;
+							node->val2.v = NULL;
 							}
 						}
 						else
@@ -2123,18 +2169,18 @@ resolved_lxt2:		free(pfx);
                                                                 jvc = jvc->next; 
                                                                 }
     
-                                                        node->val.v = hexify(strdup(rc2));
+                                                        node->val2.v = hexify(strdup(rc2));
                                                         free(rc2);               
                                                         }
                                                         else
                                                         {               
-                                                        node->val.v = NULL;
+                                                        node->val2.v = NULL;
 							}						
 						}
 					}
 					else
 					{
-					node->val.v = NULL;
+					node->val2.v = NULL;
 					}
 				}
 
@@ -2152,10 +2198,13 @@ resolved_lxt2:		free(pfx);
 			int numfacs=ae2_read_num_symbols(ae2);
 			int i;
 			int tlen;
-			char *pfx = malloc((tlen=strlen(title))+1+1);
+			char *pfx = NULL;
 			char *tstr;
 			int attempt = 0;
+
+			if(ctx->varnames) goto skip_resolved_ae2;
 			
+			pfx = malloc((tlen=strlen(title))+1+1);
 			strcpy(pfx, title);
 			strcat(pfx+tlen, ".");
 			tlen++;
@@ -2238,6 +2287,11 @@ retry_ae2:		for(i=0;i<numfacs;i++)
 				}
 
 resolved_ae2:		free(pfx);
+			ctx->varnames = varnames;
+			ctx->resolved = resolved;
+skip_resolved_ae2:
+			varnames = ctx->varnames;
+			resolved = ctx->resolved;
 
 			jrb_traverse(node, varnames)
 				{
@@ -2253,11 +2307,11 @@ resolved_ae2:		free(pfx);
 					fr.length = ae2_read_symbol_length(ae2, fr.s);
 					ae2_read_value(ae2, &fr, anno_ctx->marker, rc);
 
-					node->val.v = rc[0] ? hexify(strdup(rc)) : NULL;
+					node->val2.v = rc[0] ? hexify(strdup(rc)) : NULL;
 					}
 					else
 					{
-					node->val.v = NULL;
+					node->val2.v = NULL;
 					}
 				}
 			}
@@ -2280,11 +2334,11 @@ resolved_ae2:		free(pfx);
 						if(strcmp(w->text, design_unit)) /* filter out design unit name */
 							{
 							node = jrb_find_str(varnames, w->text);
-							if((node)&&(node->val.v))
+							if((node)&&(node->val2.v))
 								{
 								log_text(text, fontx, w->text);
 								log_text_bold(text, fontx, "[");
-								log_text_bold(text, fontx, node->val.v);
+								log_text_bold(text, fontx, node->val2.v);
 								log_text_bold(text, fontx, "]");
 								goto iter_free;
 								}
@@ -2304,7 +2358,7 @@ resolved_ae2:		free(pfx);
 						}
 					}
 
-iter_free:			free(w->text);
+iter_free: 			free(w->text);
 				wt = w;
 				w = w->next;
 				free(wt);
@@ -2342,12 +2396,13 @@ iter_free:			free(w->text);
 	free(pnt);
 
 free_vars:
+#if 0
 	/* free up variables list */
 	if(!display_mode)
 		{
 		jrb_traverse(node, varnames)
 			{
-			if(node->val.v) free(node->val.v);
+			if(node->val2.v) free(node->val2.v);
 			free(node->key.s);
 			}
 		}
@@ -2365,6 +2420,7 @@ free_vars:
 
 	jrb_free_tree(varnames);
 	varnames = NULL;
+#endif
 
 	/* insert context for destroy */
 	if(window)
@@ -2393,6 +2449,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2009/04/24 04:24:22  gtkwave
+ * reload and cygwin fixes for rtlbrowse
+ *
  * Revision 1.24  2008/12/26 22:15:42  gtkwave
  * compile fixes for gtk+-2.0 (old versions of gtk2)
  *

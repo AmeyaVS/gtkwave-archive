@@ -647,3 +647,5 @@
 		Fixed segfault caused by improper search/replace and
 		malloc length in renderopt.c for ps2pdf.
 		Beginning to integrate FST file format support.
+		Optimize rtlbrowse somewhat by not redoing fac finding
+		every time the cursor moves.

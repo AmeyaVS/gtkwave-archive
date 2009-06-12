@@ -43,6 +43,7 @@ typedef struct jrb_node {
   struct jrb_chain *jval_chain; 	/* added for rtlbrowse */
   Jval key;
   Jval val;
+  Jval val2;				/* added for rtlbrowse */
 } *JRB;
 
 
@@ -114,6 +115,9 @@ int jrb_plength(JRB n);       /* returns the # of nodes in path from
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:41  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *
