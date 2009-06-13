@@ -50,14 +50,15 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_rtlbrowse_OBJECTS = definehash.$(OBJEXT) fgetdynamic.$(OBJEXT) \
 	logfile.$(OBJEXT) splay.$(OBJEXT) tree_widget.$(OBJEXT) \
-	stem_recurse.$(OBJEXT) jrb.$(OBJEXT) vzt_read.$(OBJEXT) \
-	lxt2_read.$(OBJEXT) vlex.$(OBJEXT)
+	fastlz.$(OBJEXT) fstapi.$(OBJEXT) stem_recurse.$(OBJEXT) \
+	jrb.$(OBJEXT) vzt_read.$(OBJEXT) lxt2_read.$(OBJEXT) \
+	vlex.$(OBJEXT)
 rtlbrowse_OBJECTS = $(am_rtlbrowse_OBJECTS)
 rtlbrowse_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 rtlbrowse_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -184,16 +185,17 @@ AET2LIB =
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 LIBFST_CFLAGS = -I../../src/helpers/fst
-LIBFST_LDADD = -L../../src/helpers/fst -lfst
 LIBLZMA_CFLAGS = -I../../src/liblzma
 LIBLZMA_LDADD = -L../../src/liblzma -llzma
 rtlbrowse_SOURCES = definehash.c fgetdynamic.c fgetdynamic.h \
 	logfile.c splay.c tree_widget.c \
+	$(srcdir)/../../src/helpers/fst/fastlz.c \
+	$(srcdir)/../../src/helpers/fst/fstapi.c \
 	stem_recurse.c jrb.c jrb.h $(srcdir)/../../src/helpers/vzt_read.c \
 	$(srcdir)/../../src/helpers/lxt2_read.c splay.h \
 	vlex.l vlex.h wavelink.h
 
-LDADD = $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD) $(LIBFST_LDADD) $(AET2_LDADD)
+LDADD = $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD) $(AET2_LDADD)
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src  -I$(top_srcdir)/src/helpers \
 	$(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBFST_CFLAGS) $(AET2_CFLAGS)
 
@@ -267,7 +269,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/definehash.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastlz.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fgetdynamic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fstapi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jrb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2_read.Po@am__quote@
@@ -290,6 +294,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+fastlz.o: $(srcdir)/../../src/helpers/fst/fastlz.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fastlz.o -MD -MP -MF "$(DEPDIR)/fastlz.Tpo" -c -o fastlz.o `test -f '$(srcdir)/../../src/helpers/fst/fastlz.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/fst/fastlz.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fastlz.Tpo" "$(DEPDIR)/fastlz.Po"; else rm -f "$(DEPDIR)/fastlz.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/fst/fastlz.c' object='fastlz.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fastlz.o `test -f '$(srcdir)/../../src/helpers/fst/fastlz.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/fst/fastlz.c
+
+fastlz.obj: $(srcdir)/../../src/helpers/fst/fastlz.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fastlz.obj -MD -MP -MF "$(DEPDIR)/fastlz.Tpo" -c -o fastlz.obj `if test -f '$(srcdir)/../../src/helpers/fst/fastlz.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/fst/fastlz.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/fst/fastlz.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fastlz.Tpo" "$(DEPDIR)/fastlz.Po"; else rm -f "$(DEPDIR)/fastlz.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/fst/fastlz.c' object='fastlz.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fastlz.obj `if test -f '$(srcdir)/../../src/helpers/fst/fastlz.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/fst/fastlz.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/fst/fastlz.c'; fi`
+
+fstapi.o: $(srcdir)/../../src/helpers/fst/fstapi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fstapi.o -MD -MP -MF "$(DEPDIR)/fstapi.Tpo" -c -o fstapi.o `test -f '$(srcdir)/../../src/helpers/fst/fstapi.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/fst/fstapi.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fstapi.Tpo" "$(DEPDIR)/fstapi.Po"; else rm -f "$(DEPDIR)/fstapi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/fst/fstapi.c' object='fstapi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fstapi.o `test -f '$(srcdir)/../../src/helpers/fst/fstapi.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/fst/fstapi.c
+
+fstapi.obj: $(srcdir)/../../src/helpers/fst/fstapi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fstapi.obj -MD -MP -MF "$(DEPDIR)/fstapi.Tpo" -c -o fstapi.obj `if test -f '$(srcdir)/../../src/helpers/fst/fstapi.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/fst/fstapi.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/fst/fstapi.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fstapi.Tpo" "$(DEPDIR)/fstapi.Po"; else rm -f "$(DEPDIR)/fstapi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../../src/helpers/fst/fstapi.c' object='fstapi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fstapi.obj `if test -f '$(srcdir)/../../src/helpers/fst/fstapi.c'; then $(CYGPATH_W) '$(srcdir)/../../src/helpers/fst/fstapi.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../../src/helpers/fst/fstapi.c'; fi`
 
 vzt_read.o: $(srcdir)/../../src/helpers/vzt_read.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vzt_read.o -MD -MP -MF "$(DEPDIR)/vzt_read.Tpo" -c -o vzt_read.o `test -f '$(srcdir)/../../src/helpers/vzt_read.c' || echo '$(srcdir)/'`$(srcdir)/../../src/helpers/vzt_read.c; \

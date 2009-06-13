@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	05jun09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	13jun09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -649,3 +649,4 @@
 		Beginning to integrate FST file format support.
 		Optimize rtlbrowse somewhat by not redoing fac finding
 		every time the cursor moves.
+		Beginning to integrate FST into rtlbrowse.

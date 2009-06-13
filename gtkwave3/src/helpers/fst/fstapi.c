@@ -1614,6 +1614,18 @@ return(NULL);
 }
 
 
+void fstReaderResetScope(void *ctx)
+{
+struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
+const char *scp;
+
+if(xc)
+	{
+	while(fstReaderPopScope(xc)); /* remove any already-built scoping info */
+	}
+}
+
+
 const char *fstReaderPushScope(void *ctx, const char *nam)
 {
 struct fstReaderContext *xc = (struct fstReaderContext *)ctx;

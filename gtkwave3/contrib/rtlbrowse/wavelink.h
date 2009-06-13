@@ -8,9 +8,11 @@
 #include "../../src/debug.h"
 #include "../../src/helpers/vzt_read.h"
 #include "../../src/helpers/lxt2_read.h"
+#include <fstapi.h>
 
 extern struct vzt_rd_trace  *vzt;
 extern struct lxt2_rd_trace *lx2;
+extern void *fst;
 
 #ifdef AET2_IS_PRESENT
 extern AE2_HANDLE ae2;
@@ -21,6 +23,9 @@ extern AE2_HANDLE ae2;
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.1  2007/08/18 21:51:56  gtkwave
  * widget destroys and teardown of file formats which use external loaders
  * and are outside of malloc_2/free_2 control

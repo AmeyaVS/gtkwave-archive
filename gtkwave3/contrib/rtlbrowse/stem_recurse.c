@@ -36,6 +36,7 @@ ds_Tree *flattened_mod_list_root = NULL;
 struct gtkwave_annotate_ipc_t *anno_ctx = NULL;
 struct vzt_rd_trace  *vzt=NULL;
 struct lxt2_rd_trace *lx2=NULL;
+void *fst=NULL;
 
 #ifdef AET2_IS_PRESENT
 FILE *aetf;
@@ -474,6 +475,15 @@ if(anno_ctx)
 	{
 	switch(anno_ctx->aet_type)
 		{
+		case WAVE_ANNO_FST:
+			fst=fstReaderOpen(anno_ctx->aet_name);
+			if(!fst)         
+			        {
+			        fprintf(stderr, "Could not initialize '%s', exiting.\n", anno_ctx->aet_name);
+			        exit(255);
+			        }   
+			break;
+
 		case WAVE_ANNO_VZT:
 			vzt=vzt_rd_init(anno_ctx->aet_name);
 			if(!vzt)         
@@ -522,6 +532,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/04/23 21:57:53  gtkwave
+ * added mingw support for rtlbrowse
+ *
  * Revision 1.5  2009/01/13 22:39:24  gtkwave
  * compile fixes for mingw
  *

@@ -711,6 +711,45 @@ if(len < 4)
 }
 
 
+int fst_alpha_strcmpeq(const char *s1, const char *s2)
+{
+for(;;)
+	{
+	char c1 = *s1;
+	char c2 = *s2;
+
+	switch(c1)
+		{
+		case ' ':
+		case '\t':
+		case '[':
+			c1 = 0;
+
+		default:
+			break;
+		}
+
+	switch(c2)
+		{
+		case ' ':
+		case '\t':
+		case '[':
+			c2 = 0;
+
+		default:
+			break;
+		}
+
+	if(c1 != c2) { return(1); } 
+	if(!c1) break;
+
+	s1++; s2++;
+	}
+
+return(0);
+}
+
+
 /* for dnd */
 #define WAVE_DRAG_TAR_NAME_0         "text/plain"
 #define WAVE_DRAG_TAR_INFO_0         0
@@ -1842,7 +1881,179 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 		{
 		int resolved = 0;
 
-		if(vzt)
+/*************************/
+		if(fst)
+			{
+			int numfacs=fstReaderGetVarCount(fst);
+			int i;
+			const char *scp_nam = NULL;
+			fstHandle fh = 0;
+			int prev_hier_mat = 0;
+
+			if(ctx->varnames) goto skip_resolved_fst;
+
+			jrb_traverse(node, varnames) { node->val.i = -1; }
+			fstReaderIterateHierRewind(fst);
+			fstReaderResetScope(fst);
+
+			for(i=0;i<numfacs;i++)
+				{
+				char *fnam;
+				struct fstHier *h;
+
+				while((h = fstReaderIterateHier(fst)))
+				        {
+					int do_brk = 0;
+				        switch(h->htyp)
+				                {
+				                case FST_HT_SCOPE:
+				                        scp_nam = fstReaderPushScope(fst, h->u.scope.name);
+				                        break;
+				                case FST_HT_UPSCOPE:
+				                        scp_nam = fstReaderPopScope(fst);
+				                        break;   
+				                case FST_HT_VAR:
+				                        scp_nam = fstReaderGetCurrentFlatScope(fst);
+							fh++;
+							do_brk = 1;
+							break;
+						default: 
+							break;
+						}
+					if(do_brk) break;
+					}
+				if(!h) break;
+
+				if(strcmp(scp_nam, title))
+					{
+					if(prev_hier_mat) break;
+					}
+					else
+					{
+					prev_hier_mat = 1;
+					jrb_traverse(node, varnames)
+						{
+						if(node->val.i < 0)
+							{
+							if(!fst_alpha_strcmpeq(h->u.var.name, node->key.s))
+								{
+								resolved++;
+								if(h->u.var.is_alias)
+									{
+									node->val.i = h->u.var.is_alias;
+									}
+									else
+									{
+									node->val.i = fh;
+									}
+								}
+							}
+							else /* bitblasted */
+							{
+							if(!fst_alpha_strcmpeq(h->u.var.name, node->key.s))
+								{
+								struct jrb_chain *jvc = node->jval_chain;
+
+								if(jvc) { 
+									while(jvc->next) jvc = jvc->next;
+									jvc->next = calloc(1, sizeof(struct jrb_chain));
+									jvc = jvc->next;
+									}
+									else
+									{ 
+									jvc = calloc(1, sizeof(struct jrb_chain));
+									node->jval_chain = jvc;
+									}
+
+								if(h->u.var.is_alias)
+									{
+									jvc->val.i = h->u.var.is_alias;
+									}
+									else
+									{
+									jvc->val.i = fh;
+									}
+								}
+							}
+						}
+					}
+				}
+resolved_fst:		
+			ctx->varnames = varnames;
+			ctx->resolved = resolved;
+skip_resolved_fst:
+			varnames = ctx->varnames;
+			resolved = ctx->resolved;
+
+			jrb_traverse(node, varnames)
+				{
+				if(node->val.i >= 0)
+					{
+					char rcb[65537];
+					char *rc;
+					struct jrb_chain *jvc = node->jval_chain;
+					char first_char;
+
+					rc = fstReaderGetValueFromHandleAtTime(fst, anno_ctx->marker, node->val.i, rcb);
+					first_char = rc ? rc[0] : '?';
+
+					if(!jvc)
+						{
+						if(rc)
+							{
+							node->val2.v = hexify(strdup(rc));
+							}
+							else
+							{
+							node->val2.v = NULL;
+							}
+						}
+						else
+						{
+						char *rc2;
+						int len = rc ? strlen(rc) : 0;
+						int iter = 1;
+
+						while(jvc)
+							{
+							fstReaderGetValueFromHandleAtTime(fst, anno_ctx->marker, jvc->val.i, rc);
+							len+= strlen(rc);
+							iter++;
+							jvc = jvc->next;
+							}
+
+						if(iter==len)
+							{
+							int pos = 1;
+							jvc = node->jval_chain;
+							rc2 = calloc(1, len+1);
+							rc2[0] = first_char;
+	
+							while(jvc)
+								{
+								char *rcv;
+								fstReaderGetValueFromHandleAtTime(fst, anno_ctx->marker, jvc->val.i, rcv);
+								rc2[pos++] = *rcv;
+								jvc = jvc->next;
+								}		
+
+							node->val2.v = hexify(strdup(rc2));
+							free(rc2);
+							}
+							else
+							{
+							node->val2.v = NULL;
+							}
+						}
+					}
+					else
+					{
+					node->val2.v = NULL;
+					}
+				}
+			}
+/*************************/
+		else if(vzt)
 			{
 			int numfacs=vzt_rd_get_num_facs(vzt);
 			int i;
@@ -2449,6 +2660,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2009/06/12 19:50:08  gtkwave
+ * optimize out duplicate fac finding by adding a field to jrb tree
+ *
  * Revision 1.25  2009/04/24 04:24:22  gtkwave
  * reload and cygwin fixes for rtlbrowse
  *

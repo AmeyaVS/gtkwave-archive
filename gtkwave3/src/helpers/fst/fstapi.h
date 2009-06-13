@@ -157,6 +157,7 @@ struct fstHier *fstReaderIterateHier(void *ctx);
 const char *fstReaderGetCurrentFlatScope(void *ctx);
 const char *fstReaderPopScope(void *ctx);
 const char *fstReaderPushScope(void *ctx, const char *nam);
+void fstReaderResetScope(void *ctx);
 
 signed char fstReaderGetTimescale(void *ctx);
 uint64_t fstReaderGetStartTime(void *ctx);
