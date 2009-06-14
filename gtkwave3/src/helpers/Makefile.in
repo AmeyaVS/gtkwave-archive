@@ -35,11 +35,11 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 LIBOBJDIR =
-bin_PROGRAMS = ghwdump$(EXEEXT) lxt2miner$(EXEEXT) lxt2vcd$(EXEEXT) \
-	mvl2lxt$(EXEEXT) mvl2vcd$(EXEEXT) shmidcat$(EXEEXT) \
-	tex2vcd$(EXEEXT) tla2vcd$(EXEEXT) vcd2lxt$(EXEEXT) \
-	vcd2lxt2$(EXEEXT) vcd2vzt$(EXEEXT) vzt2vcd$(EXEEXT) \
-	vztminer$(EXEEXT)
+bin_PROGRAMS = fst2vcd$(EXEEXT) ghwdump$(EXEEXT) lxt2miner$(EXEEXT) \
+	lxt2vcd$(EXEEXT) mvl2lxt$(EXEEXT) mvl2vcd$(EXEEXT) \
+	shmidcat$(EXEEXT) tex2vcd$(EXEEXT) tla2vcd$(EXEEXT) \
+	vcd2lxt$(EXEEXT) vcd2lxt2$(EXEEXT) vcd2vzt$(EXEEXT) \
+	vzt2vcd$(EXEEXT) vztminer$(EXEEXT)
 subdir = src/helpers
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,12 +52,16 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am_fst2vcd_OBJECTS = fst2vcd.$(OBJEXT) fastlz.$(OBJEXT) \
+	fstapi.$(OBJEXT)
+fst2vcd_OBJECTS = $(am_fst2vcd_OBJECTS)
+am__DEPENDENCIES_1 =
+fst2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_ghwdump_OBJECTS = ghwdump.$(OBJEXT) ghwlib.$(OBJEXT)
 ghwdump_OBJECTS = $(am_ghwdump_OBJECTS)
 ghwdump_LDADD = $(LDADD)
 am_lxt2miner_OBJECTS = lxt2miner.$(OBJEXT) lxt2_read.$(OBJEXT)
 lxt2miner_OBJECTS = $(am_lxt2miner_OBJECTS)
-am__DEPENDENCIES_1 =
 lxt2miner_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_lxt2vcd_OBJECTS = lxt2_read.$(OBJEXT) lxt2vcd.$(OBJEXT) \
 	scopenav.$(OBJEXT)
@@ -107,15 +111,16 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(ghwdump_SOURCES) $(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) \
-	$(mvl2lxt_SOURCES) mvl2vcd.c shmidcat.c tex2vcd.c \
-	$(tla2vcd_SOURCES) $(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) \
-	$(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) $(vztminer_SOURCES)
-DIST_SOURCES = $(ghwdump_SOURCES) $(lxt2miner_SOURCES) \
+SOURCES = $(fst2vcd_SOURCES) $(ghwdump_SOURCES) $(lxt2miner_SOURCES) \
 	$(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) mvl2vcd.c shmidcat.c \
 	tex2vcd.c $(tla2vcd_SOURCES) $(vcd2lxt_SOURCES) \
 	$(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) \
 	$(vztminer_SOURCES)
+DIST_SOURCES = $(fst2vcd_SOURCES) $(ghwdump_SOURCES) \
+	$(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) \
+	mvl2vcd.c shmidcat.c tex2vcd.c $(tla2vcd_SOURCES) \
+	$(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) \
+	$(vzt2vcd_SOURCES) $(vztminer_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -230,6 +235,8 @@ AIXFLAGS = -bmaxdata:0xd0000000/dsa
 LIBLZMA_CFLAGS = -I../liblzma
 LIBLZMA_LDADD = -L../liblzma -llzma
 AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS)
+fst2vcd_SOURCES = fst2vcd.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/fstapi.h
+fst2vcd_LDADD = $(LIBZ_LDADD)
 mvl2lxt_SOURCES = mvl2lxt.c lxt_write.c lxt_write.h
 mvl2lxt_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD)
 vcd2lxt_SOURCES = vcd2lxt.c lxt_write.c lxt_write.h v2l_analyzer.h v2l_debug.c v2l_debug.h
@@ -305,6 +312,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+fst2vcd$(EXEEXT): $(fst2vcd_OBJECTS) $(fst2vcd_DEPENDENCIES) 
+	@rm -f fst2vcd$(EXEEXT)
+	$(LINK) $(fst2vcd_LDFLAGS) $(fst2vcd_OBJECTS) $(fst2vcd_LDADD) $(LIBS)
 ghwdump$(EXEEXT): $(ghwdump_OBJECTS) $(ghwdump_DEPENDENCIES) 
 	@rm -f ghwdump$(EXEEXT)
 	$(LINK) $(ghwdump_LDFLAGS) $(ghwdump_OBJECTS) $(ghwdump_LDADD) $(LIBS)
@@ -351,6 +361,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastlz.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fst2vcd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fstapi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwdump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnu_regex.Po@am__quote@
@@ -388,6 +401,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+fastlz.o: ./fst/fastlz.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fastlz.o -MD -MP -MF "$(DEPDIR)/fastlz.Tpo" -c -o fastlz.o `test -f './fst/fastlz.c' || echo '$(srcdir)/'`./fst/fastlz.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fastlz.Tpo" "$(DEPDIR)/fastlz.Po"; else rm -f "$(DEPDIR)/fastlz.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./fst/fastlz.c' object='fastlz.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fastlz.o `test -f './fst/fastlz.c' || echo '$(srcdir)/'`./fst/fastlz.c
+
+fastlz.obj: ./fst/fastlz.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fastlz.obj -MD -MP -MF "$(DEPDIR)/fastlz.Tpo" -c -o fastlz.obj `if test -f './fst/fastlz.c'; then $(CYGPATH_W) './fst/fastlz.c'; else $(CYGPATH_W) '$(srcdir)/./fst/fastlz.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fastlz.Tpo" "$(DEPDIR)/fastlz.Po"; else rm -f "$(DEPDIR)/fastlz.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./fst/fastlz.c' object='fastlz.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fastlz.obj `if test -f './fst/fastlz.c'; then $(CYGPATH_W) './fst/fastlz.c'; else $(CYGPATH_W) '$(srcdir)/./fst/fastlz.c'; fi`
+
+fstapi.o: ./fst/fstapi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fstapi.o -MD -MP -MF "$(DEPDIR)/fstapi.Tpo" -c -o fstapi.o `test -f './fst/fstapi.c' || echo '$(srcdir)/'`./fst/fstapi.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fstapi.Tpo" "$(DEPDIR)/fstapi.Po"; else rm -f "$(DEPDIR)/fstapi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./fst/fstapi.c' object='fstapi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fstapi.o `test -f './fst/fstapi.c' || echo '$(srcdir)/'`./fst/fstapi.c
+
+fstapi.obj: ./fst/fstapi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fstapi.obj -MD -MP -MF "$(DEPDIR)/fstapi.Tpo" -c -o fstapi.obj `if test -f './fst/fstapi.c'; then $(CYGPATH_W) './fst/fstapi.c'; else $(CYGPATH_W) '$(srcdir)/./fst/fstapi.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fstapi.Tpo" "$(DEPDIR)/fstapi.Po"; else rm -f "$(DEPDIR)/fstapi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='./fst/fstapi.c' object='fstapi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fstapi.obj `if test -f './fst/fstapi.c'; then $(CYGPATH_W) './fst/fstapi.c'; else $(CYGPATH_W) '$(srcdir)/./fst/fstapi.c'; fi`
 
 ghwlib.o: $(srcdir)/../ghwlib.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ghwlib.o -MD -MP -MF "$(DEPDIR)/ghwlib.Tpo" -c -o ghwlib.o `test -f '$(srcdir)/../ghwlib.c' || echo '$(srcdir)/'`$(srcdir)/../ghwlib.c; \
