@@ -1888,7 +1888,6 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 			int i;
 			const char *scp_nam = NULL;
 			fstHandle fh = 0;
-			int prev_hier_mat = 0;
 
 			if(ctx->varnames) goto skip_resolved_fst;
 
@@ -1926,11 +1925,13 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 
 				if(strcmp(scp_nam, title))
 					{
-					if(prev_hier_mat) break;
+					if(resolved == numvars)
+						{
+						break;
+						}
 					}
 					else
 					{
-					prev_hier_mat = 1;
 					jrb_traverse(node, varnames)
 						{
 						if(node->val.i < 0)
@@ -1953,7 +1954,6 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 							if(!fst_alpha_strcmpeq(h->u.var.name, node->key.s))
 								{
 								struct jrb_chain *jvc = node->jval_chain;
-
 								if(jvc) { 
 									while(jvc->next) jvc = jvc->next;
 									jvc->next = calloc(1, sizeof(struct jrb_chain));
@@ -2660,6 +2660,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2009/06/13 22:02:18  gtkwave
+ * beginning to add FST support to rtlbrowse
+ *
  * Revision 1.26  2009/06/12 19:50:08  gtkwave
  * optimize out duplicate fac finding by adding a field to jrb tree
  *
