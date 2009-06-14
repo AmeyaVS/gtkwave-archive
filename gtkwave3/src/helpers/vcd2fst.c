@@ -229,15 +229,27 @@ while(!feof(f))
 	if(!strncmp(buf, "$timescale", 10))
 		{
 		char *pnt;
+		char *num = NULL;
 		int exp = -9;
 		int tv = 1;
-		ss = getline_replace(&buf, &glen, f);
-		if(ss == -1)
+
+		if((pnt = strstr(buf, "$end")))
 			{
-			break;
+			*pnt = 0;
+			num = strchr(buf, '1');
 			}
-		line++;
-		pnt = buf;
+
+		if(!num)
+			{
+			ss = getline_replace(&buf, &glen, f);
+			if(ss == -1)
+				{
+				break;
+				}
+			line++;
+			}
+
+		pnt = num;
 		while(*pnt)
 			{
 			int mat = 0;
@@ -255,7 +267,7 @@ while(!feof(f))
 			pnt++;
 			}
 
-		tv = atoi(buf);
+		tv = atoi(num);
 		if(tv == 10)
 			{
 			exp++;
@@ -536,4 +548,7 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/06/14 22:08:29  gtkwave
+ * added vcd2fst and appropriate fst manpages
+ *
  */
