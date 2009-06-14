@@ -650,3 +650,4 @@
 		Optimize rtlbrowse somewhat by not redoing fac finding
 		every time the cursor moves.
 		Beginning to integrate FST into rtlbrowse.
+		Added vcd2fst and fst2vcd helper utils.

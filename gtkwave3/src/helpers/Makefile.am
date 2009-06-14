@@ -6,11 +6,14 @@ AIXFLAGS = -bmaxdata:0xd0000000/dsa
 LIBLZMA_CFLAGS = -I../liblzma
 LIBLZMA_LDADD  = -L../liblzma -llzma
 
-AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS)
+AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) -I./fst -I../../contrib/rtlbrowse
 
-bin_PROGRAMS= fst2vcd ghwdump lxt2miner lxt2vcd mvl2lxt mvl2vcd \
+bin_PROGRAMS= fst2vcd vcd2fst ghwdump lxt2miner lxt2vcd mvl2lxt mvl2vcd \
 	shmidcat tex2vcd tla2vcd vcd2lxt vcd2lxt2 vcd2vzt \
 	vzt2vcd vztminer
+
+vcd2fst_SOURCES= vcd2fst.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/fstapi.h ../../contrib/rtlbrowse/jrb.h ../../contrib/rtlbrowse/jrb.c
+vcd2fst_LDADD= $(LIBZ_LDADD)
 
 fst2vcd_SOURCES= fst2vcd.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/fstapi.h
 fst2vcd_LDADD= $(LIBZ_LDADD)

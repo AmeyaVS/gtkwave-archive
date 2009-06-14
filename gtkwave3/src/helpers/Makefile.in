@@ -35,11 +35,11 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 LIBOBJDIR =
-bin_PROGRAMS = fst2vcd$(EXEEXT) ghwdump$(EXEEXT) lxt2miner$(EXEEXT) \
-	lxt2vcd$(EXEEXT) mvl2lxt$(EXEEXT) mvl2vcd$(EXEEXT) \
-	shmidcat$(EXEEXT) tex2vcd$(EXEEXT) tla2vcd$(EXEEXT) \
-	vcd2lxt$(EXEEXT) vcd2lxt2$(EXEEXT) vcd2vzt$(EXEEXT) \
-	vzt2vcd$(EXEEXT) vztminer$(EXEEXT)
+bin_PROGRAMS = fst2vcd$(EXEEXT) vcd2fst$(EXEEXT) ghwdump$(EXEEXT) \
+	lxt2miner$(EXEEXT) lxt2vcd$(EXEEXT) mvl2lxt$(EXEEXT) \
+	mvl2vcd$(EXEEXT) shmidcat$(EXEEXT) tex2vcd$(EXEEXT) \
+	tla2vcd$(EXEEXT) vcd2lxt$(EXEEXT) vcd2lxt2$(EXEEXT) \
+	vcd2vzt$(EXEEXT) vzt2vcd$(EXEEXT) vztminer$(EXEEXT)
 subdir = src/helpers
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -82,6 +82,10 @@ tex2vcd_LDADD = $(LDADD)
 am_tla2vcd_OBJECTS = tla2vcd.$(OBJEXT) gnu_regex.$(OBJEXT)
 tla2vcd_OBJECTS = $(am_tla2vcd_OBJECTS)
 tla2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_vcd2fst_OBJECTS = vcd2fst.$(OBJEXT) fastlz.$(OBJEXT) \
+	fstapi.$(OBJEXT) jrb.$(OBJEXT)
+vcd2fst_OBJECTS = $(am_vcd2fst_OBJECTS)
+vcd2fst_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_vcd2lxt_OBJECTS = vcd2lxt.$(OBJEXT) lxt_write.$(OBJEXT) \
 	v2l_debug.$(OBJEXT)
 vcd2lxt_OBJECTS = $(am_vcd2lxt_OBJECTS)
@@ -113,14 +117,14 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(fst2vcd_SOURCES) $(ghwdump_SOURCES) $(lxt2miner_SOURCES) \
 	$(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) mvl2vcd.c shmidcat.c \
-	tex2vcd.c $(tla2vcd_SOURCES) $(vcd2lxt_SOURCES) \
-	$(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) \
-	$(vztminer_SOURCES)
+	tex2vcd.c $(tla2vcd_SOURCES) $(vcd2fst_SOURCES) \
+	$(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) \
+	$(vzt2vcd_SOURCES) $(vztminer_SOURCES)
 DIST_SOURCES = $(fst2vcd_SOURCES) $(ghwdump_SOURCES) \
 	$(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) \
 	mvl2vcd.c shmidcat.c tex2vcd.c $(tla2vcd_SOURCES) \
-	$(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) \
-	$(vzt2vcd_SOURCES) $(vztminer_SOURCES)
+	$(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) \
+	$(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) $(vztminer_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -234,7 +238,9 @@ BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 AIXFLAGS = -bmaxdata:0xd0000000/dsa
 LIBLZMA_CFLAGS = -I../liblzma
 LIBLZMA_LDADD = -L../liblzma -llzma
-AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS)
+AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) -I./fst -I../../contrib/rtlbrowse
+vcd2fst_SOURCES = vcd2fst.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/fstapi.h ../../contrib/rtlbrowse/jrb.h ../../contrib/rtlbrowse/jrb.c
+vcd2fst_LDADD = $(LIBZ_LDADD)
 fst2vcd_SOURCES = fst2vcd.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/fstapi.h
 fst2vcd_LDADD = $(LIBZ_LDADD)
 mvl2lxt_SOURCES = mvl2lxt.c lxt_write.c lxt_write.h
@@ -339,6 +345,9 @@ tex2vcd$(EXEEXT): $(tex2vcd_OBJECTS) $(tex2vcd_DEPENDENCIES)
 tla2vcd$(EXEEXT): $(tla2vcd_OBJECTS) $(tla2vcd_DEPENDENCIES) 
 	@rm -f tla2vcd$(EXEEXT)
 	$(LINK) $(tla2vcd_LDFLAGS) $(tla2vcd_OBJECTS) $(tla2vcd_LDADD) $(LIBS)
+vcd2fst$(EXEEXT): $(vcd2fst_OBJECTS) $(vcd2fst_DEPENDENCIES) 
+	@rm -f vcd2fst$(EXEEXT)
+	$(LINK) $(vcd2fst_LDFLAGS) $(vcd2fst_OBJECTS) $(vcd2fst_LDADD) $(LIBS)
 vcd2lxt$(EXEEXT): $(vcd2lxt_OBJECTS) $(vcd2lxt_DEPENDENCIES) 
 	@rm -f vcd2lxt$(EXEEXT)
 	$(LINK) $(vcd2lxt_LDFLAGS) $(vcd2lxt_OBJECTS) $(vcd2lxt_LDADD) $(LIBS)
@@ -367,6 +376,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwdump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnu_regex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jrb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2_read.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2_write.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2miner.Po@am__quote@
@@ -380,6 +390,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tla2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v2l_debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v2l_debug_lxt2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd2fst.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd2lxt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd2lxt2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd2vzt.Po@am__quote@
@@ -457,6 +468,20 @@ gnu_regex.obj: $(srcdir)/../gnu_regex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../gnu_regex.c' object='gnu_regex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnu_regex.obj `if test -f '$(srcdir)/../gnu_regex.c'; then $(CYGPATH_W) '$(srcdir)/../gnu_regex.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../gnu_regex.c'; fi`
+
+jrb.o: ../../contrib/rtlbrowse/jrb.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jrb.o -MD -MP -MF "$(DEPDIR)/jrb.Tpo" -c -o jrb.o `test -f '../../contrib/rtlbrowse/jrb.c' || echo '$(srcdir)/'`../../contrib/rtlbrowse/jrb.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/jrb.Tpo" "$(DEPDIR)/jrb.Po"; else rm -f "$(DEPDIR)/jrb.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../contrib/rtlbrowse/jrb.c' object='jrb.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jrb.o `test -f '../../contrib/rtlbrowse/jrb.c' || echo '$(srcdir)/'`../../contrib/rtlbrowse/jrb.c
+
+jrb.obj: ../../contrib/rtlbrowse/jrb.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jrb.obj -MD -MP -MF "$(DEPDIR)/jrb.Tpo" -c -o jrb.obj `if test -f '../../contrib/rtlbrowse/jrb.c'; then $(CYGPATH_W) '../../contrib/rtlbrowse/jrb.c'; else $(CYGPATH_W) '$(srcdir)/../../contrib/rtlbrowse/jrb.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/jrb.Tpo" "$(DEPDIR)/jrb.Po"; else rm -f "$(DEPDIR)/jrb.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../contrib/rtlbrowse/jrb.c' object='jrb.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jrb.obj `if test -f '../../contrib/rtlbrowse/jrb.c'; then $(CYGPATH_W) '../../contrib/rtlbrowse/jrb.c'; else $(CYGPATH_W) '$(srcdir)/../../contrib/rtlbrowse/jrb.c'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
