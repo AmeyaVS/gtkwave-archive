@@ -1888,6 +1888,8 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 			int i;
 			const char *scp_nam = NULL;
 			fstHandle fh = 0;
+			int new_scope_encountered = 1;
+			int good_scope = 0;
 
 			if(ctx->varnames) goto skip_resolved_fst;
 
@@ -1900,6 +1902,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 				char *fnam;
 				struct fstHier *h;
 
+				new_scope_encountered = 0;
 				while((h = fstReaderIterateHier(fst)))
 				        {
 					int do_brk = 0;
@@ -1907,9 +1910,11 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 				                {
 				                case FST_HT_SCOPE:
 				                        scp_nam = fstReaderPushScope(fst, h->u.scope.name);
+							new_scope_encountered = 1;
 				                        break;
 				                case FST_HT_UPSCOPE:
 				                        scp_nam = fstReaderPopScope(fst);
+							new_scope_encountered = 1;
 				                        break;   
 				                case FST_HT_VAR:
 				                        scp_nam = fstReaderGetCurrentFlatScope(fst);
@@ -1923,7 +1928,19 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 					}
 				if(!h) break;
 
-				if(strcmp(scp_nam, title))
+				if(!new_scope_encountered)
+					{
+					if(!good_scope)
+						{
+						continue;
+						}
+					}
+					else
+					{
+					good_scope = !strcmp(scp_nam, title);
+					}
+
+				if(!good_scope)
 					{
 					if(resolved == numvars)
 						{
@@ -1941,7 +1958,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 								resolved++;
 								if(h->u.var.is_alias)
 									{
-									node->val.i = h->u.var.is_alias;
+									node->val.i = h->u.var.handle;
 									}
 									else
 									{
@@ -2660,6 +2677,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2009/06/14 01:11:11  gtkwave
+ * previous match optimization fix
+ *
  * Revision 1.27  2009/06/13 22:02:18  gtkwave
  * beginning to add FST support to rtlbrowse
  *
