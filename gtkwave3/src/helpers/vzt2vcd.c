@@ -327,7 +327,7 @@ printf(
 #else
 printf(
 "Usage: %s [OPTION]... [VZTFILE]\n\n"
-"  -l                         specify VZT input filename\n"
+"  -v                         specify VZT input filename\n"
 "  -f                         emit flattened hierarchies\n"
 "  -c                         coalesce bitblasted vectors\n"
 "  -n                         do not shorten bitvectors\n"
@@ -434,6 +434,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/04/30 19:18:41  gtkwave
+ * added space before final brackets in VCD writers
+ *
  * Revision 1.6  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *
