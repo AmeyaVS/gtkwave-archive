@@ -42,6 +42,7 @@ enum fstBlockType {
     FST_BL_BLACKOUT	       = 2,
     FST_BL_GEOM                = 3,
     FST_BL_HIER                = 4,
+    FST_BL_ZWRAPPER	       = 254,   /* indicates that whole trace is gz wrapped */
     FST_BL_SKIP		       = 255	/* used while block is being written */
 };
 
@@ -128,7 +129,8 @@ union {
 fstHandle fstWriterCreateVar(void *ctx, enum fstVarType vt, enum fstVarDir vd,
         uint32_t len, const char *nam, fstHandle aliasHandle);
 
-void fstWriterSetPackType(void *ctx, int typ); /* type = 0 (libz), 1 (fastlz) */
+void fstWriterSetPackType(void *ctx, int typ); 		/* type = 0 (libz), 1 (fastlz) */
+void fstWriterSetRepackOnClose(void *ctx, int enable); 	/* type = 0 (none), 1 (libz) */
 void fstWriterSetDumpSizeLimit(void *ctx, uint64_t numbytes);
 
 void *fstWriterCreate(const char *nam, int use_compressed_hier);

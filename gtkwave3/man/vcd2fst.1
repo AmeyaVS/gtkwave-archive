@@ -17,6 +17,14 @@ Specify VCD input filename.
 \fB\-f,\-\-fstname\fR <\fIfilename\fP>
 Specify FST output filename.
 .TP 
+\fB\-F,\-\-fastpack\fR
+Indicates that fastlz should be used instead of gzip for block data.
+.TP 
+\fB\-c,\-\-compress\fR
+Indicates that the entire file should be run through gzip on close.  This
+results in much smaller files at the expense of a one-time decompression
+penalty on file open during reads.
+.TP 
 \fB\-h,\-\-help\fR
 Show help screen.
 .TP 

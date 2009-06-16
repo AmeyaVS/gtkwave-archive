@@ -399,10 +399,8 @@ uint32_t maxvalpos;
 
 unsigned vc_emitted : 1;
 unsigned is_initial_time : 1;
-unsigned skip_writing_section_hdr : 1;
-unsigned compress_hier : 1;
 unsigned fastpack : 1;
-unsigned size_limit_locked : 1;
+
 off_t section_header_truncpos;
 uint32_t tchn_cnt, tchn_idx;
 uint64_t curtime;
@@ -420,6 +418,11 @@ struct fstBlackoutChain *blackout_curr;
 uint32_t num_blackouts;
 
 uint64_t dump_size_limit;
+
+unsigned compress_hier : 1;
+unsigned repack_on_close : 1;
+unsigned skip_writing_section_hdr : 1;
+unsigned size_limit_locked : 1;
 };
 
 
@@ -543,7 +546,7 @@ struct fstWriterContext *xc = calloc(1, sizeof(struct fstWriterContext));
 
 xc->compress_hier = use_compressed_hier;
 
-if((!nam)||(!(xc->handle=fopen(nam, "wb"))))
+if((!nam)||(!(xc->handle=fopen(nam, "w+b"))))
         {
         free(xc);
         xc=NULL;
@@ -743,7 +746,66 @@ if(xc)
 	if(xc->valpos_handle) { fclose(xc->valpos_handle); xc->valpos_handle = NULL; }
 	if(xc->geom_handle) { fclose(xc->geom_handle); xc->geom_handle = NULL; }
 	if(xc->hier_handle) { fclose(xc->hier_handle); xc->hier_handle = NULL; }
-	if(xc->handle) { fclose(xc->handle); xc->handle = NULL; }
+	if(xc->handle) 
+		{ 
+		if(xc->repack_on_close)
+			{
+			FILE *fp;
+			off_t offpnt, uclen;
+			int flen = strlen(xc->filename);
+			char *hf = calloc(1, flen + 5);
+
+			strcpy(hf, xc->filename);
+			strcpy(hf+flen, ".pak");
+			fp = fopen(hf, "wb");
+
+			if(fp)
+				{
+				void *dsth;
+				int rc;
+				char gz_membuf[FST_GZIO_LEN];
+
+				fseeko(xc->handle, 0, SEEK_END);
+				uclen = ftello(xc->handle);
+
+				fputc(FST_BL_ZWRAPPER, fp);
+				fstWriterUint64(fp, 0);
+				fstWriterUint64(fp, uclen);
+				fflush(fp);
+
+				fseeko(xc->handle, 0, SEEK_SET);
+				dsth = gzdopen(dup(fileno(fp)), "wb4");
+
+				for(offpnt = 0; offpnt < uclen; offpnt += FST_GZIO_LEN)
+					{
+					size_t this_len = ((uclen - offpnt) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - offpnt);
+					rc = fread(gz_membuf, this_len, 1, xc->handle);
+					gzwrite(dsth, gz_membuf, this_len);
+					}
+				gzclose(dsth);
+				fseeko(fp, 0, SEEK_END);
+				offpnt = ftello(fp);
+				fseeko(fp, 1, SEEK_SET);
+				fstWriterUint64(fp, offpnt - 1);
+				fclose(fp);
+				fclose(xc->handle); xc->handle = NULL; 
+
+				unlink(xc->filename);
+				rename(hf, xc->filename);
+				}
+				else
+				{
+				xc->repack_on_close = 0;
+				fclose(xc->handle); xc->handle = NULL; 
+				}
+
+			free(hf);
+			}
+			else
+			{
+			fclose(xc->handle); xc->handle = NULL; 
+			}
+		}
 
 #ifdef __MINGW32__ 
 	{
@@ -1204,6 +1266,16 @@ if(xc)
 }
 
 
+void fstWriterSetRepackOnClose(void *ctx, int enable)
+{
+struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
+if(xc)
+	{
+	xc->repack_on_close = (enable != 0);
+	}
+}
+
+
 void fstWriterSetDumpSizeLimit(void *ctx, uint64_t numbytes)
 {
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
@@ -1515,7 +1587,7 @@ unsigned limit_range_valid : 1;		/* valid for limit_range_start, limit_range_end
 char version[FST_HDR_SIM_VERSION_SIZE + 1];
 char date[FST_HDR_DATE_SIZE + 1];
 
-char *filename;
+char *filename, *filename_unpacked;
 off_t hier_pos;
 
 uint32_t num_blackouts;
@@ -2300,6 +2372,47 @@ uint64_t vc_section_count_actual = 0;
 int hdr_incomplete = 0;
 int hdr_seen = 0;
 
+sectype = fgetc(xc->f);
+if(sectype == FST_BL_ZWRAPPER)
+	{
+	FILE *fcomp;
+	off_t offpnt, uclen;
+	char gz_membuf[FST_GZIO_LEN];
+	void *zhandle;
+        int flen = strlen(xc->filename);
+        char *hf = calloc(1, flen + 16 + 1);
+
+	sprintf(hf, "%s.upk_%d", xc->filename, getpid());
+	fcomp = fopen(hf, "w+b");
+
+#ifdef __MINGW32__
+	setvbuf(xc->fcomp, (char *)NULL, _IONBF, 0);   /* keeps gzip from acting weird in tandem with fopen */
+	xc->filename_unpacked = hf;
+#else
+	unlink(hf);
+	free(hf);
+#endif
+
+	seclen = fstReaderUint64(xc->f);
+	uclen = fstReaderUint64(xc->f);
+
+	if(!seclen) return(0); /* not finished compressing, this is a failed read */
+
+	fseeko(xc->f, 1+8+8, SEEK_SET);
+	fflush(xc->f);
+
+	zhandle = gzdopen(dup(fileno(xc->f)), "rb");
+	for(offpnt = 0; offpnt < uclen; offpnt += FST_GZIO_LEN)
+		{
+		size_t this_len = ((uclen - offpnt) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - offpnt);
+		gzread(zhandle, gz_membuf, this_len);
+		fwrite(gz_membuf, this_len, 1, fcomp);
+		}
+	fflush(fcomp);
+	fclose(xc->f);
+	xc->f = fcomp;
+	}
+
 fseeko(xc->f, 0, SEEK_END);
 endfile = ftello(xc->f);
 
@@ -2590,7 +2703,15 @@ if(xc)
 #endif
 		}
 
-	if(xc->f) { fclose(xc->f); xc->f = NULL; }
+	if(xc->f) 
+		{ 
+		fclose(xc->f); xc->f = NULL; 
+		if(xc->filename_unpacked)
+			{
+			unlink(xc->filename_unpacked);
+			free(xc->filename_unpacked);
+			}
+		}
 
 	free(xc);
 	}

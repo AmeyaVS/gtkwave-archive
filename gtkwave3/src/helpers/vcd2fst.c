@@ -71,6 +71,8 @@ for(i=0;i<len;i++)
 return(val);
 }  
 
+int pack_type = 0;  /* set to 1 for fastlz */
+int repack_all = 0; /* 0 is normal, 1 does the repack (via fstapi) at end */
 
 int fst_main(char *vname, char *fstname)
 {
@@ -101,7 +103,8 @@ if(!f)
 	}
 
 vcd_ids = make_jrb();
-fstWriterSetPackType(ctx, 0);
+fstWriterSetPackType(ctx, pack_type);
+fstWriterSetRepackOnClose(ctx, repack_all);
 
 while(!feof(f))
 	{
@@ -247,6 +250,7 @@ while(!feof(f))
 				break;
 				}
 			line++;
+			num = buf;
 			}
 
 		pnt = num;
@@ -434,6 +438,8 @@ printf(
 "Usage: %s [OPTION]... [VCDFILE] [FSTFILE]\n\n"
 "  -v, --vcdname=FILE         specify VCD input filename\n"
 "  -f, --fstname=FILE         specify FST output filename\n"
+"  -F, --fastpack             use fastlz algorithm for speed\n"
+"  -c, --compress             compress entire file on close\n"
 "  -h, --help                 display this help then exit\n\n"
 
 "Note that VCDFILE and FSTFILE are optional provided the\n"
@@ -444,6 +450,8 @@ printf(
 "Usage: %s [OPTION]... [VCDFILE] [FSTFILE]\n\n"
 "  -v FILE                    specify VCD input filename\n"
 "  -f FILE                    specify FST output filename\n"
+"  -F                         use fastlz algorithm for speed\n"
+"  -c                         compress entire file on close\n"
 "  -h                         display this help then exit\n\n"
 
 "Note that VCDFILE and FSTFILE are optional provided the\n"
@@ -472,13 +480,15 @@ while (1)
                 {
 		{"vcdname", 1, 0, 'v'},
 		{"fstname", 1, 0, 'f'},
+		{"fastpack", 0, 0, 'F'},
+		{"compress", 0, 0, 'c'},
                 {"help", 0, 0, 'h'},
                 {0, 0, 0, 0}  
                 };
                 
-        c = getopt_long (argc, argv, "v:f:h", long_options, &option_index);
+        c = getopt_long (argc, argv, "v:f:Fch", long_options, &option_index);
 #else
-        c = getopt      (argc, argv, "v:f:h");
+        c = getopt      (argc, argv, "v:f:Fch");
 #endif
                         
         if (c == -1) break;     /* no more args */
@@ -495,6 +505,14 @@ while (1)
 			if(lxname) free(lxname);
                         lxname = malloc(strlen(optarg)+1);
                         strcpy(lxname, optarg);
+			break;
+
+		case 'F':
+			pack_type = 1;
+			break;
+
+		case 'c':
+			repack_all = 1;
 			break;
 
                 case 'h':
@@ -548,6 +566,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/06/14 22:40:59  gtkwave
+ * fix for timescale vs initial scope
+ *
  * Revision 1.1  2009/06/14 22:08:29  gtkwave
  * added vcd2fst and appropriate fst manpages
  *
