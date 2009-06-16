@@ -42,23 +42,28 @@ enum fstBlockType {
     FST_BL_BLACKOUT	       = 2,
     FST_BL_GEOM                = 3,
     FST_BL_HIER                = 4,
+
     FST_BL_ZWRAPPER	       = 254,   /* indicates that whole trace is gz wrapped */
     FST_BL_SKIP		       = 255	/* used while block is being written */
 };
 
 enum fstScopeType {
+    FST_ST_VCD_MIN             = 0,
     FST_ST_VCD_MODULE          = 0,
     FST_ST_VCD_TASK            = 1,
     FST_ST_VCD_FUNCTION        = 2,
     FST_ST_VCD_BEGIN           = 3,
     FST_ST_VCD_FORK            = 4,
+    FST_ST_VCD_MAX             = 4,
+
     FST_ST_MAX                 = 4,
 
     FST_ST_VCD_SCOPE           = 254,
-    FST_ST_VCD_UPSCOPE         = 255,
+    FST_ST_VCD_UPSCOPE         = 255
 };
 
 enum fstVarType {
+    FST_VT_VCD_MIN             = 0,	/* start of VCD datatypes */
     FST_VT_VCD_EVENT           = 0,
     FST_VT_VCD_INTEGER         = 1,
     FST_VT_VCD_PARAMETER       = 2,
@@ -77,8 +82,10 @@ enum fstVarType {
     FST_VT_VCD_WAND            = 15,
     FST_VT_VCD_WIRE            = 16,
     FST_VT_VCD_WOR             = 17,
+    FST_VT_VCD_MAX             = 17,	/* end of VCD datatypes */
 
-    FST_VT_VCD_MAX             = 17,
+    FST_VT_GEN_STRING	       = 254,	/* generic string type   (max len is defined as the len in fstWriterCreateVar() */
+    FST_VT_GEN_MEMBLOCK	       = 255	/* generic memblock type (max len is defined as the len in fstWriterCreateVar() */
 };
 
 enum fstVarDir {
@@ -87,7 +94,7 @@ enum fstVarDir {
     FST_VD_OUTPUT      = 2,
     FST_VD_INOUT       = 3,
 
-    FST_VD_MAX         = 3,
+    FST_VD_MAX         = 3
 };
 
 enum fstHierType {
@@ -95,7 +102,7 @@ enum fstHierType {
     FST_HT_UPSCOPE     = 1,
     FST_HT_VAR         = 2,
 
-    FST_HT_MAX         = 2,
+    FST_HT_MAX         = 2
 };
 
 struct fstHier
