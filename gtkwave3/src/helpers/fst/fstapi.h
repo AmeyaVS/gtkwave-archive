@@ -194,6 +194,8 @@ void fstReaderClrFacProcessMask(void *ctx, fstHandle facidx);
 void fstReaderSetFacProcessMaskAll(void *ctx);
 void fstReaderClrFacProcessMaskAll(void *ctx);
 
+void fstReaderIterBlocksSetNativeDoublesOnCallback(void *ctx, int enable);
+
 int fstReaderIterBlocks(void *ctx,
         void (*value_change_callback)(void *user_callback_data_pointer, uint64_t time, fstHandle facidx, const unsigned char *value),
         void *user_callback_data_pointer, FILE *vcdhandle);

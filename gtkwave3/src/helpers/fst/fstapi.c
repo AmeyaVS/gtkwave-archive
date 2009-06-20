@@ -1580,6 +1580,7 @@ unsigned char *temp_signal_value_buf;	/* malloced for len in longest_signal_valu
 
 signed char timescale;
 unsigned double_endian_match : 1;
+unsigned native_doubles_for_cb : 1;
 unsigned contains_geom_section : 1;
 unsigned contains_hier_section : 1;	/* valid for hier_pos */
 unsigned limit_range_valid : 1;		/* valid for limit_range_start, limit_range_end */
@@ -1959,6 +1960,15 @@ if(xc)
 	}
 }
 
+
+void fstReaderIterBlocksSetNativeDoublesOnCallback(void *ctx, int enable)
+{
+struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
+if(xc)
+	{
+	xc->native_doubles_for_cb = (enable != 0);
+	}
+}
 
 /*
  * hierarchy processing
@@ -2976,32 +2986,68 @@ for(;;)
 							else
 							{
 							double d;
-							unsigned char *clone_d = (unsigned char *)&d;
+							unsigned char *clone_d;
 							unsigned char *srcdata = mu+sig_offs;
 		
-							if(xc->double_endian_match)
-								{
-								memcpy(clone_d, srcdata, 8);
-								}
-								else
-								{
-								int j;
-		
-								for(j=0;j<8;j++)
-									{
-									clone_d[j] = srcdata[7-j];
-									}
-								}
-						
 							if(value_change_callback)
 								{
-								sprintf((char *)xc->temp_signal_value_buf, "%.16g", d);
-								value_change_callback(user_callback_data_pointer, beg_tim, idx+1, xc->temp_signal_value_buf);
+								if(xc->native_doubles_for_cb)
+									{
+									if(xc->double_endian_match)
+										{
+										clone_d = srcdata;
+										}
+										else
+										{
+										int j;
+		
+										clone_d = (unsigned char *)&d;
+										for(j=0;j<8;j++)
+											{
+											clone_d[j] = srcdata[7-j];
+											}
+										}
+									value_change_callback(user_callback_data_pointer, beg_tim, idx+1, clone_d);
+									}
+									else
+									{
+									clone_d = (unsigned char *)&d;
+									if(xc->double_endian_match)
+										{
+										memcpy(clone_d, srcdata, 8);
+										}
+										else
+										{
+										int j;
+		
+										for(j=0;j<8;j++)
+											{
+											clone_d[j] = srcdata[7-j];
+											}
+										}
+									sprintf((char *)xc->temp_signal_value_buf, "%.16g", d);
+									value_change_callback(user_callback_data_pointer, beg_tim, idx+1, xc->temp_signal_value_buf);
+									}
 								}
 								else
 								{
 								if(fv)
 									{
+									clone_d = (unsigned char *)&d;
+									if(xc->double_endian_match)
+										{
+										memcpy(clone_d, srcdata, 8);
+										}
+										else
+										{
+										int j;
+		
+										for(j=0;j<8;j++)
+											{
+											clone_d[j] = srcdata[7-j];
+											}
+										}
+						
 									fprintf(fv, "r%.16g %s\n", d, fstVcdID(idx+1));
 									}
 								}
@@ -3323,29 +3369,65 @@ for(;;)
 						srcdata = vdata;
 						}
 
-					if(xc->double_endian_match)
-						{
-						memcpy(clone_d, srcdata, 8);
-						}
-						else
-						{
-						int j;
-
-						for(j=0;j<8;j++)
-							{
-							clone_d[j] = srcdata[7-j];
-							}
-						}
-
 					if(value_change_callback)
 						{
-						sprintf((char *)xc->temp_signal_value_buf, "%.16g", d);
-						value_change_callback(user_callback_data_pointer, time_table[i], idx+1, xc->temp_signal_value_buf);
+						if(xc->native_doubles_for_cb)
+							{
+							if(xc->double_endian_match)
+								{
+								clone_d = srcdata;
+								}
+								else
+								{
+								int j;
+		
+								clone_d = (unsigned char *)&d;
+								for(j=0;j<8;j++)
+									{
+									clone_d[j] = srcdata[7-j];
+									}
+								}
+							value_change_callback(user_callback_data_pointer, time_table[i], idx+1, clone_d);
+							}
+							else
+							{
+							clone_d = (unsigned char *)&d;
+							if(xc->double_endian_match)
+								{
+								memcpy(clone_d, srcdata, 8);
+								}
+								else
+								{
+								int j;
+		
+								for(j=0;j<8;j++)
+									{
+									clone_d[j] = srcdata[7-j];
+									}
+								}
+							sprintf((char *)xc->temp_signal_value_buf, "%.16g", d);
+							value_change_callback(user_callback_data_pointer, time_table[i], idx+1, xc->temp_signal_value_buf);
+							}
 						}
 						else
-						{					
+						{
 						if(fv)
 							{
+							clone_d = (unsigned char *)&d;
+							if(xc->double_endian_match)
+								{
+								memcpy(clone_d, srcdata, 8);
+								}
+								else
+								{
+								int j;
+		
+								for(j=0;j<8;j++)
+									{
+									clone_d[j] = srcdata[7-j];
+									}
+								}
+						
 							fprintf(fv, "r%.16g", d);
 							}
 						}

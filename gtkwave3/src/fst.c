@@ -676,6 +676,8 @@ if(skip_start || skip_end)
 	GLOBALS->max_time = b_end;
 	}
 
+fstReaderIterBlocksSetNativeDoublesOnCallback(GLOBALS->fst_fst_c_1, 1); /* to avoid bin -> ascii -> bin double swap */
+
 return(GLOBALS->max_time);
 }
 
@@ -720,9 +722,17 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 	}
 else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	{
+	/* if(fstReaderIterBlocksSetNativeDoublesOnCallback is disabled...)
+
 	double *d = malloc_2(sizeof(double));
 	sscanf(value, "%lg", d);
 	htemp->v.h_vector = (char *)d;
+
+	otherwise...
+	*/
+
+	htemp->v.h_vector = malloc_2(sizeof(double));
+	memcpy(htemp->v.h_vector, value, sizeof(double));
 	htemp->flags = HIST_REAL;
 	}
 else	/* string */
@@ -1031,6 +1041,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/06/08 03:51:46  gtkwave
+ * added reverse mappings to facidx for interleaved normal + alias signal fix
+ *
  * Revision 1.2  2009/06/07 19:39:41  gtkwave
  * move to one pass hier processing algorithm, add blackout region support
  *
