@@ -82,7 +82,8 @@ enum fstVarType {
     FST_VT_VCD_WAND            = 15,
     FST_VT_VCD_WIRE            = 16,
     FST_VT_VCD_WOR             = 17,
-    FST_VT_VCD_MAX             = 17,	/* end of VCD datatypes */
+    FST_VT_VCD_ARRAY           = 18,	/* used to define the rownum (index) port on the array */
+    FST_VT_VCD_MAX             = 18,	/* end of VCD datatypes */
 
     FST_VT_GEN_STRING	       = 254,	/* generic string type   (max len is defined as the len in fstWriterCreateVar() */
     FST_VT_GEN_MEMBLOCK	       = 255	/* generic memblock type (max len is defined as the len in fstWriterCreateVar() */
