@@ -1551,7 +1551,7 @@ static const char *vartypes[] = {
 	"event", "integer", "parameter", "real", "real_parameter",
 	"reg", "supply0", "supply1", "time", "tri",
 	"triand", "trior", "trireg", "tri0", "tri1", 
-	"wand", "wire", "wor"
+	"wand", "wire", "wor", "array"
 	};
 
 static const char *modtypes[] = {
