@@ -611,6 +611,16 @@ if(xc)
 	xc->skip_writing_section_hdr = 1;
 	if(!xc->size_limit_locked)
 		{
+		if(xc->is_initial_time) /* simulation time never advanced so mock up the changes as time zero ones */
+			{
+			fstHandle dupe_idx;
+
+			fstWriterEmitTimeChange(xc, 0); /* emit some time change just to have one */
+			for(dupe_idx = 0; dupe_idx < xc->maxhandle; dupe_idx++) /* now clone the values */
+				{
+				fstWriterEmitValueChange(xc, dupe_idx+1, xc->curval_mem + xc->valpos_mem[4*dupe_idx]);
+				}
+			}
 		fstWriterFlushContext(xc);
 		}
 	fstDestroyMmaps(xc);
