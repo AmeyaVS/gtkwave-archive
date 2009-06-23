@@ -32,6 +32,30 @@
 
 #define FST_RDLOAD "FSTLOAD | "
 
+/******************************************************************/
+                
+/*
+ * doubles going into histent structs are NEVER freed so this is OK.. 
+ * (we are allocating as many entries that fit in 4k minus the size of the two
+ * bookkeeping void* pointers found in the malloc_2/free_2 routines in
+ * debug.c)
+ */
+#define FST_DOUBLE_GRANULARITY ( ( (4*1024)-(2*sizeof(void *)) ) / sizeof(double) )
+                 
+static void *double_slab_calloc(void)
+{
+if(GLOBALS->double_curr_fst==GLOBALS->double_fini_fst)
+        {
+        GLOBALS->double_curr_fst=(double *)calloc_2(FST_DOUBLE_GRANULARITY, sizeof(double));
+        GLOBALS->double_fini_fst=GLOBALS->double_curr_fst+FST_DOUBLE_GRANULARITY;
+        }
+
+return((void *)(GLOBALS->double_curr_fst++));
+}  
+  
+/******************************************************************/
+
+
 static struct fstHier *extractNextVar(void *xc, int *msb, int *lsb, char **nam)
 {
 struct fstHier *h;
@@ -724,14 +748,14 @@ else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	{
 	/* if(fstReaderIterBlocksSetNativeDoublesOnCallback is disabled...)
 
-	double *d = malloc_2(sizeof(double));
+	double *d = double_slab_calloc();
 	sscanf(value, "%lg", d);
 	htemp->v.h_vector = (char *)d;
 
 	otherwise...
 	*/
 
-	htemp->v.h_vector = malloc_2(sizeof(double));
+	htemp->v.h_vector = double_slab_calloc();
 	memcpy(htemp->v.h_vector, value, sizeof(double));
 	htemp->flags = HIST_REAL;
 	}
@@ -1041,6 +1065,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/06/20 19:36:56  gtkwave
+ * floating-point read optimizations in read iter blocks
+ *
  * Revision 1.3  2009/06/08 03:51:46  gtkwave
  * added reverse mappings to facidx for interleaved normal + alias signal fix
  *
