@@ -100,16 +100,24 @@ while((h = fstReaderIterateHier(xc)))
 				}
 			else
 				{
+				int sgna = 1, sgnb = 1;
 				pnt = lb_last + 1;
 				acc = 0;
-				while(isdigit(*pnt))
+				while(isdigit(*pnt) || (*pnt == '-'))
 					{
-					acc *= 10;
-					acc += (*pnt - '0');
+					if(*pnt != '-')
+						{
+						acc *= 10;
+						acc += (*pnt - '0');
+						}
+						else
+						{
+						sgna = -1;
+						}
 					pnt++;
 					}
 
-				*msb = acc;
+				*msb = acc * sgna;
 				if(!col_last)
 					{
 					*lsb = acc;
@@ -118,13 +126,20 @@ while((h = fstReaderIterateHier(xc)))
 					{
 					pnt = col_last + 1;
 					acc = 0;
-					while(isdigit(*pnt))	
+					while(isdigit(*pnt) || (*pnt == '-'))	
 						{
-						acc *= 10;
-						acc += (*pnt - '0');
+						if(*pnt != '-')
+							{
+							acc *= 10;
+							acc += (*pnt - '0');
+							}
+							else
+							{
+							sgnb = -1;
+							}
 						pnt++;
 						}
-					*lsb = acc;
+					*lsb = acc * sgnb;
 					}
 				}			
 
@@ -1065,6 +1080,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/06/23 22:18:09  gtkwave
+ * added slab allocator for doubles in FST traces
+ *
  * Revision 1.4  2009/06/20 19:36:56  gtkwave
  * floating-point read optimizations in read iter blocks
  *
