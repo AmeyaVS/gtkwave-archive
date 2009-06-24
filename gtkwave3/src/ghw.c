@@ -152,7 +152,7 @@ if(s[len] == ']')
 	{
 	for(i=len-1;i>0;i--)
 		{
-		if((s[i]>='0') && (s[i]<='9')) continue;
+		if(((s[i]>='0') && (s[i]<='9')) || (s[i] == '-')) continue;
 		if(s[i] != '[') break;
 		return(i);	/* position right before left bracket for strncmp */
 		}
@@ -1064,6 +1064,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.4  2008/12/25 03:21:57  gtkwave
  * -Wshadow warning fixes
  *

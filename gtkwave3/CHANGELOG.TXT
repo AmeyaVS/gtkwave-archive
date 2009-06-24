@@ -654,3 +654,5 @@
 		Added option to FST to allow monolithic post-compress for
 		much smaller file sizes.
 		Documentation updates.
+		Added capability in GHW reader for negative indices on
+		bitstrands.
