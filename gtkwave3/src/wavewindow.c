@@ -1750,15 +1750,22 @@ if(t->name)
 				{
 				if(!t->n.nd->ext)
 					{
+					unsigned char h_val = h_ptr->v.h_val;
+
 					str=(char *)calloc_2(1,3*sizeof(char));
 					str[0]='=';
+					if(t->n.nd->vartype == ND_VCD_EVENT)
+						{
+						h_val = (h_ptr->time >= GLOBALS->tims.first) && ((GLOBALS->tims.marker-GLOBALS->shift_timebase) == h_ptr->time) ? AN_1 : AN_0; /* generate impulse */
+						}
+
 					if(t->flags&TR_INVERT)
 						{
-						str[1]=AN_STR_INV[h_ptr->v.h_val];
+						str[1]=AN_STR_INV[h_val];
 						}
 						else
 						{
-						str[1]=AN_STR[h_ptr->v.h_val];
+						str[1]=AN_STR[h_val];
 						}
 					t->asciivalue=str;
 					vlen=font_engine_string_measure(GLOBALS->signalfont,str);
@@ -1924,15 +1931,21 @@ if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 				{
 				if(!t->n.nd->ext)
 					{
+					unsigned char h_val = h_ptr->v.h_val;
+					if(t->n.nd->vartype == ND_VCD_EVENT)
+						{
+						h_val = (h_ptr->time >= GLOBALS->tims.first) && ((GLOBALS->tims.marker-GLOBALS->shift_timebase) == h_ptr->time) ? AN_1 : AN_0; /* generate impulse */ 
+						}
+
 					str=(char *)calloc_2(1,3*sizeof(char));
 					str[0]='=';
 					if(t->flags&TR_INVERT)
 						{
-						str[1]=AN_STR_INV[h_ptr->v.h_val];
+						str[1]=AN_STR_INV[h_val];
 						}
 						else
 						{
-						str[1]=AN_STR[h_ptr->v.h_val];
+						str[1]=AN_STR[h_val];
 						}
 					t->asciivalue=str;
 					}
@@ -2266,7 +2279,7 @@ char hval, h2val, invert;
 GdkGC    *c;
 GdkGC    *gcx, *gcxf;
 char identifier_str[2];
-int is_event = (t->n.nd->vartype == ND_VCD_EVENT);
+int is_event = t && t->n.nd && (t->n.nd->vartype == ND_VCD_EVENT);
 
 GLOBALS->tims.start-=GLOBALS->shift_timebase;
 GLOBALS->tims.end-=GLOBALS->shift_timebase;
@@ -2346,9 +2359,12 @@ if(_x0!=_x1)
 	{
 	if(is_event)
 		{
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y0, _x0, _y1); 
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0+2, _y1+2); 
-		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0-2, _y1+2); 
+		if(h->time >= GLOBALS->tims.first)
+			{
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y0, _x0, _y1); 
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0+2, _y1+2); 
+			wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0-2, _y1+2); 
+			}
 		h=h->next;
 		continue;
 		}
@@ -3847,6 +3863,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2009/06/25 18:31:19  gtkwave
+ * added event types for VCD+FST and impulse arrows on event types
+ *
  * Revision 1.46  2009/03/24 21:31:34  gtkwave
  * changed dkgray to mdgray for "Time" background as intensity changed
  *

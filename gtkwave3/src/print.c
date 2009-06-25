@@ -687,15 +687,21 @@ ps_MaxSignalLength (void)
 		    {
 		      if (!t->n.nd->ext)
 			{
+			  unsigned char h_val = h_ptr->v.h_val;
+			
+ 			  if(t->n.nd->vartype == ND_VCD_EVENT)
+				{
+				h_val = (h_ptr->time >= GLOBALS->tims.first) && ((GLOBALS->tims.marker-GLOBALS->shift_timebase) == h_ptr->time) ? AN_1 : AN_0; /* generate impulse */
+				}
 			  str = (char *) calloc_2 (1, 3 * sizeof (char));
 			  str[0] = '=';
 			  if (t->flags & TR_INVERT)
 			    {
-			      str[1] = AN_STR_INV[h_ptr->v.h_val];
+			      str[1] = AN_STR_INV[h_val];
 			    }
 			  else
 			    {
-			      str[1] = AN_STR[h_ptr->v.h_val];
+			      str[1] = AN_STR[h_val];
 			    }
 			  t->asciivalue = str;
 			  vlen =
@@ -1131,7 +1137,7 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
   hptr h2, h3;
   char hval, h2val;
   char identifier_str[2];
-  int is_event = (t->n.nd->vartype == ND_VCD_EVENT);
+  int is_event = t && t->n.nd && (t->n.nd->vartype == ND_VCD_EVENT);
 
   GLOBALS->tims.start -= GLOBALS->shift_timebase;
   GLOBALS->tims.end -= GLOBALS->shift_timebase;
@@ -1209,9 +1215,12 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	  {
 	    if(is_event)
                 {
-                pr_draw_line(prc, _x0, _y0, _x0, _y1);
-                pr_draw_line(prc, _x0, _y1, _x0+2, _y1+2);
-                pr_draw_line(prc, _x0, _y1, _x0-2, _y1+2);
+		if(h->time >= GLOBALS->tims.first)
+		  {
+                  pr_draw_line(prc, _x0, _y0, _x0, _y1);
+                  pr_draw_line(prc, _x0, _y1, _x0+2, _y1+2);
+                  pr_draw_line(prc, _x0, _y1, _x0-2, _y1+2);
+		  }
                 h=h->next;
                 continue;
                 }
@@ -2880,6 +2889,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2009/06/25 18:31:19  gtkwave
+ * added event types for VCD+FST and impulse arrows on event types
+ *
  * Revision 1.19  2008/12/31 22:20:12  gtkwave
  * adding more tcl commands
  *

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2006-2008.
+ * Copyright (c) Tony Bybell 2006-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -137,14 +137,20 @@ if(tname)
 				{
 				if(!t->n.nd->ext)
 					{
+					unsigned char h_val = h_ptr->v.h_val;
+					if(t->n.nd->vartype == ND_VCD_EVENT)
+						{
+						h_val = (h_ptr->time >= GLOBALS->tims.first) && ((GLOBALS->tims.marker-GLOBALS->shift_timebase) == h_ptr->time) ? AN_1 : AN_0; /* generate impulse */
+						}
+
 					str=(char *)calloc_2(1,2*sizeof(char));
 					if(t->flags&TR_INVERT)
 						{
-						str[0]=AN_STR_INV[h_ptr->v.h_val];
+						str[0]=AN_STR_INV[h_val];
 						}
 						else
 						{
-						str[0]=AN_STR[h_ptr->v.h_val];
+						str[0]=AN_STR[h_val];
 						}
 					*asciivalue=str;
 					vlen=font_engine_string_measure(GLOBALS->wavefont,str);
@@ -415,6 +421,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2008/12/09 00:36:42  gtkwave
+ * added mouseover support for signal window
+ *
  * Revision 1.0  2008/12/08 02:08:13  gtkwave
  * initial release
  *
