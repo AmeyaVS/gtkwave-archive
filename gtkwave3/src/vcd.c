@@ -734,25 +734,9 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 				}
 				else
 				{
-				if(v->vartype!=V_EVENT)
-					{
-					v->value[0]=GLOBALS->yytext_vcd_c_1[0];
-					DEBUG(fprintf(stderr,"%s = '%c'\n",v->name,v->value[0]));
-					add_histent(GLOBALS->current_time_vcd_c_1,v->narray[0],v->value[0],1, NULL);
-					}
-					else
-					{
-					v->value[0]=(GLOBALS->dumping_off_vcd_c_1)?'x':'1'; /* only '1' is relevant */
-					if(GLOBALS->current_time_vcd_c_1!=(v->ev->last_event_time+1))
-						{
-						/* dump degating event */
-						DEBUG(fprintf(stderr,"#"TTFormat" %s = '%c' (event)\n",v->ev->last_event_time+1,v->name,'0'));
-						add_histent(v->ev->last_event_time+1,v->narray[0],'0',1, NULL);
-						}
-					DEBUG(fprintf(stderr,"%s = '%c' (event)\n",v->name,v->value[0]));
-					add_histent(GLOBALS->current_time_vcd_c_1,v->narray[0],v->value[0],1, NULL);
-					v->ev->last_event_time=GLOBALS->current_time_vcd_c_1;
-					}
+				v->value[0]=GLOBALS->yytext_vcd_c_1[0];
+				DEBUG(fprintf(stderr,"%s = '%c'\n",v->name,v->value[0]));
+				add_histent(GLOBALS->current_time_vcd_c_1,v->narray[0],v->value[0],1, NULL);
 				}
 			}
 			else
@@ -1454,6 +1438,7 @@ for(;;)
 					v->narray[0]=(struct Node *)calloc_2(1,sizeof(struct Node));
 					v->narray[0]->head.time=-1;
 					v->narray[0]->head.v.h_val=AN_X;
+					set_vcd_vartype(v, v->narray[0]);
 					}
 					else
 					{
@@ -1464,18 +1449,16 @@ for(;;)
 						v->narray[i]=(struct Node *)calloc_2(1,sizeof(struct Node));
 						v->narray[i]->head.time=-1;
 						v->narray[i]->head.v.h_val=AN_X;
+						if(i == 0)
+							{
+							set_vcd_vartype(v, v->narray[0]);
+							}
+							else
+							{
+							v->narray[i]->vartype = v->narray[0]->vartype;
+							}
 						}
 					}
-				}
-
-			if(v->vartype==V_EVENT)
-				{
-				struct queuedevent *q;
-				v->ev=q=(struct queuedevent *)calloc_2(1,sizeof(struct queuedevent));
-				q->sym=v;
-				q->last_event_time=-1;		
-				q->next=GLOBALS->queuedevents_vcd_c_1;
-				GLOBALS->queuedevents_vcd_c_1=q;		
 				}
 
 			if(!GLOBALS->vcdsymroot_vcd_c_1)
@@ -1699,8 +1682,8 @@ if(!n->curr)
         if((ch=='w')||(ch=='W')) heval=AN_W; else
         if((ch=='l')||(ch=='L')) heval=AN_L; else
         /* if(ch=='-') */        heval=AN_DASH;		/* default */
-	
-	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_c_1)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
+
+	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_c_1)||(n->vartype==ND_VCD_EVENT)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
         	{
 		if(n->curr->time==tim)
 			{
@@ -1902,26 +1885,42 @@ switch(ch)
 }
 
 
+void set_vcd_vartype(struct vcdsymbol *v, nptr n)
+{
+unsigned char nvt;
+
+switch(v->vartype)
+	{
+        case V_EVENT:           nvt = ND_VCD_EVENT; break;
+        case V_PARAMETER:       nvt = ND_VCD_PARAMETER; break;
+        case V_INTEGER:         nvt = ND_VCD_INTEGER; break;
+        case V_REAL:            nvt = ND_VCD_REAL; break;
+        case V_REG:             nvt = ND_VCD_REG; break;
+        case V_SUPPLY0:         nvt = ND_VCD_SUPPLY0; break;
+        case V_SUPPLY1:         nvt = ND_VCD_SUPPLY1; break;
+        case V_TIME:            nvt = ND_VCD_TIME; break;
+        case V_TRI:             nvt = ND_VCD_TRI; break;
+        case V_TRIAND:          nvt = ND_VCD_TRIAND; break;
+        case V_TRIOR:           nvt = ND_VCD_TRIOR; break;
+        case V_TRIREG:          nvt = ND_VCD_TRIREG; break;
+        case V_TRI0:            nvt = ND_VCD_TRI0; break;
+        case V_TRI1:            nvt = ND_VCD_TRI1; break;
+        case V_WAND:            nvt = ND_VCD_WAND; break;
+        case V_WIRE:            nvt = ND_VCD_WIRE; break;
+        case V_WOR:             nvt = ND_VCD_WOR; break;
+        case V_PORT:            nvt = ND_VCD_PORT; break;
+        default:                nvt = ND_UNSPECIFIED_DEFAULT; break;
+	}
+n->vartype = nvt;
+}
+
+
 static void add_tail_histents(void)
 {
 int j;
 struct vcdsymbol *v;
 
-/* dump out any pending events 1st */
-struct queuedevent *q;
-q=GLOBALS->queuedevents_vcd_c_1;
-while(q)
-	{	
-	v=q->sym;
-	if(GLOBALS->current_time_vcd_c_1!=(v->ev->last_event_time+1))
-		{
-		/* dump degating event */
-		DEBUG(fprintf(stderr,"#"TTFormat" %s = '%c' (event)\n",v->ev->last_event_time+1,v->name,'0'));
-		add_histent(v->ev->last_event_time+1,v->narray[0],'0',1, NULL);	
-		}
-	q=q->next;
-	}
-
+/* dump out any pending events 1st (removed) */
 /* then do 'x' trailers */
 
 v=GLOBALS->vcdsymroot_vcd_c_1;
@@ -2317,7 +2316,6 @@ while(v)
 	if(v->name) free_2(v->name);
 	if(v->id) free_2(v->id);
 	if(v->value) free_2(v->value);
-	if(v->ev) free_2(v->ev);
 	if(v->narray) free_2(v->narray);
 	vt=v;
 	v=v->next;
@@ -2336,7 +2334,6 @@ while(s)
 	}
 
 GLOBALS->slistroot=GLOBALS->slistcurr=NULL; GLOBALS->slisthier_len=0;
-GLOBALS->queuedevents_vcd_c_1=NULL; /* deallocated in the symbol stuff */
 
 if(GLOBALS->vcd_is_compressed_vcd_c_1)
 	{
@@ -2503,6 +2500,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/04/30 01:30:53  gtkwave
+ * VCD parser fix for double subscripted nets
+ *
  * Revision 1.13  2009/03/25 09:20:26  gtkwave
  * fixing reloader crashes in vcd_build_symbols if times is zero
  *

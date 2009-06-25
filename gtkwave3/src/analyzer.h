@@ -148,7 +148,45 @@ struct Node
 
     int      numhist;	/* number of elements in the harray */
     unsigned int array_height, this_row;
+    unsigned char vartype; /* see nodeVarType, this is an internal value */
+    unsigned char vardir; /* see nodeVarDir, this is an internal value */
   };
+
+enum nodeVarType {
+    ND_UNSPECIFIED_DEFAULT = 0,
+
+    ND_VCD_EVENT           = 1,
+    ND_VCD_INTEGER         = 2,
+    ND_VCD_PARAMETER       = 3,
+    ND_VCD_REAL            = 4,
+    ND_VCD_REAL_PARAMETER  = 5,
+    ND_VCD_REG             = 6,
+    ND_VCD_SUPPLY0         = 7,
+    ND_VCD_SUPPLY1         = 8,
+    ND_VCD_TIME            = 9,
+    ND_VCD_TRI             = 10,  
+    ND_VCD_TRIAND          = 11,
+    ND_VCD_TRIOR           = 12,
+    ND_VCD_TRIREG          = 13,
+    ND_VCD_TRI0            = 14,  
+    ND_VCD_TRI1            = 15,
+    ND_VCD_WAND            = 16,
+    ND_VCD_WIRE            = 17,
+    ND_VCD_WOR             = 18,
+    ND_VCD_ARRAY           = 19,    /* used to define the rownum (index) port on the array */
+
+    ND_VCD_PORT		   = 20,
+                
+    ND_GEN_STRING          = 254,   /* generic string type */
+    ND_GEN_MEMBLOCK        = 255    /* generic memblock type */
+};
+
+enum nodeVarDir {
+    ND_DIR_IMPLICIT        = 0,
+    ND_DIR_IN              = 1,
+    ND_DIR_OUT             = 2,
+    ND_DIR_INOUT           = 3,
+};
 
 typedef struct BitAttributes
   {
@@ -334,6 +372,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/12/31 22:20:12  gtkwave
+ * adding more tcl commands
+ *
  * Revision 1.9  2008/12/18 01:31:30  gtkwave
  * integrated experimental autoscroll code on signal adds
  *

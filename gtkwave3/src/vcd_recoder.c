@@ -711,6 +711,8 @@ while(v)
 	{
 	nptr n = v->narray[0];
 
+	set_vcd_vartype(v, n);
+
 	if(n->mv.mvlfac_vlist) 
 		{
 		if(vlist_prepack)
@@ -2011,7 +2013,7 @@ if(!n->curr)
         if((ch=='l')||(ch=='L')) heval=AN_L; else
         /* if(ch=='-') */        heval=AN_DASH;		/* default */
 	
-	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_recoder_c_3)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
+	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_recoder_c_3)||(n->vartype==ND_VCD_EVENT)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
         	{
 		if(n->curr->time==tim)
 			{
@@ -2459,7 +2461,6 @@ while(v)
 	{
 	if(v->name) free_2(v->name);
 	if(v->id) free_2(v->id);
-	if(v->ev) free_2(v->ev);
 	if(v->narray) free_2(v->narray);
 	vt=v;
 	v=v->next;
@@ -2869,23 +2870,7 @@ if(vlist_type == '0') /* single bit */
 			exit(255);
 			}
 
-		if(vartype != V_EVENT)
-			{
-			add_histent(*curtime_pnt,np,ascval,1, NULL);
-			}
-			else
-			{
-			if((ascval == '0') || (ascval == '1'))
-				{
-				TimeType ev = *curtime_pnt;
-				add_histent(ev,  np,'1',1, NULL);
-				add_histent(ev+1,np,'0',1, NULL);
-				}
-				else
-				{
-				add_histent(*curtime_pnt,np,ascval,1, NULL);
-				}
-			}
+		add_histent(*curtime_pnt,np,ascval,1, NULL);
 		}
 
 	add_histent(MAX_HISTENT_TIME-1, np, 'x', 0, NULL);
@@ -3141,6 +3126,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2009/04/30 01:30:53  gtkwave
+ * VCD parser fix for double subscripted nets
+ *
  * Revision 1.22  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

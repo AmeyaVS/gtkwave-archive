@@ -303,6 +303,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	char *str;	
 	struct fac *f;
 	int hier_len, name_len;
+	unsigned char nvt;
 
 	GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
 	GLOBALS->mvlfacs_fst_c_3[i].msb = msb;
@@ -479,6 +480,30 @@ for(i=0;i<GLOBALS->numfacs;i++)
         n->nname=s->name;
         n->mv.mvlfac = GLOBALS->mvlfacs_fst_c_3+i;
 	GLOBALS->mvlfacs_fst_c_3[i].working_node = n;
+	switch(h->u.var.typ)
+		{
+                case FST_VT_VCD_EVENT: 		nvt = ND_VCD_EVENT; break;
+                case FST_VT_VCD_INTEGER: 	nvt = ND_VCD_INTEGER; break;
+                case FST_VT_VCD_PARAMETER: 	nvt = ND_VCD_PARAMETER; break;
+                case FST_VT_VCD_REAL: 		nvt = ND_VCD_REAL; break;
+                case FST_VT_VCD_REAL_PARAMETER: nvt = ND_VCD_REAL_PARAMETER; break;
+                case FST_VT_VCD_REG: 		nvt = ND_VCD_REG; break;
+                case FST_VT_VCD_SUPPLY0: 	nvt = ND_VCD_SUPPLY0; break;
+                case FST_VT_VCD_SUPPLY1: 	nvt = ND_VCD_SUPPLY1; break;
+                case FST_VT_VCD_TIME: 		nvt = ND_VCD_TIME; break;
+                case FST_VT_VCD_TRI: 		nvt = ND_VCD_TRI; break;
+                case FST_VT_VCD_TRIAND: 	nvt = ND_VCD_TRIAND; break;
+                case FST_VT_VCD_TRIOR: 		nvt = ND_VCD_TRIOR; break;
+                case FST_VT_VCD_TRIREG: 	nvt = ND_VCD_TRIREG; break;
+                case FST_VT_VCD_TRI0: 		nvt = ND_VCD_TRI0; break;
+                case FST_VT_VCD_TRI1: 		nvt = ND_VCD_TRI1; break;
+                case FST_VT_VCD_WAND: 		nvt = ND_VCD_WAND; break;
+                case FST_VT_VCD_WIRE: 		nvt = ND_VCD_WIRE; break;
+                case FST_VT_VCD_WOR: 		nvt = ND_VCD_WOR; break;
+                case FST_VT_VCD_PORT: 		nvt = ND_VCD_PORT; break;
+		default: 			nvt = ND_UNSPECIFIED_DEFAULT; break;
+		}
+	n->vartype = nvt;
 
 	if((f->len>1)||(f->flags&&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 		{
@@ -1080,6 +1105,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/06/24 21:54:53  gtkwave
+ * added sign bits to bitfield parsing for vars
+ *
  * Revision 1.5  2009/06/23 22:18:09  gtkwave
  * added slab allocator for doubles in FST traces
  *

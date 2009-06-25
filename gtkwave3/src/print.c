@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2008. 
+ * Copyright (c) Tony Bybell 1999-2009. 
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -1131,12 +1131,13 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
   hptr h2, h3;
   char hval, h2val;
   char identifier_str[2];
+  int is_event = (t->n.nd->vartype == ND_VCD_EVENT);
 
   GLOBALS->tims.start -= GLOBALS->shift_timebase;
   GLOBALS->tims.end -= GLOBALS->shift_timebase;
 
   liney = ((which + 2) * GLOBALS->fontheight) - 2;
-  if (t && (t->flags & TR_INVERT))
+  if ((t && (t->flags & TR_INVERT))&&(!is_event))
     {
       _y0 = ((which + 1) * GLOBALS->fontheight) + 2;
       _y1 = liney - 2;
@@ -1206,6 +1207,15 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	  }
 	if (_x0 != _x1)
 	  {
+	    if(is_event)
+                {
+                pr_draw_line(prc, _x0, _y0, _x0, _y1);
+                pr_draw_line(prc, _x0, _y1, _x0+2, _y1+2);
+                pr_draw_line(prc, _x0, _y1, _x0-2, _y1+2);
+                h=h->next;
+                continue;
+                }
+
 	    hval = h->v.h_val;
 	    h2val = h2->v.h_val;
 
@@ -2870,6 +2880,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2008/12/31 22:20:12  gtkwave
+ * adding more tcl commands
+ *
  * Revision 1.18  2008/12/25 04:14:11  gtkwave
  * -Wshadow warning fixes
  *

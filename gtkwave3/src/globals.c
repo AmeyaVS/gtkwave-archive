@@ -932,7 +932,6 @@ NULL, /* indexed_vcd_c_1 504 */
 0, /* numsyms_vcd_c_1 505 */
 NULL, /* he_curr_vcd_c_1 506 */
 NULL, /* he_fini */
-NULL, /* queuedevents_vcd_c_1 507 */
 ~0, /* vcd_minid_vcd_c_1 508 */
 0, /* vcd_maxid_vcd_c_1 509 */
 0, /* err_vcd_c_1 510 */
@@ -971,7 +970,6 @@ NULL, /* vcdsymcurr */
 NULL, /* sorted_vcd_partial_c_2 535 */
 NULL, /* indexed_vcd_partial_c_2 536 */
 0, /* numsyms_vcd_partial_c_2 538 */
-NULL, /* queuedevents_vcd_partial_c_2 539 */
 ~0, /* vcd_minid_vcd_partial_c_2 540 */
 0, /* vcd_maxid_vcd_partial_c_2 541 */
 0, /* err_vcd_partial_c_2 542 */

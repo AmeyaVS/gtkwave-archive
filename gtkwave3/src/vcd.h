@@ -97,18 +97,9 @@ unsigned char vartype;
 int msi, lsi;
 int size;
 char *value;
-struct queuedevent *ev; /* only if vartype==V_EVENT */
 struct Node **narray;
 hptr         *tr_array;   /* points to synthesized trailers (which can move) */
 hptr         *app_array;   /* points to hptr to append to (which can move) */
-};
-
-
-struct queuedevent
-{
-struct queuedevent *next;
-struct vcdsymbol *sym;
-TimeType last_event_time;    /* make +1 == 0 if there's not an event there too */
 };
 
 
@@ -119,7 +110,7 @@ struct HistEnt *histent_calloc(void);
 void strcpy_vcdalt(char *too, char *from, char delim);
 int strcpy_delimfix(char *too, char *from);
 void vcd_sortfacs(void);
-
+void set_vcd_vartype(struct vcdsymbol *v, nptr n);
 
 void vcd_import_masked(void);
 void vcd_set_fac_process_mask(nptr np);
@@ -132,6 +123,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/03/05 16:17:56  gtkwave
+ * added fastload option
+ *
  * Revision 1.3  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *

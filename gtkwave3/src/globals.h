@@ -927,7 +927,6 @@ struct vcdsymbol **indexed_vcd_c_1; /* from vcd.c 541 */
 int numsyms_vcd_c_1; /* from vcd.c 542 */
 struct HistEnt *he_curr_vcd_c_1; /* from vcd.c 543 */
 struct HistEnt *he_fini_vcd_c_1; /* from vcd.c 544 */
-struct queuedevent *queuedevents_vcd_c_1; /* from vcd.c 545 */
 unsigned int vcd_minid_vcd_c_1; /* from vcd.c 546 */
 unsigned int vcd_maxid_vcd_c_1; /* from vcd.c 547 */
 int err_vcd_c_1; /* from vcd.c 548 */
@@ -966,7 +965,6 @@ struct vcdsymbol *vcdsymcurr_vcd_partial_c_2; /* from vcd_partial.c 578 */
 struct vcdsymbol **sorted_vcd_partial_c_2; /* from vcd_partial.c 579 */
 struct vcdsymbol **indexed_vcd_partial_c_2; /* from vcd_partial.c 580 */
 int numsyms_vcd_partial_c_2; /* from vcd_partial.c 582 */
-struct queuedevent *queuedevents_vcd_partial_c_2; /* from vcd_partial.c 583 */
 unsigned int vcd_minid_vcd_partial_c_2; /* from vcd_partial.c 584 */
 unsigned int vcd_maxid_vcd_partial_c_2; /* from vcd_partial.c 585 */
 int err_vcd_partial_c_2; /* from vcd_partial.c 586 */

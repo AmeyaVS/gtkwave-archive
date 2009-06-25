@@ -676,39 +676,14 @@ switch(GLOBALS->yytext_vcd_partial_c_2[0])
 				}
 				else
 				{
-				if(v->vartype!=V_EVENT)
-					{
-					v->value[0]=GLOBALS->yytext_vcd_partial_c_2[0];
-					DEBUG(fprintf(stderr,"%s = '%c'\n",v->name,v->value[0]));
+				v->value[0]=GLOBALS->yytext_vcd_partial_c_2[0];
+				DEBUG(fprintf(stderr,"%s = '%c'\n",v->name,v->value[0]));
 
-					v->narray[0]->curr = v->app_array[0];
-					hsuf = add_histent_p(GLOBALS->current_time_vcd_partial_c_2,v->narray[0],v->value[0],1, NULL);
-					v->app_array[0] = v->narray[0]->curr;
-					v->narray[0]->curr->next = v->tr_array[0];
-					if(v->narray[0]->harray) { free_2(v->narray[0]->harray); v->narray[0]->harray = NULL; }
-
-					}
-					else
-					{
-					v->value[0]=(GLOBALS->dumping_off_vcd_partial_c_2)?'x':'1'; /* only '1' is relevant */
-					if(GLOBALS->current_time_vcd_partial_c_2!=(v->ev->last_event_time+1))
-						{
-						/* dump degating event */
-						DEBUG(fprintf(stderr,"#"TTFormat" %s = '%c' (event)\n",v->ev->last_event_time+1,v->name,'0'));
-						v->narray[0]->curr = v->app_array[0];
-						add_histent_p(v->ev->last_event_time+1,v->narray[0],'0',1, NULL);
-						v->app_array[0] = v->narray[0]->curr;
-						v->narray[0]->curr->next = v->tr_array[0];
-						}
-					DEBUG(fprintf(stderr,"%s = '%c' (event)\n",v->name,v->value[0]));
-					v->narray[0]->curr = v->app_array[0];
-					add_histent_p(GLOBALS->current_time_vcd_partial_c_2,v->narray[0],v->value[0],1, NULL);
-					v->app_array[0] = v->narray[0]->curr;
-					v->narray[0]->curr->next = v->tr_array[0];
-					if(v->narray[0]->harray) { free_2(v->narray[0]->harray); v->narray[0]->harray = NULL; }
-
-					v->ev->last_event_time=GLOBALS->current_time_vcd_partial_c_2;
-					}
+				v->narray[0]->curr = v->app_array[0];
+				hsuf = add_histent_p(GLOBALS->current_time_vcd_partial_c_2,v->narray[0],v->value[0],1, NULL);
+				v->app_array[0] = v->narray[0]->curr;
+				v->narray[0]->curr->next = v->tr_array[0];
+				if(v->narray[0]->harray) { free_2(v->narray[0]->harray); v->narray[0]->harray = NULL; }
 				}
 			}
 			else
@@ -1465,16 +1440,6 @@ for(;;)
 					}
 				}
 
-			if(v->vartype==V_EVENT)
-				{
-				struct queuedevent *q;
-				v->ev=q=(struct queuedevent *)calloc_2(1,sizeof(struct queuedevent));
-				q->sym=v;
-				q->last_event_time=-1;		
-				q->next=GLOBALS->queuedevents_vcd_partial_c_2;
-				GLOBALS->queuedevents_vcd_partial_c_2=q;		
-				}
-
 			if(!GLOBALS->vcdsymroot_vcd_partial_c_2)
 				{
 				GLOBALS->vcdsymroot_vcd_partial_c_2=GLOBALS->vcdsymcurr_vcd_partial_c_2=v;
@@ -1640,7 +1605,7 @@ if(!(rc=n->curr))
         if((ch=='l')||(ch=='L')) heval=AN_L; else
         /* if(ch=='-') */        heval=AN_DASH;		/* default */
 	
-	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_partial_c_2)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
+	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_partial_c_2)||(n->vartype==ND_VCD_EVENT)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */ 
         	{
 		if(n->curr->time==tim)
 			{
@@ -1861,6 +1826,7 @@ while(v)
 		d=malloc_2(sizeof(double));
 		*d=1.0;
 		rc = add_histent_p(MAX_HISTENT_TIME-1, v->narray[0], 'g', 0, (char *)d);
+		set_vcd_vartype(v, v->narray[0]);
 		v->app_array[0] = rc;
 		v->tr_array[0] = v->narray[0]->curr;
 		}
@@ -1869,12 +1835,14 @@ while(v)
 	for(j=0;j<v->size;j++)
 		{
 		rc = add_histent_p(MAX_HISTENT_TIME-1, v->narray[j], 'x', 0, NULL);
+		set_vcd_vartype(v, v->narray[j]);
 		v->app_array[j] = rc;
 		v->tr_array[j] = v->narray[j]->curr;
 		}
 	else
 		{
 		rc = add_histent_p(MAX_HISTENT_TIME-1, v->narray[0], 'x', 0, (char *)calloc_2(1,sizeof(char)));
+		set_vcd_vartype(v, v->narray[0]);
 		v->app_array[0] = rc;
 		v->tr_array[0] = v->narray[0]->curr;
 		}
@@ -2459,6 +2427,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2009/04/30 01:30:53  gtkwave
+ * VCD parser fix for double subscripted nets
+ *
  * Revision 1.14  2009/04/23 04:57:38  gtkwave
  * ported shmidcat and partial vcd loader function to mingw
  *

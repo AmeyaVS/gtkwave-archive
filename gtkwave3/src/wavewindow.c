@@ -2266,12 +2266,13 @@ char hval, h2val, invert;
 GdkGC    *c;
 GdkGC    *gcx, *gcxf;
 char identifier_str[2];
+int is_event = (t->n.nd->vartype == ND_VCD_EVENT);
 
 GLOBALS->tims.start-=GLOBALS->shift_timebase;
 GLOBALS->tims.end-=GLOBALS->shift_timebase;
 
 liney=((which+2)*GLOBALS->fontheight)-2;
-if((t)&&(t->flags&TR_INVERT))
+if(((t)&&(t->flags&TR_INVERT))&&(!is_event))
 	{
 	_y0=((which+1)*GLOBALS->fontheight)+2;	
 	_y1=liney-2;
@@ -2311,6 +2312,7 @@ for(;;)
 {
 if(!h) break;
 tim=(h->time);
+
 if((tim>GLOBALS->tims.end)||(tim>GLOBALS->tims.last)) break;
 
 _x0=(tim - GLOBALS->tims.start) * GLOBALS->pxns;
@@ -2342,6 +2344,15 @@ if(_x1>GLOBALS->wavewidth)
 
 if(_x0!=_x1)
 	{
+	if(is_event)
+		{
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y0, _x0, _y1); 
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0+2, _y1+2); 
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0-2, _y1+2); 
+		h=h->next;
+		continue;
+		}
+
 	hval=h->v.h_val;
 	h2val=h2->v.h_val;
 
@@ -2451,7 +2462,7 @@ if(_x0!=_x1)
 	}
 	else
 	{
-	wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_trans_wavewindow_c_1, _x1, _y0, _x1, _y1);		
+	wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, is_event ? GLOBALS->gc_w_wavewindow_c_1 : GLOBALS->gc_trans_wavewindow_c_1, _x1, _y0, _x1, _y1);		
 	newtime=(((gdouble)(_x1+WAVE_OPT_SKIP))*GLOBALS->nspx)+GLOBALS->tims.start+GLOBALS->shift_timebase;	/* skip to next pixel */
 	h3=bsearch_node(t->n.nd,newtime);
 	if(h3->time>h->time)
@@ -3836,6 +3847,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2009/03/24 21:31:34  gtkwave
+ * changed dkgray to mdgray for "Time" background as intensity changed
+ *
  * Revision 1.45  2009/01/09 16:18:53  gtkwave
  * mingw compile fix for earlier -Wshadow patch
  *
