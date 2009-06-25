@@ -1360,7 +1360,18 @@ for(;;)
 				}
 
 			dumpv:
-                        if(v->size == 0) { v->vartype = V_REAL; } /* MTI fix */
+                        if(v->size == 0)
+                                {
+                                if(v->vartype != V_EVENT)
+                                        {
+                                        v->vartype = V_REAL;
+                                        }
+                                        else
+                                        {
+                                        v->size = 1;
+                                        }
+
+                                } /* MTI fix */
 
 			if((v->vartype==V_REAL)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
 				{
@@ -2427,6 +2438,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/06/25 18:31:19  gtkwave
+ * added event types for VCD+FST and impulse arrows on event types
+ *
  * Revision 1.15  2009/04/30 01:30:53  gtkwave
  * VCD parser fix for double subscripted nets
  *
