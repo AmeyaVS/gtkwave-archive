@@ -1354,6 +1354,12 @@ pr_draw_hptr_trace (pr_context * prc, Trptr t, hptr h, int which, int dodraw,
 	else
 	  {
 	    pr_draw_line (prc, _x1, _y0, _x1, _y1);
+	    if(is_event)
+		{
+                  pr_draw_line(prc, _x0, _y1, _x0+2, _y1+2);
+                  pr_draw_line(prc, _x0, _y1, _x0-2, _y1+2);
+		}
+
 	    newtime = (((gdouble) (_x1 + WAVE_OPT_SKIP)) * GLOBALS->nspx) + GLOBALS->tims.start + GLOBALS->shift_timebase;	/* skip to next pixel */
 	    h3 = bsearch_node (t->n.nd, newtime);
 	    if (h3->time > h->time)
@@ -2889,6 +2895,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2009/06/25 22:12:30  gtkwave
+ * convert event impulses to strict 1/0 activity values regardless of val
+ *
  * Revision 1.20  2009/06/25 18:31:19  gtkwave
  * added event types for VCD+FST and impulse arrows on event types
  *

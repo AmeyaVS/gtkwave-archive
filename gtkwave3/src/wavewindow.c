@@ -2478,7 +2478,16 @@ if(_x0!=_x1)
 	}
 	else
 	{
-	wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, is_event ? GLOBALS->gc_w_wavewindow_c_1 : GLOBALS->gc_trans_wavewindow_c_1, _x1, _y0, _x1, _y1);		
+	if(!is_event)
+		{
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_trans_wavewindow_c_1, _x1, _y0, _x1, _y1);		
+		}
+		else
+		{
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x1, _y0, _x1, _y1);		
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0+2, _y1+2); 
+		wave_gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_w_wavewindow_c_1, _x0, _y1, _x0-2, _y1+2); 
+		}
 	newtime=(((gdouble)(_x1+WAVE_OPT_SKIP))*GLOBALS->nspx)+GLOBALS->tims.start+GLOBALS->shift_timebase;	/* skip to next pixel */
 	h3=bsearch_node(t->n.nd,newtime);
 	if(h3->time>h->time)
@@ -3863,6 +3872,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2009/06/25 22:12:30  gtkwave
+ * convert event impulses to strict 1/0 activity values regardless of val
+ *
  * Revision 1.47  2009/06/25 18:31:19  gtkwave
  * added event types for VCD+FST and impulse arrows on event types
  *
