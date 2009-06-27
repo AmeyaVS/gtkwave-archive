@@ -23,6 +23,29 @@
 #include "hierpack.h"
 #include "tcl_helper.h"
 
+static const char *vartype_strings[] = {
+    "", 
+    
+    "event",
+    "int",
+    "parm",
+    "real",
+    "real_parm",
+    "reg",
+    "supply0",
+    "supply1",
+    "time",
+    "tri",
+    "triand",
+    "trior",
+    "trireg",
+    "tri0",
+    "tri1",
+    "wand",
+    "wire",
+    "wor"
+};
+
 
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
 
@@ -40,7 +63,7 @@ enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE 
 /* The signal area is based on a tree view which requires a store model.
    This store model contains the list of signals to be displayed.
 */
-enum { NAME_COLUMN, TREE_COLUMN, N_COLUMNS };
+enum { NAME_COLUMN, TREE_COLUMN, TYPE_COLUMN, N_COLUMNS };
 
 /* list of autocoalesced (synthesized) filter names that need to be freed at some point) */
 
@@ -89,8 +112,15 @@ fill_sig_store (void)
 	{
 	int i = t->which;
 	char *s, *tmp2;
+	int vartype;
 
 	if(i == -1) continue;
+
+	vartype = GLOBALS->facs[i]->n->vartype;
+	if((vartype < 0) || (vartype > ND_VCD_WOR))
+		{
+		vartype = 0;
+		}
 
         if(!GLOBALS->facs[i]->vec_root)
 		{
@@ -127,6 +157,7 @@ fill_sig_store (void)
 			gtk_list_store_set (GLOBALS->sig_store_treesearch_gtk2_c_1, &iter,
 				    NAME_COLUMN, t->name,
 				    TREE_COLUMN, t,
+				    TYPE_COLUMN, vartype_strings[vartype],
 				    -1);
 			}
 			else
@@ -139,6 +170,7 @@ fill_sig_store (void)
 			gtk_list_store_set (GLOBALS->sig_store_treesearch_gtk2_c_1, &iter,
 				    NAME_COLUMN, s,
 				    TREE_COLUMN, t,
+				    TYPE_COLUMN, vartype_strings[vartype],
 				    -1);
 			}
       		}
@@ -1148,7 +1180,7 @@ do_tooltips:
 
 
     /* Signal names.  */
-    GLOBALS->sig_store_treesearch_gtk2_c_1 = gtk_list_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_POINTER);
+    GLOBALS->sig_store_treesearch_gtk2_c_1 = gtk_list_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING);
     GLOBALS->sig_root_treesearch_gtk2_c_1 = GLOBALS->treeroot;
     fill_sig_store ();
 
@@ -1163,6 +1195,23 @@ do_tooltips:
 	GtkTreeViewColumn *column;
 
 	renderer = gtk_cell_renderer_text_new ();
+
+	switch(GLOBALS->loaded_file_type)
+		{
+		case FST_FILE:
+		case VCD_FILE:
+		case VCD_RECODER_FILE:
+		case DUMPLESS_FILE:
+					column = gtk_tree_view_column_new_with_attributes ("Type",
+							   renderer,
+							   "text", TYPE_COLUMN,
+							   NULL);
+					gtk_tree_view_append_column (GTK_TREE_VIEW (sig_view), column);
+					break;
+		default:
+			 		break;
+		}
+
 	column = gtk_tree_view_column_new_with_attributes ("Signals",
 							   renderer,
 							   "text", NAME_COLUMN,
@@ -1383,7 +1432,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
 
 
     /* Signal names.  */
-    GLOBALS->sig_store_treesearch_gtk2_c_1 = gtk_list_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_POINTER);
+    GLOBALS->sig_store_treesearch_gtk2_c_1 = gtk_list_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING);
     GLOBALS->sig_root_treesearch_gtk2_c_1 = GLOBALS->treeroot;
     fill_sig_store ();
 
@@ -1398,12 +1447,28 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
 	GtkTreeViewColumn *column;
 
 	renderer = gtk_cell_renderer_text_new ();
+
+	switch(GLOBALS->loaded_file_type)
+		{
+		case FST_FILE:
+		case VCD_FILE:
+		case VCD_RECODER_FILE:
+		case DUMPLESS_FILE:
+					column = gtk_tree_view_column_new_with_attributes ("Type",
+							   renderer,
+							   "text", TYPE_COLUMN,
+							   NULL);
+					gtk_tree_view_append_column (GTK_TREE_VIEW (sig_view), column);
+					break;
+		default:
+					break;
+		}
+
 	column = gtk_tree_view_column_new_with_attributes ("Signals",
 							   renderer,
 							   "text", NAME_COLUMN,
 							   NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (sig_view), column);
-
 
 	/* Setup the selection handler */
 	GLOBALS->sig_selection_treesearch_gtk2_c_1 = gtk_tree_view_get_selection (GTK_TREE_VIEW (sig_view));
@@ -2027,6 +2092,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2009/01/21 02:24:15  gtkwave
+ * gtk1 compile fixes, ensure ctree_main is available for force_open_tree_node
+ *
  * Revision 1.34  2008/12/25 04:07:29  gtkwave
  * -Wshadow warning fixes
  *

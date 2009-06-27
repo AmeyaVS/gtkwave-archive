@@ -659,3 +659,4 @@
 		Added variable type support to VCD + impulse arrows for
 		depicting events on VCD (other formats will migrate in the
 		future).
+		Added vartype info (if available in trace).
