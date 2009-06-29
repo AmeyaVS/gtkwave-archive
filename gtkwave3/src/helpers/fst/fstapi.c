@@ -1561,6 +1561,7 @@ static const char *modtypes[] = {
 struct fstCurrHier
 {
 struct fstCurrHier *prev;
+void *user_info;
 int len;
 };
 
@@ -1674,6 +1675,20 @@ if(xc)
 }
 
 
+void *fstReaderGetCurrentScopeUserInfo(void *ctx)
+{
+struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
+if(xc)
+	{
+	return(xc->curr_hier ? xc->curr_hier->user_info : NULL);
+	}
+	else
+	{
+	return(NULL);
+	}
+}
+
+
 const char *fstReaderPopScope(void *ctx)
 {
 struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
@@ -1709,7 +1724,7 @@ if(xc)
 }
 
 
-const char *fstReaderPushScope(void *ctx, const char *nam)
+const char *fstReaderPushScope(void *ctx, const char *nam, void *user_info)
 {
 struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
 if(xc)
@@ -1735,6 +1750,7 @@ if(xc)
 
 	ch->len = len;
 	ch->prev = xc->curr_hier;
+	ch->user_info = user_info;
 	xc->curr_hier = ch;
 	return(xc->curr_flat_hier_nam);
 	}

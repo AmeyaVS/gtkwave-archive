@@ -69,7 +69,7 @@ while((h = fstReaderIterateHier(xc)))
         switch(h->htyp)
                 {
                 case FST_HT_SCOPE:
-                        GLOBALS->fst_scope_name = fstReaderPushScope(xc, h->u.scope.name);
+                        GLOBALS->fst_scope_name = fstReaderPushScope(xc, h->u.scope.name, NULL);
                         break;
                 case FST_HT_UPSCOPE:
                         GLOBALS->fst_scope_name = fstReaderPopScope(xc);
@@ -1106,6 +1106,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/06/27 23:10:32  gtkwave
+ * added display of type info for variables in tree view
+ *
  * Revision 1.7  2009/06/25 18:31:19  gtkwave
  * added event types for VCD+FST and impulse arrows on event types
  *

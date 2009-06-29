@@ -1909,7 +1909,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 				        switch(h->htyp)
 				                {
 				                case FST_HT_SCOPE:
-				                        scp_nam = fstReaderPushScope(fst, h->u.scope.name);
+				                        scp_nam = fstReaderPushScope(fst, h->u.scope.name, NULL);
 							new_scope_encountered = 1;
 				                        break;
 				                case FST_HT_UPSCOPE:
@@ -2677,6 +2677,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2009/06/14 15:44:29  gtkwave
+ * fix fst alias handling, reduce number of hier searches for fst
+ *
  * Revision 1.28  2009/06/14 01:11:11  gtkwave
  * previous match optimization fix
  *

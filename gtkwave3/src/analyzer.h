@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -151,6 +151,31 @@ struct Node
     unsigned char vartype; /* see nodeVarType, this is an internal value */
     unsigned char vardir; /* see nodeVarDir, this is an internal value */
   };
+
+
+#define WAVE_NODEVARTYPE_STR \
+static const char *vartype_strings[] = { \
+    "", \
+    "event", \
+    "int", \
+    "parm", \
+    "real", \
+    "real_parm", \
+    "reg", \
+    "supply0", \
+    "supply1", \
+    "time", \
+    "tri", \
+    "triand", \
+    "trior", \
+    "trireg", \
+    "tri0", \
+    "tri1", \
+    "wand", \
+    "wire", \
+    "wor" \
+};
+
 
 enum nodeVarType {
     ND_UNSPECIFIED_DEFAULT = 0,
@@ -372,6 +397,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/06/25 18:31:19  gtkwave
+ * added event types for VCD+FST and impulse arrows on event types
+ *
  * Revision 1.10  2008/12/31 22:20:12  gtkwave
  * adding more tcl commands
  *

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006
+ * Copyright (c) Tony Bybell 1999-2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +50,14 @@ enum tree_kind
    TREE_PACKAGE,
 
    /* A base (source file).  Not yet implemented.  */
-   TREE_BASE
+   TREE_BASE,
+
+   /* Verilog scope types */
+   TREE_VCD_ST_MODULE,
+   TREE_VCD_ST_TASK,
+   TREE_VCD_ST_FUNCTION,
+   TREE_VCD_ST_BEGIN,
+   TREE_VCD_ST_FORK
  };
 
 struct tree
@@ -97,6 +104,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

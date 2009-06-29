@@ -165,10 +165,11 @@ void fstReaderProcessHier(void *ctx, FILE *vcdhandle);
 void fstReaderIterateHierRewind(void *ctx);
 struct fstHier *fstReaderIterateHier(void *ctx);
 
-const char *fstReaderGetCurrentFlatScope(void *ctx);
-const char *fstReaderPopScope(void *ctx);
-const char *fstReaderPushScope(void *ctx, const char *nam);
 void fstReaderResetScope(void *ctx);
+const char *fstReaderPopScope(void *ctx);
+const char *fstReaderPushScope(void *ctx, const char *nam, void *user_info);
+const char *fstReaderGetCurrentFlatScope(void *ctx);
+void *fstReaderGetCurrentScopeUserInfo(void *ctx);
 
 signed char fstReaderGetTimescale(void *ctx);
 uint64_t fstReaderGetStartTime(void *ctx);

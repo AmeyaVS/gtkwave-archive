@@ -23,29 +23,7 @@
 #include "hierpack.h"
 #include "tcl_helper.h"
 
-static const char *vartype_strings[] = {
-    "", 
-    
-    "event",
-    "int",
-    "parm",
-    "real",
-    "real_parm",
-    "reg",
-    "supply0",
-    "supply1",
-    "time",
-    "tri",
-    "triand",
-    "trior",
-    "trireg",
-    "tri0",
-    "tri1",
-    "wand",
-    "wire",
-    "wor"
-};
-
+WAVE_NODEVARTYPE_STR
 
 enum { VIEW_DRAG_INACTIVE, TREE_TO_VIEW_DRAG_ACTIVE, SEARCH_TO_VIEW_DRAG_ACTIVE };
 
@@ -2092,6 +2070,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2009/06/27 23:10:32  gtkwave
+ * added display of type info for variables in tree view
+ *
  * Revision 1.35  2009/01/21 02:24:15  gtkwave
  * gtk1 compile fixes, ensure ctree_main is available for force_open_tree_node
  *
