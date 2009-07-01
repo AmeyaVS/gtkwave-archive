@@ -255,7 +255,6 @@ char use_pango_fonts;
  */
 void *fst_fst_c_1; 
 const char *fst_scope_name;
-struct tree *fst_tree_parent;
 TimeType first_cycle_fst_c_3;
 TimeType last_cycle_fst_c_3; 
 TimeType total_cycles_fst_c_3;
@@ -820,6 +819,7 @@ GtkWidget *clist_translate_c_4; /* from translate.c 472 */
  * tree.c
  */
 struct tree *treeroot; /* from tree.c 473 */
+struct tree *mod_tree_parent; /* from tree.c */
 char *module_tree_c_1; /* from tree.c 474 */
 int module_len_tree_c_1; /* from tree.c 475 */
 struct tree *terminals_tchain_tree_c_1; /* from tree.c 476 */

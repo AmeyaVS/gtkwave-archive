@@ -259,7 +259,6 @@ NULL, /* fonts_layout */
  */
 NULL, /* fst_fst_c_1 */
 NULL, /* fst_scope_name */
-NULL, /* fst_tree_parent */
 0, /* first_cycle_fst_c_3 */
 0, /* last_cycle_fst_c_3 */
 0, /* total_cycles_fst_c_3 */
@@ -825,6 +824,7 @@ NULL, /* clist_translate_c_4 442 */
  * tree.c
  */
 NULL, /* treeroot 443 */
+NULL, /* mod_tree_parent */
 NULL, /* module_tree_c_1 444 */
 0, /* module_len_tree_c_1 445 */
 NULL, /* terminals_tchain_tree_c_1 446 */

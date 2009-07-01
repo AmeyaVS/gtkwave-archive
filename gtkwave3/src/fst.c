@@ -63,7 +63,6 @@ const char *pnts;
 char *pnt, *pntd, *lb_last = NULL, *col_last = NULL, *rb_last = NULL;
 int acc;
 char *s;
-struct tree *t;
 unsigned char ttype;
 
 while((h = fstReaderIterateHier(xc)))
@@ -71,7 +70,7 @@ while((h = fstReaderIterateHier(xc)))
         switch(h->htyp)
                 {
                 case FST_HT_SCOPE:
-                        GLOBALS->fst_scope_name = fstReaderPushScope(xc, h->u.scope.name, GLOBALS->fst_tree_parent);
+                        GLOBALS->fst_scope_name = fstReaderPushScope(xc, h->u.scope.name, GLOBALS->mod_tree_parent);
 
 			switch(h->u.scope.typ)
 				{
@@ -83,69 +82,10 @@ while((h = fstReaderIterateHier(xc)))
 				default:			ttype = TREE_UNKNOWN; break;
 				}
 
-			if(GLOBALS->treeroot)
-				{
-				if(GLOBALS->fst_tree_parent)
-					{
-					t = GLOBALS->fst_tree_parent->child;
-					while(t)
-						{
-						if(!strcmp(t->name, h->u.scope.name))
-							{
-							GLOBALS->fst_tree_parent = t;
-							goto scope_exit;
-							}
-						t = t->next;
-						}
-
-					t = calloc_2(1, sizeof(struct tree) + strlen(h->u.scope.name));
-					strcpy(t->name, h->u.scope.name);
-					t->kind = ttype;
-					t->which = -1;
-
-					if(GLOBALS->fst_tree_parent->child)
-						{
-						t->next = GLOBALS->fst_tree_parent->child;
-						}					
-					GLOBALS->fst_tree_parent->child = t;
-					GLOBALS->fst_tree_parent = t;
-					}
-					else
-					{
-					t = GLOBALS->treeroot;
-					while(t)
-						{
-						if(!strcmp(t->name, h->u.scope.name))
-							{
-							GLOBALS->fst_tree_parent = t;
-							goto scope_exit;
-							}
-						t = t->next;
-						}
-
-					t = calloc_2(1, sizeof(struct tree) + strlen(h->u.scope.name));
-					strcpy(t->name, h->u.scope.name);
-					t->kind = ttype;
-					t->which = -1;
-
-					t->next = GLOBALS->treeroot;
-					GLOBALS->fst_tree_parent = GLOBALS->treeroot = t;
-					}
-				}
-				else
-				{
-				t = calloc_2(1, sizeof(struct tree) + strlen(h->u.scope.name));
-				strcpy(t->name, h->u.scope.name);
-				t->kind = ttype;
-				t->which = -1;
-
-				GLOBALS->fst_tree_parent = GLOBALS->treeroot = t;
-				}
-
-scope_exit:
+			allocate_and_decorate_module_tree_node(ttype, h->u.scope.name);
                         break;
                 case FST_HT_UPSCOPE:
-			GLOBALS->fst_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
+			GLOBALS->mod_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
                         GLOBALS->fst_scope_name = fstReaderPopScope(xc);
                         break;
                 case FST_HT_VAR:
@@ -357,7 +297,7 @@ if(GLOBALS->numfacs)
 		return(LLDescriptor(0));
 		}
 
-	npar = GLOBALS->fst_tree_parent;
+	npar = GLOBALS->mod_tree_parent;
 	name_len = strlen(nnam);
 	hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
 	if(hier_len)
@@ -372,7 +312,7 @@ if(GLOBALS->numfacs)
 		fnam = malloc_2(name_len + 1);
 		memcpy(fnam, nnam, name_len + 1);
 		}
-	/* free_2(nnam); */
+	/* free_2(nnam); ...deallocated through pnam */
 	
 	if(GLOBALS->do_hier_compress)
 		{
@@ -478,7 +418,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
 			h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
 			}
-		npar = GLOBALS->fst_tree_parent;
+		npar = GLOBALS->mod_tree_parent;
 		name_len = strlen(nnam);
 		hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
 		if(hier_len)
@@ -493,7 +433,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			fnam = malloc_2(name_len + 1);
 			memcpy(fnam, nnam, name_len + 1);
 			}
-		/* free_2(nnam); */
+		/* free_2(nnam); ...deallocated through pnam */
 
 		if(GLOBALS->do_hier_compress)
 			{
@@ -1106,6 +1046,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/07/01 08:16:33  gtkwave
+ * hardening of fst reader for cygwin multiple loading
+ *
  * Revision 1.10  2009/07/01 07:39:12  gtkwave
  * decorating hierarchy tree with module type info
  *

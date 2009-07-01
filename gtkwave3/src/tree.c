@@ -65,6 +65,74 @@ for(;;)
 
 
 /*
+ * decorated module add
+ */
+void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename)
+{
+struct tree *t;
+
+if(GLOBALS->treeroot)
+	{
+	if(GLOBALS->mod_tree_parent)
+		{
+		t = GLOBALS->mod_tree_parent->child;
+		while(t)
+			{
+			if(!strcmp(t->name, scopename))
+				{
+				GLOBALS->mod_tree_parent = t;
+				return;
+				}
+			t = t->next;
+			}
+
+		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
+		strcpy(t->name, scopename);
+		t->kind = ttype;
+		t->which = -1;
+
+		if(GLOBALS->mod_tree_parent->child)
+			{
+			t->next = GLOBALS->mod_tree_parent->child;
+			}					
+		GLOBALS->mod_tree_parent->child = t;
+		GLOBALS->mod_tree_parent = t;
+		}
+		else
+		{
+		t = GLOBALS->treeroot;
+			while(t)
+			{
+			if(!strcmp(t->name, scopename))
+				{
+				GLOBALS->mod_tree_parent = t;
+				return;
+				}
+			t = t->next;
+			}
+
+		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
+		strcpy(t->name, scopename);
+		t->kind = ttype;
+		t->which = -1;
+
+		t->next = GLOBALS->treeroot;
+		GLOBALS->mod_tree_parent = GLOBALS->treeroot = t;
+		}
+	}
+	else
+	{
+	t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
+	strcpy(t->name, scopename);
+	t->kind = ttype;
+	t->which = -1;
+
+	GLOBALS->mod_tree_parent = GLOBALS->treeroot = t;
+	}
+}
+
+
+/*
  * adds back netnames
  */
 int treegraft(struct tree **t)
@@ -620,6 +688,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/07/01 07:39:12  gtkwave
+ * decorating hierarchy tree with module type info
+ *
  * Revision 1.3  2008/12/26 20:47:59  gtkwave
  * fix for stack overflow crash on dumpfiles with very many signals
  *
