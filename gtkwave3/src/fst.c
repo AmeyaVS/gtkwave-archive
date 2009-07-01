@@ -351,6 +351,12 @@ if(GLOBALS->numfacs)
 	int hier_len, name_len;
 
 	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
+	if(!h)
+		{
+		fstReaderClose(GLOBALS->fst_fst_c_1); GLOBALS->fst_fst_c_1 = NULL;
+		return(LLDescriptor(0));
+		}
+
 	npar = GLOBALS->fst_tree_parent;
 	name_len = strlen(nnam);
 	hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
@@ -1100,6 +1106,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/07/01 07:39:12  gtkwave
+ * decorating hierarchy tree with module type info
+ *
  * Revision 1.9  2009/06/29 18:16:23  gtkwave
  * adding framework for module type annotation on inner tree nodes
  *

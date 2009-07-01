@@ -2055,13 +2055,13 @@ static void fstReaderRecreateHierFile(struct fstReaderContext *xc)
 if(!xc->fh)
 	{
 	off_t offs_cache = ftello(xc->f);
-	char *fnam = malloc(strlen(xc->filename) + 6 + 16 + 1);
+	char *fnam = malloc(strlen(xc->filename) + 6 + 16 + 32 + 1);
 	unsigned char *mem = malloc(FST_GZIO_LEN);
 	off_t hl;
 	uint64_t uclen;
 	gzFile zhandle;
 
-	sprintf(fnam, "%s.hier_%d", xc->filename, getpid());
+	sprintf(fnam, "%s.hier_%d_%p", xc->filename, getpid(), xc);
 	fseeko(xc->f, xc->hier_pos, SEEK_SET);
 	uclen = fstReaderUint64(xc->f);
 	fflush(xc->f);
