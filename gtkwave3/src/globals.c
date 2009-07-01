@@ -605,6 +605,18 @@ NULL, /* hiericon_instance_pixmap */
 NULL, /* hiericon_instance_mask */
 NULL, /* hiericon_package_pixmap */
 NULL, /* hiericon_package_mask */
+NULL, /* hiericon_signal_pixmap */
+NULL, /* hiericon_signal_mask */
+NULL, /* hiericon_portin_pixmap */
+NULL, /* hiericon_portin_mask */
+NULL, /* hiericon_portout_pixmap */
+NULL, /* hiericon_portout_mask */
+NULL, /* hiericon_portinout_pixmap */
+NULL, /* hiericon_portinout_mask */
+NULL, /* hiericon_buffer_pixmap */
+NULL, /* hiericon_buffer_mask */
+NULL, /* hiericon_linkage_pixmap */
+NULL, /* hiericon_linkage_mask */
 
 
 /*
@@ -1517,30 +1529,7 @@ void reload_into_new_context(void)
  new_globals->wave_info_pixmap = GLOBALS->wave_info_pixmap;
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
 
- new_globals->hiericon_module_pixmap = GLOBALS->hiericon_module_pixmap;
- new_globals->hiericon_module_mask = GLOBALS->hiericon_module_mask;
- new_globals->hiericon_task_pixmap = GLOBALS->hiericon_task_pixmap;
- new_globals->hiericon_task_mask = GLOBALS->hiericon_task_mask;
- new_globals->hiericon_function_pixmap = GLOBALS->hiericon_function_pixmap;
- new_globals->hiericon_function_mask = GLOBALS->hiericon_function_mask;
- new_globals->hiericon_begin_pixmap = GLOBALS->hiericon_begin_pixmap;
- new_globals->hiericon_begin_mask = GLOBALS->hiericon_begin_mask;
- new_globals->hiericon_fork_pixmap = GLOBALS->hiericon_fork_pixmap;
- new_globals->hiericon_fork_mask = GLOBALS->hiericon_fork_mask;
-
- new_globals->hiericon_design_pixmap = GLOBALS->hiericon_design_pixmap;
- new_globals->hiericon_design_mask = GLOBALS->hiericon_design_mask;
- new_globals->hiericon_block_pixmap = GLOBALS->hiericon_block_pixmap;
- new_globals->hiericon_block_mask = GLOBALS->hiericon_block_mask;
- new_globals->hiericon_generateif_pixmap = GLOBALS->hiericon_generateif_pixmap;
- new_globals->hiericon_generateif_mask = GLOBALS->hiericon_generateif_mask;
- new_globals->hiericon_generatefor_pixmap = GLOBALS->hiericon_generatefor_pixmap;
- new_globals->hiericon_generatefor_mask = GLOBALS->hiericon_generatefor_mask;
- new_globals->hiericon_instance_pixmap = GLOBALS->hiericon_instance_pixmap;  
- new_globals->hiericon_instance_mask = GLOBALS->hiericon_instance_mask;
- new_globals->hiericon_package_pixmap = GLOBALS->hiericon_package_pixmap;
- new_globals->hiericon_package_mask = GLOBALS->hiericon_package_mask;
-
+ clone_icon_pointers_across_contexts(new_globals, GLOBALS);
 
  /* rc.c */
  new_globals->scale_to_time_dimension = GLOBALS->scale_to_time_dimension;
@@ -2536,3 +2525,50 @@ if(line)
 
 GLOBALS = g;
 }
+
+
+/*
+ * for ensuring continuity of pixmap/mask pointers
+ */
+void clone_icon_pointers_across_contexts(struct Global *a, struct Global *b)
+{
+ if(!a || !b) return;
+
+ a->hiericon_module_pixmap = b->hiericon_module_pixmap;
+ a->hiericon_module_mask = b->hiericon_module_mask;
+ a->hiericon_task_pixmap = b->hiericon_task_pixmap;
+ a->hiericon_task_mask = b->hiericon_task_mask;
+ a->hiericon_function_pixmap = b->hiericon_function_pixmap;
+ a->hiericon_function_mask = b->hiericon_function_mask;
+ a->hiericon_begin_pixmap = b->hiericon_begin_pixmap;
+ a->hiericon_begin_mask = b->hiericon_begin_mask;  
+ a->hiericon_fork_pixmap = b->hiericon_fork_pixmap;
+ a->hiericon_fork_mask = b->hiericon_fork_mask;
+ 
+ a->hiericon_design_pixmap = b->hiericon_design_pixmap;
+ a->hiericon_design_mask = b->hiericon_design_mask;  
+ a->hiericon_block_pixmap = b->hiericon_block_pixmap;
+ a->hiericon_block_mask = b->hiericon_block_mask;
+ a->hiericon_generateif_pixmap = b->hiericon_generateif_pixmap;
+ a->hiericon_generateif_mask = b->hiericon_generateif_mask;
+ a->hiericon_generatefor_pixmap = b->hiericon_generatefor_pixmap;
+ a->hiericon_generatefor_mask = b->hiericon_generatefor_mask;
+ a->hiericon_instance_pixmap = b->hiericon_instance_pixmap;
+ a->hiericon_instance_mask = b->hiericon_instance_mask;  
+ a->hiericon_package_pixmap = b->hiericon_package_pixmap;
+ a->hiericon_package_mask = b->hiericon_package_mask;
+
+ a->hiericon_signal_pixmap = b->hiericon_signal_pixmap;
+ a->hiericon_signal_mask = b->hiericon_signal_mask;
+ a->hiericon_portin_pixmap = b->hiericon_portin_pixmap;
+ a->hiericon_portin_mask = b->hiericon_portin_mask;
+ a->hiericon_portout_pixmap = b->hiericon_portout_pixmap;
+ a->hiericon_portout_mask = b->hiericon_portout_mask;
+ a->hiericon_portinout_pixmap = b->hiericon_portinout_pixmap;
+ a->hiericon_portinout_mask = b->hiericon_portinout_mask;
+ a->hiericon_buffer_pixmap = b->hiericon_buffer_pixmap;
+ a->hiericon_buffer_mask = b->hiericon_buffer_mask;
+ a->hiericon_linkage_pixmap = b->hiericon_linkage_pixmap;
+ a->hiericon_linkage_mask = b->hiericon_linkage_mask;
+} 
+

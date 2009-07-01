@@ -65,7 +65,16 @@ enum tree_kind
    TREE_VHDL_ST_GENIF,
    TREE_VHDL_ST_GENFOR,
    TREE_VHDL_ST_INSTANCE,
-   TREE_VHDL_ST_PACKAGE
+   TREE_VHDL_ST_PACKAGE,
+
+   /* VHDL signal types (still as part of scope in GHW) */
+   TREE_VHDL_ST_SIGNAL,
+   TREE_VHDL_ST_PORTIN,
+   TREE_VHDL_ST_PORTOUT,
+   TREE_VHDL_ST_PORTINOUT,
+   TREE_VHDL_ST_BUFFER,
+   TREE_VHDL_ST_LINKAGE
+
  };
 
 struct tree
@@ -113,6 +122,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/07/01 18:22:35  gtkwave
+ * added VHDL (GHW) instance types as icons
+ *
  * Revision 1.5  2009/07/01 16:47:47  gtkwave
  * move decorated module alloc routine to tree.c
  *

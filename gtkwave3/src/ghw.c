@@ -1,5 +1,5 @@
 /*  GHDL Wavefile reader interface.
-    Copyright (C) 2005-2006 Tristan Gingold and Tony Bybell
+    Copyright (C) 2005-2009 Tristan Gingold and Tony Bybell
 
     GHDL is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -569,9 +569,23 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
     case ghw_hie_port_linkage:
       {
 	unsigned int *ptr = hie->u.sig.sigs;
+
+        switch(hie->kind)
+		{
+		case ghw_hie_signal:		ttype = TREE_VHDL_ST_SIGNAL; break;
+		case ghw_hie_port_in:		ttype = TREE_VHDL_ST_PORTIN; break;
+		case ghw_hie_port_out:		ttype = TREE_VHDL_ST_PORTOUT; break;
+		case ghw_hie_port_inout:	ttype = TREE_VHDL_ST_PORTINOUT; break;
+		case ghw_hie_port_buffer:	ttype = TREE_VHDL_ST_BUFFER; break;
+		case ghw_hie_port_linkage:	
+		default:
+						ttype = TREE_VHDL_ST_LINKAGE; break;
+		}
+
 	t = build_hierarchy_type (h, hie->u.sig.type, hie->name, &ptr);
 	if (*ptr != 0)
 	  abort ();
+	if(t) { t->kind = ttype; }
 	return t;
       }
     default:
@@ -1081,6 +1095,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/07/01 18:22:34  gtkwave
+ * added VHDL (GHW) instance types as icons
+ *
  * Revision 1.6  2009/06/24 19:31:44  gtkwave
  * added capability in GHW to handle negative offsets in bitstrands
  *

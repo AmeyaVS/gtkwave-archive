@@ -320,6 +320,13 @@ switch(mode)
 			case TREE_VHDL_ST_INSTANCE:	pxm = GLOBALS->hiericon_instance_pixmap; msk = GLOBALS->hiericon_instance_mask; break;
 			case TREE_VHDL_ST_PACKAGE:	pxm = GLOBALS->hiericon_package_pixmap; msk = GLOBALS->hiericon_package_mask; break;
 
+			case TREE_VHDL_ST_SIGNAL:	pxm = GLOBALS->hiericon_signal_pixmap; msk = GLOBALS->hiericon_signal_mask; break;
+			case TREE_VHDL_ST_PORTIN:	pxm = GLOBALS->hiericon_portin_pixmap; msk = GLOBALS->hiericon_portin_mask; break;
+			case TREE_VHDL_ST_PORTOUT:	pxm = GLOBALS->hiericon_portout_pixmap; msk = GLOBALS->hiericon_portout_mask; break;
+			case TREE_VHDL_ST_PORTINOUT:	pxm = GLOBALS->hiericon_portinout_pixmap; msk = GLOBALS->hiericon_portinout_mask; break;
+			case TREE_VHDL_ST_BUFFER:	pxm = GLOBALS->hiericon_buffer_pixmap; msk = GLOBALS->hiericon_buffer_mask; break;
+			case TREE_VHDL_ST_LINKAGE:	pxm = GLOBALS->hiericon_linkage_pixmap; msk = GLOBALS->hiericon_linkage_mask; break;
+
 			default:			pxm = msk = NULL; break;
 			}
 
@@ -696,6 +703,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/07/01 18:22:35  gtkwave
+ * added VHDL (GHW) instance types as icons
+ *
  * Revision 1.5  2009/07/01 16:47:47  gtkwave
  * move decorated module alloc routine to tree.c
  *

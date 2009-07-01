@@ -599,8 +599,18 @@ GdkDrawable *hiericon_instance_pixmap;
 GdkDrawable *hiericon_instance_mask;
 GdkDrawable *hiericon_package_pixmap;
 GdkDrawable *hiericon_package_mask;
-
-
+GdkDrawable *hiericon_signal_pixmap;
+GdkDrawable *hiericon_signal_mask;
+GdkDrawable *hiericon_portin_pixmap;
+GdkDrawable *hiericon_portin_mask;
+GdkDrawable *hiericon_portout_pixmap;
+GdkDrawable *hiericon_portout_mask;
+GdkDrawable *hiericon_portinout_pixmap;
+GdkDrawable *hiericon_portinout_mask;
+GdkDrawable *hiericon_buffer_pixmap;
+GdkDrawable *hiericon_buffer_mask;
+GdkDrawable *hiericon_linkage_pixmap;
+GdkDrawable *hiericon_linkage_mask;
 
 
 /* 
@@ -1202,7 +1212,6 @@ void dead_context_sweep(void);
 
 void install_focus_cb(GtkWidget *w, unsigned long ptr_offset);
 
-
 gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line);
 gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line);
 
@@ -1214,7 +1223,6 @@ gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, Gtk
 #define gtkwave_signal_connect_object(a,b,c,d) gtkwave_signal_connect_object_x(a,b,c,d,NULL,0)
 #endif
 
-
 void set_GLOBALS_x(struct Global *g, const char *file, int line);
 
 #ifdef GTKWAVE_GLOBALS_DEBUG
@@ -1224,6 +1232,7 @@ void set_GLOBALS_x(struct Global *g, const char *file, int line);
 #endif
 
 void logbox_reload(void);
+void clone_icon_pointers_across_contexts(struct Global *a, struct Global *b);
 
 extern struct Global *GLOBALS;
 #endif
