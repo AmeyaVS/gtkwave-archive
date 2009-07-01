@@ -190,24 +190,29 @@ while(!feof(f))
 		char *st = strtok(buf+6, " \t");
 		enum fstScopeType scopetype;
 
-		if(!strcmp(buf, "module"))
+		if(!strcmp(st, "module"))
 			{
 			scopetype = FST_ST_VCD_MODULE;
 			}
 		else
-		if(!strcmp(buf, "task"))
+		if(!strcmp(st, "task"))
 			{
 			scopetype = FST_ST_VCD_TASK;
 			}
 		else
-		if(!strcmp(buf, "function"))
+		if(!strcmp(st, "function"))
 			{
 			scopetype = FST_ST_VCD_FUNCTION;
 			}
 		else
-		if(!strcmp(buf, "begin"))
+		if(!strcmp(st, "begin"))
 			{
 			scopetype = FST_ST_VCD_BEGIN;
+			}
+		else
+		if(!strcmp(st, "fork"))
+			{
+			scopetype = FST_ST_VCD_FORK;
 			}
 		else
 			{
@@ -566,6 +571,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/06/16 03:00:36  gtkwave
+ * added monolithic post-close compress option to writer
+ *
  * Revision 1.2  2009/06/14 22:40:59  gtkwave
  * fix for timescale vs initial scope
  *
