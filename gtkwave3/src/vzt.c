@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2003-2008.
+ * Copyright (c) Tony Bybell 2003-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -368,7 +368,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
                                 }
                         }
                 }
-        treegraft(GLOBALS->treeroot);
+        treegraft(&GLOBALS->treeroot);
                                 
         fprintf(stderr, VZT_RDLOAD"Sorting facility hierarchy tree.\n");
         treesort(GLOBALS->treeroot, NULL);
@@ -454,7 +454,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
                         }
                 }
 
-	treegraft(GLOBALS->treeroot);
+	treegraft(&GLOBALS->treeroot);
 	treesort(GLOBALS->treeroot, NULL);
         if(GLOBALS->escaped_names_found_vcd_c_1)
                 {
@@ -853,6 +853,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/04/30 03:24:41  gtkwave
+ * added VCDNAM_ESCAPE cases to loader
+ *
  * Revision 1.6  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

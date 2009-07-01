@@ -642,7 +642,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		build_tree_from_name(GLOBALS->facs[i]->name, i);
                 }
 /* SPLASH */                            splash_sync(4, 5);  
-        treegraft(GLOBALS->treeroot);
+        treegraft(&GLOBALS->treeroot);
                                 
         fprintf(stderr, EXTLOAD"Sorting facility hierarchy tree.\n");
         treesort(GLOBALS->treeroot, NULL);
@@ -708,7 +708,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		        }        
 		}
 /* SPLASH */                            splash_sync(5, 5);  
-	treegraft(GLOBALS->treeroot);
+	treegraft(&GLOBALS->treeroot);
 	treesort(GLOBALS->treeroot, NULL);
 	}
 
@@ -1020,6 +1020,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/02/16 17:16:05  gtkwave
+ * extload error hardening and recovery
+ *
  * Revision 1.3  2009/01/28 20:36:56  gtkwave
  * convert 3 value to z in value changes, likewise 2 to x
  *

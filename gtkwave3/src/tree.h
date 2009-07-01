@@ -89,7 +89,7 @@ char *name;				/* free up next time filtering is performed */
 
 void init_tree(void);
 void build_tree_from_name(const char *s, int which);
-int treegraft(struct tree *t);
+int treegraft(struct tree **t);
 void treedebug(struct tree *t, char *s);
 void maketree(GtkCTreeNode *subtree, struct tree *t);
 char *leastsig_hiername(char *nam);
@@ -104,6 +104,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/06/29 18:16:23  gtkwave
+ * adding framework for module type annotation on inner tree nodes
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

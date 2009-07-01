@@ -255,6 +255,7 @@ char use_pango_fonts;
  */
 void *fst_fst_c_1; 
 const char *fst_scope_name;
+struct tree *fst_tree_parent;
 TimeType first_cycle_fst_c_3;
 TimeType last_cycle_fst_c_3; 
 TimeType total_cycles_fst_c_3;
@@ -577,6 +578,16 @@ GdkDrawable *wave_info_pixmap; /* from pixmaps.c 311 */
 GdkDrawable *wave_info_mask; /* from pixmaps.c 312 */
 GdkDrawable *wave_alert_pixmap; /* from pixmaps.c 314 */
 GdkDrawable *wave_alert_mask; /* from pixmaps.c 315 */
+GdkDrawable *hiericon_module_pixmap; /* from pixmaps.c */
+GdkDrawable *hiericon_module_mask; /* from pixmaps.c */
+GdkDrawable *hiericon_task_pixmap; /* from pixmaps.c */
+GdkDrawable *hiericon_task_mask; /* from pixmaps.c */
+GdkDrawable *hiericon_function_pixmap; /* from pixmaps.c */
+GdkDrawable *hiericon_function_mask; /* from pixmaps.c */
+GdkDrawable *hiericon_begin_pixmap; /* from pixmaps.c */
+GdkDrawable *hiericon_begin_mask; /* from pixmaps.c */
+GdkDrawable *hiericon_fork_pixmap; /* from pixmaps.c */
+GdkDrawable *hiericon_fork_mask; /* from pixmaps.c */
 
 
 /* 

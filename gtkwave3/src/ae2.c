@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2004-2008.
+ * Copyright (c) Tony Bybell 2004-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -562,7 +562,7 @@ if(GLOBALS->fast_tree_sort)
 		build_tree_from_name(GLOBALS->facs[i]->name, i);
 		}
 /* SPLASH */                            splash_sync(4, 5);
-	treegraft(GLOBALS->treeroot);
+	treegraft(&GLOBALS->treeroot);
 
 	fprintf(stderr, AET2_RDLOAD"Sorting facility hierarchy tree.\n");
 	treesort(GLOBALS->treeroot, NULL);
@@ -616,7 +616,7 @@ if(GLOBALS->fast_tree_sort)
 		build_tree_from_name(GLOBALS->facs[i]->name, i);
 		}
 /* SPLASH */                            splash_sync(5, 5);
-	treegraft(GLOBALS->treeroot);
+	treegraft(&GLOBALS->treeroot);
 	treesort(GLOBALS->treeroot, NULL);
 	}
 
@@ -1266,6 +1266,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/12/25 03:21:57  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.8  2008/09/27 19:08:39  gtkwave
  * compiler warning fixes
  *

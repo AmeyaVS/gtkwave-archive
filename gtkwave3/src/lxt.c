@@ -1826,7 +1826,7 @@ if(GLOBALS->escaped_names_found_vcd_c_1)
 		}
 	}
 
-treegraft(GLOBALS->treeroot);
+treegraft(&GLOBALS->treeroot);
 treesort(GLOBALS->treeroot, NULL);
 
 if(GLOBALS->escaped_names_found_vcd_c_1)
@@ -2418,6 +2418,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/04/30 03:24:40  gtkwave
+ * added VCDNAM_ESCAPE cases to loader
+ *
  * Revision 1.9  2008/12/27 23:29:42  gtkwave
  * lxt files for stray file descriptor on reload + clock compress fix
  *

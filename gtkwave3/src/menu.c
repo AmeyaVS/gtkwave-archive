@@ -2187,6 +2187,17 @@ if(GLOBALS->filesel_ok)
 		g_now = GLOBALS;
 		set_GLOBALS(g_old);
 
+		g_now->hiericon_module_pixmap = GLOBALS->hiericon_module_pixmap;
+		g_now->hiericon_module_mask = GLOBALS->hiericon_module_mask;
+		g_now->hiericon_task_pixmap = GLOBALS->hiericon_task_pixmap;
+		g_now->hiericon_task_mask = GLOBALS->hiericon_task_mask;
+		g_now->hiericon_function_pixmap = GLOBALS->hiericon_function_pixmap;
+		g_now->hiericon_function_mask = GLOBALS->hiericon_function_mask;
+		g_now->hiericon_begin_pixmap = GLOBALS->hiericon_begin_pixmap;
+		g_now->hiericon_begin_mask = GLOBALS->hiericon_begin_mask;
+		g_now->hiericon_fork_pixmap = GLOBALS->hiericon_fork_pixmap;
+		g_now->hiericon_fork_mask = GLOBALS->hiericon_fork_mask;
+
 		free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
 		set_window_idle(NULL);
 		set_GLOBALS(g_now);
@@ -5377,6 +5388,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.65  2009/04/24 20:00:03  gtkwave
+ * rtlbrowse exit kill mods
+ *
  * Revision 1.64  2009/04/24 05:42:33  gtkwave
  * clear out t->minmax_valid in dataformat() for sign changes on analog
  * vectors that use full data range caching

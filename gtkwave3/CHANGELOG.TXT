@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	25jun09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	30jun09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -659,4 +659,5 @@
 		Added variable type support to VCD + impulse arrows for
 		depicting events on VCD (other formats will migrate in the
 		future).
-		Added vartype info (if available in trace).
+		Added vartype info (if avail in trace, now FST+VCD).
+		Added module type info (if avail in trace, now FST only).

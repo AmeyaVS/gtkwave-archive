@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,7 @@ for(;;)
 /*
  * adds back netnames
  */
-int treegraft(struct tree *t)
+int treegraft(struct tree **t)
 {
 struct tree *tx = GLOBALS->terminals_tchain_tree_c_1;
 struct tree *t2;
@@ -95,8 +95,16 @@ while(tx)
 		}
 		else
 		{
-		tx->next = t->next;
-		t->next = tx;
+		if(*t)
+			{
+			tx->next = (*t)->next;
+			(*t)->next = tx;
+			}
+			else
+			{
+			*t = tx;
+			tx->next = NULL;
+			}
 		}
 
 	tx = t2;
@@ -170,6 +178,7 @@ static GtkCTreeNode *maketree_nodes(GtkCTreeNode *subtree, struct tree *t2, GtkC
 {
 char *tmp, *tmp2, *tmp3;
 gchar *text [1];
+GdkDrawable *pxm, *msk;
 
 if(t2->which!=-1)
 	{
@@ -228,8 +237,18 @@ switch(mode)
 		break;
 
 	default:
+		switch(t2->kind)
+			{
+   			case TREE_VCD_ST_MODULE:	pxm = GLOBALS->hiericon_module_pixmap; msk = GLOBALS->hiericon_module_mask; break;
+   			case TREE_VCD_ST_TASK:		pxm = GLOBALS->hiericon_task_pixmap; msk = GLOBALS->hiericon_task_mask; break;
+   			case TREE_VCD_ST_FUNCTION:	pxm = GLOBALS->hiericon_function_pixmap; msk = GLOBALS->hiericon_function_mask; break;
+   			case TREE_VCD_ST_BEGIN:		pxm = GLOBALS->hiericon_begin_pixmap; msk = GLOBALS->hiericon_begin_mask; break;
+   			case TREE_VCD_ST_FORK:		pxm = GLOBALS->hiericon_fork_pixmap; msk = GLOBALS->hiericon_fork_mask; break;
+			default:			pxm = msk = NULL; break;
+			}
+
 	        sibling = gtk_ctree_insert_node (GLOBALS->ctree_main, subtree, sibling, text, 3,
-               	                       NULL, NULL, NULL, NULL,
+               	                       pxm, msk, pxm, msk,
                	                       (mode==MAKETREE_LEAF), FALSE);
 		gtk_ctree_node_set_row_data(GLOBALS->ctree_main, sibling, t2);
 		break;
@@ -601,6 +620,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/12/26 20:47:59  gtkwave
+ * fix for stack overflow crash on dumpfiles with very many signals
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

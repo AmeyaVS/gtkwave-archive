@@ -259,6 +259,7 @@ NULL, /* fonts_layout */
  */
 NULL, /* fst_fst_c_1 */
 NULL, /* fst_scope_name */
+NULL, /* fst_tree_parent */
 0, /* first_cycle_fst_c_3 */
 0, /* last_cycle_fst_c_3 */
 0, /* total_cycles_fst_c_3 */
@@ -583,6 +584,16 @@ NULL, /* wave_info_pixmap 293 */
 NULL, /* wave_info_mask 294 */
 NULL, /* wave_alert_pixmap 296 */
 NULL, /* wave_alert_mask 297 */
+NULL, /* hiericon_module_pixmap */
+NULL, /* hiericon_module_mask */
+NULL, /* hiericon_task_pixmap */
+NULL, /* hiericon_task_mask */
+NULL, /* hiericon_function_pixmap */
+NULL, /* hiericon_function_mask */
+NULL, /* hiericon_begin_pixmap */
+NULL, /* hiericon_begin_mask */
+NULL, /* hiericon_fork_pixmap */
+NULL, /* hiericon_fork_mask */
 
 
 /*
@@ -1493,6 +1504,18 @@ void reload_into_new_context(void)
  new_globals->next_page_pixmap = GLOBALS->next_page_pixmap;
  new_globals->wave_info_pixmap = GLOBALS->wave_info_pixmap;
  new_globals->wave_alert_pixmap = GLOBALS->wave_alert_pixmap;
+
+ new_globals->hiericon_module_pixmap = GLOBALS->hiericon_module_pixmap;
+ new_globals->hiericon_module_mask = GLOBALS->hiericon_module_mask;
+ new_globals->hiericon_task_pixmap = GLOBALS->hiericon_task_pixmap;
+ new_globals->hiericon_task_mask = GLOBALS->hiericon_task_mask;
+ new_globals->hiericon_function_pixmap = GLOBALS->hiericon_function_pixmap;
+ new_globals->hiericon_function_mask = GLOBALS->hiericon_function_mask;
+ new_globals->hiericon_begin_pixmap = GLOBALS->hiericon_begin_pixmap;
+ new_globals->hiericon_begin_mask = GLOBALS->hiericon_begin_mask;
+ new_globals->hiericon_fork_pixmap = GLOBALS->hiericon_fork_pixmap;
+ new_globals->hiericon_fork_mask = GLOBALS->hiericon_fork_mask;
+
 
  /* rc.c */
  new_globals->scale_to_time_dimension = GLOBALS->scale_to_time_dimension;

@@ -2295,7 +2295,7 @@ if(GLOBALS->escaped_names_found_vcd_c_1)
                 }
 	}
 }                       
-treegraft(GLOBALS->treeroot);
+treegraft(&GLOBALS->treeroot);
 treesort(GLOBALS->treeroot, NULL);
 
 if(GLOBALS->escaped_names_found_vcd_c_1) 
@@ -2511,6 +2511,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/06/25 21:21:12  gtkwave
+ * crash fix for zero bit wide events
+ *
  * Revision 1.15  2009/06/25 18:31:19  gtkwave
  * added event types for VCD+FST and impulse arrows on event types
  *

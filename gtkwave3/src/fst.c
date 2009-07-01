@@ -63,15 +63,89 @@ const char *pnts;
 char *pnt, *pntd, *lb_last = NULL, *col_last = NULL, *rb_last = NULL;
 int acc;
 char *s;
+struct tree *t;
+unsigned char ttype;
 
 while((h = fstReaderIterateHier(xc)))
         {
         switch(h->htyp)
                 {
                 case FST_HT_SCOPE:
-                        GLOBALS->fst_scope_name = fstReaderPushScope(xc, h->u.scope.name, NULL);
+                        GLOBALS->fst_scope_name = fstReaderPushScope(xc, h->u.scope.name, GLOBALS->fst_tree_parent);
+
+			switch(h->u.scope.typ)
+				{
+				case FST_ST_VCD_MODULE:		ttype = TREE_VCD_ST_MODULE; break;
+				case FST_ST_VCD_TASK:		ttype = TREE_VCD_ST_TASK; break;
+				case FST_ST_VCD_FUNCTION:	ttype = TREE_VCD_ST_FUNCTION; break;
+				case FST_ST_VCD_BEGIN:		ttype = TREE_VCD_ST_BEGIN; break;
+				case FST_ST_VCD_FORK:		ttype = TREE_VCD_ST_FORK; break;
+				default:			ttype = TREE_UNKNOWN; break;
+				}
+
+			if(GLOBALS->treeroot)
+				{
+				if(GLOBALS->fst_tree_parent)
+					{
+					t = GLOBALS->fst_tree_parent->child;
+					while(t)
+						{
+						if(!strcmp(t->name, h->u.scope.name))
+							{
+							GLOBALS->fst_tree_parent = t;
+							goto scope_exit;
+							}
+						t = t->next;
+						}
+
+					t = calloc_2(1, sizeof(struct tree) + strlen(h->u.scope.name));
+					strcpy(t->name, h->u.scope.name);
+					t->kind = ttype;
+					t->which = -1;
+
+					if(GLOBALS->fst_tree_parent->child)
+						{
+						t->next = GLOBALS->fst_tree_parent->child;
+						}					
+					GLOBALS->fst_tree_parent->child = t;
+					GLOBALS->fst_tree_parent = t;
+					}
+					else
+					{
+					t = GLOBALS->treeroot;
+					while(t)
+						{
+						if(!strcmp(t->name, h->u.scope.name))
+							{
+							GLOBALS->fst_tree_parent = t;
+							goto scope_exit;
+							}
+						t = t->next;
+						}
+
+					t = calloc_2(1, sizeof(struct tree) + strlen(h->u.scope.name));
+					strcpy(t->name, h->u.scope.name);
+					t->kind = ttype;
+					t->which = -1;
+
+					t->next = GLOBALS->treeroot;
+					GLOBALS->fst_tree_parent = GLOBALS->treeroot = t;
+					}
+				}
+				else
+				{
+				t = calloc_2(1, sizeof(struct tree) + strlen(h->u.scope.name));
+				strcpy(t->name, h->u.scope.name);
+				t->kind = ttype;
+				t->which = -1;
+
+				GLOBALS->fst_tree_parent = GLOBALS->treeroot = t;
+				}
+
+scope_exit:
                         break;
                 case FST_HT_UPSCOPE:
+			GLOBALS->fst_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
                         GLOBALS->fst_scope_name = fstReaderPopScope(xc);
                         break;
                 case FST_HT_VAR:
@@ -155,6 +229,19 @@ return(NULL);
 }
 
 
+static void fst_append_graft_chain(int len, char *nam, int which, struct tree *par)
+{
+struct tree *t = calloc_2(1, sizeof(struct tree) + len);
+
+strcpy(t->name, nam);
+t->which = which;
+
+t->child = par;
+t->next = GLOBALS->terminals_tchain_tree_c_1;
+GLOBALS->terminals_tchain_tree_c_1 = t;
+}
+
+
 /*
  * mainline
  */
@@ -171,8 +258,9 @@ struct Node *node_block = NULL;
 JRB ptr, lst;
 struct fstHier *h = NULL;
 int msb, lsb;
-char *nnam = NULL;
+char *nnam = NULL, *pnam = NULL, *pnam2 = NULL;
 uint32_t activity_idx, num_activity_changes;
+struct tree *npar = NULL, *ppar = NULL;
 
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
 if(!GLOBALS->fst_fst_c_1)
@@ -263,21 +351,22 @@ if(GLOBALS->numfacs)
 	int hier_len, name_len;
 
 	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
+	npar = GLOBALS->fst_tree_parent;
 	name_len = strlen(nnam);
 	hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
 	if(hier_len)
 		{
-		fnam = malloc(hier_len + 1 + name_len + 1);
+		fnam = malloc_2(hier_len + 1 + name_len + 1);
 		memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
 		fnam[hier_len] = GLOBALS->hier_delimeter;
 		memcpy(fnam + hier_len + 1, nnam, name_len + 1);
 		}
 		else
 		{
-		fnam = malloc(name_len + 1);
+		fnam = malloc_2(name_len + 1);
 		memcpy(fnam, nnam, name_len + 1);
 		}
-	free_2(nnam);
+	/* free_2(nnam); */
 	
 	if(GLOBALS->do_hier_compress)
 		{
@@ -364,6 +453,12 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		numvars++;
 		}
 
+	if(pnam2) { free_2(pnam2); }
+	pnam2 = pnam;
+	pnam = nnam;
+
+	ppar = npar;
+
 	if(i!=(GLOBALS->numfacs-1))
 		{
 		char *fnam;
@@ -377,21 +472,22 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
 			h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
 			}
+		npar = GLOBALS->fst_tree_parent;
 		name_len = strlen(nnam);
 		hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
 		if(hier_len)
 			{
-			fnam = malloc(hier_len + 1 + name_len + 1);
+			fnam = malloc_2(hier_len + 1 + name_len + 1);
 			memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
 			fnam[hier_len] = GLOBALS->hier_delimeter;
 			memcpy(fnam + hier_len + 1, nnam, name_len + 1);
 			}
 			else
 			{
-			fnam = malloc(name_len + 1);
+			fnam = malloc_2(name_len + 1);
 			memcpy(fnam, nnam, name_len + 1);
 			}
-		free_2(nnam);
+		/* free_2(nnam); */
 
 		if(GLOBALS->do_hier_compress)
 			{
@@ -434,6 +530,9 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
 		prevsymroot = prevsym = NULL;
+
+		len = sprintf(buf, "%s[%d:%d]", pnam,GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
+		fst_append_graft_chain(len, buf, i, ppar);
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
@@ -466,6 +565,9 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			{
 			prevsymroot = prevsym = s;
 			}
+
+		len = sprintf(buf, "%s[%d]", pnam,GLOBALS->mvlfacs_fst_c_3[i].msb);
+		fst_append_graft_chain(len, buf, i, ppar);
 		}
 		else
 		{
@@ -488,6 +590,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			GLOBALS->mvlfacs_fst_c_3[i].lsb=0;
 			GLOBALS->mvlfacs_fst_c_3[i].len=32;
 			}
+
+		fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
 		}
 		
         if(!GLOBALS->firstnode)
@@ -519,6 +623,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
         s->n=n;
         }			/* for(i) of facs parsing */
 
+if(pnam2) { free_2(pnam2); pnam2 = NULL; }
+if(pnam) { free_2(pnam); pnam = NULL; }
 
 for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 	{
@@ -549,7 +655,7 @@ if(lst)
                 }
         }
 
-if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
+if(1)
         {
         GLOBALS->curnode=GLOBALS->firstnode;
         for(i=0;i<GLOBALS->numfacs;i++)
@@ -564,128 +670,16 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         fprintf(stderr, FST_RDLOAD"Building facility hierarchy tree.\n");
                                          
         init_tree();
-        for(i=0;i<GLOBALS->numfacs;i++)
-                {
-                int esc = 0;
-                char *subst = GLOBALS->facs[i]->name;
-                char ch;
+        treegraft(&GLOBALS->treeroot);
 
-                while((ch=(*subst)))
-                        {
-                        if(ch==GLOBALS->hier_delimeter) { if(esc) *subst = VCDNAM_ESCAPE; }
-                        else if(ch=='\\') { esc = 1; GLOBALS->escaped_names_found_vcd_c_1 = 1; }
-                        subst++;
-                        }
-
-		build_tree_from_name(GLOBALS->facs[i]->name, i);
-                }
 /* SPLASH */                            splash_sync(4, 5);  
-        if(GLOBALS->escaped_names_found_vcd_c_1)
-                {
-                for(i=0;i<GLOBALS->numfacs;i++)
-                        {
-                        char *subst, ch;
-                        subst=GLOBALS->facs[i]->name;
-                        while((ch=(*subst)))
-                                {
-                                if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
-                                subst++;
-                                }
-                        }
-                }
-        treegraft(GLOBALS->treeroot);
                                 
         fprintf(stderr, FST_RDLOAD"Sorting facility hierarchy tree.\n");
         treesort(GLOBALS->treeroot, NULL);
 /* SPLASH */                            splash_sync(5, 5);  
         order_facs_from_treesort(GLOBALS->treeroot, &GLOBALS->facs);
-        if(GLOBALS->escaped_names_found_vcd_c_1)
-                {
-                treenamefix(GLOBALS->treeroot); 
-                }
-                                
         GLOBALS->facs_are_sorted=1;
         }
-        else
-	{
-	GLOBALS->curnode=GLOBALS->firstnode;
-	for(i=0;i<GLOBALS->numfacs;i++)
-		{
-		char *subst, ch;
-		int len;
-		int esc = 0;
-
-		GLOBALS->facs[i]=GLOBALS->curnode;
-	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
-                while((ch=(*subst)))
-                        {
-                        if(ch==GLOBALS->hier_delimeter) { *subst=(!esc) ? VCDNAM_HIERSORT : VCDNAM_ESCAPE; }    /* forces sort at hier boundaries */
-                        else if(ch=='\\') { esc = 1; GLOBALS->escaped_names_found_vcd_c_1 = 1; }
-                        subst++;
-                        }
-		}
-
-/* SPLASH */                            splash_sync(3, 5);  
-	fprintf(stderr, FST_RDLOAD"Sorting facilities at hierarchy boundaries.\n");
-	wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
-	
-	for(i=0;i<GLOBALS->numfacs;i++)
-		{
-		char *subst, ch;
-	
-		subst=GLOBALS->facs[i]->name;
-		while((ch=(*subst)))
-			{	
-			if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; }	/* restore back to normal */
-			subst++;
-			}
-		}
-	
-	GLOBALS->facs_are_sorted=1;
-
-/* SPLASH */                            splash_sync(4, 5);  
-	fprintf(stderr, FST_RDLOAD"Building facility hierarchy tree.\n");
-
-	init_tree();		
-	for(i=0;i<GLOBALS->numfacs;i++)	
-		{
-		char *nf = GLOBALS->facs[i]->name;
-		int was_packed;
-		char *recon = hier_decompress_flagged(nf, &was_packed);
-
-		if(was_packed)
-		        {
-		        build_tree_from_name(recon, i);
-		        free_2(recon);
-		        }
-		        else
-		        {
-		        build_tree_from_name(nf, i);
-		        }        
-		}
-/* SPLASH */                            splash_sync(5, 5);  
-        if(GLOBALS->escaped_names_found_vcd_c_1)
-                {
-                for(i=0;i<GLOBALS->numfacs;i++)
-                        {
-                        char *subst, ch;
-                        subst=GLOBALS->facs[i]->name;
-                        while((ch=(*subst)))
-                                {
-                                if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
-                                subst++;
-                                }
-                        }
-                }
-
-	treegraft(GLOBALS->treeroot);
-	treesort(GLOBALS->treeroot, NULL);
-        if(GLOBALS->escaped_names_found_vcd_c_1)
-                {
-                treenamefix(GLOBALS->treeroot);
-                }
-	}
 
 if(GLOBALS->prev_hier_uncompressed_name) 
 	{
@@ -1106,6 +1100,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/06/29 18:16:23  gtkwave
+ * adding framework for module type annotation on inner tree nodes
+ *
  * Revision 1.8  2009/06/27 23:10:32  gtkwave
  * added display of type info for variables in tree view
  *

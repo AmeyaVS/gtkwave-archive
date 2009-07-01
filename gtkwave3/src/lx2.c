@@ -366,7 +366,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		                }
 			}
 	        }
-        treegraft(GLOBALS->treeroot);
+        treegraft(&GLOBALS->treeroot);
         
         fprintf(stderr, LXT2_RDLOAD"Sorting facility hierarchy tree.\n");
         treesort(GLOBALS->treeroot, NULL);
@@ -452,7 +452,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		                }
 			}
 	        }
-	treegraft(GLOBALS->treeroot);
+	treegraft(&GLOBALS->treeroot);
 	treesort(GLOBALS->treeroot, NULL);
 	if(GLOBALS->escaped_names_found_vcd_c_1)  
 	        {
@@ -885,6 +885,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/06/07 08:40:44  gtkwave
+ * adding FST support
+ *
  * Revision 1.7  2009/04/30 03:24:40  gtkwave
  * added VCDNAM_ESCAPE cases to loader
  *
