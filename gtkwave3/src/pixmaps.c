@@ -4151,52 +4151,58 @@ static char *database[] = {
 
 
 /* XPM */
-static char *bullet_black[] = {
+static char *bullet_blue[] = {
 /* columns rows colors chars-per-pixel */
-"16 16 26 1",
-"  c black",
-". c gray1",
-"X c #060606",
-"o c gray4",
-"O c gray7",
-"+ c gray9",
-"@ c #191919",
-"# c gray11",
-"$ c #1E1E1E",
-"% c gray12",
-"& c gray13",
-"* c #565656",
-"= c gray34",
-"- c #5D5D5D",
-"; c #606060",
-": c #626262",
-"> c gray39",
-", c #676767",
-"< c #6A6A6A",
-"1 c #7E7E7E",
-"2 c #818181",
-"3 c gray51",
-"4 c #868686",
-"5 c #888888",
-"6 c gray54",
-"7 c None",
+"16 16 32 1",
+"  c #00739C",
+". c #0076A1",
+"X c #0080B6",
+"o c #0083BC",
+"O c #0087C3",
+"+ c #008ACA",
+"@ c #008CCE",
+"# c #0090D7",
+"$ c #0097E5",
+"% c #009CED",
+"& c #009EF0",
+"* c #00A0F5",
+"= c #00A2F9",
+"- c #00A3FB",
+"; c #00A5FF",
+": c #78C1E4",
+"> c #7CC8EE",
+", c #67C0F4",
+"< c #6EC2F5",
+"1 c #70C2F5",
+"2 c #7DC9F0",
+"3 c #7EC7F8",
+"4 c #85CBF3",
+"5 c #86CDF3",
+"6 c #80D2FD",
+"7 c #90D0F5",
+"8 c #91D1F5",
+"9 c #A9DBF8",
+"0 c #B1DEFA",
+"q c #B8E1FB",
+"w c #B9E2FB",
+"e c None",
 /* pixels */
-"7777777777777777",
-"7777777777777777",
-"7777777777777777",
-"7777777777777777",
-"7777777777777777",
-"777777&%#+777777",
-"77777&<64>o77777",
-"77777$6,-2.77777",
-"77777@5:*1 77777",
-"77777O;31= 77777",
-"777777X   777777",
-"7777777777777777",
-"7777777777777777",
-"7777777777777777",
-"7777777777777777",
-"7777777777777777"
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeee;-*%eeeeee",
+"eeeee;6w02#eeeee",
+"eeeee=q3<8+eeeee",
+"eeeee&91,5oeeeee",
+"eeeee$>74:.eeeee",
+"eeeeee@OX eeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee"
 };
 
 
@@ -4951,7 +4957,7 @@ GLOBALS->hiericon_package_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &G
 	&style->bg[GTK_STATE_NORMAL], (gchar **)box);
 
 GLOBALS->hiericon_signal_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->hiericon_signal_mask,
-	&style->bg[GTK_STATE_NORMAL], (gchar **)bullet_black);
+	&style->bg[GTK_STATE_NORMAL], (gchar **)bullet_blue);
 GLOBALS->hiericon_portin_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->hiericon_portin_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)door_in);
 GLOBALS->hiericon_portout_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->hiericon_portout_mask,
@@ -4967,6 +4973,9 @@ GLOBALS->hiericon_linkage_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &G
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/07/01 21:58:32  gtkwave
+ * more GHW module type adds for icons in hierarchy window
+ *
  * Revision 1.6  2009/07/01 18:22:35  gtkwave
  * added VHDL (GHW) instance types as icons
  *
