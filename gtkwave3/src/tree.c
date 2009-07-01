@@ -312,6 +312,14 @@ switch(mode)
    			case TREE_VCD_ST_FUNCTION:	pxm = GLOBALS->hiericon_function_pixmap; msk = GLOBALS->hiericon_function_mask; break;
    			case TREE_VCD_ST_BEGIN:		pxm = GLOBALS->hiericon_begin_pixmap; msk = GLOBALS->hiericon_begin_mask; break;
    			case TREE_VCD_ST_FORK:		pxm = GLOBALS->hiericon_fork_pixmap; msk = GLOBALS->hiericon_fork_mask; break;
+
+			case TREE_VHDL_ST_DESIGN:	pxm = GLOBALS->hiericon_design_pixmap; msk = GLOBALS->hiericon_design_mask; break;
+			case TREE_VHDL_ST_BLOCK:	pxm = GLOBALS->hiericon_block_pixmap; msk = GLOBALS->hiericon_block_mask; break;
+			case TREE_VHDL_ST_GENIF:	pxm = GLOBALS->hiericon_generateif_pixmap; msk = GLOBALS->hiericon_generateif_mask; break;
+			case TREE_VHDL_ST_GENFOR:	pxm = GLOBALS->hiericon_generatefor_pixmap; msk = GLOBALS->hiericon_generatefor_mask; break;
+			case TREE_VHDL_ST_INSTANCE:	pxm = GLOBALS->hiericon_instance_pixmap; msk = GLOBALS->hiericon_instance_mask; break;
+			case TREE_VHDL_ST_PACKAGE:	pxm = GLOBALS->hiericon_package_pixmap; msk = GLOBALS->hiericon_package_mask; break;
+
 			default:			pxm = msk = NULL; break;
 			}
 
@@ -688,6 +696,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/07/01 16:47:47  gtkwave
+ * move decorated module alloc routine to tree.c
+ *
  * Revision 1.4  2009/07/01 07:39:12  gtkwave
  * decorating hierarchy tree with module type info
  *

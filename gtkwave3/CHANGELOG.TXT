@@ -660,4 +660,4 @@
 		depicting events on VCD (other formats will migrate in the
 		future).
 		Added vartype info (if avail in trace, now FST+VCD).
-		Added module type info (if avail in trace, now FST only).
+		Added module type info (if avail, now FST/GHW only).

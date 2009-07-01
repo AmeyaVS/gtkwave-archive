@@ -57,7 +57,15 @@ enum tree_kind
    TREE_VCD_ST_TASK,
    TREE_VCD_ST_FUNCTION,
    TREE_VCD_ST_BEGIN,
-   TREE_VCD_ST_FORK
+   TREE_VCD_ST_FORK,
+
+   /* VHDL scope types */
+   TREE_VHDL_ST_DESIGN,
+   TREE_VHDL_ST_BLOCK,
+   TREE_VHDL_ST_GENIF,
+   TREE_VHDL_ST_GENFOR,
+   TREE_VHDL_ST_INSTANCE,
+   TREE_VHDL_ST_PACKAGE
  };
 
 struct tree
@@ -105,6 +113,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/07/01 16:47:47  gtkwave
+ * move decorated module alloc routine to tree.c
+ *
  * Revision 1.4  2009/07/01 07:39:12  gtkwave
  * decorating hierarchy tree with module type info
  *

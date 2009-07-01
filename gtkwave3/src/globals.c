@@ -593,6 +593,18 @@ NULL, /* hiericon_begin_pixmap */
 NULL, /* hiericon_begin_mask */
 NULL, /* hiericon_fork_pixmap */
 NULL, /* hiericon_fork_mask */
+NULL, /* hiericon_design_pixmap */
+NULL, /* hiericon_design_mask */
+NULL, /* hiericon_block_pixmap */
+NULL, /* hiericon_block_mask */
+NULL, /* hiericon_generateif_pixmap */
+NULL, /* hiericon_generateif_mask */
+NULL, /* hiericon_generatefor_pixmap */
+NULL, /* hiericon_generatefor_mask */
+NULL, /* hiericon_instance_pixmap */
+NULL, /* hiericon_instance_mask */
+NULL, /* hiericon_package_pixmap */
+NULL, /* hiericon_package_mask */
 
 
 /*
@@ -1515,6 +1527,19 @@ void reload_into_new_context(void)
  new_globals->hiericon_begin_mask = GLOBALS->hiericon_begin_mask;
  new_globals->hiericon_fork_pixmap = GLOBALS->hiericon_fork_pixmap;
  new_globals->hiericon_fork_mask = GLOBALS->hiericon_fork_mask;
+
+ new_globals->hiericon_design_pixmap = GLOBALS->hiericon_design_pixmap;
+ new_globals->hiericon_design_mask = GLOBALS->hiericon_design_mask;
+ new_globals->hiericon_block_pixmap = GLOBALS->hiericon_block_pixmap;
+ new_globals->hiericon_block_mask = GLOBALS->hiericon_block_mask;
+ new_globals->hiericon_generateif_pixmap = GLOBALS->hiericon_generateif_pixmap;
+ new_globals->hiericon_generateif_mask = GLOBALS->hiericon_generateif_mask;
+ new_globals->hiericon_generatefor_pixmap = GLOBALS->hiericon_generatefor_pixmap;
+ new_globals->hiericon_generatefor_mask = GLOBALS->hiericon_generatefor_mask;
+ new_globals->hiericon_instance_pixmap = GLOBALS->hiericon_instance_pixmap;  
+ new_globals->hiericon_instance_mask = GLOBALS->hiericon_instance_mask;
+ new_globals->hiericon_package_pixmap = GLOBALS->hiericon_package_pixmap;
+ new_globals->hiericon_package_mask = GLOBALS->hiericon_package_mask;
 
 
  /* rc.c */

@@ -2198,6 +2198,19 @@ if(GLOBALS->filesel_ok)
 		g_now->hiericon_fork_pixmap = GLOBALS->hiericon_fork_pixmap;
 		g_now->hiericon_fork_mask = GLOBALS->hiericon_fork_mask;
 
+		g_now->hiericon_design_pixmap = GLOBALS->hiericon_design_pixmap;
+		g_now->hiericon_design_mask = GLOBALS->hiericon_design_mask;
+		g_now->hiericon_block_pixmap = GLOBALS->hiericon_block_pixmap;
+		g_now->hiericon_block_mask = GLOBALS->hiericon_block_mask;
+		g_now->hiericon_generateif_pixmap = GLOBALS->hiericon_generateif_pixmap;
+		g_now->hiericon_generateif_mask = GLOBALS->hiericon_generateif_mask;
+		g_now->hiericon_generatefor_pixmap = GLOBALS->hiericon_generatefor_pixmap;
+		g_now->hiericon_generatefor_mask = GLOBALS->hiericon_generatefor_mask;
+		g_now->hiericon_instance_pixmap = GLOBALS->hiericon_instance_pixmap;
+		g_now->hiericon_instance_mask = GLOBALS->hiericon_instance_mask;
+		g_now->hiericon_package_pixmap = GLOBALS->hiericon_package_pixmap;
+		g_now->hiericon_package_mask = GLOBALS->hiericon_package_mask;
+
 		free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
 		set_window_idle(NULL);
 		set_GLOBALS(g_now);
@@ -5388,6 +5401,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.66  2009/07/01 07:39:12  gtkwave
+ * decorating hierarchy tree with module type info
+ *
  * Revision 1.65  2009/04/24 20:00:03  gtkwave
  * rtlbrowse exit kill mods
  *

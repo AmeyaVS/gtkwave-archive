@@ -483,6 +483,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
   struct tree *t_ch;
   struct tree *prev;
   struct ghw_hie *ch;
+  unsigned char ttype;
 
   switch (hie->kind)
     {
@@ -492,6 +493,19 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
     case ghw_hie_generate_for:
     case ghw_hie_generate_if:
     case ghw_hie_package:
+
+      switch(hie->kind)
+		{
+	    	case ghw_hie_design:		ttype = TREE_VHDL_ST_DESIGN; break;
+    		case ghw_hie_block:		ttype = TREE_VHDL_ST_BLOCK; break;
+    		case ghw_hie_instance:		ttype = TREE_VHDL_ST_INSTANCE; break;
+    		case ghw_hie_generate_for:	ttype = TREE_VHDL_ST_GENFOR; break;
+    		case ghw_hie_generate_if:	ttype = TREE_VHDL_ST_GENIF; break;
+    		case ghw_hie_package:		
+		default:
+						ttype = TREE_VHDL_ST_PACKAGE; break;
+		}
+
       if (hie->kind == ghw_hie_generate_for)
 	{
 	  char buf[128];
@@ -504,6 +518,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
 	  buf_len = strlen (buf);
 
           t = (struct tree *) calloc_2(1, sizeof (struct tree) + (2 + buf_len + name_len));
+	  t->kind = ttype;
 	  n = t->name;
 
 	  memcpy (n, hie->name, name_len);
@@ -519,11 +534,13 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
           if(hie->name)
 		{
           	t = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(hie->name));
+	  	t->kind = ttype;
           	strcpy(t->name, (char *)hie->name);
 		}
 		else
 		{
           	t = (struct tree *) calloc_2(1, sizeof (struct tree));
+	  	t->kind = ttype;
 		}
         }
 
@@ -1064,6 +1081,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/06/24 19:31:44  gtkwave
+ * added capability in GHW to handle negative offsets in bitstrands
+ *
  * Revision 1.5  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *

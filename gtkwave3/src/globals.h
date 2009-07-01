@@ -587,6 +587,20 @@ GdkDrawable *hiericon_begin_pixmap; /* from pixmaps.c */
 GdkDrawable *hiericon_begin_mask; /* from pixmaps.c */
 GdkDrawable *hiericon_fork_pixmap; /* from pixmaps.c */
 GdkDrawable *hiericon_fork_mask; /* from pixmaps.c */
+GdkDrawable *hiericon_design_pixmap;
+GdkDrawable *hiericon_design_mask;
+GdkDrawable *hiericon_block_pixmap;
+GdkDrawable *hiericon_block_mask;
+GdkDrawable *hiericon_generateif_pixmap;
+GdkDrawable *hiericon_generateif_mask;
+GdkDrawable *hiericon_generatefor_pixmap;
+GdkDrawable *hiericon_generatefor_mask;
+GdkDrawable *hiericon_instance_pixmap;
+GdkDrawable *hiericon_instance_mask;
+GdkDrawable *hiericon_package_pixmap;
+GdkDrawable *hiericon_package_mask;
+
+
 
 
 /* 
