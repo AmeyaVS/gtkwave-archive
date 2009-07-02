@@ -81,6 +81,8 @@ struct slist
 struct slist *next;
 char *str;
 int len;
+
+struct tree *mod_tree_parent;
 };
 
 
@@ -123,6 +125,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/06/25 18:31:19  gtkwave
+ * added event types for VCD+FST and impulse arrows on event types
+ *
  * Revision 1.4  2009/03/05 16:17:56  gtkwave
  * added fastload option
  *

@@ -485,7 +485,7 @@ GLOBALS->facs2_tree_c_1 = NULL;
 void build_tree_from_name(const char *s, int which)
 {
 struct tree *t, *nt;
-struct tree *tchain;
+struct tree *tchain, *tchain_iter;
 struct tree *prevt;
 
 if(s==NULL || !s[0]) return;
@@ -506,7 +506,7 @@ rs:		s=get_module_name(s);
 			continue;
 			}
 
-		tchain = t;
+		tchain = tchain_iter = t;
 		if(s && t)
 			{
 		      	nt = t->next;
@@ -514,11 +514,20 @@ rs:		s=get_module_name(s);
 				{
 				if(nt && !strcmp(nt->name, GLOBALS->module_tree_c_1))
 					{
+					/* move to front to speed up next compare if in same hier during build */
+					if(prevt)
+						{
+						tchain_iter->next = nt->next;
+						nt->next = tchain;
+						prevt->child = nt;
+						}
+
 					prevt = nt;
 					t = nt->child;
 					goto rs;
 					}
 
+				tchain_iter = nt;
 				nt = nt->next;
 				}
 			}
@@ -703,6 +712,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/07/01 21:58:32  gtkwave
+ * more GHW module type adds for icons in hierarchy window
+ *
  * Revision 1.6  2009/07/01 18:22:35  gtkwave
  * added VHDL (GHW) instance types as icons
  *

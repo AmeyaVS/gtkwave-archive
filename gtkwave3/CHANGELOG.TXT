@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	30jun09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	02jul09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -660,4 +660,7 @@
 		depicting events on VCD (other formats will migrate in the
 		future).
 		Added vartype info (if avail in trace, now FST+VCD).
-		Added module type info (if avail, now FST/GHW only).
+		Added module type info (if avail, now FST+VCD+GHW only) by
+		decorating the hierarchy tree info appropriately.
+		Changed build_tree_from_name() to perform move to front for
+		hier names in order to work better with decorated trees.

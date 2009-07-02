@@ -1015,6 +1015,7 @@ while((ch=*src))
 static void vcd_parse(void)
 {
 int tok;
+unsigned char ttype;
 
 for(;;)
 	{
@@ -1080,6 +1081,18 @@ for(;;)
 			break;
 		case T_SCOPE:
 			T_GET;
+                                {
+                                switch(GLOBALS->yytext_vcd_c_1[0])
+                                        { 
+                                        case 'm':       ttype = TREE_VCD_ST_MODULE; break;
+                                        case 't':       ttype = TREE_VCD_ST_TASK; break;
+                                        case 'f':       ttype = (GLOBALS->yytext_vcd_c_1[1] == 'u') ? TREE_VCD_ST_FUNCTION : TREE_VCD_ST_FORK; break;
+                                        case 'b':       ttype = TREE_VCD_ST_BEGIN; break;
+                                        default:        ttype = TREE_UNKNOWN;
+                                                        break;
+                                        }
+                                }
+
 			T_GET;
 			if(tok==T_STRING)
 				{
@@ -1088,6 +1101,9 @@ for(;;)
 				s->len=GLOBALS->yylen_vcd_c_1;
 				s->str=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+1);
 				strcpy(s->str, GLOBALS->yytext_vcd_c_1);
+				s->mod_tree_parent = GLOBALS->mod_tree_parent;
+
+				allocate_and_decorate_module_tree_node(ttype, GLOBALS->yytext_vcd_c_1);
 
 				if(GLOBALS->slistcurr)
 					{
@@ -1109,6 +1125,7 @@ for(;;)
 				{
 				struct slist *s;
 
+				GLOBALS->mod_tree_parent = GLOBALS->slistcurr->mod_tree_parent;
 				s=GLOBALS->slistroot;
 				if(!s->next)
 					{
@@ -1131,6 +1148,10 @@ for(;;)
 					}
 				build_slisthier();
 				DEBUG(fprintf(stderr, "SCOPE: %s\n",slisthier));
+				}
+				else
+				{
+				GLOBALS->mod_tree_parent = NULL;
 				}
 			sync_end(NULL);
 			break;
@@ -2511,6 +2532,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2009/07/01 07:39:12  gtkwave
+ * decorating hierarchy tree with module type info
+ *
  * Revision 1.16  2009/06/25 21:21:12  gtkwave
  * crash fix for zero bit wide events
  *
