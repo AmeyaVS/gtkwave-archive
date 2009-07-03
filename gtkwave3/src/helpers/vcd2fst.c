@@ -338,6 +338,8 @@ while(!feof(f))
 		}
 	nl = strchr(buf, '\n');
 	if(nl) *nl = 0;
+	nl = strchr(buf, '\r');
+	if(nl) *nl = 0;
 
 	switch(buf[0])
 		{
@@ -571,6 +573,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/07/01 07:19:10  gtkwave
+ * fixed bug in parsing out module type
+ *
  * Revision 1.3  2009/06/16 03:00:36  gtkwave
  * added monolithic post-close compress option to writer
  *
