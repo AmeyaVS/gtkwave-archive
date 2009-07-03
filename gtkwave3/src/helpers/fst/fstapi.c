@@ -2416,13 +2416,13 @@ if(sectype == FST_BL_ZWRAPPER)
 	char gz_membuf[FST_GZIO_LEN];
 	void *zhandle;
         int flen = strlen(xc->filename);
-        char *hf = calloc(1, flen + 16 + 1);
+        char *hf = calloc(1, flen + 16 + 32 + 1);
 
-	sprintf(hf, "%s.upk_%d", xc->filename, getpid());
+	sprintf(hf, "%s.upk_%d_%p", xc->filename, getpid(), xc);
 	fcomp = fopen(hf, "w+b");
 
 #ifdef __MINGW32__
-	setvbuf(xc->fcomp, (char *)NULL, _IONBF, 0);   /* keeps gzip from acting weird in tandem with fopen */
+	setvbuf(fcomp, (char *)NULL, _IONBF, 0);   /* keeps gzip from acting weird in tandem with fopen */
 	xc->filename_unpacked = hf;
 #else
 	unlink(hf);

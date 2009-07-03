@@ -231,7 +231,7 @@ GLOBALS->total_cycles_fst_c_3 = GLOBALS->last_cycle_fst_c_3 - GLOBALS->first_cyc
 num_activity_changes = fstReaderGetNumberDumpActivityChanges(GLOBALS->fst_fst_c_1);
 for(activity_idx = 0; activity_idx < num_activity_changes; activity_idx++)
 	{
-	uint activity_idx2;
+	uint32_t activity_idx2;
 	uint64_t ct = fstReaderGetDumpActivityChangeTime(GLOBALS->fst_fst_c_1, activity_idx);
 	unsigned char ac = fstReaderGetDumpActivityChangeValue(GLOBALS->fst_fst_c_1, activity_idx);
 
@@ -1046,6 +1046,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/07/01 16:47:47  gtkwave
+ * move decorated module alloc routine to tree.c
+ *
  * Revision 1.11  2009/07/01 08:16:33  gtkwave
  * hardening of fst reader for cygwin multiple loading
  *

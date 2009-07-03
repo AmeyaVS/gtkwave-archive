@@ -178,6 +178,20 @@ return(FALSE);
 }       
 
 
+static void close_all_fst_files(void) /* so mingw does delete of reader tempfiles */
+{
+unsigned int i;
+for(i=0;i<GLOBALS->num_notebook_pages;i++)
+	{
+        if((*GLOBALS->contexts)[i]->fst_fst_c_1)
+		{
+		fstReaderClose((*GLOBALS->contexts)[i]->fst_fst_c_1);
+		(*GLOBALS->contexts)[i]->fst_fst_c_1 = NULL;
+		}
+        }
+}
+
+
 static void print_help(char *nam)
 {
 #if !defined _MSC_VER && !defined __MINGW32__ && !defined __FreeBSD__ && !defined __CYGWIN__
@@ -547,7 +561,13 @@ do_primary_inits:
 
 init_filetrans_data(); /* for file translation splay trees */
 init_proctrans_data(); /* for proc translation structs */
-if(!mainwindow_already_built) atexit(remove_all_proc_filters);
+if(!mainwindow_already_built) 
+	{
+	atexit(remove_all_proc_filters);
+#if defined __MINGW32__
+	atexit(close_all_fst_files);
+#endif
+	}
 
 if(mainwindow_already_built)
 	{
@@ -2472,6 +2492,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.73  2009/06/07 08:40:44  gtkwave
+ * adding FST support
+ *
  * Revision 1.72  2009/04/24 20:00:03  gtkwave
  * rtlbrowse exit kill mods
  *

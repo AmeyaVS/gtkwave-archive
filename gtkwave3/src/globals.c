@@ -1732,7 +1732,7 @@ void reload_into_new_context(void)
         
    case LX2_FILE: lxt2_rd_close(GLOBALS->lx2_lx2_c_1); break;
    case VZT_FILE: vzt_rd_close(GLOBALS->vzt_vzt_c_1); break;
-   case FST_FILE: fstReaderClose(GLOBALS->fst_fst_c_1); break;
+   case FST_FILE: fstReaderClose(GLOBALS->fst_fst_c_1); GLOBALS->fst_fst_c_1 = NULL; break;
    case AE2_FILE: 
 #ifdef AET2_IS_PRESENT
 	ae2_read_end(GLOBALS->ae2); fclose(GLOBALS->ae2_f); 
@@ -2281,7 +2281,7 @@ void free_and_destroy_page_context(void)
  
    case LX2_FILE: lxt2_rd_close(GLOBALS->lx2_lx2_c_1); break;
    case VZT_FILE: vzt_rd_close(GLOBALS->vzt_vzt_c_1); break;
-   case FST_FILE: fstReaderClose(GLOBALS->fst_fst_c_1); break;
+   case FST_FILE: fstReaderClose(GLOBALS->fst_fst_c_1); GLOBALS->fst_fst_c_1 = NULL; break;
    case AE2_FILE:
 #ifdef AET2_IS_PRESENT
         ae2_read_end(GLOBALS->ae2); fclose(GLOBALS->ae2_f);
