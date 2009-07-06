@@ -1168,7 +1168,7 @@ for(;;)
 
 			if(vtok==V_PORT)
 				{
-				vtok=get_vartoken(0);
+				vtok=get_vartoken(1);
 				if(vtok==V_STRING)
 					{
 					v->size=atoi_64(GLOBALS->yytext_vcd_partial_c_2);
@@ -2458,6 +2458,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2009/07/02 18:50:47  gtkwave
+ * decorate VCD module trees with type info, add move to front to buildname
+ *
  * Revision 1.17  2009/06/25 21:21:12  gtkwave
  * crash fix for zero bit wide events
  *

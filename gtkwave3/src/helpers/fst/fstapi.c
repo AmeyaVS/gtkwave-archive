@@ -1551,7 +1551,7 @@ static const char *vartypes[] = {
 	"event", "integer", "parameter", "real", "real_parameter",
 	"reg", "supply0", "supply1", "time", "tri",
 	"triand", "trior", "trireg", "tri0", "tri1", 
-	"wand", "wire", "wor", "array"
+	"wand", "wire", "wor", "port", "array"
 	};
 
 static const char *modtypes[] = {
@@ -2175,6 +2175,8 @@ if(!(isfeof=feof(xc->fh)))
 		case FST_VT_VCD_WAND:
 		case FST_VT_VCD_WIRE:
 		case FST_VT_VCD_WOR:
+		case FST_VT_VCD_PORT:
+		case FST_VT_VCD_ARRAY:
 			xc->hier.htyp = FST_HT_VAR;
 
 			xc->hier.u.var.typ = tag;
@@ -2186,6 +2188,12 @@ if(!(isfeof=feof(xc->fh)))
 				}; /* varname */
 			*pnt = 0;
 			xc->hier.u.var.length = fstReaderVarint32(xc->fh);
+			if(tag == FST_VT_VCD_PORT)
+				{
+				xc->hier.u.var.length -= 2; /* removal of delimiting spaces */
+				xc->hier.u.var.length /= 3; /* port -> signal size adjust */
+				}
+
 			alias = fstReaderVarint32(xc->fh);
 
 			if(!alias)
@@ -2327,6 +2335,8 @@ while(!feof(xc->fh))
 		case FST_VT_VCD_WAND:
 		case FST_VT_VCD_WIRE:
 		case FST_VT_VCD_WOR:
+		case FST_VT_VCD_PORT:
+		case FST_VT_VCD_ARRAY:
 			vartype = tag;
 			vardir = fgetc(xc->fh);
 			pnt = str;
@@ -2360,7 +2370,11 @@ while(!feof(xc->fh))
 					len = 64;
 					xc->signal_typs[xc->maxhandle] = FST_VT_VCD_REAL;
 					}
-				if(fv) fprintf(fv, "$var %s %"PRIu32" %s %s $end\n", vartypes[vartype], len, fstVcdID(xc->maxhandle+1), str);
+				if(fv) 
+					{
+					uint32_t modlen = (vartype != FST_VT_VCD_PORT) ? len : ((len - 2) / 3);
+					fprintf(fv, "$var %s %"PRIu32" %s %s $end\n", vartypes[vartype], modlen, fstVcdID(xc->maxhandle+1), str);
+					}
                 		xc->maxhandle++;
 				}
 				else
@@ -2370,7 +2384,11 @@ while(!feof(xc->fh))
 					len = 64;
 					xc->signal_typs[xc->maxhandle] = FST_VT_VCD_REAL;
 					}
-				if(fv) fprintf(fv, "$var %s %"PRIu32" %s %s $end\n", vartypes[vartype], len, fstVcdID(alias), str);
+				if(fv) 
+					{
+					uint32_t modlen = (vartype != FST_VT_VCD_PORT) ? len : ((len - 2) / 3);
+					fprintf(fv, "$var %s %"PRIu32" %s %s $end\n", vartypes[vartype], modlen, fstVcdID(alias), str);
+					}
 				xc->num_alias++;
 				}
 		
@@ -3001,7 +3019,7 @@ for(;;)
 									{
 									int vcdid_len;
 									const char *vcd_id = fstVcdIDForFwrite(idx+1, &vcdid_len);
-									fputc('b', fv);
+									fputc((xc->signal_typs[idx] != FST_VT_VCD_PORT) ? 'b' : 'p', fv);
 									fwrite(mu+sig_offs, xc->signal_lens[idx], 1, fv);
 									fputc(' ', fv);
 									fwrite(vcd_id, vcdid_len, 1, fv);
@@ -3343,7 +3361,7 @@ for(;;)
 							else
 							{
 							if(fv)	{ 
-								fputc('b', fv);
+								fputc((xc->signal_typs[idx] != FST_VT_VCD_PORT) ? 'b' : 'p', fv);
 								fwrite(xc->temp_signal_value_buf, len, 1, fv);
 								}
 							}
@@ -3362,7 +3380,7 @@ for(;;)
 							{
 							if(fv)
 								{
-								fputc('b', fv);
+								fputc((xc->signal_typs[idx] != FST_VT_VCD_PORT) ? 'b' : 'p', fv);
 								fwrite(vdata, len, 1, fv);
 								}
 							}

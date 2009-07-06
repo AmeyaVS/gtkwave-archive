@@ -1141,7 +1141,7 @@ for(;;)
 
 			if(vtok==V_PORT)
 				{
-				vtok=get_vartoken(0);
+				vtok=get_vartoken(1);
 				if(vtok==V_STRING)
 					{
 					v->size=atoi_64(yytext);
@@ -1951,6 +1951,9 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/04/30 01:30:53  gtkwave
+ * VCD parser fix for double subscripted nets
+ *
  * Revision 1.2  2007/06/01 21:13:41  gtkwave
  * regenerate configure for cygwin with proper flags, add missing files
  *

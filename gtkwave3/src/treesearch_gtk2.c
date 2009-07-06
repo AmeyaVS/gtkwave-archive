@@ -95,7 +95,7 @@ fill_sig_store (void)
 	if(i == -1) continue;
 
 	vartype = GLOBALS->facs[i]->n->vartype;
-	if((vartype < 0) || (vartype > ND_VCD_WOR))
+	if((vartype < 0) || (vartype > ND_VCD_PORT))
 		{
 		vartype = 0;
 		}
@@ -2070,6 +2070,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2009/06/29 18:16:23  gtkwave
+ * adding framework for module type annotation on inner tree nodes
+ *
  * Revision 1.36  2009/06/27 23:10:32  gtkwave
  * added display of type info for variables in tree view
  *

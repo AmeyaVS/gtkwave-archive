@@ -123,42 +123,121 @@ while(!feof(f))
 		char *nam;
 		unsigned int hash;
 
-		if(!strcmp(st, "wire"))
+		vartype = FST_VT_VCD_WIRE;
+		switch(st[0])
 			{
-			vartype = FST_VT_VCD_WIRE;
-			}
-		else
-		if(!strcmp(st, "reg"))
-			{
-			vartype = FST_VT_VCD_REG;
-			}
-		else
-		if(!strcmp(st, "integer"))
-			{
-			vartype = FST_VT_VCD_INTEGER;
-			}
-		else
-		if(!strcmp(st, "supply1"))
-			{
-			vartype = FST_VT_VCD_SUPPLY1;
-			}
-		else
-		if(!strcmp(st, "time"))
-			{
-			vartype = FST_VT_VCD_TIME;
-			}
-		else
-		if(!strcmp(st, "real"))
-			{
-			vartype = FST_VT_VCD_REAL;
-			}
-		else
-			{
-			vartype = FST_VT_VCD_WIRE;
+			case 'w':
+				if(!strcmp(st, "wire"))
+					{
+					}
+				else
+				if(!strcmp(st, "wand"))
+					{
+					vartype = FST_VT_VCD_WAND;
+					}
+				else
+				if(!strcmp(st, "wor"))
+					{
+					vartype = FST_VT_VCD_WOR;
+					}
+				break;
+
+			case 'r':
+				if(!strcmp(st, "reg"))
+					{
+					vartype = FST_VT_VCD_REG;
+					}
+				else
+				if(!strcmp(st, "real"))
+					{
+					vartype = FST_VT_VCD_REAL;
+					}
+				else
+				if(!strcmp(st, "real_parameter"))
+					{
+					vartype = FST_VT_VCD_REAL_PARAMETER;
+					}
+				break;
+				
+			case 'p':
+				if(!strcmp(st, "parameter"))
+					{
+					vartype = FST_VT_VCD_PARAMETER;
+					}
+				else
+				if(!strcmp(st, "port"))
+					{
+					vartype = FST_VT_VCD_PORT;
+					}
+				break;
+
+			case 'i':
+				vartype = FST_VT_VCD_INTEGER;
+				break;
+
+			case 'e':
+				vartype = FST_VT_VCD_EVENT;
+				break;
+
+			case 's':
+				if(!strcmp(st, "supply1"))		
+					{
+					vartype = FST_VT_VCD_SUPPLY1;
+					}
+				else
+				if(!strcmp(st, "supply0"))		
+					{
+					vartype = FST_VT_VCD_SUPPLY0;
+					}
+				break;
+
+			case 't':
+				if(!strcmp(st, "time"))
+					{
+					vartype = FST_VT_VCD_TIME;
+					}
+				else
+				if(!strcmp(st, "tri"))
+					{
+					vartype = FST_VT_VCD_TRI;
+					}
+				else
+				if(!strcmp(st, "triand"))
+					{
+					vartype = FST_VT_VCD_TRIAND;
+					}
+				else
+				if(!strcmp(st, "trior"))
+					{
+					vartype = FST_VT_VCD_TRIOR;
+					}
+				else
+				if(!strcmp(st, "trireg"))
+					{
+					vartype = FST_VT_VCD_TRIREG;
+					}
+				else
+				if(!strcmp(st, "tri0"))
+					{
+					vartype = FST_VT_VCD_TRI0;
+					}
+				else
+				if(!strcmp(st, "tri1"))
+					{
+					vartype = FST_VT_VCD_TRI1;
+					}
+				break;
+
+			default:
+				break;			
 			}
 
 		st = strtok(NULL, " \t");
 		len = atoi(st);
+		if(vartype == FST_VT_VCD_PORT)
+			{
+			len = (len * 3) + 2;
+			}
 
 		st = strtok(NULL, " \t"); /* vcdid */
 		hash = vcdid_hash(st);
@@ -384,6 +463,41 @@ while(!feof(f))
 				}
 			break;
 
+		case 'p':
+			{
+			char *src = buf+1;
+			char *pnt = bin_fixbuff;
+			int pchar = 0;
+
+			for(;;)
+				{
+				if((*src == '\n') || (*src == '\r')) break;
+				if(isspace(*src))
+					{
+					if(pchar != ' ') { *(pnt++) = pchar = ' '; }
+					src++;
+					continue;
+					}
+				*(pnt++) = pchar = *(src++);
+				}
+			*pnt = 0;
+			
+			sp = strchr(bin_fixbuff, ' ');
+			sp = strchr(sp+1, ' ');
+			sp = strchr(sp+1, ' ');
+			*sp = 0;
+			hash = vcdid_hash(sp+1);
+			node = jrb_find_int(vcd_ids, hash);
+			if(node)
+				{
+				fstWriterEmitValueChange(ctx, node->val.i, bin_fixbuff);
+				}
+				else
+				{
+				}
+			}
+			break;
+
 		case 'r':
 			sp = strchr(buf, ' ');
 			hash = vcdid_hash(sp+1);
@@ -573,6 +687,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/07/03 19:39:06  gtkwave
+ * compatibility fix for mingw
+ *
  * Revision 1.4  2009/07/01 07:19:10  gtkwave
  * fixed bug in parsing out module type
  *

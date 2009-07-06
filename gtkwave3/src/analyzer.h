@@ -173,7 +173,9 @@ static const char *vartype_strings[] = { \
     "tri1", \
     "wand", \
     "wire", \
-    "wor" \
+    "wor", \
+    "array", \
+    "port" \
 };
 
 
@@ -397,6 +399,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/06/29 18:16:23  gtkwave
+ * adding framework for module type annotation on inner tree nodes
+ *
  * Revision 1.11  2009/06/25 18:31:19  gtkwave
  * added event types for VCD+FST and impulse arrows on event types
  *

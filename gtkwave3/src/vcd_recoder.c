@@ -39,6 +39,7 @@
 #include "lx2.h"
 #include "hierpack.h"
 
+WAVE_NODEVARTYPE_STR
 
 /**/
 
@@ -1509,7 +1510,7 @@ for(;;)
 
 			if(vtok==V_PORT)
 				{
-				vtok=get_vartoken(0);
+				vtok=get_vartoken(1);
 				if(vtok==V_STRING)
 					{
 					v->size=atoi_64(GLOBALS->yytext_vcd_recoder_c_3);
@@ -1838,6 +1839,7 @@ for(;;)
 			DEBUG(fprintf(stderr,"VAR %s %d %s %s[%d:%d]\n",
 				vartypes[v->vartype], v->size, v->id, v->name, 
 					v->msi, v->lsi));
+
 			goto bail;
 			err:
 			if(v)
@@ -3157,6 +3159,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2009/07/02 18:50:47  gtkwave
+ * decorate VCD module trees with type info, add move to front to buildname
+ *
  * Revision 1.25  2009/06/25 21:21:12  gtkwave
  * crash fix for zero bit wide events
  *

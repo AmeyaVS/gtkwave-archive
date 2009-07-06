@@ -341,9 +341,17 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	unsigned char nvt;
 
 	GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
-	GLOBALS->mvlfacs_fst_c_3[i].msb = msb;
-	GLOBALS->mvlfacs_fst_c_3[i].lsb = lsb;
-	GLOBALS->mvlfacs_fst_c_3[i].len = h->u.var.length;
+        if((h->u.var.length > 1) && (msb == -1) && (lsb == -1))
+		{
+		GLOBALS->mvlfacs_fst_c_3[i].msb = h->u.var.length - 1;
+		GLOBALS->mvlfacs_fst_c_3[i].lsb = 0;
+		}
+		else
+		{	
+		GLOBALS->mvlfacs_fst_c_3[i].msb = msb;
+		GLOBALS->mvlfacs_fst_c_3[i].lsb = lsb;
+		}
+	GLOBALS->mvlfacs_fst_c_3[i].len = h->u.var.length; 
 
 	switch(h->u.var.typ)
 		{
@@ -688,6 +696,36 @@ return(GLOBALS->max_time);
 
 
 /*
+ * conversion from evcd -> vcd format
+ */
+static void evcd_memcpy(char *dst, const char *src, int len)
+{
+static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
+static char  *vcd="01xz0101xz0101xzxxxxxxx";
+                                                
+char ch;
+int i, j;
+                                                        
+for(j=0;j<len;j++)
+        {
+	ch=*src;
+        for(i=0;i<23;i++)
+                {
+                if(evcd[i]==ch)
+                        {
+                        *dst=vcd[i];
+                        break;
+                        }
+                }
+        if(i==23) *dst='x';
+        
+        src++;
+        dst++;
+        }
+}
+
+
+/*
  * fst callback (only does bits for now)
  */
 static void fst_callback(void *user_callback_data_pointer, uint64_t tim, fstHandle txidx, const unsigned char *value)
@@ -708,20 +746,49 @@ if(GLOBALS->busycnt_fst_c_2==WAVE_BUSY_ITER)
 
 if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 	{
+	unsigned char vt = ND_UNSPECIFIED_DEFAULT;
+	if(f->working_node)
+		{
+		vt = f->working_node->vartype;
+		}
+
 	if(f->len>1)        
 	        {
 	        htemp->v.h_vector = (char *)malloc_2(f->len);
-		memcpy(htemp->v.h_vector, value, f->len);
+		if(vt != ND_VCD_PORT)
+			{
+			memcpy(htemp->v.h_vector, value, f->len);
+			}
+			else
+			{
+			evcd_memcpy(htemp->v.h_vector, value, f->len);
+			}
 	        }
 	        else
 	        {
-		switch(*value)
+		if(vt != ND_VCD_PORT)
 			{
-			case '0':	htemp->v.h_val = AN_0; break;
-			case '1':	htemp->v.h_val = AN_1; break;
-			case 'Z':
-			case 'z':	htemp->v.h_val = AN_Z; break;
-			default:	htemp->v.h_val = AN_X; break;
+			switch(*value)
+				{
+				case '0':	htemp->v.h_val = AN_0; break;
+				case '1':	htemp->v.h_val = AN_1; break;
+				case 'Z':
+				case 'z':	htemp->v.h_val = AN_Z; break;
+				default:	htemp->v.h_val = AN_X; break;
+				}
+			}
+			else
+			{
+			char membuf[1];
+			evcd_memcpy(membuf, value, 1);
+			switch(*membuf)
+				{
+				case '0':	htemp->v.h_val = AN_0; break;
+				case '1':	htemp->v.h_val = AN_1; break;
+				case 'Z':
+				case 'z':	htemp->v.h_val = AN_Z; break;
+				default:	htemp->v.h_val = AN_X; break;
+				}
 			}
 	        }
 	}
@@ -1046,6 +1113,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/07/03 18:48:33  gtkwave
+ * fst read compatibility fixes for mingw
+ *
  * Revision 1.12  2009/07/01 16:47:47  gtkwave
  * move decorated module alloc routine to tree.c
  *
