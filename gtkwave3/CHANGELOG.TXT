@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	06jul09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	07jul09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -667,3 +667,4 @@
 		Add EVCD support to vcd2fst, fst2vcd, and FST loader.
 		Fix longstanding bug in vcd parsers where evcd did not
 		parse correctly if standard VCD IDs were used.
+		Fixed "f" value in EVCD files so it converts to z, not x.

@@ -701,7 +701,7 @@ return(GLOBALS->max_time);
 static void evcd_memcpy(char *dst, const char *src, int len)
 {
 static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
-static char  *vcd="01xz0101xz0101xzxxxxxxx";
+static char  *vcd="01xz0101xz0101xzxxxxxxz";
                                                 
 char ch;
 int i, j;
@@ -1113,6 +1113,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/07/06 21:41:36  gtkwave
+ * evcd support issues
+ *
  * Revision 1.13  2009/07/03 18:48:33  gtkwave
  * fst read compatibility fixes for mingw
  *

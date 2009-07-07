@@ -1316,7 +1316,7 @@ process_binary:
 static void evcd_strcpy(char *dst, char *src)
 {
 static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
-static char  *vcd="01xz0101xz0101xzxxxxxxx";
+static char  *vcd="01xz0101xz0101xzxxxxxxz";
 
 char ch;
 int i;
@@ -3159,6 +3159,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2009/07/06 21:41:36  gtkwave
+ * evcd support issues
+ *
  * Revision 1.26  2009/07/02 18:50:47  gtkwave
  * decorate VCD module trees with type info, add move to front to buildname
  *

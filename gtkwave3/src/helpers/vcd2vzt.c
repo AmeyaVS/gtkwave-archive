@@ -984,7 +984,7 @@ switch(yytext[0])
 static void evcd_strcpy(char *dst, char *src)
 {
 static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
-static char  *vcd="01xz0101xz0101xzxxxxxxx";
+static char  *vcd="01xz0101xz0101xzxxxxxxz";
 
 char ch;
 int i;
@@ -2013,6 +2013,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/07/06 21:41:36  gtkwave
+ * evcd support issues
+ *
  * Revision 1.6  2009/04/30 01:30:53  gtkwave
  * VCD parser fix for double subscripted nets
  *
