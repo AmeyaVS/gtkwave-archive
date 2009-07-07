@@ -692,12 +692,12 @@ if(len < 4)
 
 		if(isx)
 			{
-			*(pnt++) = (isx==4) ? 'X' : 'x';	
+			*(pnt++) = (isx==4) ? 'x' : 'X';	
 			}
 		else
 		if(isz)
 			{
-			*(pnt++) = (isz==4) ? 'Z' : 'z';	
+			*(pnt++) = (isz==4) ? 'z' : 'Z';	
 			}
 		else
 			{
@@ -2677,6 +2677,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2009/06/29 18:16:23  gtkwave
+ * adding framework for module type annotation on inner tree nodes
+ *
  * Revision 1.29  2009/06/14 15:44:29  gtkwave
  * fix fst alias handling, reduce number of hier searches for fst
  *
