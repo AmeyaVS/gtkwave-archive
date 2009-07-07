@@ -700,8 +700,8 @@ return(GLOBALS->max_time);
  */
 static void evcd_memcpy(char *dst, const char *src, int len)
 {
-static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
-static char  *vcd="01xz0101xz0101xzxxxxxxz";
+static const char *evcd="DUNZduLHXTlh01?FAaBbCcf";
+static const char  *vcd="01xz0101xz0101xzxxxxxxz";
                                                 
 char ch;
 int i, j;
@@ -1113,6 +1113,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2009/07/07 15:48:37  gtkwave
+ * EVCD "f" value fix (should be z not x)
+ *
  * Revision 1.14  2009/07/06 21:41:36  gtkwave
  * evcd support issues
  *

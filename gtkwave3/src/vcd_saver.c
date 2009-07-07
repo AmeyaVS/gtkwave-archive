@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005-9.
+ * Copyright (c) Tony Bybell 2005-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@ if(!strict)
 	{
 	if(ch < AN_COUNT)
 		{
-		return(AN_STR[ch]);
+		return(AN_USTR[ch]);
 		}
 		else
 		{
@@ -36,7 +36,7 @@ else
 	{
 	if(ch < AN_COUNT)
 		{
-		return(AN_STR4ST[ch]);
+		return(AN_USTR4ST[ch]);
 		}
 		else
 		{
@@ -930,7 +930,7 @@ for(i=0;i<numhist;i++)
 	{
 	if(ha[i]->time < tmin)
 		{
-		h_val = invert ? AN_STR_INV[ha[i]->v.h_val] : AN_STR[ha[i]->v.h_val];	
+		h_val = invert ? AN_USTR_INV[ha[i]->v.h_val] : AN_USTR[ha[i]->v.h_val];	
 		}
 	else
 	if(ha[i]->time > tmax)
@@ -945,7 +945,7 @@ for(i=0;i<numhist;i++)
 
 			if(skip_this)
 				{
-				h_val = invert ? AN_STR_INV[ha[i]->v.h_val] : AN_STR[ha[i]->v.h_val];
+				h_val = invert ? AN_USTR_INV[ha[i]->v.h_val] : AN_USTR[ha[i]->v.h_val];
 				}
 
 			fprintf(GLOBALS->f_vcd_saver_c_1,
@@ -970,7 +970,7 @@ for(i=0;i<numhist;i++)
 				}
 			}
 
-		h_val = invert ? AN_STR_INV[ha[i]->v.h_val] : AN_STR[ha[i]->v.h_val];
+		h_val = invert ? AN_USTR_INV[ha[i]->v.h_val] : AN_USTR[ha[i]->v.h_val];
 		fprintf(GLOBALS->f_vcd_saver_c_1, "          Edge:               "TTFormat".0 %c\n", ha[i]->time, h_val);
 		}
 	}		
@@ -1459,6 +1459,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/04/30 19:18:41  gtkwave
+ * added space before final brackets in VCD writers
+ *
  * Revision 1.9  2009/04/15 21:39:50  gtkwave
  * use XL-style identifier sequencing for VCD identifiers
  *

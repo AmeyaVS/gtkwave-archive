@@ -729,33 +729,33 @@ while(s)
 				
 			case ST_HIGH:
 				totaltraces++;
-				if((str[0]=='1')||(str[0]=='H')) s->search_result=1;	
+				if((str[0]=='1')||(str[0]=='h')||(str[0]=='H')) s->search_result=1;	
 				break;
 
 			case ST_RISE:
-				if((str[0]=='1')||(str[0]=='H')) s->search_result=1;	
+				if((str[0]=='1')||(str[0]=='h')||(str[0]=='H')) s->search_result=1;	
 				totaltraces++;
 				break;
 
 			case ST_LOW:
 				totaltraces++;
-				if((str[0]=='0')||(str[0]=='L')) s->search_result=1;
+				if((str[0]=='0')||(str[0]=='l')||(str[0]=='L')) s->search_result=1;
 				break;
 
 			case ST_FALL:
 				totaltraces++;
-				if((str[0]=='0')||(str[0]=='L')) s->search_result=1;
+				if((str[0]=='0')||(str[0]=='l')||(str[0]=='L')) s->search_result=1;
 				break;
 
 			case ST_MID:
 				totaltraces++;
-				if(str[0]=='Z')
+				if((str[0]=='z')||(str[0]=='Z'))
  					s->search_result=1;
 				break;				
 
 			case ST_X:
 				totaltraces++;
-				if(str[0]=='X') s->search_result=1;
+				if((str[0]=='x')||(str[0]=='X')) s->search_result=1;
 				break;
 
 			case ST_ANY:
@@ -835,7 +835,7 @@ while(s)
 				if((chval2=chval))
 				while((ch=*(chval2++)))
 					{
-					if(((ch>='1')&&(ch<='9'))||(ch=='H')||((ch>='A')&&(ch<='F')))
+					if(((ch>='1')&&(ch<='9'))||(ch=='h')||(ch=='H')||((ch>='A')&&(ch<='F')))
 						{
 						s->search_result=1;
 						break;
@@ -850,7 +850,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if((ch!='0')&&(ch!='L'))
+					if((ch!='0')&&(ch!='l')&&(ch!='L'))
 						{
 						s->search_result=0;
 						break;
@@ -866,7 +866,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if(ch!='Z')
+					if((ch!='z')&&(ch!='Z'))
 						{
 						s->search_result=0;
 						break;
@@ -882,7 +882,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if((ch!='X')&&(ch!='W'))
+					if((ch!='x')&&(ch!='w')&&(ch!='X')&&(ch!='W'))
 						{
 						s->search_result=0;
 						break;
@@ -1075,35 +1075,35 @@ while(s)
 				
 			case ST_HIGH:
 				totaltraces++;
-				if((str[0]=='1')||(str[0]=='H')) s->search_result=1;	
+				if((str[0]=='1')||(str[0]=='h')||(str[0]=='H')) s->search_result=1;	
 				break;
 
 			case ST_RISE:
 				totaltraces++;
-				if(((str[0]=='1')||(str[0]=='H'))&&(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase)) 
+				if(((str[0]=='1')||(str[0]=='h')||(str[0]=='H'))&&(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase)) 
 					s->search_result=1;	
 				break;
 
 			case ST_LOW:
 				totaltraces++;
-				if((str[0]=='0')||(str[0]=='L')) s->search_result=1;
+				if((str[0]=='0')||(str[0]=='l')||(str[0]=='L')) s->search_result=1;
 				break;
 
 			case ST_FALL:
 				totaltraces++;
-				if(((str[0]=='0')||(str[0]=='L'))&&(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase))
+				if(((str[0]=='0')||(str[0]=='l')||(str[0]=='L'))&&(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)==maxbase))
  					s->search_result=1;
 				break;
 
 			case ST_MID:
 				totaltraces++;
-				if(str[0]=='Z')
+				if((str[0]=='z')||(str[0]=='Z'))
  					s->search_result=1;
 				break;				
 
 			case ST_X:
 				totaltraces++;
-				if(str[0]=='X') s->search_result=1;
+				if((str[0]=='x')||(str[0]=='X')) s->search_result=1;
 				break;
 
 			case ST_ANY:
@@ -1183,7 +1183,7 @@ while(s)
 				if((chval2=chval))
 				while((ch=*(chval2++)))
 					{
-					if(((ch>='1')&&(ch<='9'))||(ch=='H')||((ch>='A')&&(ch<='F')))
+					if(((ch>='1')&&(ch<='9'))||(ch=='h')||(ch=='H')||((ch>='A')&&(ch<='F')))
 						{
 						s->search_result=1;
 						break;
@@ -1198,7 +1198,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if((ch!='0')&&(ch!='L'))
+					if((ch!='0')&&(ch!='l')&&(ch!='L'))
 						{
 						s->search_result=0;
 						break;
@@ -1214,7 +1214,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if(ch!='Z')
+					if((ch!='z')&&(ch!='Z'))
 						{
 						s->search_result=0;
 						break;
@@ -1230,7 +1230,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if((ch!='X')&&(ch!='W'))
+					if((ch!='x')&&(ch!='w')&&(ch!='X')&&(ch!='W'))
 						{
 						s->search_result=0;
 						break;
@@ -1643,6 +1643,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/03/09 23:29:12  gtkwave
+ * fixed memory access violation and added comprehensive option.
+ *
  * Revision 1.8  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

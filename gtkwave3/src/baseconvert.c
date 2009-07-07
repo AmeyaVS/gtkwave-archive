@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -336,7 +336,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 				}
 			}
 
-		*(pnt++)="0123456789ABCDEFXZWU-xzwu"[val];
+		*(pnt++)=AN_HEX_STR[val];
 		
 		parse+=4;
 		}
@@ -373,7 +373,7 @@ else if(flags&TR_OCT)
 			if((parse[j]==AN_1)||(parse[j]==AN_H)) { val|=1; }
 			}
 
-		*(pnt++)="01234567XZWU-"[val];
+		*(pnt++)=AN_OCT_STR[val];
 		
 		parse+=3;
 		}
@@ -931,7 +931,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 				}
 			}
 
-		*(pnt++)="0123456789ABCDEFXZWU-xzwu"[val];
+		*(pnt++)=AN_HEX_STR[val];
 		
 		parse+=4;
 		}
@@ -968,7 +968,7 @@ else if(flags&TR_OCT)
 			if((parse[j]==AN_1)||(parse[j]==AN_H)) { val|=1; }
 			}
 
-		*(pnt++)="01234567XZWU-"[val];
+		*(pnt++)=AN_OCT_STR[val];
 		parse+=3;
 		}
 
@@ -1528,6 +1528,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/03/24 20:51:53  gtkwave
+ * add static to const qualifier for some declarations to avoid stack push
+ *
  * Revision 1.8  2008/06/11 08:01:42  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

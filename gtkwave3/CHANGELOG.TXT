@@ -668,3 +668,6 @@
 		Fix longstanding bug in vcd parsers where evcd did not
 		parse correctly if standard VCD IDs were used.
 		Fixed "f" value in EVCD files so it converts to z, not x.
+		Convert capitalization usage on hex values to match that
+		of verilog.  (i.e., x = all bits are x, X means some but
+		not all bits are x.)

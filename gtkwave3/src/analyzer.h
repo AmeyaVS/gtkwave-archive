@@ -49,11 +49,18 @@ enum AnalyzerBits  { AN_0, AN_X, AN_Z, AN_1, AN_H, AN_U, AN_W, AN_L, AN_DASH, AN
 #define AN_MSK     (AN_COUNT-1) /* max index into AN_STR, AN_COUNT *must* be a power of two unless logic AND with AN_MSK is changed */
 
 /* positional ascii 0123456789ABCDEF, question marks should not happen unless something slips through the cracks as AN_RSVA to AN_RSVF are reserved */
-#define AN_STR     "0XZ1HUWL-???????"
-#define AN_STR_INV "1XZ0LUWH-???????"
+#define AN_STR      "0xz1huwl-???????"
+#define AN_STR_INV  "1xz0luwh-???????"
+
+#define AN_USTR     "0XZ1HUWL-???????"
+#define AN_USTR_INV "1XZ0LUWH-???????"
 
 /* for writing out 4 state formats (read GHW, write LXT) */
-#define AN_STR4ST  "0XZ11XZ0XXXXXXXX"
+#define AN_USTR4ST  "0XZ11XZ0XXXXXXXX"
+
+/* for hex/oct conversion in baseconvert.c */
+#define AN_HEX_STR  "0123456789ABCDEFxzwu-XZWU"
+#define AN_OCT_STR  "01234567xzwu-"
 
 /* now the recoded "extra" values... */
 #define RCV_X (1 | (0<<1))
@@ -64,7 +71,7 @@ enum AnalyzerBits  { AN_0, AN_X, AN_Z, AN_1, AN_H, AN_U, AN_W, AN_L, AN_DASH, AN
 #define RCV_L (1 | (5<<1))
 #define RCV_D (1 | (6<<1))
 
-#define RCV_STR "XZHUWL-?"
+#define RCV_STR "xzhuwl-?"
 /*               01234567 */
 
 /* ^^^   Bit representation   ^^^ */
@@ -399,6 +406,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/07/06 21:41:36  gtkwave
+ * evcd support issues
+ *
  * Revision 1.12  2009/06/29 18:16:23  gtkwave
  * adding framework for module type annotation on inner tree nodes
  *

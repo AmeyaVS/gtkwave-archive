@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2008.
+ * Copyright (c) Tony Bybell 2008-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -354,7 +354,7 @@ while(s)
 				if((chval2=chval))
 				while((ch=*(chval2++)))
 					{
-					if(((ch>='1')&&(ch<='9'))||(ch=='H')||((ch>='A')&&(ch<='F')))
+					if(((ch>='1')&&(ch<='9'))||(ch=='h')||(ch=='H')||((ch>='A')&&(ch<='F')))
 						{
 						s->search_result=1;
 						break;
@@ -369,7 +369,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if((ch!='0')&&(ch!='L'))
+					if((ch!='0')&&(ch!='l')&&(ch!='L'))
 						{
 						s->search_result=0;
 						break;
@@ -385,7 +385,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if(ch!='Z')
+					if((ch!='z')&&(ch!='Z'))
 						{
 						s->search_result=0;
 						break;
@@ -401,7 +401,7 @@ while(s)
 				s->search_result=1;
 				while((ch=*(chval2++)))
 					{
-					if((ch!='X')&&(ch!='W'))
+					if((ch!='X')&&(ch!='W')&&(ch!='x')&&(ch!='w'))
 						{
 						s->search_result=0;
 						break;
@@ -575,6 +575,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/06/11 08:01:48  gtkwave
+ * gcc 4.3.x compiler warning fixes
+ *
  * Revision 1.5  2008/05/01 02:53:37  gtkwave
  * edgebutton fix (went back two edges on a concat vector instead of one)
  *
