@@ -973,8 +973,8 @@ switch(GLOBALS->yytext_vcd_partial_c_2[0])
 
 static void evcd_strcpy(char *dst, char *src)
 {
-static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
-static char  *vcd="01xz0101xz0101xzxxxxxxz";
+static const char *evcd="DUNZduLHXTlh01?FAaBbCcf";
+static const char  *vcd="01xz0101xz0101xzxxxxxxz";
 
 char ch;
 int i;
@@ -2458,6 +2458,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2009/07/07 15:48:37  gtkwave
+ * EVCD "f" value fix (should be z not x)
+ *
  * Revision 1.19  2009/07/06 21:41:36  gtkwave
  * evcd support issues
  *

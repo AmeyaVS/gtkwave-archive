@@ -978,8 +978,8 @@ switch(yytext[0])
 
 static void evcd_strcpy(char *dst, char *src)
 {
-static char *evcd="DUNZduLHXTlh01?FAaBbCcf";
-static char  *vcd="01xz0101xz0101xzxxxxxxz";
+static const char *evcd="DUNZduLHXTlh01?FAaBbCcf";
+static const char  *vcd="01xz0101xz0101xzxxxxxxz";
 
 char ch;
 int i;
@@ -1951,6 +1951,9 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/07/07 15:48:37  gtkwave
+ * EVCD "f" value fix (should be z not x)
+ *
  * Revision 1.4  2009/07/06 21:41:36  gtkwave
  * evcd support issues
  *
