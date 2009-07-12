@@ -731,7 +731,7 @@ for(j=0;j<len;j++)
 static void fst_callback(void *user_callback_data_pointer, uint64_t tim, fstHandle txidx, const unsigned char *value)
 {
 fstHandle facidx = GLOBALS->mvlfacs_fst_rvs_alias[--txidx];
-struct HistEnt *htemp = histent_calloc();
+struct HistEnt *htemp;
 struct lx2_entry *l2e = GLOBALS->fst_table_fst_c_1+facidx;
 struct fac *f = GLOBALS->mvlfacs_fst_c_3+facidx;
 
@@ -754,27 +754,41 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 
 	if(f->len>1)        
 	        {
-	        htemp->v.h_vector = (char *)malloc_2(f->len);
+		char *h_vector = (char *)malloc_2(f->len);
 		if(vt != ND_VCD_PORT)
 			{
-			memcpy(htemp->v.h_vector, value, f->len);
+			memcpy(h_vector, value, f->len);
 			}
 			else
 			{
-			evcd_memcpy(htemp->v.h_vector, value, f->len);
+			evcd_memcpy(h_vector, value, f->len);
 			}
+
+		if((l2e->histent_curr)&&(l2e->histent_curr->v.h_vector)) /* remove duplicate values */
+			{
+			if(!memcmp(l2e->histent_curr->v.h_vector, h_vector, f->len))
+				{
+				free_2(h_vector);
+				return;
+				}
+			}
+
+		htemp = histent_calloc();
+		htemp->v.h_vector = h_vector;
 	        }
 	        else
 	        {
+		unsigned char h_val;
+
 		if(vt != ND_VCD_PORT)
 			{
 			switch(*value)
 				{
-				case '0':	htemp->v.h_val = AN_0; break;
-				case '1':	htemp->v.h_val = AN_1; break;
+				case '0':	h_val = AN_0; break;
+				case '1':	h_val = AN_1; break;
 				case 'Z':
-				case 'z':	htemp->v.h_val = AN_Z; break;
-				default:	htemp->v.h_val = AN_X; break;
+				case 'z':	h_val = AN_Z; break;
+				default:	h_val = AN_X; break;
 				}
 			}
 			else
@@ -783,34 +797,66 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 			evcd_memcpy(membuf, value, 1);
 			switch(*membuf)
 				{
-				case '0':	htemp->v.h_val = AN_0; break;
-				case '1':	htemp->v.h_val = AN_1; break;
+				case '0':	h_val = AN_0; break;
+				case '1':	h_val = AN_1; break;
 				case 'Z':
-				case 'z':	htemp->v.h_val = AN_Z; break;
-				default:	htemp->v.h_val = AN_X; break;
+				case 'z':	h_val = AN_Z; break;
+				default:	h_val = AN_X; break;
 				}
 			}
+
+		if((vt != ND_VCD_EVENT) && (l2e->histent_curr)) /* remove duplicate values */
+			{
+			if(l2e->histent_curr->v.h_val == h_val)
+				{
+				return;
+				}
+			}
+
+		htemp = histent_calloc();
+		htemp->v.h_val = h_val;
 	        }
 	}
 else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	{
+	if((l2e->histent_curr)&&(l2e->histent_curr->v.h_vector)) /* remove duplicate values */
+		{
+		if(!memcmp(l2e->histent_curr->v.h_vector, value, sizeof(double)))
+			{
+			return;
+			}
+		}
+
 	/* if(fstReaderIterBlocksSetNativeDoublesOnCallback is disabled...)
 
 	double *d = double_slab_calloc();
 	sscanf(value, "%lg", d);
+	htemp = histent_calloc();
 	htemp->v.h_vector = (char *)d;
 
 	otherwise...
 	*/
 
+	htemp = histent_calloc();
 	htemp->v.h_vector = double_slab_calloc();
 	memcpy(htemp->v.h_vector, value, sizeof(double));
 	htemp->flags = HIST_REAL;
 	}
 else	/* string */
 	{
-	char *s = malloc_2(strlen(value)+1);
+	char *s;
+
+	if((l2e->histent_curr)&&(l2e->histent_curr->v.h_vector)) /* remove duplicate values */
+		{
+		if(!strcmp(l2e->histent_curr->v.h_vector, value))
+			{
+			return;
+			}
+		}
+
+	s = malloc_2(strlen(value)+1);
 	strcpy(s, value);
+	htemp = histent_calloc();
 	htemp->v.h_vector = s;
 	htemp->flags = HIST_REAL|HIST_STRING;
 	}
@@ -1113,6 +1159,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/07/07 20:12:53  gtkwave
+ * convert hex capitalization to match verilog
+ *
  * Revision 1.15  2009/07/07 15:48:37  gtkwave
  * EVCD "f" value fix (should be z not x)
  *
