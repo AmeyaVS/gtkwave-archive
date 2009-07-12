@@ -588,7 +588,7 @@ int vtype2(Trptr t, vptr v)
 	if (vec == NULL)
 		return(1);
 	nbits=t->n.vec->nbits;
-	res = 3;
+	res = AN_1;
 	for (i = 0; i < nbits; i++)
 		{
 		switch (*vec) 
@@ -1528,6 +1528,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/07/07 20:12:53  gtkwave
+ * convert hex capitalization to match verilog
+ *
  * Revision 1.9  2009/03/24 20:51:53  gtkwave
  * add static to const qualifier for some declarations to avoid stack push
  *
