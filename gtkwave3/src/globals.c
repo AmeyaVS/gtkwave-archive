@@ -1671,6 +1671,13 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->filesel_lxt_writesave, &GLOBALS->filesel_lxt_writesave);
  strcpy2_into_new_context(new_globals, &new_globals->filesel_tim_writesave, &GLOBALS->filesel_tim_writesave);
 
+ strcpy2_into_new_context(new_globals, &new_globals->stems_name, &GLOBALS->stems_name); /* remaining fileselbox() vars not handled elsewhere */
+ strcpy2_into_new_context(new_globals, &new_globals->filesel_logfile_menu_c_1, &GLOBALS->filesel_logfile_menu_c_1);
+ strcpy2_into_new_context(new_globals, &new_globals->filesel_scriptfile_menu, &GLOBALS->filesel_scriptfile_menu);
+ strcpy2_into_new_context(new_globals, &new_globals->fcurr_ptranslate_c_1, &GLOBALS->fcurr_ptranslate_c_1);
+ strcpy2_into_new_context(new_globals, &new_globals->fcurr_translate_c_2, &GLOBALS->fcurr_translate_c_2);
+ 
+
  /* status.c */
  new_globals->text_status_c_2 = GLOBALS->text_status_c_2;
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)

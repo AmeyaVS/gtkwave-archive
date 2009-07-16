@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,6 +90,26 @@ GtkWidget *pFileChoose;
 GtkWidget *pWindowMain;
 GtkFileFilter *filter;
 #endif
+
+if(!*filesel_path) /* if no name specified, hijack loaded file name path */
+	{
+	if(GLOBALS->loaded_file_name)
+		{
+		char *tname = strdup_2(GLOBALS->loaded_file_name);
+		char *delim = strrchr(tname, '/');
+		if(!delim) delim =  strrchr(tname, '\\');
+		if(delim) 
+			{ 
+			*(delim+1) = 0; /* keep slash for gtk_file_chooser_set_filename vs gtk_file_chooser_set_current_folder test below */
+			*filesel_path = tname;
+			}
+			else
+			{
+			free_2(tname);
+			}
+		}
+	}
+
  
 if(GLOBALS->script_handle)
 	{
@@ -196,7 +216,18 @@ if(is_writemode)
 	        NULL);
 	}
 
-if((can_set_filename) && (*filesel_path)) gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(pFileChoose), *filesel_path);
+if((can_set_filename) && (*filesel_path)) 
+	{
+	int flen = strlen(*filesel_path);
+	if(((*filesel_path)[flen-1]=='/') || ((*filesel_path)[flen-1]=='\\'))
+		{
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(pFileChoose), *filesel_path);
+		}
+		else
+		{
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(pFileChoose), *filesel_path);
+		}
+	}
 
 if(pattn)
 	{
@@ -286,6 +317,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/01/13 22:56:47  gtkwave
+ * revert to old file chooser in mingw as new one can't be resized
+ *
  * Revision 1.10  2008/11/19 19:08:34  gtkwave
  * add tcl menu option, update file requester name reentrancy code
  *

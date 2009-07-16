@@ -2194,6 +2194,20 @@ if(GLOBALS->filesel_ok)
 		set_GLOBALS(g_now);
 		g_now->vcd_jmp_buf = NULL;
 
+		/* copy old file req strings into new context */
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_lxt_writesave, &g_old->filesel_lxt_writesave);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_vcd_writesave, &g_old->filesel_vcd_writesave);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_tim_writesave, &g_old->filesel_tim_writesave);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_writesave, &g_old->filesel_writesave);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->stems_name, &g_old->stems_name);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_logfile_menu_c_1, &g_old->filesel_logfile_menu_c_1);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_scriptfile_menu, &g_old->filesel_scriptfile_menu);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_ptranslate_c_1, &g_old->fcurr_ptranslate_c_1);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_print_pdf_renderopt_c_1, &g_old->filesel_print_pdf_renderopt_c_1);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_print_ps_renderopt_c_1, &g_old->filesel_print_ps_renderopt_c_1);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_print_mif_renderopt_c_1, &g_old->filesel_print_mif_renderopt_c_1);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_translate_c_2, &g_old->fcurr_translate_c_2);
+
 		if(g_old->loaded_file_type == MISSING_FILE) /* remove original "blank" page */
 			{
                         if(g_old->missing_file_toolbar) gtk_widget_set_sensitive(g_old->missing_file_toolbar, TRUE);
@@ -5379,6 +5393,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.68  2009/07/01 21:58:32  gtkwave
+ * more GHW module type adds for icons in hierarchy window
+ *
  * Revision 1.67  2009/07/01 18:22:35  gtkwave
  * added VHDL (GHW) instance types as icons
  *
