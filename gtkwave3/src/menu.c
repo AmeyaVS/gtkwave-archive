@@ -2195,6 +2195,11 @@ if(GLOBALS->filesel_ok)
 		g_now->vcd_jmp_buf = NULL;
 
 		/* copy old file req strings into new context */
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_ptranslate_c_1, &g_old->fcurr_ptranslate_c_1);
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_translate_c_2, &g_old->fcurr_translate_c_2);
+
+#if 0
+		/* disabled for now...these probably would be disruptive */
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_lxt_writesave, &g_old->filesel_lxt_writesave);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_vcd_writesave, &g_old->filesel_vcd_writesave);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_tim_writesave, &g_old->filesel_tim_writesave);
@@ -2202,11 +2207,10 @@ if(GLOBALS->filesel_ok)
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->stems_name, &g_old->stems_name);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_logfile_menu_c_1, &g_old->filesel_logfile_menu_c_1);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_scriptfile_menu, &g_old->filesel_scriptfile_menu);
-		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_ptranslate_c_1, &g_old->fcurr_ptranslate_c_1);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_print_pdf_renderopt_c_1, &g_old->filesel_print_pdf_renderopt_c_1);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_print_ps_renderopt_c_1, &g_old->filesel_print_ps_renderopt_c_1);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->filesel_print_mif_renderopt_c_1, &g_old->filesel_print_mif_renderopt_c_1);
-		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_translate_c_2, &g_old->fcurr_translate_c_2);
+#endif		
 
 		if(g_old->loaded_file_type == MISSING_FILE) /* remove original "blank" page */
 			{
@@ -5393,6 +5397,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*
  * $Id$
  * $Log$
+ * Revision 1.69  2009/07/16 15:36:34  gtkwave
+ * file name updates...derive unspecified names from loaded file name directory
+ *
  * Revision 1.68  2009/07/01 21:58:32  gtkwave
  * more GHW module type adds for icons in hierarchy window
  *
