@@ -95,7 +95,7 @@ fill_sig_store (void)
 	if(i == -1) continue;
 
 	vartype = GLOBALS->facs[i]->n->vartype;
-	if((vartype < 0) || (vartype > ND_VCD_PORT))
+	if((vartype < 0) || (vartype > ND_VARTYPE_MAX))
 		{
 		vartype = 0;
 		}
@@ -2070,6 +2070,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2009/07/06 21:41:36  gtkwave
+ * evcd support issues
+ *
  * Revision 1.37  2009/06/29 18:16:23  gtkwave
  * adding framework for module type annotation on inner tree nodes
  *

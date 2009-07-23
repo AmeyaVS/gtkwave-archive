@@ -210,6 +210,7 @@ enum nodeVarType {
     ND_VCD_ARRAY           = 19,    /* used to define the rownum (index) port on the array */
 
     ND_VCD_PORT		   = 20,
+    ND_VARTYPE_MAX	   = 20,
                 
     ND_GEN_STRING          = 254,   /* generic string type */
     ND_GEN_MEMBLOCK        = 255    /* generic memblock type */
@@ -406,6 +407,9 @@ char *attempt_vecmatch(char *s1, char *s2);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/07/07 20:12:53  gtkwave
+ * convert hex capitalization to match verilog
+ *
  * Revision 1.13  2009/07/06 21:41:36  gtkwave
  * evcd support issues
  *

@@ -24,6 +24,8 @@
 #include "bsearch.h"
 #include "hierpack.h"
 
+WAVE_NODEVARTYPE_STR
+
 /************************************************************************************************/
 
 static char *get_fullname(Trptr t)
@@ -50,8 +52,9 @@ return(s);
 }
 
 
-static int determine_trace_flags(unsigned int flags, char *ch)
+static int determine_trace_flags(Trptr t, char *ch)
 {
+unsigned int flags = t->flags;
 int pos = 0;
 
 /* [0] */
@@ -89,8 +92,24 @@ if((flags & TR_ZEROFILL) != 0) { ch[pos++] = '0'; }
 else
 if((flags & TR_ONEFILL) != 0) { ch[pos++] = '1'; }
 
-/* [8] (at worst case this needs 9 characters) */
+/* [8] (at worst case this front part needs 9 characters) */
 ch[pos] = 0;
+
+if(!t->vector)
+	{
+	int vartype = t->n.nd->vartype;
+	if((vartype < 0) || (vartype > ND_VARTYPE_MAX))
+		{
+		vartype = 0;
+		}
+
+	if(vartype)
+		{
+		ch[pos++] = ' ';
+		strcat(ch + pos, vartype_strings[vartype]);
+		pos += strlen(vartype_strings[vartype]);
+		}
+	}
 
 return(pos);
 }
@@ -271,7 +290,7 @@ int num_info_rows = 2;
 char *flagged_name = NULL;
 char *alternate_name = NULL;
 int fh;
-char flag_string[9];
+char flag_string[65];
 char *tname = NULL;
 
 if(GLOBALS->disable_mouseover)
@@ -296,7 +315,7 @@ if(t)
 	name_charlen = tname ? strlen(tname) : 0;
 	if(name_charlen)
 		{
-		int len = determine_trace_flags(t->flags, flag_string);
+		int len = determine_trace_flags(t, flag_string);
 		flagged_name = malloc_2(name_charlen + 1 + len + 1);
 		memcpy(flagged_name, tname, name_charlen);
 		flagged_name[name_charlen] = ' ';
@@ -421,6 +440,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/06/25 22:12:30  gtkwave
+ * convert event impulses to strict 1/0 activity values regardless of val
+ *
  * Revision 1.1  2008/12/09 00:36:42  gtkwave
  * added mouseover support for signal window
  *
