@@ -69,6 +69,31 @@ else
 fi
 
 
+# check for "fisher price" (simvision rendering style) mode
+AC_MSG_CHECKING([if fatlines should be used])
+
+FLN=no
+AC_ARG_ENABLE([fatlines],
+[  --enable-fatlines       Renders lines as double width in gtkwave.],
+[
+if test "X$enable_fatlines" = "Xno" ; then
+	FLN=no
+else
+	FLN=yes
+fi
+],
+[
+FLN=no
+])
+
+if test "X$FLN" = "Xno" ; then
+	AC_MSG_RESULT([no])
+else
+	AC_MSG_RESULT([yes])
+	CPPFLAGS="-DWAVE_DOUBLE_LINE_WIDTH_MODE $CPPFLAGS"
+fi
+
+
 AC_MSG_CHECKING([if ae2 support should be used])
 
 AE2_CFLAGS=

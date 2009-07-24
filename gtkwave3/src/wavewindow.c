@@ -483,7 +483,9 @@ if(GLOBALS->m1x_wavewindow_c_1==GLOBALS->m2x_wavewindow_c_1)
 	}
 
 /* keep baseline from getting obliterated */
+#ifndef WAVE_DOUBLE_LINE_WIDTH_MODE
 if(GLOBALS->tims.baseline>=0)
+#endif
 	{
 	draw_marker();
 	}
@@ -1143,6 +1145,20 @@ if(!GLOBALS->made_gc_contexts_wavewindow_c_1)
 	GLOBALS->gc_mark_wavewindow_c_1   = alloc_color(GLOBALS->wavearea, GLOBALS->color_mark, GLOBALS->wavearea->style->bg_gc[GTK_STATE_SELECTED]);
 	GLOBALS->gc_umark_wavewindow_c_1  = alloc_color(GLOBALS->wavearea, GLOBALS->color_umark, GLOBALS->wavearea->style->bg_gc[GTK_STATE_SELECTED]);
 
+#ifdef WAVE_DOUBLE_LINE_WIDTH_MODE
+	gdk_gc_set_line_attributes(GLOBALS->gc_value_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_low_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_high_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_trans_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_mid_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_xfill_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_x_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_vbox_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_vtrans_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_mark_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_umark_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+#endif
+
         GLOBALS->gc_0_wavewindow_c_1      = alloc_color(GLOBALS->wavearea, GLOBALS->color_0, GLOBALS->wavearea->style->black_gc);
         GLOBALS->gc_1_wavewindow_c_1      = alloc_color(GLOBALS->wavearea, GLOBALS->color_1, GLOBALS->wavearea->style->black_gc);
         GLOBALS->gc_ufill_wavewindow_c_1  = alloc_color(GLOBALS->wavearea, GLOBALS->color_ufill, GLOBALS->wavearea->style->bg_gc[GTK_STATE_PRELIGHT]);
@@ -1151,6 +1167,17 @@ if(!GLOBALS->made_gc_contexts_wavewindow_c_1)
         GLOBALS->gc_w_wavewindow_c_1      = alloc_color(GLOBALS->wavearea, GLOBALS->color_w, GLOBALS->wavearea->style->black_gc);
         GLOBALS->gc_dashfill_wavewindow_c_1= alloc_color(GLOBALS->wavearea, GLOBALS->color_dashfill, GLOBALS->wavearea->style->bg_gc[GTK_STATE_PRELIGHT]);
         GLOBALS->gc_dash_wavewindow_c_1   = alloc_color(GLOBALS->wavearea, GLOBALS->color_dash, GLOBALS->wavearea->style->black_gc);
+
+#ifdef WAVE_DOUBLE_LINE_WIDTH_MODE
+	gdk_gc_set_line_attributes(GLOBALS->gc_0_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_1_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_ufill_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_u_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_wfill_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_w_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_dashfill_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	gdk_gc_set_line_attributes(GLOBALS->gc_dash_wavewindow_c_1, 2, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+#endif
 
 	GLOBALS->made_gc_contexts_wavewindow_c_1=~0;
 
@@ -3872,6 +3899,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2009/06/26 19:56:18  gtkwave
+ * add arrowheads to all impulse arrows
+ *
  * Revision 1.48  2009/06/25 22:12:30  gtkwave
  * convert event impulses to strict 1/0 activity values regardless of val
  *

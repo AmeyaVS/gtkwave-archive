@@ -677,3 +677,6 @@
 		to the new tab and the directory used on an unspecified
 		entry is derived from the loaded file name directory.
 		Added type information to mouseover in signal window.
+		Added --enable-fatlines ./configure flag which enables gtkwave
+		to render lines in "Fisher Price" (aka Simvision) double-
+		width style.
