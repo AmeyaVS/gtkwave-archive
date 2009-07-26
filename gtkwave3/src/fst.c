@@ -898,7 +898,7 @@ np->mv.mvlfac=NULL;
  */
 void import_fst_trace(nptr np)
 {
-struct HistEnt *htemp, *histent_tail;
+hptr htemp, htempx, histent_tail;
 int len, i;
 struct fac *f;
 int txidx;
@@ -947,8 +947,20 @@ htemp->time = MAX_HISTENT_TIME;
 htemp = histent_calloc();
 if(len>1)
 	{
-	htemp->v.h_vector = (char *)malloc_2(len);
-	for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+	if(!(f->flags&VZT_RD_SYM_F_DOUBLE))
+		{
+		htemp->v.h_vector = (char *)malloc_2(len);
+		for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+		}
+		else
+		{
+                double *d = malloc_2(sizeof(double));
+
+                *d = strtod("NaN", NULL);
+                htemp->v.h_vector = (char *)d;
+                htemp->flags = HIST_REAL;
+		}
+        htempx = htemp;
 	}
 	else
 	{
@@ -978,7 +990,10 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
         else
         {
         np->head.flags = HIST_REAL;
-        if(f->flags&VZT_RD_SYM_F_STRING) np->head.flags |= HIST_STRING;
+        if(f->flags&VZT_RD_SYM_F_STRING) 
+		{
+		np->head.flags |= HIST_STRING;
+		}
         }
 
 	{
@@ -986,7 +1001,8 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
         htemp2->time = -1;
         if(len>1)
         	{
-                htemp2->v.h_vector = htemp->v.h_vector;
+                htemp2->v.h_vector = htempx->v.h_vector;
+		htemp2->flags = htempx->flags;
                 }
                 else
                 {
@@ -1044,6 +1060,7 @@ if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but fst doe
 void fst_import_masked(void)
 {
 int txidx, txidxi, i, cnt;
+hptr htempx;
 
 cnt = 0;
 for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
@@ -1093,8 +1110,21 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 		htemp = histent_calloc();
 		if(len>1)
 			{
-			htemp->v.h_vector = (char *)malloc_2(len);
-			for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+			if(!(f->flags&VZT_RD_SYM_F_DOUBLE))
+				{
+				htemp->v.h_vector = (char *)malloc_2(len);
+				for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+				htempx = htemp;
+				}
+				else
+				{
+				double *d = malloc_2(sizeof(double));
+
+				*d = strtod("NaN", NULL);
+				htemp->v.h_vector = (char *)d;
+				htemp->flags = HIST_REAL;
+				htempx = htemp;
+				}
 			}
 			else
 			{
@@ -1124,7 +1154,10 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 		        else
 		        {
 		        np->head.flags = HIST_REAL;
-		        if(f->flags&VZT_RD_SYM_F_STRING) np->head.flags |= HIST_STRING;
+		        if(f->flags&VZT_RD_SYM_F_STRING) 
+				{
+				np->head.flags |= HIST_STRING;
+				}
 		        }
 
                         {
@@ -1132,7 +1165,8 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
                         htemp2->time = -1;
                         if(len>1)
                                 {
-                                htemp2->v.h_vector = htemp->v.h_vector;
+                                htemp2->v.h_vector = htempx->v.h_vector;
+                                htemp2->flags = htempx->flags;
                                 }
                                 else
                                 {
@@ -1159,6 +1193,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2009/07/12 21:01:03  gtkwave
+ * elide duplicate consecutive values for histents
+ *
  * Revision 1.16  2009/07/07 20:12:53  gtkwave
  * convert hex capitalization to match verilog
  *
