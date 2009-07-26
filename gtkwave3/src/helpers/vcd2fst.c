@@ -86,7 +86,6 @@ fstHandle returnedhandle;
 JRB node;
 char bin_fixbuff[32769];
 
-ctx = fstWriterCreate(fstname, 1);
 if(!strcmp("-", vname))
 	{
 	f = stdin;
@@ -99,6 +98,14 @@ if(!strcmp("-", vname))
 if(!f)
 	{
 	printf("could not open '%s', exiting.\n", vname);
+	exit(255);
+	}
+
+ctx = fstWriterCreate(fstname, 1);
+
+if(!ctx)
+	{
+	printf("could not open '%s', exiting.\n", fstname);
 	exit(255);
 	}
 
@@ -687,6 +694,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/07/06 21:41:36  gtkwave
+ * evcd support issues
+ *
  * Revision 1.5  2009/07/03 19:39:06  gtkwave
  * compatibility fix for mingw
  *
