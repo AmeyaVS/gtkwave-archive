@@ -35,11 +35,12 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 LIBOBJDIR =
-bin_PROGRAMS = fst2vcd$(EXEEXT) vcd2fst$(EXEEXT) ghwdump$(EXEEXT) \
-	lxt2miner$(EXEEXT) lxt2vcd$(EXEEXT) mvl2lxt$(EXEEXT) \
-	mvl2vcd$(EXEEXT) shmidcat$(EXEEXT) tex2vcd$(EXEEXT) \
-	tla2vcd$(EXEEXT) vcd2lxt$(EXEEXT) vcd2lxt2$(EXEEXT) \
-	vcd2vzt$(EXEEXT) vzt2vcd$(EXEEXT) vztminer$(EXEEXT)
+bin_PROGRAMS = evcd2vcd$(EXEEXT) fst2vcd$(EXEEXT) vcd2fst$(EXEEXT) \
+	ghwdump$(EXEEXT) lxt2miner$(EXEEXT) lxt2vcd$(EXEEXT) \
+	mvl2lxt$(EXEEXT) mvl2vcd$(EXEEXT) shmidcat$(EXEEXT) \
+	tex2vcd$(EXEEXT) tla2vcd$(EXEEXT) vcd2lxt$(EXEEXT) \
+	vcd2lxt2$(EXEEXT) vcd2vzt$(EXEEXT) vzt2vcd$(EXEEXT) \
+	vztminer$(EXEEXT)
 subdir = src/helpers
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,6 +53,9 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am_evcd2vcd_OBJECTS = evcd2vcd.$(OBJEXT) jrb.$(OBJEXT)
+evcd2vcd_OBJECTS = $(am_evcd2vcd_OBJECTS)
+evcd2vcd_LDADD = $(LDADD)
 am_fst2vcd_OBJECTS = fst2vcd.$(OBJEXT) fastlz.$(OBJEXT) \
 	fstapi.$(OBJEXT)
 fst2vcd_OBJECTS = $(am_fst2vcd_OBJECTS)
@@ -115,16 +119,17 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(fst2vcd_SOURCES) $(ghwdump_SOURCES) $(lxt2miner_SOURCES) \
-	$(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) mvl2vcd.c shmidcat.c \
-	tex2vcd.c $(tla2vcd_SOURCES) $(vcd2fst_SOURCES) \
-	$(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) \
-	$(vzt2vcd_SOURCES) $(vztminer_SOURCES)
-DIST_SOURCES = $(fst2vcd_SOURCES) $(ghwdump_SOURCES) \
+SOURCES = $(evcd2vcd_SOURCES) $(fst2vcd_SOURCES) $(ghwdump_SOURCES) \
 	$(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) \
 	mvl2vcd.c shmidcat.c tex2vcd.c $(tla2vcd_SOURCES) \
 	$(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) \
 	$(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) $(vztminer_SOURCES)
+DIST_SOURCES = $(evcd2vcd_SOURCES) $(fst2vcd_SOURCES) \
+	$(ghwdump_SOURCES) $(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) \
+	$(mvl2lxt_SOURCES) mvl2vcd.c shmidcat.c tex2vcd.c \
+	$(tla2vcd_SOURCES) $(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) \
+	$(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) \
+	$(vztminer_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -262,6 +267,7 @@ lxt2miner_LDADD = $(LIBZ_LDADD)
 tla2vcd_SOURCES = tla2vcd.c $(srcdir)/../gnu_regex.c $(srcdir)/../gnu_regex.h
 tla2vcd_LDADD = $(LIBZ_LDADD) $(GTK_LIBS)
 ghwdump_SOURCES = ghwdump.c $(srcdir)/../ghwlib.c
+evcd2vcd_SOURCES = evcd2vcd.c ../../contrib/rtlbrowse/jrb.h ../../contrib/rtlbrowse/jrb.c
 all: all-am
 
 .SUFFIXES:
@@ -318,6 +324,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+evcd2vcd$(EXEEXT): $(evcd2vcd_OBJECTS) $(evcd2vcd_DEPENDENCIES) 
+	@rm -f evcd2vcd$(EXEEXT)
+	$(LINK) $(evcd2vcd_LDFLAGS) $(evcd2vcd_OBJECTS) $(evcd2vcd_LDADD) $(LIBS)
 fst2vcd$(EXEEXT): $(fst2vcd_OBJECTS) $(fst2vcd_DEPENDENCIES) 
 	@rm -f fst2vcd$(EXEEXT)
 	$(LINK) $(fst2vcd_LDFLAGS) $(fst2vcd_OBJECTS) $(fst2vcd_LDADD) $(LIBS)
@@ -370,6 +379,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/evcd2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastlz.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fst2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fstapi.Po@am__quote@
@@ -412,6 +422,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+jrb.o: ../../contrib/rtlbrowse/jrb.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jrb.o -MD -MP -MF "$(DEPDIR)/jrb.Tpo" -c -o jrb.o `test -f '../../contrib/rtlbrowse/jrb.c' || echo '$(srcdir)/'`../../contrib/rtlbrowse/jrb.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/jrb.Tpo" "$(DEPDIR)/jrb.Po"; else rm -f "$(DEPDIR)/jrb.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../contrib/rtlbrowse/jrb.c' object='jrb.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jrb.o `test -f '../../contrib/rtlbrowse/jrb.c' || echo '$(srcdir)/'`../../contrib/rtlbrowse/jrb.c
+
+jrb.obj: ../../contrib/rtlbrowse/jrb.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jrb.obj -MD -MP -MF "$(DEPDIR)/jrb.Tpo" -c -o jrb.obj `if test -f '../../contrib/rtlbrowse/jrb.c'; then $(CYGPATH_W) '../../contrib/rtlbrowse/jrb.c'; else $(CYGPATH_W) '$(srcdir)/../../contrib/rtlbrowse/jrb.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/jrb.Tpo" "$(DEPDIR)/jrb.Po"; else rm -f "$(DEPDIR)/jrb.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../contrib/rtlbrowse/jrb.c' object='jrb.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jrb.obj `if test -f '../../contrib/rtlbrowse/jrb.c'; then $(CYGPATH_W) '../../contrib/rtlbrowse/jrb.c'; else $(CYGPATH_W) '$(srcdir)/../../contrib/rtlbrowse/jrb.c'; fi`
 
 fastlz.o: ./fst/fastlz.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fastlz.o -MD -MP -MF "$(DEPDIR)/fastlz.Tpo" -c -o fastlz.o `test -f './fst/fastlz.c' || echo '$(srcdir)/'`./fst/fastlz.c; \
@@ -468,20 +492,6 @@ gnu_regex.obj: $(srcdir)/../gnu_regex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../gnu_regex.c' object='gnu_regex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnu_regex.obj `if test -f '$(srcdir)/../gnu_regex.c'; then $(CYGPATH_W) '$(srcdir)/../gnu_regex.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../gnu_regex.c'; fi`
-
-jrb.o: ../../contrib/rtlbrowse/jrb.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jrb.o -MD -MP -MF "$(DEPDIR)/jrb.Tpo" -c -o jrb.o `test -f '../../contrib/rtlbrowse/jrb.c' || echo '$(srcdir)/'`../../contrib/rtlbrowse/jrb.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/jrb.Tpo" "$(DEPDIR)/jrb.Po"; else rm -f "$(DEPDIR)/jrb.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../contrib/rtlbrowse/jrb.c' object='jrb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jrb.o `test -f '../../contrib/rtlbrowse/jrb.c' || echo '$(srcdir)/'`../../contrib/rtlbrowse/jrb.c
-
-jrb.obj: ../../contrib/rtlbrowse/jrb.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jrb.obj -MD -MP -MF "$(DEPDIR)/jrb.Tpo" -c -o jrb.obj `if test -f '../../contrib/rtlbrowse/jrb.c'; then $(CYGPATH_W) '../../contrib/rtlbrowse/jrb.c'; else $(CYGPATH_W) '$(srcdir)/../../contrib/rtlbrowse/jrb.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/jrb.Tpo" "$(DEPDIR)/jrb.Po"; else rm -f "$(DEPDIR)/jrb.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../contrib/rtlbrowse/jrb.c' object='jrb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jrb.obj `if test -f '../../contrib/rtlbrowse/jrb.c'; then $(CYGPATH_W) '../../contrib/rtlbrowse/jrb.c'; else $(CYGPATH_W) '$(srcdir)/../../contrib/rtlbrowse/jrb.c'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)

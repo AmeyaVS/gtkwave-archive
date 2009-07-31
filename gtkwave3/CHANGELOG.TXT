@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	23jul09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	31jul09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -680,3 +680,4 @@
 		Added --enable-fatlines ./configure flag which enables gtkwave
 		to render lines in "Fisher Price" (aka Simvision) double-
 		width style.
+		Added evcd2vcd to the distribution.
