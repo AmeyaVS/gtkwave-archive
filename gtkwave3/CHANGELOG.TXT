@@ -616,7 +616,7 @@
 		Fixed calling to install_keypress_handler() as it only needs
 		to be done once.
 		Add menu blackouts on empty gui.
-3.2.2	31jul09	Changed some instances of exit() in main.c to vcd_exit() in
+3.2.2	02aug09	Changed some instances of exit() in main.c to vcd_exit() in
 		order to keep failed loads in tabs from killing the whole
 		session.
 		Update VCD ID generation in VCD writers to use XL-style
@@ -640,7 +640,7 @@
 		Warning fixes for printf format strings in lxt2/vzt/ghw.
 		Updated VCD parser to handle names like "a[1] [3:0]".
 		Added VCDNAM_ESCAPE cases in lxt, lxt2, and vzt loaders.
-		Updated VCD writers so they put spaces before bracked 
+		Updated VCD writers so they put spaces before bracketed 
 		signal ranges.
 		Added extra message for help requester if file type is
 		MISSING_FILE in order to direct users what to do.
