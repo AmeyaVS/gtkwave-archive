@@ -105,9 +105,10 @@ if(!t->vector)
 
 	if(vartype)
 		{
-		ch[pos++] = ' ';
-		strcat(ch + pos, vartype_strings[vartype]);
+		ch[pos++] = ':';
+		strcpy(ch + pos, vartype_strings[vartype]);
 		pos += strlen(vartype_strings[vartype]);
+		ch[++pos] = 0;
 		}
 	}
 
@@ -440,6 +441,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/07/23 20:00:55  gtkwave
+ * added type info to signal window mouseover
+ *
  * Revision 1.2  2009/06/25 22:12:30  gtkwave
  * convert event impulses to strict 1/0 activity values regardless of val
  *
