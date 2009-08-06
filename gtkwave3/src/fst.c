@@ -29,6 +29,7 @@
 #include "debug.h"
 #include "busy.h"
 #include "hierpack.h"
+#include "fst.h"
 
 #define FST_RDLOAD "FSTLOAD | "
 
@@ -187,7 +188,7 @@ GLOBALS->terminals_tchain_tree_c_1 = t;
  */
 TimeType fst_main(char *fname, char *skip_start, char *skip_end)
 {
-int i, j, k;
+int i;
 struct Node *n;
 struct symbol *s, *prevsymroot=NULL, *prevsym=NULL;
 signed char scale;
@@ -761,7 +762,7 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 			}
 			else
 			{
-			evcd_memcpy(h_vector, value, f->len);
+			evcd_memcpy(h_vector, (const char *)value, f->len);
 			}
 
 		if((l2e->histent_curr)&&(l2e->histent_curr->v.h_vector)) /* remove duplicate values */
@@ -794,7 +795,7 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 			else
 			{
 			char membuf[1];
-			evcd_memcpy(membuf, value, 1);
+			evcd_memcpy(membuf, (const char *)value, 1);
 			switch(*membuf)
 				{
 				case '0':	h_val = AN_0; break;
@@ -848,14 +849,14 @@ else	/* string */
 
 	if((l2e->histent_curr)&&(l2e->histent_curr->v.h_vector)) /* remove duplicate values */
 		{
-		if(!strcmp(l2e->histent_curr->v.h_vector, value))
+		if(!strcmp(l2e->histent_curr->v.h_vector, (const char *)value))
 			{
 			return;
 			}
 		}
 
-	s = malloc_2(strlen(value)+1);
-	strcpy(s, value);
+	s = malloc_2(strlen((const char *)value)+1);
+	strcpy(s, (const char *)value);
 	htemp = histent_calloc();
 	htemp->v.h_vector = s;
 	htemp->flags = HIST_REAL|HIST_STRING;
@@ -898,7 +899,7 @@ np->mv.mvlfac=NULL;
  */
 void import_fst_trace(nptr np)
 {
-hptr htemp, htempx, histent_tail;
+hptr htemp, htempx=NULL, histent_tail;
 int len, i;
 struct fac *f;
 int txidx;
@@ -1059,8 +1060,8 @@ if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but fst doe
 
 void fst_import_masked(void)
 {
-int txidx, txidxi, i, cnt;
-hptr htempx;
+int txidxi, i, cnt;
+hptr htempx = NULL;
 
 cnt = 0;
 for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
@@ -1193,6 +1194,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2009/07/26 20:18:43  gtkwave
+ * fix "x" value for time -1 on reals to be "NaN"
+ *
  * Revision 1.17  2009/07/12 21:01:03  gtkwave
  * elide duplicate consecutive values for histents
  *

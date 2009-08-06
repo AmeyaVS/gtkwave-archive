@@ -57,7 +57,6 @@ int main(int argc, char **argv)
 char opt_errors_encountered=0;
 char *fstname=NULL;
 int c;
-int rc;
 struct fstReaderContext *xc;
 FILE *fv;
 
@@ -149,5 +148,8 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/06/14 19:44:18  gtkwave
+ * added fst2vcd to the distro
+ *
  */
 

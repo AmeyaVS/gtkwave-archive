@@ -27,7 +27,7 @@
 #include "debug.h"
 #include "busy.h"
 #include "hierpack.h"
-
+#include "fst.h"
 
 /*
  * mainline
@@ -885,6 +885,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/07/01 07:39:12  gtkwave
+ * decorating hierarchy tree with module type info
+ *
  * Revision 1.8  2009/06/07 08:40:44  gtkwave
  * adding FST support
  *

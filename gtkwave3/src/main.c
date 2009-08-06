@@ -55,6 +55,7 @@
 #include "ae2.h"
 #include "vzt.h"
 #include "ghw.h"
+#include "fst.h"
 #include "main.h"
 #include "menu.h"
 #include "vcd.h"
@@ -178,6 +179,7 @@ return(FALSE);
 }       
 
 
+#if defined __MINGW32__
 static void close_all_fst_files(void) /* so mingw does delete of reader tempfiles */
 {
 unsigned int i;
@@ -190,6 +192,7 @@ for(i=0;i<GLOBALS->num_notebook_pages;i++)
 		}
         }
 }
+#endif
 
 
 static void print_help(char *nam)
@@ -2492,6 +2495,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.74  2009/07/03 18:48:33  gtkwave
+ * fst read compatibility fixes for mingw
+ *
  * Revision 1.73  2009/06/07 08:40:44  gtkwave
  * adding FST support
  *

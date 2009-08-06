@@ -32,6 +32,8 @@
 
 size_t getline_replace(char **buf, size_t *len, FILE *f)
 {
+char *fgets_rc;
+
 if(!*buf)
 	{
 	*buf = malloc(32768);
@@ -39,8 +41,8 @@ if(!*buf)
 	}
 
 (*buf)[0] = 0;
-fgets(*buf, 32767, f);
-if(!(*buf)[0])
+fgets_rc = fgets(*buf, 32767, f);
+if((!(*buf)[0])||(!fgets_rc))
 	{
 	return(-1);
 	}
@@ -694,6 +696,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/07/26 20:18:08  gtkwave
+ * signify error on null FST context rather than run with it
+ *
  * Revision 1.6  2009/07/06 21:41:36  gtkwave
  * evcd support issues
  *

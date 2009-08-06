@@ -37,6 +37,8 @@
 
 size_t getline_replace(char **buf, size_t *len, FILE *f)
 {
+char *fgets_rc;
+
 if(!*buf)
 	{
 	*buf = malloc(32768);
@@ -44,8 +46,8 @@ if(!*buf)
 	}
 
 (*buf)[0] = 0;
-fgets(*buf, 32767, f);
-if(!(*buf)[0])
+fgets_rc = fgets(*buf, 32767, f);
+if((!(*buf)[0])||(!fgets_rc))
 	{
 	return(-1);
 	}
@@ -286,10 +288,8 @@ while(!feof(f))
 while(!feof(f))
 	{
 	unsigned int hash;
-	uint64_t tim;
 	size_t len;
 	char *nl, *sp;
-	double doub;
 
 	ss = getline_replace(&buf, &len, f);
 	if(ss == -1)
@@ -501,4 +501,7 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/07/31 19:55:48  gtkwave
+ * add evcd2vcd to the distribution
+ *
  */
