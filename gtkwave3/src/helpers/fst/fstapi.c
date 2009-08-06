@@ -1715,7 +1715,6 @@ return(NULL);
 void fstReaderResetScope(void *ctx)
 {
 struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
-const char *scp;
 
 if(xc)
 	{

@@ -43,6 +43,7 @@
 
 #include "lxt2_read.h"
 #include "vzt_read.h"
+#include "fst.h"
 
 #ifdef __MINGW32__
 #define sleep(x) Sleep(x)

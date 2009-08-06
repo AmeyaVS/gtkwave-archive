@@ -39,8 +39,6 @@
 #include "lx2.h"
 #include "hierpack.h"
 
-WAVE_NODEVARTYPE_STR
-
 /**/
 
 static void vlist_packer_emit_uv64(struct vlist_packer_t **vl, guint64 v)
@@ -3159,6 +3157,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2009/07/07 19:46:03  gtkwave
+ * make evcd->vcd conversion table const
+ *
  * Revision 1.28  2009/07/07 15:48:37  gtkwave
  * EVCD "f" value fix (should be z not x)
  *
