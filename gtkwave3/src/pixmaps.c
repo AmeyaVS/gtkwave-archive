@@ -11,6 +11,64 @@
 #include <config.h>
 #include "pixmaps.h"
 
+#ifdef WAVE_USE_GTK2
+/* Apply GMASK to GPIX and return a GdkPixbuf with an alpha channel.  */
+/* this function from gtkutil.c in emacs                              */      
+static GdkPixbuf *
+xg_get_pixbuf_from_pix_and_mask (GdkPixmap *gpix, GdkPixmap *gmask, GdkColormap *cmap)
+{
+  int x, y, width, height, rowstride, mask_rowstride;
+  GdkPixbuf *icon_buf, *tmp_buf;
+  guchar *pixels;
+  guchar *mask_pixels;
+      
+  gdk_drawable_get_size (gpix, &width, &height);
+  tmp_buf = gdk_pixbuf_get_from_drawable (NULL, gpix, cmap,
+                                          0, 0, 0, 0, width, height);
+  icon_buf = gdk_pixbuf_add_alpha (tmp_buf, FALSE, 0, 0, 0);
+  g_object_unref (G_OBJECT (tmp_buf));
+          
+  if (gmask)
+    {
+      GdkPixbuf *mask_buf = gdk_pixbuf_get_from_drawable (NULL,
+                                                          gmask,
+                                                          NULL,
+                                                          0, 0, 0, 0,
+                                                          width, height);
+      guchar *pixels = gdk_pixbuf_get_pixels (icon_buf);
+      guchar *mask_pixels = gdk_pixbuf_get_pixels (mask_buf);
+      int rowstride = gdk_pixbuf_get_rowstride (icon_buf);
+      int mask_rowstride = gdk_pixbuf_get_rowstride (mask_buf);
+      int y;
+
+      for (y = 0; y < height; ++y)
+        {
+          guchar *iconptr, *maskptr;
+          int x;  
+ 
+          iconptr = pixels + y * rowstride;
+          maskptr = mask_pixels + y * mask_rowstride;
+          
+          for (x = 0; x < width; ++x)
+            {
+              /* In a bitmap, RGB is either 255/255/255 or 0/0/0.  Checking
+                 just R is sufficient.  */
+              if (maskptr[0] == 0)
+                iconptr[3] = 0; /* 0, 1, 2 is R, G, B.  3 is alpha.  */
+                
+              iconptr += rowstride/width;
+              maskptr += mask_rowstride/width;
+            }
+        }
+         
+      g_object_unref (G_OBJECT (mask_buf));
+    }
+     
+  return(icon_buf);
+}
+#endif
+
+
 /* XPM */
 static char * icon_redo[] = {
 "24 24 126 2",
@@ -5114,6 +5172,9 @@ static char *icon_link[] = {
 void make_pixmaps(GtkWidget *window)
 {
 GtkStyle *style;
+#ifdef WAVE_USE_GTK2
+GdkPixbuf *gp;
+#endif
 
 style=gtk_widget_get_style(window);
 
@@ -5187,11 +5248,21 @@ GLOBALS->hiericon_buffer_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GL
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_extension);
 GLOBALS->hiericon_linkage_pixmap=gdk_pixmap_create_from_xpm_d(window->window, &GLOBALS->hiericon_linkage_mask,
 	&style->bg[GTK_STATE_NORMAL], (gchar **)icon_link);
+
+#ifdef WAVE_USE_GTK2
+/* set icon for window manager */
+gp = xg_get_pixbuf_from_pix_and_mask(GLOBALS->wave_info_pixmap, GLOBALS->wave_info_mask, NULL);
+gtk_window_set_icon(GTK_WINDOW(window), gp);
+#endif
 }
+
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/07/07 04:18:32  gtkwave
+ * updated signal icon
+ *
  * Revision 1.9  2009/07/01 23:56:02  gtkwave
  * made VHDL + Verilog icons mutually exclusive for usability
  *

@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.2 (w)1999-2009 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.3_pre (w)1999-2009 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -176,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.58  2009/08/04 18:01:56  gtkwave
+ * version bump to 3.2.2
+ *
  * Revision 1.57  2009/04/11 21:57:53  gtkwave
  * changed exit() to vcd_exit() in some instances for tab loader hardening
  *
