@@ -681,4 +681,5 @@
 		to render lines in "Fisher Price" (aka Simvision) double-
 		width style.
 		Added evcd2vcd to the distribution.
-3.2.3	11aug09 Set iconify icon for gtkwave with gtk_window_set_icon().
+3.2.3	16aug09 Set iconify icon for gtkwave with gtk_window_set_icon().
+		Ensure -d flag survives across reloads/new tab.

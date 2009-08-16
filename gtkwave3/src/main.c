@@ -424,6 +424,7 @@ if(!GLOBALS)
 	GLOBALS->to_entry = old_g->to_entry;
 	
 	/* rc.c */
+	GLOBALS->possibly_use_rc_defaults = old_g->possibly_use_rc_defaults;
 	GLOBALS->ignore_savefile_pos = old_g->ignore_savefile_pos;
 	GLOBALS->ignore_savefile_size = old_g->ignore_savefile_size;
 	
@@ -2495,6 +2496,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.75  2009/08/06 20:03:31  gtkwave
+ * warnings fixes
+ *
  * Revision 1.74  2009/07/03 18:48:33  gtkwave
  * fst read compatibility fixes for mingw
  *
