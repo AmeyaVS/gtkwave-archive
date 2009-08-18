@@ -243,6 +243,7 @@ gtk_container_set_border_width(GTK_CONTAINER(pFileChoose), 10);
 gtk_window_set_position(GTK_WINDOW(pFileChoose), GTK_WIN_POS_CENTER);
 gtk_window_set_modal(GTK_WINDOW(pFileChoose), TRUE);
 gtk_window_set_policy(GTK_WINDOW(pFileChoose), FALSE, FALSE, FALSE);
+gtk_window_set_resizable(GTK_WINDOW(pFileChoose), TRUE); /* some distros need this */
 if(pWindowMain)
 	{
 	gtk_window_set_transient_for(GTK_WINDOW(pFileChoose), GTK_WINDOW(pWindowMain));
@@ -317,6 +318,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/07/16 15:36:34  gtkwave
+ * file name updates...derive unspecified names from loaded file name directory
+ *
  * Revision 1.11  2009/01/13 22:56:47  gtkwave
  * revert to old file chooser in mingw as new one can't be resized
  *
