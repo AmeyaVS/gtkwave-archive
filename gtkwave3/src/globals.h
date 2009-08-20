@@ -796,10 +796,10 @@ char shadow_logical_mutex[6]; /* from strace.c 441 */
 char shadow_active; /* from strace.c 442 */
 char shadow_type; /* from strace.c 443 */
 char *shadow_string; /* from strace.c 444 */
-char mark_idx_start; /* from strace.c 445 */
-char mark_idx_end; /* from strace.c 446 */
-char shadow_mark_idx_start; /* from strace.c 447 */
-char shadow_mark_idx_end; /* from strace.c 448 */
+signed char mark_idx_start; /* from strace.c 445 */
+signed char mark_idx_end; /* from strace.c 446 */
+signed char shadow_mark_idx_start; /* from strace.c 447 */
+signed char shadow_mark_idx_end; /* from strace.c 448 */
 struct mprintf_buff_t *mprintf_buff_head; /* from strace.c 451 */
 struct mprintf_buff_t *mprintf_buff_current; /* from strace.c 452 */
 
