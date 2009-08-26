@@ -328,14 +328,14 @@ AC_STRUCT_TM
 AC_CHECK_TYPES([ptrdiff_t])
 AC_SYS_LARGEFILE
 
-# Checks for library functions.
+# Checks for library functions. (malloc/realloc removed to get rid of rpl_xxx substitutions)
+# AC_FUNC_MALLOC
+# AC_FUNC_REALLOC
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_FORK
 AC_FUNC_FSEEKO
-AC_FUNC_MALLOC
 AC_FUNC_MEMCMP
 AC_FUNC_MMAP
-AC_FUNC_REALLOC
 AC_FUNC_SELECT_ARGTYPES
 AC_FUNC_SETVBUF_REVERSED
 AC_FUNC_STAT
@@ -344,6 +344,18 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([atexit btowc bzero dup2 memmove memset munmap pow putenv re_comp realpath regcomp select setenv strcasecmp strchr strdup strerror strncasecmp strrchr strstr getopt_long setenv unsetenv])
 AC_CHECK_LIB(nsl,xdrmem_create)
 AC_CHECK_LIB(rpc,xdrmem_create)
+
+# some AIX adds (linker flag for 32 bit compiles)
+if test "X$OSTYPE" = "Xaix" ; then
+if test "X$MACHTYPE" = "Xrs6000" ; then
+	CFLAGS="${CFLAGS} -D_WAVE_BE32"
+	if test "X$CC" = "Xxlc" ; then
+	LDFLAGS="${LDFLAGS} -bmaxdata:0xd0000000/dsa"
+	else
+	LDFLAGS="${LDFLAGS} -Wl,-bmaxdata:0xd0000000/dsa"
+	fi
+fi
+fi
 
 if test "X$ETCL" = "Xyes" ; then
 if test "X$OSTYPE" = "Xcygwin" ; then
@@ -429,6 +441,7 @@ AC_MSG_NOTICE([
 
   CPPFLAGS         : $CPPFLAGS
   CFLAGS           : $CFLAGS
+  LDFLAGS          : $LDFLAGS
   LIBS             : $LIBS
 --------------------------------------------
 ])

@@ -212,8 +212,6 @@ LIBFST_CFLAGS = -I./helpers/fst
 LIBFST_LDADD = -L./helpers/fst -lfst
 LIBLZMA_CFLAGS = -I./liblzma
 LIBLZMA_LDADD = -L./liblzma -llzma
-AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
-BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBFST_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD) $(EXTLOAD_CFLAGS)
 gtkwave_SOURCES = \
 	globals.c globals.h ae2.c ae2.h analyzer.c analyzer.h baseconvert.c bitvec.c \
