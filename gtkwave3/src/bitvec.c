@@ -158,11 +158,12 @@ s[idx] = ':';
 idx++;
 memcpy(s+idx, n2, n2len);
 idx += n2len;
-if(*sfx != ']')
+if((!sfx) || (*sfx != ']'))
 	{
 	s[idx] = ']';
 	idx++;
 	}
+
 if(sfxlen) { memcpy(s+idx, sfx, sfxlen); idx+=sfxlen; }
 s[idx] = 0;
 
@@ -2915,6 +2916,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/03/31 18:49:49  gtkwave
+ * removal of warnings under cygwin compile
+ *
  * Revision 1.13  2009/01/27 07:04:28  gtkwave
  * added extload external process loader capability
  *
