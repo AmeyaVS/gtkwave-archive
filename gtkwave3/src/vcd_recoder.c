@@ -41,6 +41,17 @@
 
 /**/
 
+static void malform_eof_fix(void)
+{
+if(feof(GLOBALS->vcd_handle_vcd_recoder_c_2))
+	{
+        memset(GLOBALS->vcdbuf_vcd_recoder_c_3, ' ', VCD_BSIZ);
+        GLOBALS->vst_vcd_recoder_c_3=GLOBALS->vend_vcd_recoder_c_3;
+        }
+}
+
+/**/
+
 static void vlist_packer_emit_uv64(struct vlist_packer_t **vl, guint64 v)
 {
 guint64 nxt;
@@ -1157,6 +1168,7 @@ switch((typ = GLOBALS->yytext_vcd_recoder_c_3[0]))
                         if(!v)
                                 {
                                 fprintf(stderr,"Near byte %d, Unknown VCD identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_recoder_c_3+(GLOBALS->vst_vcd_recoder_c_3-GLOBALS->vcdbuf_vcd_recoder_c_3)),GLOBALS->yytext_vcd_recoder_c_3+1);
+				malform_eof_fix();
                                 }
                                 else
                                 {
@@ -1195,6 +1207,7 @@ switch((typ = GLOBALS->yytext_vcd_recoder_c_3[0]))
                         else
                         {
                         fprintf(stderr,"Near byte %d, Malformed VCD identifier\n", (int)(GLOBALS->vcdbyteno_vcd_recoder_c_3+(GLOBALS->vst_vcd_recoder_c_3-GLOBALS->vcdbuf_vcd_recoder_c_3)));
+			malform_eof_fix();
                         }
                 break;
 
@@ -1217,6 +1230,7 @@ process_binary:
                 if(!v)
 			{
                         fprintf(stderr,"Near byte %d, Unknown VCD identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_recoder_c_3+(GLOBALS->vst_vcd_recoder_c_3-GLOBALS->vcdbuf_vcd_recoder_c_3)),GLOBALS->yytext_vcd_recoder_c_3+1);
+			malform_eof_fix();
                         }
                         else
                         {
@@ -3157,6 +3171,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2009/08/06 20:11:03  gtkwave
+ * warnings fixes
+ *
  * Revision 1.29  2009/07/07 19:46:03  gtkwave
  * make evcd->vcd conversion table const
  *

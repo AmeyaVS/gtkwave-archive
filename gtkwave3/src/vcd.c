@@ -50,6 +50,17 @@ static void evcd_strcpy(char *dst, char *src);
 
 /******************************************************************/
 
+static void malform_eof_fix(void)
+{
+if(feof(GLOBALS->vcd_handle_vcd_c_1))
+        {
+        memset(GLOBALS->vcdbuf_vcd_c_1, ' ', VCD_BSIZ);
+        GLOBALS->vst_vcd_c_1=GLOBALS->vend_vcd_c_1;
+        }
+}
+
+/**/
+
 void strcpy_vcdalt(char *too, char *from, char delim)
 {
 char ch;
@@ -731,6 +742,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			if(!v)
 				{
 				fprintf(stderr,"Near byte %d, Unknown VCD identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)),GLOBALS->yytext_vcd_c_1+1);
+				malform_eof_fix();
 				}
 				else
 				{
@@ -742,6 +754,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			else
 			{
 			fprintf(stderr,"Near byte %d, Malformed VCD identifier\n", (int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)));
+			malform_eof_fix();
 			}
 		break;
 
@@ -759,6 +772,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			{
 			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(vector);
+			malform_eof_fix();
 			}
 			else
 			{
@@ -780,6 +794,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 					{
 					fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 					free_2(d);
+					malform_eof_fix();
 					}
 					else
 					{
@@ -853,6 +868,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			{
 			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(vector);
+			malform_eof_fix();
 			}
 			else
 			{
@@ -874,6 +890,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 					{
 					fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 					free_2(d);
+					malform_eof_fix();
 					}
 					else
 					{
@@ -946,6 +963,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			{
 			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(d);
+			malform_eof_fix();
 			}
 			else
 			{
@@ -970,6 +988,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			{
 			fprintf(stderr,"Near byte %d, Unknown identifier: '%s'\n",(int)(GLOBALS->vcdbyteno_vcd_c_1+(GLOBALS->vst_vcd_c_1-GLOBALS->vcdbuf_vcd_c_1)), GLOBALS->yytext_vcd_c_1);
 			free_2(d);
+			malform_eof_fix();
 			}
 			else
 			{
@@ -2532,6 +2551,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2009/07/07 19:46:03  gtkwave
+ * make evcd->vcd conversion table const
+ *
  * Revision 1.20  2009/07/07 15:48:37  gtkwave
  * EVCD "f" value fix (should be z not x)
  *

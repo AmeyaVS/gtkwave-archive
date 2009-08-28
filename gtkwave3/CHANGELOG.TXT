@@ -681,7 +681,7 @@
 		to render lines in "Fisher Price" (aka Simvision) double-
 		width style.
 		Added evcd2vcd to the distribution.
-3.2.3	26aug09 Set iconify icon for gtkwave with gtk_window_set_icon().
+3.2.3	28aug09 Set iconify icon for gtkwave with gtk_window_set_icon().
 		Ensure -d flag survives across reloads/new tab.
 		Added LIBZ_CFLAGS to helpers/fst AM_CFLAGS for MinGW.
 		Added gtk_window_set_resizable for pWindowMain in file.c
@@ -689,3 +689,4 @@
 		Changed some strace.c globals to "signed char" to remove
 		warnings under AIX compiles.
 		AIX ./configure fixes.
+		Added malform_eof_fix() to recoder and regular VCD loader.
