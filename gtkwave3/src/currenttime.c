@@ -93,7 +93,49 @@ if(GLOBALS->use_maxtime_display)
 	}
 }
 
-TimeType unformat_time(const char *buf, char dim)
+/* handles floating point values with units */
+static TimeType unformat_time_complex(const char *s, char dim)
+{
+int i, delta, rc;
+unsigned char ch = dim;
+double d = 0.0;
+const char *offs = NULL, *doffs = NULL;
+                                 
+rc = sscanf(s, "%lf %cs", &d, &ch);
+if(rc == 2)
+        {
+        ch = tolower(ch);   
+        if(ch=='s') ch = ' ';
+        offs=strchr(time_prefix, ch);
+        if(offs)
+                {
+                doffs=strchr(time_prefix, (int)dim);
+                if(!doffs) doffs = offs; /* should *never* happen */
+                 
+                delta= (doffs-time_prefix) - (offs-time_prefix);
+                
+                if(delta<0)
+                        {  
+                        for(i=delta;i<0;i++)
+                                {
+                                d=d/1000;
+                                }
+                        }
+                        else
+                        {   
+                        for(i=0;i<delta;i++)
+                                {
+                                d=d*1000;
+                                }
+                        }
+                }
+        }
+         
+return((TimeType)d);
+}
+
+/* handles integer values with units */
+static TimeType unformat_time_simple(const char *buf, char dim)
 {
 TimeType rval;
 const char *pnt;
@@ -145,6 +187,27 @@ if(delta<0)
 	}
 
 return(rval);
+}
+
+TimeType unformat_time(const char *s, char dim)
+{
+const char *compar = ".+eE";
+int compar_len = strlen(compar);
+int i;
+char *pnt;
+
+for(i=0;i<compar_len;i++)
+	{
+	if((pnt = strchr(s, (int)compar[i])))
+		{
+		if((tolower(pnt[0]) != 'e') && (tolower(pnt[1]) != 'c'))
+			{
+			return(unformat_time_complex(s, dim));
+			}
+		}
+	}
+
+return(unformat_time_simple(s, dim));
 }
 
 void reformat_time_simple(char *buf, TimeType val, char dim)
@@ -672,6 +735,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/04/23 21:57:53  gtkwave
+ * added mingw support for rtlbrowse
+ *
  * Revision 1.12  2008/12/28 03:12:27  gtkwave
  * adjusted fractional part of %g
  *
