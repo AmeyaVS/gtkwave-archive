@@ -638,6 +638,7 @@ ac_includes_default="\
 #endif"
 
 ac_subst_vars='LTLIBOBJS
+TK_LDADD
 TCL_DEFADD
 TCL_LDADD
 POW_LIB
@@ -681,6 +682,16 @@ CFLAGS
 CC
 AET2_LDADD
 AET2_CFLAGS
+TK_INCLUDE_SPEC
+TK_STUB_LIB_SPEC
+TK_STUB_LIB_FLAG
+TK_STUB_LIB_FILE
+TK_LIB_SPEC
+TK_LIB_FLAG
+TK_LIB_FILE
+TK_SRC_DIR
+TK_BIN_DIR
+TK_VERSION
 TCL_INCLUDE_SPEC
 TCL_STUB_LIB_SPEC
 TCL_STUB_LIB_FLAG
@@ -759,6 +770,7 @@ enable_option_checking
 enable_maintainer_mode
 enable_tcl
 with_tcl
+with_tk
 enable_gtk1
 enable_fatlines
 enable_ae2
@@ -1429,6 +1441,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-tcl              directory containing tcl configuration
                           (tclConfig.sh)
+  --with-tk               directory containing tk configuration (tkConfig.sh)
 
 Some influential environment variables:
   CC          C compiler command
@@ -2603,6 +2616,210 @@ $as_echo "could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6; }
     eval "TCL_STUB_LIB_FLAG=\"${TCL_STUB_LIB_FLAG}\""
     eval "TCL_STUB_LIB_SPEC=\"${TCL_STUB_LIB_SPEC}\""
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	fi
+fi
+
+if test "X$ETCL" = "Xyes" ; then
+
+    #
+    # Ok, lets find the tk configuration
+    # First, look for one uninstalled.
+    # the alternative search directory is invoked by --with-tk
+    #
+
+    if test x"${no_tk}" = x ; then
+	# we reset no_tk in case something fails here
+	no_tk=true
+
+# Check whether --with-tk was given.
+if test "${with_tk+set}" = set; then
+  withval=$with_tk; with_tkconfig="${withval}"
+fi
+
+	{ $as_echo "$as_me:$LINENO: checking for Tk configuration" >&5
+$as_echo_n "checking for Tk configuration... " >&6; }
+	if test "${ac_cv_c_tkconfig+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+
+
+	    # First check to see if --with-tkconfig was specified.
+	    if test x"${with_tkconfig}" != x ; then
+		case "${with_tkconfig}" in
+		    */tkConfig.sh )
+			if test -f "${with_tkconfig}"; then
+			    { $as_echo "$as_me:$LINENO: WARNING: --with-tk argument should refer to directory containing tkConfig.sh, not to tkConfig.sh itself" >&5
+$as_echo "$as_me: WARNING: --with-tk argument should refer to directory containing tkConfig.sh, not to tkConfig.sh itself" >&2;}
+			    with_tkconfig="`echo "${with_tkconfig}" | sed 's!/tkConfig\.sh$!!'`"
+			fi ;;
+		esac
+		if test -f "${with_tkconfig}/tkConfig.sh" ; then
+		    ac_cv_c_tkconfig="`(cd "${with_tkconfig}"; pwd)`"
+		else
+		    { { $as_echo "$as_me:$LINENO: error: ${with_tkconfig} directory doesn't contain tkConfig.sh" >&5
+$as_echo "$as_me: error: ${with_tkconfig} directory doesn't contain tkConfig.sh" >&2;}
+   { (exit 1); exit 1; }; }
+		fi
+	    fi
+
+	    # then check for a private Tk library
+	    if test x"${ac_cv_c_tkconfig}" = x ; then
+		for i in \
+			../tk \
+			`ls -dr ../tk[8-9].[0-9].[0-9]* 2>/dev/null` \
+			`ls -dr ../tk[8-9].[0-9] 2>/dev/null` \
+			`ls -dr ../tk[8-9].[0-9]* 2>/dev/null` \
+			../../tk \
+			`ls -dr ../../tk[8-9].[0-9].[0-9]* 2>/dev/null` \
+			`ls -dr ../../tk[8-9].[0-9] 2>/dev/null` \
+			`ls -dr ../../tk[8-9].[0-9]* 2>/dev/null` \
+			../../../tk \
+			`ls -dr ../../../tk[8-9].[0-9].[0-9]* 2>/dev/null` \
+			`ls -dr ../../../tk[8-9].[0-9] 2>/dev/null` \
+			`ls -dr ../../../tk[8-9].[0-9]* 2>/dev/null` ; do
+		    if test -f "$i/unix/tkConfig.sh" ; then
+			ac_cv_c_tkconfig="`(cd $i/unix; pwd)`"
+			break
+		    fi
+		done
+	    fi
+
+	    # on Darwin, check in Framework installation locations
+	    if test "`uname -s`" = "Darwin" -a x"${ac_cv_c_tkconfig}" = x ; then
+		for i in `ls -d ~/Library/Frameworks 2>/dev/null` \
+			`ls -d /Library/Frameworks 2>/dev/null` \
+			`ls -d /Network/Library/Frameworks 2>/dev/null` \
+			`ls -d /System/Library/Frameworks 2>/dev/null` \
+			; do
+		    if test -f "$i/Tk.framework/tkConfig.sh" ; then
+			ac_cv_c_tkconfig="`(cd $i/Tk.framework; pwd)`"
+			break
+		    fi
+		done
+	    fi
+
+	    # check in a few common install locations
+	    if test x"${ac_cv_c_tkconfig}" = x ; then
+		for i in `ls -d ${libdir} 2>/dev/null` \
+			`ls -d ${exec_prefix}/lib 2>/dev/null` \
+			`ls -d ${prefix}/lib 2>/dev/null` \
+			`ls -d /usr/local/lib 2>/dev/null` \
+			`ls -d /usr/contrib/lib 2>/dev/null` \
+			`ls -d /usr/lib 2>/dev/null` \
+			; do
+		    if test -f "$i/tkConfig.sh" ; then
+			ac_cv_c_tkconfig="`(cd $i; pwd)`"
+			break
+		    fi
+		done
+	    fi
+
+	    # check in a few other private locations
+	    if test x"${ac_cv_c_tkconfig}" = x ; then
+		for i in \
+			${srcdir}/../tk \
+			`ls -dr ${srcdir}/../tk[8-9].[0-9].[0-9]* 2>/dev/null` \
+			`ls -dr ${srcdir}/../tk[8-9].[0-9] 2>/dev/null` \
+			`ls -dr ${srcdir}/../tk[8-9].[0-9]* 2>/dev/null` ; do
+		    if test -f "$i/unix/tkConfig.sh" ; then
+			ac_cv_c_tkconfig="`(cd $i/unix; pwd)`"
+			break
+		    fi
+		done
+	    fi
+
+fi
+
+
+	if test x"${ac_cv_c_tkconfig}" = x ; then
+	    TK_BIN_DIR="# no Tk configs found"
+	    { $as_echo "$as_me:$LINENO: WARNING: Can't find Tk configuration definitions" >&5
+$as_echo "$as_me: WARNING: Can't find Tk configuration definitions" >&2;}
+	    exit 0
+	else
+	    no_tk=
+	    TK_BIN_DIR="${ac_cv_c_tkconfig}"
+	    { $as_echo "$as_me:$LINENO: result: found ${TK_BIN_DIR}/tkConfig.sh" >&5
+$as_echo "found ${TK_BIN_DIR}/tkConfig.sh" >&6; }
+	fi
+    fi
+
+	if test "X$TK_BIN_DIR" = "X# no Tk configs found" ; then
+		{ $as_echo "$as_me:$LINENO: WARNING: Tk not found, skipping." >&5
+$as_echo "$as_me: WARNING: Tk not found, skipping." >&2;}
+		ETCL=no
+	        DTCL=yes
+	else
+
+    { $as_echo "$as_me:$LINENO: checking for existence of ${TK_BIN_DIR}/tkConfig.sh" >&5
+$as_echo_n "checking for existence of ${TK_BIN_DIR}/tkConfig.sh... " >&6; }
+
+    if test -f "${TK_BIN_DIR}/tkConfig.sh" ; then
+        { $as_echo "$as_me:$LINENO: result: loading" >&5
+$as_echo "loading" >&6; }
+	. "${TK_BIN_DIR}/tkConfig.sh"
+    else
+        { $as_echo "$as_me:$LINENO: result: could not find ${TK_BIN_DIR}/tkConfig.sh" >&5
+$as_echo "could not find ${TK_BIN_DIR}/tkConfig.sh" >&6; }
+    fi
+
+    # eval is required to do the TK_DBGX substitution
+    eval "TK_LIB_FILE=\"${TK_LIB_FILE}\""
+    eval "TK_STUB_LIB_FILE=\"${TK_STUB_LIB_FILE}\""
+
+    # If the TK_BIN_DIR is the build directory (not the install directory),
+    # then set the common variable name to the value of the build variables.
+    # For example, the variable TK_LIB_SPEC will be set to the value
+    # of TK_BUILD_LIB_SPEC. An extension should make use of TK_LIB_SPEC
+    # instead of TK_BUILD_LIB_SPEC since it will work with both an
+    # installed and uninstalled version of Tcl.
+    if test -f "${TK_BIN_DIR}/Makefile" ; then
+        TK_LIB_SPEC="${TK_BUILD_LIB_SPEC}"
+        TK_STUB_LIB_SPEC="${TK_BUILD_STUB_LIB_SPEC}"
+        TK_STUB_LIB_PATH="${TK_BUILD_STUB_LIB_PATH}"
+    elif test "`uname -s`" = "Darwin"; then
+	# If Tk was built as a framework, attempt to use the libraries
+	# from the framework at the given location so that linking works
+	# against Tk.framework installed in an arbitary location.
+	case ${TK_DEFS} in
+	    *TK_FRAMEWORK*)
+		if test -f "${TK_BIN_DIR}/${TK_LIB_FILE}"; then
+		    for i in "`cd "${TK_BIN_DIR}"; pwd`" \
+			     "`cd "${TK_BIN_DIR}"/../..; pwd`"; do
+			if test "`basename "$i"`" = "${TK_LIB_FILE}.framework"; then
+			    TK_LIB_SPEC="-F`dirname "$i" | sed -e 's/ /\\\\ /g'` -framework ${TK_LIB_FILE}"
+			    break
+			fi
+		    done
+		fi
+		if test -f "${TK_BIN_DIR}/${TK_STUB_LIB_FILE}"; then
+		    TK_STUB_LIB_SPEC="-L` echo "${TK_BIN_DIR}"  | sed -e 's/ /\\\\ /g'` ${TK_STUB_LIB_FLAG}"
+		    TK_STUB_LIB_PATH="${TK_BIN_DIR}/${TK_STUB_LIB_FILE}"
+		fi
+		;;
+	esac
+    fi
+
+    # eval is required to do the TK_DBGX substitution
+    eval "TK_LIB_FLAG=\"${TK_LIB_FLAG}\""
+    eval "TK_LIB_SPEC=\"${TK_LIB_SPEC}\""
+    eval "TK_STUB_LIB_FLAG=\"${TK_STUB_LIB_FLAG}\""
+    eval "TK_STUB_LIB_SPEC=\"${TK_STUB_LIB_SPEC}\""
 
 
 
@@ -10602,11 +10819,12 @@ if test "X$OSTYPE" = "Xcygwin" ; then
 # skip Tcl_CreateInterp check on cygwin...
 	TCL_DEFADD=-DHAVE_LIBTCL
 	TCL_LDADD="${TCL_LIB_SPEC}"
+	TK_LDADD="${TK_LIB_SPEC}"
 else
 OLD_LDFLAGS="${LDFLAGS}"
 TCLSPEC_LHS="${TCL_LIB_SPEC% *}"
-LDFLAGS="${LDFLAGS} ${TCLSPEC_LHS}"
-# LDFLAGS="${LDFLAGS} ${TCL_LIB_SPEC}"
+TKLSPEC_LHS="${TK_LIB_SPEC% *}"
+LDFLAGS="${LDFLAGS} ${TCLSPEC_LHS} ${TKLSPEC_LHS}"
 as_ac_Lib=`$as_echo "ac_cv_lib_tcl${TCL_VERSION}''_Tcl_CreateInterp" | $as_tr_sh`
 { $as_echo "$as_me:$LINENO: checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}" >&5
 $as_echo_n "checking for Tcl_CreateInterp in -ltcl${TCL_VERSION}... " >&6; }
@@ -10690,10 +10908,13 @@ $as_echo "$as_me: WARNING:
 Tcl support not enabled." >&2;}
 else
 	TCL_DEFADD=-DHAVE_LIBTCL
+	TCL_LDADD="${TCL_LIB_SPEC}"
+	TK_LDADD="${TK_LIB_SPEC}"
 	fi
 LDFLAGS="${OLD_LDFLAGS}"
 fi
 fi
+
 
 
 
@@ -10723,8 +10944,13 @@ ac_config_files="$ac_config_files Makefile doc/Makefile contrib/Makefile contrib
   EXTLOAD_CFLAGS   : $EXTLOAD_CFLAGS
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+  TCL_LIB_SPEC     : $TCL_LIB_SPEC
   TCL_LDADD        : $TCL_LDADD
   TCL_DEFADD       : $TCL_DEFADD
+
+  TK_INCLUDE_SPEC  : $TK_INCLUDE_SPEC
+  TK_LIB_SPEC      : $TK_LIB_SPEC
+  TK_LDADD         : $TK_LDADD
 
   CPPFLAGS         : $CPPFLAGS
   CFLAGS           : $CFLAGS
@@ -10753,8 +10979,13 @@ $as_echo "$as_me:
   EXTLOAD_CFLAGS   : $EXTLOAD_CFLAGS
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+  TCL_LIB_SPEC     : $TCL_LIB_SPEC
   TCL_LDADD        : $TCL_LDADD
   TCL_DEFADD       : $TCL_DEFADD
+
+  TK_INCLUDE_SPEC  : $TK_INCLUDE_SPEC
+  TK_LIB_SPEC      : $TK_LIB_SPEC
+  TK_LDADD         : $TK_LDADD
 
   CPPFLAGS         : $CPPFLAGS
   CFLAGS           : $CFLAGS

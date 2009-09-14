@@ -1587,10 +1587,12 @@ if(GLOBALS->timearray)
 			{
 			if(t->vector)
 				{
+				if(HasAlias(t)) { mprintf("+{%s} ",t->name_full); }
+
 				int i;
 				nptr *nodes;
 
-				mprintf("#%s",t->name);
+				mprintf("#{%s}",t->name);
 
 				nodes=t->n.vec->bits->nodes;
 				for(i=0;i<t->n.vec->nbits;i++)
@@ -1608,15 +1610,15 @@ if(GLOBALS->timearray)
 				}
 				else
 				{
-				if(t->is_alias)
+				if(HasAlias(t))
 					{
 					if(t->n.nd->expansion)
 						{
-						mprintf("+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
+						mprintf("+{%s} (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
 						}
 						else
 						{
-						mprintf("+%s %s\n",t->name+2,t->n.nd->nname);
+						mprintf("+{%s} %s\n",t->name+2,t->n.nd->nname);
 						}
 					}
 					else
@@ -1643,6 +1645,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/07/07 20:12:53  gtkwave
+ * convert hex capitalization to match verilog
+ *
  * Revision 1.9  2009/03/09 23:29:12  gtkwave
  * fixed memory access violation and added comprehensive option.
  *

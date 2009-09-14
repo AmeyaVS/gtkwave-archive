@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,9 @@ int  f_color_black (char *str);
 int  f_color_dash (char *str);
 int  f_color_dashfill (char *str);
 int  f_color_dkblue (char *str);
+int  f_color_brkred (char *str);
+int  f_color_ltblue (char *str);
+int  f_color_gmstrd (char *str);
 int  f_color_dkgray (char *str);
 int  f_color_grid (char *str);
 int  f_color_high (char *str);
@@ -117,6 +120,9 @@ int  f_zoom_pow10_snap (char *str);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/08/26 21:35:44  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *
@@ -136,4 +142,3 @@ int  f_zoom_pow10_snap (char *str);
  * initial release
  *
  */
-

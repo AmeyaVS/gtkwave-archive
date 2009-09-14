@@ -44,6 +44,19 @@ if test "X$ETCL" = "Xyes" ; then
 	fi
 fi
 
+if test "X$ETCL" = "Xyes" ; then
+	SC_PATH_TKCONFIG
+	if test "X$TK_BIN_DIR" = "X# no Tk configs found" ; then
+		AC_MSG_WARN([Tk not found, skipping.])
+		ETCL=no
+	        DTCL=yes
+	else
+		SC_LOAD_TKCONFIG
+		AC_SUBST(TK_INCLUDE_SPEC)
+		AC_SUBST(TK_LIB_SPEC)
+	fi
+fi
+
 AC_MSG_CHECKING([if gtk1 or gtk2 should be used])
 
 GTK1=no
@@ -362,17 +375,20 @@ if test "X$OSTYPE" = "Xcygwin" ; then
 # skip Tcl_CreateInterp check on cygwin...
 	TCL_DEFADD=-DHAVE_LIBTCL
 	TCL_LDADD="${TCL_LIB_SPEC}"
+	TK_LDADD="${TK_LIB_SPEC}"
 else
 OLD_LDFLAGS="${LDFLAGS}"
 TCLSPEC_LHS="${TCL_LIB_SPEC% *}"
-LDFLAGS="${LDFLAGS} ${TCLSPEC_LHS}"
-# LDFLAGS="${LDFLAGS} ${TCL_LIB_SPEC}"
+TKLSPEC_LHS="${TK_LIB_SPEC% *}"
+LDFLAGS="${LDFLAGS} ${TCLSPEC_LHS} ${TKLSPEC_LHS}"
 AC_CHECK_LIB(tcl${TCL_VERSION},Tcl_CreateInterp, [TCL_LDADD=${TCL_LIB_SPEC}], [need_tcl=yes])
 if test "$need_tcl" = "yes" ; then
                 AC_MSG_WARN([
 Tcl support not enabled.])
 else
 	TCL_DEFADD=-DHAVE_LIBTCL
+	TCL_LDADD="${TCL_LIB_SPEC}"
+	TK_LDADD="${TK_LIB_SPEC}"
 	fi
 LDFLAGS="${OLD_LDFLAGS}"
 fi
@@ -380,6 +396,7 @@ fi
 
 AC_SUBST(TCL_LDADD)
 AC_SUBST(TCL_DEFADD)
+AC_SUBST(TK_LDADD)
 
 AC_CONFIG_FILES([Makefile
 		doc/Makefile
@@ -436,8 +453,13 @@ AC_MSG_NOTICE([
   EXTLOAD_CFLAGS   : $EXTLOAD_CFLAGS
 
   TCL_INCLUDE_SPEC : $TCL_INCLUDE_SPEC
+  TCL_LIB_SPEC     : $TCL_LIB_SPEC
   TCL_LDADD        : $TCL_LDADD
   TCL_DEFADD       : $TCL_DEFADD  
+
+  TK_INCLUDE_SPEC  : $TK_INCLUDE_SPEC
+  TK_LIB_SPEC      : $TK_LIB_SPEC
+  TK_LDADD         : $TK_LDADD
 
   CPPFLAGS         : $CPPFLAGS
   CFLAGS           : $CFLAGS

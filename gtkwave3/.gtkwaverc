@@ -75,6 +75,11 @@ color_mark   ffff80
 color_time   ffffff
 color_timeb  000000
 
+color_brkred cc0000
+color_ltblue 5dbebb
+color_gmstrd 7d8104
+
+
 #
 # menu accelerators
 #

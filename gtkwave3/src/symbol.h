@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007
+ * Copyright (c) Tony Bybell 1999-2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,10 +94,10 @@ void wave_heapsort(struct symbol **a, int num);
 
 struct Bits *makevec(char *, char *);
 struct Bits *makevec_annotated(char *, char *);
-int maketraces(char *, int);
+int maketraces(char *, char *, int);
 
-int parsewavline(char *, int);
-int parsewavline_lx2(char *, int);
+int parsewavline(char *, char *, int);
+int parsewavline_lx2(char *, char *, int);
 
 
 /* additions to bitvec.c because of search.c/menu.c ==> formerly in analyzer.h */
@@ -119,6 +119,10 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/09/26 17:05:10  gtkwave
+ * force open tree nodes in ctree on initial .sav file read (didn't happen
+ * before as ctree was not built yet)
+ *
  * Revision 1.2  2007/08/26 21:35:45  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

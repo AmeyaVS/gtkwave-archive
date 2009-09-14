@@ -123,31 +123,28 @@ static char *extractFullTraceName(Trptr t)
 {
 char *name = NULL;
 
-if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
-	{
-	if(t->vector==TRUE)
-		{
-		name = strdup_2(t->n.vec->name);
-		}
-		else 
-		{
-		if(!t->is_alias)
-			{
-	                int flagged = 0;
+ if(HasWave(t))
+   {
+     if (HasAlias(t))
+       {
+	 name = strdup_2(t->name_full);
+       }
+     else if (t->vector)
+       {
+	 name = strdup_2(t->n.vec->name);
+       }
+     else
+       {
+	 int flagged = 0;
 
-	                name = hier_decompress_flagged(t->n.nd->nname, &flagged);
-			if(!flagged)
-				{
-				name = strdup_2(name);
-				}
-       			}
-       			else
-       			{
-			name = strdup_2(t->name);
-       			} 
-		}
-	}
-return(name);
+	 name = hier_decompress_flagged(t->n.nd->nname, &flagged);
+	 if(!flagged)
+	   {
+	     name = strdup_2(name);
+	   }
+       }
+   }
+ return(name);
 }
 
 
@@ -938,20 +935,23 @@ if(objc == 2)
         {
         char *s = Tcl_GetString(objv[1]);
         int target = atoi(s);
-        GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
 
-        int num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
-        num_traces_displayable--;   /* for the time trace that is always there */
+ 	SetTraceScrollbarRowValue(target, 0);
 
-	if(target > GLOBALS->traces.visible - num_traces_displayable) target = GLOBALS->traces.visible - num_traces_displayable;
+/*         GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider); */
 
-	if(target < 0) target = 0;
+/*         int num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight); */
+/*         num_traces_displayable--;   /\* for the time trace that is always there *\/ */
 
-	wadj->value = target;
+/* 	if(target > GLOBALS->traces.visible - num_traces_displayable) target = GLOBALS->traces.visible - num_traces_displayable; */
 
-        gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
-        gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
-	gtkwave_gtk_main_iteration();
+/* 	if(target < 0) target = 0; */
+
+/* 	wadj->value = target; */
+
+/*         gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /\* force bar update *\/ */
+/*         gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /\* force text update *\/ */
+/*	gtkwave_gtk_main_iteration(); */
 	}
         else  
         {
@@ -1596,6 +1596,79 @@ if(objc == 2)
 return(TCL_OK);
 }
 
+static int gtkwavetcl_loadFile(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+  if(objc == 2)
+    {
+      char *s = Tcl_GetString(objv[1]);
+	
+      /*	read_save_helper(s); */
+      process_url_file(s);
+      /*	process_url_list(s); */
+      /*	gtkwave_gtk_main_iteration(); */
+
+
+    }
+  else  
+    {
+      return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+    }
+
+  return(TCL_OK);
+}
+
+static int gtkwavetcl_reLoadFile(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+
+  if(objc == 1)
+    {
+      reload_into_new_context();
+    }
+  else  
+    {
+      return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 0));
+    }
+  return(TCL_OK);
+}
+
+static int gtkwavetcl_presentWindow(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+
+  if(objc == 1)
+    {
+      gtk_window_present(GTK_WINDOW(GLOBALS->mainwindow));
+    }
+  else  
+    {
+      return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 0));
+    }
+  return(TCL_OK);
+}
+
+static int gtkwavetcl_showSignal(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+  if(objc == 3)
+    {
+      char *s0 = Tcl_GetString(objv[1]);
+      int row;
+      sscanf(s0, "%d", &row);
+      if (row < 0) { row = 0; };
+
+      char *s1 = Tcl_GetString(objv[2]);
+      unsigned location;
+      sscanf(s1, "%d", &location);
+
+      SetTraceScrollbarRowValue(row, location);
+
+
+    }
+  else  
+    {
+      return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 2));
+    }
+
+  return(TCL_OK);
+}
 
 tcl_cmdstruct gtkwave_commands[] =
 	{
@@ -1655,6 +1728,10 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"setWindowStartTime",			gtkwavetcl_setWindowStartTime},
 	{"setZoomFactor",			gtkwavetcl_setZoomFactor},
 	{"setZoomRangeTimes",			gtkwavetcl_setZoomRangeTimes},
+	{"loadFile",			        gtkwavetcl_loadFile},
+	{"reLoadFile",			        gtkwavetcl_reLoadFile},
+	{"presentWindow",			gtkwavetcl_presentWindow},
+	{"showSignal",         			gtkwavetcl_showSignal},
 	{"unhighlightSignalsFromList",		gtkwavetcl_unhighlightSignalsFromList},
    	{"", 					NULL} /* sentinel */
 	};
@@ -1672,6 +1749,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2009/03/26 20:57:42  gtkwave
+ * added MISSING_FILE support for bringing up gtkwave without a dumpfile
+ *
  * Revision 1.23  2009/02/16 05:24:32  gtkwave
  * added setBaselineMarker command
  *

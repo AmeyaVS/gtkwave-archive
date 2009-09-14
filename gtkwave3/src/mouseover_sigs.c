@@ -39,7 +39,7 @@ if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 		}
 		else 
 		{
-		if(!t->is_alias)
+		if(!HasAlias(t))
 			{
 			int flagged;
 	                s = hier_decompress_flagged(t->n.nd->nname, &flagged);
@@ -306,9 +306,8 @@ if(GLOBALS->disable_mouseover)
 
 fh = GLOBALS->wavefont->ascent+GLOBALS->wavefont->descent;
 
-if(t)
+if(t && (tname = get_fullname(t)))
 	{
-	tname = get_fullname(t);
 	local_trace_asciival(t, tname, tim, &nmaxlen, &vmaxlen, &asciivalue);
 
 	value_charlen = asciivalue ? strlen(asciivalue) : 0;
@@ -367,7 +366,7 @@ if(t)
 		}
 	}
 
-if((!t)||(yin<0)||(yin>GLOBALS->waveheight))
+if((!t)||(!tname)||(yin<0)||(yin>GLOBALS->waveheight))
 	{
 	if(GLOBALS->mouseover_mouseover_c_1)
 		{
@@ -441,6 +440,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/08/03 03:52:54  gtkwave
+ * fix bug with displaying sig type in mouseover on signalwindow
+ *
  * Revision 1.3  2009/07/23 20:00:55  gtkwave
  * added type info to signal window mouseover
  *

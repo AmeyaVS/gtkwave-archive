@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,15 +73,17 @@ WV_MENU_TCLSEP,
 WV_MENU_FQY,
 WV_MENU_FQN,
 WV_MENU_ESTMH,
+WV_MENU_ETH,
 WV_MENU_SEP3,
 WV_MENU_EIB,
 WV_MENU_EIC,
 WV_MENU_EIA,
-WV_MENU_EAHT,
-WV_MENU_ERHA,
 WV_MENU_EC,
 WV_MENU_ECY,
 WV_MENU_EP,
+WV_MENU_SEP3A,
+WV_MENU_EAHT,
+WV_MENU_ERHA,
 WV_MENU_SEP4,
 WV_MENU_EE,
 WV_MENU_ECD,
@@ -126,8 +128,10 @@ WV_MENU_SEP7A,
 WV_MENU_EEX,
 WV_MENU_ESH,
 WV_MENU_SEP6A,
-WV_MENU_EXA,
-WV_MENU_CPA,
+/* WV_MENU_EXA, */
+/* WV_MENU_CPA, */
+WV_MENU_AG,
+WV_MENU_TG,
 WV_MENU_SEP6A1,
 WV_MENU_EHR,
 WV_MENU_EUHR,
@@ -239,7 +243,6 @@ void menu_remove_aliases(GtkWidget *widget, gpointer data);
 void menu_cut_traces(GtkWidget *widget, gpointer data);
 void menu_copy_traces(GtkWidget *widget, gpointer data);
 void menu_paste_traces(GtkWidget *widget, gpointer data);
-void menu_expand(GtkWidget *widget, gpointer data);
 void menu_combine_down(GtkWidget *widget, gpointer data);
 void menu_combine_up(GtkWidget *widget, gpointer data);
 void menu_reduce_singlebit_vex(GtkWidget *widget, gpointer data);
@@ -270,8 +273,6 @@ void menu_unwarp_traces(GtkWidget *widget, gpointer data);
 void menu_unwarp_traces_all(GtkWidget *widget, gpointer data);
 void menu_dataformat_exclude_on(GtkWidget *widget, gpointer data);
 void menu_dataformat_exclude_off(GtkWidget *widget, gpointer data);
-void menu_expand_all(GtkWidget *widget, gpointer data);
-void menu_collapse_all(GtkWidget *widget, gpointer data);
 void menu_regexp_highlight(GtkWidget *widget, gpointer data);
 void menu_regexp_unhighlight(GtkWidget *widget, gpointer data);
 void menu_dataformat_highlight_all(GtkWidget *widget, gpointer data);
@@ -327,11 +328,16 @@ void set_scale_to_time_dimension_toggles(void);
 void write_save_helper(FILE *file);
 void read_save_helper(char *wname);
 
+void SetTraceScrollbarRowValue(int row, unsigned center);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2009/04/23 21:57:53  gtkwave
+ * added mingw support for rtlbrowse
+ *
  * Revision 1.25  2009/04/10 04:33:58  gtkwave
  * added menu blackouts on empty gui
  *

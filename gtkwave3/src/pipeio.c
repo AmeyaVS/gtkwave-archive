@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005.
+ * Copyright (c) Tony Bybell 2005-2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
 
 #if defined _MSC_VER || defined __MINGW32__
 
-struct pipe_ctx *pipeio_create(char *execappname)
+struct pipe_ctx *pipeio_create(char *execappname, char *args)
 {
 /* nothing, not supported in win32 */
 return(NULL);
@@ -27,7 +27,7 @@ void pipeio_destroy(struct pipe_ctx *p)
 #else
 #include <sys/wait.h>
 
-struct pipe_ctx *pipeio_create(char *execappname)
+struct pipe_ctx *pipeio_create(char *execappname, char *arg)
 {
 int rc1, rc2;
 pid_t pid, wave_pid;
@@ -63,7 +63,11 @@ if((pid=fork()))
 
 #ifdef _AIX
 	/* NOTE: doesn't handle ctrl-c or killing, but I don't want to mess with this right now for AIX */
-	execl(execappname, execappname, NULL);
+	if ((!arg)||(strlen(arg) == 0)) {
+	  execl(execappname, execappname, NULL);
+	} else {
+	  execl(execappname, execappname, arg, NULL);
+	}
 	exit(0);
 #else
 	if((pid=fork()))	/* monitor process */
@@ -79,7 +83,11 @@ if((pid=fork()))
 		}
 		else		/* actual helper */
 		{
-		execl(execappname, execappname, NULL);
+		  if (strlen(arg) == 0) {
+		    execl(execappname, execappname, NULL);
+		  } else {
+		    execl(execappname, execappname, arg, NULL);
+		  }
 		exit(0);
 		}
 #endif
@@ -114,6 +122,9 @@ free_2(p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/12/25 04:07:29  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.2  2007/08/26 21:35:43  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

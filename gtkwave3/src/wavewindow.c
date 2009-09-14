@@ -1098,6 +1098,9 @@ if(!GLOBALS->made_sgc_contexts_wavewindow_c_1)
 	GLOBALS->gc_mdgray= alloc_color(signalarea, GLOBALS->color_mdgray, signalarea->style->bg_gc[GTK_STATE_INSENSITIVE]);
 	GLOBALS->gc_dkgray= alloc_color(signalarea, GLOBALS->color_dkgray, signalarea->style->bg_gc[GTK_STATE_ACTIVE]);
 	GLOBALS->gc_dkblue= alloc_color(signalarea, GLOBALS->color_dkblue, signalarea->style->bg_gc[GTK_STATE_SELECTED]);
+	GLOBALS->gc_brkred= alloc_color(signalarea, GLOBALS->color_brkred, signalarea->style->bg_gc[GTK_STATE_SELECTED]);
+	GLOBALS->gc_ltblue= alloc_color(signalarea, GLOBALS->color_ltblue, signalarea->style->bg_gc[GTK_STATE_SELECTED]);
+	GLOBALS->gc_gmstrd= alloc_color(signalarea, GLOBALS->color_gmstrd, signalarea->style->bg_gc[GTK_STATE_SELECTED]);
 
 	GLOBALS->made_sgc_contexts_wavewindow_c_1=~0;
 	}
@@ -1186,6 +1189,9 @@ if(!GLOBALS->made_gc_contexts_wavewindow_c_1)
 	GLOBALS->gccache_mdgray = GLOBALS->gc_mdgray ; 
 	GLOBALS->gccache_dkgray = GLOBALS->gc_dkgray ; 
 	GLOBALS->gccache_dkblue = GLOBALS->gc_dkblue ; 
+	GLOBALS->gccache_brkred = GLOBALS->gc_brkred ; 
+	GLOBALS->gccache_ltblue = GLOBALS->gc_ltblue ; 
+	GLOBALS->gccache_gmstrd = GLOBALS->gc_gmstrd ; 
 	GLOBALS->gccache_back_wavewindow_c_1 = GLOBALS->gc_back_wavewindow_c_1 ; 
 	GLOBALS->gccache_baseline_wavewindow_c_1 = GLOBALS->gc_baseline_wavewindow_c_1 ; 
 	GLOBALS->gccache_grid_wavewindow_c_1 = GLOBALS->gc_grid_wavewindow_c_1 ; 
@@ -1257,6 +1263,9 @@ GLOBALS->gc_normal= GLOBALS->gc_white ;
 GLOBALS->gc_mdgray= GLOBALS->gc_white ;
 GLOBALS->gc_dkgray= GLOBALS->gc_white ;
 GLOBALS->gc_dkblue= GLOBALS->gc_black ;
+GLOBALS->gc_brkred= GLOBALS->gc_black ;
+GLOBALS->gc_ltblue= GLOBALS->gc_black ;
+GLOBALS->gc_gmstrd= GLOBALS->gc_black ;
 GLOBALS->gc_back_wavewindow_c_1   = GLOBALS->gc_white ;
 GLOBALS->gc_baseline_wavewindow_c_1 = GLOBALS->gc_black;
 GLOBALS->gc_grid_wavewindow_c_1   = GLOBALS->gc_black;
@@ -1290,6 +1299,9 @@ GLOBALS->gc_normal = GLOBALS->gccache_normal ;
 GLOBALS->gc_mdgray = GLOBALS->gccache_mdgray ;
 GLOBALS->gc_dkgray = GLOBALS->gccache_dkgray ;
 GLOBALS->gc_dkblue = GLOBALS->gccache_dkblue ;
+GLOBALS->gc_brkred = GLOBALS->gccache_brkred ;
+GLOBALS->gc_ltblue = GLOBALS->gccache_ltblue ;
+GLOBALS->gc_gmstrd = GLOBALS->gccache_gmstrd ;
 GLOBALS->gc_back_wavewindow_c_1 = GLOBALS->gccache_back_wavewindow_c_1 ;
 GLOBALS->gc_baseline_wavewindow_c_1 = GLOBALS->gccache_baseline_wavewindow_c_1 ;
 GLOBALS->gc_grid_wavewindow_c_1 = GLOBALS->gccache_grid_wavewindow_c_1 ;
@@ -1482,210 +1494,162 @@ if((GLOBALS->wavepixmap_wavewindow_c_1)&&(update_waves))
 }
 
 
+void populateBuffer (Trptr t, char* buf)
+{
+  char* ptr = buf;
+
+  if (HasWave(t))
+    {
+      if (t->name) 
+	{
+	  strcpy(ptr, t->name);
+	  ptr = ptr + strlen(ptr);
+
+	  if((t->name)&&(t->shift))
+	    {
+	      ptr[0]='`';
+	      reformat_time(ptr+1, t->shift, GLOBALS->time_dimension);
+	      ptr = ptr + strlen(ptr+1) + 1;
+	      strcpy(ptr,"\'");
+	      ptr = ptr + strlen(ptr);
+	    }
+
+	  if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
+	    {
+	      sprintf(ptr, "{%d}", t->n.nd->this_row);
+	      ptr = ptr + strlen(ptr);
+	    }
+	}
+
+      if (IsGroupBegin(t))
+	{
+	  ptr = buf;
+	  char * pch;
+	  if (IsClosed(t)) {
+	    pch = strstr (ptr,"[-]");
+	    if(pch) {strncpy (pch,"[+]", 3); }
+	  } else {
+	    pch = strstr (ptr,"[+]");
+	    if(pch) {strncpy (pch,"[-]", 3); }
+	  }
+	}
+    }
+  else
+    {
+      if (t->name) 
+	{
+
+	  if (IsGroupEnd(t))
+	    {
+	      strcpy(ptr, "} ");
+	      ptr = ptr + strlen(ptr);
+	    }
+
+	  strcpy(ptr, t->name);
+	  ptr = ptr + strlen(ptr);
+
+	  if (IsGroupBegin(t))
+	    {
+	      if (IsClosed(t) && IsCollapsed(t->t_match))
+		{
+		  strcpy(ptr, " {}");
+		}
+	      else
+		{
+		  strcpy(ptr, " {");
+		}
+	      ptr = ptr + strlen(ptr);
+	    }
+	}
+    }
+}
+
+/***************************************************************************/
+
 int RenderSig(Trptr t, int i, int dobackground)
 {
-int texty, liney;
-int retval;
-char buf[128];
-int bufxlen = 0;
+  int texty, liney;
+  int retval;
+  char buf[256];
 
-buf[0] = 0;
+  buf[0] = 0;
 
-UpdateSigValue(t); /* in case it's stale on nonprop */
-if((t->name)&&(t->shift))
-	{
-	buf[0]='`';
-	reformat_time(buf+1, t->shift, GLOBALS->time_dimension);
-	strcpy(buf+strlen(buf+1)+1,"\'");
-	bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
-	}
+  populateBuffer(t, buf);
 
-if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
-	{
-	sprintf(buf + strlen(buf), "{%d}", t->n.nd->this_row);
-	bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
-	}
+  GdkGC *clr_comment  = GLOBALS->gc_brkred;
+  GdkGC *clr_group    = GLOBALS->gc_gmstrd;
+  GdkGC *clr_shadowed = GLOBALS->gc_ltblue;
+  GdkGC *clr_signal   = GLOBALS->gc_dkblue;
 
-liney=((i+2)*GLOBALS->fontheight)-2;
-texty=liney-(GLOBALS->signalfont->descent);
+  UpdateSigValue(t); /* in case it's stale on nonprop */
 
-retval=liney-GLOBALS->fontheight+1;
+  liney=((i+2)*GLOBALS->fontheight)-2;
+  texty=liney-(GLOBALS->signalfont->descent);
 
-if(!(t->flags&TR_HIGHLIGHT)) 
-	{
-	if(dobackground)	/* for the highlight routines in signalwindow.c */
-		{
-		if(dobackground==2)
-			{
-			gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_normal, TRUE, 
-				0, retval,
-		            	GLOBALS->signal_fill_width, GLOBALS->fontheight-1);
-			}
-			else
-			{
-			gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_ltgray, TRUE, 
-				0, retval,
-		            	GLOBALS->signal_fill_width, GLOBALS->fontheight-1);
-			}
-		}
+  retval=liney-GLOBALS->fontheight+1;
 
-	gdk_draw_line(GLOBALS->signalpixmap, 
+  unsigned left_justify = ((IsGroupBegin(t) || IsGroupEnd(t)) && !HasWave(t))|| GLOBALS->left_justify_sigs;
+
+  GdkGC* bg_color;
+  GdkGC* text_color;
+
+  if (IsSelected(t))
+    {
+      bg_color = (!HasWave(t))
+	? ((IsGroupBegin(t) || IsGroupEnd(t)) ? clr_group : clr_comment)
+	: ((IsShadowed(t)) ? clr_shadowed : clr_signal);
+      text_color = GLOBALS->gc_white;
+    }
+  else
+    {
+      bg_color = (dobackground==2) ?  GLOBALS->gc_normal : GLOBALS->gc_ltgray;
+      if(HasWave(t))
+	{ text_color = GLOBALS->gc_black; }
+      else
+	{ text_color = (IsGroupBegin(t) || IsGroupEnd(t)) ? clr_group : clr_comment; }
+    }
+
+  if (dobackground || IsSelected(t))
+    {
+
+      gdk_draw_rectangle(GLOBALS->signalpixmap, bg_color, TRUE, 
+			 0, retval,
+			 GLOBALS->signal_fill_width, GLOBALS->fontheight-1);
+
+    }
+
+  gdk_draw_line(GLOBALS->signalpixmap, 
 		GLOBALS->gc_white,
 		0, liney,
 		GLOBALS->signal_fill_width-1, liney);
 
-	if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
-		{
-		if(t->name)
-			{
-			if(bufxlen)
-				{
-				int baselen=font_engine_string_measure(GLOBALS->signalfont, t->name);
-				int combined=baselen+bufxlen;
+  if(t->name)
+    {
+      font_engine_draw_string(GLOBALS->signalpixmap,
+			      GLOBALS->signalfont,
+			      text_color,
+			      left_justify?3:3+GLOBALS->max_signal_name_pixel_width-
+			      font_engine_string_measure(GLOBALS->signalfont, buf), 
+			      texty,
+			      buf);
 
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        GLOBALS->gc_black,
-				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						combined, 
-					texty,
-				        t->name);
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        GLOBALS->gc_black,
-				        GLOBALS->left_justify_sigs?3+baselen:3+GLOBALS->max_signal_name_pixel_width-
-						bufxlen, 
-					texty,
-				        buf);
-				}
-				else
-				{
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        GLOBALS->gc_black,
-				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						font_engine_string_measure(GLOBALS->signalfont, t->name), 
-					texty,
-				        t->name);
-				}
-			}
+      
+    }
 
-		if((t->asciivalue)&&(!(t->flags&TR_EXCLUDE)))
-			font_engine_draw_string(GLOBALS->signalpixmap,
+  if (HasWave(t))
+    {
+      if((t->asciivalue)&&(!(t->flags&TR_EXCLUDE)))
+	font_engine_draw_string(GLOBALS->signalpixmap,
 				GLOBALS->signalfont,
-	        		GLOBALS->gc_black,
-	        		GLOBALS->max_signal_name_pixel_width+6,
+				text_color,
+				GLOBALS->max_signal_name_pixel_width+6,
 				texty,
-	        		t->asciivalue);
-		}
-		else
-		{
-		if(t->name)
-			{
-			GdkGC *comment_color = (t->flags&TR_COLLAPSED) ? GLOBALS->gc_mdgray : GLOBALS->gc_dkblue;
+				t->asciivalue);
+    }
 
-			if(bufxlen)
-				{
-				int baselen=font_engine_string_measure(GLOBALS->signalfont, t->name);
-				int combined=baselen+bufxlen;
-
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        comment_color,
-				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						combined, 
-					texty,
-				        t->name);
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        comment_color,
-				        GLOBALS->left_justify_sigs?3+baselen:3+GLOBALS->max_signal_name_pixel_width-
-						bufxlen, 
-					texty,
-				        buf);
-				}
-				else
-				{
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        comment_color,
-				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						font_engine_string_measure(GLOBALS->signalfont, t->name), 
-					texty,
-				        t->name);
-				}
-			}
-		}
-	}
-	else
-	{
-	gdk_draw_rectangle(GLOBALS->signalpixmap, GLOBALS->gc_dkblue, TRUE, 
-		0, retval,
-            	GLOBALS->signal_fill_width, GLOBALS->fontheight-1);
-	gdk_draw_line(GLOBALS->signalpixmap, 
-		GLOBALS->gc_white,
-		0, liney,
-		GLOBALS->signal_fill_width-1, liney);
-
-	if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
-		{
-		if(t->name)
-			{
-			if(bufxlen)
-				{
-				int baselen=font_engine_string_measure(GLOBALS->signalfont, t->name);
-				int combined=baselen+bufxlen;
-
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        GLOBALS->gc_white,
-				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						combined, 
-					texty,
-				        t->name);
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        GLOBALS->gc_white,
-				        GLOBALS->left_justify_sigs?3+baselen:3+GLOBALS->max_signal_name_pixel_width-
-						bufxlen, 
-					texty,
-				        buf);
-				}
-				else
-				{
-				font_engine_draw_string(GLOBALS->signalpixmap,
-					GLOBALS->signalfont,
-				        GLOBALS->gc_white,
-				        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-						font_engine_string_measure(GLOBALS->signalfont, t->name), 
-					texty,
-				        t->name);
-				}
-			}
-
-		if((t->asciivalue)&&(!(t->flags&TR_EXCLUDE)))
-			font_engine_draw_string(GLOBALS->signalpixmap,
-		      	GLOBALS->signalfont,
-		       	GLOBALS->gc_white,
-		        GLOBALS->max_signal_name_pixel_width+6,
-			texty,
-		        t->asciivalue);
-		}
-		else
-		{
-		if(t->name)
-		font_engine_draw_string(GLOBALS->signalpixmap,
-		      	GLOBALS->signalfont,
-		        (dobackground==2)?GLOBALS->gc_ltgray:GLOBALS->gc_dkgray,
-		        GLOBALS->left_justify_sigs?3:3+GLOBALS->max_signal_name_pixel_width-
-				font_engine_string_measure(GLOBALS->signalfont, t->name), 
-			texty,
-  		        t->name);
-		}
-	} 
-
-return(retval);
+  return(retval);
 }
+
 
 /***************************************************************************/
 
@@ -1694,8 +1658,7 @@ void MaxSignalLength(void)
 Trptr t;
 int len=0,maxlen=0;
 int vlen=0, vmaxlen=0;
-char buf[128];
-int bufxlen;
+char buf[256];
 char dirty_kick;
 
 DEBUG(printf("signalwindow_width_dirty: %d\n",signalwindow_width_dirty));
@@ -1706,41 +1669,29 @@ dirty_kick = GLOBALS->signalwindow_width_dirty;
 GLOBALS->signalwindow_width_dirty=0;
 
 t=GLOBALS->traces.first;
+
+
 while(t)
-{
-if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))	/* for "comment" style blank traces */
-	{
+  {
+
+    populateBuffer(t, buf);
+    if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))	/* for "comment" style blank traces */
+      {
 	if(t->name)
-		{
-		len=font_engine_string_measure(GLOBALS->signalfont, t->name);
-		if(len>maxlen) maxlen=len;
-		}
+	  {
+	    len=font_engine_string_measure(GLOBALS->signalfont, buf);
+	    if(len>maxlen) maxlen=len;
+	  }
 	t=GiveNextTrace(t);
-	}
-else
-if(t->name)
+      }
+    else
+      if(t->name)
 	{
-	bufxlen = 0;
-	buf[0] = 0;
 
-	if((GLOBALS->shift_timebase=t->shift))
-        	{
-        	buf[0]='`';
-        	reformat_time(buf+1, t->shift, GLOBALS->time_dimension);
-        	strcpy(buf+strlen(buf+1)+1,"\'");
-        	bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
-        	}
+	  len=font_engine_string_measure(GLOBALS->signalfont, buf);
+	  if(len>maxlen) maxlen=len;
 
-	if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
-		{
-		sprintf(buf + strlen(buf), "{%d}", t->n.nd->this_row);
-		bufxlen=font_engine_string_measure(GLOBALS->signalfont, buf);
-		}
-
-	len=font_engine_string_measure(GLOBALS->signalfont, t->name)+bufxlen;
-	if(len>maxlen) maxlen=len;
-
-	if((GLOBALS->tims.marker!=-1)&&(!(t->flags&TR_EXCLUDE)))
+	  if((GLOBALS->tims.marker!=-1)&&(!(t->flags&TR_EXCLUDE)))
 		{
 		t->asciitime=GLOBALS->tims.marker;
 		if(t->asciivalue) free_2(t->asciivalue);
@@ -3899,6 +3850,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2009/07/24 03:21:31  gtkwave
+ * added fisher price mode to GCs as a ./configure option
+ *
  * Revision 1.49  2009/06/26 19:56:18  gtkwave
  * add arrowheads to all impulse arrows
  *

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2007.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -399,7 +399,7 @@ return(bitvec);
 /*
  * Make solitary traces from wildcarded signals...
  */
-int maketraces(char *str, int quick_return)
+int maketraces(char *str, char *alias, int quick_return)
 {
 char *pnt, *wild;
 char ch, wild_active=0;
@@ -438,7 +438,7 @@ if(!wild_active)	/* short circuit wildcard evaluation with bsearch */
 			nexp = ExtractNodeSingleBit(&s->n[rows], atoi(str+1));
 			if(nexp)
 				{
-				AddNode(nexp, NULL);
+				AddNode(nexp, alias);
 				return(~0);
 				}
 			}
@@ -449,7 +449,7 @@ if(!wild_active)	/* short circuit wildcard evaluation with bsearch */
 		{
 		if((s=symfind(str, &rows)))
 			{
-			AddNode(&s->n[rows],NULL);
+			AddNode(&s->n[rows],alias);
 			return(~0);
 			}
 			else
@@ -796,7 +796,7 @@ if((b=makevec_selected(alias, numrows, direction)))
         if((v=bits2vector(b)))
                 {
                 v->bits=b;      /* only needed for savefile function */
-                AddVector(v);
+                AddVector(v, NULL);
                 free_2(b->name);
                 b->name=NULL;
                 return(v!=NULL);
@@ -1012,7 +1012,7 @@ if(len>1)
 	        if((v=bits2vector(b)))
 	                {
 	                v->bits=b;      /* only needed for savefile function */
-	                AddVector(v);
+	                AddVector(v, NULL);
 	                free_2(b->name);
 	                b->name=NULL;
 	                return(v!=NULL);
@@ -1187,7 +1187,7 @@ if(lo!=hi)
 	        if((v=bits2vector(b)))
 	                {
 	                v->bits=b;      /* only needed for savefile function */
-	                AddVector(v);
+	                AddVector(v, NULL);
 	                free_2(b->name);
 	                b->name=NULL;
 	                return(v!=NULL);
@@ -2098,35 +2098,87 @@ return(mem);
  * Parse a line of the wave file and act accordingly.. 
  * Returns nonzero if trace(s) added.
  */
-int parsewavline(char *w, int depth)
+int parsewavline(char *w, char *alias, int depth)
 {
-int i;
-int len;
-char *prefix, *suffix;
-char *w2;
-nptr nexp;
-unsigned int rows = 0;
+  int i;
+  int len;
+  char *w2;
+  nptr nexp;
+  unsigned int rows = 0;
 
-if(!(len=strlen(w))) return(0);
-if(*(w+len-1)=='\n')
-	{
-	*(w+len-1)=0x00; /* strip newline if present */
-	len--;
-	if(!len) return(0);
-	}
 
-prefix=(char *)wave_alloca(len+1);
-suffix=(char *)wave_alloca(len+1);
+  if(!(len=strlen(w))) return(0);
+  if(*(w+len-1)=='\n')
+    {
+      *(w+len-1)=0x00; /* strip newline if present */
+      len--;
+      if(!len) return(0);
+    }
 
-w2=w;
-while(1)
-{
-if(isspace(*w2)) { w2++; continue; }
-if(!(*w2)) return(0);	/* no args */
-break;			/* start grabbing chars from here */
-}
+  while(1)
+    {
+      if(isspace(*w)) { w++; continue; }
+      if(!(*w)) return(0);	/* no args */
+      break;			/* start grabbing chars from here */
+    }
 
-sscanf(w2,"%s",prefix);
+  w2=w;
+
+  /* sscanf(w2,"%s",prefix); */
+
+ char *prefix, *suffix, *new;
+
+ prefix=(char *)wave_alloca(len+1);
+ suffix=(char *)wave_alloca(len+1);
+ new=(char *)wave_alloca(len+1);
+
+ char *prefix_init, *w2_init;
+ prefix_init = prefix;
+ w2_init = new;
+ unsigned int mode = 0; /* 0 = before "{", 1 = after "{", 2 = after "}" or " " */
+
+ while(*w2)
+   {
+     if((mode == 0) && (*w2 == '{'))
+       {
+	 mode = 1;
+	 w2++;
+       }
+     else if((mode == 1) && (*w2 == '}'))
+       {
+	 /* strcpy(prefix, ""); */
+	 *(prefix) = '\0';
+	 mode = 2;
+	 w2++;
+       }
+     else if((mode == 0) && (*w2 == ' '))
+       {
+	 /* strcpy(prefix, ""); */
+	 *(prefix) = '\0';
+	 strcpy(new, w2);
+	 mode = 2;
+	 w2++;
+	 new++;
+       }
+     else
+       {
+	 strcpy(new, w2);
+	 if (mode != 2)
+	   {
+	     strcpy(prefix, w2);
+	     prefix++;
+	   }
+	 w2++;
+	 new++;
+       }
+   }
+
+ prefix = prefix_init;
+ w2 = w2_init;
+
+ /* printf("HHHHH |%s| %s\n", prefix, w2); */
+
+
 if(*w2=='*')
 	{
 	float f;
@@ -2190,41 +2242,53 @@ else
 if(*w2=='+')
 	{
 	/* handle aliasing */
-	struct symbol *s;
-	sscanf(w2+strlen(prefix),"%s",suffix);
+	  struct symbol *s;
+	  sscanf(w2+strlen(prefix),"%s",suffix);
 
-	if(suffix[0]=='(')
+	  if(suffix[0]=='(')
+	    {
+	      for(i=1;;i++)
 		{
-		for(i=1;;i++)
-			{
-			if(suffix[i]==0) return(0);
-			if((suffix[i]==')')&&(suffix[i+1])) {i++; break; }
-			}
+		  if(suffix[i]==0) return(0);
+		  if((suffix[i]==')')&&(suffix[i+1])) {i++; break; }
+		}
 
-		s=symfind(suffix+i, &rows);
-		nexp = ExtractNodeSingleBit(&s->n[rows], atoi(suffix+1));
-		if(nexp)
-			{
-			AddNode(nexp, prefix+1);
-			return(~0);
-			}
-			else
-			{
-			return(0);
-			}		
-		}
-		else
+	      s=symfind(suffix+i, &rows);
+	      nexp = ExtractNodeSingleBit(&s->n[rows], atoi(suffix+1));
+	      if(nexp)
 		{
-		if((s=symfind(suffix, &rows)))
-			{
-			AddNode(&s->n[rows],prefix+1);
-			return(~0);
-			}
-			else
-			{
-			return(0);
-			}
+		  AddNode(nexp, prefix+1);
+		  return(~0);
 		}
+	      else
+		{
+		  return(0);
+		}		
+	    }
+	  else
+	    {
+	      int rc;
+	      
+	      char *newl   = strdup_2(w2+strlen(prefix));
+	      char *nalias = strdup_2(prefix+1);
+
+	      rc = parsewavline(newl, nalias, depth);
+	      if (newl)   free_2(newl);
+	      if (nalias) free_2(nalias);
+
+	      return rc;
+	    }
+	/* 	{ */
+/* 		if((s=symfind(suffix, &rows))) */
+/* 			{ */
+/* 			AddNode(&s->n[rows],prefix+1); */
+/* 			return(~0); */
+/* 			} */
+/* 			else */
+/* 			{ */
+/* 			return(0); */
+/* 			} */
+/* 		} */
 	}
 else
 if((*w2=='#')||(*w2==':'))
@@ -2249,7 +2313,7 @@ if((*w2=='#')||(*w2==':'))
 		if((v=bits2vector(b)))
 			{
 			v->bits=b;	/* only needed for savefile function */
-			AddVector(v);
+			AddVector(v, alias);
 			free_2(b->name);
 			b->name=NULL;
 			return(v!=NULL);
@@ -2286,7 +2350,7 @@ if((*w2=='#')||(*w2==':'))
 					w3 = malloc_2(strlen(w2) + 1 + strlen(rightmost_lbrack+1) + 1);
 					sprintf(w3, "%s:%s", w2, rightmost_lbrack+1);
 
-					made = maketraces(w3,1);
+					made = maketraces(w3, alias, 1);
 					free_2(w3);
 					}
 
@@ -2298,7 +2362,7 @@ if((*w2=='#')||(*w2==':'))
 
 					w3 = malloc_2(1 + strlen(w2) + 5);
 					sprintf(w3, "^%s\\[.*", w2);
-					maketraces(w3, 1);
+					maketraces(w3, alias, 1);
 					free_2(w3);
 					}
 				}
@@ -2395,7 +2459,8 @@ else if(*w2=='^')
 
 		if(*(w2+2) != '0')
 			{
-			char *fn = strstr(w2+3, " ");
+			  /*			char *fn = strstr(w2+3, " "); */
+			char *fn = w2+3;
 			if(fn)
 				{
 				while(*fn && isspace(*fn)) fn++;
@@ -2524,7 +2589,7 @@ else if (*w2 == '[')
   }
 	else
 	{
-	int rc = maketraces(w, 0);
+	int rc = maketraces(w, alias, 0);
 	if(rc)
 		{
 		return(rc);
@@ -2535,7 +2600,7 @@ else if (*w2 == '[')
 
 		if(newl)
 			{
-			rc = parsewavline(newl, depth+1);
+			rc = parsewavline(newl, alias, depth+1);
 			free_2(newl);
 			}
 
@@ -2554,7 +2619,7 @@ return(0);
 /*
  * Make solitary traces from wildcarded signals...
  */
-int maketraces_lx2(char *str, int quick_return)
+int maketraces_lx2(char *str, char *alias, int quick_return)
 {
 char *pnt, *wild;
 char ch, wild_active=0;
@@ -2740,34 +2805,83 @@ return(rc);
  * Parse a line of the wave file and act accordingly.. 
  * Returns nonzero if trace(s) added.
  */
-int parsewavline_lx2(char *w, int depth)
+int parsewavline_lx2(char *w, char *alias, int depth)
 {
-int made = 0;
-int i;
-int len;
-char *prefix, *suffix;
-char *w2;
+  int made = 0;
+  int i;
+  int len;
+  char *w2;
 
-if(!(len=strlen(w))) return(0);
-if(*(w+len-1)=='\n')
-	{
-	*(w+len-1)=0x00; /* strip newline if present */
-	len--;
-	if(!len) return(0);
-	}
+  if(!(len=strlen(w))) return(0);
+  if(*(w+len-1)=='\n')
+    {
+      *(w+len-1)=0x00; /* strip newline if present */
+      len--;
+      if(!len) return(0);
+    }
 
-prefix=(char *)wave_alloca(len+1);
-suffix=(char *)wave_alloca(len+1);
+  while(1)
+    {
+      if(isspace(*w)) { w++; continue; }
+      if(!(*w)) return(0);	/* no args */
+      break;			/* start grabbing chars from here */
+    }
 
-w2=w;
-while(1)
-{
-if(isspace(*w2)) { w2++; continue; }
-if(!(*w2)) return(0);	/* no args */
-break;			/* start grabbing chars from here */
-}
+  w2=w;
 
-sscanf(w2,"%s",prefix);
+/* sscanf(w2,"%s",prefix); */
+
+ char *prefix, *suffix, *new;
+
+ prefix=(char *)wave_alloca(len+1);
+ suffix=(char *)wave_alloca(len+1);
+ new=(char *)wave_alloca(len+1);
+
+ char *prefix_init, *w2_init;
+ prefix_init = prefix;
+ w2_init = new;
+ unsigned int mode = 0; /* 0 = before "{", 1 = after "{", 2 = after "}" or " " */
+
+ while(*w2)
+   {
+     if((mode == 0) && (*w2 == '{'))
+       {
+	 mode = 1;
+	 w2++;
+       }
+     else if((mode == 1) && (*w2 == '}'))
+       {
+
+	 *(prefix) = '\0';
+	 mode = 2;
+	 w2++;
+       }
+     else if((mode == 0) && (*w2 == ' '))
+       {
+	 *(prefix) = '\0';
+	 strcpy(new, w2);
+	 mode = 2;
+	 w2++;
+	 new++;
+       }
+     else
+       {
+	 strcpy(new, w2);
+	 if (mode != 2)
+	   {
+	     strcpy(prefix, w2);
+	     prefix++;
+	   }
+	 w2++;
+	 new++;
+       }
+   }
+
+ prefix = prefix_init;
+ w2 = w2_init;
+
+ /* printf("IIIII |%s| %s\n", prefix, w2); */
+
 if(*w2=='[')
 	{
 	}
@@ -2810,15 +2924,27 @@ if(*w2=='+')
 			}
 		return(made);
 		}
-		else
-		{
-		if((s=symfind(suffix, NULL)))
-			{
-			lx2_set_fac_process_mask(s->n);
-			made = ~0;
-			}
-		return(made);
-		}
+	else
+	  {
+	    int rc;
+	    char *newl   = strdup_2(w2+strlen(prefix));
+	    char *nalias = strdup_2(prefix+1);
+
+	    rc = parsewavline_lx2(newl, nalias, depth);
+	    if (newl)   free_2(newl);
+	    if (nalias) free_2(nalias);
+
+	    return rc;
+	  }
+
+	/* 	{ */
+/* 		if((s=symfind(suffix, NULL))) */
+/* 			{ */
+/* 			lx2_set_fac_process_mask(s->n); */
+/* 			made = ~0; */
+/* 			} */
+/* 		return(made); */
+/* 		} */
 	}
 else
 if((*w2=='#')||(*w2==':'))
@@ -2859,7 +2985,7 @@ if((*w2=='#')||(*w2==':'))
 					w3 = malloc_2(strlen(w2) + 1 + strlen(rightmost_lbrack+1) + 1);
 					sprintf(w3, "%s:%s", w2, rightmost_lbrack+1);
 
-					made = maketraces_lx2(w3,1);
+					made = maketraces_lx2(w3, alias, 1);
 					free_2(w3);
 					}
 
@@ -2870,7 +2996,7 @@ if((*w2=='#')||(*w2==':'))
 
 					w3 = malloc_2(1 + strlen(w2) + 5);
 					sprintf(w3, "^%s\\[.*", w2);
-					maketraces_lx2(w3, 1);
+					maketraces_lx2(w3, alias, 1);
 					free_2(w3);
 					}
 				}
@@ -2892,14 +3018,14 @@ else if(*w2=='^')
 	}
 	else
 	{
-        made = maketraces_lx2(w, 0);
+	  made = maketraces_lx2(w, alias, 0);
         if(!made)
                 {
                 char *newl = synth_blastvec(w);
 
 		if(newl)
 			{
-	                made = parsewavline_lx2(newl, depth+1);
+	                made = parsewavline_lx2(newl, alias, depth+1);
 	                free_2(newl);
 			}
                 }
@@ -2916,6 +3042,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2009/08/28 20:29:35  gtkwave
+ * Fix to attempt_vecmatch_2 when no suffix encountered.
+ *
  * Revision 1.14  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

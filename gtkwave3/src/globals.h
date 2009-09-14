@@ -92,6 +92,7 @@ Traces traces; /* from analyzer.c 7 */
 int hier_max_level; /* from analyzer.c 8 */
 TimeType timestart_from_savefile;
 char timestart_from_savefile_valid;
+int group_depth;
 
 /*
  * baseconvert.c
@@ -158,6 +159,9 @@ int color_normal; /* from color.c 52 */
 int color_mdgray; /* from color.c 53 */
 int color_dkgray; /* from color.c 54 */
 int color_dkblue; /* from color.c 55 */
+int color_brkred;
+int color_ltblue;
+int color_gmstrd;
 
 
 /*
@@ -427,8 +431,7 @@ char *argvlist;
 #ifdef HAVE_LIBTCL
 Tcl_Interp *interp;
 #endif
-char *repscript_name;
-unsigned int repscript_period;
+char *tcl_init_cmd;
 char tcl_running;
 char block_xy_update;
 char *winname;
@@ -1164,6 +1167,9 @@ GdkGC *gc_normal; /* from wavewindow.c 713 */
 GdkGC *gc_mdgray; /* from wavewindow.c 714 */
 GdkGC *gc_dkgray; /* from wavewindow.c 715 */
 GdkGC *gc_dkblue; /* from wavewindow.c 716 */
+GdkGC *gc_brkred; 
+GdkGC *gc_ltblue; 
+GdkGC *gc_gmstrd; 
 char fill_in_smaller_rgb_areas_wavewindow_c_1; /* from wavewindow.c 719 */
 TimeType prev_markertime; /* from wavewindow.c */
 GdkGC *gccache_ltgray; /* from wavewindow.c */
@@ -1171,6 +1177,9 @@ GdkGC *gccache_normal; /* from wavewindow.c */
 GdkGC *gccache_mdgray; /* from wavewindow.c */
 GdkGC *gccache_dkgray; /* from wavewindow.c */
 GdkGC *gccache_dkblue; /* from wavewindow.c */
+GdkGC *gccache_brkred; /* from wavewindow.c */
+GdkGC *gccache_ltblue; /* from wavewindow.c */
+GdkGC *gccache_gmstrd; /* from wavewindow.c */
 GdkGC *gccache_back_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gccache_baseline_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gccache_grid_wavewindow_c_1; /* from wavewindow.c */
@@ -1201,6 +1210,7 @@ GdkGC *gccache_dash_wavewindow_c_1; /* from wavewindow.c */
  */
 char do_zoom_center; /* from zoombuttons.c 720 */
 char do_initial_zoom_fit; /* from zoombuttons.c 721 */
+
 };
 
 

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,8 +81,6 @@ static void DNDBeginCB(
         GtkWidget *widget, GdkDragContext *dc, gpointer data
 )
 {
-if((widget == NULL) || (dc == NULL))
-	return;
 
 GLOBALS->dnd_state = 1;
 }
@@ -144,7 +142,11 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 	                {
 	                break;
 	                }
-	        }       
+	        }
+
+	while(t->t_next && IsGroupEnd(t->t_next) && IsCollapsed(t->t_next)) {
+	  t = t->t_next;
+	}
         
         GLOBALS->cachedtrace=t;
         if(GLOBALS->cachedtrace)
@@ -309,21 +311,25 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 	                }
 	        }       
 
-	if(t)
-		{
-		while(t)
-			{
-			if(t->flags & TR_HIGHLIGHT)
-				{
-				t=GivePrevTrace(t);
-				which--;
-				}
-				else
-				{
-				break;
-				}
-			}
-		}
+	while(t->t_next && IsGroupEnd(t->t_next) && IsCollapsed(t->t_next)) {
+	  t = t->t_next;
+	}
+
+/* 	if(t) */
+/* 		{ */
+/* 		while(t) */
+/* 			{ */
+/* 			if(t->flags & TR_HIGHLIGHT) */
+/* 				{ */
+/* 				t=GivePrevTrace(t); */
+/* 				which--; */
+/* 				} */
+/* 				else */
+/* 				{ */
+/* 				break; */
+/* 				} */
+/* 			} */
+/* 		} */
 
 	if(1)
 		{
@@ -376,6 +382,13 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 	}
 
 	return(FALSE);
+}
+
+static gboolean ignoreAccelerators(GdkEventKey *event)
+{
+  return (GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry) && 
+	  !(event->state & GDK_CONTROL_MASK) &&
+	  !(event->state & GDK_MOD1_MASK));
 }
 
 /*
@@ -505,52 +518,57 @@ if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 else
 if(GLOBALS->dnd_sigview)
 	{
-	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->dnd_sigview) || GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry))
+	  if(GTK_WIDGET_HAS_FOCUS(GLOBALS->dnd_sigview) || GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry))
+	    {
+	      switch(event->keyval)
 		{
-		switch(event->keyval)
-			{
-			case GDK_a:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					treeview_select_all_callback();
-					rc = TRUE;
-					}
-				break;
+		case GDK_a:
+		  if(event->state & GDK_CONTROL_MASK)
+		    {
+		      treeview_select_all_callback();
+		      rc = TRUE;
+		    }
+		  break;
 
-			case GDK_A:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					treeview_unselect_all_callback();
-					rc = TRUE;
-					}
-			default:
-				break;
-			}
+		case GDK_A:
+		  if(event->state & GDK_CONTROL_MASK)
+		    {
+		      treeview_unselect_all_callback();
+		      rc = TRUE;
+		    }
+		default:
+		  break;
 		}
+	    }
 	else
-	if(GTK_WIDGET_HAS_FOCUS(GLOBALS->tree_treesearch_gtk2_c_1))
+	  if(GTK_WIDGET_HAS_FOCUS(GLOBALS->tree_treesearch_gtk2_c_1))
+	    {
+	      switch(event->keyval)
 		{
-		switch(event->keyval)
-			{
-			case GDK_a:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					/* eat keystroke */
-					rc = TRUE;
-					}
-				break;
+		case GDK_a:
+		  if(event->state & GDK_CONTROL_MASK)
+		    {
+		      /* eat keystroke */
+		      rc = TRUE;
+		    }
+		  break;
 
-			case GDK_A:
-				if(event->state & GDK_CONTROL_MASK)
-					{
-					/* eat keystroke */
-					rc = TRUE;
-					}
-			default:
-				break;
-			}
+		case GDK_A:
+		  if(event->state & GDK_CONTROL_MASK)
+		    {
+		      /* eat keystroke */
+		      rc = TRUE;
+		    }
+		default:
+		  break;
 		}
+	    }
 	}
+ if (ignoreAccelerators(event)) {
+   gtk_widget_event(GLOBALS->filter_entry, (GdkEvent *)event);
+   /* eat keystroke */
+   rc = TRUE; 
+ }
 
 return(rc);
 }
@@ -744,6 +762,18 @@ Trptr t, t2;
 
 if(GLOBALS->signalarea_event_box)
 	{
+
+	  /* Don't mess with highlights with button 2 (save for dnd) */
+	  if((event->button == 2) && (event->type == GDK_BUTTON_PRESS))
+	    {
+	      return(TRUE);
+	    }
+
+	  /* Don't mess with highlights with button 3 (save for menu_check) */
+	  if((event->button == 3) && (event->type == GDK_BUTTON_PRESS))
+	    {
+	      goto menu_chk;
+	    }
 	if((event->x<0)||(event->x>=widget->allocation.width)||(event->y<0)||(event->y>=widget->allocation.height))
 		{
 		/* let gtk take focus from us with focus out event */
@@ -775,13 +805,15 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 			}
 			else
 			{
-			goto menu_chk; /* off in no man's land */
+			  ClearTraces();
+			  goto redraw; /* off in no man's land */
 			}
 		}
 
 	if((which>=num_traces_displayable)||(which<0))
 		{
-		goto menu_chk; /* off in no man's land */
+		  ClearTraces();
+		  goto redraw; /* off in no man's land */
 		}
 
 	wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
@@ -802,26 +834,20 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 	                }
 	        }
 
-	if((event->state&(GDK_CONTROL_MASK|GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK|GDK_SHIFT_MASK))
-		{
-		/* frankel add */
-		if(t)
-			{
-			if((!GLOBALS->std_collapse_pressed) && CollapseTrace(t))
-				{
-				GLOBALS->signalwindow_width_dirty=1;
-	        		MaxSignalLength();
-	        		signalarea_configure_event(GLOBALS->signalarea, NULL);
-	        		wavearea_configure_event(GLOBALS->wavearea, NULL);
-				GLOBALS->std_collapse_pressed = 1;
-				}
-			goto menu_chk;
-			}
-		}
-
 	if(event->state&GDK_CONTROL_MASK)
 		{
-		t->flags ^= TR_HIGHLIGHT;
+		  if(IsGroupBegin(t) && IsSelected(t))
+		    {
+		      ClearGroupTraces(t);
+		    }
+		  else if(IsGroupEnd(t) && IsSelected(t))
+		    {
+		      ClearGroupTraces(t->t_match);
+		    }
+		  else
+		    {
+		      t->flags ^= TR_HIGHLIGHT;
+		    }
 		}
 	else
 	if((event->state&GDK_SHIFT_MASK)&&(GLOBALS->starting_unshifted_trace))
@@ -837,22 +863,34 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 
 			cnt++;
 
-			t2->flags &= ~TR_HIGHLIGHT;
+			/*			t2->flags &= ~TR_HIGHLIGHT; */
 			t2 = t2->t_next;
 			}
 
 		if(src != -1)
 			{
-			int cpy;
+			  cnt = 0;
+			  t2=GLOBALS->traces.first;
+			  while(t2)
+				{
+				  if ((cnt == src) && (cnt == dst) && IsSelected(t2))
+				    {
+				      GLOBALS->starting_unshifted_trace = NULL;
+				    }
+				  t2->flags &= ~TR_HIGHLIGHT;
+				  t2=t2->t_next;
+				  cnt++;
+				}
 
+			int cpy;
 			if(src > dst) { cpy = src; src = dst; dst = cpy; }
 			cnt = 0;
 			t2=GLOBALS->traces.first;
-			while(t2)
+			while(t2 && GLOBALS->starting_unshifted_trace)
 				{
 				if((cnt >= src) && (cnt <= dst))
 					{
-					t2->flags |= TR_HIGHLIGHT;
+					  t2->flags |= TR_HIGHLIGHT;
 					}
 
 				cnt++;
@@ -865,7 +903,8 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 			t->flags |= TR_HIGHLIGHT;
 			}
 		}
-	else if(!(t->flags & TR_HIGHLIGHT)) /* Ben Sferrazza suggested fix rather than a regular "else" */
+	/*	else if(!(t->flags & TR_HIGHLIGHT)) Ben Sferrazza suggested fix rather than a regular "else" */
+else
 		{
 		GLOBALS->starting_unshifted_trace = t;
 
@@ -879,6 +918,13 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 		t->flags |= TR_HIGHLIGHT;
 		}
 
+	if(event->type == GDK_2BUTTON_PRESS)
+	  {
+	    menu_toggle_group(widget, NULL);
+	    goto menu_chk;
+	  }
+
+	redraw:
 
 	GLOBALS->signalwindow_width_dirty=1;
         MaxSignalLength();
@@ -1140,6 +1186,8 @@ int trwhich, trtarget;
 GtkAdjustment *wadj;
 Trptr t;
 
+ printf("PRESS\n");
+
 if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 	{
 	gdk_pointer_grab(widget->window, FALSE,
@@ -1178,20 +1226,6 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 	        }
 
 	GLOBALS->cachedtrace=t;
-
-	/* frankel add */
-	if((event->state&GDK_CONTROL_MASK)&&(GLOBALS->dnd_state==0)&&(event->button==1))
-	if(t)
-		{
-		if(CollapseTrace(t))
-			{
-			GLOBALS->signalwindow_width_dirty=1;
-        		MaxSignalLength();
-        		signalarea_configure_event(GLOBALS->signalarea, NULL);
-        		wavearea_configure_event(GLOBALS->wavearea, NULL);
-			return(TRUE);
-			}
-		}
 
 	if((GLOBALS->dnd_state==0)&&(event->button==1))
 	if(t)
@@ -1315,6 +1349,7 @@ UpdateTracesVisible();
 
 num_traces_displayable=widget->allocation.height/(GLOBALS->fontheight);
 num_traces_displayable--;   /* for the time trace that is always there */
+
 
 DEBUG(printf("SigWin Configure Event h: %d, w: %d\n",
 		widget->allocation.height,
@@ -1676,6 +1711,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2009/04/09 22:17:21  gtkwave
+ * install_keypress_handler() fixes
+ *
  * Revision 1.42  2009/03/27 04:58:14  gtkwave
  * enable splash screen during empty gui handling / load dumpfile
  *

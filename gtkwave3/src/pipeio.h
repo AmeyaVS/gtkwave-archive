@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005.
+ * Copyright (c) Tony Bybell 2005-2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ pid_t pid;
 };
 
 
-struct pipe_ctx *pipeio_create(char *execappname);
+struct pipe_ctx *pipeio_create(char *execappname, char *arg);
 void pipeio_destroy(struct pipe_ctx *p);
         
 #endif
@@ -37,6 +37,9 @@ void pipeio_destroy(struct pipe_ctx *p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:43  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

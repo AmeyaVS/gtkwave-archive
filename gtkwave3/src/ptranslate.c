@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2005-6.
+ * Copyright (c) Tony Bybell 2005-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,21 +88,59 @@ if(GLOBALS->proc_filter[which])
 
 void load_proc_filter(int which, char *name)
 {
-FILE *f = fopen(name, "rb");
-if(!f)
-	{
-	/* looking at permissions might not be applicable on AFS! */
-	status_text("Could not open filter process!\n");
-	return;
-	}
-	else
-	{
-	fclose(f);
-	}
 
-remove_proc_filter(which, 0); /* should never happen from GUI, but possible from save files or other weirdness */
+  FILE *stream;
 
-GLOBALS->proc_filter[which] = pipeio_create(name);
+  char *cmd;
+  char exec_name[1025];
+  char abs_path [1025];
+
+  exec_name[0] = 0;
+  abs_path[0]  = 0;
+
+  /* if name has arguments grab only the first word (the name of the executable)*/
+  sscanf(name, "%s ", exec_name);
+  
+  char* arg, end;
+  arg = name + strlen(exec_name);
+
+  /* remove leading spaces from argument */
+  while (isspace(arg[0])) {
+    arg++;
+  }
+
+  /* remove trailing spaces from argument */
+  if (strlen(arg) > 0) {
+
+    end = strlen(arg) - 1;
+
+    while (arg[end] == ' ') {
+      arg[end] = 0;
+      end--;
+    }
+  }
+
+  /* turn the exec_name into an absolute path */
+  cmd = (char *)malloc_2(strlen(exec_name)+6+1);
+  sprintf(cmd, "which %s", exec_name);
+  stream = popen(cmd, "r");
+
+  int result;
+  result = fscanf(stream, "%s", abs_path);
+
+  if(strlen(abs_path) == 0)
+    {
+      status_text("Could not find filter process!\n");
+      return;
+
+    }
+
+  pclose(stream);
+  free_2(cmd);
+
+  remove_proc_filter(which, 0); /* should never happen from GUI, but possible from save files or other weirdness */
+
+  GLOBALS->proc_filter[which] = pipeio_create(abs_path, arg);
 }
 
 void install_proc_filter(int which)
@@ -395,6 +433,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

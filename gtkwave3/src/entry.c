@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,10 +41,11 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
   GLOBALS->window_entry_c_1 = NULL;
 }
 
-void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFunc func)
+void entrybox(char *title, int width, char *dflt_text, char *comment, int maxch, GtkSignalFunc func)
 {
     GtkWidget *vbox, *hbox;
     GtkWidget *button1, *button2;
+    int height = (comment) ? 75 : 60;
 
     GLOBALS->cleanup_entry_c_1=func;
 
@@ -72,7 +73,7 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
     install_focus_cb(GLOBALS->window_entry_c_1, ((char *)&GLOBALS->window_entry_c_1) - ((char *)GLOBALS));
 
     gtk_grab_add(GLOBALS->window_entry_c_1);
-    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_entry_c_1), width, 60);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_entry_c_1), width, height);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_entry_c_1), title);
     gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_entry_c_1), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
     gtk_window_set_policy(GTK_WINDOW(GLOBALS->window_entry_c_1), FALSE, FALSE, FALSE);
@@ -81,9 +82,24 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
     gtk_container_add (GTK_CONTAINER (GLOBALS->window_entry_c_1), vbox);
     gtk_widget_show (vbox);
 
+    if (comment)
+      {
+	GtkWidget *label, *cbox;
+
+	cbox = gtk_hbox_new (FALSE, 1);
+	gtk_box_pack_start (GTK_BOX (vbox), cbox, FALSE, FALSE, 0);
+	gtk_widget_show (cbox);
+
+	label = gtk_label_new(comment);
+	gtk_widget_show (label);
+
+	gtk_container_add (GTK_CONTAINER (cbox), label);
+	GTK_WIDGET_SET_FLAGS (label, GTK_CAN_DEFAULT);
+      }
+
     GLOBALS->entry_entry_c_1 = gtk_entry_new_with_max_length (maxch);
     gtkwave_signal_connect(GTK_OBJECT(GLOBALS->entry_entry_c_1), "activate",GTK_SIGNAL_FUNC(enter_callback),GLOBALS->entry_entry_c_1);
-    gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_entry_c_1), default_text);
+    gtk_entry_set_text (GTK_ENTRY (GLOBALS->entry_entry_c_1), dflt_text);
     gtk_entry_select_region (GTK_ENTRY (GLOBALS->entry_entry_c_1),0, GTK_ENTRY(GLOBALS->entry_entry_c_1)->text_length);
     gtk_box_pack_start (GTK_BOX (vbox), GLOBALS->entry_entry_c_1, FALSE, FALSE, 0);
     gtk_widget_show (GLOBALS->entry_entry_c_1);
@@ -114,6 +130,9 @@ void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFu
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:44  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:48  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

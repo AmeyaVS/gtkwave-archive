@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -656,6 +656,9 @@ color_make(normal)
 color_make(mdgray)
 color_make(dkgray)
 color_make(dkblue)
+color_make(brkred)
+color_make(ltblue)
+color_make(gmstrd)
 
 
 /*
@@ -675,13 +678,16 @@ static struct rc_entry rcitems[]=
 { "color_back", f_color_back },
 { "color_baseline", f_color_baseline },
 { "color_black", f_color_black },
+{ "color_brkred", f_color_brkred },
 { "color_dash", f_color_dash },
 { "color_dashfill", f_color_dashfill },
 { "color_dkblue", f_color_dkblue },
 { "color_dkgray", f_color_dkgray },
+{ "color_gmstrd", f_color_gmstrd },
 { "color_grid", f_color_grid },
 { "color_high", f_color_high },
 { "color_low", f_color_low },
+{ "color_ltblue", f_color_ltblue },
 { "color_ltgray", f_color_ltgray },
 { "color_mark", f_color_mark },
 { "color_mdgray", f_color_mdgray },
@@ -780,39 +786,42 @@ f_use_nonprop_fonts	("on");
 f_use_pango_fonts	("on");
 f_constant_marker_update("on");
 f_show_base_symbols	("off");
-f_color_back   		("000000");
-f_color_baseline 	("ffffff");
-f_color_grid		("202070");
-f_color_high		("79f6f2");
-f_color_low		("5dbebb");
-f_color_1		("00ff00");
-f_color_0		("008000");
-f_color_trans		("00c000");
-f_color_mid		("c0c000");  
-f_color_value		("ffffff");
-f_color_vbox		("00ff00");
-f_color_vtrans		("00c000");
-f_color_x		("ff0000");
-f_color_xfill		("400000");
-f_color_u		("cc0000");
-f_color_ufill		("200000");
-f_color_w		("79f6f2");
-f_color_wfill		("3f817f");
-f_color_dash		("edf508");
-f_color_dashfill	("7d8104");
-f_color_umark		("ff8080");
-f_color_mark		("ffff80");
-f_color_time		("ffffff");
-f_color_timeb		("000000");
-f_color_white		("ffffff");
-f_color_black		("000000");
+f_color_back   		("000000"); /* black */
+f_color_baseline 	("ffffff"); /* white */
+f_color_grid		("202070"); /* dark dark blue */
+f_color_high		("79f6f2"); /* light light blue */
+f_color_low		("5dbebb"); /* light blue */
+f_color_1		("00ff00"); /* green */
+f_color_0		("008000"); /* dark green */
+f_color_trans		("00c000"); /* medium green */
+f_color_mid		("c0c000"); /* mustard */
+f_color_value		("ffffff"); /* white */
+f_color_vbox		("00ff00"); /* green */
+f_color_vtrans		("00c000"); /* medium green */
+f_color_x		("ff0000"); /* red */
+f_color_xfill		("400000"); /* dark maroon */
+f_color_u		("cc0000"); /* brick */
+f_color_ufill		("200000"); /* dark maroon */
+f_color_w		("79f6f2"); /* light light blue */
+f_color_wfill		("3f817f"); /* dark blue-green */
+f_color_dash		("edf508"); /* yellow */
+f_color_dashfill	("7d8104"); /* green mustard */
+f_color_umark		("ff8080"); /* pink */
+f_color_mark		("ffff80"); /* light yellow */
+f_color_time		("ffffff"); /* white */
+f_color_timeb		("000000"); /* black */
+f_color_white		("ffffff"); /* white */
+f_color_black		("000000"); /* black */
 f_color_ltgray		("f5f5f5");
 f_color_normal		("e6e6e6");
 f_color_mdgray		("cccccc");
 f_color_dkgray		("aaaaaa");
 f_color_dkblue		("4464ac");
+f_color_brkred		("cc0000"); /* brick */
+f_color_ltblue	        ("5dbebb"); /* light blue    */
+f_color_gmstrd          ("7d8104"); /* green mustard */
 }
-
+ 
 
 void read_rc_file(char *override_rc)
 {
@@ -933,6 +942,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2009/03/26 23:53:22  gtkwave
+ * added disable_empty_gui rc variable which reverts to old behavior
+ *
  * Revision 1.17  2009/03/15 17:34:03  gtkwave
  * adjusted mdgray and dkgray brightness for better visibility when using
  * collapsed traces

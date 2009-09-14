@@ -293,11 +293,11 @@ typedef struct TraceEnt
   {
     Trptr    t_next;		/* doubly linked list of traces */
     Trptr    t_prev;
+    Trptr    t_grp;             /* pointer to group I'm in */
+    Trptr    t_match;           /* If group begin pointer to group end and visa versa */
 
-    Trptr    t_group;
-    char     *t_group_name;
-
-    char     *name;		/* name stripped of path */
+    char     *name;		/* current name */
+    char     *name_full;   	/* full name */
     char     *asciivalue;	/* value that marker points to */
     TimeType asciitime;		/* time this value corresponds with */
     TimeType shift;		/* offset added to all entries in the trace */
@@ -327,11 +327,13 @@ typedef struct TraceEnt
 
 
 enum TraceEntFlagBits
-{ TR_HIGHLIGHT_B, TR_HEX_B, TR_DEC_B, TR_BIN_B, TR_OCT_B, 
-  TR_RJUSTIFY_B, TR_INVERT_B, TR_REVERSE_B, TR_EXCLUDE_B,
-  TR_BLANK_B, TR_SIGNED_B, TR_ASCII_B, TR_COLLAPSED_B, TR_FTRANSLATED_B, TR_PTRANSLATED_B,
-  TR_ANALOG_STEP_B, TR_ANALOG_INTERPOLATED_B, TR_ANALOG_BLANK_STRETCH_B, TR_REAL_B,
-  TR_ANALOG_FULLSCALE_B, TR_ZEROFILL_B, TR_ONEFILL_B
+{ TR_HIGHLIGHT_B, TR_HEX_B, TR_DEC_B, TR_BIN_B, 
+  TR_OCT_B, TR_RJUSTIFY_B, TR_INVERT_B, TR_REVERSE_B,
+  TR_EXCLUDE_B, TR_BLANK_B, TR_SIGNED_B, TR_ASCII_B, 
+  TR_COLLAPSED_B, TR_FTRANSLATED_B, TR_PTRANSLATED_B, TR_ANALOG_STEP_B, 
+  TR_ANALOG_INTERPOLATED_B, TR_ANALOG_BLANK_STRETCH_B, TR_REAL_B, TR_ANALOG_FULLSCALE_B, 
+  TR_ZEROFILL_B, TR_ONEFILL_B, TR_CLOSED_B, TR_GRP_BEGIN_B, 
+  TR_GRP_END_B
 };
  
 #define TR_HIGHLIGHT 		(1<<TR_HIGHLIGHT_B)
@@ -353,6 +355,9 @@ enum TraceEntFlagBits
 #define TR_ANALOG_FULLSCALE	(1<<TR_ANALOG_FULLSCALE_B)
 #define TR_ZEROFILL		(1<<TR_ZEROFILL_B)
 #define TR_ONEFILL		(1<<TR_ONEFILL_B)
+#define TR_CLOSED		(1<<TR_CLOSED_B)
+#define TR_GRP_BEGIN		(1<<TR_GRP_BEGIN_B)
+#define TR_GRP_END		(1<<TR_GRP_END_B)
 
 #define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL)
 
@@ -366,16 +371,13 @@ enum TraceEntFlagBits
 
 Trptr GiveNextTrace(Trptr t);
 Trptr GivePrevTrace(Trptr t);
-int CollapseTrace(Trptr t);
 int UpdateTracesVisible(void);
-void CollapseAllGroups(void);
-void ExpandAllGroups(void);
 
 void DisplayTraces(int val);
 int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret);
 int AddNode(nptr nd, char *aliasname);
 int AddNodeUnroll(nptr nd, char *aliasname);
-int AddVector(bvptr vec);
+int AddVector(bvptr vec, char *aliasname);
 int AddBlankTrace(char *commentname);
 int InsertBlankTrace(char *comment, int different_flags);
 void RemoveNode(nptr n);
@@ -402,11 +404,34 @@ char *hier_extract(char *pnt, int levels);
 /* vector matching */
 char *attempt_vecmatch(char *s1, char *s2);
 
+void updateTraceGroup(Trptr t);
+int GetTraceNumber(Trptr t);
+
+#define IsSelected(t)   (t->flags&TR_HIGHLIGHT) 
+#define IsGroupBegin(t) (t->flags&TR_GRP_BEGIN)
+#define IsGroupEnd(t)   (t->flags&TR_GRP_END)
+#define IsClosed(t)     (t->flags&TR_CLOSED)
+#define HasWave(t)      (!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+#define CanAlias(t)     HasWave(t)
+#define HasAlias(t)     (t->name_full&&HasWave(t))
+#define IsCollapsed(t)  (t->flags&TR_COLLAPSED)
+
+unsigned IsShadowed(Trptr t);
+char*    GetFullName(Trptr t);
+
+void OpenTrace(Trptr t);
+void CloseTrace(Trptr t);
+void ClearTraces();
+void ClearGroupTraces(Trptr t);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2009/07/23 20:00:55  gtkwave
+ * added type info to signal window mouseover
+ *
  * Revision 1.14  2009/07/07 20:12:53  gtkwave
  * convert hex capitalization to match verilog
  *

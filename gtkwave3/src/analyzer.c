@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "translate.h"
 #include "ptranslate.h"
 #include "hierpack.h"
+#include "analyzer.h"
 
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
@@ -80,6 +81,138 @@ for(i=0;i<len;i++)
 return(pnt); /* not as many levels as max, so give the full name.. */
 }
 
+void updateTraceGroup(Trptr t)
+{
+
+  /*  t->t_match = NULL; */
+
+  if (t->t_prev)
+    {
+      if (IsGroupBegin(t->t_prev))
+	{
+	  if (IsGroupEnd(t))
+	    { /* empty group */
+	      Trptr g_begin = t->t_prev;
+	      t->t_grp = g_begin->t_grp;
+	      t->t_match = g_begin;
+	      g_begin->t_match = t;
+	    }
+	  else
+	    { /* first trace in group */
+	      t->t_grp = t->t_prev;
+	    }
+	}
+      else
+	{
+	  if (IsGroupEnd(t))
+	    {
+	      Trptr g_begin = t->t_prev->t_grp;
+	      t->t_grp = g_begin->t_grp;
+	      t->t_match = g_begin;
+	      g_begin->t_match = t;
+	    }
+	  else
+	    { 
+	      t->t_grp = t->t_prev->t_grp;
+	    }
+
+
+	}
+    }
+  else 
+    { /* very first trace */
+      t->t_grp = NULL;
+    }
+
+  if ((t->t_grp) && IsSelected(t->t_grp))
+    {
+      t->flags |= TR_HIGHLIGHT;
+    }
+}
+
+void CloseTrace(Trptr t)
+{
+
+  if (IsGroupBegin(t))
+    {
+      t->flags |= TR_CLOSED;
+      if (t->t_match) { t->t_match->flags |= TR_CLOSED; };
+
+      if (!HasWave(t))
+	{
+	  /* Group End */
+	  if (t->t_match) { t->t_match->flags |= TR_COLLAPSED; };
+	}
+      else
+	{
+	  /* Composite  End */
+	  if (t->t_match) { t->t_match->flags |= TR_COLLAPSED; };
+	}
+    }
+
+  if (IsGroupEnd(t))
+    {
+      t->flags |= TR_CLOSED;
+      if (t->t_match) { t->t_match->flags |= TR_CLOSED; };
+
+      if ((t->t_match) && !HasWave(t->t_match))
+	{
+	  /* Group End */
+	  t->flags |= TR_COLLAPSED;
+	}
+      else
+	{
+	  /* Composite End */
+	  t->flags |= TR_COLLAPSED;
+	}
+    }
+}
+
+
+void OpenTrace(Trptr t)
+{
+
+  if (IsGroupBegin(t) || IsGroupEnd(t))
+  {
+    t->flags &= ~TR_CLOSED;
+    if (t->t_match) { t->t_match->flags &= ~TR_CLOSED; };
+
+    if (!HasWave(t))
+      {
+	t->flags &= ~TR_COLLAPSED;
+	if(t->t_match) { t->t_match->flags &= ~TR_COLLAPSED; };
+      }
+  }
+}
+
+void ClearTraces()
+{
+  Trptr t = GLOBALS->traces.first;
+  while(t)
+	{
+	  t->flags &= ~TR_HIGHLIGHT;
+	  t=t->t_next;
+	}
+}
+
+void ClearGroupTraces(Trptr t_grp)
+{
+  if (IsGroupBegin(t_grp))
+    {
+      Trptr t = t_grp;
+      while(t)
+	{
+	  t->flags &= ~TR_HIGHLIGHT;
+	  if(t->t_match == t_grp) break;
+	  t=t->t_next;
+	}
+    }
+  else
+    {
+      fprintf(stderr, "INTERNAL ERROR: ClearGroupTrace applied to non-group!  Exiting.\n");
+      exit(255);
+    }
+}
 
 /* 
  * Add a trace to the display...
@@ -99,6 +232,18 @@ if(GLOBALS->default_flags & TR_PTRANSLATED)
 	t->p_filter = GLOBALS->current_translate_proc;
 	}
 
+ if (IsGroupBegin(t)) {
+   GLOBALS->group_depth = GLOBALS->group_depth + 1;
+ }
+
+ if (IsGroupEnd(t)) {
+   if (GLOBALS->group_depth == 0) {
+     fprintf(stderr, "ERROR: Group End encountered with no matching start. Ignoring.\n");
+     t->flags &= ~TR_GRP_END;
+   } else {
+     GLOBALS->group_depth = GLOBALS->group_depth - 1;
+   }
+ }
 
 if(GLOBALS->shift_timebase_default_for_add)
 	t->shift=GLOBALS->shift_timebase_default_for_add;
@@ -118,6 +263,7 @@ if(!GLOBALS->shadow_active)
 		GLOBALS->traces.last = t;
 	      	}
 	GLOBALS->traces.total++;
+	updateTraceGroup(GLOBALS->traces.last);
 	}
 	else	/* hide offscreen */
 	{
@@ -157,28 +303,35 @@ return(s2);
 
 int AddBlankTrace(char *commentname)
 {
-Trptr  t;
-char *comment;
+  Trptr  t;
+  char *comment;
+  unsigned int flags_filtered;
 
-if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
-	{
-	fprintf( stderr, "Out of memory, can't add blank trace to analyzer\n");
-	return( 0 );
-      	}
-AddTrace(t);
-t->flags = TR_BLANK | (GLOBALS->default_flags & (TR_COLLAPSED|TR_ANALOG_BLANK_STRETCH));
-if(t->flags & TR_ANALOG_BLANK_STRETCH)
-	{
-	t->flags &= ~TR_BLANK;
-	}
+  if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
+    {
+      fprintf( stderr, "Out of memory, can't add blank trace to analyzer\n");
+      return( 0 );
+    }
+  AddTrace(t);
+  /* Keep only flags that make sense for a blank trace. */
+  flags_filtered = TR_BLANK | (GLOBALS->default_flags & (TR_CLOSED|
+							 TR_GRP_BEGIN|
+							 TR_GRP_END|
+							 TR_COLLAPSED|
+							 TR_ANALOG_BLANK_STRETCH));
+  t->flags = flags_filtered;
+  if(t->flags & TR_ANALOG_BLANK_STRETCH)
 
-if((comment=precondition_string(commentname)))
-	{
-	t->name=comment;
-	t->is_alias=1;
-	}
+    {
+      t->flags &= ~TR_BLANK;
+    }
 
-return(1);
+  if((comment=precondition_string(commentname)))
+    {
+      t->name      = comment;
+    }
+
+  return(1);
 }
 
 
@@ -208,8 +361,7 @@ if(!different_flags)
 
 if((comm=precondition_string(comment)))
 	{
-	t->name=comm;
-	t->is_alias=1;
+	t->name = comm;
 	}
 
 if(!GLOBALS->traces.first)
@@ -241,114 +393,115 @@ if(!GLOBALS->traces.first)
  * Adds a single bit signal to the display...
  */
 int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
-  {
-    Trptr  t;
-    hptr histpnt;
-    hptr *harray;
-    int histcount;
-    int i;
+{
+  Trptr  t;
+  hptr histpnt;
+  hptr *harray;
+  int histcount;
+  int i;
 
-    if(!nd) return(0); /* passed it a null node ptr by mistake */
-    if(nd->mv.mvlfac) import_trace(nd);
+  if(!nd) return(0); /* passed it a null node ptr by mistake */
+  if(nd->mv.mvlfac) import_trace(nd);
 
-    GLOBALS->signalwindow_width_dirty=1;
+  GLOBALS->signalwindow_width_dirty=1;
     
-    if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
-      {
-	fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	  nd->nname );
-	return( 0 );
-      }
+  if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
+    {
+      fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
+	       nd->nname );
+      return( 0 );
+    }
 
-if(!nd->harray)		/* make quick array lookup for aet display */
+  if(!nd->harray)		/* make quick array lookup for aet display */
+    {
+      histpnt=&(nd->head);
+      histcount=0;
+
+      while(histpnt)
 	{
-	histpnt=&(nd->head);
-	histcount=0;
+	  histcount++;
+	  histpnt=histpnt->next;
+	}
 
-	while(histpnt)
-		{
-		histcount++;
-		histpnt=histpnt->next;
-		}
-
-	nd->numhist=histcount;
+      nd->numhist=histcount;
 	
-	if(!(nd->harray=harray=(hptr *)malloc_2(histcount*sizeof(hptr))))
-		{
-		fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-		  	nd->nname );
-		free_2(t);
-		return(0);
-		}
-
-	histpnt=&(nd->head);
-	for(i=0;i<histcount;i++)
-		{
-		*harray=histpnt;
-
-		/* printf("%s, time: %d, val: %d\n", nd->nname, 
-			(*harray)->time, (*harray)->val); */
-
-		harray++;
-		histpnt=histpnt->next;
-		}
-	}
-
-if(aliasname)
-	{	
-	char *alias;
-
-	t->name=alias=(char *)malloc_2((strlen(aliasname)+2)+1);
-	strcpy(alias,"+ "); /* use plus sign to mark aliases */
-	strcpy(alias+2,aliasname);
-        t->is_alias=1;	/* means can be freed later */
-	}
-	else
+      if(!(nd->harray=harray=(hptr *)malloc_2(histcount*sizeof(hptr))))
 	{
-    	if(!GLOBALS->hier_max_level) 
-		{
-		int flagged;
-
-		t->name = hier_decompress_flagged(nd->nname, &flagged);
-		t->is_depacked = (flagged != 0);
-		}
-		else
-		{
-		int flagged;
-		char *tbuff = hier_decompress_flagged(nd->nname, &flagged);
-		if(!flagged)
-			{
-			t->name = hier_extract(nd->nname, GLOBALS->hier_max_level);
-			}
-			else
-			{
-			t->name = strdup_2(hier_extract(tbuff, GLOBALS->hier_max_level));
-			free_2(tbuff);
-			t->is_depacked = 1;
-			}
-		}
+	  fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
+		   nd->nname );
+	  free_2(t);
+	  return(0);
 	}
 
-    if(nd->ext)	/* expansion vectors */
-	{	
-	int n;
-
-	n = nd->ext->msi - nd->ext->lsi;
-	if(n<0)n=-n;
-	n++;
-
-	t->flags = (( n > 3 )||( n < -3 )) ? TR_HEX|TR_RJUSTIFY : TR_BIN|TR_RJUSTIFY;
-	}
-	else
+      histpnt=&(nd->head);
+      for(i=0;i<histcount;i++)
 	{
-	t->flags |= TR_BIN;	/* binary */
+	  *harray=histpnt;
+
+	  /* printf("%s, time: %d, val: %d\n", nd->nname, 
+	     (*harray)->time, (*harray)->val); */
+
+	  harray++;
+	  histpnt=histpnt->next;
 	}
-    t->vector = FALSE;
-    t->n.nd = nd;
-    if(tret) *tret = t;		/* for expand */
-    AddTrace( t );
-    return( 1 );
-  }
+    }
+
+  if(aliasname)
+   {	
+     char *alias;
+
+     t->name_full = alias =(char *)malloc_2(strlen(aliasname)+1);
+     strcpy(alias,aliasname);
+     t->name = t->name_full;
+     if(GLOBALS->hier_max_level) 
+       t->name = hier_extract(t->name_full, GLOBALS->hier_max_level);
+   }
+  else
+    {
+      if(!GLOBALS->hier_max_level) 
+	{
+	  int flagged;
+
+	  t->name = hier_decompress_flagged(nd->nname, &flagged);
+	  t->is_depacked = (flagged != 0);
+	}
+      else
+	{
+	  int flagged;
+	  char *tbuff = hier_decompress_flagged(nd->nname, &flagged);
+	  if(!flagged)
+	    {
+	      t->name = hier_extract(nd->nname, GLOBALS->hier_max_level);
+	    }
+	  else
+	    {
+	      t->name = strdup_2(hier_extract(tbuff, GLOBALS->hier_max_level));
+	      free_2(tbuff);
+	      t->is_depacked = 1;
+	    }
+	}
+    }
+
+  if(nd->ext)	/* expansion vectors */
+    {	
+      int n;
+
+      n = nd->ext->msi - nd->ext->lsi;
+      if(n<0)n=-n;
+      n++;
+
+      t->flags = (( n > 3 )||( n < -3 )) ? TR_HEX|TR_RJUSTIFY : TR_BIN|TR_RJUSTIFY;
+    }
+  else
+    {
+      t->flags |= TR_BIN;	/* binary */
+    }
+  t->vector = FALSE;
+  t->n.nd = nd;
+  if(tret) *tret = t;		/* for expand */
+  AddTrace( t );
+  return( 1 );
+}
 
 
 /* single node */
@@ -382,7 +535,7 @@ if(nd->array_height <= 1)
 /*
  * Adds a vector to the display...
  */
-int AddVector( bvptr vec )
+int AddVector(bvptr vec, char *aliasname)
   {
     Trptr  t;
     int    n;
@@ -400,14 +553,19 @@ int AddVector( bvptr vec )
 	return( 0 );
       }
 
-    if(!GLOBALS->hier_max_level)
-	{	
-    	t->name = vec->name;
-	}
-	else
-	{
-	t->name = hier_extract(vec->name, GLOBALS->hier_max_level);
-	}
+    if (aliasname)
+      {
+	t->name_full = strdup_2(aliasname);
+	t->name = t->name_full;
+      }
+    else
+      {
+	t->name = vec->name;
+      }
+
+    if(GLOBALS->hier_max_level)
+      t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+
     t->flags = ( n > 3 ) ? TR_HEX|TR_RJUSTIFY : TR_BIN|TR_RJUSTIFY;
     t->vector = TRUE;
     t->n.vec = vec;
@@ -459,7 +617,7 @@ if(t->vector)
 		}
 
 	if(bv->name) free_2(bv->name);
-      	if(t->n.vec)free_2(t->n.vec);
+      	if(t->n.vec) free_2(t->n.vec);
       	}
 	else
 	{
@@ -469,10 +627,10 @@ if(t->vector)
 		}
 	}
 
-if(t->asciivalue) free_2(t->asciivalue);
-if(((t->is_alias)||(t->is_depacked))&&(t->name)) free_2(t->name);
-
-free_2( t );
+ if(t->is_depacked) free_2(t->name);
+ if(t->asciivalue) free_2(t->asciivalue);
+ if(t->name_full)  free_2(t->name_full);
+ free_2( t );
 }
 
 
@@ -552,67 +710,34 @@ GLOBALS->signalwindow_width_dirty=1;
 
 FreeCutBuffer();
 
-/*
- * propagate cut for whole comment group if comment selected and collapsed...
- */
-t=GLOBALS->traces.first;
-while(t)
-	{
-	top_of_cut:
-	if( (t->name) && ((t->flags&(TR_BLANK|TR_HIGHLIGHT))==(TR_BLANK|TR_HIGHLIGHT)) )
-		{
-		if(t->flags&TR_COLLAPSED)
-			{
-			t=t->t_next;
-			while(t)
-				{
-				if(t->flags & TR_BLANK) goto top_of_cut;
-				t->flags |= TR_HIGHLIGHT;
-				t=t->t_next;
-				}
-			break;
-			}	
-			else
-			{
-			t=t->t_next; /* for sanity, ensure we're uncollapsed */
-			while(t)
-				{
-				if(t->flags & TR_BLANK) goto top_of_cut;
-				t->flags &= ~TR_COLLAPSED;
-				t=t->t_next;
-				}
-			break;
-			}
-		}
-
-	t=t->t_next;
-	}
-
 t=GLOBALS->traces.first;
 while(t)
 	{
 	tnext=t->t_next;
-	if(t->flags&TR_HIGHLIGHT)
-		{
-		GLOBALS->traces.bufferlast=t;
-		GLOBALS->traces.buffercount++;
+	if(IsSelected(t) || (t->t_grp && IsSelected(t->t_grp)))
+	  {
+	    /* members of closed groups may not be highlighted */
+	    /* so propogate highlighting here */
+	    t->flags |= TR_HIGHLIGHT;
+	    GLOBALS->traces.bufferlast=t;
+	    GLOBALS->traces.buffercount++;
 
-		t->flags&=(~TR_HIGHLIGHT);
-		RemoveTrace(t, 0);
-		if(!current)
-			{
-			first=current=t;
-			t->t_prev=NULL;
-			t->t_next=NULL;
-			}
-			else
-			{
-			current->t_next=t;
-			t->t_prev=current;
-			current=t;
-			t->t_next=NULL;
-			}
-		}
+	    /* t->flags&=(~TR_HIGHLIGHT); */
+	    RemoveTrace(t, 0);
+	    if(!current)
+	      {
+		first=current=t;
+		t->t_prev=NULL;
+		t->t_next=NULL;
+	      }
+	    else
+	      {
+		current->t_next=t;
+		t->t_prev=current;
+		current=t;
+		t->t_next=NULL;
+	      }
+	  }
 	t=tnext;
 	}
 
@@ -626,77 +751,92 @@ return(GLOBALS->traces.buffer=first);
  */
 Trptr PasteBuffer(void)
 {
-Trptr t, tinsert=NULL, tinsertnext;
+  Trptr t, tinsert=NULL, tinsertnext;
 
-if(!GLOBALS->traces.buffer) return(NULL);
+  if(!GLOBALS->traces.buffer) return(NULL);
 
-GLOBALS->signalwindow_width_dirty=1;
+  GLOBALS->signalwindow_width_dirty=1;
 
-if(!(t=GLOBALS->traces.first))
+  if(!(t=GLOBALS->traces.first))
+    {
+      t=GLOBALS->traces.last=GLOBALS->traces.first=GLOBALS->traces.buffer;
+      while(t)
 	{
-	t=GLOBALS->traces.last=GLOBALS->traces.first=GLOBALS->traces.buffer;
-	while(t)
-		{
-		GLOBALS->traces.last=t;
-		GLOBALS->traces.total++;
-		t=t->t_next;
-		}	
+	  GLOBALS->traces.last=t;
+	  GLOBALS->traces.total++;
+	  t=t->t_next;
+	}	
 
-	GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
-	GLOBALS->traces.buffercount=0;
+      GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
+      GLOBALS->traces.buffercount=0;
 
-	return(GLOBALS->traces.first);
-	}
+      return(GLOBALS->traces.first);
+    }
 
-while(t)
+  while(t)
+    {
+      if(t->flags&TR_HIGHLIGHT) 
 	{
-	if(t->flags&TR_HIGHLIGHT) 
-		{
-		if(((t->flags & TR_ISCOLLAPSED)==(TR_ISCOLLAPSED)) && (t->name))
-			{
-			tinsert=t;
-			t=t->t_next;
-			while(t)
-				{
-				if(t->flags & TR_BLANK) goto nxtl;
-				tinsert=t;
-				t=t->t_next;
-				}
-			break;
-			}
-			else
-			{
-			tinsert=t;
-			}
-		}
-
-nxtl:	t=t->t_next;
+	  tinsert=t;
 	}
+      t=t->t_next;
+    }
 
-if(!tinsert) tinsert=GLOBALS->traces.last;
 
-tinsertnext=tinsert->t_next;
-tinsert->t_next=GLOBALS->traces.buffer;
-GLOBALS->traces.buffer->t_prev=tinsert;
-GLOBALS->traces.bufferlast->t_next=tinsertnext;
-GLOBALS->traces.total+=GLOBALS->traces.buffercount;
+  if(!tinsert) tinsert=GLOBALS->traces.last;
 
-if(!tinsertnext)
+  if(IsGroupBegin(tinsert) && IsClosed(tinsert) && IsCollapsed(tinsert->t_match))
+    tinsert=tinsert->t_match;
+
+  tinsertnext=tinsert->t_next;
+  tinsert->t_next=GLOBALS->traces.buffer;
+  GLOBALS->traces.buffer->t_prev=tinsert;
+  GLOBALS->traces.bufferlast->t_next=tinsertnext;
+  GLOBALS->traces.total+=GLOBALS->traces.buffercount;
+
+  if(!tinsertnext)
+    {
+      GLOBALS->traces.last=GLOBALS->traces.bufferlast;
+    }
+  else
+    {
+      tinsertnext->t_prev=GLOBALS->traces.bufferlast;
+    }
+
+  GLOBALS->traces.scroll_top = GLOBALS->traces.buffer;
+  GLOBALS->traces.scroll_bottom = GLOBALS->traces.bufferlast;
+
+  if(GLOBALS->traces.first)
+    {
+      t = GLOBALS->traces.first;
+      t->t_grp = NULL;
+      while(t)
 	{
-	GLOBALS->traces.last=GLOBALS->traces.bufferlast;
+	  updateTraceGroup(t);
+	  t->flags &= ~TR_HIGHLIGHT;
+	  t=t->t_next;
 	}
-	else
+    }
+
+  int count = 0;
+
+  if (GLOBALS->traces.buffer)
+    {
+      t = GLOBALS->traces.buffer;
+      while(t)
 	{
-	tinsertnext->t_prev=GLOBALS->traces.bufferlast;
+	  t->flags |= TR_HIGHLIGHT;
+	  t=t->t_next;
+	  count++;
+	  if (count == GLOBALS->traces.buffercount) break;
 	}
+    }
 
-GLOBALS->traces.scroll_top = GLOBALS->traces.buffer;
-GLOBALS->traces.scroll_bottom = GLOBALS->traces.bufferlast;
+  /* clean out the buffer */
+  GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
+  GLOBALS->traces.buffercount=0;
 
-GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
-GLOBALS->traces.buffercount=0;
-
-return(GLOBALS->traces.first);
+  return(GLOBALS->traces.first);
 }
 
 
@@ -734,6 +874,33 @@ if((prev->t_next=GLOBALS->traces.first))
 
 GLOBALS->traces.first=GLOBALS->traces.buffer;
 
+if(GLOBALS->traces.first)
+  {
+    t = GLOBALS->traces.first;
+    t->t_grp = NULL;
+    while(t)
+      {
+	updateTraceGroup(t);
+	t->flags &= ~TR_HIGHLIGHT;
+	t=t->t_next;
+      }
+  }
+
+ int count = 0;
+
+ if (GLOBALS->traces.buffer)
+   {
+     t = GLOBALS->traces.buffer;
+     while(t)
+       {
+	 t->flags |= TR_HIGHLIGHT;
+	 t=t->t_next;
+	 count++;
+	 if (count == GLOBALS->traces.buffercount) break;
+      }
+   }
+
+ /* clean out the buffer */
 GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
 GLOBALS->traces.buffercount=0;
 
@@ -958,156 +1125,139 @@ prev->t_next=NULL;
 return(1);
 }  
 
-
-/*
- * trace traversal with collapsed groups
- */
-Trptr GiveNextTrace(Trptr t)
+/* propogate selection info down into groups */
+void UpdateTraceSelection(Trptr t)
 {
-if((t->name)&&((t->flags & TR_ISCOLLAPSED)==TR_ISCOLLAPSED))
-	{
-	t=t->t_next;
-	while(t)
-		{
-		if(t->flags & TR_BLANK) break;
-		t=t->t_next;
-		}
-	}
-	else
-	{
-	t=t->t_next;
-	}
-
-return(t);
+  if ((t->t_match) && (IsGroupBegin(t) || IsGroupEnd(t)) && (IsSelected(t) || IsSelected(t->t_match)))
+    {
+      t->flags          |= TR_HIGHLIGHT;
+      t->t_match->flags |= TR_HIGHLIGHT;
+    }
+  if ((t->t_grp) && IsSelected(t->t_grp))
+    {
+      t->flags |= TR_HIGHLIGHT;
+    }
 }
 
+Trptr GiveNextTrace(Trptr t)
+{
+  /* if(t->name) { printf("NEXT: %s %x\n", t->name, t->flags); } */
+  UpdateTraceSelection(t);
+  if (IsGroupBegin(t) && IsClosed(t))
+    {
+      Trptr next = t->t_match;
+      if (next)
+	return (IsCollapsed(next) ? GiveNextTrace(next) : next);
+      return NULL;
+    }
+  else
+    {
+      Trptr next = t->t_next;
+      if (next)
+	return (IsCollapsed(next) ? GiveNextTrace(next) : next);
+      return NULL;
+    }
+}
 
 Trptr GivePrevTrace(Trptr t)
 {
-Trptr t2 = t;
-int iter = 0;
-
-while(t2)
-	{
-	if((t2->flags & TR_COLLAPSED) && (!(t2->flags & TR_BLANK)))
-		{
-		if(!iter)
-			{
-			t2=t2->t_prev;
-			iter=1;
-			continue;
-			}
-			else
-			{
-			break;
-			}
-		}
-		else
-		{
-		if(iter) break;
-		return(t2->t_prev);
-		}
-	}
-
-return(t2);
+  /* if(t->name) { printf("PREV: %s\n", t->name); } */
+  UpdateTraceSelection(t);
+  if (IsGroupEnd(t) && IsClosed(t))
+    {
+      Trptr prev = t->t_match;
+      if (prev)
+	return (IsCollapsed(prev) ? GivePrevTrace(prev) : prev);
+      return NULL;
+    }
+  else
+    {
+      Trptr prev = t->t_prev;
+      if (prev)
+	return (IsCollapsed(prev) ? GivePrevTrace(prev) : prev);
+      return NULL;
+    }
 }
 
-
-int CollapseTrace(Trptr t)
-{
-int rc;
-int flg;
-
-if((rc=((t->name)&&(t->flags&TR_BLANK))))
-	{
-        Trptr t2 = t;
-
-        t2->flags ^= TR_COLLAPSED;
-	flg = t2->flags & TR_COLLAPSED;
-	t2->flags &= ~TR_HIGHLIGHT;
-
-        t2=t->t_next;
-        while(t2)
-        	{
-                if(t2->flags & TR_BLANK) break;
-                t2->flags &= ~(TR_COLLAPSED|TR_HIGHLIGHT);
-		t2->flags |= flg;
-                t2=t2->t_next;
-                }
-
-	UpdateTracesVisible();
-	}
-
-return(rc);
-}
 
 
 int UpdateTracesVisible(void)
 {
-Trptr t = GLOBALS->traces.first;
-int cnt = 0;
+  Trptr t = GLOBALS->traces.first;
+  int cnt = 0;
 
-while(t)
-	{
-	if( (t->flags & TR_BLANK) || (!(t->flags & TR_COLLAPSED)) )
-		{
-		cnt++;
-		}
+  while(t)
+    {
+      t = GiveNextTrace(t);
+      cnt++;
+    }
 
-	t=t->t_next;
-	}
-
-GLOBALS->traces.visible = cnt;
-return(cnt);
+  GLOBALS->traces.visible = cnt;
+  return(cnt);
 }
 
-
-void CollapseAllGroups(void)
+/* where is trace t_in in the list of displayable traces */
+int GetTraceNumber(Trptr t_in)
 {
-Trptr t = GLOBALS->traces.first;
-int mode = 0;
+  Trptr t = GLOBALS->traces.first;
+  int i   = 0;
+  int num = -1;
 
-while(t)
+  while(t)
+    {
+      if (t == t_in)
 	{
-	t->flags &= ~TR_HIGHLIGHT;
-
-	if(t->flags & TR_BLANK)
-		{
-		mode = (t->name != NULL);
-		}
-
-	if(mode)
-		{
-		t->flags |= TR_COLLAPSED;
-		}
-		else
-		{
-		t->flags &= ~TR_COLLAPSED;
-		}
-
-	t=t->t_next;
+	  num = i;
+	  break;
 	}
+      i++;
+      t = GiveNextTrace(t);
+    }
 
-UpdateTracesVisible();
+  return(num);
 }
 
-
-void ExpandAllGroups(void)
+unsigned IsShadowed( Trptr t )
 {
-Trptr t = GLOBALS->traces.first;
 
-while(t)
+  if (t->t_grp)
+    {
+      if (HasWave(t->t_grp))
 	{
-	t->flags &= ~(TR_HIGHLIGHT|TR_COLLAPSED);
-	t=t->t_next;
+	  return IsSelected(t->t_grp);
 	}
+      else
+	{
+	  return IsShadowed(t->t_grp);
+	}
+    }
 
-UpdateTracesVisible();
+  return 0;
+}
+
+char* GetFullName( Trptr t )
+{
+  if (HasAlias(t) || !HasWave(t))
+    {
+      return (t->name_full);
+    }
+  else if (t->vector)
+    {
+      return (t->n.vec->name);
+      
+    }
+  else
+    {
+      return (t->n.nd->nname);
+    }
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/12/18 01:31:29  gtkwave
+ * integrated experimental autoscroll code on signal adds
+ *
  * Revision 1.6  2008/08/05 17:49:39  gtkwave
  * comment trace dnd fix
  *

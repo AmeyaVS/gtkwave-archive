@@ -30,6 +30,7 @@
 #include "hierpack.h"
 #include "menu.h"
 #include "tcl_helper.h"
+#include <tk.h>
 
 #if !defined __MINGW32__ && !defined _MSC_VER
 #include <sys/types.h>
@@ -968,14 +969,14 @@ for(ii=0;ii<c;ii++)
 										break;
 										}
 	
-									if((!is)&&(GLOBALS->is_lx2)) { parsewavline_lx2(nxt_hd, 0); found++; } else { parsewavline(nxt_hd, 0); }
+									if((!is)&&(GLOBALS->is_lx2)) { parsewavline_lx2(nxt_hd, NULL, 0); found++; } else { parsewavline(nxt_hd, NULL, 0); }
 									break;
 									}
 								else
 								if(*pnt == '\n')
 									{
 									*pnt = 0;
-									if((!is)&&(GLOBALS->is_lx2)) { parsewavline_lx2(nxt_hd, 0); found++; } else { parsewavline(nxt_hd, 0); }
+									if((!is)&&(GLOBALS->is_lx2)) { parsewavline_lx2(nxt_hd, NULL, 0); found++; } else { parsewavline(nxt_hd, NULL, 0); }
 									*pnt = '\n';
 									nxt_hd = pnt+1;
 									pnt++;
@@ -1974,30 +1975,26 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 		flag_skip = 0;
 
 		if(use_tcl_mode)
-			{
-			if((t->flags & (TR_HIGHLIGHT|TR_COLLAPSED)) == (TR_HIGHLIGHT|TR_COLLAPSED)) 
-				{
-				collapsed_state = 1;
-				}
+		  {
+		    if(IsSelected(t) || (t->t_grp && IsSelected(t->t_grp)))
+		      {
+			/* members of closed groups may not be highlighted */
+			/* so propogate highlighting here */
+			t->flags |= TR_HIGHLIGHT;
+		      }
+		    else
+		      {
+			if((prev_flags & TR_ANALOGMASK) && (t->flags &TR_ANALOG_BLANK_STRETCH))
+			  {
+			    flag_skip = 1;
+			  }
 			else
-			if((t->flags & TR_BLANK) && collapsed_state)
-				{
-				collapsed_state = 0;
-				}
-			else
-			if(!(t->flags & TR_HIGHLIGHT))
-				{
-				if((prev_flags & TR_ANALOGMASK) && (t->flags &TR_ANALOG_BLANK_STRETCH))
-					{
-					flag_skip = 1;
-					}
-				else
-					{
-					t = t->t_next;
-					continue;
-					}
-				}
-			}
+			  {
+			    t = t->t_next;
+			    continue;
+			  }
+		      }
+		  }
 
 		if((t->flags!=def)||(is_first))
 			{
@@ -2048,12 +2045,14 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 
 			if(t->vector)
 				{
+				if(HasAlias(t)) { one_entry = make_message("+{%s} ",t->name_full); 
+				                  WAVE_OE_ME }
 				int i;
 				nptr *nodes;
 				bptr bits = t->n.vec->bits;
 				baptr ba = bits ? bits->attribs : NULL;
 
-				one_entry = make_message("%c%s", ba ? ':' : '#', t->name);
+				one_entry = make_message("%c{%s}", ba ? ':' : '#', t->n.vec->name);
 				WAVE_OE_ME
 
 				nodes=t->n.vec->bits->nodes;
@@ -2081,16 +2080,16 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 				}
 				else
 				{
-				if(t->is_alias)
+				  if(HasAlias(t))
 					{
 					if(t->n.nd->expansion)
 						{
-						one_entry = make_message("+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
+						one_entry = make_message("+{%s} (%d)%s\n",t->name_full,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
 						WAVE_OE_ME
 						}
 						else
 						{
-						one_entry = make_message("+%s %s\n",t->name+2,append_array_row(t->n.nd));
+						one_entry = make_message("+{%s} %s\n",t->name_full,append_array_row(t->n.nd));
 						WAVE_OE_ME
 						}
 					}
@@ -2248,7 +2247,7 @@ return(ftype);
  *      Loads save file, new dump file, or stems file viewer
  * ----------------------------------------------------------------------------
  */
-static int process_url_file(char *s)
+int process_url_file(char *s)
 {
 int rc = 0;
 char *dotpnt = NULL;
@@ -2487,109 +2486,68 @@ GLOBALS->script_handle = old_handle;
 return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewStringObj(reportString, -1); Tcl_SetObjResult(interp, aobj); */
 }
 
-
-static gboolean repscript_timer(gpointer dummy)
+void gtkUpdate(ClientData ignore)
 {
-static gboolean run_once = FALSE;
-
-if(run_once == FALSE) /* avoid any race conditions with the toolkit for uninitialized data */
-        {
-        run_once = TRUE;
-        return(TRUE);
-        }
-
-if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
-	{
-	int tclrc;
-	int nlen = strlen(GLOBALS->repscript_name);
-	char *tcl_cmd = malloc_2(7 + nlen + 1);
-	strcpy(tcl_cmd, "source ");
-	strcpy(tcl_cmd+7, GLOBALS->repscript_name);
-
-	GLOBALS->tcl_running = 1;
-	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
-	GLOBALS->tcl_running = 0;
-	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
-
-	free_2(tcl_cmd);
-	return(TRUE);
-	}
-	else
-	{
-	return(FALSE);
-	}
+  while (gtk_events_pending()) { gtk_main_iteration(); }
+  Tcl_CreateTimerHandler(0,gtkUpdate, (ClientData) NULL);
 }
 
-void make_tcl_interpreter(char *argv[])
-{
-int i;
-char commandName[128];
-GtkItemFactoryEntry *ife;
-int num_menu_items;
+int  gtkwaveInterpreterInit(Tcl_Interp *interp) {
+  if(Tcl_Init(interp) == TCL_ERROR) return TCL_ERROR;
+  if(Tk_Init(interp) == TCL_ERROR) return TCL_ERROR;
+  Tcl_SetVar(interp,"tcl_rcFileName","~/.wishrc",TCL_GLOBAL_ONLY);
 
-Tcl_FindExecutable(argv[0]);
+  int i;
+  char commandName[128];
+  GtkItemFactoryEntry *ife;
+  int num_menu_items;
 
-GLOBALS->interp = Tcl_CreateInterp();
+  strcpy(commandName, "gtkwave::");
 
-if (TCL_OK != Tcl_Init(GLOBALS->interp)) 
+  ife = retrieve_menu_items_array(&num_menu_items);
+  for(i=0;i<num_menu_items;i++)
+    {
+      if(ife[i].callback)
 	{
-   	fprintf(stderr, "GTKWAVE | Tcl_Init error: %s\n", Tcl_GetStringResult (GLOBALS->interp));
-   	exit(EXIT_FAILURE);
-  	}
-
-strcpy(commandName, "gtkwave::");
-
-ife = retrieve_menu_items_array(&num_menu_items);
-for(i=0;i<num_menu_items;i++)
-	{
-	if(ife[i].callback)
-		{
-		char *pnt = commandName + 9;
-		strcpy(pnt, ife[i].path);	
-		while(*pnt)
-			{
-			if(*pnt==' ') *pnt='_';
-			pnt++;
-			}
+	  char *pnt = commandName + 9;
+	  strcpy(pnt, ife[i].path);
+	  while(*pnt)
+	    {
+	      if(*pnt==' ') *pnt='_';
+	      pnt++;
+	    }
 	
-	      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
-	                (Tcl_ObjCmdProc *)menu_func,
-	                (ClientData)(ife+i), (Tcl_CmdDeleteProc *)NULL);
-		}
+	  Tcl_CreateObjCommand(interp, commandName,
+			       (Tcl_ObjCmdProc *)menu_func,
+			       (ClientData)(ife+i), (Tcl_CmdDeleteProc *)NULL);
 	}
+    }
 
 
-for (i = 0; gtkwave_commands[i].func != NULL; i++) 
-	{
-      	strcpy(commandName + 9, gtkwave_commands[i].cmdstr);
+  for (i = 0; gtkwave_commands[i].func != NULL; i++)
+    {
+      strcpy(commandName + 9, gtkwave_commands[i].cmdstr);
 
-      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
-                (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
-                (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
-   	}
+      Tcl_CreateObjCommand(interp, commandName,
+			   (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
+			   (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+    }
 
-if(GLOBALS->repscript_name)
-	{
-	FILE *f = fopen(GLOBALS->repscript_name, "rb");
-	if(f)
-		{
-		fclose(f);
-		g_timeout_add(GLOBALS->repscript_period, repscript_timer, NULL);
-		}
-		else
-		{
-		fprintf(stderr, "GTKWAVE | Could not open repscript '%s', exiting.\n", GLOBALS->repscript_name);
-		perror("Why");
-		exit(255);
-		}
-	}
-}
+  /* hide the "wish" window */
+  Tcl_Eval(interp, "wm withdraw .");
 
-#else
+  Tcl_Eval(interp, 
+    "puts \"Interpreter id is [file tail $::argv0]\"");
 
-void make_tcl_interpreter(char *argv[])
-{
-/* nothing */
+  if (GLOBALS->tcl_init_cmd)
+    {
+      Tcl_Eval(interp, GLOBALS->tcl_init_cmd);
+    }
+
+  Tcl_CreateTimerHandler(50,gtkUpdate, (ClientData) NULL);
+
+
+  return TCL_OK;
 }
 
 #endif
@@ -2598,6 +2556,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.53  2009/06/08 06:03:47  gtkwave
+ * add fst to dnd filetypes
+ *
  * Revision 1.52  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

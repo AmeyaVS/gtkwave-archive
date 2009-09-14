@@ -51,6 +51,7 @@ struct iter_dnd_strings
 	int mult_len;
 	};
 
+int process_url_file(char *s);
 int process_url_list(char *s);
 int process_tcl_list(char *s, gboolean track_mouse_y);
 char *add_dnd_from_searchbox(void);
@@ -62,13 +63,19 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr trhead, gboolean
 char* zMergeTclList(int argc, const char** argv);
 char** zSplitTclList(const char* list, int* argcPtr);
 char *make_single_tcl_list_name(char *s, char *opt_value, int promote_to_bus);
-void make_tcl_interpreter(char *argv[]);
+
+#ifdef HAVE_LIBTCL
+int gtkwaveInterpreterInit (Tcl_Interp *interp);
+#endif
 
 #endif
 
 /* 
  * $Id$
  * $Log$
+ * Revision 1.15  2009/01/23 19:23:10  gtkwave
+ * compatibility fix for gcc 3.x
+ *
  * Revision 1.14  2009/01/20 06:11:48  gtkwave
  * added gtkwave::getDisplayedSignals command
  *

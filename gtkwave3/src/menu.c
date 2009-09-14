@@ -548,16 +548,16 @@ if(GLOBALS->entrybox_text)
 
 	t=GLOBALS->traces.first;
 	while(t)
-		{
-		if(t->flags&TR_HIGHLIGHT)
-			{
-			if((!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))&&(t->name))	/* though note if a user specifies comment warping in a .sav file we will honor it.. */
-				{
-				t->shift=gt;
-				}
-				else
-				{
-				t->shift=LLDescriptor(0);
+	  {
+	    if(t->flags&TR_HIGHLIGHT)
+	      {
+		if(HasWave(t)) /* though note if a user specifies comment warping in a .sav file we will honor it.. */
+		  {
+		    t->shift=gt;
+		  }
+		else
+		  {
+		    t->shift=LLDescriptor(0);
 				}
 			t->flags&=(~TR_HIGHLIGHT);
 			}
@@ -610,7 +610,7 @@ while(t)
 if(found)
 	{
 	reformat_time(gt, LLDescriptor(0), GLOBALS->time_dimension);
-	entrybox("Warp Traces",200,gt,20,GTK_SIGNAL_FUNC(warp_cleanup));
+	entrybox("Warp Traces",200,gt,NULL,20,GTK_SIGNAL_FUNC(warp_cleanup));
 	}
 }
 
@@ -776,80 +776,91 @@ GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(GLOBALS->item_factory_menu_c_1, 
 }
 
 
+void set_hier_cleanup(GtkWidget *widget, gpointer data, int level)
+{
+  char update_string[128];
+  Trptr t;
+  int i;
+
+  GLOBALS->hier_max_level=level;
+  if(GLOBALS->hier_max_level<0) GLOBALS->hier_max_level=0;
+
+  for(i=0;i<2;i++)
+    {
+      if(i==0) t=GLOBALS->traces.first; else t=GLOBALS->traces.buffer;
+
+      while(t)
+	{
+	  if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+	    {
+	      if (HasAlias(t))
+		{
+		  t->name = t->name_full;
+		  if(GLOBALS->hier_max_level)
+		    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+		}
+	      else if(t->vector==TRUE)
+		{
+		  t->name = t->n.vec->name;
+		  if(GLOBALS->hier_max_level)
+		    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+		}
+	      else
+		{
+		  if(!GLOBALS->hier_max_level)
+		      {
+			int flagged;
+
+			if(t->name&&t->is_depacked) { free_2(t->name); }
+			t->name = hier_decompress_flagged(t->n.nd->nname, &flagged);
+			t->is_depacked = (flagged != 0);
+		      }
+		    else
+		      {
+			int flagged;
+
+			if(t->name&&t->is_depacked) { free_2(t->name); }
+			char *tbuff = hier_decompress_flagged(t->n.nd->nname, &flagged);
+			t->is_depacked = (flagged != 0);
+
+			if(!flagged)
+			  {   
+			    t->name = hier_extract(t->n.nd->nname, GLOBALS->hier_max_level);
+			  }
+			else
+			  {   
+			    t->name = strdup_2(hier_extract(tbuff, GLOBALS->hier_max_level));
+			    free_2(tbuff);
+			  }
+		      } 
+		}
+	    }
+	  t=t->t_next;
+	}
+    }
+
+  GLOBALS->signalwindow_width_dirty=1;
+  MaxSignalLength();
+  signalarea_configure_event(GLOBALS->signalarea, NULL);
+  wavearea_configure_event(GLOBALS->wavearea, NULL);
+  sprintf(update_string, "Trace Hier Max Depth is now: %d\n", GLOBALS->hier_max_level);
+  status_text(update_string);
+
+}
+
 void max_hier_cleanup(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->entrybox_text)
-	{
-	char update_string[128];
-	Trptr t;
-	int i;
+  {
+    int i;
 
-	GLOBALS->hier_max_level=atoi_64(GLOBALS->entrybox_text);
-	if(GLOBALS->hier_max_level<0) GLOBALS->hier_max_level=0;
-	free_2(GLOBALS->entrybox_text);
-	GLOBALS->entrybox_text=NULL;
-
-	for(i=0;i<2;i++)
-		{
-		if(i==0) t=GLOBALS->traces.first; else t=GLOBALS->traces.buffer;
-
-		while(t)
-			{
-			if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
-				{
-				if(t->vector==TRUE)
-					{
-	    				if(!GLOBALS->hier_max_level)
-	        				{
-	        				t->name = t->n.vec->name;
-	        				}
-	        				else
-	        				{
-	        				t->name = hier_extract(t->n.vec->name, GLOBALS->hier_max_level);
-	        				}
-					}
-					else 
-					if(!t->is_alias)
-					{
-	        			if(!GLOBALS->hier_max_level)
-	                			{
-				                int flagged;
-
-						if(t->is_depacked) { free_2(t->name); }
-				                t->name = hier_decompress_flagged(t->n.nd->nname, &flagged);
-				                t->is_depacked = (flagged != 0);
-	                			}
-	                			else
-	                			{
-				                int flagged;
-				                char *tbuff = hier_decompress_flagged(t->n.nd->nname, &flagged);
-
-						if(t->is_depacked) { free_2(t->name); }
-						t->is_depacked = (flagged != 0);
-				                if(!flagged)
-				                        {   
-				                        t->name = hier_extract(t->n.nd->nname, GLOBALS->hier_max_level);
-				                        }
-				                        else
-				                        {   
-				                        t->name = strdup_2(hier_extract(tbuff, GLOBALS->hier_max_level));
-				                        free_2(tbuff);
-				                        }
-	                			} 
-					}
-				}
-			t=t->t_next;
-			}
-		}
-
-	GLOBALS->signalwindow_width_dirty=1;
-	MaxSignalLength();
-	signalarea_configure_event(GLOBALS->signalarea, NULL);
-	wavearea_configure_event(GLOBALS->wavearea, NULL);
-	sprintf(update_string, "Trace Hier Max Depth is now: %d\n", GLOBALS->hier_max_level);
-	status_text(update_string);
-	}
+    i = atoi_64(GLOBALS->entrybox_text);
+    set_hier_cleanup(widget, data, i);
+    free_2(GLOBALS->entrybox_text);
+    GLOBALS->entrybox_text=NULL;
+  }
 }
+
 
 void menu_set_max_hier(GtkWidget *widget, gpointer data)
 {
@@ -871,7 +882,31 @@ if(GLOBALS->helpbox_is_active)
 
 sprintf(za,"%d",GLOBALS->hier_max_level);
 
-entrybox("Max Hier Depth",200,za,20,GTK_SIGNAL_FUNC(max_hier_cleanup));
+entrybox("Max Hier Depth",200,za,NULL,20,GTK_SIGNAL_FUNC(max_hier_cleanup));
+}
+
+void menu_toggle_hier(GtkWidget *widget, gpointer data)
+{
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nToggle Hierarchy On/Off");
+        help_text(
+		" sets the maximum hierarchy depth (counting from the right"
+		" with bit numbers or ranges ignored) that is displayable"
+		" for trace names.  Zero indicates that no truncation will"
+		" be performed (default).  Note that any aliased signals"
+		" (prefix of a \"+\") will not have truncated names." 
+        );
+        return;
+        }
+
+
+ if (GLOBALS->hier_max_level == 1)
+   set_hier_cleanup(widget, data, 0);
+ else
+   set_hier_cleanup(widget, data, 1);
+
 }
 
 
@@ -1429,24 +1464,360 @@ if((GLOBALS->num_notebook_pages < 2) && (!GLOBALS->enable_fast_exit))
 /**/
 void must_sel(void)
 {
-status_text("Select one or more traces.\n");
+  status_text("Select one or more traces.\n");
 }
 static void must_sel_nb(void)
 {
-status_text("Select one or more nonblank traces.\n");
+  status_text("Select one or more nonblank traces.\n");
+}
+static void must_sel_bg(void)
+{
+  status_text("Select a bundle or group.\n");
 }
 /**/
+
+static void
+menu_open_group(GtkWidget *widget, gpointer data)
+{
+  Trptr t;
+  unsigned dirty = 0;
+
+  /* currently only called by toggle menu option, so no help menu text */
+
+ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+
+ t=GLOBALS->traces.first;
+ while(t)
+   {
+     if((t->flags&TR_HIGHLIGHT)&&(IsGroupBegin(t) || IsGroupEnd(t)))
+       {
+	 dirty=1;
+	 break;
+       }
+     t=t->t_next;
+   }
+
+ if(dirty)
+   {
+     OpenTrace(t);
+     GLOBALS->signalwindow_width_dirty=1;
+     MaxSignalLength();
+     signalarea_configure_event(GLOBALS->signalarea, NULL);
+     wavearea_configure_event(GLOBALS->wavearea, NULL);
+   }
+ else
+   {
+     must_sel_bg();
+   }
+}
+
+
+static void
+menu_close_group(GtkWidget *widget, gpointer data)
+{
+  Trptr t;
+  unsigned dirty = 0;
+
+  /* currently only called by toggle menu option, so no help menu text */
+
+ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+
+ t=GLOBALS->traces.first;
+ while(t)
+   {
+     if((t->flags&TR_HIGHLIGHT)&&(IsGroupBegin(t) || IsGroupEnd(t)))
+       {
+	 dirty=1;
+	 break;
+       }
+     t=t->t_next;
+   }
+
+ if(dirty)
+   {
+
+     CloseTrace(t);
+     GLOBALS->signalwindow_width_dirty=1;
+     MaxSignalLength();
+     signalarea_configure_event(GLOBALS->signalarea, NULL);
+     wavearea_configure_event(GLOBALS->wavearea, NULL);
+   }
+ else
+   {
+     must_sel_bg();
+   }
+}
+
+
+
+
+static unsigned create_group (char* name, Trptr t_composite)
+{
+  Trptr t, t_prev, t_begin, t_end;
+  unsigned dirty = 0;
+
+ t=GLOBALS->traces.first;
+ while(t)
+   {
+     if(t->flags&TR_HIGHLIGHT)
+       {
+	 dirty=1;
+	 break;
+       }
+     t=t->t_next;
+   }
+
+ if(dirty)
+   {
+
+     t_prev = t->t_prev;
+
+     CutBuffer();
+
+     if (t_composite)
+       {
+	 t_begin = t_composite;
+	 t_begin->flags |=TR_GRP_BEGIN;
+       }
+     else 
+       {
+	 if( (t_begin = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
+	   {
+	     fprintf( stderr, "Out of memory, can't add trace.\n");
+	     return;
+	   }
+     
+	 t_begin->flags = (TR_BLANK|TR_GRP_BEGIN);
+	 t_begin->name = (char *)malloc_2(1+strlen(name));
+	 strcpy(t_begin->name, name);
+       }
+
+     GLOBALS->traces.buffer->t_prev = t_begin;
+     t_begin->t_next = GLOBALS->traces.buffer;
+     GLOBALS->traces.buffer = t_begin;
+     GLOBALS->traces.buffercount++;
+
+     if( (t_end = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
+       {
+	 fprintf( stderr, "Out of memory, can't add trace.\n");
+	 return;
+       }
+
+     t_end->flags = (TR_BLANK|TR_GRP_END);
+    
+     if (t_composite)
+       {
+	 /* make the group end trace invisible */
+	 t_end->flags |= TR_COLLAPSED;
+	 t_end->name = (char *)malloc_2(1+strlen("group_end"));
+	 strcpy(t_end->name, "group_end");
+       }
+     else
+       {
+	 t_end->name = (char *)malloc_2(1+strlen(name));
+	 strcpy(t_end->name, name);
+       }
+
+     GLOBALS->traces.bufferlast->t_next = t_end;
+     t_end->t_prev = GLOBALS->traces.bufferlast;
+     GLOBALS->traces.bufferlast = t_end;
+     GLOBALS->traces.buffercount++;
+
+     t_begin->t_match = t_end;
+     t_end->t_match   = t_begin;
+
+     if (t_prev) 
+       {
+	 t_prev->flags |= TR_HIGHLIGHT;
+	 PasteBuffer();
+       }
+     else
+       {
+	 PrependBuffer();
+       }
+   }
+ return dirty;
+}
+
+
+static void 
+create_group_cleanup(GtkWidget *widget, gpointer data)
+{
+  Trptr t, t_prev, t_begin, t_end;
+  unsigned dirty = 0;
+
+  dirty = create_group(GLOBALS->entrybox_text, NULL);
+
+  if (!dirty)
+    	{
+      	must_sel_bg();
+    	}
+    	else
+	{
+      	GLOBALS->signalwindow_width_dirty=1;
+      	MaxSignalLength();
+      	signalarea_configure_event(GLOBALS->signalarea, NULL);
+      	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+
+
+void 
+menu_create_group(GtkWidget *widget, gpointer data)
+{
+
+  Trptr t;
+  unsigned dirty = 0;
+
+  if(GLOBALS->helpbox_is_active)
+    {
+      help_text_bold("\n\nCreate Group");
+      help_text(
+		" creates a group of traces which may be opened or closed."
+		" It is permitted for groups to be nested."
+		);
+      return;
+    }
+
+  t=GLOBALS->traces.first;
+  while(t)
+    {
+      if(t->flags&TR_HIGHLIGHT)
+       {
+	 dirty=1;
+	 break;
+       }
+      t=t->t_next;
+    }
+
+  if(dirty)
+    {
+      /* don't mess with sigs when dnd active */
+      if(GLOBALS->dnd_state) { dnd_error(); return; } 
+      entrybox("Create Group",300,"","Enter group name:",128,GTK_SIGNAL_FUNC(create_group_cleanup));
+    }
+  else
+    {
+      must_sel_bg();
+    }
+}
+
+
+static unsigned expand_trace(Trptr t_top)
+{
+
+  Trptr t, tmp;
+  int tmpi;
+  unsigned dirty = 0;
+
+  t = t_top;
+
+  if(HasWave(t) && !IsGroupBegin(t) && !IsGroupEnd(t))
+    {
+      FreeCutBuffer();
+      GLOBALS->traces.buffer=GLOBALS->traces.first;
+      GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+      GLOBALS->traces.buffercount=GLOBALS->traces.total;
+
+      GLOBALS->traces.first=GLOBALS->traces.last=NULL; GLOBALS->traces.total=0;
+
+      if(t->vector)
+	{
+	  bptr bits;	
+	  int i;
+	  Trptr tfix;
+	  TimeType otime = t->shift;
+
+	  bits=t->n.vec->bits;
+	  if(!(t->flags&TR_REVERSE))
+	    {
+	      for(i=0;i<bits->nbits;i++)
+		{
+		  if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
+		  AddNodeTraceReturn(bits->nodes[i],NULL, &tfix);
+		  if(bits->attribs)
+		    {
+		      tfix->shift = otime + bits->attribs[i].shift;
+		    }
+		}
+	    }
+	  else
+	    {
+	      for(i=(bits->nbits-1);i>-1;i--)
+		{
+		  if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
+		  AddNodeTraceReturn(bits->nodes[i],NULL, &tfix);
+		  if(bits->attribs)
+		    {
+		      tfix->shift = otime + bits->attribs[i].shift;
+		    }
+		}
+	    }
+	}
+      else
+	{
+	  eptr e=ExpandNode(t->n.nd);
+	  int i;
+	  if(!e)
+	    {
+	      /* 		      if(t->n.nd->expansion) t->n.nd->expansion->refcnt++; */
+	      /* 		      AddNode(t->n.nd,NULL); */
+	    }
+	  else
+	    {
+	      for(i=0;i<e->width;i++)
+		{
+		  AddNode(e->narray[i], NULL);	
+		}
+	      free_2(e->narray);
+	      free_2(e);
+	    }
+	}
+
+      tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
+      tmp=GLOBALS->traces.bufferlast; GLOBALS->traces.bufferlast=GLOBALS->traces.last; GLOBALS->traces.last=tmp;
+      tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
+      GLOBALS->traces.total=tmpi;
+
+      if (GLOBALS->traces.buffercount > 0) 
+	{
+
+	  /* buffer now contains the created signals */
+	  Trptr t_begin, t_end;
+	  ClearTraces();
+
+	  if (t_top->t_prev)
+	    {
+	      t_top->t_prev->flags |= TR_HIGHLIGHT;
+	      RemoveTrace(t_top, 0);
+	      PasteBuffer();
+	      t_top->t_prev->flags &= ~TR_HIGHLIGHT;
+	    }
+	  else 
+	    {
+	      RemoveTrace(t_top, 0);
+	      PrependBuffer();
+	    }
+
+	  dirty = create_group("unused_2", t_top);
+	
+	}
+    }
+
+  return dirty;
+}
 
 void
 menu_expand(GtkWidget *widget, gpointer data)
 {
-Trptr t, tmp;
-int tmpi,dirty=0;
+  Trptr t, t_next, tmp, t_top;
+  int tmpi,dirty=0;
 
-if(GLOBALS->helpbox_is_active)
-        {
-        help_text_bold("\n\nExpand");
-        help_text(
+  if(GLOBALS->helpbox_is_active)
+    {
+      help_text_bold("\n\nExpand");
+      help_text(
 		" decomposes the highlighted signals into their individual bits."
 		" The resulting bits are converted to traces and inserted after the"
 		" last highlighted trace.  The original unexpanded traces will"
@@ -1456,513 +1827,670 @@ if(GLOBALS->helpbox_is_active)
 		" When used upon multi-bit vectors that contain "
 		" real valued traces, those traces will expand to their normal \"correct\" values,"
 		" not individual bits."
+		);
+      return;
+    }
+
+
+  if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+
+  DEBUG(printf("Expand Traces\n"));
+
+  t=GLOBALS->traces.first;
+  while(t)
+    {
+      if(IsSelected(t) && HasWave(t))
+	{
+	  t->flags |= TR_COLLAPSED;
+	  dirty=1;
+	}
+      t=t->t_next;
+    }
+
+  if(dirty)
+    {
+      ClearTraces();
+      t=GLOBALS->traces.first;
+      while(t)
+	{
+	  t_next = t->t_next;
+	  if(HasWave(t) && (t->flags&TR_COLLAPSED))
+	    {
+	      if (!IsGroupBegin(t) && !IsGroupEnd(t))
+		{
+		  expand_trace(t);
+		}
+	      else
+		{
+		  OpenTrace(t);
+		}
+	    }
+	  t=t_next;
+	}
+      t=GLOBALS->traces.first;
+      t->t_grp = NULL;
+      while(t)
+	{
+	  if(HasWave(t) && (t->flags&TR_COLLAPSED))
+	    {
+	      t->flags &= ~TR_COLLAPSED;
+      	      t->flags |= TR_HIGHLIGHT;
+	    }
+
+	  updateTraceGroup(t);
+	  t=t->t_next;
+	}
+
+      t=GLOBALS->traces.first;
+      while(t)
+	{
+	  if (IsSelected(t)) { break; }
+	  t=t->t_next;
+	}
+
+      int j = GetTraceNumber(t);
+      GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+      if (j < wadj->value)
+	{
+	  SetTraceScrollbarRowValue(j, 0);
+	}
+
+      GLOBALS->signalwindow_width_dirty=1;
+      MaxSignalLength();
+      signalarea_configure_event(GLOBALS->signalarea, NULL);
+      wavearea_configure_event(GLOBALS->wavearea, NULL);
+    }
+  else
+    {
+      must_sel_nb();
+    }
+}
+
+void
+menu_toggle_group(GtkWidget *widget, gpointer data)
+{
+  Trptr t;
+  unsigned dirty_group  = 0;
+  unsigned dirty_signal = 0;
+
+  if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nToggle Group");
+        help_text(
+		" toggles a group opened or closed."
         );
         return;
         }
 
 
-if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
 
-DEBUG(printf("Expand Traces\n"));
+ t=GLOBALS->traces.first;
+ while(t)
+   {
+     if((t->flags&TR_HIGHLIGHT)&&(IsGroupBegin(t) || IsGroupEnd(t)))
+       {
+	 dirty_group=1;
+	 break;
+       }
 
-t=GLOBALS->traces.first;
-while(t)
-	{
-	if((t->flags&TR_HIGHLIGHT)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
-		{
-		dirty=1;
-		break;
-		}
-	t=t->t_next;
-	}
+     if((t->flags&TR_HIGHLIGHT)&&HasWave(t))
+       {
+	 dirty_signal=1;
+	 break;
+       }
+     t=t->t_next;
+   }
 
-if(dirty)
-	{
-	FreeCutBuffer();
-	GLOBALS->traces.buffer=GLOBALS->traces.first;
-	GLOBALS->traces.bufferlast=GLOBALS->traces.last;
-	GLOBALS->traces.buffercount=GLOBALS->traces.total;
+ if(dirty_group)
+   {
+     if(IsClosed(t))
+       {
+	 menu_open_group(widget, data);
+       }
+     else
+       {
+	 menu_close_group(widget, data);
+       }
+     return;
+   }
+ if(dirty_signal)
+   {
+     ClearTraces();
+     t->flags |= TR_HIGHLIGHT;
+     menu_expand(widget, data);
+     return;
+   }
 
-	GLOBALS->traces.first=GLOBALS->traces.last=NULL; GLOBALS->traces.total=0;
+ must_sel_bg();
 
-	t=GLOBALS->traces.buffer;
-
-	while(t)
-		{
-		if(t->flags&TR_HIGHLIGHT)
-			{
-			if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))
-				{
-				AddBlankTrace(t->name);
-				}
-				else
-				{
-				if(t->vector)
-					{
-					bptr bits;	
-					int i;
-					Trptr tfix;
-					TimeType otime = t->shift;
-
-					bits=t->n.vec->bits;
-					if(!(t->flags&TR_REVERSE))
-						{
-						for(i=0;i<bits->nbits;i++)
-							{
-							if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
-							AddNodeTraceReturn(bits->nodes[i],NULL, &tfix);
-							if(bits->attribs)
-								{
-								tfix->shift = otime + bits->attribs[i].shift;
-								}
-							}
-						}
-						else
-						{
-						for(i=(bits->nbits-1);i>-1;i--)
-							{
-							if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
-							AddNodeTraceReturn(bits->nodes[i],NULL, &tfix);
-							if(bits->attribs)
-								{
-								tfix->shift = otime + bits->attribs[i].shift;
-								}
-							}
-						}
-					}
-					else
-					{
-					eptr e=ExpandNode(t->n.nd);
-					int i;
-					if(!e)
-						{
-						if(t->n.nd->expansion) t->n.nd->expansion->refcnt++;
-						AddNode(t->n.nd,NULL);
-						}
-						else
-						{
-						for(i=0;i<e->width;i++)
-							{
-							AddNode(e->narray[i], NULL);						
-							}
-						free_2(e->narray);
-						free_2(e);
-						}
-					}
-				}
-			}
-		t=t->t_next;
-		}
-
-	tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
-	tmp=GLOBALS->traces.bufferlast; GLOBALS->traces.bufferlast=GLOBALS->traces.last; GLOBALS->traces.last=tmp;
-	tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
-				GLOBALS->traces.total=tmpi;
-	PasteBuffer();
-	CutBuffer();
-	
-	GLOBALS->signalwindow_width_dirty=1;
-	MaxSignalLength();
-	signalarea_configure_event(GLOBALS->signalarea, NULL);
-	wavearea_configure_event(GLOBALS->wavearea, NULL);
-	}
-	else
-	{
-	must_sel_nb();
-	}
 }
 
-void
-menu_combine(int direction)
+static void rename_cleanup(GtkWidget *widget, gpointer data)
 {
-Trptr t, tmp;
-int tmpi,dirty=0, attrib_reqd=0;
-nptr bitblast_parent;
-int bitblast_delta=0;
+  Trptr t = GLOBALS->trace_to_alias_menu_c_1;
 
-if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-
-DEBUG(printf("Combine Traces\n"));
-
-t=GLOBALS->traces.first;
-while(t)
+  if(GLOBALS->entrybox_text)
+    {
+      char *efix;
+      /* code to turn '{' and '}' into '[' and ']' */
+      if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 	{
-	if((t->flags&TR_HIGHLIGHT)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
+	  efix=GLOBALS->entrybox_text;
+	  while(*efix)
+	    {
+	      if(*efix=='{')
 		{
-		if(t->vector)
-			{
-			dirty+=t->n.vec->nbits;
-			}
-			else
-			{
-			if(t->n.nd->ext)
-				{
-				int msb, lsb, width;
-				msb = t->n.nd->ext->msi;
-				lsb = t->n.nd->ext->lsi;
-				if(msb>lsb) width = msb-lsb+1; else width = lsb-msb+1;
-				dirty += width;
-				}
-				else
-				{
-				dirty++;
-				}
-			}
+		  *efix='[';
 		}
-	t=t->t_next;
+	      if(*efix=='}')
+		{
+		  *efix=']';
+		}
+	      efix++;
+	    }
 	}
 
-if(!dirty)
+      if(t->vector)
 	{
-	must_sel_nb();
-	return;
+	  if(t->name_full)
+	    {
+	      free_2(t->name_full);
+	      t->name_full = NULL;
+	    }
+	  if (t->n.vec->name)
+	    {
+	      free_2(t->n.vec->name);
+	    }
+
+	  t->n.vec->name = (char *)malloc_2(1+strlen(GLOBALS->entrybox_text));
+	  strcpy(t->n.vec->name, GLOBALS->entrybox_text);
+	  t->name = t->n.vec->name;
+	  if(GLOBALS->hier_max_level)
+	    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+
+	  t->flags&= ~TR_HIGHLIGHT;
+
 	}
 
-if(dirty>512)
-	{
-	char buf[512];
+      GLOBALS->signalwindow_width_dirty=1;
+      MaxSignalLength();
+      signalarea_configure_event(GLOBALS->signalarea, NULL);
+      wavearea_configure_event(GLOBALS->wavearea, NULL);
+    }
+}
 
-	sprintf(buf,"%d bits selected, please use <= 512.\n",dirty);
-	status_text(buf);
+
+static void menu_rename(GtkWidget *widget, gpointer data)
+{
+  /* currently only called by various combine menu options, so no help menu text */
+
+  GLOBALS->trace_to_alias_menu_c_1=NULL;
+
+  /* don't mess with sigs when dnd active */
+  if(GLOBALS->dnd_state) { dnd_error(); return; } 
+
+  Trptr t = GLOBALS->traces.first;
+  while(t)
+    {
+      if(IsSelected(t)&&(t->vector==TRUE))
+	{
+	  GLOBALS->trace_to_alias_menu_c_1 = t;
+	  break;
 	}
-	else
+      t=t->t_next;
+    }
+
+  if(GLOBALS->trace_to_alias_menu_c_1)
+    {
+      char* current = GetFullName(GLOBALS->trace_to_alias_menu_c_1);
+      ClearTraces();
+      GLOBALS->trace_to_alias_menu_c_1->flags |= TR_HIGHLIGHT;
+      entrybox("Trace Name",300,current,NULL,128,GTK_SIGNAL_FUNC(rename_cleanup));
+    }
+  else
+    {
+      must_sel();
+    }
+}
+
+static bvptr combine_traces(int direction)
+{
+  Trptr t, tmp;
+  int tmpi,dirty=0, attrib_reqd=0;
+  nptr bitblast_parent;
+  int bitblast_delta=0;
+
+  DEBUG(printf("Combine Traces\n"));
+
+  t=GLOBALS->traces.first;
+  while(t)
+    {
+      if((t->flags&TR_HIGHLIGHT)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 	{
-	int i,nodepnt=0;
-	struct Node *n[512];
-	struct BitAttributes ba[512];
-	struct Bits *b=NULL;
-	bvptr v=NULL;
-
-	FreeCutBuffer();
-	GLOBALS->traces.buffer=GLOBALS->traces.first;
-	GLOBALS->traces.bufferlast=GLOBALS->traces.last;
-	GLOBALS->traces.buffercount=GLOBALS->traces.total;
-
-	GLOBALS->traces.first=GLOBALS->traces.last=NULL; GLOBALS->traces.total=0;
-
-	t=GLOBALS->traces.buffer;
-
-	while(t)
+	  if(t->vector)
+	    {
+	      dirty+=t->n.vec->nbits;
+	    }
+	  else
+	    {
+	      if(t->n.nd->ext)
 		{
-		if(t->flags&TR_HIGHLIGHT)
-			{
-			if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))
-				{
-				/* nothing */
-				}
-				else
-				{
-				if(t->vector)
-					{
-					int ix;
-					bptr bits = t->n.vec->bits;	
-					baptr oldba = bits ? bits->attribs : NULL;
-
-					bits=t->n.vec->bits;
-
-					if(!(t->flags&TR_REVERSE))
-						{
-						for(ix=0;ix<bits->nbits;ix++)
-							{
-							if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
-							ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
-							ba[nodepnt].flags = t->flags ^ (oldba ? oldba[ix].flags&TR_INVERT : 0);
-							n[nodepnt++]=bits->nodes[ix];
-							}
-						}
-						else
-						{
-						for(ix=(bits->nbits-1);ix>-1;ix--)
-							{
-							if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
-							ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
-							ba[nodepnt].flags = t->flags ^ (oldba ? oldba[ix].flags&TR_INVERT : 0);
-							n[nodepnt++]=bits->nodes[ix];
-							}
-						}
-					}
-					else
-					{
-					eptr e=ExpandNode(t->n.nd);
-					int ix;
-					if(!e)
-						{
-						if(t->n.nd->expansion) t->n.nd->expansion->refcnt++;
-						ba[nodepnt].shift = t->shift;
-						ba[nodepnt].flags = t->flags;
-						n[nodepnt++]=t->n.nd;
-						}
-						else
-						{
-						for(ix=0;ix<e->width;ix++)
-							{
-							ba[nodepnt].shift = t->shift;
-							ba[nodepnt].flags = t->flags;
-							n[nodepnt++]=e->narray[ix];	
-							e->narray[ix]->expansion->refcnt++;
-							}
-						free_2(e->narray);
-						free_2(e);
-						}
-					}
-				}
-			}
-		if(nodepnt==dirty) break;
-		t=t->t_next;
+		  int msb, lsb, width;
+		  msb = t->n.nd->ext->msi;
+		  lsb = t->n.nd->ext->lsi;
+		  if(msb>lsb) width = msb-lsb+1; else width = lsb-msb+1;
+		  dirty += width;
 		}
-
-        b=(struct Bits *)calloc_2(1,sizeof(struct Bits)+(nodepnt-1)*
-                                  sizeof(struct Node *));
-
-	b->attribs = malloc_2(nodepnt * sizeof(struct BitAttributes));
-	for(i=0;i<nodepnt;i++)	/* for up combine we need to reverse the attribs list! */
+	      else
 		{
-		if(direction)
-			{
-			memcpy(b->attribs+i, ba+i, sizeof(struct BitAttributes));
-			}
-			else
-			{
-			memcpy(b->attribs+i, ba+(nodepnt-1-i), sizeof(struct BitAttributes));
-			}
-
-		if((ba[i].shift)||(ba[i].flags&TR_INVERT))	/* timeshift/invert are only relevant flags */
-			{
-			attrib_reqd = 1;
-			}
+		  dirty++;
 		}
+	    }
+	}
+      t=t->t_next;
+    }
 
-	if(!attrib_reqd)
+  if(!dirty)
+    {
+      must_sel_nb();
+      return NULL;
+    }
+  if(dirty>512)
+    {
+      char buf[512];
+
+      sprintf(buf,"%d bits selected, please use <= 512.\n",dirty);
+      status_text(buf);
+      return NULL;
+    }
+  else
+    {
+      int i,nodepnt=0;
+      struct Node *n[512];
+      struct BitAttributes ba[512];
+      struct Bits *b=NULL;
+      bvptr v=NULL;
+
+      FreeCutBuffer();
+      GLOBALS->traces.buffer=GLOBALS->traces.first;
+      GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+      GLOBALS->traces.buffercount=GLOBALS->traces.total;
+
+      GLOBALS->traces.first=GLOBALS->traces.last=NULL; GLOBALS->traces.total=0;
+
+      t=GLOBALS->traces.buffer;
+
+      while(t)
+	{
+	  if(t->flags&TR_HIGHLIGHT)
+	    {
+	      if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))
 		{
-		free_2(b->attribs);
-		b->attribs = NULL;
+		  /* nothing */
 		}
-
-	if(n[0]->expansion)
+	      else
 		{
-		bitblast_parent = n[0]->expansion->parent;
+		  if(t->vector)
+		    {
+		      int ix;
+		      bptr bits = t->n.vec->bits;	
+		      baptr oldba = bits ? bits->attribs : NULL;
+
+		      bits=t->n.vec->bits;
+
+		      if(!(t->flags&TR_REVERSE))
+			{
+			  for(ix=0;ix<bits->nbits;ix++)
+			    {
+			      if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
+			      ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
+			      ba[nodepnt].flags = t->flags ^ (oldba ? oldba[ix].flags&TR_INVERT : 0);
+			      n[nodepnt++]=bits->nodes[ix];
+			    }
+			}
+		      else
+			{
+			  for(ix=(bits->nbits-1);ix>-1;ix--)
+			    {
+			      if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
+			      ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
+			      ba[nodepnt].flags = t->flags ^ (oldba ? oldba[ix].flags&TR_INVERT : 0);
+			      n[nodepnt++]=bits->nodes[ix];
+			    }
+			}
+		    }
+		  else
+		    {
+		      eptr e=ExpandNode(t->n.nd);
+		      int ix;
+		      if(!e)
+			{
+			  if(t->n.nd->expansion) t->n.nd->expansion->refcnt++;
+			  ba[nodepnt].shift = t->shift;
+			  ba[nodepnt].flags = t->flags;
+			  n[nodepnt++]=t->n.nd;
+			}
+		      else
+			{
+			  for(ix=0;ix<e->width;ix++)
+			    {
+			      ba[nodepnt].shift = t->shift;
+			      ba[nodepnt].flags = t->flags;
+			      n[nodepnt++]=e->narray[ix];	
+			      e->narray[ix]->expansion->refcnt++;
+			    }
+			  free_2(e->narray);
+			  free_2(e);
+			}
+		    }
 		}
-		else
+	    }
+	  if(nodepnt==dirty) break;
+	  t=t->t_next;
+	}
+
+      b=(struct Bits *)calloc_2(1,sizeof(struct Bits)+(nodepnt-1)*
+				sizeof(struct Node *));
+
+      b->attribs = malloc_2(nodepnt * sizeof(struct BitAttributes));
+      for(i=0;i<nodepnt;i++)	/* for up combine we need to reverse the attribs list! */
+	{
+	  if(direction)
+	    {
+	      memcpy(b->attribs+i, ba+i, sizeof(struct BitAttributes));
+	    }
+	  else
+	    {
+	      memcpy(b->attribs+i, ba+(nodepnt-1-i), sizeof(struct BitAttributes));
+	    }
+
+	  if((ba[i].shift)||(ba[i].flags&TR_INVERT))	/* timeshift/invert are only relevant flags */
+	    {
+	      attrib_reqd = 1;
+	    }
+	}
+
+      if(!attrib_reqd)
+	{
+	  free_2(b->attribs);
+	  b->attribs = NULL;
+	}
+
+      if(n[0]->expansion)
+	{
+	  bitblast_parent = n[0]->expansion->parent;
+	}
+      else
+	{
+	  bitblast_parent = NULL;
+	}
+
+      if(direction)
+	{
+	  for(i=0;i<nodepnt;i++)
+	    {
+	      b->nodes[i]=n[i];
+	      if(n[i]->expansion)
 		{
-		bitblast_parent = NULL;
+		  if(bitblast_parent != n[i]->expansion->parent) 
+		    {
+		      bitblast_parent=NULL;
+		    }
+		  else
+		    {
+		      if(i==1)
+			{
+			  bitblast_delta = n[1]->expansion->actual - n[0]->expansion->actual;
+			  if(bitblast_delta<-1) bitblast_delta=0;
+			  else if(bitblast_delta>1) bitblast_delta=0;
+			}
+		      else if((bitblast_delta)&&(i>1))
+			{
+			  if((n[i]->expansion->actual - n[i-1]->expansion->actual) != bitblast_delta) bitblast_delta=0;
+			}
+		    }
 		}
-
-	if(direction)
+	      else
 		{
-	        for(i=0;i<nodepnt;i++)
-	                {
-	                b->nodes[i]=n[i];
-			if(n[i]->expansion)
-				{
-				if(bitblast_parent != n[i]->expansion->parent) 
-					{
-					bitblast_parent=NULL;
-					}
-					else
-					{
-					if(i==1)
-						{
-						bitblast_delta = n[1]->expansion->actual - n[0]->expansion->actual;
-						if(bitblast_delta<-1) bitblast_delta=0;
-						else if(bitblast_delta>1) bitblast_delta=0;
-						}
-					else if((bitblast_delta)&&(i>1))
-						{
-						if((n[i]->expansion->actual - n[i-1]->expansion->actual) != bitblast_delta) bitblast_delta=0;
-						}
-					}
-				}
-				else
-				{
-				bitblast_parent = NULL;
-				}
-	                }
+		  bitblast_parent = NULL;
 		}
-		else
+	    }
+	}
+      else
+	{
+	  int rev;
+	  rev=nodepnt-1;
+	  for(i=0;i<nodepnt;i++)
+	    {
+	      b->nodes[i]=n[rev--];
+	      if(n[i]->expansion)
 		{
-		int rev;
-		rev=nodepnt-1;
-	        for(i=0;i<nodepnt;i++)
-	                {
-	                b->nodes[i]=n[rev--];
-			if(n[i]->expansion)
-				{
-				if(bitblast_parent != n[i]->expansion->parent) 
-					{
-					bitblast_parent=NULL;
-					}
-					else
-					{
-					if(i==1)
-						{
-						bitblast_delta = n[1]->expansion->actual - n[0]->expansion->actual;
-						if(bitblast_delta<-1) bitblast_delta=0;
-						else if(bitblast_delta>1) bitblast_delta=0;
-						}
-					else if((bitblast_delta)&&(i>1))
-						{
-						if((n[i]->expansion->actual - n[i-1]->expansion->actual) != bitblast_delta) bitblast_delta=0;
-						}
-					}
-				}
-				else
-				{
-				bitblast_parent = NULL;
-				}
-	                }
+		  if(bitblast_parent != n[i]->expansion->parent) 
+		    {
+		      bitblast_parent=NULL;
+		    }
+		  else
+		    {
+		      if(i==1)
+			{
+			  bitblast_delta = n[1]->expansion->actual - n[0]->expansion->actual;
+			  if(bitblast_delta<-1) bitblast_delta=0;
+			  else if(bitblast_delta>1) bitblast_delta=0;
+			}
+		      else if((bitblast_delta)&&(i>1))
+			{
+			  if((n[i]->expansion->actual - n[i-1]->expansion->actual) != bitblast_delta) bitblast_delta=0;
+			}
+		    }
 		}
-
-        b->nbits=nodepnt;
-
-	if(!bitblast_parent)
+	      else
 		{
-		char *aname;
-		int match_iter = 1;
-
-		if(direction)
-			{
-			aname = attempt_vecmatch(n[0]->nname, n[nodepnt-1]->nname);
-			}
-			else
-			{
-			aname = attempt_vecmatch(n[nodepnt-1]->nname, n[0]->nname);
-			}
-
-		if(aname)
-			{
-			int ix;
-
-			for(ix=0;ix<nodepnt-1;ix++)
-				{
-				char *mat = attempt_vecmatch(n[0]->nname, n[ix]->nname);
-				if(!mat) { match_iter = 0; break; } else { free_2(mat); }
-				}
-			}
-
-		if(!match_iter)
-			{
-			free_2(aname);
-			aname = NULL;
-			}
-
-		if(!b->attribs)
-			{
-			if(aname)
-				{
-				b->name = aname;
-				}
-				else
-				{
-				strcpy(b->name=(char *)malloc_2(strlen("<Vector>")+1),"<Vector>");
-				}
-			}
-			else
-			{
-			if(aname)
-				{
-				b->name = aname;
-				}
-				else
-				{
-				strcpy(b->name=(char *)malloc_2(strlen("<ComplexVector>")+1),"<ComplexVector>");
-				}
-			}
+		  bitblast_parent = NULL;
 		}
-		else
-		{
-		int ix, offset;
-		char *nam;
+	    }
+	}
 
-	        offset = strlen(n[0]->nname);
-	        for(ix=offset-1;ix>=0;ix--)
-	                {
-	                if(n[0]->nname[ix]=='[') break;
-	                }
-	        if(ix>-1) offset=ix;
+      b->nbits=nodepnt;
+
+      if(!bitblast_parent)
+	{
+	  char *aname;
+	  int match_iter = 1;
+
+	  if(direction)
+	    {
+	      aname = attempt_vecmatch(n[0]->nname, n[nodepnt-1]->nname);
+	    }
+	  else
+	    {
+	      aname = attempt_vecmatch(n[nodepnt-1]->nname, n[0]->nname);
+	    }
+
+	  if(aname)
+	    {
+	      int ix;
+
+	      for(ix=0;ix<nodepnt-1;ix++)
+		{
+		  char *mat = attempt_vecmatch(n[0]->nname, n[ix]->nname);
+		  if(!mat) { match_iter = 0; break; } else { free_2(mat); }
+		}
+	    }
+
+	  if(!match_iter)
+	    {
+	      free_2(aname);
+	      aname = NULL;
+	    }
+
+	  if(!b->attribs)
+	    {
+	      if(aname)
+		{
+		  b->name = aname;
+		}
+	      else
+		{
+		  strcpy(b->name=(char *)malloc_2(strlen("<Vector>")+1),"<Vector>");
+		}
+	    }
+	  else
+	    {
+	      if(aname)
+		{
+		  b->name = aname;
+		}
+	      else
+		{
+		  strcpy(b->name=(char *)malloc_2(strlen("<ComplexVector>")+1),"<ComplexVector>");
+		}
+	    }
+	}
+      else
+	{
+	  int ix, offset;
+	  char *nam;
+
+	  offset = strlen(n[0]->nname);
+	  for(ix=offset-1;ix>=0;ix--)
+	    {
+	      if(n[0]->nname[ix]=='[') break;
+	    }
+	  if(ix>-1) offset=ix;
 	
-	        nam=(char *)wave_alloca(offset+40);
-	        memcpy(nam, n[0]->nname, offset);
-		if(direction)
-			{
-                	sprintf(nam+offset, "[%d%s%d]", n[0]->expansion->actual, (bitblast_delta!=0) ? ":" : "|", n[nodepnt-1]->expansion->actual);
-			}
-			else
-			{
-                	sprintf(nam+offset, "[%d%s%d]", n[nodepnt-1]->expansion->actual,  (bitblast_delta!=0) ? ":" : "|", n[0]->expansion->actual);
-			}
+	  nam=(char *)wave_alloca(offset+40);
+	  memcpy(nam, n[0]->nname, offset);
+	  if(direction)
+	    {
+	      sprintf(nam+offset, "[%d%s%d]", n[0]->expansion->actual, (bitblast_delta!=0) ? ":" : "|", n[nodepnt-1]->expansion->actual);
+	    }
+	  else
+	    {
+	      sprintf(nam+offset, "[%d%s%d]", n[nodepnt-1]->expansion->actual,  (bitblast_delta!=0) ? ":" : "|", n[0]->expansion->actual);
+	    }
 	
-		strcpy(b->name=(char *)malloc_2(offset + strlen(nam+offset)+1), nam);
-		DEBUG(printf("Name is: '%s'\n", nam));
-		}
-
-	if((v=bits2vector(b)))
-        	{
-                v->bits=b;      /* only needed for savefile function */
-                AddVector(v);
-                free_2(b->name);
-                b->name=NULL;
-                }
-                else
-                {
-                free_2(b->name);
-		if(b->attribs) free_2(b->attribs);
-                free_2(b);
-                }
-
-	tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
-	tmp=GLOBALS->traces.bufferlast; GLOBALS->traces.bufferlast=GLOBALS->traces.last; GLOBALS->traces.last=tmp;
-	tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
-				GLOBALS->traces.total=tmpi;
-	PasteBuffer();
-	CutBuffer();
-	
-	GLOBALS->signalwindow_width_dirty=1;
-	MaxSignalLength();
-	signalarea_configure_event(GLOBALS->signalarea, NULL);
-	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	  strcpy(b->name=(char *)malloc_2(offset + strlen(nam+offset)+1), nam);
+	  DEBUG(printf("Name is: '%s'\n", nam));
 	}
+
+      if((v=bits2vector(b)))
+	{
+ 	  v->bits=b;      /* only needed for savefile function */
+	}
+      else
+	{
+	  free_2(b->name);
+	  if(b->attribs) free_2(b->attribs);
+	  free_2(b);
+	  return NULL;
+	}
+
+      tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
+      tmp=GLOBALS->traces.bufferlast; GLOBALS->traces.bufferlast=GLOBALS->traces.last; GLOBALS->traces.last=tmp;
+      tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
+      GLOBALS->traces.total=tmpi;
+      PasteBuffer();
+
+      return v;
+
+    }
 }
 
 void
 menu_combine_down(GtkWidget *widget, gpointer data)
 {
-if(GLOBALS->helpbox_is_active)
-        {
-        help_text_bold("\n\nCombine Down");
-        help_text(
+  if(GLOBALS->helpbox_is_active)
+    {
+      help_text_bold("\n\nCombine Down");
+      help_text(
                 " coalesces the highlighted signals into a single vector named"
 		" \"<Vector>\" in a top to bottom fashion"
                 " placed after the last highlighted trace.  The original traces will"
                 " be placed in the cut buffer."
 		" It will function seemingly randomly"
 		" when used upon real valued single-bit traces."
-        );
-        return;
-        }
+		);
+      return;
+    }
 
-if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-menu_combine(1); /* down */
+  if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+  bvptr v = combine_traces(1); /* down */
+
+  if (v)
+    {
+      AddVector(v, NULL);
+      free_2(v->bits->name);
+      v->bits->name=NULL;
+
+      Trptr t;
+
+      t = GLOBALS->traces.last;
+
+      RemoveTrace(t, 0);
+
+      /* t is now the composite signal trace */
+
+      create_group("unused_0", t);
+
+      GLOBALS->signalwindow_width_dirty=1;
+      MaxSignalLength();
+      signalarea_configure_event(GLOBALS->signalarea, NULL);
+      wavearea_configure_event(GLOBALS->wavearea, NULL);
+
+      menu_rename(widget, data);
+    }
+  else
+    {
+    }
 }
 
 void
 menu_combine_up(GtkWidget *widget, gpointer data)
 {
-if(GLOBALS->helpbox_is_active)
-        {
-        help_text_bold("\n\nCombine Up");
-        help_text(
+  if(GLOBALS->helpbox_is_active)
+    {
+      help_text_bold("\n\nCombine Up");
+      help_text(
                 " coalesces the highlighted signals into a single vector named"
                 " \"<Vector>\" in a bottom to top fashion"
                 " placed after the last highlighted trace.  The original traces will"
                 " be placed in the cut buffer."
 		" It will function seemingly randomly"
 		" when used upon real valued single-bit traces."
-        );
-        return;
-        }
+		);
+      return;
+    }
 
-if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-menu_combine(0); /* up */
+  if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+  bvptr v = combine_traces(0); /* up */
+
+  if (v)
+    {
+      AddVector(v, NULL);
+      free_2(v->bits->name);
+      v->bits->name=NULL;
+
+      Trptr t;
+
+      t = GLOBALS->traces.last;
+
+      RemoveTrace(t, 0);
+
+      /* t is now the composite signal trace */
+
+      create_group("unused_1", t);
+
+      GLOBALS->signalwindow_width_dirty=1;
+      MaxSignalLength();
+      signalarea_configure_event(GLOBALS->signalarea, NULL);
+      wavearea_configure_event(GLOBALS->wavearea, NULL);
+
+      menu_rename(widget, data);
+    }
+  else
+    {
+    }
 }
 
 /**/
@@ -2017,35 +2545,35 @@ if(dirty)
 
 	while(t)
 		{
-		if(t->flags&TR_HIGHLIGHT)
+		  if(t->flags&TR_HIGHLIGHT)
+		    {
+		      if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))
 			{
-                        if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))
-                                {
-                                AddBlankTrace(t->name);
-                                }
-				else
-				{
-				if(t->vector)
-					{
-					bptr bits;
-					bits=t->n.vec->bits;
-					if(bits->nbits==1)
-						{
-						AddNode(bits->nodes[0],NULL);
-						}
-						else
-						{
-						/* reset the cut criteria */
-						t->flags&=(~TR_HIGHLIGHT);
-						}
-					}
-					else
-					{
-					AddNode(t->n.nd,NULL);
-					}
-				}
+			  AddBlankTrace(t->name);
 			}
-		t=t->t_next;
+		      else
+			{
+			  if(t->vector)
+			    {
+			      bptr bits;
+			      bits=t->n.vec->bits;
+			      if(bits->nbits==1)
+				{
+				  AddNode(bits->nodes[0],NULL);
+				}
+			      else
+				{
+				  /* reset the cut criteria */
+				  t->flags&=(~TR_HIGHLIGHT);
+				}
+			    }
+			  else
+			    {
+			      AddNode(t->n.nd,NULL);
+			    }
+			}
+		    }
+		  t=t->t_next;
 		}
 
 	tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
@@ -2053,7 +2581,7 @@ if(dirty)
 	tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
 				GLOBALS->traces.total=tmpi;
 	PasteBuffer();
-	CutBuffer();
+	/* CutBuffer(); */
 	
 	GLOBALS->signalwindow_width_dirty=1;
 	MaxSignalLength();
@@ -2101,20 +2629,16 @@ if(GLOBALS->helpbox_is_active)
         return;
         }
 
-for(t=GLOBALS->traces.first;t;t=t->t_next)
+ for(t=GLOBALS->traces.first;t;t=t->t_next)
 	{
-	if ((t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))||(!(t->flags&TR_HIGHLIGHT))||(!(t->name))) 
-		{
-		continue;
-		}
-		else	/* at least one good trace, so do it */
-		{	
-		tracesearchbox("Waveform Display Search", GTK_SIGNAL_FUNC(menu_tracesearchbox_callback));
-		return;
-		}
+	if ((t->flags&TR_HIGHLIGHT)&&HasWave(t))
+	  {
+	    /* at least one good trace, so do it */
+	    tracesearchbox("Waveform Display Search", GTK_SIGNAL_FUNC(menu_tracesearchbox_callback));
+	    return;
+	  }
 	}
-
-must_sel();
+ must_sel();
 }
 
 /**/
@@ -2219,6 +2743,13 @@ if(GLOBALS->filesel_ok)
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(g_old->notebook), g_old->this_context_page);
 			menu_quit_close_callback(NULL, NULL);
 			}
+
+	
+		/* not sure what's really needed here */
+		/* for now, add back in repscript_name */
+		/* if(GLOBALS->repscript_name) free_2(GLOBALS->repscript_name); */
+/* 		GLOBALS->repscript_name = malloc_2(strlen(g_old->repscript_name)+1); */
+/* 		strcpy(GLOBALS->repscript_name, g_old->repscript_name); */
 		}
                 else
                 {
@@ -2608,108 +3139,107 @@ must_sel();
 /**/
 void menu_remove_aliases(GtkWidget *widget, gpointer data)
 {
-Trptr t;
-int dirty=0;
+  Trptr t;
+  int dirty=0, none_selected = 1;
 
-if(GLOBALS->helpbox_is_active)
-        {
-        help_text_bold("\n\nRemove Highlighted Aliases");
-        help_text(
+  if(GLOBALS->helpbox_is_active)
+    {
+      help_text_bold("\n\nRemove Highlighted Aliases");
+      help_text(
                 " only works when at least one trace has been highlighted. "
                 " Any aliased traces will have their names restored to their"
 		" original names.  As vectors get their names from aliases,"
 		" vector aliases will not be removed."
-        );
-        return;
-        }
+		);
+      return;
+    }
 
-if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+  if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
 
-t=GLOBALS->traces.first;
-while(t)
+  t=GLOBALS->traces.first;
+  while(t)
+    {
+      if(HasAlias(t) && IsSelected(t))
 	{
-	if((!t->vector)&&(t->is_alias))
-		{
-		if(t->name) free_2(t->name);
-		t->is_alias=0;
-		if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))) t->name=t->n.nd->nname; else t->name=NULL;
-		dirty=1;
-		}
-	t=t->t_next;
-	}
 
-if(dirty)
-	{
-	GLOBALS->signalwindow_width_dirty=1;
-	MaxSignalLength();
-	signalarea_configure_event(GLOBALS->signalarea, NULL);
-	wavearea_configure_event(GLOBALS->wavearea, NULL);
-	DEBUG(printf("menu_remove_aliases()\n"));
+	  free_2(t->name_full);
+	  t->name_full = NULL;
+
+	  char* name_full = (t->vector) ? t->n.vec->name : t->n.nd->nname;
+	  t->name = name_full;
+	  if (GLOBALS->hier_max_level) 
+	    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+	  dirty = 1;
 	}
-	else
-	{
-	must_sel();
-	}
+      if (IsSelected(t)) none_selected = 0;
+      t=t->t_next;
+    }
+
+  if(dirty)
+    {
+      GLOBALS->signalwindow_width_dirty=1;
+      MaxSignalLength();
+      signalarea_configure_event(GLOBALS->signalarea, NULL);
+      wavearea_configure_event(GLOBALS->wavearea, NULL);
+      DEBUG(printf("menu_remove_aliases()\n"));
+    }
+  if (none_selected)
+    {
+      must_sel();
+    }
 }
-/**/
+
+
 static void alias_cleanup(GtkWidget *widget, gpointer data)
 {
-Trptr t;
+  Trptr t = GLOBALS->trace_to_alias_menu_c_1;
 
-t=GLOBALS->trace_to_alias_menu_c_1;
-
-if(GLOBALS->entrybox_text)
+  if(GLOBALS->entrybox_text)
+    {
+      char *efix;
+      /* code to turn '{' and '}' into '[' and ']' */
+      if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 	{
-	char *efix;
-
-	if(t->is_alias) free_2(t->name);
-	t->is_alias=1;
-
-	if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+	  efix=GLOBALS->entrybox_text;
+	  while(*efix)
+	    {
+	      if(*efix=='{')
 		{
-		efix=GLOBALS->entrybox_text;
-		while(*efix)
-			{
-			if(*efix==' ')
-				{
-				*efix='_';
-				}
-			efix++;
-			}
+		  *efix='[';
 		}
-
-	if((!t->vector)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
+	      if(*efix=='}')
 		{
-		t->name=(char *)malloc_2(3+strlen(GLOBALS->entrybox_text));
-		strcpy(t->name, "+ ");
-		strcpy(t->name+2, GLOBALS->entrybox_text);
+		  *efix=']';
 		}
-		else
-		{
-		t->name=(char *)malloc_2(1+strlen(GLOBALS->entrybox_text));
-		strcpy(t->name, GLOBALS->entrybox_text);
-		}
-
-	t->flags&=(~TR_HIGHLIGHT);
-
-	GLOBALS->signalwindow_width_dirty=1;
-	MaxSignalLength();
-	signalarea_configure_event(GLOBALS->signalarea, NULL);
-	wavearea_configure_event(GLOBALS->wavearea, NULL);
-	DEBUG(printf("alias_cleanup()\n"));
+	      efix++;
+	    }
 	}
+
+      if (CanAlias(t))
+	{
+	  if(HasAlias(t)) free_2(t->name_full);
+	  t->name_full = (char *)malloc_2(1+strlen(GLOBALS->entrybox_text));
+	  strcpy(t->name_full, GLOBALS->entrybox_text);
+	  t->name = t->name_full;
+	  if(GLOBALS->hier_max_level)
+	    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+
+	  t->flags&= ~TR_HIGHLIGHT;
+	}
+
+      GLOBALS->signalwindow_width_dirty=1;
+      MaxSignalLength();
+      signalarea_configure_event(GLOBALS->signalarea, NULL);
+      wavearea_configure_event(GLOBALS->wavearea, NULL);
+    }
 }
 
 void menu_alias(GtkWidget *widget, gpointer data)
 {
-Trptr t;
-t=GLOBALS->traces.first;
-GLOBALS->trace_to_alias_menu_c_1=NULL;
-
-if(GLOBALS->helpbox_is_active)
-        {
-        help_text_bold("\n\nAlias Highlighted Trace");
-        help_text(
+  if(GLOBALS->helpbox_is_active)
+    {
+      help_text_bold("\n\nAlias Highlighted Trace");
+      help_text(
                 " only works when at least one trace has been highlighted. "
                 " With this function, you will be prompted for an alias"
                 " name for the first highlighted trace.  After successfully"
@@ -2718,31 +3248,42 @@ if(GLOBALS->helpbox_is_active)
 		" will have no such designation.  The purpose of this is to"
 		" provide a fast method of determining which trace names are"
 		" real and which ones are aliases."
-        );
-        return;
-        }
+		);
+      return;
+    }
 
-if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
+  GLOBALS->trace_to_alias_menu_c_1=NULL;
 
-while(t)
-	{
-	if(t->flags&TR_HIGHLIGHT)
-		{
-		GLOBALS->trace_to_alias_menu_c_1=t;
-		break;
-		}
-	t=t->t_next;
-	}
+  /* don't mess with sigs when dnd active */
+  if(GLOBALS->dnd_state) { dnd_error(); return; } 
 
-if(GLOBALS->trace_to_alias_menu_c_1)
+  Trptr t = GLOBALS->traces.first;
+  while(t)
+    {
+      if(IsSelected(t)&&CanAlias(t))
 	{
-	entrybox("Alias Highlighted Trace",300,"",128,GTK_SIGNAL_FUNC(alias_cleanup));
+	  GLOBALS->trace_to_alias_menu_c_1=t;
+	  break;
 	}
-	else
-	{
-	must_sel();
-	}
+      t=t->t_next;
+    }
+
+  if(GLOBALS->trace_to_alias_menu_c_1)
+    {
+      char* current = GetFullName(GLOBALS->trace_to_alias_menu_c_1);
+      ClearTraces();
+      GLOBALS->trace_to_alias_menu_c_1->flags |= TR_HIGHLIGHT;
+      entrybox("Alias Highlighted Trace",300,current,NULL,128,GTK_SIGNAL_FUNC(alias_cleanup));
+    }
+  else
+    {
+      must_sel();
+    }
 }
+
+
+
+
 /**/
 void menu_hiersearch_cleanup(GtkWidget *widget, gpointer data)
 {
@@ -2864,7 +3405,7 @@ if(GLOBALS->helpbox_is_active)
         return;
         }
 
-entrybox("Regexp UnHighlight",300,GLOBALS->regexp_string_menu_c_1,128,GTK_SIGNAL_FUNC(regexp_unhighlight_cleanup));
+entrybox("Regexp UnHighlight",300,GLOBALS->regexp_string_menu_c_1,NULL,128,GTK_SIGNAL_FUNC(regexp_unhighlight_cleanup));
 }
 /**/
 static void 
@@ -2888,7 +3429,7 @@ if(GLOBALS->helpbox_is_active)
         return;
         }
 
-entrybox("Regexp Highlight",300,GLOBALS->regexp_string_menu_c_1,128,GTK_SIGNAL_FUNC(regexp_highlight_cleanup));
+entrybox("Regexp Highlight",300,GLOBALS->regexp_string_menu_c_1,NULL,128,GTK_SIGNAL_FUNC(regexp_highlight_cleanup));
 }
 
 /**/
@@ -3003,12 +3544,14 @@ void write_save_helper(FILE *wave) {
 
 			if(t->vector)
 				{
+
+				if (HasAlias(t)) { fprintf(wave,"+{%s} ", t->name_full); }
 				int ix;
 				nptr *nodes;
 				bptr bits = t->n.vec->bits;
 				baptr ba = bits ? bits->attribs : NULL;
 
-				fprintf(wave,"%c%s", ba ? ':' : '#', t->name);
+				fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
 
 				nodes=t->n.vec->bits->nodes;
 				for(ix=0;ix<t->n.vec->nbits;ix++)
@@ -3030,15 +3573,15 @@ void write_save_helper(FILE *wave) {
 				}
 				else
 				{
-				if(t->is_alias)
+				if(HasAlias(t))
 					{
 					if(t->n.nd->expansion)
 						{
-						fprintf(wave,"+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
+						fprintf(wave,"+{%s} (%d)%s\n",t->name_full,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
 						}
 						else
 						{
-						fprintf(wave,"+%s %s\n",t->name+2,append_array_row(t->n.nd));
+						fprintf(wave,"+{%s} %s\n",t->name_full,append_array_row(t->n.nd));
 						}
 					}
 					else
@@ -3128,12 +3671,14 @@ void write_save_helper(FILE *wave) {
 
 					if(t->vector)
 						{
+						if (HasAlias(t)) { fprintf(wave,"+{%s} ", t->name_full); }
+
 						int ix;
 						nptr *nodes;
 						bptr bits = t->n.vec->bits;
 						baptr ba = bits ? bits->attribs : NULL;
 
-						fprintf(wave,"%c%s", ba ? ':' : '#', t->name);
+						fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
 
 						nodes=t->n.vec->bits->nodes;
 						for(ix=0;ix<t->n.vec->nbits;ix++)
@@ -3155,15 +3700,15 @@ void write_save_helper(FILE *wave) {
 						}
 						else
 						{
-						if(t->is_alias)
+						if(HasAlias(t))
 							{
 							if(t->n.nd->expansion)
 								{
-								fprintf(wave,"+%s (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
+								fprintf(wave,"+{%s} (%d)%s\n",t->name_full,t->n.nd->expansion->parentbit, append_array_row(t->n.nd->expansion->parent));
 								}
 								else
 								{
-								fprintf(wave,"+%s %s\n",t->name+2,append_array_row(t->n.nd));
+								fprintf(wave,"+{%s} %s\n",t->name_full,append_array_row(t->n.nd));
 								}
 							}
 							else
@@ -3322,14 +3867,15 @@ void read_save_helper(char *wname) {
 
 		if(GLOBALS->traces.total)
 			{
-			AddBlankTrace(NULL); /* in order to terminate any possible collapsed groups */
+			  GLOBALS->group_depth=0;
+			  /*		 AddBlankTrace(NULL); in order to terminate any possible collapsed groups */
 			}
 
 		if(GLOBALS->is_lx2)
 			{
 	                while((iline=fgetmalloc(wave)))
 	                        {
-	                        parsewavline_lx2(iline, 0);
+	                        parsewavline_lx2(iline, NULL, 0);
 	                        free_2(iline);
 	                        }
 
@@ -3360,7 +3906,7 @@ void read_save_helper(char *wname) {
 
                 while((iline=fgetmalloc(wave)))
                         {
-                        parsewavline(iline, 0);
+                        parsewavline(iline, NULL, 0);
 			any_shadow |= GLOBALS->shadow_active;
                         free_2(iline);
                         }
@@ -3639,7 +4185,7 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 
 DEBUG(printf("Insert Comment Trace\n"));
 
-entrybox("Insert Comment Trace",300,"",128,GTK_SIGNAL_FUNC(comment_trace_cleanup));
+entrybox("Insert Comment Trace",300,"",NULL,128,GTK_SIGNAL_FUNC(comment_trace_cleanup));
 }
 /**/
 static void movetotime_cleanup(GtkWidget *widget, gpointer data)
@@ -3695,7 +4241,7 @@ if(GLOBALS->helpbox_is_active)
 
 reformat_time(gt, GLOBALS->tims.start, GLOBALS->time_dimension);
 
-entrybox("Move To Time",200,gt,20,GTK_SIGNAL_FUNC(movetotime_cleanup));
+entrybox("Move To Time",200,gt,NULL,20,GTK_SIGNAL_FUNC(movetotime_cleanup));
 }
 /**/
 static void fetchsize_cleanup(GtkWidget *widget, gpointer data)
@@ -3737,7 +4283,7 @@ if(GLOBALS->helpbox_is_active)
 
 reformat_time(fw, GLOBALS->fetchwindow, GLOBALS->time_dimension);
 
-entrybox("New Fetch Size",200,fw,20,GTK_SIGNAL_FUNC(fetchsize_cleanup));
+entrybox("New Fetch Size",200,fw,NULL,20,GTK_SIGNAL_FUNC(fetchsize_cleanup));
 }
 /**/
 static void zoomsize_cleanup(GtkWidget *widget, gpointer data)
@@ -3790,7 +4336,7 @@ if(GLOBALS->helpbox_is_active)
 
 sprintf(za,"%g",(float)(GLOBALS->tims.zoom));
 
-entrybox("New Zoom Amount",200,za,20,GTK_SIGNAL_FUNC(zoomsize_cleanup));
+entrybox("New Zoom Amount",200,za,NULL,20,GTK_SIGNAL_FUNC(zoomsize_cleanup));
 }
 /**/
 static void zoombase_cleanup(GtkWidget *widget, gpointer data)
@@ -3841,34 +4387,33 @@ if(GLOBALS->helpbox_is_active)
 
 sprintf(za,"%g",GLOBALS->zoombase);
 
-entrybox("New Zoom Base Amount",200,za,20,GTK_SIGNAL_FUNC(zoombase_cleanup));
+entrybox("New Zoom Base Amount",200,za,NULL,20,GTK_SIGNAL_FUNC(zoombase_cleanup));
 }
 /**/
 static void dataformat(int mask, int patch)
 {
-Trptr t;
-int fix=0;
+  Trptr t;
+  int fix=0;
 
-if((t=GLOBALS->traces.first))
+  if((t=GLOBALS->traces.first))
+    {
+      while(t)
 	{
-	while(t)
-		{
-		if(t->flags&TR_HIGHLIGHT)
-			{
-			t->minmax_valid = 0; /* for analog in full trace minmax mode ... ensure recalc occurs if "signed" is flipped */
-			t->flags=((t->flags)&mask)|patch;
-			fix=1;
-			}
-		t=t->t_next;
-		}
-	if(fix)
-		{
-		GLOBALS->signalwindow_width_dirty=1;
-		MaxSignalLength();
-		signalarea_configure_event(GLOBALS->signalarea, NULL);
-		wavearea_configure_event(GLOBALS->wavearea, NULL);
-		}
+	  if(IsSelected(t)&&!IsShadowed(t))
+	    {
+	      t->flags=((t->flags)&mask)|patch;
+	      fix=1;
+	    }
+	  t=t->t_next;
 	}
+      if(fix)
+	{
+	  GLOBALS->signalwindow_width_dirty=1;
+	  MaxSignalLength();
+	  signalarea_configure_event(GLOBALS->signalarea, NULL);
+	  wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+    }
 }
 
 void
@@ -4333,51 +4878,6 @@ if((t=GLOBALS->traces.first))
 	wavearea_configure_event(GLOBALS->wavearea, NULL);
 	}
 }
-/**/
-void
-menu_collapse_all(GtkWidget *widget, gpointer data)
-{
-if(GLOBALS->helpbox_is_active)
-	{
-	help_text_bold("\n\nCollapse All Groups");
-	help_text(
-		" causes all groups defined by comment traces to collapse."
-		" Groups are manually toggled collapsed and uncollapsed individually by holding"
-		" down CTRL and pressing the left mouse button on a comment"
-		" trace."
-	);
-	return;
-	}
-
-CollapseAllGroups();
-GLOBALS->signalwindow_width_dirty=1;
-MaxSignalLength();
-signalarea_configure_event(GLOBALS->signalarea, NULL);
-wavearea_configure_event(GLOBALS->wavearea, NULL);
-}
-
-void
-menu_expand_all(GtkWidget *widget, gpointer data)
-{
-if(GLOBALS->helpbox_is_active)
-	{
-	help_text_bold("\n\nExpand All Groups");
-	help_text(
-		" causes all groups defined by comment traces to expand."
-		" Groups are manually toggled collapsed and uncollapsed individually by holding"
-		" down CTRL and pressing the left mouse button on a comment"
-		" trace."
-	);
-	return;
-	}
-
-ExpandAllGroups();
-GLOBALS->signalwindow_width_dirty=1;
-MaxSignalLength();
-signalarea_configure_event(GLOBALS->signalarea, NULL);
-wavearea_configure_event(GLOBALS->wavearea, NULL);
-}
-/**/
 
 void menu_lexize(GtkWidget *widget, gpointer data)
 {
@@ -4756,7 +5256,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Write Save File", "<Control>S", menu_write_save_file, WV_MENU_FWSF, "<Item>"),
     WAVE_GTKIFE("/File/Write Save File As", "<Shift><Control>S", menu_write_save_file_as, WV_MENU_FWSFAS, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2, "<Separator>"),
-    WAVE_GTKIFE("/File/Read Sim Logfile", "<Control>L", menu_read_log_file, WV_MENU_FRLF, "<Item>"),
+    WAVE_GTKIFE("/File/Read Sim Logfile", "L", menu_read_log_file, WV_MENU_FRLF, "<Item>"),
       /* 10 */
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_SEP2LF, "<Separator>"),
 #if !defined _MSC_VER
@@ -4771,16 +5271,22 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Quit/Don't Quit", NULL, NULL, WV_MENU_FQN, "<Item>"),
 
     WAVE_GTKIFE("/Edit/Set Trace Max Hier", NULL, menu_set_max_hier, WV_MENU_ESTMH, "<Item>"),
+    WAVE_GTKIFE("/Edit/Toggle Trace Hier", "H", menu_toggle_hier, WV_MENU_ETH, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP3, "<Separator>"),
     WAVE_GTKIFE("/Edit/Insert Blank", "<Control>B", menu_insert_blank_traces, WV_MENU_EIB, "<Item>"),
     WAVE_GTKIFE("/Edit/Insert Comment", NULL, menu_insert_comment_traces, WV_MENU_EIC, "<Item>"),
     WAVE_GTKIFE("/Edit/Insert Analog Height Extension", NULL, menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
-    WAVE_GTKIFE("/Edit/Alias Highlighted Trace", "<Alt>A", menu_alias, WV_MENU_EAHT, "<Item>"),
-    WAVE_GTKIFE("/Edit/Remove Highlighted Aliases", "<Shift><Alt>A", menu_remove_aliases, WV_MENU_ERHA, "<Item>"),
-      /* 20 */
+
+
     WAVE_GTKIFE("/Edit/Cut", "<Control>X", menu_cut_traces, WV_MENU_EC, "<Item>"),
     WAVE_GTKIFE("/Edit/Copy", "<Control>C", menu_copy_traces, WV_MENU_ECY, "<Item>"),
     WAVE_GTKIFE("/Edit/Paste", "<Control>V", menu_paste_traces, WV_MENU_EP, "<Item>"),
+
+    WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP3A, "<Separator>"),
+
+    WAVE_GTKIFE("/Edit/Alias Highlighted Trace", "<Alt>A", menu_alias, WV_MENU_EAHT, "<Item>"),
+    WAVE_GTKIFE("/Edit/Remove Highlighted Aliases", "<Shift><Alt>A", menu_remove_aliases, WV_MENU_ERHA, "<Item>"),
+      /* 20 */
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP4, "<Separator>"),
     WAVE_GTKIFE("/Edit/Expand", "F3", menu_expand, WV_MENU_EE, "<Item>"),
     WAVE_GTKIFE("/Edit/Combine Down", "F4", menu_combine_down, WV_MENU_ECD, "<Item>"),
@@ -4828,9 +5334,11 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Exclude", "<Shift><Alt>E", menu_dataformat_exclude_on, WV_MENU_EEX, "<Item>"),
     WAVE_GTKIFE("/Edit/Show", "<Shift><Alt>S", menu_dataformat_exclude_off, WV_MENU_ESH, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6A, "<Separator>"),
-    WAVE_GTKIFE("/Edit/Expand All Groups", "F12", menu_expand_all, WV_MENU_EXA, "<Item>"),
-    WAVE_GTKIFE("/Edit/Collapse All Groups", "<Shift>F12", menu_collapse_all, WV_MENU_CPA, "<Item>"),
+    /* WAVE_GTKIFE("/Edit/Expand All Groups", "F12", menu_expand_all, WV_MENU_EXA, "<Item>"), */
+    /* WAVE_GTKIFE("/Edit/Collapse All Groups", "<Shift>F12", menu_collapse_all, WV_MENU_CPA, "<Item>"), */
       /* 60 */
+    WAVE_GTKIFE("/Edit/Toggle Group Open|Close", "T", menu_toggle_group, WV_MENU_TG, "<Item>"),
+    WAVE_GTKIFE("/Edit/Create Group", "G", menu_create_group, WV_MENU_AG, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP6A1, "<Separator>"),
     WAVE_GTKIFE("/Edit/Highlight Regexp", "<Alt>R", menu_regexp_highlight, WV_MENU_EHR, "<Item>"),
     WAVE_GTKIFE("/Edit/UnHighlight Regexp", "<Shift><Alt>R", menu_regexp_unhighlight, WV_MENU_EUHR, "<Item>"),
@@ -5393,10 +5901,46 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
                   button, event_time);
 }
 
+void SetTraceScrollbarRowValue(int row, unsigned location)
+{
+  if(row >= 0)
+    {
+      GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+      int target = row;
+
+      int num_traces_displayable=(GLOBALS->signalarea->allocation.height)/(GLOBALS->fontheight);
+      num_traces_displayable--;   /* for the time trace that is always there */
+
+      /* center */
+      if (location == 1) {
+	target = target - num_traces_displayable/2;
+      }
+
+      /* end */
+      if (location == 2) {
+	target = target - num_traces_displayable;
+      }
+
+      if(target > GLOBALS->traces.visible - num_traces_displayable) target = GLOBALS->traces.visible - num_traces_displayable;
+
+      if(target < 0) target = 0;
+
+      wadj->value = target;
+
+      gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
+      gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
+      gtkwave_gtk_main_iteration();
+
+    }
+}
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.70  2009/07/16 15:42:13  gtkwave
+ * only copy over translate filenames for now (all the others on a new tab
+ * might be disruptive)
+ *
  * Revision 1.69  2009/07/16 15:36:34  gtkwave
  * file name updates...derive unspecified names from loaded file name directory
  *

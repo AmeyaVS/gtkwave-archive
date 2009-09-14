@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.2.4_pre (w)1999-2009 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.0_pre1 (w)1999-2009 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -94,7 +94,7 @@ void force_normal_gcs(void);
 void draw_signalarea_focus(void);
 gint signalarea_configure_event(GtkWidget *widget, GdkEventConfigure *event);
 gint wavearea_configure_event(GtkWidget *widget, GdkEventConfigure *event);
-void entrybox(char *title, int width, char *default_text, int maxch, GtkSignalFunc func);
+void entrybox(char *title, int width, char *dflt_text, char *comment, int maxch, GtkSignalFunc func);
 void fileselbox_old(char *title, char **filesel_path, GtkSignalFunc ok_func, GtkSignalFunc notok_func, char *pattn);
 void fileselbox(char *title, char **filesel_path, GtkSignalFunc ok_func, GtkSignalFunc notok_func, char *pattn, int is_writemode);
 void status_text(char *str);
@@ -176,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.60  2009/09/08 15:31:48  gtkwave
+ * handle floating-point numbers in unformat_time()
+ *
  * Revision 1.59  2009/08/11 22:08:58  gtkwave
  * added iconify for gtkwave
  *

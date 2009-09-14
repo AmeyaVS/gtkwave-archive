@@ -70,6 +70,10 @@
 #include "ptranslate.h"
 
 #include "tcl_helper.h"
+#if defined(HAVE_LIBTCL)
+#include <tcl.h>
+#include <tk.h>
+#endif
 
 static void switch_page(GtkNotebook     *notebook,
 			GtkNotebookPage *page,
@@ -226,8 +230,8 @@ static void print_help(char *nam)
 #endif
 
 #if defined(HAVE_LIBTCL)
-#define REPSCRIPT_GETOPT "  -R, --repscript=FILE       specify timer-driven Tcl command script file\n"\
-                         "  -P, --repperiod=VALUE      specify repscript period in msec (default: 500)\n"
+#define REPSCRIPT_GETOPT "  -T, --tcl_init=FILE        specify Tcl command script file to be loaded on startup\n" \
+                         "  -W, --wish                 enable Tcl command line on stdio\n"
 #else
 #define REPSCRIPT_GETOPT
 #endif
@@ -313,6 +317,31 @@ gtk_main();
 return(GLOBALS->ftext_main_main_c_1);
 }
 
+/*
+ * Modify the name of the executable (argv[0]) handed to Tk_MainEx;
+ * The new executable name has _[pid] appended. This gives a unique
+ * (and known) name to the interpreter (for use with send).
+ */
+void addPidToExecutableName(int argc, char* argv[], char* argv_mod[])
+{
+  int i;
+  for(i=0;i<argc;i++)
+    {
+      argv_mod[i] = argv[i];
+    }
+
+  char* pos;
+  char* buffer = malloc_2(strlen(argv[0])+1+10);
+  pos = buffer;
+  strcpy(pos, argv[0]);
+  pos = buffer + strlen(buffer);
+  strcpy(pos, "_");
+  pos = buffer + strlen(buffer);
+  sprintf(pos, "%d", getpid());
+	  
+  argv_mod[0] = buffer;
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -329,6 +358,7 @@ char *output_name = NULL;
 int i;
 int c;
 char is_vcd=0;
+char is_wish=0;
 char is_interactive=0;
 char is_smartsave = 0;
 char is_legacy = 0;
@@ -358,7 +388,6 @@ GtkWidget *timebox;
 GtkWidget *panedwindow;
 GtkWidget *dummy1, *dummy2;
 GtkWidget *toolhandle=NULL;
-int tcl_interpreter_needs_making = 0;
 
 int splash_disable_rc_override = 0;
 int mainwindow_already_built;
@@ -372,7 +401,6 @@ if(!GLOBALS)
 	mainwindow_already_built = 0;
 
 	GLOBALS->logfiles = calloc(1, sizeof(void **)); /* calloc is deliberate! */
-	tcl_interpreter_needs_making = 1;
 	}
 	else
 	{
@@ -459,6 +487,9 @@ if(!GLOBALS)
 	GLOBALS->color_mdgray = old_g->color_mdgray;
 	GLOBALS->color_dkgray = old_g->color_dkgray;
 	GLOBALS->color_dkblue = old_g->color_dkblue;
+	GLOBALS->color_brkred = old_g->color_brkred;
+	GLOBALS->color_ltblue = old_g->color_ltblue;
+	GLOBALS->color_gmstrd = old_g->color_gmstrd;
 	
 	GLOBALS->atomic_vectors = old_g->atomic_vectors;
 	GLOBALS->autoname_bundles = old_g->autoname_bundles;
@@ -611,13 +642,13 @@ while (1)
 		{"giga", 0, 0, 'g'},
 		{"comphier", 0, 0, 'C'},
                 {"legacy", 0, 0, 'L'},  
-		{"repscript", 1, 0, 'R'},
-		{"repperiod", 1, 0, 'P'},
+		{"tcl_init", 1, 0, 'T'},
+		{"wish", 0, 0, 'W'},
 		{"output", 1, 0, 'O' },
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:Fon:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:", long_options, &option_index);
+        c = getopt_long (argc, argv, "f:Fon:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:W", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -630,6 +661,10 @@ while (1)
 			"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
 			);
 			exit(0);
+
+		case 'W':
+			is_wish = 1;
+			break;
 
 		case 'I':
 #if !defined _MSC_VER
@@ -825,26 +860,36 @@ while (1)
 			GLOBALS->do_hier_compress = 1;
 			break;
 
-                case 'R':
-			if(GLOBALS->repscript_name) free_2(GLOBALS->repscript_name);
-			GLOBALS->repscript_name = malloc_2(strlen(optarg)+1);
-			strcpy(GLOBALS->repscript_name, optarg);
+                case 'T':
+		        {
+			  char* pos;
+			  if(GLOBALS->tcl_init_cmd) 
+			    {
+			      int length = strlen(GLOBALS->tcl_init_cmd)+9+strlen(optarg);
+			      char* buffer = malloc_2(strlen(GLOBALS->tcl_init_cmd)+1);
+			      strcpy(buffer, GLOBALS->tcl_init_cmd);
+			      free_2(GLOBALS->tcl_init_cmd);
+			      GLOBALS->tcl_init_cmd = malloc_2(length+1);
+			      strcpy(GLOBALS->tcl_init_cmd, buffer);
+			      pos = GLOBALS->tcl_init_cmd + strlen(GLOBALS->tcl_init_cmd);
+			      free_2(buffer);
+			    }
+			  else
+			    {
+			      int length = 9+strlen(optarg);
+			      GLOBALS->tcl_init_cmd = malloc_2(length+1);
+			      pos = GLOBALS->tcl_init_cmd;
+			    }
+			  strcpy(pos, "; source ");
+			  pos = GLOBALS->tcl_init_cmd + strlen(GLOBALS->tcl_init_cmd);
+			  strcpy(pos, optarg);
+			}
 			break;
 
                 case 'O':
 			if(output_name) free_2(output_name);
 			output_name = malloc_2(strlen(optarg)+1);
 			strcpy(output_name, optarg);
-			break;
-
-                case 'P':
-			{
-			int pd = atoi(optarg);
-			if(pd > 0)
-				{
-				GLOBALS->repscript_period = pd;	
-				}
-			}
 			break;
 
                 case '?':
@@ -946,11 +991,6 @@ if(output_name)
 	}
 
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
-if(tcl_interpreter_needs_making)
-	{
-	GLOBALS->argvlist = zMergeTclList(argc, (const char**)argv);
-	make_tcl_interpreter(argv);
-	}
 
 if((!wname)&&(GLOBALS->make_vcd_save_file))
 	{
@@ -967,7 +1007,10 @@ if(!GLOBALS->loaded_file_name)
 	is_missing_file = 1;
 	GLOBALS->min_time=LLDescriptor(0);
 	GLOBALS->max_time=LLDescriptor(0);
-	fprintf(stderr, "GTKWAVE | Use the -h, --help command line flags to display help.\n");
+	if(!is_wish)
+		{
+		fprintf(stderr, "GTKWAVE | Use the -h, --help command line flags to display help.\n");
+		}
 	}
 	
 /* load either the vcd or aet file depending on suffix then mode setting */
@@ -1273,7 +1316,7 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 			{
 		        while((iline=fgetmalloc(wave)))
 		                {
-		                parsewavline_lx2(iline, 0);
+		                parsewavline_lx2(iline, NULL, 0);
 				free_2(iline);
 		                }
 
@@ -1308,7 +1351,7 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
 	        while((iline=fgetmalloc(wave)))
 	                {
-	                parsewavline(iline, 0);
+	                parsewavline(iline, NULL, 0);
 			any_shadow |= GLOBALS->shadow_active;
 			free_2(iline);
 	                }
@@ -2134,8 +2177,28 @@ if(is_interactive)
 	}
 	else
 	{
-	/* Jump in to the main program loop */
-	gtk_main();
+#if defined(HAVE_LIBTCL)
+	  char* argv_mod[1];
+	  int kk;
+
+	  GLOBALS->interp = Tcl_CreateInterp();
+
+	  if(is_wish)
+		{
+		addPidToExecutableName(1, argv, argv_mod);
+
+		Tk_MainEx(1, argv_mod, gtkwaveInterpreterInit, GLOBALS->interp);
+
+		/* note: for(kk=0;kk<argc;kk++) { free_2(argv_mod[kk]); } can't really be done here, doesn't matter anyway as context free will get it */
+		}
+		else
+		{
+		gtk_main();
+		}
+
+#else
+	  gtk_main();
+#endif
 	}
 
 return(0);
@@ -2496,6 +2559,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.76  2009/08/16 04:41:41  gtkwave
+ * fix -d flag across reloads and new tab openings
+ *
  * Revision 1.75  2009/08/06 20:03:31  gtkwave
  * warnings fixes
  *

@@ -95,6 +95,7 @@ TR_RJUSTIFY, /* default_flags 5 */
 0, /* hier_max_level 8 */
 0, /* timestart_from_savefile */
 0, /* timestart_from_savefile_valid */
+0, /* group_depth */
 
 
 /*
@@ -162,6 +163,9 @@ NULL, /* busycursor_busy_c_1 23 */
 -1, /* color_mdgray 53 */
 -1, /* color_dkgray 54 */
 -1, /* color_dkblue 55 */
+-1, /* color_brkred */
+-1, /* color_ltblue */
+-1, /* color_gmstrd */
 
 
 /*
@@ -431,8 +435,7 @@ NULL, /* argvlist */
 #if defined(HAVE_LIBTCL)
 NULL, /* interp */
 #endif
-NULL, /* repscript_name */
-500, /* repscript_period */
+NULL, /* tcl_init_cmd */
 0, /* tcl_running */
 0, /* block_xy_update */
 NULL, /* winname */
@@ -1170,6 +1173,9 @@ NULL, /* gc_normal 653 */
 NULL, /* gc_mdgray 654 */
 NULL, /* gc_dkgray 655 */
 NULL, /* gc_dkblue 656 */
+NULL, /* gc_brkred */
+NULL, /* gc_ltblue */
+NULL, /* gc_gmstrd */
 0, /* fill_in_smaller_rgb_areas_wavewindow_c_1 659 */
 -1, /* prev_markertime */
 NULL, /* gccache_ltgray */
@@ -1177,6 +1183,9 @@ NULL, /* gccache_normal */
 NULL, /* gccache_mdgray */
 NULL, /* gccache_dkgray */
 NULL, /* gccache_dkblue */
+NULL, /* gccache_brkred */
+NULL, /* gccache_ltblue */
+NULL, /* gccache_gmstrd */
 NULL, /* gccache_back_wavewindow_c_1 */
 NULL, /* gccache_baseline_wavewindow_c_1 */
 NULL, /* gccache_grid_wavewindow_c_1 */
@@ -1414,6 +1423,9 @@ void reload_into_new_context(void)
  new_globals->gc_mdgray = GLOBALS->gc_mdgray;
  new_globals->gc_dkgray = GLOBALS->gc_dkgray;
  new_globals->gc_dkblue = GLOBALS->gc_dkblue;
+ new_globals->gc_brkred = GLOBALS->gc_brkred;
+ new_globals->gc_ltblue = GLOBALS->gc_ltblue;
+ new_globals->gc_gmstrd = GLOBALS->gc_gmstrd;
  new_globals->made_sgc_contexts_wavewindow_c_1 = GLOBALS->made_sgc_contexts_wavewindow_c_1;
 
  new_globals->gc_back_wavewindow_c_1 = GLOBALS->gc_back_wavewindow_c_1;
@@ -1447,6 +1459,9 @@ void reload_into_new_context(void)
  new_globals->gccache_mdgray = GLOBALS->gccache_mdgray;
  new_globals->gccache_dkgray = GLOBALS->gccache_dkgray;
  new_globals->gccache_dkblue = GLOBALS->gccache_dkblue;
+ new_globals->gccache_brkred = GLOBALS->gccache_brkred;
+ new_globals->gccache_ltblue = GLOBALS->gccache_ltblue;
+ new_globals->gccache_gmstrd = GLOBALS->gccache_gmstrd;
  new_globals->gccache_back_wavewindow_c_1 = GLOBALS->gccache_back_wavewindow_c_1;
  new_globals->gccache_baseline_wavewindow_c_1 = GLOBALS->gccache_baseline_wavewindow_c_1;
  new_globals->gccache_grid_wavewindow_c_1 = GLOBALS->gccache_grid_wavewindow_c_1;
@@ -1576,6 +1591,9 @@ void reload_into_new_context(void)
  new_globals->color_mdgray = GLOBALS->color_mdgray;
  new_globals->color_dkgray = GLOBALS->color_dkgray;
  new_globals->color_dkblue = GLOBALS->color_dkblue;
+ new_globals->color_brkred = GLOBALS->color_brkred;
+ new_globals->color_ltblue = GLOBALS->color_ltblue;
+ new_globals->color_gmstrd = GLOBALS->color_gmstrd;
 
  new_globals->atomic_vectors = GLOBALS->atomic_vectors;
  new_globals->autoname_bundles = GLOBALS->autoname_bundles;
@@ -1639,8 +1657,7 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->fontname_signals, &GLOBALS->fontname_signals); 
  strcpy2_into_new_context(new_globals, &new_globals->fontname_waves, &GLOBALS->fontname_waves);
  strcpy2_into_new_context(new_globals, &new_globals->cutcopylist, &GLOBALS->cutcopylist);
- strcpy2_into_new_context(new_globals, &new_globals->repscript_name, &GLOBALS->repscript_name);
- new_globals->repscript_period = GLOBALS->repscript_period;
+ strcpy2_into_new_context(new_globals, &new_globals->tcl_init_cmd, &GLOBALS->tcl_init_cmd);
 
  /* hierarchy handling from vcd.c */
  if(GLOBALS->hier_pfx) { jrb_free_tree(GLOBALS->hier_pfx); GLOBALS->hier_pfx = NULL; }
