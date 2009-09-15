@@ -87,10 +87,16 @@ as automated Postscript file generation.  If the script filename is suffixed wit
 to be Tcl.
 .TP
 \fB\-T\fR,\fB\-\-tcl_init\fR <\fIfilename\fP>
-Specify Tcl command script to be loaded on startup.
+Specify Tcl command script to be loaded on startup.  Implies \-\-wish command flag.
 .TP 
 \fB\-W\fR,\fB\-\-wish\fR
 Enable Tcl command line on stdio.  All script commands can be typed in on stdin.
+.TP
+\fB\-R\fR,\fB\-\-repscript\fR <\fIfilename\fP>
+Specify Tcl command script for periodic execution.
+.TP
+\fB\-P\fR,\fB\-\-repperiod\fR <\fIvalue\fP>
+Specifies delay in milliseconds between successive executions of the repscript.  Default is 500.
 .TP
 \fB\-X\fR,\fB\-\-xid\fR <\fIXID\fP>
 Specify XID of window for a GtkPlug to connect to.  GTKWave does not directly render to a window but instead renders into a 
