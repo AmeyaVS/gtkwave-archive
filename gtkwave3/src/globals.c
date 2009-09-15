@@ -435,6 +435,8 @@ NULL, /* argvlist */
 #if defined(HAVE_LIBTCL)
 NULL, /* interp */
 #endif
+NULL, /* repscript_name */
+500, /* repscript_period */
 NULL, /* tcl_init_cmd */
 0, /* tcl_running */
 0, /* block_xy_update */
@@ -1658,6 +1660,8 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->fontname_waves, &GLOBALS->fontname_waves);
  strcpy2_into_new_context(new_globals, &new_globals->cutcopylist, &GLOBALS->cutcopylist);
  strcpy2_into_new_context(new_globals, &new_globals->tcl_init_cmd, &GLOBALS->tcl_init_cmd);
+ strcpy2_into_new_context(new_globals, &new_globals->repscript_name, &GLOBALS->repscript_name);
+ new_globals->repscript_period = GLOBALS->repscript_period;
 
  /* hierarchy handling from vcd.c */
  if(GLOBALS->hier_pfx) { jrb_free_tree(GLOBALS->hier_pfx); GLOBALS->hier_pfx = NULL; }

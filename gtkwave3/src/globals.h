@@ -431,6 +431,8 @@ char *argvlist;
 #ifdef HAVE_LIBTCL
 Tcl_Interp *interp;
 #endif
+char *repscript_name;
+unsigned int repscript_period;
 char *tcl_init_cmd;
 char tcl_running;
 char block_xy_update;

@@ -231,7 +231,9 @@ static void print_help(char *nam)
 
 #if defined(HAVE_LIBTCL)
 #define REPSCRIPT_GETOPT "  -T, --tcl_init=FILE        specify Tcl command script file to be loaded on startup\n" \
-                         "  -W, --wish                 enable Tcl command line on stdio\n"
+                         "  -W, --wish                 enable Tcl command line on stdio\n" \
+                         "  -R, --repscript=FILE       specify timer-driven Tcl command script file\n" \
+                         "  -P, --repperiod=VALUE      specify repscript period in msec (default: 500)\n"
 #else
 #define REPSCRIPT_GETOPT
 #endif
@@ -388,6 +390,7 @@ GtkWidget *timebox;
 GtkWidget *panedwindow;
 GtkWidget *dummy1, *dummy2;
 GtkWidget *toolhandle=NULL;
+int tcl_interpreter_needs_making = 0;
 
 int splash_disable_rc_override = 0;
 int mainwindow_already_built;
@@ -399,6 +402,7 @@ if(!GLOBALS)
 	{
 	set_GLOBALS(initialize_globals());
 	mainwindow_already_built = 0;
+	tcl_interpreter_needs_making = 1;
 
 	GLOBALS->logfiles = calloc(1, sizeof(void **)); /* calloc is deliberate! */
 	}
@@ -644,6 +648,8 @@ while (1)
                 {"legacy", 0, 0, 'L'},  
 		{"tcl_init", 1, 0, 'T'},
 		{"wish", 0, 0, 'W'},
+                {"repscript", 1, 0, 'R'},   
+                {"repperiod", 1, 0, 'P'},
 		{"output", 1, 0, 'O' },
                 {0, 0, 0, 0}
                 };
@@ -860,9 +866,26 @@ while (1)
 			GLOBALS->do_hier_compress = 1;
 			break;
 
+                case 'R':
+                        if(GLOBALS->repscript_name) free_2(GLOBALS->repscript_name);
+                        GLOBALS->repscript_name = malloc_2(strlen(optarg)+1);
+                        strcpy(GLOBALS->repscript_name, optarg);
+                        break;
+                
+                case 'P':   
+                        {
+                        int pd = atoi(optarg);
+                        if(pd > 0)
+                                {
+                                GLOBALS->repscript_period = pd;
+                                }
+                        }
+                        break;
+
                 case 'T':
 		        {
 			  char* pos;
+			  is_wish = 1;
 			  if(GLOBALS->tcl_init_cmd) 
 			    {
 			      int length = strlen(GLOBALS->tcl_init_cmd)+9+strlen(optarg);
@@ -991,6 +1014,14 @@ if(output_name)
 	}
 
 fprintf(stderr, "\n%s\n\n",WAVE_VERSION_INFO);
+if(!is_wish)
+	{
+	if(tcl_interpreter_needs_making)
+	        {
+	        GLOBALS->argvlist = zMergeTclList(argc, (const char**)argv);
+	        make_tcl_interpreter(argv);
+	        }
+	}
 
 if((!wname)&&(GLOBALS->make_vcd_save_file))
 	{
@@ -2178,6 +2209,8 @@ if(is_interactive)
 	else
 	{
 #if defined(HAVE_LIBTCL)
+	if(is_wish)
+	  {
 	  char* argv_mod[1];
 	  int kk;
 
@@ -2195,7 +2228,11 @@ if(is_interactive)
 		{
 		gtk_main();
 		}
-
+	  }
+	  else
+	  {
+	  gtk_main();
+          }
 #else
 	  gtk_main();
 #endif
@@ -2559,6 +2596,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.77  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.76  2009/08/16 04:41:41  gtkwave
  * fix -d flag across reloads and new tab openings
  *
@@ -2836,4 +2876,3 @@ void optimize_vcd_file(void) {
  * initial release
  *
  */
-

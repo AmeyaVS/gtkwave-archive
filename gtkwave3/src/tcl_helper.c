@@ -2486,6 +2486,10 @@ GLOBALS->script_handle = old_handle;
 return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewStringObj(reportString, -1); Tcl_SetObjResult(interp, aobj); */
 }
 
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXX  Bluespec Tcl Variant  XXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
 void gtkUpdate(ClientData ignore)
 {
   while (gtk_events_pending()) { gtk_main_iteration(); }
@@ -2550,12 +2554,123 @@ int  gtkwaveInterpreterInit(Tcl_Interp *interp) {
   return TCL_OK;
 }
 
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXX  Simpod Tcl Variant  XXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+static gboolean repscript_timer(gpointer dummy)
+{
+static gboolean run_once = FALSE;
+
+if(run_once == FALSE) /* avoid any race conditions with the toolkit for uninitialized data */
+        {
+        run_once = TRUE;
+        return(TRUE);
+        }
+
+if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
+	{
+	int tclrc;
+	int nlen = strlen(GLOBALS->repscript_name);
+	char *tcl_cmd = malloc_2(7 + nlen + 1);
+	strcpy(tcl_cmd, "source ");
+	strcpy(tcl_cmd+7, GLOBALS->repscript_name);
+
+	GLOBALS->tcl_running = 1;
+	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
+	GLOBALS->tcl_running = 0;
+	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
+
+	free_2(tcl_cmd);
+	return(TRUE);
+	}
+	else
+	{
+	return(FALSE);
+	}
+}
+
+void make_tcl_interpreter(char *argv[])
+{
+int i;
+char commandName[128];
+GtkItemFactoryEntry *ife;
+int num_menu_items;
+
+Tcl_FindExecutable(argv[0]);
+
+GLOBALS->interp = Tcl_CreateInterp();
+
+if (TCL_OK != Tcl_Init(GLOBALS->interp)) 
+	{
+   	fprintf(stderr, "GTKWAVE | Tcl_Init error: %s\n", Tcl_GetStringResult (GLOBALS->interp));
+   	exit(EXIT_FAILURE);
+  	}
+
+strcpy(commandName, "gtkwave::");
+
+ife = retrieve_menu_items_array(&num_menu_items);
+for(i=0;i<num_menu_items;i++)
+	{
+	if(ife[i].callback)
+		{
+		char *pnt = commandName + 9;
+		strcpy(pnt, ife[i].path);	
+		while(*pnt)
+			{
+			if(*pnt==' ') *pnt='_';
+			pnt++;
+			}
+	
+	      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
+	                (Tcl_ObjCmdProc *)menu_func,
+	                (ClientData)(ife+i), (Tcl_CmdDeleteProc *)NULL);
+		}
+	}
+
+
+for (i = 0; gtkwave_commands[i].func != NULL; i++) 
+	{
+      	strcpy(commandName + 9, gtkwave_commands[i].cmdstr);
+
+      	Tcl_CreateObjCommand(GLOBALS->interp, commandName,
+                (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
+                (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+   	}
+
+if(GLOBALS->repscript_name)
+	{
+	FILE *f = fopen(GLOBALS->repscript_name, "rb");
+	if(f)
+		{
+		fclose(f);
+		g_timeout_add(GLOBALS->repscript_period, repscript_timer, NULL);
+		}
+		else
+		{
+		fprintf(stderr, "GTKWAVE | Could not open repscript '%s', exiting.\n", GLOBALS->repscript_name);
+		perror("Why");
+		exit(255);
+		}
+	}
+}
+
+#else
+
+void make_tcl_interpreter(char *argv[])
+{
+/* nothing */
+}
+
 #endif
 
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.54  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.53  2009/06/08 06:03:47  gtkwave
  * add fst to dnd filetypes
  *
