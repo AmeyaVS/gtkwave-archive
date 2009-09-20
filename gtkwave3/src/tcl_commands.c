@@ -30,6 +30,7 @@
 #include "hierpack.h"
 #include "menu.h"
 #include "tcl_helper.h"
+#include "tcl_support_commands.h"
 
 #if !defined __MINGW32__ && !defined _MSC_VER
 #include <sys/types.h>
@@ -1438,6 +1439,7 @@ return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
 
 static int gtkwavetcl_forceOpenTreeNode(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+  int rv = -100;		/* Tree does not exist */
 if(objc == 2)
         {
         char *s = Tcl_GetString(objv[1]);
@@ -1447,18 +1449,14 @@ if(objc == 2)
 		int len = strlen(s);
 		if(s[len-1]!=GLOBALS->hier_delimeter)
 			{
-			char *s2 = calloc_2(1, len+2);
-			strcpy(s2, s);
-			s2[len] = GLOBALS->hier_delimeter;
 #ifdef WAVE_USE_GTK2
-			force_open_tree_node(s2);
+			rv = SST_open_node(s);
 #endif
-			free_2(s2);
 			}
 			else
 			{
 #ifdef WAVE_USE_GTK2
-			force_open_tree_node(s);
+			rv = SST_open_node(s);
 #endif
 			}
 		}
@@ -1469,6 +1467,7 @@ if(objc == 2)
         {
         return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
         }
+ Tcl_SetObjResult(GLOBALS->interp, Tcl_NewIntObj(rv)) ;
 
 return(TCL_OK);
 }
@@ -1749,6 +1748,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.24  2009/03/26 20:57:42  gtkwave
  * added MISSING_FILE support for bringing up gtkwave without a dumpfile
  *

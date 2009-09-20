@@ -107,7 +107,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window);
 GtkWidget* treeboxframe(char *title, GtkSignalFunc func);
 void mkmenu_treesearch_cleanup(GtkWidget *widget, gpointer data);
 void dump_open_tree_nodes(FILE *wave, xl_Tree *t);
-void force_open_tree_node(char *name);
+int force_open_tree_node(char *name);
 void select_tree_node(char *name);
 
 void dnd_setup(GtkWidget *src, GtkWidget *widget, int enable_receive); /* dnd from gtk2 tree to signalwindow */
@@ -176,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.61  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.60  2009/09/08 15:31:48  gtkwave
  * handle floating-point numbers in unformat_time()
  *

@@ -77,7 +77,7 @@ return(lastmatch ? lastmatch : nam);
 
 
 /* Fill the store model using current SIG_ROOT and FILTER_STR.  */
-static void
+void
 fill_sig_store (void)
 {
   struct tree *t;
@@ -162,117 +162,97 @@ fill_sig_store (void)
 	}
 }
 
-
 /*
  * tree open/close handling
  */
-void force_open_tree_node(char *name)
-{
-GtkCTree *ctree = GLOBALS->ctree_main;
-
-if(ctree)
-	{
-	int namlen = strlen(name);
-	char *namecache = wave_alloca(namlen+1);
-	char *name_end = name + namlen - 1;
-	char *zap = name;
-	GtkCTreeNode *node = GLOBALS->any_tree_node;
-	GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
-	int depth = 1;
-
-	strcpy(namecache, name);
-
-	while(gctr->parent)
-		{
-		node = gctr->parent;
-		gctr = GTK_CTREE_ROW(node);
-		} 
-
-	for(;;)
-		{
-		struct tree *t = gctr->row.data;
-
-		while(*zap)
-			{
-			if(*zap != GLOBALS->hier_delimeter)
-				{
-				zap++;
-				}
-				else
-				{
-				*zap = 0;
-				break;
-				}
-			}
-
-		if(!strcmp(t->name, name))
-			{
-			if(zap == name_end)
-				{
-				GtkCTreeNode **nodehist = wave_alloca(depth * sizeof(GtkCTreeNode *));
-				int *exp1 = wave_alloca(depth * sizeof(int));
-				int i = depth-1;
-
-				nodehist[i] = node;
-				exp1[i--] = 1;
-				/* now work backwards up to parent getting the node open/close history*/
-				gctr = GTK_CTREE_ROW(node);
-				while(gctr->parent)
-					{        
-					node = gctr->parent;
-				        gctr = GTK_CTREE_ROW(node);
-					nodehist[i] = node;
-					exp1[i--] = gctr->expanded;
-				        }        
-
-				gtk_clist_freeze(GTK_CLIST(ctree));
-
-				/* fully expand down */
-				for(i=0;i<depth;i++)
-					{
-					gtk_ctree_expand(ctree, nodehist[i]);
-					}
-
-				/* work backwards and close up nodes that were originally closed */
-				for(i=depth-1;i>=0;i--)
-					{
-					if(exp1[i])
-						{
-						gtk_ctree_expand(ctree, nodehist[i]);
-						}
-						else
-						{
-						gtk_ctree_collapse(ctree, nodehist[i]);
-						}
-					}
-
-				gtk_clist_thaw(GTK_CLIST(ctree));
-
-				/* printf("[treeopennode] '%s' ok\n", name); */
-				GLOBALS->open_tree_nodes = xl_insert(namecache, GLOBALS->open_tree_nodes, NULL);
-				return;
-				}
-				else
-				{
-				depth++;
-
-				node = gctr->children;
-				if(!node) break;
-				gctr = GTK_CTREE_ROW(node);
-				if(!gctr) break;
-
-				name = ++zap;
-				continue;
-				}
-			}
-
-		node = gctr->sibling;
-		if(!node) break;
-		gctr = GTK_CTREE_ROW(node);
-		}
-
-	/* printf("[treeopennode] '%s' failed\n", name); */
+int force_open_tree_node(char *name) {
+  GtkCTree *ctree = GLOBALS->ctree_main;
+  int rv = 1 ;			/* can possible open */
+  if(ctree) {
+    int namlen = strlen(name);
+    char *namecache = wave_alloca(namlen+1);
+    char *name_end = name + namlen - 1;
+    char *zap = name;
+    GtkCTreeNode *node = GLOBALS->any_tree_node;
+    GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
+    int depth = 1;
+    
+    strcpy(namecache, name);
+    while(gctr->parent)	{
+      node = gctr->parent;
+      gctr = GTK_CTREE_ROW(node);
+    } 
+    for(;;) {
+      struct tree *t = gctr->row.data;
+      while(*zap) {
+	if(*zap != GLOBALS->hier_delimeter) {
+	  zap++;
 	}
+	else {
+	  *zap = 0;
+	  break;
+	}
+      }
+      if(!strcmp(t->name, name)) {
+	if(zap == name_end) {
+	  GtkCTreeNode **nodehist = wave_alloca(depth * sizeof(GtkCTreeNode *));
+	  int *exp1 = wave_alloca(depth * sizeof(int));
+	  int i = depth-1;
+	  nodehist[i] = node;
+	  exp1[i--] = 1;
+	  /* now work backwards up to parent getting the node open/close history*/
+	  gctr = GTK_CTREE_ROW(node);
+	  while(gctr->parent) {        
+	    node = gctr->parent;
+	    gctr = GTK_CTREE_ROW(node);
+	    nodehist[i] = node;
+	    exp1[i--] = gctr->expanded;
+	  }        
+	  gtk_clist_freeze(GTK_CLIST(ctree));
+	  /* fully expand down */
+	  for(i=0;i<depth;i++) {
+	    gtk_ctree_expand(ctree, nodehist[i]);
+	  }
+	  /* work backwards and close up nodes that were originally closed */
+	  for(i=depth-1;i>=0;i--) {
+	    if(exp1[i]) {
+	      gtk_ctree_expand(ctree, nodehist[i]);
+	    }
+	    else {
+	      gtk_ctree_collapse(ctree, nodehist[i]);
+	    }
+	  }
+	  gtk_clist_thaw(GTK_CLIST(ctree));
+
+	  gtk_ctree_node_moveto(ctree, nodehist[depth-1],
+				depth /*column*/,
+				0.5 /*row_align*/,
+				0.5 /*col_align*/);
+	  /* printf("[treeopennode] '%s' ok\n", name); */
+	  rv = 0 ;		/* opened */
+	  GLOBALS->open_tree_nodes = xl_insert(namecache, GLOBALS->open_tree_nodes, NULL);
+	  return rv;
+	}
+	else {
+	  depth++;
+	  node = gctr->children;
+	  if(!node) break;
+	  gctr = GTK_CTREE_ROW(node);
+	  if(!gctr) break;
+	  name = ++zap;
+	  continue;
+	}
+      }
+      node = gctr->sibling;
+      if(!node) break;
+      gctr = GTK_CTREE_ROW(node);
+    }
+    
+    /* printf("[treeopennode] '%s' failed\n", name); */
+  } else {
+    rv = -1 ;			/* tree does not exist */
+  }
+  return rv ;
 }
 
 void dump_open_tree_nodes(FILE *wave, xl_Tree *t)
@@ -2070,6 +2050,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2009/07/23 20:00:55  gtkwave
+ * added type info to signal window mouseover
+ *
  * Revision 1.38  2009/07/06 21:41:36  gtkwave
  * evcd support issues
  *
