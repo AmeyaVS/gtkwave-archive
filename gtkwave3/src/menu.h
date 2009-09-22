@@ -316,6 +316,8 @@ void menu_remove_marked(GtkWidget *widget, gpointer data);
 void menu_lxt_clk_compress(GtkWidget *widget, gpointer data);
 void menu_help(GtkWidget *widget, gpointer data);
 void menu_version(GtkWidget *widget, gpointer data);
+void menu_toggle_group(GtkWidget *widget, gpointer data);
+
 
 GtkItemFactoryEntry *retrieve_menu_items_array(int *num_items);
 
@@ -335,6 +337,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.26  2009/04/23 21:57:53  gtkwave
  * added mingw support for rtlbrowse
  *

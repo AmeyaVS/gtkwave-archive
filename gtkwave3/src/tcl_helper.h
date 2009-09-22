@@ -64,6 +64,8 @@ char* zMergeTclList(int argc, const char** argv);
 char** zSplitTclList(const char* list, int* argcPtr);
 char *make_single_tcl_list_name(char *s, char *opt_value, int promote_to_bus);
 
+void make_tcl_interpreter(char *argv[]);
+
 #ifdef HAVE_LIBTCL
 int gtkwaveInterpreterInit (Tcl_Interp *interp);
 #endif
@@ -73,6 +75,9 @@ int gtkwaveInterpreterInit (Tcl_Interp *interp);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.16  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.15  2009/01/23 19:23:10  gtkwave
  * compatibility fix for gcc 3.x
  *

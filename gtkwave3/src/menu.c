@@ -1584,7 +1584,7 @@ static unsigned create_group (char* name, Trptr t_composite)
 	 if( (t_begin = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
 	   {
 	     fprintf( stderr, "Out of memory, can't add trace.\n");
-	     return;
+	     return(0);
 	   }
      
 	 t_begin->flags = (TR_BLANK|TR_GRP_BEGIN);
@@ -1600,7 +1600,7 @@ static unsigned create_group (char* name, Trptr t_composite)
      if( (t_end = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
        {
 	 fprintf( stderr, "Out of memory, can't add trace.\n");
-	 return;
+	 return(0);
        }
 
      t_end->flags = (TR_BLANK|TR_GRP_END);
@@ -1643,7 +1643,6 @@ static unsigned create_group (char* name, Trptr t_composite)
 static void 
 create_group_cleanup(GtkWidget *widget, gpointer data)
 {
-  Trptr t, t_prev, t_begin, t_end;
   unsigned dirty = 0;
 
   dirty = create_group(GLOBALS->entrybox_text, NULL);
@@ -1784,7 +1783,6 @@ static unsigned expand_trace(Trptr t_top)
 	{
 
 	  /* buffer now contains the created signals */
-	  Trptr t_begin, t_end;
 	  ClearTraces();
 
 	  if (t_top->t_prev)
@@ -1811,8 +1809,8 @@ static unsigned expand_trace(Trptr t_top)
 void
 menu_expand(GtkWidget *widget, gpointer data)
 {
-  Trptr t, t_next, tmp, t_top;
-  int tmpi,dirty=0;
+  Trptr t, t_next;
+  int dirty=0;
 
   if(GLOBALS->helpbox_is_active)
     {
@@ -5937,6 +5935,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.71  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.70  2009/07/16 15:42:13  gtkwave
  * only copy over translate filenames for now (all the others on a new tab
  * might be disruptive)

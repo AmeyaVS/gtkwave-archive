@@ -1968,7 +1968,7 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 	unsigned int def=0;
 	TimeType prevshift=LLDescriptor(0);
 	char is_first = 1;
-	char collapsed_state = 0, flag_skip;
+	char flag_skip;
 
 	while(t)
 		{
@@ -2668,6 +2668,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.55  2009/09/15 06:21:07  gtkwave
+ * simpod-style tcl command reintegration
+ *
  * Revision 1.54  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

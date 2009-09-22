@@ -2212,7 +2212,6 @@ if(is_interactive)
 	if(is_wish)
 	  {
 	  char* argv_mod[1];
-	  int kk;
 
 	  GLOBALS->interp = Tcl_CreateInterp();
 
@@ -2596,6 +2595,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.78  2009/09/15 06:21:07  gtkwave
+ * simpod-style tcl command reintegration
+ *
  * Revision 1.77  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

@@ -114,8 +114,8 @@ void load_proc_filter(int which, char *name)
 
     end = strlen(arg) - 1;
 
-    while (arg[end] == ' ') {
-      arg[end] = 0;
+    while (arg[(int)end] == ' ') {
+      arg[(int)end] = 0;
       end--;
     }
   }
@@ -433,6 +433,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

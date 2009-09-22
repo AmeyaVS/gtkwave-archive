@@ -17,10 +17,8 @@
 static GdkPixbuf *
 xg_get_pixbuf_from_pix_and_mask (GdkPixmap *gpix, GdkPixmap *gmask, GdkColormap *cmap)
 {
-  int x, y, width, height, rowstride, mask_rowstride;
+  int width, height;
   GdkPixbuf *icon_buf, *tmp_buf;
-  guchar *pixels;
-  guchar *mask_pixels;
       
   gdk_drawable_get_size (gpix, &width, &height);
   tmp_buf = gdk_pixbuf_get_from_drawable (NULL, gpix, cmap,
@@ -5260,6 +5258,9 @@ gtk_window_set_icon(GTK_WINDOW(window), gp);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/08/11 22:08:58  gtkwave
+ * added iconify for gtkwave
+ *
  * Revision 1.10  2009/07/07 04:18:32  gtkwave
  * updated signal icon
  *
