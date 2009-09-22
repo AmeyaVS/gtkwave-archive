@@ -97,13 +97,11 @@ int SST_open_node(char *name) {
   int rv ;
    GtkCTree *ctree = GLOBALS->ctree_main;
    if (ctree) {
-     GtkCTreeRow *gctr = GTK_CTREE_ROW(GLOBALS->any_tree_node);
-     for(GTK_CTREE_ROW(GLOBALS->any_tree_node); gctr->parent;
-	 gctr = GTK_CTREE_ROW(gctr->parent)) ;
-     GtkCTreeNode *target_node ;
+     GtkCTreeRow *gctr;
+     GtkCTreeNode *target_node;
+     for(gctr = GTK_CTREE_ROW(GLOBALS->any_tree_node); gctr->parent; gctr = GTK_CTREE_ROW(gctr->parent)) ;
      if ((target_node = SST_find_node_by_path(gctr, name))) {
        struct tree *t ;
-       GtkWidget *sig_view;
        rv = SST_NODE_FOUND ;
        gtk_ctree_collapse_recursive(ctree, gctr->parent) ;
        SST_open_path(ctree, target_node) ;
@@ -124,5 +122,8 @@ int SST_open_node(char *name) {
 
 /* 
  * $Id$
- * $Log$  
+ * $Log$
+ * Revision 1.1  2009/09/20 21:43:35  gtkwave
+ * created
+ *  
  */
