@@ -311,7 +311,7 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 	                }
 	        }       
 
-	while(t->t_next && IsGroupEnd(t->t_next) && IsCollapsed(t->t_next)) {
+	while(t && t->t_next && IsGroupEnd(t->t_next) && IsCollapsed(t->t_next)) {
 	  t = t->t_next;
 	}
 
@@ -1711,6 +1711,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.43  2009/04/09 22:17:21  gtkwave
  * install_keypress_handler() fixes
  *
