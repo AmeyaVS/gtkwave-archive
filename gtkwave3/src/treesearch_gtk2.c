@@ -45,7 +45,7 @@ enum { NAME_COLUMN, TREE_COLUMN, TYPE_COLUMN, N_COLUMNS };
 
 /* list of autocoalesced (synthesized) filter names that need to be freed at some point) */
 
-static void free_afl(void)
+void free_afl(void)
 {
 struct autocoalesce_free_list *at;
 
@@ -2050,6 +2050,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2009/09/20 21:45:50  gtkwave
+ * tree force open node handling changed for tcl
+ *
  * Revision 1.39  2009/07/23 20:00:55  gtkwave
  * added type info to signal window mouseover
  *

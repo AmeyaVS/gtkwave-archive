@@ -1421,6 +1421,103 @@ return(TCL_OK);
 }
 
 
+static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp,
+				       int objc, Tcl_Obj *CONST objv[]) {
+    int dir = STRACE_FORWARD ;
+    int start_time = 0 ;
+    int end_time = 0x7fffffff ;
+    int max_elements = 0x7fffffff ;
+    char *sig_name = NULL ;
+    int i ;
+    char *str_p, *str1_p ;
+    int error = 0 ;
+
+    for(i=1; i<objc; i++) {
+      str_p = Tcl_GetStringFromObj(objv[i], NULL) ;
+      if (*str_p != '-') {
+	sig_name = str_p ;
+      } else {
+	str1_p = Tcl_GetStringFromObj(objv[++i], NULL) ;
+	switch(str_p[1]) {
+	case 's': // start time
+	  if(!strstr("-start_time", str_p))
+	    error++ ;
+	  else {
+	    if((start_time = strtol(str1_p, NULL, 0)) < 0)
+	      start_time = 0 ;
+	    dir = (start_time > end_time) ? STRACE_BACKWARD : STRACE_FORWARD ;
+	  }
+	  break ;
+	case 'e': // end time
+	  if(!strstr("-end_time", str_p))
+	    error++ ;
+	  else {
+	    end_time = strtol(str1_p, NULL, 0) ;
+	    dir = (start_time > end_time) ? STRACE_BACKWARD : STRACE_FORWARD ;
+	  }
+	  break ;
+	case 'm': // max
+	  if(!strstr("-max", str_p))
+	    error++ ;
+	  else {
+	    max_elements = strtol(str1_p, NULL, 0) ;
+	  }
+	  break ;
+	case 'd': // dir
+	  if(!strstr("-dir", str_p))
+	    error++ ;
+	  else {
+	    if(strstr("forward", str1_p))
+	      dir = STRACE_FORWARD ;
+	    else 
+	      if(strstr("backward", str1_p))
+		dir = STRACE_BACKWARD ;
+	      else
+		error++ ;
+	  }
+	  break ;
+	default:
+	  error++ ;
+	}
+      }
+    }
+    /* consistancy check */
+    if(dir == STRACE_FORWARD) {
+      if(start_time > end_time) error++ ;
+    } else {
+      if(start_time < end_time) {
+	if(end_time == 0x7fffffff)
+	  end_time = 0 ;
+	else
+	  error ++ ;
+      }
+    }
+    if(error) {
+      Tcl_SetObjResult
+	(interp, 
+	 Tcl_NewStringObj("Usage: signal_change_list ?name? ?-start time? ?-end time? ?-max size? ?-dir forward|backward?", -1)) ;
+      return TCL_ERROR;
+    } 
+    llist_p *l_head = signal_change_list(sig_name, dir, start_time, 
+					 end_time, max_elements) ;
+    Tcl_Obj *l_obj = Tcl_NewListObj(0, NULL) ;
+    Tcl_Obj *obj ;
+    llist_p *p = l_head,*p1 ;
+    while(p) {
+      obj = Tcl_NewIntObj(p->u.i) ;
+      p1= p->next ;
+      free_2(p) ;
+      Tcl_ListObjAppendElement(interp, l_obj, obj) ;
+      obj = Tcl_NewStringObj(p1->u.str,-1) ;
+      Tcl_ListObjAppendElement(interp, l_obj, obj) ;
+      p = p1->next ;
+      free_2(p1->u.str) ;
+      free_2(p1) ;
+    }
+    Tcl_SetObjResult(interp, l_obj) ;
+    return TCL_OK ;
+}
+
 static int gtkwavetcl_findNextEdge(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 edge_search(STRACE_FORWARD);
@@ -1437,6 +1534,7 @@ return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
 }
 
 
+int SST_open_node(char *name) ;
 static int gtkwavetcl_forceOpenTreeNode(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
   int rv = -100;		/* Tree does not exist */
@@ -1456,22 +1554,21 @@ if(objc == 2)
 			else
 			{
 #ifdef WAVE_USE_GTK2
+
 			rv = SST_open_node(s);
 #endif
-			}
-		}
-
-	gtkwave_gtk_main_iteration();
+	    }
 	}
-        else  
-        {
-        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
-        }
- Tcl_SetObjResult(GLOBALS->interp, Tcl_NewIntObj(rv)) ;
-
-return(TCL_OK);
+      gtkwave_gtk_main_iteration(); /* check if this is needed */
+    }
+  else  
+    {
+      return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+    }
+  Tcl_SetObjResult(GLOBALS->interp, Tcl_NewIntObj(rv)) ;
+  
+  return(TCL_OK);
 }
-
 
 static int gtkwavetcl_setFromEntry(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
@@ -1732,6 +1829,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"presentWindow",			gtkwavetcl_presentWindow},
 	{"showSignal",         			gtkwavetcl_showSignal},
 	{"unhighlightSignalsFromList",		gtkwavetcl_unhighlightSignalsFromList},
+	{"signal_change_list",                  gtkwavetcl_signalChangeList},
    	{"", 					NULL} /* sentinel */
 	};
 
@@ -1748,6 +1846,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2009/09/20 21:45:50  gtkwave
+ * tree force open node handling changed for tcl
+ *
  * Revision 1.25  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

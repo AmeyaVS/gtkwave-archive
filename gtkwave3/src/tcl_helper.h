@@ -51,6 +51,21 @@ struct iter_dnd_strings
 	int mult_len;
 	};
 
+typedef enum {LL_NONE, LL_INT, LL_UINT, LL_CHAR, LL_SHORT, LL_STR, LL_VOID_P} 
+  ll_elem_type;
+typedef struct llist_s {
+  union {
+    int i ;
+    unsigned int u ;
+    short s ;
+    char c ;
+    char *str ;
+    void *p ;
+  } u ;
+  struct llist_s *prev ;
+  struct llist_s *next ;
+} llist_p ;
+
 int process_url_file(char *s);
 int process_url_list(char *s);
 int process_tcl_list(char *s, gboolean track_mouse_y);
@@ -75,6 +90,9 @@ int gtkwaveInterpreterInit (Tcl_Interp *interp);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.17  2009/09/22 13:51:14  gtkwave
+ * warnings fixes
+ *
  * Revision 1.16  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *
@@ -126,4 +144,3 @@ int gtkwaveInterpreterInit (Tcl_Interp *interp);
  * file creation
  *
  */
-
