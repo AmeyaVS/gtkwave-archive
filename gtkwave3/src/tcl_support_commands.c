@@ -206,7 +206,10 @@ while(t)
         {
         if(t->flags&TR_HIGHLIGHT)
                 {  
-		break;
+		if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+			{
+			break;
+			}
                 }
         t=t->t_next;
         }
