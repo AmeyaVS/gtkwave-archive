@@ -1431,6 +1431,10 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
     int i ;
     char *str_p, *str1_p ;
     int error = 0 ;
+    llist_p *l_head ;
+    Tcl_Obj *l_obj ;
+    Tcl_Obj *obj ;
+    llist_p *p, *p1 ;
 
     for(i=1; i<objc; i++) {
       str_p = Tcl_GetStringFromObj(objv[i], NULL) ;
@@ -1498,11 +1502,9 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
 	 Tcl_NewStringObj("Usage: signal_change_list ?name? ?-start time? ?-end time? ?-max size? ?-dir forward|backward?", -1)) ;
       return TCL_ERROR;
     } 
-    llist_p *l_head = signal_change_list(sig_name, dir, start_time, 
-					 end_time, max_elements) ;
-    Tcl_Obj *l_obj = Tcl_NewListObj(0, NULL) ;
-    Tcl_Obj *obj ;
-    llist_p *p = l_head,*p1 ;
+    l_head = signal_change_list(sig_name, dir, start_time, end_time, max_elements) ;
+    l_obj = Tcl_NewListObj(0, NULL) ;
+    p = l_head;
     while(p) {
       obj = Tcl_NewIntObj(p->u.i) ;
       p1= p->next ;
@@ -1846,6 +1848,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2009/09/28 05:58:05  gtkwave
+ * changes to support signal_change_list
+ *
  * Revision 1.26  2009/09/20 21:45:50  gtkwave
  * tree force open node handling changed for tcl
  *

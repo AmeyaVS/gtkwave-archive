@@ -97,13 +97,12 @@ int SST_open_node(char *name) {
   int rv ;
    GtkCTree *ctree = GLOBALS->ctree_main;
    if (ctree) {
-     GtkCTreeRow *gctr = GTK_CTREE_ROW(GLOBALS->any_tree_node);
-     for(GTK_CTREE_ROW(GLOBALS->any_tree_node); gctr->parent;
+     GtkCTreeRow *gctr;
+     for(gctr = GTK_CTREE_ROW(GLOBALS->any_tree_node); gctr->parent;
 	 gctr = GTK_CTREE_ROW(gctr->parent)) ;
      GtkCTreeNode *target_node ;
      if ((target_node = SST_find_node_by_path(gctr, name))) {
        struct tree *t ;
-       GtkWidget *sig_view;
        rv = SST_NODE_FOUND ;
        gtk_ctree_collapse_recursive(ctree, gctr->parent) ;
        SST_open_path(ctree, target_node) ;
@@ -140,6 +139,9 @@ llist_p *llist_new(long v, ll_elem_type type, int arg) {
     }
     break ;
   case LL_VOID_P: p->u.p = (void *)v ; break ;
+  default:
+	fprintf(stderr, "Internal error in llist_new(), type: %d\n", type);
+	exit(255);
   }
   return p ;
 }
@@ -172,6 +174,9 @@ llist_p *llist_remove_last(llist_p *head, llist_p **tail, ll_elem_type type, voi
       if (f)
 	f(p->u.p) ; 
       break ;
+    default:           
+      fprintf(stderr, "Internal error in llist_remove_last(), type: %d\n", type);
+      exit(255);
     }
     if (p->prev) {
       tail[0] = p->prev ;
@@ -193,6 +198,9 @@ void llist_free(llist_p *head, ll_elem_type type, void *f()) {
       if (f)
 	f(p->u.p) ; 
       break ;
+    default:           
+      fprintf(stderr, "Internal error in llist_free(), type: %d\n", type);
+      exit(255);
     }
     free_2(p) ;
     p = p1 ;
@@ -220,6 +228,9 @@ return(t);
 llist_p *signal_change_list(char *sig_name, int dir, int start_time, 
 		       int end_time, int max_elements) {
   llist_p *l0_head = NULL, *l0_tail = NULL, *l1_head = NULL,*l_elem, *lp ;
+  llist_p *l1_tail = NULL ;
+  char *s ;
+  hptr h_ptr ;
   Trptr t = NULL ;
   if(!sig_name) {
     t = (Trptr)find_first_highlighted_trace();
@@ -271,9 +282,6 @@ llist_p *signal_change_list(char *sig_name, int dir, int start_time,
       }
     }
     lp = (start_time < end_time) ? l0_head : l0_tail ;
-    llist_p *l1_tail = NULL ;
-    char *s ;
-    hptr h_ptr ;
     /* now create a linked list of time,value.. */
     while (lp && (nelem++ < max_elements)) {
       l_elem = llist_new((long)((t->vector) ? ((vptr)lp->u.p)->time:
