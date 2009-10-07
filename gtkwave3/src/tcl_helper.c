@@ -2590,6 +2590,13 @@ if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 	}
 }
 
+
+void set_globals_interp(void)
+{
+GLOBALS->interp = Tcl_CreateInterp();
+}
+
+
 void make_tcl_interpreter(char *argv[])
 {
 int i;
@@ -2599,7 +2606,7 @@ int num_menu_items;
 
 Tcl_FindExecutable(argv[0]);
 
-GLOBALS->interp = Tcl_CreateInterp();
+set_globals_interp();
 
 if (TCL_OK != Tcl_Init(GLOBALS->interp)) 
 	{
@@ -2668,6 +2675,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.56  2009/09/22 13:51:14  gtkwave
+ * warnings fixes
+ *
  * Revision 1.55  2009/09/15 06:21:07  gtkwave
  * simpod-style tcl command reintegration
  *

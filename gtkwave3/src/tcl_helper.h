@@ -83,6 +83,7 @@ void make_tcl_interpreter(char *argv[]);
 
 #ifdef HAVE_LIBTCL
 int gtkwaveInterpreterInit (Tcl_Interp *interp);
+void set_globals_interp(void);
 #endif
 
 #endif
@@ -90,6 +91,9 @@ int gtkwaveInterpreterInit (Tcl_Interp *interp);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.18  2009/09/28 05:58:05  gtkwave
+ * changes to support signal_change_list
+ *
  * Revision 1.17  2009/09/22 13:51:14  gtkwave
  * warnings fixes
  *
