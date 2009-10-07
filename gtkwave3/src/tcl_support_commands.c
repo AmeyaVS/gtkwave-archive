@@ -225,8 +225,8 @@ while(t)
 return(t);
 }
 
-llist_p *signal_change_list(char *sig_name, int dir, int start_time, 
-		       int end_time, int max_elements) {
+llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time, 
+		       TimeType end_time, int max_elements) {
   llist_p *l0_head = NULL, *l0_tail = NULL, *l1_head = NULL,*l_elem, *lp ;
   llist_p *l1_tail = NULL ;
   char *s ;
@@ -240,8 +240,8 @@ llist_p *signal_change_list(char *sig_name, int dir, int start_time,
   if (t) {			/* we have a signal */
     /* create a list of value change structs (hptrs or vptrs */
     int nelem = 0, bw = -1 ;
-    int tstart = (dir == STRACE_FORWARD) ? start_time : end_time ;
-    int tend = (dir == STRACE_FORWARD) ? end_time : start_time ;
+    TimeType tstart = (dir == STRACE_FORWARD) ? start_time : end_time ;
+    TimeType tend = (dir == STRACE_FORWARD) ? end_time : start_time ;
     if (!t->vector) {
       hptr h, h1;
       int len = 0  ;

@@ -1424,8 +1424,8 @@ return(TCL_OK);
 static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp,
 				       int objc, Tcl_Obj *CONST objv[]) {
     int dir = STRACE_FORWARD ;
-    int start_time = 0 ;
-    int end_time = 0x7fffffff ;
+    TimeType start_time = 0 ;
+    TimeType end_time = MAX_HISTENT_TIME ;
     int max_elements = 0x7fffffff ;
     char *sig_name = NULL ;
     int i ;
@@ -1441,13 +1441,17 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
       if (*str_p != '-') {
 	sig_name = str_p ;
       } else {
+        if(i == (objc-1)) { /* loop overflow on i check */
+	  error++;
+	  break;
+	  }
 	str1_p = Tcl_GetStringFromObj(objv[++i], NULL) ;
 	switch(str_p[1]) {
 	case 's': // start time
 	  if(!strstr("-start_time", str_p))
 	    error++ ;
 	  else {
-	    if((start_time = strtol(str1_p, NULL, 0)) < 0)
+	    if((start_time = atoi_64(str1_p)) < 0)
 	      start_time = 0 ;
 	    dir = (start_time > end_time) ? STRACE_BACKWARD : STRACE_FORWARD ;
 	  }
@@ -1456,7 +1460,7 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
 	  if(!strstr("-end_time", str_p))
 	    error++ ;
 	  else {
-	    end_time = strtol(str1_p, NULL, 0) ;
+	    end_time = atoi_64(str1_p) ;
 	    dir = (start_time > end_time) ? STRACE_BACKWARD : STRACE_FORWARD ;
 	  }
 	  break ;
@@ -1464,7 +1468,7 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
 	  if(!strstr("-max", str_p))
 	    error++ ;
 	  else {
-	    max_elements = strtol(str1_p, NULL, 0) ;
+	    max_elements = atoi(str1_p) ;
 	  }
 	  break ;
 	case 'd': // dir
@@ -1490,7 +1494,7 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
       if(start_time > end_time) error++ ;
     } else {
       if(start_time < end_time) {
-	if(end_time == 0x7fffffff)
+	if(end_time == MAX_HISTENT_TIME)
 	  end_time = 0 ;
 	else
 	  error ++ ;
@@ -1831,7 +1835,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"presentWindow",			gtkwavetcl_presentWindow},
 	{"showSignal",         			gtkwavetcl_showSignal},
 	{"unhighlightSignalsFromList",		gtkwavetcl_unhighlightSignalsFromList},
-	{"signal_change_list",                  gtkwavetcl_signalChangeList},
+	{"signalChangeList",                    gtkwavetcl_signalChangeList},	/* changed from signal_change_list for consistency! */
    	{"", 					NULL} /* sentinel */
 	};
 
@@ -1848,6 +1852,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2009/09/29 02:45:19  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.27  2009/09/28 05:58:05  gtkwave
  * changes to support signal_change_list
  *

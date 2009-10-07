@@ -21,8 +21,8 @@ llist_p *llist_append(llist_p *head, llist_p *elem, llist_p **tail);
 llist_p *llist_remove_last(llist_p *head, llist_p **tail, ll_elem_type type, void *f() ); 
 void llist_free(llist_p *head, ll_elem_type type, void *f()); 
 
-llist_p *signal_change_list(char *sig_name, int dir, int start_time,
-                       int end_time, int max_elements); 
+llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
+                       TimeType end_time, int max_elements); 
 
 #define SST_NODE_FOUND 0
 #define SST_NODE_NOT_EXIST 1
@@ -33,6 +33,9 @@ llist_p *signal_change_list(char *sig_name, int dir, int start_time,
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/09/28 05:58:05  gtkwave
+ * changes to support signal_change_list
+ *
  * Revision 1.1  2009/09/20 21:43:35  gtkwave
  * created
  *
