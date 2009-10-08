@@ -121,24 +121,25 @@ int SST_open_node(char *name) {
    return rv ;
 }
 /* ===== Double link lists */
-llist_p *llist_new(long v, ll_elem_type type, int arg) {
+llist_p *llist_new(llist_u v, ll_elem_type type, int arg) {
   llist_p *p = (llist_p *)malloc_2(sizeof(llist_p)) ;
   p->next = p->prev = NULL ;
   switch(type) {
-  case LL_INT: p->u.i = (int)v ; break ;
-  case LL_UINT: p->u.u = (unsigned int)v ; break ;
-  case LL_CHAR: p->u.c = (char)v ; break ;
-  case LL_SHORT: p->u.s = (short)v ; break ;
+  case LL_INT: p->u.i = v.i ; break ;
+  case LL_UINT: p->u.u = v.u ; break ;
+  case LL_TIMETYPE: p->u.tt = v.tt ; break ;
+  case LL_CHAR: p->u.c = v.c ; break ;
+  case LL_SHORT: p->u.s = v.s ; break ;
   case LL_STR: 
     if(arg == -1)
-      p->u.str = strdup_2((char *)v) ;
+      p->u.str = strdup_2(v.str) ;
     else {
       p->u.str = (char *)malloc_2(arg) ;
-      strncpy(p->u.str, (char *)v, arg) ; 
+      strncpy(p->u.str, v.str, arg) ; 
       p->u.str[arg] = '\0' ;
     }
     break ;
-  case LL_VOID_P: p->u.p = (void *)v ; break ;
+  case LL_VOID_P: p->u.p = v.p ; break ;
   default:
 	fprintf(stderr, "Internal error in llist_new(), type: %d\n", type);
 	exit(255);
@@ -245,13 +246,15 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
     if (!t->vector) {
       hptr h, h1;
       int len = 0  ;
-      if(t->n.nd->ext)
+      if(t->n.nd->ext && (t->n.nd->ext != 0)) {
 	bw = abs(t->n.nd->ext->msi - t->n.nd->ext->lsi) + 1 ;
+      }
       h = bsearch_node(t->n.nd, tstart) ;
       for(h1 = h; h1; h1 = h1->next) {
 	if (h1->time <= tend) {
 	  if (len++ < max_elements) {
-	    l_elem = llist_new((long)h1, LL_VOID_P, -1) ;
+	    llist_u llp; llp.p = h1;
+	    l_elem = llist_new(llp, LL_VOID_P, -1) ;
 	    l0_head = llist_append(l0_head, l_elem, &l0_tail) ;
 	    if(!l0_tail) l0_tail = l0_head ;
 	  } else {
@@ -275,7 +278,8 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
       v = bsearch_vector(t->n.vec, tstart) ;
       for(v1 = v; v1; v1 = v1->next) {
 	if (v1->time <= tend) {
-	  l_elem = llist_new((long)v1, LL_VOID_P, -1) ;
+	  llist_u llp; llp.p = v1;
+	  l_elem = llist_new(llp, LL_VOID_P, -1) ;
 	  l0_head = llist_append(l0_head, l_elem, &l0_tail) ;
 	  if(!l0_tail) l0_tail = l0_head ;
 	}
@@ -284,17 +288,17 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
     lp = (start_time < end_time) ? l0_head : l0_tail ;
     /* now create a linked list of time,value.. */
     while (lp && (nelem++ < max_elements)) {
-      l_elem = llist_new((long)((t->vector) ? ((vptr)lp->u.p)->time:
-				((hptr)lp->u.p)->time), LL_INT, -1) ;
+      llist_u llp; llp.tt = ((t->vector) ? ((vptr)lp->u.p)->time: ((hptr)lp->u.p)->time); 
+      l_elem = llist_new(llp, LL_TIMETYPE, -1) ;
       l1_head = llist_append(l1_head, l_elem, &l1_tail) ;
       if(!l1_tail) l1_tail = l1_head ;
       if(t->vector == 0) {
 	if(!t->n.nd->ext) {	/* really single bit */
 	  switch(((hptr)lp->u.p)->v.h_val) {
-	  case AN_0: l_elem = llist_new((long)"0", LL_STR, -1) ; break ;
-	  case AN_1: l_elem = llist_new((long)"1", LL_STR, -1) ; break ;
-	  case AN_X: l_elem = llist_new((long)"x", LL_STR, -1) ; break ;
-	  case AN_Z: l_elem = llist_new((long)"z", LL_STR, -1) ; break ;
+	  case AN_0: llp.str = "0"; l_elem = llist_new(llp, LL_STR, -1) ; break ;
+	  case AN_1: llp.str = "1"; l_elem = llist_new(llp, LL_STR, -1) ; break ;
+	  case AN_X: llp.str = "x"; l_elem = llist_new(llp, LL_STR, -1) ; break ;
+	  case AN_Z: llp.str = "z"; l_elem = llist_new(llp, LL_STR, -1) ; break ;
 	  }
 	} else {		/* this is still an array */
 	  h_ptr = (hptr)lp->u.p ;
@@ -308,13 +312,15 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
 	    s=convert_ascii_vec(t,h_ptr->v.h_vector);
 	  }
 	  if(s) {
-	    l_elem = llist_new((long)s, LL_STR, -1) ;
+	    llp.str = s;
+	    l_elem = llist_new(llp, LL_STR, -1) ;
 	  } else {
 	    l1_head = llist_remove_last(l1_head, &l1_tail, LL_INT, NULL) ;
 	  }
 	}
       } else {
-	l_elem = llist_new((long)convert_ascii(t, (vptr)lp->u.p), LL_STR, -1) ;
+        llp.str = convert_ascii(t, (vptr)lp->u.p);
+	l_elem = llist_new(llp, LL_STR, -1) ;
       }
       l1_head = llist_append(l1_head, l_elem, &l1_tail) ;
       lp = (start_time < end_time) ? lp->next : lp->prev ;

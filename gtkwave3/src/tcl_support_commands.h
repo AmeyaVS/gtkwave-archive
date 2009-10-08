@@ -10,13 +10,14 @@
 #define WAVE_TCL_SUPPORT_CMDS_H
 
 #include <gtk/gtk.h>
+#include "debug.h"
 
 GtkCTreeNode *SST_find_node_by_path(GtkCTreeRow *root, char *path);
 int SST_open_path(GtkCTree *ctree, GtkCTreeNode *node);
 void fill_sig_store (void);
 int SST_open_node(char *name);
 
-llist_p *llist_new(long v, ll_elem_type type, int arg); 
+llist_p *llist_new(llist_u v, ll_elem_type type, int arg); 
 llist_p *llist_append(llist_p *head, llist_p *elem, llist_p **tail); 
 llist_p *llist_remove_last(llist_p *head, llist_p **tail, ll_elem_type type, void *f() ); 
 void llist_free(llist_p *head, ll_elem_type type, void *f()); 
@@ -33,6 +34,9 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/10/07 21:13:10  gtkwave
+ * 64-bit fixes on signal list generation
+ *
  * Revision 1.2  2009/09/28 05:58:05  gtkwave
  * changes to support signal_change_list
  *

@@ -15,6 +15,7 @@
 #ifdef HAVE_LIBTCL
 
 #include <tcl.h>
+#include "debug.h"
 
 typedef struct
         {
@@ -51,17 +52,21 @@ struct iter_dnd_strings
 	int mult_len;
 	};
 
-typedef enum {LL_NONE, LL_INT, LL_UINT, LL_CHAR, LL_SHORT, LL_STR, LL_VOID_P} 
-  ll_elem_type;
+typedef enum {LL_NONE, LL_INT, LL_UINT, LL_CHAR, LL_SHORT, LL_STR, 
+	      LL_VOID_P, LL_TIMETYPE} ll_elem_type;
+
+typedef union llist_payload {
+  int i ;
+  unsigned int u ;
+  char c ;
+  short s ;
+  char *str ;
+  void *p ;
+  TimeType tt ;
+} llist_u;
+
 typedef struct llist_s {
-  union {
-    int i ;
-    unsigned int u ;
-    short s ;
-    char c ;
-    char *str ;
-    void *p ;
-  } u ;
+  llist_u u;
   struct llist_s *prev ;
   struct llist_s *next ;
 } llist_p ;
@@ -91,6 +96,9 @@ void set_globals_interp(void);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.19  2009/10/07 16:59:08  gtkwave
+ * move Tcl_CreateInterp to tcl_helper.c to make stubify easier
+ *
  * Revision 1.18  2009/09/28 05:58:05  gtkwave
  * changes to support signal_change_list
  *

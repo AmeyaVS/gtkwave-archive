@@ -1510,7 +1510,7 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
     l_obj = Tcl_NewListObj(0, NULL) ;
     p = l_head;
     while(p) {
-      obj = Tcl_NewIntObj(p->u.i) ;
+      obj = Tcl_NewWideIntObj((Tcl_WideInt )p->u.tt) ;
       p1= p->next ;
       free_2(p) ;
       Tcl_ListObjAppendElement(interp, l_obj, obj) ;
@@ -1852,6 +1852,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2009/10/07 21:13:10  gtkwave
+ * 64-bit fixes on signal list generation
+ *
  * Revision 1.28  2009/09/29 02:45:19  gtkwave
  * warnings cleanups
  *
