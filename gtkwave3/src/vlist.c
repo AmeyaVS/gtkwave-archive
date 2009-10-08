@@ -811,7 +811,7 @@ attempt2:
 void vlist_packer_finalize(struct vlist_packer_t *p)
 {
 #ifdef WAVE_VLIST_PACKER_STATS
-static unsigned long long pp = 0, upp = 0;
+static guint64 pp = 0, upp = 0;
 #endif
 
 if(p->repcnt)
@@ -967,6 +967,9 @@ free_2(mem - WAVE_ZIVWRAP);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2009/03/05 20:04:52  gtkwave
+ * fix valgrind error in vlist_fwrite()
+ *
  * Revision 1.16  2009/03/05 16:17:56  gtkwave
  * added fastload option
  *

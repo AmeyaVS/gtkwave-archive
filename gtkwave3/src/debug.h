@@ -39,9 +39,6 @@ size_t size;
  * types...
  */
 #ifdef G_HAVE_GINT64
-	/* typedef long long int          TimeType; */
-	/* typedef unsigned long long int UTimeType; */
-
 	typedef gint64          TimeType; 
 	typedef guint64         UTimeType;
 
@@ -205,6 +202,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/06/07 08:40:44  gtkwave
+ * adding FST support
+ *
  * Revision 1.8  2009/04/24 04:24:22  gtkwave
  * reload and cygwin fixes for rtlbrowse
  *
