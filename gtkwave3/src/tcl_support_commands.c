@@ -147,6 +147,14 @@ llist_p *llist_new(llist_u v, ll_elem_type type, int arg) {
   return p ;
 }
 
+/*
+* append llist_p element ELEM to the of the list whose first member is HEAD amd
+* last is TAIL. and return the head of the list.
+* if HEAD is NULL ELEM is returned.
+* if TAIL is defined then ELEM is chained to it and TAIL is set to point to
+* ELEM
+*/
+
 llist_p *llist_append(llist_p *head, llist_p *elem, llist_p **tail) {
   llist_p *p ;
   if (*tail) {
@@ -165,6 +173,13 @@ llist_p *llist_append(llist_p *head, llist_p *elem, llist_p **tail) {
   }
   return head ;
 }
+/* 
+* Remove the last element from list whose first member is HEAD
+* if TYPE is LL_STR the memory allocated for this string is freed.
+* if the TYPE is LL_VOID_P that the caller supplied function pointer F() is 
+*  is executed (if not NULL)
+* HEAD and TAIL are updated. 
+ */
 
 llist_p *llist_remove_last(llist_p *head, llist_p **tail, ll_elem_type type, void *f() ) {
   if (head) {
@@ -189,6 +204,10 @@ llist_p *llist_remove_last(llist_p *head, llist_p **tail, ll_elem_type type, voi
   return head ;
 }
 
+/* Destroy the list whose first member is HEAD
+* function pointer F() is called in type is LL_VOID_P
+* if TYPE is LL_STR then string is freed
+*/
 void llist_free(llist_p *head, ll_elem_type type, void *f()) {
   llist_p *p = head, *p1 ;
   while(p) {
@@ -208,35 +227,268 @@ void llist_free(llist_p *head, ll_elem_type type, void *f()) {
   }
 }
 /* ===================================================== */
-static Trptr find_first_highlighted_trace(void)
+/* Create a Trptr structure that contains the bit-vector VEC
+* This is based on the function AddVector()
+ */
+Trptr BitVector_to_Trptr(bvptr vec) {
+  Trptr  t;
+  int    n;
+
+  GLOBALS->signalwindow_width_dirty=1;
+  
+  n = vec->nbits;
+  t = (Trptr) calloc_2(1, sizeof( TraceEnt ) );
+  if( t == NULL ) {
+    fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
+	     vec->name );
+    return( 0 );
+  }
+
+  t->name = vec->name;
+
+  if(GLOBALS->hier_max_level)
+    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+
+  t->flags = ( n > 3 ) ? TR_HEX|TR_RJUSTIFY : TR_BIN|TR_RJUSTIFY;
+  t->vector = TRUE;
+  t->n.vec = vec;
+  /* AddTrace( t ); */
+  return( t );
+}
+
+Trptr find_first_highlighted_trace(void) {
+  Trptr t=GLOBALS->traces.first;
+  while(t) {
+    if(t->flags&TR_HIGHLIGHT) {  
+      if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))) {
+	break;
+      }
+    }
+    t=t->t_next;
+  }
+  return(t);
+}
+
+/* Find is signal named NAME is on display and return is Trptr value
+* or NULL
+* NAME is a full hierarchical name, but may not in include range '[..:..]'
+*  information.
+ */
+Trptr is_signal_displayed(char *name) {
+  Trptr t=GLOBALS->traces.first ;
+  char *p = strchr(name, '['), *p1 ;
+  int len, len1 ;
+  if(p)
+    *p = '\0' ;
+  len = strlen(name) ;
+  while(t) {
+    p = (!t->vector) ?  t->n.nd->nname : t->n.vec->name ;
+    p1 = strchr(p,'[') ;
+    len1 = (p1) ? p1 - p : strlen(p) ;
+    if((len == len1) && !strncmp(name, p, len))
+      break ;
+    t = t->t_next ;
+  }
+  return t ;
+}
+
+/* Create a Trptr structure for ND and return its value
+* This is based on the function AddNodeTraceReturn()
+*/
+Trptr Node_to_Trptr(nptr nd)
 {
-Trptr t=GLOBALS->traces.first;
-while(t)
-        {
-        if(t->flags&TR_HIGHLIGHT)
-                {  
-		if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+  Trptr  t = NULL;
+  hptr histpnt;
+  hptr *harray;
+  int histcount;
+  int i;
+
+  if(nd->mv.mvlfac) import_trace(nd);
+
+  GLOBALS->signalwindow_width_dirty=1;
+    
+  if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL ) {
+    fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
+	     nd->nname );
+    return( 0 );
+  }
+
+  if(!nd->harray) { /* make quick array lookup for aet display */
+    histpnt=&(nd->head);
+    histcount=0;
+
+    while(histpnt) {
+      histcount++;
+      histpnt=histpnt->next;
+    }
+
+    nd->numhist=histcount;
+	
+    if(!(nd->harray=harray=(hptr *)malloc_2(histcount*sizeof(hptr)))) {
+      fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
+	       nd->nname );
+      free_2(t);
+      return(0);
+    }
+
+    histpnt=&(nd->head);
+    for(i=0;i<histcount;i++) {
+      *harray=histpnt;
+      harray++;
+      histpnt=histpnt->next;
+    }
+  }
+
+  if(!GLOBALS->hier_max_level) {
+    int flagged;
+    
+    t->name = hier_decompress_flagged(nd->nname, &flagged);
+    t->is_depacked = (flagged != 0);
+  }
+  else {
+    int flagged;
+    char *tbuff = hier_decompress_flagged(nd->nname, &flagged);
+    if(!flagged) {
+      t->name = hier_extract(nd->nname, GLOBALS->hier_max_level);
+    }
+    else {
+      t->name = strdup_2(hier_extract(tbuff, GLOBALS->hier_max_level));
+      free_2(tbuff);
+      t->is_depacked = 1;
+    }
+  }
+
+  if(nd->ext) {	/* expansion vectors */
+    int n;
+
+    n = nd->ext->msi - nd->ext->lsi;
+    if(n<0)n=-n;
+    n++;
+    
+    t->flags = (( n > 3 )||( n < -3 )) ? TR_HEX|TR_RJUSTIFY : 
+      TR_BIN|TR_RJUSTIFY;
+  }
+  else {
+    t->flags |= TR_BIN;	/* binary */
+  }
+  t->vector = FALSE;
+  t->n.nd = nd;
+  /* if(tret) *tret = t;		... for expand */
+  return t ;
+}
+/* 
+* Search for the signal named (full path) NAME in the signal data base and
+* create a Trptr structure for it
+* NAME is a full hierarchy name, but may not include range information.
+* Return the structure created or NULL
+*/
+Trptr sig_name_to_Trptr(char *name) {
+  Trptr t = NULL ;
+  int was_packed = 0;
+  int i, name_len;
+  char *hfacname = NULL;
+  struct symbol *s = NULL, *s2 ;
+  int len = 0 ;
+  bvptr v = NULL;
+  bptr b = NULL;
+  int pre_import = 0;
+
+  if(name)
+	{
+	name_len = strlen(name);
+	for(i=0;i<GLOBALS->numfacs;i++)
+		{
+		hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name,  &was_packed);
+		if(!strcmp(name, hfacname) || ((!strncmp(name, hfacname, name_len) && hfacname[name_len] == '['))) 
 			{
+			s = GLOBALS->facs[i];
+			if((s2 = s->vec_root))
+				{
+				s = s2;
+				}
+				else
+				{
+				s2 = s;
+				}
+
+			while(s2)
+				{
+                                if(s2->n->mv.mvlfac)	/* the node doesn't exist yet! */
+                                        {
+                                        lx2_set_fac_process_mask(s2->n);
+                                        pre_import++;
+                                        }
+
+				s2 = s2->vec_chain;
+				len++;
+				}
+	
+			if(was_packed) { free_2(hfacname); }
 			break;
 			}
-                }
-        t=t->t_next;
-        }
+		if(was_packed) { free_2(hfacname); }
+		s = NULL;
+		}
 
-return(t);
+	if(s)
+		{
+	        if(pre_import)
+        	        {
+        	        lx2_import_masked();		/* import any missing nodes */
+        	        }
+
+		if(len > 1)
+			{
+			if ((b = makevec_chain(NULL, s, len)))
+				{
+				if((v=bits2vector(b)))
+					{
+					t = BitVector_to_Trptr(v) ;
+					}
+			                else
+			                { 
+			                free_2(b->name);
+			                if(b->attribs) free_2(b->attribs);
+			                free_2(b);
+			                }
+				}
+			}
+			else
+			{
+			nptr node = s->n ;
+			t = Node_to_Trptr(node) ;
+			}
+		}
+	
+	}
+
+  return t ;
 }
+  
+/* Return the base prefix for the signal value */
+char *signal_value_prefix(int flags) {
+  if(flags & TR_BIN) return "0b" ;
+  if(flags & TR_HEX) return "0x" ;
+  if(flags & TR_OCT) return "0" ;
+  return "" ;
+}
+
+/* ===================================================== */
 
 llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time, 
 		       TimeType end_time, int max_elements) {
   llist_p *l0_head = NULL, *l0_tail = NULL, *l1_head = NULL,*l_elem, *lp ;
   llist_p *l1_tail = NULL ;
-  char *s ;
+  char *s, s1[1024] ;
   hptr h_ptr ;
   Trptr t = NULL ;
+  Trptr t_created = NULL;
   if(!sig_name) {
     t = (Trptr)find_first_highlighted_trace();
   } else {
     /* case of sig name, find the representing Trptr structure */
+    if (!(t = is_signal_displayed(sig_name)))
+      t = t_created = sig_name_to_Trptr(sig_name) ;
   }
   if (t) {			/* we have a signal */
     /* create a list of value change structs (hptrs or vptrs */
@@ -312,14 +564,17 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
 	    s=convert_ascii_vec(t,h_ptr->v.h_vector);
 	  }
 	  if(s) {
-	    llp.str = s;
+	    sprintf(s1,"%s%s", signal_value_prefix(t->flags), s) ;
+	    llp.str = s1;
 	    l_elem = llist_new(llp, LL_STR, -1) ;
 	  } else {
 	    l1_head = llist_remove_last(l1_head, &l1_tail, LL_INT, NULL) ;
 	  }
 	}
       } else {
-        llp.str = convert_ascii(t, (vptr)lp->u.p);
+        sprintf(s1, "%s%s", signal_value_prefix(t->flags), 
+		convert_ascii(t, (vptr)lp->u.p)) ;
+        llp.str = s1 ;
 	l_elem = llist_new(llp, LL_STR, -1) ;
       }
       l1_head = llist_append(l1_head, l_elem, &l1_tail) ;
@@ -327,5 +582,11 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
     }
     llist_free(l0_head, LL_VOID_P, NULL) ;
   }
+
+  if(t_created)
+	{
+	FreeTrace(t_created);
+	}
+
   return l1_head ;
 }
