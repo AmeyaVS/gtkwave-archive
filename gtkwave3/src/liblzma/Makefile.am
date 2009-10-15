@@ -1,9 +1,9 @@
 ## -*- makefile -*-
 ##
 
-noinst_LIBRARIES=	liblzma.a
+noinst_LIBRARIES=	libgwlzma.a
 
-liblzma_a_SOURCES= Alloc.c Alloc.h LzFind.c LzFind.h LzHash.h \
+libgwlzma_a_SOURCES= Alloc.c Alloc.h LzFind.c LzFind.h LzHash.h \
 	LzmaDec.c LzmaDec.h LzmaEnc.c LzmaEnc.h Types.h \
 	LzmaLib.c LzmaLib.h
 

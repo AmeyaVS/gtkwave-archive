@@ -47,11 +47,11 @@ CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
 ARFLAGS = cru
-liblzma_a_AR = $(AR) $(ARFLAGS)
-liblzma_a_LIBADD =
-am_liblzma_a_OBJECTS = Alloc.$(OBJEXT) LzFind.$(OBJEXT) \
+libgwlzma_a_AR = $(AR) $(ARFLAGS)
+libgwlzma_a_LIBADD =
+am_libgwlzma_a_OBJECTS = Alloc.$(OBJEXT) LzFind.$(OBJEXT) \
 	LzmaDec.$(OBJEXT) LzmaEnc.$(OBJEXT) LzmaLib.$(OBJEXT)
-liblzma_a_OBJECTS = $(am_liblzma_a_OBJECTS)
+libgwlzma_a_OBJECTS = $(am_libgwlzma_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -59,8 +59,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(liblzma_a_SOURCES)
-DIST_SOURCES = $(liblzma_a_SOURCES)
+SOURCES = $(libgwlzma_a_SOURCES)
+DIST_SOURCES = $(libgwlzma_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -173,8 +173,8 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-noinst_LIBRARIES = liblzma.a
-liblzma_a_SOURCES = Alloc.c Alloc.h LzFind.c LzFind.h LzHash.h \
+noinst_LIBRARIES = libgwlzma.a
+libgwlzma_a_SOURCES = Alloc.c Alloc.h LzFind.c LzFind.h LzHash.h \
 	LzmaDec.c LzmaDec.h LzmaEnc.c LzmaEnc.h Types.h \
 	LzmaLib.c LzmaLib.h
 
@@ -215,10 +215,10 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-liblzma.a: $(liblzma_a_OBJECTS) $(liblzma_a_DEPENDENCIES) 
-	-rm -f liblzma.a
-	$(liblzma_a_AR) liblzma.a $(liblzma_a_OBJECTS) $(liblzma_a_LIBADD)
-	$(RANLIB) liblzma.a
+libgwlzma.a: $(libgwlzma_a_OBJECTS) $(libgwlzma_a_DEPENDENCIES) 
+	-rm -f libgwlzma.a
+	$(libgwlzma_a_AR) libgwlzma.a $(libgwlzma_a_OBJECTS) $(libgwlzma_a_LIBADD)
+	$(RANLIB) libgwlzma.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

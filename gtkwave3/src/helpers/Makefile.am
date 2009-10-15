@@ -4,7 +4,7 @@
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 AIXFLAGS = -bmaxdata:0xd0000000/dsa
 LIBLZMA_CFLAGS = -I../liblzma
-LIBLZMA_LDADD  = -L../liblzma -llzma
+LIBLZMA_LDADD  = -L../liblzma -lgwlzma
 
 AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) -I./fst -I../../contrib/rtlbrowse
 

@@ -691,10 +691,13 @@
 		AIX ./configure fixes.
 		Added malform_eof_fix() to recoder and regular VCD loader.
 		Fix to attempt_vecmatch_2 when no suffix encountered.
-3.3.0	20sep09	Modified unformat_time() so it can also handle floating-
+3.3.0	15oct09	Modified unformat_time() so it can also handle floating-
 		point exponential format.
 		Integration of a large amount of group handling sourcecode 
 		from Don Baltus / Bluespec, Inc.
 		Re-integrated original Simpod repscript handling.
 		Reworked force open tree node and moved to
 		tcl_support_commands.c.
+		Renamed liblzma to libgwlzma for now: liblzma is present
+		on some systems and causing conflicts.
+

@@ -7,7 +7,7 @@ DIST_SUBDIRS=	libz libbz2 liblzma helpers helpers/fst
 LIBFST_CFLAGS  = -I./helpers/fst
 LIBFST_LDADD   = -L./helpers/fst -lfst
 LIBLZMA_CFLAGS = -I./liblzma
-LIBLZMA_LDADD  = -L./liblzma -llzma
+LIBLZMA_LDADD  = -L./liblzma -lgwlzma
 #DEBUGS = -DDEBUG_FACILITIES -DDEBUG_PRINTF -DDEBUG_MALLOC -DSTRICT_VCD_ONLY -DDEBUG_MALLOC_LINES
 
 bin_PROGRAMS=	gtkwave twinwave
