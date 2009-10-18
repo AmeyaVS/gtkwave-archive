@@ -376,6 +376,10 @@ if test "X$OSTYPE" = "Xcygwin" ; then
 	TCL_DEFADD=-DHAVE_LIBTCL
 	TCL_LDADD="${TCL_LIB_SPEC}"
 	TK_LDADD="${TK_LIB_SPEC}"
+	# cygwin tkConfig.sh has issues...
+        if test "X$TK_LDADD" = "X" ; then
+		TK_LDADD="${TK_BUILD_LIB_SPEC}"
+	fi
 else
 OLD_LDFLAGS="${LDFLAGS}"
 TCLSPEC_LHS="${TCL_LIB_SPEC% *}"
