@@ -15,6 +15,7 @@
 #ifdef HAVE_LIBTCL
 
 #include <tcl.h>
+#include <tk.h>
 #include "debug.h"
 
 typedef struct
@@ -96,6 +97,9 @@ void set_globals_interp(void);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.20  2009/10/08 17:40:49  gtkwave
+ * removed casting on llist_new, use union instead as arg
+ *
  * Revision 1.19  2009/10/07 16:59:08  gtkwave
  * move Tcl_CreateInterp to tcl_helper.c to make stubify easier
  *

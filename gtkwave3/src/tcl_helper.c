@@ -30,7 +30,6 @@
 #include "hierpack.h"
 #include "menu.h"
 #include "tcl_helper.h"
-#include <tk.h>
 
 #if !defined __MINGW32__ && !defined _MSC_VER
 #include <sys/types.h>
@@ -2675,6 +2674,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.57  2009/10/07 16:59:08  gtkwave
+ * move Tcl_CreateInterp to tcl_helper.c to make stubify easier
+ *
  * Revision 1.56  2009/09/22 13:51:14  gtkwave
  * warnings fixes
  *
