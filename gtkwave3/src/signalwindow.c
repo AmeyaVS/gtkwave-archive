@@ -386,9 +386,16 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 
 static gboolean ignoreAccelerators(GdkEventKey *event)
 {
-  return (GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry) && 
+if(!GLOBALS || !GLOBALS->filter_entry || !event)
+	{
+	return(FALSE);
+	}
+	else
+	{
+	return (GTK_WIDGET_HAS_FOCUS(GLOBALS->filter_entry) && 
 	  !(event->state & GDK_CONTROL_MASK) &&
 	  !(event->state & GDK_MOD1_MASK));
+	}
 }
 
 /*
@@ -1711,6 +1718,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2009/09/27 23:46:53  gtkwave
+ * crash fix on DnD drop
+ *
  * Revision 1.44  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

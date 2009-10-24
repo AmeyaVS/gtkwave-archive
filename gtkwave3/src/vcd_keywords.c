@@ -1,5 +1,5 @@
-/* C code produced by gperf version 3.0.1 */
-/* Command-line: gperf -o -i 1 -C -k '1,$' -L C -H keyword_hash -N check_identifier -tT vcd_keywords.gperf  */
+/* C code produced by gperf version 3.0.3 */
+/* Command-line: /usr/bin/gperf -o -i 1 -C -k '1,$' -L C -H keyword_hash -N check_identifier -tT ./vcd_keywords.gperf  */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
@@ -28,7 +28,7 @@
 error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
-#line 1 "vcd_keywords.gperf"
+#line 1 "./vcd_keywords.gperf"
 
 
 /* AIX may need this for alloca to work */
@@ -96,6 +96,9 @@ keyword_hash (str, len)
 
 #ifdef __GNUC__
 __inline
+#ifdef __GNUC_STDC_INLINE__
+__attribute__ ((__gnu_inline__))
+#endif
 #endif
 const struct vcd_keyword *
 check_identifier (str, len)
@@ -105,59 +108,59 @@ check_identifier (str, len)
   static const struct vcd_keyword wordlist[] =
     {
       {""}, {""}, {""}, {""}, {""},
-#line 22 "vcd_keywords.gperf"
+#line 22 "./vcd_keywords.gperf"
       {"reg", V_REG},
-#line 35 "vcd_keywords.gperf"
+#line 35 "./vcd_keywords.gperf"
       {"port", V_PORT},
-#line 28 "vcd_keywords.gperf"
+#line 28 "./vcd_keywords.gperf"
       {"trior", V_TRIOR},
-#line 29 "vcd_keywords.gperf"
+#line 29 "./vcd_keywords.gperf"
       {"trireg", V_TRIREG},
-#line 36 "vcd_keywords.gperf"
+#line 36 "./vcd_keywords.gperf"
       {"in", V_IN},
-#line 26 "vcd_keywords.gperf"
+#line 26 "./vcd_keywords.gperf"
       {"tri", V_TRI},
-#line 18 "vcd_keywords.gperf"
+#line 18 "./vcd_keywords.gperf"
       {"parameter", V_PARAMETER},
-#line 38 "vcd_keywords.gperf"
+#line 38 "./vcd_keywords.gperf"
       {"inout", V_INOUT},
       {""},
-#line 19 "vcd_keywords.gperf"
+#line 19 "./vcd_keywords.gperf"
       {"integer", V_INTEGER},
-#line 34 "vcd_keywords.gperf"
+#line 34 "./vcd_keywords.gperf"
       {"wor", V_WOR},
-#line 21 "vcd_keywords.gperf"
+#line 21 "./vcd_keywords.gperf"
       {"real_parameter", V_REAL_PARAMETER},
       {""},
-#line 27 "vcd_keywords.gperf"
+#line 27 "./vcd_keywords.gperf"
       {"triand", V_TRIAND},
-#line 20 "vcd_keywords.gperf"
+#line 20 "./vcd_keywords.gperf"
       {"real", V_REAL},
-#line 37 "vcd_keywords.gperf"
+#line 37 "./vcd_keywords.gperf"
       {"out", V_OUT},
-#line 25 "vcd_keywords.gperf"
+#line 25 "./vcd_keywords.gperf"
       {"time", V_TIME},
-#line 17 "vcd_keywords.gperf"
+#line 17 "./vcd_keywords.gperf"
       {"event", V_EVENT},
       {""},
-#line 30 "vcd_keywords.gperf"
+#line 30 "./vcd_keywords.gperf"
       {"tri0", V_TRI0},
       {""},
-#line 32 "vcd_keywords.gperf"
+#line 32 "./vcd_keywords.gperf"
       {"wand", V_WAND},
-#line 23 "vcd_keywords.gperf"
+#line 23 "./vcd_keywords.gperf"
       {"supply0", V_SUPPLY0},
       {""}, {""}, {""},
-#line 33 "vcd_keywords.gperf"
+#line 33 "./vcd_keywords.gperf"
       {"wire", V_WIRE},
       {""}, {""}, {""}, {""},
-#line 31 "vcd_keywords.gperf"
+#line 31 "./vcd_keywords.gperf"
       {"tri1", V_TRI1},
       {""}, {""},
-#line 24 "vcd_keywords.gperf"
+#line 24 "./vcd_keywords.gperf"
       {"supply1", V_SUPPLY1},
       {""},
-#line 39 "vcd_keywords.gperf"
+#line 39 "./vcd_keywords.gperf"
       {"$end", V_END}
     };
 
@@ -175,7 +178,7 @@ check_identifier (str, len)
     }
   return 0;
 }
-#line 40 "vcd_keywords.gperf"
+#line 40 "./vcd_keywords.gperf"
 
 
 int vcd_keyword_code(const char *s, unsigned int len)
@@ -187,6 +190,9 @@ return(rc ? rc->token : V_STRING);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:27:35  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:17  gtkwave
  * initial release
  *

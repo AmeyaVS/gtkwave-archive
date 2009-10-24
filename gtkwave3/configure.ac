@@ -57,6 +57,25 @@ if test "X$ETCL" = "Xyes" ; then
 	fi
 fi
 
+AC_MSG_CHECKING([if Tcl/Tk (if present) should be stubified])
+
+STUBIFY=no
+AC_ARG_ENABLE([stubify],
+[  --enable-stubify        Causes the Tcl/Tk libraries to be dynamically loaded.],
+[
+if test "X$enable_stubify" = "Xno" ; then
+	STUBIFY=no
+else
+	STUBIFY=yes
+fi
+],
+[
+STUBIFY=no
+])
+
+AC_MSG_RESULT([$STUBIFY])
+
+
 AC_MSG_CHECKING([if gtk1 or gtk2 should be used])
 
 GTK1=no
@@ -373,12 +392,30 @@ fi
 if test "X$ETCL" = "Xyes" ; then
 if test "X$OSTYPE" = "Xcygwin" ; then
 # skip Tcl_CreateInterp check on cygwin...
-	TCL_DEFADD=-DHAVE_LIBTCL
+	if test "X$STUBIFY" = "Xyes" ; then
+	TCL_DEFADD="-DHAVE_LIBTCL -DWAVE_TCL_STUBIFY -DUSE_TCL_STUBS -DUSE_TK_STUBS"
+	TCL_LDADD="${TCL_STUB_LIB_SPEC}"
+	TK_LDADD="${TK_STUB_LIB_SPEC}"
+	else
+	TCL_DEFADD="-DHAVE_LIBTCL"
 	TCL_LDADD="${TCL_LIB_SPEC}"
 	TK_LDADD="${TK_LIB_SPEC}"
-	# cygwin tkConfig.sh has issues...
+        # cygwin tkConfig.sh has issues...
         if test "X$TK_LDADD" = "X" ; then
-		TK_LDADD="${TK_BUILD_LIB_SPEC}"
+                TK_LDADD="${TK_BUILD_LIB_SPEC}"
+        fi
+	fi
+else
+if test "X$OSTYPE" = "Xmsys" ; then
+# skip Tcl_CreateInterp check on MingW (until we figure out)...
+	if test "X$STUBIFY" = "Xyes" ; then
+	TCL_DEFADD="-DHAVE_LIBTCL -DWAVE_TCL_STUBIFY -DUSE_TCL_STUBS -DUSE_TK_STUBS"
+	TCL_LDADD="${TCL_STUB_LIB_SPEC}"
+	TK_LDADD="${TK_STUB_LIB_SPEC}"
+	else
+	TCL_DEFADD="-DHAVE_LIBTCL"
+	TCL_LDADD="${TCL_LIB_SPEC}"
+	TK_LDADD="${TK_LIB_SPEC}"
 	fi
 else
 OLD_LDFLAGS="${LDFLAGS}"
@@ -390,13 +427,21 @@ if test "$need_tcl" = "yes" ; then
                 AC_MSG_WARN([
 Tcl support not enabled.])
 else
-	TCL_DEFADD=-DHAVE_LIBTCL
+	if test "X$STUBIFY" = "Xyes" ; then
+	TCL_DEFADD="-DHAVE_LIBTCL -DWAVE_TCL_STUBIFY -DUSE_TCL_STUBS -DUSE_TK_STUBS"
+	TCL_LDADD="${TCL_STUB_LIB_SPEC}"
+	TK_LDADD="${TK_STUB_LIB_SPEC}"
+	else
+	TCL_DEFADD="-DHAVE_LIBTCL"
 	TCL_LDADD="${TCL_LIB_SPEC}"
 	TK_LDADD="${TK_LIB_SPEC}"
+	fi
 	fi
 LDFLAGS="${OLD_LDFLAGS}"
 fi
 fi
+fi
+
 
 AC_SUBST(TCL_LDADD)
 AC_SUBST(TCL_DEFADD)

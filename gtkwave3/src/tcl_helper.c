@@ -30,6 +30,7 @@
 #include "hierpack.h"
 #include "menu.h"
 #include "tcl_helper.h"
+#include "tcl_np.h"
 
 #if !defined __MINGW32__ && !defined _MSC_VER
 #include <sys/types.h>
@@ -39,7 +40,6 @@
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
 #endif
-
 
 /*----------------------------------------------------------------------
  * tclBackslash -- Figure out how to handle a backslash sequence in tcl list.
@@ -2496,14 +2496,18 @@ void gtkUpdate(ClientData ignore)
 }
 
 int  gtkwaveInterpreterInit(Tcl_Interp *interp) {
-  if(Tcl_Init(interp) == TCL_ERROR) return TCL_ERROR;
-  if(Tk_Init(interp) == TCL_ERROR) return TCL_ERROR;
-  Tcl_SetVar(interp,"tcl_rcFileName","~/.wishrc",TCL_GLOBAL_ONLY);
-
   int i;
   char commandName[128];
   GtkItemFactoryEntry *ife;
   int num_menu_items;
+
+#ifdef WAVE_TCL_STUBIFY
+  set_globals_interp();
+#else
+  if(Tcl_Init(interp) == TCL_ERROR) return TCL_ERROR;
+  if(Tk_Init(interp) == TCL_ERROR) return TCL_ERROR;
+  Tcl_SetVar(interp,"tcl_rcFileName","~/.wishrc",TCL_GLOBAL_ONLY);
+#endif
 
   strcpy(commandName, "gtkwave::");
 
@@ -2592,7 +2596,21 @@ if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 
 void set_globals_interp(void)
 {
+#ifdef WAVE_TCL_STUBIFY
+if(NpCreateMainInterp())
+	{
+	GLOBALS->interp = NpGetMainInterp();
+	}
+	else
+	{
+	fprintf(stderr, "GTKWAVE | Error, failed to find Tcl/Tk runtime libraries.\n");
+	fprintf(stderr, "GTKWAVE | Set the environment variable TCL_PLUGIN_DLL to point to\n");
+	fprintf(stderr, "GTKWAVE | the Tcl shared object file.\n");
+	exit(255);
+	}
+#else
 GLOBALS->interp = Tcl_CreateInterp();
+#endif
 }
 
 
@@ -2603,15 +2621,19 @@ char commandName[128];
 GtkItemFactoryEntry *ife;
 int num_menu_items;
 
+#ifndef WAVE_TCL_STUBIFY
 Tcl_FindExecutable(argv[0]);
+#endif
 
 set_globals_interp();
 
+#ifndef WAVE_TCL_STUBIFY
 if (TCL_OK != Tcl_Init(GLOBALS->interp)) 
 	{
    	fprintf(stderr, "GTKWAVE | Tcl_Init error: %s\n", Tcl_GetStringResult (GLOBALS->interp));
    	exit(EXIT_FAILURE);
   	}
+#endif
 
 strcpy(commandName, "gtkwave::");
 
@@ -2674,6 +2696,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.58  2009/10/23 20:10:33  gtkwave
+ * compatibility cleanups with syntax
+ *
  * Revision 1.57  2009/10/07 16:59:08  gtkwave
  * move Tcl_CreateInterp to tcl_helper.c to make stubify easier
  *
