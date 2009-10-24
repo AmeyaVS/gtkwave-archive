@@ -700,20 +700,6 @@ void NpDestroyInstanceInterp(Tcl_Interp *interp) {
 
 /* ======== Np... End */
 
-#if 0
-void set_globals_interp(void)
-{
-  /* GLOBALS->interp = Tcl_CreateInterp(); */
-  if(NpCreateMainInterp())
-    GLOBALS->interp = NpGetMainInterp() ;
-  else {
-    printf("GTKWAVE | ERROR Failed to find TCL/TK Runtime libraries.\n") ;
-    printf("GTKWAVE | set the environment variable TCL_PLUGIN_DLL to point to the library\n") ;
-    exit(-1) ;
-  }
-}
-#endif
-
 #else
 
 static void dummy_compilation_unit(void)
@@ -726,4 +712,7 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/10/24 01:45:16  gtkwave
+ * initial version
+ *
  */
