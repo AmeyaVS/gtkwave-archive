@@ -15,10 +15,9 @@
 
 /* ==== Np... Begin */
 
-#define NpPlatformMsg(s1, s2) \
-  printf("Platform: %s\n\t%s\n", s1, s2)
-#define NpLog printf
-#define NpPanic printf
+#  define NpPlatformMsg(s1, s2) printf("TCLINIT | Platform: %s\n\t%s\n", s1, s2)
+#  define NpLog(x,y) printf("TCLINIT | " x, y)
+#  define NpPanic(x) fprintf(stderr, "TCLINIT | "x)
 
 #include <tcl.h>
 
@@ -208,4 +207,7 @@ extern void		NpDestroyInstanceInterp(Tcl_Interp *interp);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/10/24 01:45:16  gtkwave
+ * initial version
+ *
  */

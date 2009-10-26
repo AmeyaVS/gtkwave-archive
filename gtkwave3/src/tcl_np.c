@@ -27,10 +27,6 @@
 #   define LIB_RUNTIME_DIR ""
 #endif
 #  define XP_UNIX 1
-#  define NpPlatformMsg(s1, s2) \
-  printf("Platform: %s\n\t%s\n", s1, s2)
-#  define NpLog printf
-#  define NpPanic printf
 
 /*
  * Default directory in which to look for Tcl libraries.  The
@@ -405,12 +401,12 @@ int NpInitInterp(Tcl_Interp *interp) {
    * the Tcl level, so we can just pkg req Tk here instead of calling
    * Tk_InitStubs.
    */
-  NpLog("package require Tk\n", interp);
   if (TCL_OK != Tcl_Init(interp)) {
-    fprintf(stderr, "GTKWAVE | Tcl_Init error: %s\n", 
+    fprintf(stderr, "TCLINIT | Tcl_Init error: %s\n", 
 	    Tcl_GetStringResult (GLOBALS->interp));
     exit(EXIT_FAILURE);
   }
+  NpLog("Tcl_PkgRequire(\"Tk\", \"%s\", 0)\n", TK_VERSION);
   if (1 && Tcl_PkgRequire(interp, "Tk", TK_VERSION, 0) == NULL) {
     NpPlatformMsg(Tcl_GetStringResult(interp),
 		  "NpInitInterp Tcl_PkgRequire(Tk)");
@@ -440,8 +436,6 @@ int NpInitInterp(Tcl_Interp *interp) {
 Tcl_Interp *NpCreateMainInterp() {
   ThreadSpecificData *tsdPtr;
   Tcl_Interp *interp;
-  
-  NpLog("ENTERING NpCreateMainInterp\n");
   
 #ifdef USE_TCL_STUBS
   /*
@@ -475,7 +469,7 @@ Tcl_Interp *NpCreateMainInterp() {
     DLSYM(tclHandle, "Tcl_CreateThread", 
 	  int (*)(Tcl_ThreadId *, Tcl_ThreadCreateProc, ClientData, int, int),
 	  tcl_createThread);
-    DLSYM(tclHandle, "Tcl_FindExecutable", void (*)(char *),
+    DLSYM(tclHandle, "Tcl_FindExecutable", void (*)(const char *),
 	  tcl_findExecutable);
 
   } else {
@@ -509,7 +503,6 @@ Tcl_Interp *NpCreateMainInterp() {
    *   Tcl_CreateThread(&tid, ThreadCreateProc, clientData,
    *     TCL_THREAD_STACK_DEFAULT, TCL_THREAD_JOINABLE);
    */
-  NpLog("Tcl_CreateInterp()\n");
   interp = tcl_createInterp();
   if (interp == (Tcl_Interp *) NULL) {
     NpPlatformMsg("Failed to create main interpreter!",
@@ -544,7 +537,6 @@ Tcl_Interp *NpCreateMainInterp() {
     return NULL;
   }
   
-  NpLog("LEAVING NpCreateMainInterp interp == %p\n", interp);
   return interp;
 }
 
@@ -610,16 +602,13 @@ void NpDestroyMainInterp() {
 #ifdef USE_TCL_STUBS
   tclHandleCnt--;
   if (tclHandle && tclHandleCnt <= 0) {
-    NpLog("Tcl_Finalize && close library\n");
     Tcl_Finalize();
     dlclose(tclHandle);
     tclHandle = NULL;
   } else {
-    NpLog("Tcl_ExitThread\n");
     Tcl_ExitThread(0);
   }
 #else
-  NpLog("Tcl_Finalize\n");
   Tcl_Finalize();
 #endif
 }
@@ -712,6 +701,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/10/24 01:46:32  gtkwave
+ * remove dead code
+ *
  * Revision 1.1  2009/10/24 01:45:16  gtkwave
  * initial version
  *

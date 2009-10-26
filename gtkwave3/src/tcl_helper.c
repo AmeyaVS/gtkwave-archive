@@ -2502,7 +2502,7 @@ int  gtkwaveInterpreterInit(Tcl_Interp *interp) {
   int num_menu_items;
 
 #ifdef WAVE_TCL_STUBIFY
-  set_globals_interp();
+/* not needed...this does a double init if enabled:  set_globals_interp(); */
 #else
   if(Tcl_Init(interp) == TCL_ERROR) return TCL_ERROR;
   if(Tk_Init(interp) == TCL_ERROR) return TCL_ERROR;
@@ -2696,6 +2696,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.59  2009/10/24 01:51:41  gtkwave
+ * added dynamic loading for tcl/tk via --enable-stubify
+ *
  * Revision 1.58  2009/10/23 20:10:33  gtkwave
  * compatibility cleanups with syntax
  *

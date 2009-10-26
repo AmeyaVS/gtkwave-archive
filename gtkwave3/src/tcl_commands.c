@@ -1447,7 +1447,7 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
 	  }
 	str1_p = Tcl_GetStringFromObj(objv[++i], NULL) ;
 	switch(str_p[1]) {
-	case 's': // start time
+	case 's': /* start time */
 	  if(!strstr("-start_time", str_p))
 	    error++ ;
 	  else {
@@ -1456,7 +1456,7 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
 	    dir = (start_time > end_time) ? STRACE_BACKWARD : STRACE_FORWARD ;
 	  }
 	  break ;
-	case 'e': // end time
+	case 'e': /* end time */
 	  if(!strstr("-end_time", str_p))
 	    error++ ;
 	  else {
@@ -1464,14 +1464,14 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
 	    dir = (start_time > end_time) ? STRACE_BACKWARD : STRACE_FORWARD ;
 	  }
 	  break ;
-	case 'm': // max
+	case 'm': /* max */
 	  if(!strstr("-max", str_p))
 	    error++ ;
 	  else {
 	    max_elements = atoi(str1_p) ;
 	  }
 	  break ;
-	case 'd': // dir
+	case 'd': /* dir */
 	  if(!strstr("-dir", str_p))
 	    error++ ;
 	  else {
@@ -1852,6 +1852,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2009/10/08 17:40:49  gtkwave
+ * removed casting on llist_new, use union instead as arg
+ *
  * Revision 1.29  2009/10/07 21:13:10  gtkwave
  * 64-bit fixes on signal list generation
  *
