@@ -327,15 +327,16 @@ EXTERN int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize) {
  * Static variables in this file:
  */
 
-static HMODULE tclHandle = NULL;	/* should be the same in any thread */
 static char dllName[MAX_PATH] = "";
+
 #ifdef USE_TCL_STUBS
+static HMODULE tclHandle = NULL;	/* should be the same in any thread */
 static int tclHandleCnt  = 0;		/* only close on last count */
+static int (* tcl_createThread)(Tcl_ThreadId *, Tcl_ThreadCreateProc,
+	ClientData, int, int) = NULL;
 #endif
 
 static Tcl_Interp * (* tcl_createInterp)() = NULL;
-static int (* tcl_createThread)(Tcl_ThreadId *, Tcl_ThreadCreateProc,
-	ClientData, int, int) = NULL;
 static void (* tcl_findExecutable)(const char *) = NULL;
 /*
  * We want the Tcl_InitStubs func static to ourselves - before Tcl
@@ -701,6 +702,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/10/26 22:44:01  gtkwave
+ * output style fixes, remove double init for bluespec
+ *
  * Revision 1.2  2009/10/24 01:46:32  gtkwave
  * remove dead code
  *
