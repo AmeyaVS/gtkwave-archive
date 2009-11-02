@@ -314,6 +314,7 @@ typedef struct TraceEnt
     unsigned shift_drag_valid : 1; /* qualifies shift_drag above */
     unsigned interactive_vector_needs_regeneration : 1; /* for interactive VCDs */
     unsigned minmax_valid : 1;	/* for d_minval, d_maxval */
+    unsigned is_sort_group : 1; /* only used for sorting purposes */
 
     unsigned int flags;		/* see def below in TraceEntFlagBits */
     unsigned int cached_flags;	/* used for tcl for saving flags during cut and paste */
@@ -431,6 +432,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2009/11/02 05:45:14  gtkwave
+ * temporarily disable sort when groups present
+ *
  * Revision 1.16  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

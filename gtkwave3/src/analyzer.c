@@ -911,7 +911,7 @@ return(GLOBALS->traces.first);
 /*
  * avoid sort/rvs manipulations if there are group traces (for now)
  */
-static int avoidReordering(void)
+static int groupsArePresent(void)
 {
 Trptr t;
 int i, rc = 0;
@@ -947,7 +947,7 @@ Trptr *tsort, *tsort_pnt;
 int i;
    
 if(!GLOBALS->traces.total) return(0);
-if(avoidReordering()) return(0);
+if(groupsArePresent()) return(0);
 
 t=GLOBALS->traces.first;
 tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
@@ -1092,7 +1092,6 @@ int i;
 int (*cptr)(const void*, const void*);
    
 if(!GLOBALS->traces.total) return(0);
-if(avoidReordering()) return(0);
 
 t=GLOBALS->traces.first;
 tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
@@ -1122,7 +1121,72 @@ switch(mode)
 	default:	cptr=tracesignamecompare; break;
 	}
 
-qsort(tsort, GLOBALS->traces.total, sizeof(Trptr), cptr);
+if(!groupsArePresent())
+	{
+	qsort(tsort, GLOBALS->traces.total, sizeof(Trptr), cptr);
+	}
+	else /* keep groups segregated off on the side and sort names + (indirect pointer to) top-level groups */
+	{
+	Trptr *tsort_reduced = wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);
+	int num_reduced = 0;
+	int j;
+
+	for(i=0;i<GLOBALS->traces.total;i++)
+	        {
+	        if(tsort[i]->flags & TR_GRP_BEGIN)
+	                {
+	                int cnt = 0;
+	                
+	                for(j=i;j<GLOBALS->traces.total;j++)
+	                        {
+	                        if(tsort[j]->flags & TR_GRP_BEGIN) { cnt++; }   
+	                        else if(tsort[j]->flags & TR_GRP_END) { cnt--; }
+	                        
+	                        if(!cnt) 
+	                                {
+	                                tsort_reduced[num_reduced] = calloc_2(1, sizeof(struct TraceEnt));
+	                                tsort_reduced[num_reduced]->name = tsort[i]->name;
+	                                tsort_reduced[num_reduced]->is_sort_group = 1;
+	                                tsort_reduced[num_reduced]->t_grp = tsort[i];
+	                                
+	                                tsort[j]->t_next = NULL;
+	                                num_reduced++;        
+	                                
+	                                i = j; break;
+	                                }
+	                        }
+	                }   
+	                else
+	                {
+	                tsort_reduced[num_reduced++] = tsort[i];
+	                }
+	        }
+
+
+	if(num_reduced) 
+		{
+		qsort(tsort_reduced, num_reduced, sizeof(Trptr), cptr);
+		}
+
+	i = 0;
+	for(j=0;j<num_reduced;j++)
+		{
+		if(!tsort_reduced[j]->is_sort_group)
+			{
+			tsort[i++] = tsort_reduced[j];
+			}
+			else
+			{
+			Trptr trav = tsort_reduced[j]->t_grp;
+			free_2(tsort_reduced[j]);
+			while(trav)
+				{
+				tsort[i++] = trav;
+				trav = trav->t_next;
+				}
+			}
+		}
+	}
 
 tsort_pnt=tsort;
 for(i=0;i<GLOBALS->traces.total;i++)
@@ -1286,6 +1350,9 @@ char* GetFullName( Trptr t )
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/11/02 05:45:14  gtkwave
+ * temporarily disable sort when groups present
+ *
  * Revision 1.8  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *
