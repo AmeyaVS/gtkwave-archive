@@ -890,13 +890,9 @@ void menu_toggle_hier(GtkWidget *widget, gpointer data)
 
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nToggle Hierarchy On/Off");
+        help_text_bold("\n\nToggle Trace Hier");
         help_text(
-		" sets the maximum hierarchy depth (counting from the right"
-		" with bit numbers or ranges ignored) that is displayable"
-		" for trace names.  Zero indicates that no truncation will"
-		" be performed (default).  Note that any aliased signals"
-		" (prefix of a \"+\") will not have truncated names." 
+		" toggles the maximum hierarchy depth from zero to one."
         );
         return;
         }
@@ -5935,6 +5931,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.72  2009/09/22 13:51:13  gtkwave
+ * warnings fixes
+ *
  * Revision 1.71  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *
