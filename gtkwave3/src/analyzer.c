@@ -909,6 +909,35 @@ return(GLOBALS->traces.first);
 
 
 /*
+ * avoid sort/rvs manipulations if there are group traces (for now)
+ */
+static int avoidReordering(void)
+{
+Trptr t;
+int i, rc = 0;
+
+t=GLOBALS->traces.first;
+for(i=0;i<GLOBALS->traces.total;i++)
+        {
+        if(!t)
+                {
+                fprintf(stderr, "INTERNAL ERROR: traces.total vs traversal mismatch!  Exiting.\n");
+                exit(255);
+                }
+
+	if((t->t_grp)||(t->t_match)||(t->flags & TR_GRP_MASK))
+		{
+		rc = 1; break;
+		}
+
+        t=t->t_next;
+        }
+
+return(rc);
+}
+
+
+/*
  * reversal of traces
  */
 int TracesReverse(void)
@@ -918,6 +947,7 @@ Trptr *tsort, *tsort_pnt;
 int i;
    
 if(!GLOBALS->traces.total) return(0);
+if(avoidReordering()) return(0);
 
 t=GLOBALS->traces.first;
 tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
@@ -1062,6 +1092,7 @@ int i;
 int (*cptr)(const void*, const void*);
    
 if(!GLOBALS->traces.total) return(0);
+if(avoidReordering()) return(0);
 
 t=GLOBALS->traces.first;
 tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
@@ -1255,6 +1286,9 @@ char* GetFullName( Trptr t )
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.7  2008/12/18 01:31:29  gtkwave
  * integrated experimental autoscroll code on signal adds
  *

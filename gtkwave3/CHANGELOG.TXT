@@ -691,7 +691,7 @@
 		AIX ./configure fixes.
 		Added malform_eof_fix() to recoder and regular VCD loader.
 		Fix to attempt_vecmatch_2 when no suffix encountered.
-3.3.0	23oct09	Modified unformat_time() so it can also handle floating-
+3.3.0	02nov09	Modified unformat_time() so it can also handle floating-
 		point exponential format.
 		Integration of a large amount of group handling sourcecode 
 		from Don Baltus / Bluespec, Inc.
@@ -704,3 +704,5 @@
 		if TK_LIB_SPEC is a null string.)
 		Added --enable-stubify ./configure option to make Tcl/Tk
 		library usage be completely dynamic.
+		Disable trace sort and reverse if groups are present--will
+		fix this in the future sometime.

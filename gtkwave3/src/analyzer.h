@@ -356,8 +356,10 @@ enum TraceEntFlagBits
 #define TR_ZEROFILL		(1<<TR_ZEROFILL_B)
 #define TR_ONEFILL		(1<<TR_ONEFILL_B)
 #define TR_CLOSED		(1<<TR_CLOSED_B)
+
 #define TR_GRP_BEGIN		(1<<TR_GRP_BEGIN_B)
 #define TR_GRP_END		(1<<TR_GRP_END_B)
+#define TR_GRP_MASK		(TR_GRP_BEGIN|TR_GRP_END)
 
 #define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL)
 
@@ -429,6 +431,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.15  2009/07/23 20:00:55  gtkwave
  * added type info to signal window mouseover
  *
