@@ -4890,7 +4890,7 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 
 if((t=GLOBALS->traces.first))
 	{
-	if(TracesAlphabetize(2))
+	if(TracesReorder(TR_SORT_LEX))
 		{
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
 		wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -4915,7 +4915,7 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 
 if((t=GLOBALS->traces.first))
 	{
-	if(TracesAlphabetize(1))
+	if(TracesReorder(TR_SORT_NORM))
 		{
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
 		wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -4940,7 +4940,7 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 
 if((t=GLOBALS->traces.first))
 	{
-	if(TracesAlphabetize(0))
+	if(TracesReorder(TR_SORT_INS))
 		{
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
 		wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -4965,7 +4965,7 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 
 if((t=GLOBALS->traces.first))
 	{
-	if(TracesReverse())
+	if(TracesReorder(TR_SORT_RVS))
 		{
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
 		wavearea_configure_event(GLOBALS->wavearea, NULL);
@@ -5931,6 +5931,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.73  2009/11/02 03:10:51  gtkwave
+ * documentation updates
+ *
  * Revision 1.72  2009/09/22 13:51:13  gtkwave
  * warnings fixes
  *

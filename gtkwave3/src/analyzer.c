@@ -937,65 +937,11 @@ return(rc);
 }
 
 
-/*
- * reversal of traces
- */
-int TracesReverse(void)
-{
-Trptr t;
-Trptr *tsort, *tsort_pnt;
-int i;
-   
-if(!GLOBALS->traces.total) return(0);
-if(groupsArePresent()) return(0);
-
-t=GLOBALS->traces.first;
-tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
-for(i=0;i<GLOBALS->traces.total;i++)
-        {
-        if(!t)
-                {
-                fprintf(stderr, "INTERNAL ERROR: traces.total vs traversal mismatch!  Exiting.\n");
-                exit(255);
-                }
-        *(tsort_pnt++)=t;
-
-        t=t->t_next;
-        }
-
-GLOBALS->traces.first=*(--tsort_pnt);
-
-for(i=GLOBALS->traces.total-1;i>=0;i--)
-        {
-        t=*tsort_pnt;
-
-	if(i==GLOBALS->traces.total-1)
-		{
-		t->t_prev=NULL;
-		}
-		else
-		{
-		t->t_prev=*(tsort_pnt+1);
-		}
-
-	if(i)
-		{
-		t->t_next=*(--tsort_pnt);
-		}
-        }
-
-GLOBALS->traces.last=*tsort;
-GLOBALS->traces.last->t_next=NULL;
-
-return(1);
-}  
-
-
 /*************************************************************/
 
 
 /*
- * sort on tracename pointers (alpha/caseins alpha/sig sort)
+ * sort on tracename pointers (alpha/caseins alpha/sig sort full_reverse)
  */
 static int tracenamecompare(const void *s1, const void *s2)
 {
@@ -1081,9 +1027,9 @@ return(sigcmp(str1, str2));
 
 
 /*
- * alphabetization of traces
+ * alphabetization/reordering of traces
  */
-int TracesAlphabetize(int mode)
+int TracesReorder(int mode)
 {
 Trptr t, prev = NULL;
 Trptr *tsort, *tsort_pnt;
@@ -1116,12 +1062,13 @@ for(i=0;i<GLOBALS->traces.total;i++)
 
 switch(mode)
 	{
-	case 0:		cptr=traceinamecompare;   break;
-	case 1:		cptr=tracenamecompare;	  break;
-	default:	cptr=tracesignamecompare; break;
+	case TR_SORT_INS:  	cptr=traceinamecompare;   break;
+	case TR_SORT_NORM: 	cptr=tracenamecompare;	  break;
+	case TR_SORT_LEX:  	cptr=tracesignamecompare; break;
+	default: 		cptr=NULL; break;
 	}
 
-if(!groupsArePresent())
+if((cptr) && (!groupsArePresent()))
 	{
 	qsort(tsort, GLOBALS->traces.total, sizeof(Trptr), cptr);
 	}
@@ -1162,10 +1109,26 @@ if(!groupsArePresent())
 	                }
 	        }
 
-
-	if(num_reduced) 
+	if(num_reduced)
 		{
-		qsort(tsort_reduced, num_reduced, sizeof(Trptr), cptr);
+		if(mode == TR_SORT_RVS) /* reverse of current order */
+			{
+			for(i=0;i<=(num_reduced/2);i++)
+				{
+				Trptr t_tmp = tsort_reduced[i];
+								
+				j = num_reduced-i-1;
+				tsort_reduced[i] = tsort_reduced[j];
+				tsort_reduced[j] = t_tmp;
+				}			
+			}
+			else
+			{
+			if(cptr)
+				{
+				qsort(tsort_reduced, num_reduced, sizeof(Trptr), cptr);
+				}
+			}
 		}
 
 	i = 0;
@@ -1350,6 +1313,9 @@ char* GetFullName( Trptr t )
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/11/02 22:43:43  gtkwave
+ * enable sorting on groups (need to do reverse yet)
+ *
  * Revision 1.9  2009/11/02 05:45:14  gtkwave
  * temporarily disable sort when groups present
  *

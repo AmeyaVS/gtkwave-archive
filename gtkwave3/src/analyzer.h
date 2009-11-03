@@ -39,6 +39,8 @@ typedef struct BitAttributes *baptr;
 typedef unsigned long  Ulong;
 typedef unsigned int   Uint;
 
+enum TraceReorderMode  { TR_SORT_INS, TR_SORT_NORM, TR_SORT_LEX, TR_SORT_RVS };
+
 
 /* vvv   Bit representation   vvv */
 
@@ -390,8 +392,7 @@ Trptr CutBuffer(void);
 void FreeCutBuffer(void);
 Trptr PasteBuffer(void);
 Trptr PrependBuffer(void);
-int TracesAlphabetize(int mode);
-int TracesReverse(void);
+int TracesReorder(int mode);
 
 void import_trace(nptr np);
 
@@ -432,6 +433,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2009/11/02 22:43:44  gtkwave
+ * enable sorting on groups (need to do reverse yet)
+ *
  * Revision 1.17  2009/11/02 05:45:14  gtkwave
  * temporarily disable sort when groups present
  *
