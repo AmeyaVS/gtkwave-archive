@@ -1552,6 +1552,8 @@ static unsigned create_group (char* name, Trptr t_composite)
   Trptr t, t_prev, t_begin, t_end;
   unsigned dirty = 0;
 
+ if(!name) name = "Group"; /* generate anonymous name */
+
  t=GLOBALS->traces.first;
  while(t)
    {
@@ -5931,6 +5933,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.74  2009/11/03 07:08:21  gtkwave
+ * enabled reverse when groups present
+ *
  * Revision 1.73  2009/11/02 03:10:51  gtkwave
  * documentation updates
  *
