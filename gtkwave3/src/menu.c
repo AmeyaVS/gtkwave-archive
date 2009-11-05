@@ -3928,6 +3928,8 @@ void read_save_helper(char *wname) {
 
 		if(traces_already_exist) GLOBALS->timestart_from_savefile_valid = 0;
 
+		EnsureGroupsMatch();
+
 		GLOBALS->signalwindow_width_dirty=1;
 		MaxSignalLength();
 		signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -5933,6 +5935,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.75  2009/11/05 20:09:16  gtkwave
+ * anonymous group name fix
+ *
  * Revision 1.74  2009/11/03 07:08:21  gtkwave
  * enabled reverse when groups present
  *

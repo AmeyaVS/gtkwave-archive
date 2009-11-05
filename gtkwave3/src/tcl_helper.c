@@ -1242,6 +1242,8 @@ free_2(match_type_list);
 free_2(most_recent_lbrack_list);
 free_2(list);
 
+EnsureGroupsMatch();
+
 return(found);
 }
 
@@ -2696,6 +2698,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.60  2009/10/26 22:44:01  gtkwave
+ * output style fixes, remove double init for bluespec
+ *
  * Revision 1.59  2009/10/24 01:51:41  gtkwave
  * added dynamic loading for tcl/tk via --enable-stubify
  *

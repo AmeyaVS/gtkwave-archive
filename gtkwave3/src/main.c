@@ -1374,6 +1374,7 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 			if(!wave)
 			        {
 			        fprintf(stderr, "** WARNING: Error opening .sav file '%s', skipping.\n",wname);
+				EnsureGroupsMatch();
 				goto savefile_bail;
 			        }	
 			}
@@ -1390,6 +1391,8 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
 
 		if(wave_is_compressed) pclose(wave); else fclose(wave);
+
+		EnsureGroupsMatch();
 
                 if(any_shadow)
                         {
@@ -2595,6 +2598,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.80  2009/10/07 16:59:07  gtkwave
+ * move Tcl_CreateInterp to tcl_helper.c to make stubify easier
+ *
  * Revision 1.79  2009/09/22 13:51:13  gtkwave
  * warnings fixes
  *

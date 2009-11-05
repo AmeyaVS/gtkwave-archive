@@ -1310,9 +1310,78 @@ char* GetFullName( Trptr t )
     }
 }
 
+
+/*
+ * sanity checking to make sure there are not any group open/close mismatches
+ */
+void EnsureGroupsMatch(void)
+{
+Trptr t = GLOBALS->traces.first;
+Trptr last_good = t;
+Trptr t2;
+int oc_cnt = 0;
+int underflow_sticky = 0;
+Trptr tkill_undeflow = NULL;
+
+while(t)
+	{
+	if(t->flags & TR_GRP_MASK)
+		{
+		if(t->flags & TR_GRP_BEGIN)
+			{
+			oc_cnt++;
+			}
+		else
+		if(t->flags & TR_GRP_END)
+			{
+			oc_cnt--;
+			if(oc_cnt == 0)
+				{
+				if(!underflow_sticky)
+					{
+					last_good = t->t_next;
+					}
+				}
+			}
+
+		if(oc_cnt < 0) 
+			{
+			if(!underflow_sticky)
+				{
+				tkill_undeflow = t;
+				}
+			underflow_sticky = 1;
+			}
+		}
+		else
+		{
+		if((oc_cnt == 0) && (!underflow_sticky))
+			{
+			last_good = t->t_next;
+			}
+		}
+
+	t = t->t_next;
+	}
+
+if((underflow_sticky) || (oc_cnt > 0))
+	{
+	t = last_good;
+	while(t)
+		{
+		t2 = t->t_next;
+		RemoveTrace(t, 0); /* conservatively don't set "dofree", if there is a reload memory will reclaim */
+		t = t2;
+		}
+	}
+}
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/11/03 07:08:21  gtkwave
+ * enabled reverse when groups present
+ *
  * Revision 1.10  2009/11/02 22:43:43  gtkwave
  * enable sorting on groups (need to do reverse yet)
  *

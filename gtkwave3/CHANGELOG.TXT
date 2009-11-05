@@ -706,3 +706,5 @@
 		library usage be completely dynamic.
 		Generate anonymous name for groups to prevent crashes when
 		group name is unspecified.
+		Added EnsureGroupsMatch() on various parsewavline() code
+		sections to enforce legitimate group formations.

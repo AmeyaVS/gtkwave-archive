@@ -410,6 +410,7 @@ char *attempt_vecmatch(char *s1, char *s2);
 
 void updateTraceGroup(Trptr t);
 int GetTraceNumber(Trptr t);
+void EnsureGroupsMatch(void);
 
 #define IsSelected(t)   (t->flags&TR_HIGHLIGHT) 
 #define IsGroupBegin(t) (t->flags&TR_GRP_BEGIN)
@@ -433,6 +434,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2009/11/03 07:08:21  gtkwave
+ * enabled reverse when groups present
+ *
  * Revision 1.18  2009/11/02 22:43:44  gtkwave
  * enable sorting on groups (need to do reverse yet)
  *
