@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.0_pre1 (w)1999-2009 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.0 (w)1999-2009 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -176,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.62  2009/09/20 21:45:50  gtkwave
+ * tree force open node handling changed for tcl
+ *
  * Revision 1.61  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *
