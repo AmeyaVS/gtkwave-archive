@@ -95,6 +95,7 @@ int SST_open_path(GtkCTree *ctree, GtkCTreeNode *node) {
 
 int SST_open_node(char *name) {
   int rv ;
+#ifdef WAVE_USE_GTK2
    GtkCTree *ctree = GLOBALS->ctree_main;
    if (ctree) {
      GtkCTreeRow *gctr;
@@ -118,6 +119,10 @@ int SST_open_node(char *name) {
    } else {
      rv = SST_TREE_NOT_EXIST ;
    }
+#else
+  rv = SST_TREE_NOT_EXIST ;
+#endif
+
    return rv ;
 }
 /* ===== Double link lists */

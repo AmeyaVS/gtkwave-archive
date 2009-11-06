@@ -2784,7 +2784,11 @@ if(GLOBALS->helpbox_is_active)
 	return;
 	}
 
+#ifdef WAVE_USE_GTK2
 if((!GLOBALS->socket_xid)&&(!GLOBALS->partial_vcd))
+#else
+if(!GLOBALS->partial_vcd)
+#endif
 	{
 	fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_SIGNAL_FUNC(menu_new_viewer_tab_cleanup), GTK_SIGNAL_FUNC(NULL), NULL, 0);
 	}
@@ -5562,7 +5566,11 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 #endif
 	}
 
-    if((GLOBALS->socket_xid)||(GLOBALS->partial_vcd))
+    if(
+#ifdef WAVE_USE_GTK2
+	(GLOBALS->socket_xid)||
+#endif
+	(GLOBALS->partial_vcd))
 	{
 	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_FONVT].path);
 	}
@@ -5935,6 +5943,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.76  2009/11/05 23:11:09  gtkwave
+ * added EnsureGroupsMatch()
+ *
  * Revision 1.75  2009/11/05 20:09:16  gtkwave
  * anonymous group name fix
  *

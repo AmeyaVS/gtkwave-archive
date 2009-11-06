@@ -169,12 +169,6 @@ for(ix=0;ix<GLOBALS->num_notebook_pages;ix++)
 #endif
 
 
-/* for XID plug handling... */
-#ifdef WAVE_USE_XID
-#else
-GdkNativeWindow socket_xid = 0;
-#endif
-
 static int plug_destroy (GtkWidget *widget, gpointer data)
 {
 exit(0);
@@ -2269,7 +2263,9 @@ set_window_size (int x, int y)
     }
   else
     {
+#ifdef WAVE_USE_XID
       if(!GLOBALS->socket_xid)
+#endif
 	{
       	gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mainwindow), x, y);
 	}
@@ -2598,6 +2594,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.81  2009/11/05 23:11:09  gtkwave
+ * added EnsureGroupsMatch()
+ *
  * Revision 1.80  2009/10/07 16:59:07  gtkwave
  * move Tcl_CreateInterp to tcl_helper.c to make stubify easier
  *

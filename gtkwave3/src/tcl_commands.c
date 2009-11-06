@@ -1738,7 +1738,11 @@ static int gtkwavetcl_presentWindow(ClientData clientData, Tcl_Interp *interp, i
 
   if(objc == 1)
     {
+#ifdef WAVE_USE_GTK2 
       gtk_window_present(GTK_WINDOW(GLOBALS->mainwindow));
+#else
+      gdk_window_raise(GTK_WIDGET(GLOBALS->mainwindow)->window);
+#endif
     }
   else  
     {
@@ -1852,6 +1856,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2009/10/26 22:44:01  gtkwave
+ * output style fixes, remove double init for bluespec
+ *
  * Revision 1.30  2009/10/08 17:40:49  gtkwave
  * removed casting on llist_new, use union instead as arg
  *

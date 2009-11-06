@@ -495,7 +495,9 @@ NULL, /* expanderwindow 205 */
 0, /* force_toolbars 221 */
 0, /* hide_sst 222 */
 1, /* sst_expanded 223 */
+#ifdef WAVE_USE_GTK2
 0, /* socket_xid 224 */
+#endif
 0, /* disable_menus 225 */
 NULL, /* ftext_main_main_c_1 226 */
 #ifdef WAVE_USE_GTK2
@@ -1736,7 +1738,9 @@ void reload_into_new_context(void)
  /* twinwave stuff */
  new_globals->dual_attach_id_main_c_1 = GLOBALS->dual_attach_id_main_c_1;
  new_globals->dual_id = GLOBALS->dual_id;
+#ifdef WAVE_USE_GTK2
  new_globals->socket_xid = GLOBALS->socket_xid;
+#endif
  new_globals->dual_ctx = GLOBALS->dual_ctx;
   
  /* Times struct */

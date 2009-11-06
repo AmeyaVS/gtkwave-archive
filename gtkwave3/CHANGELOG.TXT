@@ -708,3 +708,5 @@
 		group name is unspecified.
 		Added EnsureGroupsMatch() on various parsewavline() code
 		sections to enforce legitimate group formations.
+		Applied gtk+-1.2 compile fixes as compile was getting out
+		of sync as it hadn't been tested recently.
