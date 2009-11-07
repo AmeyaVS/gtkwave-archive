@@ -2252,18 +2252,24 @@ if(*w2=='+')
 		  if(suffix[i]==0) return(0);
 		  if((suffix[i]==')')&&(suffix[i+1])) {i++; break; }
 		}
-
+	      
 	      s=symfind(suffix+i, &rows);
-	      nexp = ExtractNodeSingleBit(&s->n[rows], atoi(suffix+1));
-	      if(nexp)
-		{
-		  AddNode(nexp, prefix+1);
-		  return(~0);
-		}
-	      else
+	      if (s) {
+		nexp = ExtractNodeSingleBit(&s->n[rows], atoi(suffix+1));
+		if(nexp)
+		  {
+		    AddNode(nexp, prefix+1);
+		    return(~0);
+		  }
+		else
+		  {
+		    return(0);
+		  }
+	      }	
+	      else 
 		{
 		  return(0);
-		}		
+		}
 	    }
 	  else
 	    {
@@ -3042,6 +3048,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.15  2009/08/28 20:29:35  gtkwave
  * Fix to attempt_vecmatch_2 when no suffix encountered.
  *
