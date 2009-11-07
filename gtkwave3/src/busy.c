@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2006-2008.
+ * Copyright (c) Tony Bybell 2006-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,20 +19,40 @@ if(!GLOBALS->busy_busy_c_1)
 	}
 	else
 	{
+	/* filter out user input when we're "busy" */
+
+	/* originally we allowed these two sets only... */
+
+        /* usual expose events */
+        /* case GDK_CONFIGURE: */
+        /* case GDK_EXPOSE: */
+
+        /* needed to keep dnd from hanging */
+        /* case GDK_ENTER_NOTIFY: */
+        /* case GDK_LEAVE_NOTIFY: */
+        /* case GDK_FOCUS_CHANGE: */
+        /* case GDK_MAP: */
+
+	/* now it has been updated to remove keyboard/mouse input */
+
 	switch (event->type) 
 		{
-		/* usual expose events */
-		case GDK_CONFIGURE:
-		case GDK_EXPOSE:
-
-		/* needed to keep dnd from hanging */
-		case GDK_ENTER_NOTIFY:
-		case GDK_LEAVE_NOTIFY:
-		case GDK_FOCUS_CHANGE:
-		case GDK_MAP:
-	            	gtk_main_do_event(event);
+		/* more may be needed to be added in the future */
+		case GDK_MOTION_NOTIFY:
+		case GDK_BUTTON_PRESS:
+		case GDK_2BUTTON_PRESS:
+		case GDK_3BUTTON_PRESS:
+		case GDK_BUTTON_RELEASE:
+		case GDK_KEY_PRESS:
+		case GDK_KEY_RELEASE:
+#if GTK_CHECK_VERSION(2,6,0)
+		case GDK_SCROLL:
+#endif
+			/* printf("event->type: %d\n", event->type); */
+			break;
 
 		default:
+	            	gtk_main_do_event(event);
 			/* printf("event->type: %d\n", event->type); */
 			break;
 		}
@@ -143,6 +163,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/11/07 22:11:10  gtkwave
+ * underflow handling on idle
+ *
  * Revision 1.10  2008/01/13 02:16:27  gtkwave
  * re-enable busy pointer during dnd: allow more gdkevents to pass through
  *
