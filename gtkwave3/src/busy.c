@@ -115,7 +115,7 @@ int i;
 
 if(GLOBALS->busy_busy_c_1)
 	{
-	if(GLOBALS->busy_busy_c_1 == 1)
+	if(GLOBALS->busy_busy_c_1 <= 1) /* defensively, in case something causes the value to go below zero */
 		{
 		if(w) gdk_window_set_cursor (w->window, NULL);
 		else
@@ -143,6 +143,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2008/01/13 02:16:27  gtkwave
+ * re-enable busy pointer during dnd: allow more gdkevents to pass through
+ *
  * Revision 1.9  2008/01/09 19:20:52  gtkwave
  * more updating to globals management (expose events cause wrong swap)
  *
