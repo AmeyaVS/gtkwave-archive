@@ -691,7 +691,7 @@
 		AIX ./configure fixes.
 		Added malform_eof_fix() to recoder and regular VCD loader.
 		Fix to attempt_vecmatch_2 when no suffix encountered.
-3.3.0	05nov09	Modified unformat_time() so it can also handle floating-
+3.3.0	09nov09	Modified unformat_time() so it can also handle floating-
 		point exponential format.
 		Integration of a large amount of group handling sourcecode 
 		from Don Baltus / Bluespec, Inc.
@@ -711,3 +711,5 @@
 		Applied gtk+-1.2 compile fixes as compile was getting out
 		of sync as it hadn't been tested recently.
 		Allow more events in GuiDoEvent() to prevent hangs.
+		Made --wish and --vcd mutually exclusive as they both require
+		input on stdin.

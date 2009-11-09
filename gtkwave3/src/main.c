@@ -956,6 +956,14 @@ if (optind < argc)
 		}
         }
 
+if(is_wish && is_vcd)
+	{
+	fprintf(stderr, 
+		"GTKWAVE | Cannot use --vcd and --wish options together as both use stdin,\n"
+		"GTKWAVE | exiting!\n");
+	exit(255);
+	}
+
 read_rc_file(override_rc);
 GLOBALS->splash_disable |= splash_disable_rc_override;
 
@@ -2594,6 +2602,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.82  2009/11/06 04:15:17  gtkwave
+ * gtk+-1.2 compile fixes
+ *
  * Revision 1.81  2009/11/05 23:11:09  gtkwave
  * added EnsureGroupsMatch()
  *
