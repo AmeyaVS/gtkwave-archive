@@ -89,7 +89,7 @@ void make_tcl_interpreter(char *argv[]);
 
 #ifdef HAVE_LIBTCL
 int gtkwaveInterpreterInit (Tcl_Interp *interp);
-void set_globals_interp(void);
+void set_globals_interp(char *me, int install_tk);
 #endif
 
 #endif
@@ -97,6 +97,9 @@ void set_globals_interp(void);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.21  2009/10/23 20:10:33  gtkwave
+ * compatibility cleanups with syntax
+ *
  * Revision 1.20  2009/10/08 17:40:49  gtkwave
  * removed casting on llist_new, use union instead as arg
  *

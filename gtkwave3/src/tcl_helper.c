@@ -2596,10 +2596,10 @@ if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 }
 
 
-void set_globals_interp(void)
+void set_globals_interp(char *me, int install_tk)
 {
 #ifdef WAVE_TCL_STUBIFY
-if(NpCreateMainInterp())
+  if(NpCreateMainInterp(me, install_tk))
 	{
 	GLOBALS->interp = NpGetMainInterp();
 	}
@@ -2624,10 +2624,10 @@ GtkItemFactoryEntry *ife;
 int num_menu_items;
 
 #ifndef WAVE_TCL_STUBIFY
-Tcl_FindExecutable(argv[0]);
+ Tcl_FindExecutable(argv[0]);
 #endif
 
-set_globals_interp();
+ set_globals_interp(argv[0], 0);
 
 #ifndef WAVE_TCL_STUBIFY
 if (TCL_OK != Tcl_Init(GLOBALS->interp)) 
@@ -2698,6 +2698,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.61  2009/11/05 23:11:09  gtkwave
+ * added EnsureGroupsMatch()
+ *
  * Revision 1.60  2009/10/26 22:44:01  gtkwave
  * output style fixes, remove double init for bluespec
  *

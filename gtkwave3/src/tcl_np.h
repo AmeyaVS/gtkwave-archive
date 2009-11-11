@@ -192,10 +192,10 @@
 /*
  * npinterp.c
  */
-extern Tcl_Interp	*NpCreateMainInterp(void);
+extern Tcl_Interp	*NpCreateMainInterp(char *me, int install_tk);
 extern Tcl_Interp	*NpGetMainInterp(void);
 extern void		NpDestroyMainInterp(void);
-extern Tcl_Interp	*NpGetInstanceInterp(void);
+extern Tcl_Interp	*NpGetInstanceInterp(int install_tk);
 extern void		NpDestroyInstanceInterp(Tcl_Interp *interp);
 
 /* ==== Np... End */
@@ -207,6 +207,9 @@ extern void		NpDestroyInstanceInterp(Tcl_Interp *interp);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/10/26 22:44:01  gtkwave
+ * output style fixes, remove double init for bluespec
+ *
  * Revision 1.1  2009/10/24 01:45:16  gtkwave
  * initial version
  *

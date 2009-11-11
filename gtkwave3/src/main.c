@@ -2218,7 +2218,7 @@ if(is_interactive)
 	  {
 	  char* argv_mod[1];
 
-	  set_globals_interp();
+	  set_globals_interp(argv[0], 1);
 
 	  if(is_wish)
 		{
@@ -2602,6 +2602,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.83  2009/11/09 20:09:12  gtkwave
+ * made --vcd and --wish mutually exclusive
+ *
  * Revision 1.82  2009/11/06 04:15:17  gtkwave
  * gtk+-1.2 compile fixes
  *

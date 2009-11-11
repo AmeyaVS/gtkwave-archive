@@ -27,7 +27,7 @@
 #   define LIB_RUNTIME_DIR ""
 #endif
 #  define XP_UNIX 1
-
+ 
 /*
  * Default directory in which to look for Tcl libraries.  The
  * symbol is defined by Makefile.
@@ -62,20 +62,42 @@ static HINSTANCE nptclInst = NULL;
  *
  *----------------------------------------------------------------------
  */
-
-extern int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize) {
+/* me :: path to the current executable */
+extern int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize,
+			 char *me) {
   char *envdll, libname[MAX_PATH];
   HMODULE handle = (HMODULE) NULL;
   
+  char path[MAX_PATH], *p ; 
+  /* #include <windows.h> */
+  /* #include <iostream> */
+  if( !GetModuleFileName(NULL, path, MAX_PATH) ) {
+    printf("GetModuleFileName() failed\n") ;
+  } else {
+    if((p = strrchr(path,'\\'))) {
+      *(++p) = '\0' ;
+      sprintf(libname, "%s\\%s\\tcl%d%d.dll", path, TCL_MAJOR_VERSION,
+	      TCL_MINOR_VERSION) ;
+      NpLog("Attempt to load from executable directory '%s'\n", libname) ;
+      if(!(handle = LoadLibrary(libname))) {
+	sprintf(libname, "%s..\\lib\\tcl%d%d.dll", path, TCL_MAJOR_VERSION,
+		TCL_MINOR_VERSION) ;
+	NpLog("Attempt to load from relative lib directory '%s'\n", libname) ;
+	handle = LOAD_LIBRARY(libname) ;
+      }
+    }
+  }
   /*
    * Try a user-supplied Tcl dll to start with.
    */
-  envdll = getenv("TCL_PLUGIN_DLL");
-  if (envdll != NULL) {
-    NpLog("Attempt to load Tcl dll (TCL_PLUGIN_DLL) '%s'\n", envdll);
-    handle = LoadLibrary(envdll);
-    if (handle) {
-      memcpy(libname, envdll, MAX_PATH);
+  if(!handle) {
+    envdll = getenv("TCL_PLUGIN_DLL");
+    if (envdll != NULL) {
+      NpLog("Attempt to load Tcl dll (TCL_PLUGIN_DLL) '%s'\n", envdll);
+      handle = LoadLibrary(envdll);
+      if (handle) {
+	memcpy(libname, envdll, MAX_PATH);
+      }
     }
   }
 
@@ -218,6 +240,36 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD dwReason, LPVOID lpReserved) {
  * exist on others;  if it doesn't exist, set it to 0 so it has no effect.
  */
 
+
+/*
+ *----------------------------------------------------------------------
+ * NpMyDirectoryPath --
+ * 
+ * Results:
+ *   Full directory path to the current executable or NULL
+ *----------------------------------------------------------------------
+ */
+char *NpMyDirectoryPath(char *path, int path_max_len) {
+     int length;
+     char *p ;
+     length = readlink("/proc/self/exe", path, path_max_len);
+     
+     if ((length < 0) || (length >= path_max_len)) {
+       fprintf(stderr, "Error while looking for executable path.\n");
+       path = NULL ;
+     } else {
+       path[length] = '\0';       /* Strip '@' off the end. */
+     }
+     if(path) {
+       if((p = strrchr(path, '/')))
+	 *p = '\0' ;
+       else
+	 path = NULL ;
+     }
+     return path ;
+}
+
+
 #  ifndef RTLD_NOW
 #     define RTLD_NOW 1
 #  endif
@@ -241,21 +293,39 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD dwReason, LPVOID lpReserved) {
  *----------------------------------------------------------------------
  */
 
-EXTERN int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize) {
+ EXTERN int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize,
+			  char *me) {
   char *envdll, libname[MAX_PATH];
   HMODULE handle = (HMODULE) NULL;
   
   *tclHandle = NULL;
+  char path[MAX_PATH], *p ; 
+  if(me) 
+    strcpy(path, me) ;
+  if(me && (p = strrchr(path,'/'))) {
+    *(++p) = '\0' ;
+    sprintf(libname, "%s/%s", path, TCL_LIB_FILE) ;
+    NpLog("Attempt to load from executable directory '%s'\n", libname) ;
+    if(!(handle = dlopen(libname, RTLD_NOW | RTLD_GLOBAL))) {
+      sprintf(libname, "%s../lib/%s", path, TCL_LIB_FILE) ;
+      NpLog("Attempt to load from relative lib directory '%s'\n", libname) ;
+      handle = dlopen(libname, RTLD_NOW | RTLD_GLOBAL) ;
+    }
+  } else {
+    handle = NULL ;
+  }
   
   /*
    * Try a user-supplied Tcl dll to start with.
    */
-  envdll = getenv("TCL_PLUGIN_DLL");
-  if (envdll != NULL) {
-    NpLog("Attempt to load Tcl dll (TCL_PLUGIN_DLL) '%s'\n", envdll);
-    handle = dlopen(envdll, RTLD_NOW | RTLD_GLOBAL);
-    if (handle) {
-      memcpy(libname, envdll, MAX_PATH);
+  if(!handle) {
+    envdll = getenv("TCL_PLUGIN_DLL");
+    if (envdll != NULL) {
+      NpLog("Attempt to load Tcl dll (TCL_PLUGIN_DLL) '%s'\n", envdll);
+      handle = dlopen(envdll, RTLD_NOW | RTLD_GLOBAL);
+      if (handle) {
+	memcpy(libname, envdll, MAX_PATH);
+      }
     }
   }
   
@@ -383,7 +453,7 @@ static Tcl_Interp *mainInterp = NULL;
  *----------------------------------------------------------------------
  */
 
-int NpInitInterp(Tcl_Interp *interp) {
+int NpInitInterp(Tcl_Interp *interp, int install_tk) {
   Tcl_Preserve((ClientData) interp);
   
   /*
@@ -403,18 +473,19 @@ int NpInitInterp(Tcl_Interp *interp) {
    * Tk_InitStubs.
    */
   if (TCL_OK != Tcl_Init(interp)) {
-    fprintf(stderr, "TCLINIT | Tcl_Init error: %s\n", 
-	    Tcl_GetStringResult (GLOBALS->interp));
+    CONST char *msg = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
+    fprintf(stderr, "GTKWAVE | Tcl_Init error: %s\n", msg) ;
     exit(EXIT_FAILURE);
   }
-  NpLog("Tcl_PkgRequire(\"Tk\", \"%s\", 0)\n", TK_VERSION);
-  if (1 && Tcl_PkgRequire(interp, "Tk", TK_VERSION, 0) == NULL) {
-    NpPlatformMsg(Tcl_GetStringResult(interp),
-		  "NpInitInterp Tcl_PkgRequire(Tk)");
-    NpPlatformMsg("Failed to create initialize Tk", "NpInitInterp");
-    return TCL_ERROR;
+  if (install_tk) {
+    NpLog("Tcl_PkgRequire(\"Tk\", \"%s\", 0)\n", TK_VERSION);
+    if (1 && Tcl_PkgRequire(interp, "Tk", TK_VERSION, 0) == NULL) {
+      NpPlatformMsg(Tcl_GetStringResult(interp),
+		    "NpInitInterp Tcl_PkgRequire(Tk)");
+      NpPlatformMsg("Failed to create initialize Tk", "NpInitInterp");
+      return TCL_ERROR;
+    }
   }
-
   return TCL_OK;
 }
 
@@ -434,7 +505,7 @@ int NpInitInterp(Tcl_Interp *interp) {
  *----------------------------------------------------------------------
  */
 
-Tcl_Interp *NpCreateMainInterp() {
+Tcl_Interp *NpCreateMainInterp(char *me, int install_tk) {
   ThreadSpecificData *tsdPtr;
   Tcl_Interp *interp;
   
@@ -449,7 +520,7 @@ Tcl_Interp *NpCreateMainInterp() {
     /* DLSYM(tclHandle, "Tcl_CreateInterp", Tcl_Interp * (*)(), tcl_createInterp); */
 
     if ((tcl_createInterp == NULL)
-	&& (NpLoadLibrary(&tclHandle, dllName, MAX_PATH) != TCL_OK)) {
+	&& (NpLoadLibrary(&tclHandle, dllName, MAX_PATH, me) != TCL_OK)) {
       NpPlatformMsg("Failed to load Tcl dll!", "NpCreateMainInterp");
       return NULL;
     }
@@ -534,7 +605,7 @@ Tcl_Interp *NpCreateMainInterp() {
   tsdPtr->interp = interp;
   mainInterp = interp;
   
-  if (NpInitInterp(interp) != TCL_OK) {
+  if (NpInitInterp(interp, install_tk) != TCL_OK) {
     return NULL;
   }
   
@@ -630,7 +701,7 @@ void NpDestroyMainInterp() {
  *----------------------------------------------------------------------
  */
 
-Tcl_Interp *NpGetInstanceInterp() {
+Tcl_Interp *NpGetInstanceInterp(int install_tk) {
   ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
   Tcl_Interp *interp;
   
@@ -642,7 +713,7 @@ Tcl_Interp *NpGetInstanceInterp() {
   interp = Tcl_CreateInterp();
   NpLog("NpGetInstanceInterp - create interp %p\n", interp);
   
-  if (NpInitInterp(interp) != TCL_OK) {
+  if (NpInitInterp(interp, install_tk) != TCL_OK) {
     NpLog("NpGetInstanceInterp: NpInitInterp(%p) != TCL_OK\n", interp);
     return NULL;
   }
@@ -702,6 +773,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/10/27 21:40:22  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.3  2009/10/26 22:44:01  gtkwave
  * output style fixes, remove double init for bluespec
  *
