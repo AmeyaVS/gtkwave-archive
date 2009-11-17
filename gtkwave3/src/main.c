@@ -2219,19 +2219,10 @@ if(is_interactive)
 	  char* argv_mod[1];
 
 	  set_globals_interp(argv[0], 1);
+	  addPidToExecutableName(1, argv, argv_mod);
+	  Tk_MainEx(1, argv_mod, gtkwaveInterpreterInit, GLOBALS->interp);
 
-	  if(is_wish)
-		{
-		addPidToExecutableName(1, argv, argv_mod);
-
-		Tk_MainEx(1, argv_mod, gtkwaveInterpreterInit, GLOBALS->interp);
-
-		/* note: for(kk=0;kk<argc;kk++) { free_2(argv_mod[kk]); } can't really be done here, doesn't matter anyway as context free will get it */
-		}
-		else
-		{
-		gtk_main();
-		}
+	  /* note: for(kk=0;kk<argc;kk++) { free_2(argv_mod[kk]); } can't really be done here, doesn't matter anyway as context free will get it */
 	  }
 	  else
 	  {
@@ -2602,6 +2593,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.84  2009/11/11 16:30:57  gtkwave
+ * changed tcl library ordering, no tk unless --wish
+ *
  * Revision 1.83  2009/11/09 20:09:12  gtkwave
  * made --vcd and --wish mutually exclusive
  *
