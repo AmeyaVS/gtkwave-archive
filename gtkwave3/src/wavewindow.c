@@ -53,13 +53,19 @@ if(GLOBALS->dual_ctx && !GLOBALS->dual_race_lock)
 
 /*
  * gtk_draw_line() acceleration for win32 by doing draw combining
+ * now always enabled.  if there need to be an exact correlation
+ * between this and the printed data, this needs to be disabled.
  */
-#if defined __MINGW32__ || defined _MSC_VER
+#if 1
 
 #define WAVE_SEG_BUF_CNT 1024
 
-static int seg_trans_cnt=0, seg_low_cnt=0, seg_high_cnt=0, seg_mid_cnt=0;
-static GdkSegment seg_trans[WAVE_SEG_BUF_CNT], seg_low[WAVE_SEG_BUF_CNT], seg_high[WAVE_SEG_BUF_CNT], seg_mid[WAVE_SEG_BUF_CNT];
+static int seg_trans_cnt = 0, seg_low_cnt = 0, seg_high_cnt = 0, seg_mid_cnt = 0, seg_x_cnt = 0, seg_vtrans_cnt 
+= 0, seg_0_cnt = 0, seg_1_cnt = 0, seg_vbox_cnt = 0;
+
+static GdkSegment seg_trans[WAVE_SEG_BUF_CNT], seg_low[WAVE_SEG_BUF_CNT], seg_high[WAVE_SEG_BUF_CNT], 
+seg_mid[WAVE_SEG_BUF_CNT], seg_x[WAVE_SEG_BUF_CNT], seg_vtrans[WAVE_SEG_BUF_CNT], seg_0[WAVE_SEG_BUF_CNT],
+seg_1[WAVE_SEG_BUF_CNT], seg_vbox[WAVE_SEG_BUF_CNT];
 
 
 static void wave_gdk_draw_line(GdkDrawable *drawable, GdkGC *gc, gint x1, gint y1, gint x2, gint y2)
@@ -71,13 +77,19 @@ if(gc==GLOBALS->gc_trans_wavewindow_c_1) 	{ seg = seg_trans; seg_cnt = &seg_tran
 else if(gc==GLOBALS->gc_low_wavewindow_c_1) 	{ seg = seg_low; seg_cnt = &seg_low_cnt; }
 else if(gc==GLOBALS->gc_high_wavewindow_c_1) 	{ seg = seg_high; seg_cnt = &seg_high_cnt; }
 else if(gc==GLOBALS->gc_mid_wavewindow_c_1) 	{ seg = seg_mid; seg_cnt = &seg_mid_cnt; }
-else 			{ gdk_draw_line(drawable, gc, x1, y1, x2, y2); return; }
+else if(gc == GLOBALS->gc_x_wavewindow_c_1)	{ seg = seg_x; seg_cnt = &seg_x_cnt; }
+else if(gc == GLOBALS->gc_vtrans_wavewindow_c_1){ seg = seg_vtrans; seg_cnt = &seg_vtrans_cnt; }
+else if(gc == GLOBALS->gc_0_wavewindow_c_1) 	{ seg = seg_0;  seg_cnt = &seg_0_cnt; }
+else if(gc == GLOBALS->gc_1_wavewindow_c_1)	{ seg = seg_1; seg_cnt = &seg_1_cnt; }
+else if(gc == GLOBALS->gc_vbox_wavewindow_c_1)	{ seg = seg_vbox; seg_cnt = &seg_vbox_cnt; }
+else 						{ gdk_draw_line(drawable, gc, x1, y1, x2, y2); return; }
 
 seg[*seg_cnt].x1 = x1;
 seg[*seg_cnt].y1 = y1;
 seg[*seg_cnt].x2 = x2;
 seg[*seg_cnt].y2 = y2;
 (*seg_cnt)++;
+
 if(*seg_cnt == WAVE_SEG_BUF_CNT)
 	{
 	gdk_draw_segments(drawable, gc, seg, *seg_cnt);
@@ -87,34 +99,66 @@ if(*seg_cnt == WAVE_SEG_BUF_CNT)
 
 static void wave_gdk_draw_line_flush(GdkDrawable *drawable)
 {
-if(seg_mid)
+if(seg_mid_cnt)
 	{
 	gdk_draw_segments(drawable, GLOBALS->gc_mid_wavewindow_c_1, seg_mid, seg_mid_cnt);
 	seg_mid_cnt = 0;
 	}
 
-if(seg_high)
+if(seg_high_cnt)
 	{
 	gdk_draw_segments(drawable, GLOBALS->gc_high_wavewindow_c_1, seg_high, seg_high_cnt);
 	seg_high_cnt = 0;
 	}
 
-if(seg_low)
+if(seg_low_cnt)
 	{
 	gdk_draw_segments(drawable, GLOBALS->gc_low_wavewindow_c_1, seg_low, seg_low_cnt);
 	seg_low_cnt = 0;
 	}
 
-if(seg_trans)
+if(seg_trans_cnt)
 	{
 	gdk_draw_segments(drawable, GLOBALS->gc_trans_wavewindow_c_1, seg_trans, seg_trans_cnt);
 	seg_trans_cnt = 0;
+	}
+
+if(seg_0_cnt)
+	{
+	gdk_draw_segments (drawable, GLOBALS->gc_0_wavewindow_c_1, seg_0, seg_0_cnt);
+	seg_0_cnt = 0;
+	}
+
+if(seg_1_cnt)
+	{
+	gdk_draw_segments (drawable, GLOBALS->gc_1_wavewindow_c_1, seg_1, seg_1_cnt);
+	seg_1_cnt = 0;
+	}
+
+/* place x down here to propagate them over low/high transitions */
+
+if(seg_x_cnt)
+	{
+	gdk_draw_segments (drawable, GLOBALS->gc_x_wavewindow_c_1, seg_x, seg_x_cnt);
+	seg_x_cnt = 0;
+	}
+
+if(seg_vbox_cnt)
+	{
+	gdk_draw_segments (drawable, GLOBALS->gc_vbox_wavewindow_c_1, seg_vbox, seg_vbox_cnt);
+	seg_vbox_cnt = 0;
+	}
+
+if(seg_vtrans_cnt)
+	{
+	gdk_draw_segments (drawable, GLOBALS->gc_vtrans_wavewindow_c_1, seg_vtrans, seg_vtrans_cnt);
+	seg_vtrans_cnt = 0;
 	}
 }
 
 #else
 
-/* completely unnecessary for linux */
+/* completely unnecessary for linux ... unless there are extremely dense traces */
 
 #define wave_gdk_draw_line(a,b,c,d,e,f) gdk_draw_line(a,b,c,d,e,f)
 #define wave_gdk_draw_line_flush(x)
@@ -3850,6 +3894,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.51  2009/09/14 03:00:09  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.50  2009/07/24 03:21:31  gtkwave
  * added fisher price mode to GCs as a ./configure option
  *
