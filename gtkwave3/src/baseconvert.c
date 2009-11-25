@@ -27,6 +27,115 @@
 #define strcasecmp _stricmp
 #endif
 
+/*
+ * convert binary <=> gray in place
+ */
+#define cvt_gray(f,p,n) \
+do { \
+if((f)&TR_GRAYMASK) \
+	{ \
+	if((f)&TR_BINGRAY) { convert_bingray((p),(n)); } \
+	if((f)&TR_GRAYBIN) { convert_graybin((p),(n)); } \
+	} \
+} while(0)
+
+
+static void convert_graybin(char *pnt, int nbits)
+{
+char kill_state = 0;
+char pch = AN_0;
+int i;
+
+for(i=0;i<nbits;i++)
+	{
+	char ch = pnt[i];
+
+	if(!kill_state)
+		{
+		switch(ch)
+			{
+			case AN_0:
+			case AN_L:
+					if((pch == AN_1) || (pch == AN_H))
+						{
+						pnt[i] = pch;
+						}
+					break;
+	
+			case AN_1:
+			case AN_H:
+					if(pch == AN_1)
+						{
+						pnt[i] = AN_0;
+						}
+					else if(pch == AN_H)
+						{
+						pnt[i] = AN_L;
+						}
+					break;
+	
+			default:
+					kill_state = 1;
+					break;	
+			}
+	
+		pch = pnt[i];	/* pch is xor accumulator */
+		}
+		else
+		{
+		pnt[i] = pch;
+		}
+	}
+}
+
+static void convert_bingray(char *pnt, int nbits)
+{
+char kill_state = 0;
+char pch = AN_0;
+int i;
+
+for(i=0;i<nbits;i++)
+	{
+	char ch = pnt[i];
+
+	if(!kill_state)
+		{
+		switch(ch)
+			{
+			case AN_0:
+			case AN_L:
+					if((pch == AN_1) || (pch == AN_H))
+						{
+						pnt[i] = pch;
+						}
+					break;
+	
+			case AN_1:
+			case AN_H:
+					if(pch == AN_1)
+						{
+						pnt[i] = AN_0;
+						}
+					else if(pch == AN_H)
+						{
+						pnt[i] = AN_L;
+						}
+					break;
+	
+			default:
+					kill_state = 1;
+					break;	
+			}
+	
+		pch = ch;	/* pch is previous character */
+		}
+		else
+		{
+		pnt[i] = pch;
+		}
+	}
+}
+
 
 /*
  * convert trptr+vptr into an ascii string
@@ -38,10 +147,10 @@ int nbits;
 unsigned char *bits;
 char *os, *pnt, *newbuff;
 int i, j, len;
-char xtab[AN_COUNT];
 
 static const char xfwd[AN_COUNT]= AN_NORMAL  ;
 static const char xrev[AN_COUNT]= AN_INVERSE ;
+const char *xtab;
 
 flags=t->flags;
 nbits=t->n.vec->nbits;
@@ -49,11 +158,11 @@ bits=v->v;
 
 if(flags&TR_INVERT)
 	{
-	memcpy(xtab,xrev,AN_COUNT);
+	xtab = xrev;
 	}
 	else
 	{
-	memcpy(xtab,xfwd,AN_COUNT);
+	xtab = xfwd;
 	}
 
 if(flags&(TR_ZEROFILL|TR_ONEFILL))
@@ -155,6 +264,7 @@ if(flags&TR_ASCII)
 	if(GLOBALS->show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i+=8)
 		{
@@ -194,6 +304,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 	if(GLOBALS->show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i+=4)
 		{
@@ -354,6 +465,7 @@ else if(flags&TR_OCT)
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
 		:(newbuff+3);
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i+=3)
 		{
@@ -389,6 +501,7 @@ else if(flags&TR_BIN)
 	if(GLOBALS->show_base) { *(pnt++)='%'; }
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i++)
 		{
@@ -407,6 +520,7 @@ else if(flags&TR_SIGNED)
 	os=(char *)calloc_2(1,len);
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	if((parse[0]==AN_1)||(parse[0]==AN_H))
 		{ val = LLDescriptor(-1); }
@@ -444,6 +558,7 @@ else if(flags&TR_REAL)
 		double d;
 
 		parse=newbuff+3;
+		cvt_gray(flags,parse,nbits);
 
 		for(i=0;i<nbits;i++)
 			{
@@ -473,6 +588,7 @@ rl_go_binary:	len=(nbits/1)+2+1;		/* %xxxxx */
 		if(GLOBALS->show_base) { *(pnt++)='%'; }
 	
 		parse=newbuff+3;
+		cvt_gray(flags,parse,nbits);
 	
 		for(i=0;i<nbits;i++)
 			{
@@ -492,6 +608,7 @@ else	/* decimal when all else fails */
 	os=(char *)calloc_2(1,len);
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i++)
 		{
@@ -618,7 +735,7 @@ int nbits;
 char *bits;
 char *os, *pnt, *newbuff;
 int i, j, len;
-char xtab[AN_COUNT];
+const char *xtab;
 
 static const char xfwd[AN_COUNT]= AN_NORMAL  ;
 static const char xrev[AN_COUNT]= AN_INVERSE ;
@@ -705,13 +822,13 @@ if((flags&(TR_ZEROFILL|TR_ONEFILL))&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->e
 	}
 
 if(flags&TR_INVERT)
-	{
-	memcpy(xtab,xrev,AN_COUNT);
-	}
-	else
-	{
-	memcpy(xtab,xfwd,AN_COUNT);
-	}
+        {
+        xtab = xrev;
+        }
+        else
+        {
+        xtab = xfwd;
+        }
 
 newbuff=(char *)malloc_2(nbits+6); /* for justify */
 if(flags&TR_REVERSE)
@@ -751,6 +868,7 @@ if(flags&TR_ASCII)
 	if(GLOBALS->show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i+=8)
 		{
@@ -789,6 +907,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)))
 	if(GLOBALS->show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i+=4)
 		{
@@ -949,6 +1068,7 @@ else if(flags&TR_OCT)
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
 		:(newbuff+3);
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i+=3)
 		{
@@ -983,6 +1103,7 @@ else if(flags&TR_BIN)
 	if(GLOBALS->show_base) { *(pnt++)='%'; }
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i++)
 		{
@@ -1001,6 +1122,7 @@ else if(flags&TR_SIGNED)
 	os=(char *)calloc_2(1,len);
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
         if((parse[0]==AN_1)||(parse[0]==AN_H))
                 { val = LLDescriptor(-1); }
@@ -1038,6 +1160,7 @@ else if(flags&TR_REAL)
 		double d;
 
 		parse=newbuff+3;
+		cvt_gray(flags,parse,nbits);
 
 		for(i=0;i<nbits;i++)
 			{
@@ -1067,6 +1190,7 @@ rl_go_binary:	len=(nbits/1)+2+1;		/* %xxxxx */
 		if(GLOBALS->show_base) { *(pnt++)='%'; }
 	
 		parse=newbuff+3;
+		cvt_gray(flags,parse,nbits);
 	
 		for(i=0;i<nbits;i++)
 			{
@@ -1086,6 +1210,7 @@ else	/* decimal when all else fails */
 	os=(char *)calloc_2(1,len);
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i++)
 		{
@@ -1268,7 +1393,7 @@ int nbits;
 char *bits;
 char *pnt, *newbuff;
 int i;
-char xtab[AN_COUNT];
+const char *xtab;
 double mynan = strtod("NaN", NULL);
 double retval = mynan;
 
@@ -1318,13 +1443,13 @@ if(vec)
 
 
 if(flags&TR_INVERT)
-	{
-	memcpy(xtab,xrev,AN_COUNT);
-	}
-	else
-	{
-	memcpy(xtab,xfwd,AN_COUNT);
-	}
+        {
+        xtab = xrev;
+        }
+        else
+        {
+        xtab = xfwd;
+        }
 
 newbuff=(char *)malloc_2(nbits+6); /* for justify */
 if(flags&TR_REVERSE)
@@ -1361,6 +1486,7 @@ if(flags&TR_SIGNED)
 	unsigned char fail=0;
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
         if((parse[0]==AN_1)||(parse[0]==AN_H))
                 { val = LLDescriptor(-1); }
@@ -1390,6 +1516,7 @@ else	/* decimal when all else fails */
 	unsigned char fail=0;
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i++)
 		{
@@ -1420,7 +1547,7 @@ int nbits;
 unsigned char *bits;
 char *newbuff;
 int i;
-char xtab[AN_COUNT];
+const char *xtab;
 double mynan = strtod("NaN", NULL);
 double retval = mynan;
 
@@ -1432,13 +1559,13 @@ nbits=t->n.vec->nbits;
 bits=v->v;
 
 if(flags&TR_INVERT)
-	{
-	memcpy(xtab,xrev,AN_COUNT);
-	}
-	else
-	{
-	memcpy(xtab,xfwd,AN_COUNT);
-	}
+        {
+        xtab = xrev;
+        }
+        else
+        {
+        xtab = xfwd;
+        }
 
 newbuff=(char *)malloc_2(nbits+6); /* for justify */
 if(flags&TR_REVERSE)
@@ -1476,6 +1603,7 @@ if(flags&TR_SIGNED)
 	unsigned char fail=0;
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	if((parse[0]==AN_1)||(parse[0]==AN_H))
 		{ val = LLDescriptor(-1); }
@@ -1506,6 +1634,7 @@ else	/* decimal when all else fails */
 	unsigned char fail=0;
 
 	parse=newbuff+3;
+	cvt_gray(flags,parse,nbits);
 
 	for(i=0;i<nbits;i++)
 		{
@@ -1528,6 +1657,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/07/12 20:23:17  gtkwave
+ * vtype2() fix (remove magic number and replace with AN_ constant)
+ *
  * Revision 1.10  2009/07/07 20:12:53  gtkwave
  * convert hex capitalization to match verilog
  *

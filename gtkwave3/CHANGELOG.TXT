@@ -691,7 +691,7 @@
 		AIX ./configure fixes.
 		Added malform_eof_fix() to recoder and regular VCD loader.
 		Fix to attempt_vecmatch_2 when no suffix encountered.
-3.3.0	20nov09	Modified unformat_time() so it can also handle floating-
+3.3.0	25nov09	Modified unformat_time() so it can also handle floating-
 		point exponential format.
 		Integration of a large amount of group handling sourcecode 
 		from Don Baltus / Bluespec, Inc.
@@ -715,3 +715,11 @@
 		input on stdin.
 		Enabled gc caching on linux to help with rendering extremely
 		dense traces.
+		Removed memcpy() ops in baseconvert.c and changed them into
+		pointer copies as the copied string is never modified.
+		Resequenced enum WV_MenuItems in menu.h which lost ordering
+		from Bluespec menu item adds.
+		Added gray code conversion ops.
+
+		<< NEED TO ADD GRAY CODE MENU OPS + Gg MOUSEOVER CODES TO 
+		USER MANUAL >>

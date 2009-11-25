@@ -103,6 +103,12 @@ WV_MENU_EDFION,
 WV_MENU_EDFIOFF,
 WV_MENU_EDFRON,
 WV_MENU_EDFROFF,
+WV_MENU_XLF_0,
+WV_MENU_XLF_1,
+#if !defined __MINGW32__ && !defined _MSC_VER
+WV_MENU_XLP_0,
+WV_MENU_XLP_1,
+#endif
 WV_MENU_EDFAOFF,
 WV_MENU_EDFASTEP,
 WV_MENU_EDFAINTERPOL,
@@ -112,12 +118,9 @@ WV_MENU_EDFARAD,
 WV_MENU_RFILL0,
 WV_MENU_RFILL1,
 WV_MENU_RFILLOFF,
-WV_MENU_XLF_0,
-WV_MENU_XLF_1,
-#if !defined __MINGW32__ && !defined _MSC_VER
-WV_MENU_XLP_0,
-WV_MENU_XLP_1,
-#endif
+WV_MENU_B2G,
+WV_MENU_G2B,
+WV_MENU_GBNONE,
 WV_MENU_ESCAH,
 WV_MENU_ESCFH,
 WV_MENU_SEP6,
@@ -130,8 +133,8 @@ WV_MENU_ESH,
 WV_MENU_SEP6A,
 /* WV_MENU_EXA, */
 /* WV_MENU_CPA, */
-WV_MENU_AG,
 WV_MENU_TG,
+WV_MENU_AG,
 WV_MENU_SEP6A1,
 WV_MENU_EHR,
 WV_MENU_EUHR,
@@ -337,6 +340,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2009/09/22 13:51:14  gtkwave
+ * warnings fixes
+ *
  * Revision 1.27  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

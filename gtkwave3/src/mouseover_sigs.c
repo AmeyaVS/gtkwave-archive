@@ -92,7 +92,12 @@ if((flags & TR_ZEROFILL) != 0) { ch[pos++] = '0'; }
 else
 if((flags & TR_ONEFILL) != 0) { ch[pos++] = '1'; }
 
-/* [8] (at worst case this front part needs 9 characters) */
+/* [8] */
+if((flags & TR_BINGRAY) != 0) { ch[pos++] = 'G'; }
+/* [9] */
+if((flags & TR_GRAYBIN) != 0) { ch[pos++] = 'g'; }
+
+/* [10]  (at worst case this front part needs 11 characters) */
 ch[pos] = 0;
 
 if(!t->vector)
@@ -440,6 +445,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.4  2009/08/03 03:52:54  gtkwave
  * fix bug with displaying sig type in mouseover on signalwindow
  *
