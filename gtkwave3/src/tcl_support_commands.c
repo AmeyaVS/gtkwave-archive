@@ -500,6 +500,10 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
     int nelem = 0, bw = -1 ;
     TimeType tstart = (dir == STRACE_FORWARD) ? start_time : end_time ;
     TimeType tend = (dir == STRACE_FORWARD) ? end_time : start_time ;
+    if ((dir == STRACE_BACKWARD) && (max_elements == 1))
+	{
+	max_elements++;
+	}
     if (!t->vector) {
       hptr h, h1;
       int len = 0  ;
