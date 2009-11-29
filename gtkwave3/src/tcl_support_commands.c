@@ -416,16 +416,27 @@ Trptr sig_name_to_Trptr(char *name) {
 				s2 = s;
 				}
 
-			while(s2)
+			if(GLOBALS->is_lx2)
 				{
-                                if(s2->n->mv.mvlfac)	/* the node doesn't exist yet! */
-                                        {
-                                        lx2_set_fac_process_mask(s2->n);
-                                        pre_import++;
-                                        }
-
-				s2 = s2->vec_chain;
-				len++;
+				while(s2)
+					{
+	                                if(s2->n->mv.mvlfac)	/* the node doesn't exist yet! */
+	                                        {
+	                                        lx2_set_fac_process_mask(s2->n);
+	                                        pre_import++;
+	                                        }
+	
+					s2 = s2->vec_chain;
+					len++;
+					}
+				}
+				else
+				{
+				while(s2)
+					{
+					s2 = s2->vec_chain;
+					len++;
+					}
 				}
 	
 			if(was_packed) { free_2(hfacname); }
