@@ -1777,6 +1777,76 @@ static int gtkwavetcl_showSignal(ClientData clientData, Tcl_Interp *interp, int 
   return(TCL_OK);
 }
 
+
+/* 
+ * swap to a given context based on tab number (from Tcl)
+ */
+static gint switch_to_tab_number(unsigned int i)
+{       
+if(i < GLOBALS->num_notebook_pages)  
+        {
+        struct Global *g_old = GLOBALS;
+        /* printf("Switching to: %d\n", i); */
+
+        set_GLOBALS((*GLOBALS->contexts)[i]);
+        
+        GLOBALS->lxt_clock_compress_to_z = g_old->lxt_clock_compress_to_z;
+        GLOBALS->autoname_bundles = g_old->autoname_bundles;
+        GLOBALS->autocoalesce_reversal = g_old->autocoalesce_reversal;
+        GLOBALS->autocoalesce = g_old->autocoalesce;
+        GLOBALS->hier_grouping = g_old->hier_grouping;
+        GLOBALS->wave_scrolling = g_old->wave_scrolling;
+        GLOBALS->constant_marker_update = g_old->constant_marker_update;
+        GLOBALS->do_zoom_center = g_old->do_zoom_center;
+        GLOBALS->use_roundcaps = g_old->use_roundcaps;
+        GLOBALS->do_resize_signals = g_old->do_resize_signals;
+        GLOBALS->use_full_precision = g_old->use_full_precision;
+        GLOBALS->show_base = g_old->show_base;
+        GLOBALS->display_grid = g_old->display_grid;
+        GLOBALS->disable_mouseover = g_old->disable_mouseover;
+        GLOBALS->zoom_pow10_snap = g_old->zoom_pow10_snap;
+                                         
+        GLOBALS->scale_to_time_dimension = g_old->scale_to_time_dimension;
+        GLOBALS->zoom_dyn = g_old->zoom_dyn;
+        GLOBALS->zoom_dyne = g_old->zoom_dyne;
+                                                         
+        gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
+        return(TRUE);
+        }
+                
+return(FALSE);
+}                     
+
+
+static int gtkwavetcl_setTabActive(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = Tcl_GetString(objv[1]);
+        unsigned int tabnum = atoi(s);
+	gint rc = switch_to_tab_number(tabnum);
+        
+        MaxSignalLength();
+        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        
+        gtkwave_gtk_main_iteration();
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, rc));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
+static int gtkwavetcl_getNumTabs(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+int value = GLOBALS->num_notebook_pages;
+return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
+}
+
+
 tcl_cmdstruct gtkwave_commands[] =
 	{
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
@@ -1801,6 +1871,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getMinTime", 				gtkwavetcl_getMinTime},
 	{"getNamedMarker", 			gtkwavetcl_getNamedMarker},
 	{"getNumFacs", 				gtkwavetcl_getNumFacs},
+	{"getNumTabs",				gtkwavetcl_getNumTabs},
 	{"getPixelsUnitTime", 			gtkwavetcl_getPixelsUnitTime},
 	{"getSaveFileName",			gtkwavetcl_getSaveFileName},
 	{"getStemsFileName",			gtkwavetcl_getStemsFileName},
@@ -1828,6 +1899,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"setLeftJustifySigs",			gtkwavetcl_setLeftJustifySigs},
 	{"setMarker",				gtkwavetcl_setMarker},
 	{"setNamedMarker",			gtkwavetcl_setNamedMarker},
+   	{"setTabActive",			gtkwavetcl_setTabActive},
 	{"setToEntry",				gtkwavetcl_setToEntry},
 	{"setTraceHighlightFromIndex",		gtkwavetcl_setTraceHighlightFromIndex},
 	{"setTraceHighlightFromNameMatch",	gtkwavetcl_setTraceHighlightFromNameMatch},
@@ -1857,6 +1929,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2009/11/29 18:38:20  gtkwave
+ * added FST to return types for gtkwave::getDumpType
+ *
  * Revision 1.32  2009/11/06 04:15:17  gtkwave
  * gtk+-1.2 compile fixes
  *
