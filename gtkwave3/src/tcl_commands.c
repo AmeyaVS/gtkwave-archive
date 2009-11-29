@@ -285,6 +285,7 @@ if(GLOBALS->is_lx2)
                 case LXT2_IS_AET2: reportString = "AET2"; break;
                 case LXT2_IS_VZT:  reportString = "VZT"; break;
                 case LXT2_IS_VLIST:reportString = "VCD"; break;
+                case LXT2_IS_FST:  reportString = "FST"; break;
                 }
         }
 
@@ -1856,6 +1857,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2009/11/06 04:15:17  gtkwave
+ * gtk+-1.2 compile fixes
+ *
  * Revision 1.31  2009/10/26 22:44:01  gtkwave
  * output style fixes, remove double init for bluespec
  *
