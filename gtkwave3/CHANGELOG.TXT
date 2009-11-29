@@ -721,6 +721,7 @@
 		from Bluespec menu item adds.
 		Added gray code conversion ops.
 		Added FST detection to gtkwave::getDumpType.
+		Added missing context change variables in context_swapper().
 
 		<< NEED TO ADD GRAY CODE MENU OPS + Gg MOUSEOVER CODES TO 
 		USER MANUAL >>
