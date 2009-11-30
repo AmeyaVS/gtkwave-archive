@@ -17,6 +17,7 @@
 
 #  define NpPlatformMsg(s1, s2) printf("TCLINIT | Platform: %s\n\t%s\n", s1, s2)
 #  define NpLog(x,y) printf("TCLINIT | " x, y)
+#  define NpLog3(x,y,z) printf("TCLINIT | " x, y, z)
 #  define NpPanic(x) fprintf(stderr, "TCLINIT | "x)
 
 #include <tcl.h>
@@ -207,6 +208,9 @@ extern void		NpDestroyInstanceInterp(Tcl_Interp *interp);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/11/11 16:30:58  gtkwave
+ * changed tcl library ordering, no tk unless --wish
+ *
  * Revision 1.2  2009/10/26 22:44:01  gtkwave
  * output style fixes, remove double init for bluespec
  *

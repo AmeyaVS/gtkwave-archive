@@ -195,8 +195,7 @@ extern int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize,
 			      | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, code,
 			      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 			      (char *) &msgPtr, 0, NULL);
-      NpLog("GetModuleFileNameA ERROR: %d (%s)\n", code,
-	    (length == 0) ? "unknown error" : msgPtr);
+      NpLog3("GetModuleFileNameA ERROR: %d (%s)\n", code, ((length == 0) ? "unknown error" : msgPtr));
       if (length > 0) {
 	LocalFree(msgPtr);
       }
@@ -381,7 +380,7 @@ char *NpMyDirectoryPath(char *path, int path_max_len) {
     Dl_info info;
     
     if (tcl_Init && dladdr(tcl_Init, &info)) {
-      NpLog("using dladdr '%s' => '%s'\n", libname, info.dli_fname);
+      NpLog3("using dladdr '%s' => '%s'\n", libname, info.dli_fname);
       snprintf(dllName, dllNameSize, info.dli_fname);
     } else
 #  endif
@@ -558,8 +557,7 @@ Tcl_Interp *NpCreateMainInterp(char *me, int install_tk) {
 #elif defined(HAVE_DLADDR)
     Dl_info info;
     if (dladdr(tcl_createInterp, &info)) {
-      NpLog("NpCreateMainInterp: using dladdr '%s' => '%s'\n",
-	    dllName, info.dli_fname);
+      NpLog3("NpCreateMainInterp: using dladdr '%s' => '%s'\n", dllName, info.dli_fname);
       snprintf(dllName, MAX_PATH, info.dli_fname);
     }
 #endif
@@ -773,6 +771,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/11/11 16:30:58  gtkwave
+ * changed tcl library ordering, no tk unless --wish
+ *
  * Revision 1.4  2009/10/27 21:40:22  gtkwave
  * warnings cleanups
  *
