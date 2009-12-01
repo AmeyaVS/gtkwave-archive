@@ -4577,11 +4577,12 @@ menu_dataformat_bingray_on(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nData Format-Gray-B2G");
+        help_text_bold("\n\nData Format-Gray Filters-To Gray");
         help_text(
                 " will step through all highlighted traces and ensure that"
-                " bits and vectors with this qualifier will be displayed with"       
-                " gray code instead of binary."
+                " bits and vectors with this qualifier will be displayed after"       
+                " going through binary to gray conversion. This is a filter"
+		" which sits before other Data Format options such as hex, etc."
         );
         return;
         }  
@@ -4594,11 +4595,12 @@ menu_dataformat_graybin_on(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nData Format-Gray-G2B");
+        help_text_bold("\n\nData Format-Gray Filters-From Gray");
         help_text(
                 " will step through all highlighted traces and ensure that"
-                " bits and vectors with this qualifier will be displayed with"       
-                " gray converted to binary encoding."
+                " bits and vectors with this qualifier will be displayed after"       
+                " going through gray to binary conversion. This is a filter"
+                " which sits before other Data Format options such as hex, etc."
         );
         return;
         }  
@@ -5380,9 +5382,9 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Range Fill/With 1s", NULL, menu_dataformat_rangefill_one, WV_MENU_RFILL1, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Range Fill/Off", NULL, menu_dataformat_rangefill_off, WV_MENU_RFILLOFF, "<Item>"),
 
-    WAVE_GTKIFE("/Edit/Data Format/Gray/B2G", NULL, menu_dataformat_bingray_on, WV_MENU_B2G, "<Item>"),
-    WAVE_GTKIFE("/Edit/Data Format/Gray/G2B", NULL, menu_dataformat_graybin_on, WV_MENU_G2B, "<Item>"),
-    WAVE_GTKIFE("/Edit/Data Format/Gray/None", NULL, menu_dataformat_nogray,    WV_MENU_GBNONE, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Gray Filters/To Gray", NULL, menu_dataformat_bingray_on, WV_MENU_B2G, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Gray Filters/From Gray", NULL, menu_dataformat_graybin_on, WV_MENU_G2B, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Gray Filters/None", NULL, menu_dataformat_nogray,    WV_MENU_GBNONE, "<Item>"),
 
     WAVE_GTKIFE("/Edit/Show-Change All Highlighted", NULL, menu_showchangeall, WV_MENU_ESCAH, "<Item>"),
     WAVE_GTKIFE("/Edit/Show-Change First Highlighted", "<Control>F", menu_showchange, WV_MENU_ESCFH, "<Item>"),
@@ -5915,9 +5917,9 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Range Fill/With 1s", NULL, menu_dataformat_rangefill_one, WV_MENU_RFILL1, "<Item>"),
     WAVE_GTKIFE("/Data Format/Range Fill/Off", NULL, menu_dataformat_rangefill_off, WV_MENU_RFILLOFF, "<Item>"),
 
-    WAVE_GTKIFE("/Data Format/Gray/B2G", NULL, menu_dataformat_bingray_on, WV_MENU_B2G, "<Item>"),
-    WAVE_GTKIFE("/Data Format/Gray/G2B", NULL, menu_dataformat_graybin_on, WV_MENU_G2B, "<Item>"),
-    WAVE_GTKIFE("/Data Format/Gray/None", NULL, menu_dataformat_nogray,    WV_MENU_GBNONE, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Gray Filters/To Gray", NULL, menu_dataformat_bingray_on, WV_MENU_B2G, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Gray Filters/From Gray", NULL, menu_dataformat_graybin_on, WV_MENU_G2B, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Gray Filters/None", NULL, menu_dataformat_nogray,    WV_MENU_GBNONE, "<Item>"),
 
     WAVE_GTKIFE("/<separator>", NULL, NULL, WV_MENU_SEP1, "<Separator>"),
     WAVE_GTKIFE("/Insert Analog Height Extension", NULL, menu_insert_analog_height_extension, WV_MENU_EIA, "<Item>"),
@@ -6006,6 +6008,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.78  2009/11/25 09:49:28  gtkwave
+ * added gray code support
+ *
  * Revision 1.77  2009/11/06 04:15:17  gtkwave
  * gtk+-1.2 compile fixes
  *
