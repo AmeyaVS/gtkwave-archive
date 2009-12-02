@@ -4581,7 +4581,7 @@ if(GLOBALS->helpbox_is_active)
         help_text(
                 " will step through all highlighted traces and ensure that"
                 " bits and vectors with this qualifier will be displayed after"       
-                " going through binary to gray conversion. This is a filter"
+                " going through normal to gray conversion. This is a filter"
 		" which sits before other Data Format options such as hex, etc."
         );
         return;
@@ -4599,7 +4599,7 @@ if(GLOBALS->helpbox_is_active)
         help_text(
                 " will step through all highlighted traces and ensure that"
                 " bits and vectors with this qualifier will be displayed after"       
-                " going through gray to binary conversion. This is a filter"
+                " going through gray to normal conversion. This is a filter"
                 " which sits before other Data Format options such as hex, etc."
         );
         return;
@@ -4614,11 +4614,11 @@ menu_dataformat_nogray(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nData Format-Gray-None");
+        help_text_bold("\n\nData Format-Gray Filters-None");
         help_text(
                 " will step through all highlighted traces and ensure that"
                 " bits and vectors with this qualifier will be displayed with"       
-                " normal binary encoding."
+                " normal encoding."
         );
         return;
         }  
@@ -6008,6 +6008,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.79  2009/12/01 21:26:55  gtkwave
+ * renamed B2G and G2B options
+ *
  * Revision 1.78  2009/11/25 09:49:28  gtkwave
  * added gray code support
  *
