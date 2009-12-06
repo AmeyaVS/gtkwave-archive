@@ -17,6 +17,8 @@
 #ifndef alloca
 #define alloca __builtin_alloca
 #endif
+#else
+#include <malloc.h>
 #endif
 #elif defined(_MSC_VER)
 #include <malloc.h>
@@ -28,6 +30,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:50  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.1  2007/08/06 03:50:50  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.
