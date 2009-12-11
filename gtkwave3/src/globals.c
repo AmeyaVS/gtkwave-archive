@@ -454,6 +454,7 @@ NULL, /* skip_start */
 NULL, /* skip_end */
 NULL, /* indirect_fname */
 MISSING_FILE, /* loaded_file_type */
+0, /* is_optimized_stdin_vcd */
 NULL, /* whoami 190 */
 NULL, /* logfile 191 */
 NULL, /* stems_name 192 */
@@ -1311,7 +1312,7 @@ void reload_into_new_context(void)
  char cached_ignore_savefile_size = GLOBALS->ignore_savefile_size;
  char cached_splash_disable = GLOBALS->splash_disable;
 
- if(GLOBALS->loaded_file_type == MISSING_FILE)
+ if((GLOBALS->loaded_file_type == MISSING_FILE)||(GLOBALS->is_optimized_stdin_vcd))
 	{
 	fprintf(stderr, "GTKWAVE | Nothing to reload!\n");
 	return;

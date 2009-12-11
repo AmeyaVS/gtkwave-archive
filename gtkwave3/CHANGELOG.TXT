@@ -724,6 +724,8 @@
 		Added missing context change variables in context_swapper().
 		Added gtkwave::setTabActive and gtkwave::getNumTabs
 		MinGW tcl compile fixes.
+		Cygwin fix for optimized vcd -o option.
+		Disabled reload on optimized vcd from stdin.
 
 		<< NEED TO ADD GRAY CODE MENU OPS + Gg MOUSEOVER CODES TO 
 		USER MANUAL >>

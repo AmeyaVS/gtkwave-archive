@@ -450,6 +450,7 @@ char *skip_start;
 char *skip_end;
 char *indirect_fname;
 enum FileType loaded_file_type;
+char is_optimized_stdin_vcd;
 char *whoami; /* from main.c 201 */
 struct logfile_chain *logfile; /* from main.c 202 */
 char *stems_name; /* from main.c 203 */

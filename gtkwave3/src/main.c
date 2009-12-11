@@ -2542,6 +2542,13 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 #if !defined _MSC_VER && !defined __MINGW32__
 void optimize_vcd_file(void) {
   if(!strcmp("-vcd", GLOBALS->unoptimized_vcd_file_name)) {        
+#ifdef __CYGWIN__
+    char *buf = strdup_2("vcd2lxt2 -- - vcd.lx2");
+    system(buf);
+    free_2(buf);
+    GLOBALS->loaded_file_name = strdup_2("vcd.lx2");
+    GLOBALS->is_optimized_stdin_vcd = 1;
+#else
     pid_t pid;
     char *buf = malloc_2(strlen("vcd") + 4 + 1);
     sprintf(buf, "%s.lx2", "vcd");
@@ -2563,8 +2570,18 @@ void optimize_vcd_file(void) {
 	exit(255);
       }
     }
+#endif
   }
   else {
+#ifdef __CYGWIN__
+    char *buf = malloc_2(9 + (strlen(GLOBALS->unoptimized_vcd_file_name) + 1) + (strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1));
+    sprintf(buf, "vcd2lxt2 %s %s.lx2", GLOBALS->unoptimized_vcd_file_name, GLOBALS->unoptimized_vcd_file_name);
+    system(buf);
+    free_2(buf);
+    buf = malloc_2(strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1);
+    sprintf(buf, "%s.lx2", GLOBALS->unoptimized_vcd_file_name);
+    GLOBALS->loaded_file_name = buf;
+#else
     pid_t pid;
     char *buf = malloc_2(strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1);
     sprintf(buf, "%s.lx2", GLOBALS->unoptimized_vcd_file_name);
@@ -2586,6 +2603,7 @@ void optimize_vcd_file(void) {
 	exit(255);
       }
     }
+#endif
   }	
 }
 #endif
@@ -2593,6 +2611,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.85  2009/11/17 00:14:40  gtkwave
+ * removed redundant is_wish check
+ *
  * Revision 1.84  2009/11/11 16:30:57  gtkwave
  * changed tcl library ordering, no tk unless --wish
  *
