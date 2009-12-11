@@ -76,7 +76,7 @@ extern int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize,
   } else {
     if((p = strrchr(path,'\\'))) {
       *(++p) = '\0' ;
-      sprintf(libname, "%s\\%s\\tcl%d%d.dll", path, TCL_MAJOR_VERSION,
+      sprintf(libname, "%s\\tcl%d%d.dll", path, TCL_MAJOR_VERSION,
 	      TCL_MINOR_VERSION) ;
       NpLog("Attempt to load from executable directory '%s'\n", libname) ;
       if(!(handle = LoadLibrary(libname))) {
@@ -771,6 +771,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/12/11 20:36:20  gtkwave
+ * compile warning fix
+ *
  * Revision 1.7  2009/12/11 19:48:59  gtkwave
  * mingw tcl fixes
  *
