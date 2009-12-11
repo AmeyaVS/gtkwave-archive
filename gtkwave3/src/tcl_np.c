@@ -398,12 +398,12 @@ char *NpMyDirectoryPath(char *path, int path_max_len) {
 
 static char dllName[MAX_PATH] = "";
 
-/* #ifdef USE_TCL_STUBS */
+#ifdef WIN32
 static HMODULE tclHandle = NULL;	/* should be the same in any thread */
 static int tclHandleCnt  = 0;		/* only close on last count */
 static int (* tcl_createThread)(Tcl_ThreadId *, Tcl_ThreadCreateProc,
 	ClientData, int, int) = NULL;
-/* #endif */
+#endif
 
 static Tcl_Interp * (* tcl_createInterp)() = NULL;
 static void (* tcl_findExecutable)(const char *) = NULL;
@@ -771,6 +771,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/12/11 19:48:59  gtkwave
+ * mingw tcl fixes
+ *
  * Revision 1.6  2009/11/30 17:09:35  gtkwave
  * NpLog fix for 3 arguments
  *
