@@ -83,7 +83,7 @@ extern int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize,
 	sprintf(libname, "%s..\\lib\\tcl%d%d.dll", path, TCL_MAJOR_VERSION,
 		TCL_MINOR_VERSION) ;
 	NpLog("Attempt to load from relative lib directory '%s'\n", libname) ;
-	handle = LOAD_LIBRARY(libname) ;
+	handle = LoadLibrary(libname) ;
       }
     }
   }
@@ -398,12 +398,12 @@ char *NpMyDirectoryPath(char *path, int path_max_len) {
 
 static char dllName[MAX_PATH] = "";
 
-#ifdef USE_TCL_STUBS
+/* #ifdef USE_TCL_STUBS */
 static HMODULE tclHandle = NULL;	/* should be the same in any thread */
 static int tclHandleCnt  = 0;		/* only close on last count */
 static int (* tcl_createThread)(Tcl_ThreadId *, Tcl_ThreadCreateProc,
 	ClientData, int, int) = NULL;
-#endif
+/* #endif */
 
 static Tcl_Interp * (* tcl_createInterp)() = NULL;
 static void (* tcl_findExecutable)(const char *) = NULL;
@@ -771,6 +771,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/11/30 17:09:35  gtkwave
+ * NpLog fix for 3 arguments
+ *
  * Revision 1.5  2009/11/11 16:30:58  gtkwave
  * changed tcl library ordering, no tk unless --wish
  *

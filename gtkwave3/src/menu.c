@@ -5756,6 +5756,18 @@ if((nlen > 4) && (!strcasecmp(".tcl", name + nlen - 4)))
 	strcpy(tcl_cmd+7, name);
 
 	fprintf(stderr, "GTKWAVE | Executing Tcl script '%s'\n", name);
+
+#ifdef WIN32
+	{
+	char *slashfix = tcl_cmd;
+	while(*slashfix)
+		{
+		if(*slashfix=='\\') *slashfix='/';
+		slashfix++;
+		}
+	}
+#endif
+
 	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
 	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
 
@@ -6008,6 +6020,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.80  2009/12/02 05:16:38  gtkwave
+ * revamped the gray help text to use normal instead of binary
+ *
  * Revision 1.79  2009/12/01 21:26:55  gtkwave
  * renamed B2G and G2B options
  *

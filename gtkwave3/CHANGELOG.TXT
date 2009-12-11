@@ -723,8 +723,10 @@
 		Added FST detection to gtkwave::getDumpType.
 		Added missing context change variables in context_swapper().
 		Added gtkwave::setTabActive and gtkwave::getNumTabs
+		MinGW tcl compile fixes.
 
 		<< NEED TO ADD GRAY CODE MENU OPS + Gg MOUSEOVER CODES TO 
 		USER MANUAL >>
 		<< NEED TO ADD success = gtkwave::setTabActive num
 		and count = gtkwave::getNumTabs Tcl functions to USER MANUAL >>
+		

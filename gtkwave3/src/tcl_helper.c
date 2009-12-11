@@ -2445,7 +2445,7 @@ GLOBALS->enable_fast_exit = 1;
 if(objc > 1)
 	{
 	int fd = -1;
-	char *fnam = tmpnam_2("tclwave", &fd);
+	char *fnam = tmpnam_2(NULL, &fd);
 	if(fnam)
 		{
 		FILE *local_script_handle;
@@ -2698,6 +2698,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.62  2009/11/11 16:30:58  gtkwave
+ * changed tcl library ordering, no tk unless --wish
+ *
  * Revision 1.61  2009/11/05 23:11:09  gtkwave
  * added EnsureGroupsMatch()
  *
