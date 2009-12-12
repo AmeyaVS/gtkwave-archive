@@ -398,7 +398,7 @@ char *NpMyDirectoryPath(char *path, int path_max_len) {
 
 static char dllName[MAX_PATH] = "";
 
-#ifdef WIN32
+#if defined(WIN32) || defined(USE_TCL_STUBS)
 static HMODULE tclHandle = NULL;	/* should be the same in any thread */
 static int tclHandleCnt  = 0;		/* only close on last count */
 static int (* tcl_createThread)(Tcl_ThreadId *, Tcl_ThreadCreateProc,
@@ -771,6 +771,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/12/11 22:09:20  gtkwave
+ * printf typo fix in NpLoadLibrary
+ *
  * Revision 1.8  2009/12/11 20:36:20  gtkwave
  * compile warning fix
  *

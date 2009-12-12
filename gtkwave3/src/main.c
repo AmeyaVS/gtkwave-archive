@@ -223,9 +223,15 @@ static void print_help(char *nam)
 #define XID_GETOPT
 #endif
 
+#if defined(WIN32) && defined(USE_TCL_STUBS)
+#define WISH_GETOPT
+#else
+#define WISH_GETOPT	 "  -T, --tcl_init=FILE        specify Tcl command script file to be loaded on startup\n" \
+			 "  -W, --wish                 enable Tcl command line on stdio\n"
+#endif
+
 #if defined(HAVE_LIBTCL)
-#define REPSCRIPT_GETOPT "  -T, --tcl_init=FILE        specify Tcl command script file to be loaded on startup\n" \
-                         "  -W, --wish                 enable Tcl command line on stdio\n" \
+#define REPSCRIPT_GETOPT WISH_GETOPT \
                          "  -R, --repscript=FILE       specify timer-driven Tcl command script file\n" \
                          "  -P, --repperiod=VALUE      specify repscript period in msec (default: 500)\n"
 #else
@@ -648,7 +654,8 @@ while (1)
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:Fon:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:W", long_options, &option_index);
+        c = getopt_long (argc, argv, "f:Fon:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:", long_options, 
+&option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -663,7 +670,10 @@ while (1)
 			exit(0);
 
 		case 'W':
+#if defined(WIN32) && defined(USE_TCL_STUBS)
+#else
 			is_wish = 1;
+#endif
 			break;
 
 		case 'I':
@@ -877,6 +887,8 @@ while (1)
                         break;
 
                 case 'T':
+#if defined(WIN32) && defined(USE_TCL_STUBS)
+#else
 		        {
 			  char* pos;
 			  is_wish = 1;
@@ -901,6 +913,7 @@ while (1)
 			  pos = GLOBALS->tcl_init_cmd + strlen(GLOBALS->tcl_init_cmd);
 			  strcpy(pos, optarg);
 			}
+#endif
 			break;
 
                 case 'O':
@@ -2563,6 +2576,7 @@ void optimize_vcd_file(void) {
 	if(rc > 0) {
 	  free_2(GLOBALS->loaded_file_name);
 	  GLOBALS->loaded_file_name = buf;
+	  GLOBALS->is_optimized_stdin_vcd = 1;
 	}					
       }
       else {
@@ -2611,6 +2625,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.86  2009/12/11 23:41:07  gtkwave
+ * cygwin fixes for optimized vcd
+ *
  * Revision 1.85  2009/11/17 00:14:40  gtkwave
  * removed redundant is_wish check
  *
