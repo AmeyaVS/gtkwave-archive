@@ -7,7 +7,6 @@
  * of the License, or (at your option) any later version.
  */
 
-
 /* AIX may need this for alloca to work */ 
 #if defined _AIX
   #pragma alloca
@@ -670,9 +669,14 @@ while (1)
 			exit(0);
 
 		case 'W':
+#if defined(HAVE_LIBTCL)
 #if defined(WIN32) && defined(USE_TCL_STUBS)
 #else
 			is_wish = 1;
+#endif
+#else
+			fprintf(stderr, "GTKWAVE | Tcl support not compiled into this executable, exiting.\n");
+			exit(255);
 #endif
 			break;
 
@@ -2625,6 +2629,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.87  2009/12/12 01:12:57  gtkwave
+ * tcl cross-platform fixes
+ *
  * Revision 1.86  2009/12/11 23:41:07  gtkwave
  * cygwin fixes for optimized vcd
  *
