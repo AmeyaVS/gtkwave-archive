@@ -726,5 +726,6 @@
 		MinGW tcl compile fixes.
 		Cygwin fix for optimized vcd -o option.
 		Disabled reload on optimized vcd from stdin.
-		Removed --wish when building under MinGW + --stubify (for
-		now).
+		Removed --wish when building under MinGW and when specifying
+		--enable-stubify for configure (for now, the fail is with
+		TkMainEx).
