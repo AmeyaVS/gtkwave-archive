@@ -111,14 +111,14 @@ if(!*filesel_path) /* if no name specified, hijack loaded file name path */
 	}
 
  
-if(GLOBALS->script_handle)
+if(GLOBALS->wave_script_args)
 	{
 	char *s = NULL;
 
 	GLOBALS->fileselbox_text=filesel_path;
 	GLOBALS->filesel_ok=1;
 
-	while((!s)&&(!feof(GLOBALS->script_handle))) s = fgetmalloc_stripspaces(GLOBALS->script_handle);
+	while((!s)&&(GLOBALS->wave_script_args->curr)) s = wave_script_args_fgetmalloc_stripspaces(GLOBALS->wave_script_args);
 
 	if(*GLOBALS->fileselbox_text) free_2(*GLOBALS->fileselbox_text); 
 	if(!s)
@@ -318,6 +318,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/08/18 17:21:05  gtkwave
+ * added gtk_window_set_resizable to the file chooser mode select
+ *
  * Revision 1.12  2009/07/16 15:36:34  gtkwave
  * file name updates...derive unspecified names from loaded file name directory
  *

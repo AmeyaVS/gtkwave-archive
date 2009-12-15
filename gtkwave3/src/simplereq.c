@@ -46,7 +46,7 @@ void simplereqbox(char *title, int width, char *default_text,
 
     GLOBALS->cleanup=WAVE_GTK_SFUNCAST(func);
 
-    if(GLOBALS->script_handle)
+    if(GLOBALS->wave_script_args)
 	{
 	if(GLOBALS->cleanup)GLOBALS->cleanup(NULL,(gpointer)1);
 	return;
@@ -114,6 +114,9 @@ void simplereqbox(char *title, int width, char *default_text,
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2008/11/14 19:01:28  gtkwave
+ * updated simplereq so the window is transient
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

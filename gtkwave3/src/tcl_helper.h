@@ -72,6 +72,7 @@ typedef struct llist_s {
   struct llist_s *next ;
 } llist_p ;
 
+
 int process_url_file(char *s);
 int process_url_list(char *s);
 int process_tcl_list(char *s, gboolean track_mouse_y);
@@ -97,6 +98,9 @@ void set_globals_interp(char *me, int install_tk);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.22  2009/11/11 16:30:58  gtkwave
+ * changed tcl library ordering, no tk unless --wish
+ *
  * Revision 1.21  2009/10/23 20:10:33  gtkwave
  * compatibility cleanups with syntax
  *

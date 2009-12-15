@@ -5738,16 +5738,8 @@ if(GLOBALS->tcl_running)
 	}
 
 GLOBALS->tcl_running = 1;
-f = fopen(name, "rb");
 
-if(!f)
-	{
-	fprintf(stderr, "Could not run script file '%s', exiting.\n", name);
-	perror("Why");
-	gtk_exit(255);
-	}
-
-if((nlen > 4) && (!strcasecmp(".tcl", name + nlen - 4)))
+if(1) /* all scripts are Tcl now */
 	{
 #if defined(HAVE_LIBTCL)
 	int tclrc;
@@ -5777,44 +5769,10 @@ if((nlen > 4) && (!strcasecmp(".tcl", name + nlen - 4)))
 	gtk_exit(255);
 #endif
 	}
-else
-while(!feof(f))
-	{
-	char *s = fgetmalloc_stripspaces(f);
-	char fexit = GLOBALS->enable_fast_exit;
-
-	if(!s) continue;
-
-	GLOBALS->enable_fast_exit = 1;
-
-	if(s[0] != '#')
-	for(i=0;i<nmenu_items;i++)
-		{
-		if(!strcmp(s, menu_items[i].path))
-			{
-			fprintf(stderr, "GTKWAVE | Executing: '%s'\n", s);
-			free_2(s); s = NULL;
-
-			if(menu_items[i].callback)
-				{
-				GLOBALS->script_handle = f;
-				menu_items[i].callback();
-				gtkwave_gtk_main_iteration();
-				GLOBALS->script_handle = NULL;
-				}
-			break;
-			}
-		}
-
-	GLOBALS->enable_fast_exit = fexit;
-	if(s) free_2(s);
-	}
-
-fclose(f);
 
 for(i=0;i<GLOBALS->num_notebook_pages;i++)
 	{
-        (*GLOBALS->contexts)[i]->script_handle = NULL;	/* just in case there was a CTX swap */
+        (*GLOBALS->contexts)[i]->wave_script_args = NULL; /* just in case there was a CTX swap */
 	}
 
 GLOBALS->tcl_running = 0;
@@ -6020,6 +5978,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.81  2009/12/11 19:48:59  gtkwave
+ * mingw tcl fixes
+ *
  * Revision 1.80  2009/12/02 05:16:38  gtkwave
  * revamped the gray help text to use normal instead of binary
  *

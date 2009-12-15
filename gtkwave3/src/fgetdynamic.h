@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,14 +14,27 @@
 
 #include "vlist.h"
 
+/* using alloca avoids having to preserve across contexts */
+struct wave_script_args {
+  struct wave_script_args *curr;
+  struct wave_script_args *next;
+  char payload[1];
+};
+
 char *fgetmalloc(FILE *handle);
 char *fgetmalloc_stripspaces(FILE *handle);
+
+char *wave_script_args_fgetmalloc(struct wave_script_args *wave_script_args);
+char *wave_script_args_fgetmalloc_stripspaces(struct wave_script_args *wave_script_args);
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

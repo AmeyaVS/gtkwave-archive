@@ -49,11 +49,11 @@ void entrybox(char *title, int width, char *dflt_text, char *comment, int maxch,
 
     GLOBALS->cleanup_entry_c_1=func;
 
-    if(GLOBALS->script_handle)
+    if(GLOBALS->wave_script_args)
 	{
         char *s = NULL;
 
-        while((!s)&&(!feof(GLOBALS->script_handle))) s = fgetmalloc_stripspaces(GLOBALS->script_handle);
+        while((!s)&&(GLOBALS->wave_script_args->curr)) s = wave_script_args_fgetmalloc_stripspaces(GLOBALS->wave_script_args);
 	if(s)
 		{
 		fprintf(stderr, "GTKWAVE | Entry '%s'\n", s);
@@ -130,6 +130,9 @@ void entrybox(char *title, int width, char *dflt_text, char *comment, int maxch,
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.4  2007/09/12 17:26:44  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

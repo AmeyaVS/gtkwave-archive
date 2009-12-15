@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2006.
+ * Copyright (c) Tony Bybell 1999-2009.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,9 +56,8 @@ return(pnt);
 /*
  * remove any leading and trailing spaces
  */
-char *fgetmalloc_stripspaces(FILE *handle)
+static char *stripspaces(char *s)
 {
-char *s = fgetmalloc(handle);
 int len;
 
 if(s) 
@@ -88,9 +87,44 @@ if(s)
 return(s);
 }
 
+
+char *fgetmalloc_stripspaces(FILE *handle)
+{
+char *s = fgetmalloc(handle);
+return(stripspaces(s));
+}
+
+
+/*
+ * variants for tcl argument passing which really aren't fgetdynamic-ish functions...
+ * the struct wave_script_args * passed in was generated in tcl_helper.c.
+ */
+char *wave_script_args_fgetmalloc(struct wave_script_args *w)
+{
+char *pnt;
+
+if((!w)||(!w->curr)) return(NULL);
+
+pnt = malloc_2(strlen(w->curr->payload)+1);
+strcpy(pnt, w->curr->payload);
+
+w->curr = w->curr->next;
+return(pnt);
+}
+
+
+char *wave_script_args_fgetmalloc_stripspaces(struct wave_script_args *w)
+{
+char *s = wave_script_args_fgetmalloc(w);
+return(stripspaces(s));
+}
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2007/12/06 04:16:20  gtkwave
+ * removed non-growable vlists
+ *
  * Revision 1.2  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

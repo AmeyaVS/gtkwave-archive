@@ -57,6 +57,7 @@
 #include "jrb.h"
 #include "extload.h"
 
+
 struct Global{ 
 
 /*
@@ -516,7 +517,7 @@ char *shadow_marker_names[26]; /* from markerbox.c */
  */
 char *cutcopylist; /* from menu.c */
 char enable_fast_exit; /* from menu.c 253 */
-FILE *script_handle; /* from menu.c 254 */
+struct wave_script_args *wave_script_args; /* from tcl_helper.c */
 char ignore_savefile_pos; /* from menu.c 255 */
 char ignore_savefile_size; /* from menu.c 256 */
 GtkItemFactory *item_factory_menu_c_1; /* from menu.c 258 */

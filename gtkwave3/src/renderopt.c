@@ -209,15 +209,15 @@ void renderbox(char *title)
     GtkWidget *button1, *button2;
     int i;
 
-    if(GLOBALS->script_handle)
+    if(GLOBALS->wave_script_args)
         {
         char *s1 = NULL;
         char *s2 = NULL;
         char *s3 = NULL;
 
-        while((!s1)&&(!feof(GLOBALS->script_handle))) s1 = fgetmalloc_stripspaces(GLOBALS->script_handle);
-        while((!s2)&&(!feof(GLOBALS->script_handle))) s2 = fgetmalloc_stripspaces(GLOBALS->script_handle);
-        while((!s3)&&(!feof(GLOBALS->script_handle))) s3 = fgetmalloc_stripspaces(GLOBALS->script_handle);
+        while((!s1)&&(GLOBALS->wave_script_args->curr)) s1 = wave_script_args_fgetmalloc_stripspaces(GLOBALS->wave_script_args);
+        while((!s2)&&(GLOBALS->wave_script_args->curr)) s2 = wave_script_args_fgetmalloc_stripspaces(GLOBALS->wave_script_args);
+        while((!s3)&&(GLOBALS->wave_script_args->curr)) s3 = wave_script_args_fgetmalloc_stripspaces(GLOBALS->wave_script_args);
 
         if(s1 && s2 && s3)
                 {
@@ -381,6 +381,9 @@ void renderbox(char *title)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/05/21 04:04:10  gtkwave
+ * crash fixes introduced by ps2pdf addition
+ *
  * Revision 1.9  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

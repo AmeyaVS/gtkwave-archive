@@ -2436,45 +2436,52 @@ static int menu_func(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Ob
 {
 GtkItemFactoryEntry *ife = (GtkItemFactoryEntry *)clientData;
 int i;
-FILE *old_handle = GLOBALS->script_handle;
+struct wave_script_args *old_wave_script_args = GLOBALS->wave_script_args; /* stackable args */
 char fexit = GLOBALS->enable_fast_exit;
 
-GLOBALS->script_handle = NULL;
+GLOBALS->wave_script_args = NULL;
 GLOBALS->enable_fast_exit = 1;
 
 if(objc > 1)
 	{
-	int fd = -1;
-	char *fnam = tmpnam_2(NULL, &fd);
-	if(fnam)
+	struct wave_script_args *wc = NULL;
+
+	for(i=1;i<objc;i++)
 		{
-		FILE *local_script_handle;
-
-		GLOBALS->script_handle = fopen(fnam, "wb");
-		for(i=1;i<objc;i++)
+		char *s = Tcl_GetString(objv[i]);
+		struct wave_script_args *w = wave_alloca(sizeof(struct wave_script_args) + strlen(s));
+			
+		if(strlen(s))
 			{
-			char *s = Tcl_GetString(objv[i]);
-			fprintf(GLOBALS->script_handle,"%s\n", s);
+			strcpy(w->payload, s);
 			}
-		fclose(GLOBALS->script_handle);
-
-		local_script_handle = GLOBALS->script_handle = fopen(fnam, "rb");
-		ife->callback();
-		gtkwave_gtk_main_iteration();
-		if(fd>-1) 
+		w->curr = NULL;
+		w->next = NULL;
+		if(!GLOBALS->wave_script_args)
 			{
-			close(fd);
+			GLOBALS->wave_script_args = w;
+			w->curr = w;
+			wc = w;
 			}
-
-		fclose(local_script_handle);
-		GLOBALS->script_handle = NULL;
-
-		unlink(fnam);
-		if(fd>-1) 
+			else
 			{
-			free_2(fnam);
+			wc->next = w;
+			wc = w;
 			}
 		}
+
+	if(!GLOBALS->wave_script_args)
+		{
+		GLOBALS->wave_script_args = wave_alloca(sizeof(struct wave_script_args));
+		GLOBALS->wave_script_args->curr = NULL;
+		GLOBALS->wave_script_args->next = NULL;
+		GLOBALS->wave_script_args->payload[0] = NULL;
+		}
+
+	ife->callback();
+	gtkwave_gtk_main_iteration();
+
+	GLOBALS->wave_script_args = NULL;
 	}
 	else
 	{
@@ -2483,7 +2490,7 @@ if(objc > 1)
 	}
 
 GLOBALS->enable_fast_exit = fexit;
-GLOBALS->script_handle = old_handle;
+GLOBALS->wave_script_args = old_wave_script_args;
 return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewStringObj(reportString, -1); Tcl_SetObjResult(interp, aobj); */
 }
 
@@ -2698,6 +2705,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.63  2009/12/11 19:48:59  gtkwave
+ * mingw tcl fixes
+ *
  * Revision 1.62  2009/11/11 16:30:58  gtkwave
  * changed tcl library ordering, no tk unless --wish
  *

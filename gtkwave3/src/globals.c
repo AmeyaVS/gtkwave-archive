@@ -524,7 +524,7 @@ NULL, /* cleanup_markerbox_c_4 233 */
  */ 
 NULL, /* cutcopylist */
 0, /* enable_fast_exit 236 */
-NULL, /* script_handle 237 */
+NULL, /* wave_script_args 237 */
 0, /* ignore_savefile_pos 238 */
 0, /* ignore_savefile_size 239 */
 NULL, /* item_factory_menu_c_1 241 */
@@ -1688,7 +1688,7 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->winname, &GLOBALS->winname); /* for page swapping */
 
  /* menu.c */
- new_globals->script_handle = GLOBALS->script_handle;
+ new_globals->wave_script_args = GLOBALS->wave_script_args;
  new_globals->item_factory_menu_c_1 = GLOBALS->item_factory_menu_c_1;
  strcpy2_into_new_context(new_globals, &new_globals->filesel_writesave, &GLOBALS->filesel_writesave);
  new_globals->save_success_menu_c_1 = GLOBALS->save_success_menu_c_1; 
