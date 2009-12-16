@@ -262,7 +262,7 @@ STEMS_GETOPT
 WAVE_GETOPT_CPUS
 "  -N, --nowm                 disable window manager for most windows\n"
 "  -M, --nomenus              do not render menubar (for making applets)\n"
-"  -S, --script=FILE          specify GUI command script file for execution\n"
+"  -S, --script=FILE          specify Tcl command script file for execution\n"
 REPSCRIPT_GETOPT
 XID_GETOPT
 INTR_GETOPT
@@ -2629,6 +2629,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.88  2009/12/12 06:06:39  gtkwave
+ * added error for --wish if no tcl present
+ *
  * Revision 1.87  2009/12/12 01:12:57  gtkwave
  * tcl cross-platform fixes
  *

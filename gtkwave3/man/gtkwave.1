@@ -79,12 +79,7 @@ on its own, however it also can be used as a workaround in earlier versions of G
 GTKSocket/GTKPlug focus interactions properly.
 .TP
 \fB\-S\fR,\fB\-\-script\fR <\fIfilename\fP>
-Specify GUI command script file for execution.  Comments are indicated by the '#' character.  Lines in the script are the
-full menu pathname including the first forward slash.  Arguments for an option (such as a filename) will follow with one
-argument each on its own separate line.  Menu options that bring up complex requesters (e.g., search) will hang in the
-GUI waiting for user intervention.  The intended use of this option is to allow automated subset extraction to VCD as well
-as automated Postscript file generation.  If the script filename is suffixed with .tcl, then the script will be considered
-to be Tcl.
+Specify Tcl command script file for execution.
 .TP
 \fB\-T\fR,\fB\-\-tcl_init\fR <\fIfilename\fP>
 Specify Tcl command script to be loaded on startup.  Implies \-\-wish command flag.

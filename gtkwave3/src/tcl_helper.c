@@ -2449,13 +2449,14 @@ if(objc > 1)
 	for(i=1;i<objc;i++)
 		{
 		char *s = Tcl_GetString(objv[i]);
-		struct wave_script_args *w = wave_alloca(sizeof(struct wave_script_args) + strlen(s));
-			
-		if(strlen(s))
+		int slen = strlen(s);
+		struct wave_script_args *w = wave_alloca(sizeof(struct wave_script_args) + slen);
+			/*  alloca used in case we context switch and get our allocator ripped out from under us -- the call stack won't go away */
+		if(slen)
 			{
 			strcpy(w->payload, s);
 			}
-		w->curr = NULL;
+		w->curr = NULL; /* yes, curr is only ever used for the 1st struct, but there is no sense creating head/follower structs for this */
 		w->next = NULL;
 		if(!GLOBALS->wave_script_args)
 			{
@@ -2465,12 +2466,12 @@ if(objc > 1)
 			}
 			else
 			{
-			wc->next = w;
+			wc->next = w; /* we later really traverse through curr->next from the head pointer */
 			wc = w;
 			}
 		}
 
-	if(!GLOBALS->wave_script_args)
+	if(!GLOBALS->wave_script_args) /* create a dummy list in order to keep requesters from popping up in file.c, etc. */
 		{
 		GLOBALS->wave_script_args = wave_alloca(sizeof(struct wave_script_args));
 		GLOBALS->wave_script_args->curr = NULL;
@@ -2705,6 +2706,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.64  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.63  2009/12/11 19:48:59  gtkwave
  * mingw tcl fixes
  *
