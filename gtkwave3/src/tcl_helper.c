@@ -2476,7 +2476,7 @@ if(objc > 1)
 		GLOBALS->wave_script_args = wave_alloca(sizeof(struct wave_script_args));
 		GLOBALS->wave_script_args->curr = NULL;
 		GLOBALS->wave_script_args->next = NULL;
-		GLOBALS->wave_script_args->payload[0] = NULL;
+		GLOBALS->wave_script_args->payload[0] = 0;
 		}
 
 	ife->callback();
@@ -2706,6 +2706,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.65  2009/12/16 17:41:21  gtkwave
+ * code + documentation cleanups for --script
+ *
  * Revision 1.64  2009/12/15 23:40:59  gtkwave
  * removed old style scripts; also removed tempfiles for Tcl args
  *
