@@ -74,11 +74,11 @@ return((unsigned int)((unsigned char)*p));
 
 unsigned int get_32(char *p)
 {
-unsigned int rc =
-        (get_8(p++) << 24) |
-        (get_8(p++) << 16) |
-        (get_8(p++) <<  8) |
-        (get_8(p)   <<  0) ;
+unsigned int rc;
+rc =    (get_8(p++) << 24) ;
+rc|=    (get_8(p++) << 16) ;
+rc|=    (get_8(p++) <<  8) ;
+rc|=    (get_8(p)   <<  0) ;
 
 return(rc);
 }
@@ -2458,6 +2458,9 @@ gtkwave_gtk_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2009/07/07 19:46:03  gtkwave
+ * make evcd->vcd conversion table const
+ *
  * Revision 1.20  2009/07/07 15:48:37  gtkwave
  * EVCD "f" value fix (should be z not x)
  *
