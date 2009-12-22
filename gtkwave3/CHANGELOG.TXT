@@ -691,7 +691,7 @@
 		AIX ./configure fixes.
 		Added malform_eof_fix() to recoder and regular VCD loader.
 		Fix to attempt_vecmatch_2 when no suffix encountered.
-3.3.0	17dec09	Modified unformat_time() so it can also handle floating-
+3.3.0	22dec09	Modified unformat_time() so it can also handle floating-
 		point exponential format.
 		Integration of a large amount of group handling sourcecode 
 		from Don Baltus / Bluespec, Inc.
@@ -734,3 +734,5 @@
 		file support as it is obsolete: all scripts are Tcl scripts
 		now.
 		Integrated user-provided rework of rgb.c.
+		Warnings fixes in shmidcat.c on multiple ++ ops in one
+		statement on the same variable p.

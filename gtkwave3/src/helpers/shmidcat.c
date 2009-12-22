@@ -58,11 +58,12 @@ return((unsigned int)((unsigned char)*p));
 
 unsigned int get_32(char *p)
 {
-unsigned int rc =
-	(get_8(p++) << 24) |
-	(get_8(p++) << 16) |
-	(get_8(p++) <<  8) |
-	(get_8(p)   <<  0) ;
+unsigned int rc;
+
+rc =	(get_8(p++) << 24);
+rc |=	(get_8(p++) << 16);
+rc |=	(get_8(p++) <<  8);
+rc |=	(get_8(p)   <<  0);
 
 return(rc);
 }
@@ -320,6 +321,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/04/23 04:57:38  gtkwave
+ * ported shmidcat and partial vcd loader function to mingw
+ *
  * Revision 1.6  2008/12/16 19:28:20  gtkwave
  * more warnings cleanups
  *
