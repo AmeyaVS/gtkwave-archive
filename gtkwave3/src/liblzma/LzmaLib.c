@@ -34,6 +34,7 @@
 #endif
 
 #define LZMA_BLOCK_LEN (4*1024*1024)
+#define LZMA_DECODER_SIZE (256*1024*1024)
 
 enum lzma_state_t { LZMA_STATE_WRITE, LZMA_STATE_READ_ERROR, 
 			LZMA_STATE_READ_INIT, LZMA_STATE_READ_GETBLOCK, LZMA_STATE_READ_GETBYTES };
@@ -95,7 +96,6 @@ static size_t LZMA_write_compress(struct lzma_handle_t *h, unsigned char *mem, s
 #ifdef _WAVE_HAVE_XZ
 size_t srclen = len;
 size_t destlen = h->blksiz;
-int rc;
 
 lzma_stream strm = LZMA_STREAM_INIT;
 lzma_options_lzma  preset;
@@ -321,15 +321,12 @@ if(h)
 				}
 				else
 				{
-				char *src = h->dmem;
-				char *dest = h->mem;
-
 				lzma_stream strm = LZMA_STREAM_INIT;
 				lzma_ret lrc;
 
 				rc = read(h->fd, h->dmem, srclen);
 
-				lrc = lzma_alone_decoder(&strm, (uint64_t)256*1024*1024);
+				lrc = lzma_alone_decoder(&strm, LZMA_DECODER_SIZE);
 				if(lrc != LZMA_OK)
 					{
 					fprintf(stderr, "Error in lzma_alone_decoder(), exiting!\n");
