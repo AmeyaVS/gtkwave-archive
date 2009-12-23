@@ -49,8 +49,7 @@ AR = ar
 ARFLAGS = cru
 libgwlzma_a_AR = $(AR) $(ARFLAGS)
 libgwlzma_a_LIBADD =
-am_libgwlzma_a_OBJECTS = Alloc.$(OBJEXT) LzFind.$(OBJEXT) \
-	LzmaDec.$(OBJEXT) LzmaEnc.$(OBJEXT) LzmaLib.$(OBJEXT)
+am_libgwlzma_a_OBJECTS = LzmaLib.$(OBJEXT)
 libgwlzma_a_OBJECTS = $(am_libgwlzma_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -108,6 +107,8 @@ LIBBZ2_DIR = @LIBBZ2_DIR@
 LIBBZ2_LDADD = @LIBBZ2_LDADD@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBXZ_CFLAGS = @LIBXZ_CFLAGS@
+LIBXZ_LDADD = @LIBXZ_LDADD@
 LIBZ_CFLAGS = @LIBZ_CFLAGS@
 LIBZ_DIR = @LIBZ_DIR@
 LIBZ_LDADD = @LIBZ_LDADD@
@@ -177,10 +178,8 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 noinst_LIBRARIES = libgwlzma.a
-libgwlzma_a_SOURCES = Alloc.c Alloc.h LzFind.c LzFind.h LzHash.h \
-	LzmaDec.c LzmaDec.h LzmaEnc.c LzmaEnc.h Types.h \
-	LzmaLib.c LzmaLib.h
-
+AM_CFLAGS = $(LIBXZ_CFLAGS)
+libgwlzma_a_SOURCES = LzmaLib.c LzmaLib.h
 EXTRA_DIST = lzma.txt
 all: all-am
 
@@ -229,10 +228,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Alloc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LzFind.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LzmaDec.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LzmaEnc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LzmaLib.Po@am__quote@
 
 .c.o:

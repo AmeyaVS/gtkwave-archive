@@ -23,9 +23,6 @@
 #ifndef LIBLZMA_H
 #define LIBLZMA_H
 
-#include <LzmaEnc.h>
-#include <LzmaDec.h>
-
 void *LZMA_fdopen(int fd, const char *mode);
 void LZMA_close(void *handle);
 size_t LZMA_flush(void *handle);

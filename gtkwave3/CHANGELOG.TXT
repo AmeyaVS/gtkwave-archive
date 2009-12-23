@@ -691,7 +691,7 @@
 		AIX ./configure fixes.
 		Added malform_eof_fix() to recoder and regular VCD loader.
 		Fix to attempt_vecmatch_2 when no suffix encountered.
-3.3.0	22dec09	Modified unformat_time() so it can also handle floating-
+3.3.0	23dec09	Modified unformat_time() so it can also handle floating-
 		point exponential format.
 		Integration of a large amount of group handling sourcecode 
 		from Don Baltus / Bluespec, Inc.
@@ -736,3 +736,7 @@
 		Integrated user-provided rework of rgb.c.
 		Warnings fixes in shmidcat.c on multiple ++ ops in one
 		statement on the same variable p.
+		Removed local lzma library and now use system xz if 
+		available. Old VZT files using -z 2 are no longer readable
+		but can be converted using vzt2vcd from an old version of
+		gtkwave.

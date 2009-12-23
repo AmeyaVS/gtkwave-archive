@@ -303,6 +303,22 @@ AC_SUBST(LIBBZ2_CFLAGS)
 AC_SUBST(LIBBZ2_LDADD)
 AC_SUBST(LIBBZ2_DIR)
 
+# ------------- LZMA / XZ -------------------
+
+need_liblzma=no
+AC_TRY_COMPILE([#include <lzma.h>], [lzma_end(NULL);],, [need_liblzma=yes])
+AC_CHECK_LIB([lzma], [lzma_end], [LIBLZMA_LDADD=-llzma] , [need_liblzma=yes])
+if test "$need_liblzma" = "yes" ; then
+	LIBXZ_LDADD=
+	LIBXZ_CFLAGS=
+else
+	LIBXZ_LDADD='-llzma'
+	LIBXZ_CFLAGS='-D_WAVE_HAVE_XZ'
+fi
+
+AC_SUBST(LIBXZ_LDADD)
+AC_SUBST(LIBXZ_CFLAGS)
+
 # ------------- GTK -------------------
 if test "X$GTK1" = "Xyes" ; then
 	AC_PATH_PROG(GTK_CONFIG, [gtk-config], [notfound])
@@ -495,6 +511,9 @@ AC_MSG_NOTICE([
 
   LIBBZ2_CFLAGS    : $LIBBZ2_CFLAGS
   LIBBZ2_LDADD     : $LIBBZ2_LDADD
+
+  LIBXZ_CFLAGS     : $LIBXZ_CFLAGS
+  LIBXZ_LDADD      : $LIBXZ_LDADD
 
   AET2_CFLAGS      : $AET2_CFLAGS
   AET2_LDADD       : $AET2_LDADD

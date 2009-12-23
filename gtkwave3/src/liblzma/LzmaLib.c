@@ -20,20 +20,18 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include "LzmaLib.h"
-#include <Alloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WAVE_HAVE_XZ
+#include "lzma.h"
+#endif
+#include "LzmaLib.h"
 
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
-
-static void *SzAlloc(void *p, size_t size) { p = p; return MyAlloc(size); }
-static void SzFree(void *p, void *address) { p = p; MyFree(address); }
-static ISzAlloc g_Alloc = { SzAlloc, SzFree };
 
 #define LZMA_BLOCK_LEN (4*1024*1024)
 
@@ -94,27 +92,38 @@ return(rc);
 
 static size_t LZMA_write_compress(struct lzma_handle_t *h, unsigned char *mem, size_t len)
 {
+#ifdef _WAVE_HAVE_XZ
 size_t srclen = len;
 size_t destlen = h->blksiz;
-size_t outPropsSize = LZMA_PROPS_SIZE;
 int rc;
 
-CLzmaEncProps props;
-LzmaEncProps_Init(&props);
-props.level = h->depth;
-props.dictSize = h->blksiz;
+lzma_stream strm = LZMA_STREAM_INIT;
+lzma_options_lzma  preset;
+lzma_ret lrc;
 
-rc = LzmaEncode(h->dmem + LZMA_PROPS_SIZE, &destlen,
-	mem, len,
-        &props, h->dmem, &outPropsSize, 0,
-        NULL, &g_Alloc, &g_Alloc);
+lzma_lzma_preset(&preset, h->depth);
 
-if(rc == SZ_OK)
+lrc = lzma_alone_encoder(&strm, &preset);
+if(lrc != LZMA_OK)
+	{
+	fprintf(stderr, "Error in lzma_alone_encoder(), exiting!\n");
+	exit(255);
+	}
+
+strm.next_in = mem;
+strm.avail_in = len;
+strm.next_out = h->dmem;
+strm.avail_out = destlen;
+
+lrc = lzma_code(&strm, LZMA_FINISH);
+lzma_end(&strm);
+
+if((lrc == LZMA_OK)||(lrc == LZMA_STREAM_END))
 	{
 	LZMA_write_varint(h, srclen);
-	LZMA_write_varint(h, destlen);
+	LZMA_write_varint(h, strm.total_out);
 
-	return(write(h->fd, h->dmem, destlen + LZMA_PROPS_SIZE));
+	return(write(h->fd, h->dmem, strm.total_out));
 	}
 	else
 	{
@@ -123,13 +132,17 @@ if(rc == SZ_OK)
 
 	return(write(h->fd, mem, len));
 	}
+#else
+fprintf(stderr, "LZMA support was not compiled into this executable, sorry.\n");
+exit(255);
+#endif
 }
 
 
 void *LZMA_fdopen(int fd, const char *mode)
 {
 static const char z7[] = "z7";
-struct lzma_handle_t *h = MyAlloc(sizeof(struct lzma_handle_t));
+struct lzma_handle_t *h = malloc(sizeof(struct lzma_handle_t));
 
 h->fd = fd;
 h->offs = 0;
@@ -138,8 +151,8 @@ h->depth = 4;
 if(mode[0] == 'w')
 	{
 	h->blksiz = LZMA_BLOCK_LEN;
-	h->mem = MyAlloc(h->blksiz);
-	h->dmem = MyAlloc (LZMA_PROPS_SIZE + h->blksiz);
+	h->mem = malloc(h->blksiz);
+	h->dmem = malloc(h->blksiz);
 
 	if(mode[1])
 		{
@@ -172,9 +185,9 @@ if(mode[0] == 'r')
 else
 	{
 	close(h->fd);
-	MyFree(h->dmem);
-	MyFree(h->mem);
-	MyFree(h);
+	free(h->dmem);
+	free(h->mem);
+	free(h);
 	return(NULL);
 	}
 }
@@ -204,14 +217,14 @@ if(h)
 		}
 	if(h->dmem)
 		{
-		MyFree(h->dmem);
+		free(h->dmem);
 		}
 	if(h->mem)
 		{
-		MyFree(h->mem);
+		free(h->mem);
 		}
 	close(h->fd);
-	MyFree(h);
+	free(h);
 	}
 }
 
@@ -252,6 +265,7 @@ return(len);
 
 size_t LZMA_read(void *handle, void *mem, size_t len)
 {
+#ifdef _WAVE_HAVE_XZ
 struct lzma_handle_t *h = (struct lzma_handle_t *)handle;
 size_t rc = 0;
 char hdr[2] = {0, 0};
@@ -286,15 +300,15 @@ if(h)
 				{
 				if(h->dmem)
 					{
-					MyFree(h->dmem);
+					free(h->dmem);
 					}
 				if(h->mem)
 					{
-					MyFree(h->mem);
+					free(h->mem);
 					}
 				h->blksiz = dstlen; 
-				h->mem = MyAlloc(h->blksiz);
-				h->dmem = MyAlloc (LZMA_PROPS_SIZE + h->blksiz);
+				h->mem = malloc(h->blksiz);
+				h->dmem = malloc(h->blksiz);
 				}
 
 			srclen = LZMA_read_varint(h);
@@ -307,19 +321,33 @@ if(h)
 				}
 				else
 				{
-				SizeT inSizePure = srclen; 
-				ELzmaStatus status;
 				char *src = h->dmem;
 				char *dest = h->mem;
-				SRes res;
 
-				rc = read(h->fd, h->dmem, srclen + LZMA_PROPS_SIZE);
+				lzma_stream strm = LZMA_STREAM_INIT;
+				lzma_ret lrc;
 
-				res = LzmaDecode(dest, &dstlen, src + LZMA_PROPS_SIZE, &inSizePure,
-			      		src, LZMA_PROPS_SIZE, LZMA_FINISH_ANY, &status, &g_Alloc);
-	
-				if(res == SZ_OK)
+				rc = read(h->fd, h->dmem, srclen);
+
+				lrc = lzma_alone_decoder(&strm, (uint64_t)256*1024*1024);
+				if(lrc != LZMA_OK)
 					{
+					fprintf(stderr, "Error in lzma_alone_decoder(), exiting!\n");
+					exit(255);
+					}
+
+				strm.next_in = h->dmem;
+				strm.avail_in = srclen;
+				strm.next_out = h->mem;
+				strm.avail_out = h->blksiz;
+
+				lrc = lzma_code(&strm, LZMA_RUN);
+				lzma_end(&strm);
+
+				if((lrc == LZMA_OK)||(lrc == LZMA_STREAM_END))
+					{
+					dstlen = strm.total_out;
+
 					h->blklen = dstlen;
 					h->offs = 0;
 					}
@@ -375,4 +403,9 @@ if(h)
 	}
 
 return(rc);
+
+#else
+fprintf(stderr, "LZMA support was not compiled into this executable, sorry.\n");
+exit(255);
+#endif
 }

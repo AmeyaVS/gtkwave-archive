@@ -7,8 +7,8 @@ AET2LIB =
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 LIBFST_CFLAGS  = -I../../src/helpers/fst
-LIBLZMA_CFLAGS = -I../../src/liblzma
-LIBLZMA_LDADD  = -L../../src/liblzma -lgwlzma
+LIBLZMA_CFLAGS = -I../../src/liblzma $(LIBXZ_CFLAGS)
+LIBLZMA_LDADD  = -L../../src/liblzma -lgwlzma $(LIBXZ_LDADD)
 
 
 bin_PROGRAMS= rtlbrowse
