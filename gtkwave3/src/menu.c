@@ -5726,8 +5726,6 @@ return(TRUE); /* keeps "delete_event" from happening...we'll manually destory la
  */
 int execute_script(char *name)
 {
-FILE *f;
-int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
 int i;
 int nlen = strlen(name);
 
@@ -5978,6 +5976,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.82  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.81  2009/12/11 19:48:59  gtkwave
  * mingw tcl fixes
  *
