@@ -1567,8 +1567,8 @@ void populateBuffer (Trptr t, char* buf)
 
       if (IsGroupBegin(t))
 	{
-	  ptr = buf;
 	  char * pch;
+	  ptr = buf;
 	  if (IsClosed(t)) {
 	    pch = strstr (ptr,"[-]");
 	    if(pch) {strncpy (pch,"[+]", 3); }
@@ -1615,15 +1615,22 @@ int RenderSig(Trptr t, int i, int dobackground)
   int texty, liney;
   int retval;
   char buf[256];
-
+  GdkGC *clr_comment;
+  GdkGC *clr_group;
+  GdkGC *clr_shadowed;
+  GdkGC *clr_signal;
+  GdkGC* bg_color;  
+  GdkGC* text_color;
+  unsigned left_justify;
+ 
   buf[0] = 0;
 
   populateBuffer(t, buf);
 
-  GdkGC *clr_comment  = GLOBALS->gc_brkred;
-  GdkGC *clr_group    = GLOBALS->gc_gmstrd;
-  GdkGC *clr_shadowed = GLOBALS->gc_ltblue;
-  GdkGC *clr_signal   = GLOBALS->gc_dkblue;
+  clr_comment  = GLOBALS->gc_brkred;
+  clr_group    = GLOBALS->gc_gmstrd;
+  clr_shadowed = GLOBALS->gc_ltblue;
+  clr_signal   = GLOBALS->gc_dkblue;
 
   UpdateSigValue(t); /* in case it's stale on nonprop */
 
@@ -1632,10 +1639,7 @@ int RenderSig(Trptr t, int i, int dobackground)
 
   retval=liney-GLOBALS->fontheight+1;
 
-  unsigned left_justify = ((IsGroupBegin(t) || IsGroupEnd(t)) && !HasWave(t))|| GLOBALS->left_justify_sigs;
-
-  GdkGC* bg_color;
-  GdkGC* text_color;
+  left_justify = ((IsGroupBegin(t) || IsGroupEnd(t)) && !HasWave(t))|| GLOBALS->left_justify_sigs;
 
   if (IsSelected(t))
     {
@@ -3894,6 +3898,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.53  2009/12/24 03:02:14  gtkwave
+ * move cached vtran up earlier to make more visually pleasing
+ *
  * Revision 1.52  2009/11/20 20:48:19  gtkwave
  * enabled line drawing caching for linux
  *

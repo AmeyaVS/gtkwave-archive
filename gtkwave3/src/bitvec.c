@@ -2105,7 +2105,9 @@ int parsewavline(char *w, char *alias, int depth)
   char *w2;
   nptr nexp;
   unsigned int rows = 0;
-
+  char *prefix, *suffix, *new;
+  char *prefix_init, *w2_init;
+  unsigned int mode;
 
   if(!(len=strlen(w))) return(0);
   if(*(w+len-1)=='\n')
@@ -2126,16 +2128,13 @@ int parsewavline(char *w, char *alias, int depth)
 
   /* sscanf(w2,"%s",prefix); */
 
- char *prefix, *suffix, *new;
-
  prefix=(char *)wave_alloca(len+1);
  suffix=(char *)wave_alloca(len+1);
  new=(char *)wave_alloca(len+1);
 
- char *prefix_init, *w2_init;
  prefix_init = prefix;
  w2_init = new;
- unsigned int mode = 0; /* 0 = before "{", 1 = after "{", 2 = after "}" or " " */
+ mode = 0; /* 0 = before "{", 1 = after "{", 2 = after "}" or " " */
 
  while(*w2)
    {
@@ -2817,6 +2816,10 @@ int parsewavline_lx2(char *w, char *alias, int depth)
   int i;
   int len;
   char *w2;
+  char *prefix, *suffix, *new;
+  char *prefix_init, *w2_init;
+  unsigned int mode;
+
 
   if(!(len=strlen(w))) return(0);
   if(*(w+len-1)=='\n')
@@ -2837,16 +2840,13 @@ int parsewavline_lx2(char *w, char *alias, int depth)
 
 /* sscanf(w2,"%s",prefix); */
 
- char *prefix, *suffix, *new;
-
  prefix=(char *)wave_alloca(len+1);
  suffix=(char *)wave_alloca(len+1);
  new=(char *)wave_alloca(len+1);
 
- char *prefix_init, *w2_init;
  prefix_init = prefix;
  w2_init = new;
- unsigned int mode = 0; /* 0 = before "{", 1 = after "{", 2 = after "}" or " " */
+ mode = 0; /* 0 = before "{", 1 = after "{", 2 = after "}" or " " */
 
  while(*w2)
    {
@@ -3048,6 +3048,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2009/11/07 16:40:18  gtkwave
+ * null pointer fix on symfind
+ *
  * Revision 1.16  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

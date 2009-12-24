@@ -99,9 +99,9 @@ int SST_open_node(char *name) {
    GtkCTree *ctree = GLOBALS->ctree_main;
    if (ctree) {
      GtkCTreeRow *gctr;
+     GtkCTreeNode *target_node ;
      for(gctr = GTK_CTREE_ROW(GLOBALS->any_tree_node); gctr->parent;
 	 gctr = GTK_CTREE_ROW(gctr->parent)) ;
-     GtkCTreeNode *target_node ;
      if ((target_node = SST_find_node_by_path(gctr, name))) {
        struct tree *t ;
        rv = SST_NODE_FOUND ;

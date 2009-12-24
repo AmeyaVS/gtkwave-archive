@@ -752,6 +752,7 @@ return(GLOBALS->traces.buffer=first);
 Trptr PasteBuffer(void)
 {
   Trptr t, tinsert=NULL, tinsertnext;
+  int count;
 
   if(!GLOBALS->traces.buffer) return(NULL);
 
@@ -818,7 +819,7 @@ Trptr PasteBuffer(void)
 	}
     }
 
-  int count = 0;
+  count = 0;
 
   if (GLOBALS->traces.buffer)
     {
@@ -847,6 +848,7 @@ Trptr PasteBuffer(void)
 Trptr PrependBuffer(void)
 {
 Trptr t, prev = NULL;
+int count;
 
 if(!GLOBALS->traces.buffer) return(NULL);
 
@@ -886,7 +888,7 @@ if(GLOBALS->traces.first)
       }
   }
 
- int count = 0;
+ count = 0;
 
  if (GLOBALS->traces.buffer)
    {
@@ -1379,6 +1381,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/11/05 23:11:09  gtkwave
+ * added EnsureGroupsMatch()
+ *
  * Revision 1.11  2009/11/03 07:08:21  gtkwave
  * enabled reverse when groups present
  *

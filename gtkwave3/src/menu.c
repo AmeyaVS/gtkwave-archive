@@ -818,9 +818,10 @@ void set_hier_cleanup(GtkWidget *widget, gpointer data, int level)
 		    else
 		      {
 			int flagged;
+			char *tbuff;
 
 			if(t->name&&t->is_depacked) { free_2(t->name); }
-			char *tbuff = hier_decompress_flagged(t->n.nd->nname, &flagged);
+			tbuff = hier_decompress_flagged(t->n.nd->nname, &flagged);
 			t->is_depacked = (flagged != 0);
 
 			if(!flagged)
@@ -1809,6 +1810,8 @@ menu_expand(GtkWidget *widget, gpointer data)
 {
   Trptr t, t_next;
   int dirty=0;
+  int j;
+  GtkAdjustment *wadj;
 
   if(GLOBALS->helpbox_is_active)
     {
@@ -1884,8 +1887,8 @@ menu_expand(GtkWidget *widget, gpointer data)
 	  t=t->t_next;
 	}
 
-      int j = GetTraceNumber(t);
-      GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+      j = GetTraceNumber(t);
+      wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
       if (j < wadj->value)
 	{
 	  SetTraceScrollbarRowValue(j, 0);
@@ -1959,7 +1962,6 @@ menu_toggle_group(GtkWidget *widget, gpointer data)
    }
 
  must_sel_bg();
-
 }
 
 static void rename_cleanup(GtkWidget *widget, gpointer data)
@@ -2019,6 +2021,7 @@ static void rename_cleanup(GtkWidget *widget, gpointer data)
 
 static void menu_rename(GtkWidget *widget, gpointer data)
 {
+  Trptr t;
   /* currently only called by various combine menu options, so no help menu text */
 
   GLOBALS->trace_to_alias_menu_c_1=NULL;
@@ -2026,7 +2029,7 @@ static void menu_rename(GtkWidget *widget, gpointer data)
   /* don't mess with sigs when dnd active */
   if(GLOBALS->dnd_state) { dnd_error(); return; } 
 
-  Trptr t = GLOBALS->traces.first;
+  t = GLOBALS->traces.first;
   while(t)
     {
       if(IsSelected(t)&&(t->vector==TRUE))
@@ -2396,6 +2399,8 @@ static bvptr combine_traces(int direction)
 void
 menu_combine_down(GtkWidget *widget, gpointer data)
 {
+  bvptr v;
+
   if(GLOBALS->helpbox_is_active)
     {
       help_text_bold("\n\nCombine Down");
@@ -2411,15 +2416,15 @@ menu_combine_down(GtkWidget *widget, gpointer data)
     }
 
   if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-  bvptr v = combine_traces(1); /* down */
+  v = combine_traces(1); /* down */
 
   if (v)
     {
+      Trptr t;
+
       AddVector(v, NULL);
       free_2(v->bits->name);
       v->bits->name=NULL;
-
-      Trptr t;
 
       t = GLOBALS->traces.last;
 
@@ -2444,6 +2449,8 @@ menu_combine_down(GtkWidget *widget, gpointer data)
 void
 menu_combine_up(GtkWidget *widget, gpointer data)
 {
+  bvptr v;
+
   if(GLOBALS->helpbox_is_active)
     {
       help_text_bold("\n\nCombine Up");
@@ -2459,15 +2466,15 @@ menu_combine_up(GtkWidget *widget, gpointer data)
     }
 
   if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-  bvptr v = combine_traces(0); /* up */
+  v = combine_traces(0); /* up */
 
   if (v)
     {
+      Trptr t;
+
       AddVector(v, NULL);
       free_2(v->bits->name);
       v->bits->name=NULL;
-
-      Trptr t;
 
       t = GLOBALS->traces.last;
 
@@ -3161,11 +3168,12 @@ void menu_remove_aliases(GtkWidget *widget, gpointer data)
     {
       if(HasAlias(t) && IsSelected(t))
 	{
+          char *name_full;
 
 	  free_2(t->name_full);
 	  t->name_full = NULL;
 
-	  char* name_full = (t->vector) ? t->n.vec->name : t->n.nd->nname;
+	  name_full = (t->vector) ? t->n.vec->name : t->n.nd->nname;
 	  t->name = name_full;
 	  if (GLOBALS->hier_max_level) 
 	    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
@@ -3236,6 +3244,8 @@ static void alias_cleanup(GtkWidget *widget, gpointer data)
 
 void menu_alias(GtkWidget *widget, gpointer data)
 {
+  Trptr t;
+
   if(GLOBALS->helpbox_is_active)
     {
       help_text_bold("\n\nAlias Highlighted Trace");
@@ -3257,7 +3267,7 @@ void menu_alias(GtkWidget *widget, gpointer data)
   /* don't mess with sigs when dnd active */
   if(GLOBALS->dnd_state) { dnd_error(); return; } 
 
-  Trptr t = GLOBALS->traces.first;
+  t = GLOBALS->traces.first;
   while(t)
     {
       if(IsSelected(t)&&CanAlias(t))
@@ -3544,12 +3554,14 @@ void write_save_helper(FILE *wave) {
 
 			if(t->vector)
 				{
-
-				if (HasAlias(t)) { fprintf(wave,"+{%s} ", t->name_full); }
 				int ix;
 				nptr *nodes;
-				bptr bits = t->n.vec->bits;
-				baptr ba = bits ? bits->attribs : NULL;
+				bptr bits;
+				baptr ba;
+
+				if (HasAlias(t)) { fprintf(wave,"+{%s} ", t->name_full); }
+				bits = t->n.vec->bits;
+				ba = bits ? bits->attribs : NULL;
 
 				fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
 
@@ -3671,12 +3683,15 @@ void write_save_helper(FILE *wave) {
 
 					if(t->vector)
 						{
+						int ix;
+                                                nptr *nodes;
+						bptr bits;
+						baptr ba;
+
 						if (HasAlias(t)) { fprintf(wave,"+{%s} ", t->name_full); }
 
-						int ix;
-						nptr *nodes;
-						bptr bits = t->n.vec->bits;
-						baptr ba = bits ? bits->attribs : NULL;
+						bits = t->n.vec->bits;
+						ba = bits ? bits->attribs : NULL;
 
 						fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
 
@@ -5976,6 +5991,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.83  2009/12/24 19:11:26  gtkwave
+ * warnings fixes
+ *
  * Revision 1.82  2009/12/15 23:40:59  gtkwave
  * removed old style scripts; also removed tempfiles for Tcl args
  *

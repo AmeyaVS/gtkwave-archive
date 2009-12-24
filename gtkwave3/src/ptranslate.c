@@ -94,6 +94,8 @@ void load_proc_filter(int which, char *name)
   char *cmd;
   char exec_name[1025];
   char abs_path [1025];
+  char* arg, end;
+  int result;
 
   exec_name[0] = 0;
   abs_path[0]  = 0;
@@ -101,7 +103,6 @@ void load_proc_filter(int which, char *name)
   /* if name has arguments grab only the first word (the name of the executable)*/
   sscanf(name, "%s ", exec_name);
   
-  char* arg, end;
   arg = name + strlen(exec_name);
 
   /* remove leading spaces from argument */
@@ -125,7 +126,6 @@ void load_proc_filter(int which, char *name)
   sprintf(cmd, "which %s", exec_name);
   stream = popen(cmd, "r");
 
-  int result;
   result = fscanf(stream, "%s", abs_path);
 
   if(strlen(abs_path) == 0)
@@ -433,6 +433,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/09/22 13:51:14  gtkwave
+ * warnings fixes
+ *
  * Revision 1.5  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

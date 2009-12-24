@@ -145,7 +145,7 @@ JRB jrb_find_gte_str(JRB n, char *key, int *fnd)
  
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_str called on non-head 0x%p\n", n);
+    fprintf(stderr, "jrb_find_gte_str called on non-head 0x%p\n", (void *)n);
     exit(1);
   }
   if (n->parent == n) return n;
@@ -179,7 +179,7 @@ JRB jrb_find_gte_int(JRB n, int ikey, int *fnd)
 {
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_int called on non-head 0x%p\n", n);
+    fprintf(stderr, "jrb_find_gte_int called on non-head 0x%p\n", (void *)n);
     exit(1);
   }
   if (n->parent == n) return n;
@@ -212,7 +212,7 @@ JRB jrb_find_gte_vptr(JRB n, void *vkey, int *fnd)
 {
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_int called on non-head 0x%p\n", n);
+    fprintf(stderr, "jrb_find_gte_int called on non-head 0x%p\n", (void *)n);
     exit(1);
   }
   if (n->parent == n) return n;
@@ -247,7 +247,7 @@ JRB jrb_find_gte_gen(JRB n, Jval key,int (*fxn)(Jval, Jval), int *fnd)
  
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_str called on non-head 0x%p\n", n);
+    fprintf(stderr, "jrb_find_gte_str called on non-head 0x%p\n", (void *)n);
     exit(1);
   }
   if (n->parent == n) return n;
@@ -406,11 +406,11 @@ void jrb_delete_node(JRB n)
   char ir;
  
   if (isint(n)) {
-    fprintf(stderr, "Cannot delete an internal node: 0x%p\n", n);
+    fprintf(stderr, "Cannot delete an internal node: 0x%p\n", (void *)n);
     exit(1);
   }
   if (ishead(n)) {
-    fprintf(stderr, "Cannot delete the head of an jrb_tree: 0x%p\n", n);
+    fprintf(stderr, "Cannot delete the head of an jrb_tree: 0x%p\n", (void *)n);
     exit(1);
   }
   delete_item(n); /* Delete it from the list */
@@ -526,7 +526,7 @@ int jrb_nblack(JRB n)
   int nb;
   if (ishead(n) || isint(n)) {
     fprintf(stderr, "ERROR: jrb_nblack called on a non-external node 0x%p\n",
-            n);
+            (void *)n);
     exit(1);
   }
   nb = 0;
@@ -542,7 +542,7 @@ int jrb_plength(JRB n)
   int pl;
   if (ishead(n) || isint(n)) {
     fprintf(stderr, "ERROR: jrb_plength called on a non-external node 0x%p\n",
-            n);
+            (void *)n);
     exit(1);
   }
   pl = 0;
@@ -609,6 +609,9 @@ JRB jrb_insert_gen(JRB tree, Jval key, Jval val,
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:40  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *

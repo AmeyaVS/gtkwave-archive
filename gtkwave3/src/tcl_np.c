@@ -296,9 +296,9 @@ char *NpMyDirectoryPath(char *path, int path_max_len) {
 			  char *me) {
   char *envdll, libname[MAX_PATH];
   HMODULE handle = (HMODULE) NULL;
+  char path[MAX_PATH], *p ; 
   
   *tclHandle = NULL;
-  char path[MAX_PATH], *p ; 
   if(me) 
     strcpy(path, me) ;
   if(me && (p = strrchr(path,'/'))) {
@@ -586,7 +586,7 @@ Tcl_Interp *NpCreateMainInterp(char *me, int install_tk) {
    * This will be Tcl_PkgRequire for non-stubs builds.
    */
 #ifdef USE_TCL_STUBS
-  NpLog("Tcl_InitStubs(%p)\n", interp);
+  NpLog("Tcl_InitStubs(%p)\n", (void *)interp);
   if (tcl_initStubs(interp, TCL_VERSION, 0) == NULL) {
     NpPlatformMsg("Failed to create initialize Tcl stubs!",
 		  "NpCreateMainInterp");
@@ -658,7 +658,7 @@ void NpDestroyMainInterp() {
    */
   if (mainInterp) {
     ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
-    NpLog("Tcl_DeleteInterp(%p) MAIN\n", mainInterp);
+    NpLog("Tcl_DeleteInterp(%p) MAIN\n", (void *)mainInterp);
     Tcl_DeleteInterp(mainInterp);
     Tcl_Release((ClientData) mainInterp);
     tsdPtr->interp = mainInterp = (Tcl_Interp *) NULL;
@@ -704,15 +704,15 @@ Tcl_Interp *NpGetInstanceInterp(int install_tk) {
   Tcl_Interp *interp;
   
   if (tsdPtr->interp != NULL) {
-    NpLog("NpGetInstanceInterp - use main interp %p\n", tsdPtr->interp);
+    NpLog("NpGetInstanceInterp - use main interp %p\n", (void *)tsdPtr->interp);
     return tsdPtr->interp;
   }
   
   interp = Tcl_CreateInterp();
-  NpLog("NpGetInstanceInterp - create interp %p\n", interp);
+  NpLog("NpGetInstanceInterp - create interp %p\n", (void *)interp);
   
   if (NpInitInterp(interp, install_tk) != TCL_OK) {
-    NpLog("NpGetInstanceInterp: NpInitInterp(%p) != TCL_OK\n", interp);
+    NpLog("NpGetInstanceInterp: NpInitInterp(%p) != TCL_OK\n", (void *)interp);
     return NULL;
   }
 
@@ -721,7 +721,7 @@ Tcl_Interp *NpGetInstanceInterp(int install_tk) {
    */
   #ifdef nodef
   if (NpInit(interp) != TCL_OK) {
-    NpLog("NpGetInstanceInterp: NpInit(%p) != TCL_OK\n", interp);
+    NpLog("NpGetInstanceInterp: NpInit(%p) != TCL_OK\n", (void *)interp);
     return NULL;
   }
   #endif
@@ -748,10 +748,10 @@ void NpDestroyInstanceInterp(Tcl_Interp *interp) {
   ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
   
   if (tsdPtr->interp == interp) {
-    NpLog("NpDestroyInstanceInterp(%p) - using main interp\n", interp);
+    NpLog("NpDestroyInstanceInterp(%p) - using main interp\n", (void *)interp);
     return;
   }
-  NpLog("Tcl_DeleteInterp(%p) INSTANCE\n", interp);
+  NpLog("Tcl_DeleteInterp(%p) INSTANCE\n", (void *)interp);
   Tcl_DeleteInterp(interp);
   Tcl_Release((ClientData) interp);
 }
@@ -771,6 +771,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/12/12 01:12:57  gtkwave
+ * tcl cross-platform fixes
+ *
  * Revision 1.9  2009/12/11 22:09:20  gtkwave
  * printf typo fix in NpLoadLibrary
  *

@@ -325,14 +325,16 @@ return(GLOBALS->ftext_main_main_c_1);
  */
 void addPidToExecutableName(int argc, char* argv[], char* argv_mod[])
 {
+  char* pos;
+  char* buffer;
+
   int i;
   for(i=0;i<argc;i++)
     {
       argv_mod[i] = argv[i];
     }
 
-  char* pos;
-  char* buffer = malloc_2(strlen(argv[0])+1+10);
+  buffer = malloc_2(strlen(argv[0])+1+10);
   pos = buffer;
   strcpy(pos, argv[0]);
   pos = buffer + strlen(buffer);
@@ -341,7 +343,6 @@ void addPidToExecutableName(int argc, char* argv[], char* argv_mod[])
   sprintf(pos, "%d", getpid());
 	  
   argv_mod[0] = buffer;
-
 }
 
 int main(int argc, char *argv[])
@@ -2629,6 +2630,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.89  2009/12/16 17:41:21  gtkwave
+ * code + documentation cleanups for --script
+ *
  * Revision 1.88  2009/12/12 06:06:39  gtkwave
  * added error for --wish if no tcl present
  *

@@ -1757,17 +1757,17 @@ static int gtkwavetcl_showSignal(ClientData clientData, Tcl_Interp *interp, int 
   if(objc == 3)
     {
       char *s0 = Tcl_GetString(objv[1]);
+      char *s1;
       int row;
+      unsigned location;
+
       sscanf(s0, "%d", &row);
       if (row < 0) { row = 0; };
 
-      char *s1 = Tcl_GetString(objv[2]);
-      unsigned location;
+      s1 = Tcl_GetString(objv[2]);
       sscanf(s1, "%d", &location);
 
       SetTraceScrollbarRowValue(row, location);
-
-
     }
   else  
     {
@@ -1929,6 +1929,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2009/11/29 19:16:13  gtkwave
+ * added gtkwave::setTabActive and gtkwave::getNumTabs
+ *
  * Revision 1.33  2009/11/29 18:38:20  gtkwave
  * added FST to return types for gtkwave::getDumpType
  *

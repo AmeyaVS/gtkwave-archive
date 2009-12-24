@@ -889,8 +889,7 @@ if((GLOBALS->traces.visible)&&(GLOBALS->signalpixmap))
 				  cnt++;
 				}
 
-			int cpy;
-			if(src > dst) { cpy = src; src = dst; dst = cpy; }
+			if(src > dst) { int cpy; cpy = src; src = dst; dst = cpy; }
 			cnt = 0;
 			t2=GLOBALS->traces.first;
 			while(t2 && GLOBALS->starting_unshifted_trace)
@@ -1339,6 +1338,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2009/10/30 18:05:51  gtkwave
+ * removed use_standard_clicking off click semantics
+ *
  * Revision 1.46  2009/10/24 01:51:41  gtkwave
  * added dynamic loading for tcl/tk via --enable-stubify
  *

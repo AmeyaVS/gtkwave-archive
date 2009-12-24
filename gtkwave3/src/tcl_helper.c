@@ -2046,12 +2046,15 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 
 			if(t->vector)
 				{
-				if(HasAlias(t)) { one_entry = make_message("+{%s} ",t->name_full); 
-				                  WAVE_OE_ME }
 				int i;
 				nptr *nodes;
-				bptr bits = t->n.vec->bits;
-				baptr ba = bits ? bits->attribs : NULL;
+				bptr bits;
+				baptr ba;
+
+				if(HasAlias(t)) { one_entry = make_message("+{%s} ",t->name_full); 
+				                  WAVE_OE_ME }
+				bits = t->n.vec->bits;
+				ba = bits ? bits->attribs : NULL;
 
 				one_entry = make_message("%c{%s}", ba ? ':' : '#', t->n.vec->name);
 				WAVE_OE_ME
@@ -2706,6 +2709,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.66  2009/12/22 20:02:19  gtkwave
+ * fixed usage of NULL for a char assign
+ *
  * Revision 1.65  2009/12/16 17:41:21  gtkwave
  * code + documentation cleanups for --script
  *

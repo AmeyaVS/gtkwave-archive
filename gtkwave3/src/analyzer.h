@@ -222,7 +222,7 @@ enum nodeVarDir {
     ND_DIR_IMPLICIT        = 0,
     ND_DIR_IN              = 1,
     ND_DIR_OUT             = 2,
-    ND_DIR_INOUT           = 3,
+    ND_DIR_INOUT           = 3
 };
 
 typedef struct BitAttributes
@@ -439,6 +439,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2009/11/25 09:49:28  gtkwave
+ * added gray code support
+ *
  * Revision 1.20  2009/11/05 23:11:09  gtkwave
  * added EnsureGroupsMatch()
  *

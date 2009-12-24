@@ -159,7 +159,7 @@ static void vlist_emit_uv32(struct vlist_t **vl, unsigned int v)
 unsigned int nxt;
 char *pnt;
 
-if(GLOBALS->vlist_prepack) { return(vlist_packer_emit_uv32((struct vlist_packer_t **)vl, v)); }
+if(GLOBALS->vlist_prepack) { vlist_packer_emit_uv32((struct vlist_packer_t **)vl, v); return; }
          
 while((nxt = v>>7))
         {
@@ -177,7 +177,7 @@ static void vlist_emit_string(struct vlist_t **vl, char *s)
 {
 char *pnt;
 
-if(GLOBALS->vlist_prepack) { return(vlist_packer_emit_string((struct vlist_packer_t **)vl, s)); }
+if(GLOBALS->vlist_prepack) { vlist_packer_emit_string((struct vlist_packer_t **)vl, s); return; }
 
 while(*s)
 	{
@@ -196,7 +196,7 @@ unsigned int recoded_bit;
 unsigned char which;
 unsigned char accum;
 
-if(GLOBALS->vlist_prepack) { return(vlist_packer_emit_mvl9_string((struct vlist_packer_t **)vl, s)); }
+if(GLOBALS->vlist_prepack) { vlist_packer_emit_mvl9_string((struct vlist_packer_t **)vl, s); return; }
 
 which = accum = 0;
 
@@ -3171,6 +3171,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2009/08/28 19:58:42  gtkwave
+ * added malform_eof_fix
+ *
  * Revision 1.30  2009/08/06 20:11:03  gtkwave
  * warnings fixes
  *

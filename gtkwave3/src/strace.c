@@ -1587,10 +1587,10 @@ if(GLOBALS->timearray)
 			{
 			if(t->vector)
 				{
-				if(HasAlias(t)) { mprintf("+{%s} ",t->name_full); }
-
 				int i;
 				nptr *nodes;
+
+				if(HasAlias(t)) { mprintf("+{%s} ",t->name_full); }
 
 				mprintf("#{%s}",t->name);
 
@@ -1645,6 +1645,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.10  2009/07/07 20:12:53  gtkwave
  * convert hex capitalization to match verilog
  *

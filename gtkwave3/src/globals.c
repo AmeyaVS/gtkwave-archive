@@ -2502,7 +2502,7 @@ if(GLOBALS->gtk_context_bridge_ptr != w)
 	{
 #ifdef GTKWAVE_SIGNAL_CONNECT_DEBUG
 	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p, session %d vs %d\n", 
-		GLOBALS->gtk_context_bridge_ptr,w, (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
+		(void *)GLOBALS->gtk_context_bridge_ptr,(void *)w, (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
 #endif
 
 	set_GLOBALS(watch);
@@ -2560,7 +2560,7 @@ void set_GLOBALS_x(struct Global *g, const char *file, int line)
 {
 if(line)
 	{
-	printf("Globals old %p -> new %p (%s: %d)\n", GLOBALS, g, file, line);
+	printf("Globals old %p -> new %p (%s: %d)\n", (void *)GLOBALS, (void *)g, file, line);
 	}
 
 GLOBALS = g;
