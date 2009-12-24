@@ -197,23 +197,18 @@ return((m1<<24)|(m2<<16)|(m3<<8)|m4);
 
 static vztint32_t vzt_rd_get_v32(char **mmx)
 {
-union {
-  signed char **mm;
-  char **mmu;
-} u;
-
 signed char *c;
 signed char *beg;
 vztint32_t val;
+signed char **mm = (signed char **)mmx;
 
-u.mmu = mmx;
-c = *u.mm;
+c = *mm;
 beg = c;
 
 if(*c>=0)
 	{
 	while(*c>=0) c++;
-	*u.mm = c+1;
+	*mm = c+1;
 
 	val = (vztint32_t)(*c&0x7f);
 	do
@@ -224,7 +219,7 @@ if(*c>=0)
 	}
 	else
 	{
-	*u.mm = c+1;
+	*mm = c+1;
 	val = (vztint32_t)(*c&0x7f);
 	}
 
@@ -233,23 +228,18 @@ return(val);
 
 static vztint64_t vzt_rd_get_v64(char **mmx)
 {
-union {
-  signed char **mm;
-  char **mmu;
-} u;
-
 signed char *c;
 signed char *beg;
 vztint64_t val;
+signed char **mm = (signed char **)mmx;
 
-u.mmu = mmx;
-c = *u.mm;
+c = *mm;
 beg = c;
 
 if(*c>=0)
 	{
 	while(*c>=0) c++;
-	*u.mm = c+1;
+	*mm = c+1;
 
 	val = (vztint64_t)(*c&0x7f);
 	do
@@ -261,7 +251,7 @@ if(*c>=0)
 	else
 	{
 	val = (vztint64_t)(*c&0x7f);
-	*u.mm = c+1;
+	*mm = c+1;
 	}
 
 return(val);
@@ -1426,7 +1416,7 @@ if((!b->killed)&&(!b->mem))
 		}
 	if(rc!=b->uncompressed_siz)
 		{
-		fprintf(stderr, VZT_RDLOAD"short read on block %p %d vs "VZT_RD_LD" (exp), ignoring\n", b, rc, b->uncompressed_siz);
+		fprintf(stderr, VZT_RDLOAD"short read on block %p %d vs "VZT_RD_LD" (exp), ignoring\n", (void *)b, rc, b->uncompressed_siz);
 		free(b->mem); b->mem=NULL;
 		b->short_read_ignore = 1;
 		}
@@ -2390,6 +2380,9 @@ return(rcval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.5  2009/03/31 06:21:12  gtkwave
  * added support for lzma
  *
