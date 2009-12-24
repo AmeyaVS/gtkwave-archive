@@ -46,7 +46,8 @@ unsigned int offs, blklen;
 unsigned int depth;
 enum lzma_state_t state;
 unsigned int blksiz;
-char *mem, *dmem;
+unsigned char *mem, *dmem;
+size_t write_cnt, read_cnt;
 };
 
 
@@ -63,7 +64,7 @@ while((nxt = v>>7))
         }
 *(pnt++) = (v&0x7f) | 0x80;
 
-write(h->fd, buf, pnt-buf);
+h->write_cnt += write(h->fd, buf, pnt-buf);
 }
 
 
@@ -75,7 +76,7 @@ size_t rc = 0;
 
 for(;;)
 	{
-	read(h->fd, buf+idx, 1);
+	h->read_cnt += read(h->fd, buf+idx, 1);
 	if(buf[idx++] & 0x80) break;
 	}
 
@@ -100,6 +101,7 @@ size_t destlen = h->blksiz;
 lzma_stream strm = LZMA_STREAM_INIT;
 lzma_options_lzma  preset;
 lzma_ret lrc;
+size_t wcnt;
 
 lzma_lzma_preset(&preset, h->depth);
 
@@ -123,14 +125,18 @@ if((lrc == LZMA_OK)||(lrc == LZMA_STREAM_END))
 	LZMA_write_varint(h, srclen);
 	LZMA_write_varint(h, strm.total_out);
 
-	return(write(h->fd, h->dmem, strm.total_out));
+	wcnt = write(h->fd, h->dmem, strm.total_out);
+	h->write_cnt += wcnt;
+	return(wcnt);
 	}
 	else
 	{
 	LZMA_write_varint(h, srclen);
 	LZMA_write_varint(h, 0);
 
-	return(write(h->fd, mem, len));
+	wcnt = write(h->fd, mem, len);
+	h->write_cnt += wcnt;
+	return(wcnt);
 	}
 #else
 fprintf(stderr, "LZMA support was not compiled into this executable, sorry.\n");
@@ -170,7 +176,7 @@ if(mode[0] == 'w')
 		}
 
 	h->state = LZMA_STATE_WRITE;
-	write(h->fd, z7, 2);
+	h->write_cnt += write(h->fd, z7, 2);
 	return(h);
 	}
 else
@@ -277,7 +283,7 @@ if(h)
 	switch(h->state)
 		{
 		case LZMA_STATE_READ_INIT:
-			read(h->fd, hdr, 2);
+			h->read_cnt += read(h->fd, hdr, 2);
 			if((hdr[0] == 'z') && (hdr[1] == '7'))
 				{
 				h->state = LZMA_STATE_READ_GETBLOCK;
@@ -315,7 +321,7 @@ if(h)
 
 			if(!srclen)
 				{
-				rc = read(h->fd, h->mem, dstlen);
+				h->read_cnt += (rc = read(h->fd, h->mem, dstlen));
 				h->blklen = rc;
 				h->offs = 0;
 				}
@@ -324,7 +330,7 @@ if(h)
 				lzma_stream strm = LZMA_STREAM_INIT;
 				lzma_ret lrc;
 
-				rc = read(h->fd, h->dmem, srclen);
+				h->read_cnt += (rc = read(h->fd, h->dmem, srclen));
 
 				lrc = lzma_alone_decoder(&strm, LZMA_DECODER_SIZE);
 				if(lrc != LZMA_OK)

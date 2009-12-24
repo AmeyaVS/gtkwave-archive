@@ -65,6 +65,21 @@
 /*                   01234567 */
 
 
+/* 
+ * to remove warn_unused_result compile time messages
+ * (in the future there needs to be results checking)
+ */
+size_t fstFread(void *BUF, size_t SIZE, size_t COUNT, FILE *FP)
+{
+return(fread(BUF, SIZE, COUNT, FP));
+}
+
+size_t fstFwrite(const void *BUF, size_t SIZE, size_t COUNT, FILE *FP)
+{
+return(fwrite(BUF, SIZE, COUNT, FP));
+}
+
+
 /*
  * mmap compatibility
  */
@@ -75,7 +90,7 @@
 
 static void *fstMmap2(size_t __len, int __fd, off_t __off)
 {
-void *pnt = malloc(__len);
+unsigned char *pnt = malloc(__len);
 off_t cur_offs = lseek(__fd, 0, SEEK_CUR);
 size_t i;
 
@@ -138,7 +153,7 @@ for(i=7;i>=0;i--)
 	v >>= 8;
 	}
 
-fwrite(buf, 8, 1, handle);
+fstFwrite(buf, 8, 1, handle);
 return(8);
 }
 
@@ -149,7 +164,7 @@ uint64_t val = 0;
 unsigned char buf[sizeof(uint64_t)];
 int i;
 
-fread(buf, sizeof(uint64_t), 1, f);
+fstFread(buf, sizeof(uint64_t), 1, f);
 for(i=0;i<sizeof(uint64_t);i++)
 	{
 	val <<= 8;
@@ -353,7 +368,7 @@ while((nxt = v>>7))
 *(pnt++) = (v&0x7f);
 
 len = pnt-buf;
-fwrite(buf, len, 1, handle);
+fstFwrite(buf, len, 1, handle);
 return(len);
 }
 
@@ -450,7 +465,7 @@ fstWriterUint64(xc->handle, 0);			/* +9 start time */
 fstWriterUint64(xc->handle, 0);  		/* +17 end time */
 
 #define FST_HDR_OFFS_ENDIAN_TEST		(FST_HDR_OFFS_END_TIME + 8)
-fwrite(&endtest, 8, 1, xc->handle); 		/* +25 endian test for reals */
+fstFwrite(&endtest, 8, 1, xc->handle); 		/* +25 endian test for reals */
 
 #define FST_HDR_OFFS_MEM_USED			(FST_HDR_OFFS_ENDIAN_TEST + 8)
 fstWriterUint64(xc->handle, FST_BREAK_SIZE); 	/* +33 memory used by writer */
@@ -473,13 +488,13 @@ fputc((-9)&255, xc->handle);			/* +73 timescale 1ns */
 #define FST_HDR_OFFS_SIM_VERSION		(FST_HDR_OFFS_TIMESCALE + 1)
 memset(vbuf, 0, FST_HDR_SIM_VERSION_SIZE);
 strcpy(vbuf, FST_WRITER_STR);
-fwrite(vbuf, FST_HDR_SIM_VERSION_SIZE, 1, xc->handle); /* +74 version */
+fstFwrite(vbuf, FST_HDR_SIM_VERSION_SIZE, 1, xc->handle); /* +74 version */
 
 #define FST_HDR_OFFS_DATE			(FST_HDR_OFFS_SIM_VERSION + FST_HDR_SIM_VERSION_SIZE)
 memset(dbuf, 0, FST_HDR_DATE_SIZE);
 time(&walltime);
 strcpy(dbuf, asctime(localtime(&walltime)));
-fwrite(dbuf, FST_HDR_DATE_SIZE, 1, xc->handle);	/* +202 date */
+fstFwrite(dbuf, FST_HDR_DATE_SIZE, 1, xc->handle);	/* +202 date */
 
 #define FST_HDR_LENGTH				(FST_HDR_OFFS_DATE + FST_HDR_DATE_SIZE)
 						/* +330 next section starts here */
@@ -646,7 +661,7 @@ if(xc)
 		fstWriterUint64(xc->handle, tlen);		/* uncompressed */
 								/* compressed len is section length - 24 */
 		fstWriterUint64(xc->handle, xc->maxhandle);	/* maxhandle */
-		fwrite((destlen != tlen) ? dmem : tmem, destlen, 1, xc->handle);
+		fstFwrite((destlen != tlen) ? dmem : tmem, destlen, 1, xc->handle);
 		fflush(xc->handle);
 
 		fseeko(xc->handle, fixup_offs, SEEK_SET);
@@ -714,7 +729,7 @@ if(xc)
 		for(hl = 0; hl < xc->hier_file_len; hl += FST_GZIO_LEN)
 			{
 			unsigned len = ((xc->hier_file_len - hl) > FST_GZIO_LEN) ? FST_GZIO_LEN : (xc->hier_file_len - hl);
-			fread(mem, len, 1, xc->hier_handle);
+			fstFread(mem, len, 1, xc->hier_handle);
 			gzwrite(zhandle, mem, len);
 			}
 		gzclose(zhandle);
@@ -789,7 +804,7 @@ if(xc)
 				for(offpnt = 0; offpnt < uclen; offpnt += FST_GZIO_LEN)
 					{
 					size_t this_len = ((uclen - offpnt) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - offpnt);
-					rc = fread(gz_membuf, this_len, 1, xc->handle);
+					rc = fstFread(gz_membuf, this_len, 1, xc->handle);
 					gzwrite(dsth, gz_membuf, this_len);
 					}
 				gzclose(dsth);
@@ -887,11 +902,11 @@ if(xc)
 
 	if((rc == Z_OK) && (destlen < xc->maxvalpos))
 		{
-		fwrite(dmem, destlen, 1, xc->handle);
+		fstFwrite(dmem, destlen, 1, xc->handle);
 		}
 		else /* comparison between compressed / decompressed len tells if compressed */
 		{
-		fwrite(xc->curval_mem, xc->maxvalpos, 1, xc->handle);
+		fstFwrite(xc->curval_mem, xc->maxvalpos, 1, xc->handle);
 		}
 
 	free(dmem);
@@ -1056,13 +1071,13 @@ for(i=0;i<xc->maxhandle;i++)
 					{
 					fpos += fstWriterVarint(f, wrlen);
 					fpos += destlen;
-					fwrite(dmem, destlen, 1, f);
+					fstFwrite(dmem, destlen, 1, f);
 					}
 					else
 					{
 					fpos += fstWriterVarint(f, 0);
 					fpos += wrlen;
-					fwrite(scratchpad, wrlen, 1, f);
+					fstFwrite(scratchpad, wrlen, 1, f);
 					}
 				free(dmem);
 				}
@@ -1074,13 +1089,13 @@ for(i=0;i<xc->maxhandle;i++)
         				{
 					fpos += fstWriterVarint(f, wrlen);
 					fpos += rc;
-					fwrite(dmem, rc, 1, f);
+					fstFwrite(dmem, rc, 1, f);
         				}
         				else
         				{
 					fpos += fstWriterVarint(f, 0);
 					fpos += wrlen;
-					fwrite(scratchpad, wrlen, 1, f);
+					fstFwrite(scratchpad, wrlen, 1, f);
         				}
 				free(dmem);
 				}
@@ -1089,7 +1104,7 @@ for(i=0;i<xc->maxhandle;i++)
 			{
 			fpos += fstWriterVarint(f, 0);
 			fpos += wrlen;
-			fwrite(scratchpad, wrlen, 1, f);
+			fstFwrite(scratchpad, wrlen, 1, f);
 			}
 
 		xc->valpos_mem[4*i+3] = 0;
@@ -1155,11 +1170,11 @@ if(tmem)
 
 	if((rc == Z_OK) && (destlen < tlen))
 		{
-		fwrite(dmem, destlen, 1, xc->handle);
+		fstFwrite(dmem, destlen, 1, xc->handle);
 		}
 		else /* comparison between compressed / decompressed len tells if compressed */
 		{
-		fwrite(tmem, tlen, 1, xc->handle);
+		fstFwrite(tmem, tlen, 1, xc->handle);
 		destlen = tlen;
 		}
 	free(dmem);
@@ -1226,7 +1241,7 @@ if(xc)
 	fseeko(xc->handle, FST_HDR_OFFS_DATE, SEEK_SET);
 	memset(s, 0, FST_HDR_DATE_SIZE);
 	memcpy(s, dat, (len < FST_HDR_DATE_SIZE) ? len : FST_HDR_DATE_SIZE);
-	fwrite(s, FST_HDR_DATE_SIZE, 1, xc->handle);
+	fstFwrite(s, FST_HDR_DATE_SIZE, 1, xc->handle);
 	fflush(xc->handle);
 	fseeko(xc->handle, fpos, SEEK_SET);
 	}
@@ -1245,7 +1260,7 @@ if(xc && vers)
 	fseeko(xc->handle, FST_HDR_OFFS_SIM_VERSION, SEEK_SET);
 	memset(s, 0, FST_HDR_SIM_VERSION_SIZE);
 	memcpy(s, vers, (len < FST_HDR_SIM_VERSION_SIZE) ? len : FST_HDR_SIM_VERSION_SIZE);
-	fwrite(s, FST_HDR_SIM_VERSION_SIZE, 1, xc->handle);
+	fstFwrite(s, FST_HDR_SIM_VERSION_SIZE, 1, xc->handle);
 	fflush(xc->handle);
 	fseeko(xc->handle, fpos, SEEK_SET);
 	}
@@ -1315,7 +1330,7 @@ if(xc && nam)
 	fputc(vt, xc->hier_handle);
 	fputc(vd, xc->hier_handle);
 	nlen = strlen(nam);
-	fwrite(nam, nlen, 1, xc->hier_handle);
+	fstFwrite(nam, nlen, 1, xc->hier_handle);
 	fputc(0, xc->hier_handle);
 	xc->hier_file_len += (nlen+3);
 
@@ -1340,10 +1355,10 @@ if(xc && nam)
 
 		fstWriterVarint(xc->geom_handle, !is_real ? len : 0); /* geom section encodes reals as zero byte */
 
-		fwrite(&xc->maxvalpos, sizeof(uint32_t), 1, xc->valpos_handle);
-		fwrite(&len, sizeof(uint32_t), 1, xc->valpos_handle);
-		fwrite(&zero, sizeof(uint32_t), 1, xc->valpos_handle);
-		fwrite(&zero, sizeof(uint32_t), 1, xc->valpos_handle);
+		fstFwrite(&xc->maxvalpos, sizeof(uint32_t), 1, xc->valpos_handle);
+		fstFwrite(&len, sizeof(uint32_t), 1, xc->valpos_handle);
+		fstFwrite(&zero, sizeof(uint32_t), 1, xc->valpos_handle);
+		fstFwrite(&zero, sizeof(uint32_t), 1, xc->valpos_handle);
 
 		if(!is_real)
 			{
@@ -1354,7 +1369,7 @@ if(xc && nam)
 			}
 			else
 			{
-			fwrite(&xc->nan, 8, 1, xc->curval_handle); /* initialize doubles to NaN rather than x */
+			fstFwrite(&xc->nan, 8, 1, xc->curval_handle); /* initialize doubles to NaN rather than x */
 			}			
 		
 		xc->maxvalpos+=len;
@@ -1444,12 +1459,12 @@ if((xc) && (handle <= xc->maxhandle))
 		prev_chg = xc->valpos_mem[4*handle+2];
 		fpos = xc->vchn_siz;
 
-		fwrite(&prev_chg, 1, sizeof(uint32_t), xc->vchn_handle);
+		fstFwrite(&prev_chg, 1, sizeof(uint32_t), xc->vchn_handle);
 		xc->vchn_siz += 4;
 		xc->valpos_mem[4*handle+2] = fpos;
 		xc->vchn_siz += fstWriterVarint(xc->vchn_handle, xc->tchn_idx - xc->valpos_mem[4*handle+3]);
 		xc->valpos_mem[4*handle+3] = xc->tchn_idx;
-		fwrite(buf, len, 1, xc->vchn_handle);
+		fstFwrite(buf, len, 1, xc->vchn_handle);
 		xc->vchn_siz += len;
 		}
 	}
@@ -2060,7 +2075,7 @@ if(!xc->fh)
 	uint64_t uclen;
 	gzFile zhandle;
 
-	sprintf(fnam, "%s.hier_%d_%p", xc->filename, getpid(), xc);
+	sprintf(fnam, "%s.hier_%d_%p", xc->filename, getpid(), (void *)xc);
 	fseeko(xc->f, xc->hier_pos, SEEK_SET);
 	uclen = fstReaderUint64(xc->f);
 	fflush(xc->f);
@@ -2074,7 +2089,7 @@ if(!xc->fh)
 		{
                 unsigned len = ((uclen - hl) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - hl);
 		gzread(zhandle, mem, len); /* rc should equal len... */
-		fwrite(mem, len, 1, xc->fh);
+		fstFwrite(mem, len, 1, xc->fh);
                 }
         gzclose(zhandle);
 	free(mem);
@@ -2435,7 +2450,7 @@ if(sectype == FST_BL_ZWRAPPER)
         int flen = strlen(xc->filename);
         char *hf = calloc(1, flen + 16 + 32 + 1);
 
-	sprintf(hf, "%s.upk_%d_%p", xc->filename, getpid(), xc);
+	sprintf(hf, "%s.upk_%d_%p", xc->filename, getpid(), (void *)xc);
 	fcomp = fopen(hf, "w+b");
 
 #ifdef __MINGW32__
@@ -2459,7 +2474,7 @@ if(sectype == FST_BL_ZWRAPPER)
 		{
 		size_t this_len = ((uclen - offpnt) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - offpnt);
 		gzread(zhandle, gz_membuf, this_len);
-		fwrite(gz_membuf, this_len, 1, fcomp);
+		fstFwrite(gz_membuf, this_len, 1, fcomp);
 		}
 	fflush(fcomp);
 	fclose(xc->f);
@@ -2499,7 +2514,7 @@ while(blkpos < endfile)
 
 			hdr_incomplete = (xc->start_time == 0) && (xc->end_time == 0);
 
-			fread(&dcheck, 8, 1, xc->f);
+			fstFread(&dcheck, 8, 1, xc->f);
 			xc->double_endian_match = (dcheck == FST_DOUBLE_ENDTEST);
 			if(!xc->double_endian_match)
 				{
@@ -2527,9 +2542,9 @@ while(blkpos < endfile)
 			xc->vc_section_count = fstReaderUint64(xc->f); 
 			ch = fgetc(xc->f);
 			xc->timescale = (signed char)ch;
-			fread(xc->version, FST_HDR_SIM_VERSION_SIZE, 1, xc->f);
+			fstFread(xc->version, FST_HDR_SIM_VERSION_SIZE, 1, xc->f);
 			xc->version[FST_HDR_SIM_VERSION_SIZE] = 0;
-			fread(xc->date, FST_HDR_DATE_SIZE, 1, xc->f);
+			fstFread(xc->date, FST_HDR_DATE_SIZE, 1, xc->f);
 			xc->date[FST_HDR_DATE_SIZE] = 0;
 			}
 		}
@@ -2569,7 +2584,7 @@ while(blkpos < endfile)
 			        unsigned long sourcelen = clen;
 				int rc;
 	
-				fread(cdata, clen, 1, xc->f);
+				fstFread(cdata, clen, 1, xc->f);
 				rc = uncompress(ucdata, &destlen, cdata, sourcelen);
 
 				if(rc != Z_OK)
@@ -2582,7 +2597,7 @@ while(blkpos < endfile)
 				}
 				else
 				{
-				fread(ucdata, uclen, 1, xc->f);
+				fstFread(ucdata, uclen, 1, xc->f);
 				}
 	
 			if(xc->signal_lens) free(xc->signal_lens);
@@ -2893,7 +2908,7 @@ for(;;)
 	if(tsec_uclen != tsec_clen)
 		{
 		cdata = malloc(tsec_clen);
-		fread(cdata, tsec_clen, 1, xc->f);
+		fstFread(cdata, tsec_clen, 1, xc->f);
 	
 		rc = uncompress(ucdata, &destlen, cdata, sourcelen);
 	                
@@ -2907,7 +2922,7 @@ for(;;)
 		}
 		else
 		{
-		fread(ucdata, tsec_uclen, 1, xc->f);
+		fstFread(ucdata, tsec_uclen, 1, xc->f);
 		}
 	
 	if(time_table) free(time_table);
@@ -2953,7 +2968,7 @@ for(;;)
 
 			if(frame_uclen == frame_clen)
 				{
-				fread(mu, frame_uclen, 1, xc->f);
+				fstFread(mu, frame_uclen, 1, xc->f);
 				}
 				else
 				{
@@ -2963,7 +2978,7 @@ for(;;)
 				unsigned long destlen = frame_uclen;
 				unsigned long sourcelen = frame_clen;
 
-				fread(mc, sourcelen, 1, xc->f);
+				fstFread(mc, sourcelen, 1, xc->f);
 				rc = uncompress(mu, &destlen, mc, sourcelen);
 				if(rc != Z_OK)
 					{
@@ -2997,7 +3012,7 @@ for(;;)
 								int vcdid_len;
 								const char *vcd_id = fstVcdIDForFwrite(idx+1, &vcdid_len);
 								fputc(val, fv);
-								fwrite(vcd_id, vcdid_len, 1, fv);
+								fstFwrite(vcd_id, vcdid_len, 1, fv);
 								fputc('\n', fv);
 								}
 							}
@@ -3019,9 +3034,9 @@ for(;;)
 									int vcdid_len;
 									const char *vcd_id = fstVcdIDForFwrite(idx+1, &vcdid_len);
 									fputc((xc->signal_typs[idx] != FST_VT_VCD_PORT) ? 'b' : 'p', fv);
-									fwrite(mu+sig_offs, xc->signal_lens[idx], 1, fv);
+									fstFwrite(mu+sig_offs, xc->signal_lens[idx], 1, fv);
 									fputc(' ', fv);
-									fwrite(vcd_id, vcdid_len, 1, fv);
+									fstFwrite(vcd_id, vcdid_len, 1, fv);
 									fputc('\n', fv);
 									}
 								}
@@ -3127,7 +3142,7 @@ for(;;)
 #endif
 	chain_cmem = malloc(chain_clen);
 	fseeko(xc->f, indx_pos, SEEK_SET);
-	fread(chain_cmem, chain_clen, 1, xc->f);
+	fstFread(chain_cmem, chain_clen, 1, xc->f);
 	
 	if(vc_maxhandle > vc_maxhandle_largest)
 		{
@@ -3194,7 +3209,7 @@ for(;;)
 					unsigned long destlen = val;
 					unsigned long sourcelen = chain_table_lengths[i];
 	
-					fread(mc, chain_table_lengths[i], 1, xc->f);
+					fstFread(mc, chain_table_lengths[i], 1, xc->f);
 					if(packtype == 'F')
 						{
 						rc = fastlz_decompress(mc, sourcelen, mu, destlen);
@@ -3213,7 +3228,7 @@ for(;;)
 					{
 					int destlen = chain_table_lengths[i] - skiplen;
 					unsigned char *mu = mem_for_traversal + traversal_mem_offs;
-					fread(mu, destlen, 1, xc->f);
+					fstFread(mu, destlen, 1, xc->f);
 					/* data to process is for(j=0;j<destlen;j++) in mu[j] */
 					headptr[i] = traversal_mem_offs;
 					length_remaining[i] = destlen;
@@ -3306,7 +3321,7 @@ for(;;)
 						int vcdid_len;
 						const char *vcd_id = fstVcdIDForFwrite(idx+1, &vcdid_len);
 						fputc(val, fv);
-						fwrite(vcd_id, vcdid_len, 1, fv);
+						fstFwrite(vcd_id, vcdid_len, 1, fv);
 						fputc('\n', fv);
 						}
 					}
@@ -3346,9 +3361,10 @@ for(;;)
 
 						for(j=0;j<len;j++)
 							{
+							unsigned char ch;
 							byte = j/8;
 							bit = 7 - (j & 7);
-							unsigned char ch = ((vdata[byte] >> bit) & 1) | '0';
+							ch = ((vdata[byte] >> bit) & 1) | '0';
 							xc->temp_signal_value_buf[j] = ch;
 							}
 						xc->temp_signal_value_buf[j] = 0;
@@ -3361,7 +3377,7 @@ for(;;)
 							{
 							if(fv)	{ 
 								fputc((xc->signal_typs[idx] != FST_VT_VCD_PORT) ? 'b' : 'p', fv);
-								fwrite(xc->temp_signal_value_buf, len, 1, fv);
+								fstFwrite(xc->temp_signal_value_buf, len, 1, fv);
 								}
 							}
 
@@ -3380,7 +3396,7 @@ for(;;)
 							if(fv)
 								{
 								fputc((xc->signal_typs[idx] != FST_VT_VCD_PORT) ? 'b' : 'p', fv);
-								fwrite(vdata, len, 1, fv);
+								fstFwrite(vdata, len, 1, fv);
 								}
 							}
 						}
@@ -3399,8 +3415,9 @@ for(;;)
 
 						for(j=0;j<8;j++)
 							{
+							unsigned char ch;
 							bit = 7 - (j & 7);
-							unsigned char ch = ((vdata[0] >> bit) & 1) | '0';
+							ch = ((vdata[0] >> bit) & 1) | '0';
 							buf[j] = ch;
 							}
 	
@@ -3481,7 +3498,7 @@ for(;;)
 					int vcdid_len;
 					const char *vcd_id = fstVcdIDForFwrite(idx+1, &vcdid_len);
 					fputc(' ', fv);
-					fwrite(vcd_id, vcdid_len, 1, fv);
+					fstFwrite(vcd_id, vcdid_len, 1, fv);
 					fputc('\n', fv);
 					}
 
@@ -3714,7 +3731,7 @@ fseeko(xc->f, -24 - tsec_clen, SEEK_CUR);
 if(tsec_uclen != tsec_clen)
 	{
 	cdata = malloc(tsec_clen);
-	fread(cdata, tsec_clen, 1, xc->f);
+	fstFread(cdata, tsec_clen, 1, xc->f);
 	
 	rc = uncompress(ucdata, &destlen, cdata, sourcelen);
 	                
@@ -3728,7 +3745,7 @@ if(tsec_uclen != tsec_clen)
 	}
 	else
 	{
-	fread(ucdata, tsec_uclen, 1, xc->f);
+	fstFread(ucdata, tsec_uclen, 1, xc->f);
 	}
 
 xc->rvat_time_table = calloc(tsec_nitems, sizeof(uint64_t));
@@ -3754,7 +3771,7 @@ xc->rvat_frame_data = malloc(frame_uclen);
 
 if(frame_uclen == frame_clen)
 	{
-	fread(xc->rvat_frame_data, frame_uclen, 1, xc->f);
+	fstFread(xc->rvat_frame_data, frame_uclen, 1, xc->f);
 	}
 	else
 	{
@@ -3764,7 +3781,7 @@ if(frame_uclen == frame_clen)
 	unsigned long destlen = frame_uclen;
 	unsigned long sourcelen = frame_clen;
 
-	fread(mc, sourcelen, 1, xc->f);
+	fstFread(mc, sourcelen, 1, xc->f);
 	rc = uncompress(xc->rvat_frame_data, &destlen, mc, sourcelen);
 	if(rc != Z_OK)
 		{
@@ -3792,7 +3809,7 @@ printf("\tindx_pos: %d (%d bytes)\n", (int)indx_pos, (int)chain_clen);
 #endif
 chain_cmem = malloc(chain_clen);
 fseeko(xc->f, indx_pos, SEEK_SET);
-fread(chain_cmem, chain_clen, 1, xc->f);
+fstFread(chain_cmem, chain_clen, 1, xc->f);
 	
 xc->rvat_chain_table = malloc((xc->rvat_vc_maxhandle+1) * sizeof(off_t));
 xc->rvat_chain_table_lengths = malloc((xc->rvat_vc_maxhandle+1) * sizeof(uint32_t));
@@ -3872,7 +3889,7 @@ if(!xc->rvat_chain_mem)
 		unsigned long sourcelen = xc->rvat_chain_table_lengths[facidx];
 		int rc;
 		
-		fread(mc, xc->rvat_chain_table_lengths[facidx], 1, xc->f);
+		fstFread(mc, xc->rvat_chain_table_lengths[facidx], 1, xc->f);
 		rc = uncompress(mu, &destlen, mc, sourcelen);
 		free(mc);
 	
@@ -3889,7 +3906,7 @@ if(!xc->rvat_chain_mem)
 		{
 		int destlen = xc->rvat_chain_table_lengths[facidx] - skiplen;
 		unsigned char *mu = malloc(xc->rvat_chain_len = destlen);
-		fread(mu, destlen, 1, xc->f);
+		fstFread(mu, destlen, 1, xc->f);
 		/* data to process is for(j=0;j<destlen;j++) in mu[j] */
 		xc->rvat_chain_mem = mu;
 		}
@@ -4016,9 +4033,10 @@ if(xc->signal_lens[facidx] == 1)
 
 				for(j=0;j<xc->signal_lens[facidx];j++)
 					{
+					unsigned char ch;
 					byte = j/8;
 					bit = 7 - (j & 7);
-					unsigned char ch = ((vdata[byte] >> bit) & 1) | '0';
+					ch = ((vdata[byte] >> bit) & 1) | '0';
 					buf[j] = ch;
 					}
 				buf[j] = 0;
@@ -4046,8 +4064,9 @@ if(xc->signal_lens[facidx] == 1)
 
 				for(j=0;j<8;j++)
 					{
+					unsigned char ch;
 					bit = 7 - (j & 7);
-					unsigned char ch = ((vdata[0] >> bit) & 1) | '0';
+					ch = ((vdata[0] >> bit) & 1) | '0';
 					bufd[j] = ch;
 					}
 	
