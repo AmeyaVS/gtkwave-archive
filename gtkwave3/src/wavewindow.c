@@ -99,6 +99,12 @@ if(*seg_cnt == WAVE_SEG_BUF_CNT)
 
 static void wave_gdk_draw_line_flush(GdkDrawable *drawable)
 {
+if(seg_vtrans_cnt)
+	{
+	gdk_draw_segments (drawable, GLOBALS->gc_vtrans_wavewindow_c_1, seg_vtrans, seg_vtrans_cnt);
+	seg_vtrans_cnt = 0;
+	}
+
 if(seg_mid_cnt)
 	{
 	gdk_draw_segments(drawable, GLOBALS->gc_mid_wavewindow_c_1, seg_mid, seg_mid_cnt);
@@ -147,12 +153,6 @@ if(seg_vbox_cnt)
 	{
 	gdk_draw_segments (drawable, GLOBALS->gc_vbox_wavewindow_c_1, seg_vbox, seg_vbox_cnt);
 	seg_vbox_cnt = 0;
-	}
-
-if(seg_vtrans_cnt)
-	{
-	gdk_draw_segments (drawable, GLOBALS->gc_vtrans_wavewindow_c_1, seg_vtrans, seg_vtrans_cnt);
-	seg_vtrans_cnt = 0;
 	}
 }
 
@@ -3894,6 +3894,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.52  2009/11/20 20:48:19  gtkwave
+ * enabled line drawing caching for linux
+ *
  * Revision 1.51  2009/09/14 03:00:09  gtkwave
  * bluespec code integration
  *
