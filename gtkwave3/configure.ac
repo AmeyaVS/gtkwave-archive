@@ -305,12 +305,13 @@ AC_SUBST(LIBBZ2_DIR)
 
 # ------------- LZMA / XZ -------------------
 
-need_liblzma=no
-AC_TRY_COMPILE([#include <lzma.h>], [lzma_end(NULL);],, [need_liblzma=yes])
-AC_CHECK_LIB([lzma], [lzma_end], [LIBLZMA_LDADD=-llzma] , [need_liblzma=yes])
-if test "$need_liblzma" = "yes" ; then
+have_liblzma=no
+AC_TRY_COMPILE([#include <lzma.h>], [lzma_end(NULL);],, [have_liblzma=yes])
+AC_CHECK_LIB([lzma], [lzma_end], [LIBLZMA_LDADD=-llzma] , [have_liblzma=yes])
+if test "$have_liblzma" = "yes" ; then
 	LIBXZ_LDADD=
 	LIBXZ_CFLAGS=
+	AC_MSG_WARN([Missing devel liblzma so LZMA support for VZT not enabled, please install xz.])
 else
 	LIBXZ_LDADD='-llzma'
 	LIBXZ_CFLAGS='-D_WAVE_HAVE_XZ'
