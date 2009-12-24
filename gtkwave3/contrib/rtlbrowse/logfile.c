@@ -1592,11 +1592,13 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 #ifdef WAVE_USE_GTK2
 	else
 	{
-	window = gtk_hpaned_new();
-	GtkWidget *tbox = gtk_hbox_new(FALSE, 0);
+	GtkWidget *tbox;
 	GtkWidget *l1;
 	GtkWidget *image;
 	GtkRcStyle *rcstyle;
+
+	window = gtk_hpaned_new();
+	tbox = gtk_hbox_new(FALSE, 0);
 	
 	l1 = gtk_label_new(title);
 
@@ -1899,7 +1901,6 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 
 			for(i=0;i<numfacs;i++)
 				{
-				char *fnam;
 				struct fstHier *h;
 
 				new_scope_encountered = 0;
@@ -1995,7 +1996,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 						}
 					}
 				}
-resolved_fst:		
+/* resolved_fst: */
 			ctx->varnames = varnames;
 			ctx->resolved = resolved;
 skip_resolved_fst:
@@ -2048,7 +2049,7 @@ skip_resolved_fst:
 	
 							while(jvc)
 								{
-								char *rcv;
+								char rcv[65537];
 								fstReaderGetValueFromHandleAtTime(fst, anno_ctx->marker, jvc->val.i, rcv);
 								rc2[pos++] = *rcv;
 								jvc = jvc->next;
@@ -2677,6 +2678,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2009/07/07 20:22:52  gtkwave
+ * use standard verilog capitalization for x/X z/Z values in hexify()
+ *
  * Revision 1.30  2009/06/29 18:16:23  gtkwave
  * adding framework for module type annotation on inner tree nodes
  *
