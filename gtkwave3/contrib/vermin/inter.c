@@ -325,7 +325,7 @@ if(pri)
 			}
 			else if(pri->primval.number->numtype==NV_RVAL)
 			{
-			printf("PRIM: %lf\n",pri->primval.number->num.rval);
+			printf("PRIM: %.16g\n",pri->primval.number->num.rval);
 			}
 			else
 			{
@@ -374,6 +374,9 @@ printf("CONCAT ^^^ ---------------------------------------------\n");
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:42  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *
