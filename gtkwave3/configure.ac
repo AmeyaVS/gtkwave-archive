@@ -311,7 +311,7 @@ AC_CHECK_LIB([lzma], [lzma_end], [LIBLZMA_LDADD=-llzma] , [have_liblzma=yes])
 if test "$have_liblzma" = "yes" ; then
 	LIBXZ_LDADD=
 	LIBXZ_CFLAGS=
-	AC_MSG_WARN([Missing devel liblzma so LZMA support for VZT not enabled, please install xz.])
+	AC_MSG_WARN([Missing devel liblzma so LZMA support for VZT not enabled! Please install xz, see the http://tukaani.org/xz website.])
 else
 	LIBXZ_LDADD='-llzma'
 	LIBXZ_CFLAGS='-D_WAVE_HAVE_XZ'
