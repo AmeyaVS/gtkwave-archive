@@ -68,6 +68,8 @@ h->write_cnt += write(h->fd, buf, pnt-buf);
 }
 
 
+#ifdef _WAVE_HAVE_XZ
+/* ifdef is warnings fix if XZ is not present */
 static size_t LZMA_read_varint(struct lzma_handle_t *h)
 {
 unsigned char buf[16];
@@ -90,7 +92,7 @@ do
 
 return(rc);
 }
-
+#endif
 
 static size_t LZMA_write_compress(struct lzma_handle_t *h, unsigned char *mem, size_t len)
 {

@@ -79,6 +79,11 @@ size_t fstFwrite(const void *BUF, size_t SIZE, size_t COUNT, FILE *FP)
 return(fwrite(BUF, SIZE, COUNT, FP));
 }
 
+int fstFtruncate(int fd, off_t length)
+{
+return(ftruncate(fd, length));
+}
+
 
 /*
  * mmap compatibility
@@ -1149,7 +1154,7 @@ printf("value chains: %d\n", cnt);
 fstMunmap(vchg_mem, xc->vchn_siz);
 
 fseeko(xc->vchn_handle, 0, SEEK_SET);
-ftruncate(fileno(xc->vchn_handle), 0);
+fstFtruncate(fileno(xc->vchn_handle), 0);
 fputc('!', xc->vchn_handle);
 xc->vchn_siz = 1;
 
@@ -1186,7 +1191,7 @@ if(tmem)
 
 xc->tchn_cnt = xc->tchn_idx = 0;
 fseeko(xc->tchn_handle, 0, SEEK_SET);
-ftruncate(fileno(xc->tchn_handle), 0);
+fstFtruncate(fileno(xc->tchn_handle), 0);
 
 /* write block trailer */
 endpos = ftello(xc->handle);
@@ -1495,7 +1500,7 @@ if(xc)
 		xc->firsttime = (xc->vc_emitted) ? 0: tim;
 		xc->curtime = 0;
 		fseeko(xc->vchn_handle, 0, SEEK_SET);
-		ftruncate(fileno(xc->vchn_handle), 0);
+		fstFtruncate(fileno(xc->vchn_handle), 0);
 		fputc('!', xc->vchn_handle);
 		xc->vchn_siz = 1;
 		fstWriterEmitSectionHeader(xc);

@@ -262,19 +262,19 @@ if(GLOBALS->blackout_regions)
 		bt = bt->next;
 		}
 
-	vlist_packer_emit_uv32((struct vlist_packer_t **)&GLOBALS->time_vlist_vcd_recoder_write, bcnt);
+	vlist_packer_emit_uv32((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, bcnt);
 
 	bt = GLOBALS->blackout_regions;
 	while(bt)
 		{
-		vlist_packer_emit_utt((struct vlist_packer_t **)&GLOBALS->time_vlist_vcd_recoder_write, bt->bstart);
-		vlist_packer_emit_utt((struct vlist_packer_t **)&GLOBALS->time_vlist_vcd_recoder_write, bt->bend);
+		vlist_packer_emit_utt((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, bt->bstart);
+		vlist_packer_emit_utt((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, bt->bend);
 		bt = bt->next;
 		}
 	}
 	else
 	{
-	vlist_packer_emit_uv32((struct vlist_packer_t **)&GLOBALS->time_vlist_vcd_recoder_write, 0);
+	vlist_packer_emit_uv32((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, 0);
 	}
 
 vlist_p = (struct vlist_packer_t *)GLOBALS->time_vlist_vcd_recoder_write;
@@ -1927,14 +1927,14 @@ for(;;)
 
 						if(GLOBALS->time_vlist_vcd_recoder_write)
 							{					
-							vlist_packer_emit_utt((struct vlist_packer_t **)&GLOBALS->time_vlist_vcd_recoder_write, tim);
+							vlist_packer_emit_utt((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, tim);
 							}
 						}
 						else
 						{
 						if(GLOBALS->time_vlist_vcd_recoder_write)
 							{					
-							vlist_packer_emit_utt((struct vlist_packer_t **)&GLOBALS->time_vlist_vcd_recoder_write, tim - GLOBALS->current_time_vcd_recoder_c_3);
+							vlist_packer_emit_utt((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, tim - GLOBALS->current_time_vcd_recoder_c_3);
 							}
 						}
 
@@ -1961,7 +1961,7 @@ for(;;)
 
 						if(GLOBALS->time_vlist_vcd_recoder_write)
 							{					
-							vlist_packer_emit_utt((struct vlist_packer_t **)&GLOBALS->time_vlist_vcd_recoder_write, tim);
+							vlist_packer_emit_utt((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, tim);
 							}
 
 						tt = vlist_alloc(&GLOBALS->time_vlist_vcd_recoder_c_1, 0);
@@ -3171,6 +3171,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.31  2009/08/28 19:58:42  gtkwave
  * added malform_eof_fix
  *
