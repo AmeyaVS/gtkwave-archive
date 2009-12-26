@@ -435,7 +435,7 @@ b->multi_state = (num_bitplanes > 1);
 padskip = ((long)pnt)&3; pnt += (padskip) ? 4-padskip : 0; /* skip pad to next 4 byte boundary */
 b->vindex = (vztint32_t *)(pnt);
 
-if(*((int *)endian_word) == 0x01020304)	/* have to bswap the value changes on big endian machines... */
+if(*((int *)((void *)endian_word)) == 0x01020304) /* have to bswap the value changes on big endian machines... */
 	{
 	if(!b->rle)
 		{
@@ -2380,6 +2380,9 @@ return(rcval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/12/24 20:08:15  gtkwave
+ * warnings fixes
+ *
  * Revision 1.6  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *
