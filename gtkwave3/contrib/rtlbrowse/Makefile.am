@@ -6,8 +6,8 @@
 AET2LIB = 
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-LIBFST_CFLAGS  = -I../../src/helpers/fst
-LIBLZMA_CFLAGS = -I../../src/liblzma $(LIBXZ_CFLAGS)
+LIBFST_CFLAGS  = -I$(srcdir)/../../src/helpers/fst
+LIBLZMA_CFLAGS = -I$(srcdir)/../../src/liblzma $(LIBXZ_CFLAGS)
 LIBLZMA_LDADD  = -L../../src/liblzma -lgwlzma $(LIBXZ_LDADD)
 
 

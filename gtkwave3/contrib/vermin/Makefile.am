@@ -21,8 +21,8 @@ vermin_SOURCES= \
 verilog.c parser.dlg tokens.h err.c : $(srcdir)/verilog.g
 	$(ANTLR) $(AFLAGS) $(srcdir)/verilog.g
 
-scan.c mode.h : $(srcdir)/parser.dlg
-	$(DLG) $(DFLAGS) $(srcdir)/parser.dlg scan.c
+scan.c mode.h : parser.dlg
+	$(DLG) $(DFLAGS) parser.dlg scan.c
 
 definehash.c: vpp_keyword.gperf
 	$(GPERF) -C -I -N is_builtin_define $(srcdir)/vpp_keyword.gperf >definehash.c
