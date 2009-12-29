@@ -742,5 +742,6 @@
 
 		<< in CVS, this is after 3.3.0 tar.gz release >>
 
-	28dec09	Fixed Makefile.am files to allow builds into different
+	29dec09	Fixed Makefile.am files to allow builds into different
 		directories than the current one.
+		GHW crash fixes.

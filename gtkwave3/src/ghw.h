@@ -13,7 +13,6 @@
 #define GHW_H
 
 #include <limits.h>
-#include "ghwlib.h"
 #include "tree.h"
 #include "vcd.h"
 
@@ -27,6 +26,9 @@ int strand_pnt(char *s);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

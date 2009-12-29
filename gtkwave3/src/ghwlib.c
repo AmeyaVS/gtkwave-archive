@@ -460,7 +460,7 @@ get_nbr_elements (union ghw_type *t)
 }
 
 int
-get_range_length (union ghw_range *rng)
+ghw_get_range_length (union ghw_range *rng)
 {
   switch (rng->kind)
     {
@@ -626,7 +626,7 @@ ghw_read_type (struct ghw_handler *h)
 	    for (j = 0; j < sa->base->nbr_dim; j++)
 	      {
 		sa->rngs[j] = ghw_read_range (h);
-		nbr_el *= get_range_length (sa->rngs[j]);
+		nbr_el *= ghw_get_range_length (sa->rngs[j]);
 	      }
 	    sa->nbr_el = nbr_el;
 	    if (h->flag_verbose > 1)
@@ -1806,6 +1806,9 @@ ghw_disp_types (struct ghw_handler *h)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.5  2008/12/20 07:44:22  gtkwave
  * experimental support for Tcl repscripts
  *

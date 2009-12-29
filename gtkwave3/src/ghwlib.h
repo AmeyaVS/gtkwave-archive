@@ -411,6 +411,8 @@ void ghw_close (struct ghw_handler *h);
 
 const char *ghw_get_dir (int is_downto);
 
+int ghw_get_range_length (union ghw_range *rng);
+
 /* Note: TYPE must be a base type (used only to display literals).  */
 void ghw_disp_range (union ghw_type *type, union ghw_range *rng);
 
@@ -422,6 +424,9 @@ void ghw_disp_types (struct ghw_handler *h);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.3  2008/07/01 18:51:06  gtkwave
  * compiler warning fixes for amd64
  *

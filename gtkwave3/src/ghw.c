@@ -20,6 +20,7 @@
 #include "globals.h"
 #include <config.h>
 #include "ghw.h"
+#include "ghwlib.h"
 
 /************************ splay ************************/
 
@@ -288,8 +289,14 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	}
 
 recurse_tree_fix_from_whichcache(GLOBALS->treeroot);
-incinerate_whichcache_tree(GLOBALS->gwt_ghw_c_1); GLOBALS->gwt_ghw_c_1 = NULL;
-incinerate_whichcache_tree(GLOBALS->gwt_corr_ghw_c_1); GLOBALS->gwt_corr_ghw_c_1 = NULL;
+if(GLOBALS->gwt_ghw_c_1)
+	{
+	incinerate_whichcache_tree(GLOBALS->gwt_ghw_c_1); GLOBALS->gwt_ghw_c_1 = NULL;
+	}
+if(GLOBALS->gwt_corr_ghw_c_1)
+	{
+	incinerate_whichcache_tree(GLOBALS->gwt_corr_ghw_c_1); GLOBALS->gwt_corr_ghw_c_1 = NULL;
+	}
  
 for(i=0;i<GLOBALS->numfacs;i++)
         {
@@ -345,9 +352,13 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	char *nam;
 	struct ghw_range_i32 *r;
 	struct tree *last;
+	int len;
 	
 	last = NULL;
 	r = &arr->sa.rngs[dim]->i32;
+	len = ghw_get_range_length ((union ghw_range *)r);
+	if (len <= 0)
+	  break;
 	v = r->left;
 	while (1)
 	  {
@@ -371,9 +382,13 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	char *nam;
 	struct ghw_range_e8 *r;
 	struct tree *last;
+	int len;
 	
 	last = NULL;
 	r = &arr->sa.rngs[dim]->e8;
+	len = ghw_get_range_length ((union ghw_range *)r);
+	if (len <= 0)
+	  break;
 	v = r->left;
 	while (1)
 	  {
@@ -476,6 +491,8 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
     }
 }
 
+/* Create the gtkwave tree from the GHW hierarchy.  */
+
 static struct tree *
 build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
 {
@@ -494,6 +511,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
     case ghw_hie_generate_if:
     case ghw_hie_package:
 
+      /* Convert kind.  */
       switch(hie->kind)
 		{
 	    	case ghw_hie_design:		ttype = TREE_VHDL_ST_DESIGN; break;
@@ -506,6 +524,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
 						ttype = TREE_VHDL_ST_PACKAGE; break;
 		}
 
+      /* For iterative generate, add the index.  *
       if (hie->kind == ghw_hie_generate_for)
 	{
 	  char buf[128];
@@ -545,6 +564,8 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
         }
 
       t->which = -1;
+
+      /* Recurse.  */
       prev = NULL;
       for (ch = hie->u.blk.child; ch != NULL; ch = ch->brother)
 	{
@@ -570,6 +591,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
       {
 	unsigned int *ptr = hie->u.sig.sigs;
 
+        /* Convert kind.  */
         switch(hie->kind)
 		{
 		case ghw_hie_signal:		ttype = TREE_VHDL_ST_SIGNAL; break;
@@ -582,6 +604,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
 						ttype = TREE_VHDL_ST_LINKAGE; break;
 		}
 
+        /* Convert type.  */
 	t = build_hierarchy_type (h, hie->u.sig.type, hie->name, &ptr);
 	if (*ptr != 0)
 	  abort ();
@@ -1095,6 +1118,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/07/01 21:58:31  gtkwave
+ * more GHW module type adds for icons in hierarchy window
+ *
  * Revision 1.7  2009/07/01 18:22:34  gtkwave
  * added VHDL (GHW) instance types as icons
  *
