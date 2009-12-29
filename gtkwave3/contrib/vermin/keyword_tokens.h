@@ -2,7 +2,7 @@
 #define _VERTEX_KEYWORD_TOKENS_H
 
 enum VertexKeywordTokens {
-zzEOF_TOKEN=1,
+/* zzEOF_TOKEN=1, */
 V_EOF=1,
 V_DECIMAL_NUMBER,
 V_FLOAT1,
@@ -170,6 +170,9 @@ V_XORLIT
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:42  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *
