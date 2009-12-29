@@ -3,6 +3,9 @@
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/01/13 22:39:24  gtkwave
+ * compile fixes for mingw
+ *
  * Revision 1.5  2008/11/12 19:49:42  gtkwave
  * changed usage of usize
  *
@@ -163,7 +166,7 @@ if(tok!=zzEOF_TOKEN)
 	}
 	else
 	{
-	warn("   Local context preceeding EOF in '%s' on line %d.%d:\n",zzfilename, zzline,col-1);
+	warn("   Local context preceding EOF in '%s' on line %d.%d:\n",zzfilename, zzline,col-1);
 	}
 if(zzline>2)
 	{
