@@ -573,27 +573,19 @@ if((!nam)||(!(xc->handle=fopen(nam, "w+b"))))
         }
         else
         {
-#ifdef __MINGW32__
-	const int mgw = 1;
-#else
-	const int mgw = 0;
-#endif
 	int flen = strlen(nam);
 	char *hf = calloc(1, flen + 6);
 
 	memcpy(hf, nam, flen);
 	strcpy(hf + flen, ".hier");
 	xc->hier_handle = fopen(hf, "w+b");
-	strcpy(hf + flen, ".geom");
-	xc->geom_handle = fopen(hf, "w+b");     if(!mgw) unlink(hf); /* temp file */
-	strcpy(hf + flen, ".offs");
-	xc->valpos_handle = fopen(hf, "w+b"); 	if(!mgw) unlink(hf); /* temp file */
-	strcpy(hf + flen, ".bits");
-	xc->curval_handle = fopen(hf, "w+b"); 	if(!mgw) unlink(hf); /* temp file */
-	strcpy(hf + flen, ".vchn");
-	xc->vchn_handle = fopen(hf, "w+b"); 	if(!mgw) unlink(hf); /* temp file */
-	strcpy(hf + flen, ".tchn");
-	xc->tchn_handle = fopen(hf, "w+b");	if(!mgw) unlink(hf); /* temp file */
+
+	xc->geom_handle = tmpfile();	/* .geom */
+	xc->valpos_handle = tmpfile();	/* .offs */
+	xc->curval_handle = tmpfile();	/* .bits */
+	xc->vchn_handle = tmpfile();	/* .vchn */
+	xc->tchn_handle = tmpfile();	/* .tchn */
+
 	free(hf);
 	if(xc->hier_handle && xc->geom_handle && xc->valpos_handle && xc->curval_handle && xc->vchn_handle && xc->tchn_handle)
 		{
