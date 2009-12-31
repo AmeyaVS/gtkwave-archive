@@ -841,16 +841,6 @@ if(xc)
 		unlink(hf); /* no longer needed as a section now exists for this */
 		}
 
-	strcpy(hf + flen, ".geom");
-	unlink(hf); /* temp file */
-	strcpy(hf + flen, ".offs");
-	unlink(hf); /* temp file */
-	strcpy(hf + flen, ".bits");
-	unlink(hf); /* temp file */
-	strcpy(hf + flen, ".vchn");
-	unlink(hf); /* temp file */
-	strcpy(hf + flen, ".tchn");
-	unlink(hf); /* temp file */
 	free(hf);
 	}
 #endif
