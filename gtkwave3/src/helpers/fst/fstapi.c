@@ -69,17 +69,17 @@
  * to remove warn_unused_result compile time messages
  * (in the future there needs to be results checking)
  */
-size_t fstFread(void *BUF, size_t SIZE, size_t COUNT, FILE *FP)
+static size_t fstFread(void *buf, size_t siz, size_t cnt, FILE *fp)
 {
-return(fread(BUF, SIZE, COUNT, FP));
+return(fread(buf, siz, cnt, fp));
 }
 
-size_t fstFwrite(const void *BUF, size_t SIZE, size_t COUNT, FILE *FP)
+static size_t fstFwrite(const void *buf, size_t siz, size_t cnt, FILE *fp)
 {
-return(fwrite(BUF, SIZE, COUNT, FP));
+return(fwrite(buf, siz, cnt, fp));
 }
 
-int fstFtruncate(int fd, off_t length)
+static int fstFtruncate(int fd, off_t length)
 {
 return(ftruncate(fd, length));
 }
