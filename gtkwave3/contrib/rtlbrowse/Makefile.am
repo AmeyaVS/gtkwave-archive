@@ -3,6 +3,8 @@
 
 # FIXME -- how to figure out automatically when we need these?
 # 
+SUBDIRS= ../../src/liblzma
+
 AET2LIB = 
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
@@ -19,7 +21,7 @@ rtlbrowse_SOURCES = definehash.c fgetdynamic.c fgetdynamic.h \
 	$(srcdir)/../../src/helpers/fst/fstapi.c \
 	stem_recurse.c jrb.c jrb.h $(srcdir)/../../src/helpers/vzt_read.c \
 	$(srcdir)/../../src/helpers/lxt2_read.c splay.h \
-	vlex.l vlex.h wavelink.h
+	vlex.l vlex.h wavelink.h ../../src/liblzma/libgwlzma.a 
 
 LDADD= $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD) $(AET2_LDADD)
 AM_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src  -I$(top_srcdir)/src/helpers \
