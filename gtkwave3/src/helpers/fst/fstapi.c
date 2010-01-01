@@ -2890,8 +2890,9 @@ for(;;)
 	ucdata = malloc(tsec_uclen);
 	destlen = tsec_uclen;
 	sourcelen = tsec_clen;
-	
-	fseeko(xc->f, -24 - tsec_clen, SEEK_CUR);
+
+	fseeko(xc->f, -24 - ((off_t)tsec_clen), SEEK_CUR);
+
 	if(tsec_uclen != tsec_clen)
 		{
 		cdata = malloc(tsec_clen);
@@ -3104,11 +3105,11 @@ for(;;)
 				}
 
 			free(mu);
-			fseeko(xc->f, -frame_clen, SEEK_CUR);
+			fseeko(xc->f, -((off_t)frame_clen), SEEK_CUR);
 			}
 		}
 
-	fseeko(xc->f, frame_clen, SEEK_CUR); /* skip past compressed data */
+	fseeko(xc->f, (off_t)frame_clen, SEEK_CUR); /* skip past compressed data */
 
 	vc_maxhandle = fstReaderVarint64(xc->f);
 	vc_start = ftello(xc->f);	/* points to '!' character */
@@ -3714,7 +3715,7 @@ ucdata = malloc(tsec_uclen);
 destlen = tsec_uclen;
 sourcelen = tsec_clen;
 	
-fseeko(xc->f, -24 - tsec_clen, SEEK_CUR);
+fseeko(xc->f, -24 - ((off_t)tsec_clen), SEEK_CUR);
 if(tsec_uclen != tsec_clen)
 	{
 	cdata = malloc(tsec_clen);
