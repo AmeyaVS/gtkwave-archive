@@ -739,15 +739,12 @@
 		but can be converted using vzt2vcd from an old version of
 		gtkwave.
 		Various warnings fixes.
-
-		<< in CVS, this is after 3.3.0 tar.gz release >>
-
-	29dec09	Fixed Makefile.am files to allow builds into different
+3.3.1	03jan10	Fixed Makefile.am files to allow builds into different
 		directories than the current one.
 		GHW crash fixes.
 		In fstapi.c now use tmpfile() to generate tempfiles in
 		order to speed up operation on networked filesystems.
 		Fixed problem in fstapi.c with conflict between off_t
-		and unsigned longs on some systems which cause a 
+		and unsigned longs on some 32-bit systems which cause a 
 		"tsec uncompress" failure on reads.
 		Fixed missing dependencies in various Makefile.am files.

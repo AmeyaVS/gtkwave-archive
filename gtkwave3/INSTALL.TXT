@@ -80,7 +80,7 @@ include in INSTALL .txt as an option for ubuntu users. Other linux
 distributions might have other things to do.
 
 sudo apt-get install libgtk2.0-dev
-./configure --with-tcl=/usr/lib/tcl8.4
+./configure --with-tcl=/usr/lib/tcl8.4 --with-tk=/usr/lib/tk8.4
 
 -030109ajb  bybell@nc.rr.com
 
