@@ -1,5 +1,5 @@
 /*  GHDL Wavefile reader interface.
-    Copyright (C) 2005-2009 Tristan Gingold and Tony Bybell
+    Copyright (C) 2005-2010 Tristan Gingold and Tony Bybell
 
     GHDL is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -524,7 +524,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
 						ttype = TREE_VHDL_ST_PACKAGE; break;
 		}
 
-      /* For iterative generate, add the index.  *
+      /* For iterative generate, add the index.  */
       if (hie->kind == ghw_hie_generate_for)
 	{
 	  char buf[128];
@@ -1118,6 +1118,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/12/29 07:07:49  gtkwave
+ * fixes for ghw files
+ *
  * Revision 1.8  2009/07/01 21:58:31  gtkwave
  * more GHW module type adds for icons in hierarchy window
  *

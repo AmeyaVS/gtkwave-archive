@@ -748,3 +748,5 @@
 		and unsigned longs on some 32-bit systems which cause a 
 		"tsec uncompress" failure on reads.
 		Fixed missing dependencies in various Makefile.am files.
+3.3.2	05jan10	Emergency fix for ghw.c as it was missing a close comment
+		causing problems with iterative generate.
