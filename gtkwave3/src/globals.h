@@ -1140,6 +1140,7 @@ GdkDrawable *wavepixmap_wavewindow_c_1; /* from wavewindow.c 680 */
 GtkObject *wave_vslider; /* from wavewindow.c 681 */
 GtkObject *wave_hslider; /* from wavewindow.c 682 */
 TimeType named_markers[26]; /* from wavewindow.c 683 */
+int named_marker_lock_idx; /* from menu.c */
 char made_gc_contexts_wavewindow_c_1; /* from wavewindow.c 684 */
 GdkGC *gc_back_wavewindow_c_1; /* from wavewindow.c 685 */
 GdkGC *gc_baseline_wavewindow_c_1; /* from wavewindow.c 686 */

@@ -1145,6 +1145,7 @@ NULL, /* wavepixmap_wavewindow_c_1 621 */
 NULL, /* wave_vslider 622 */
 NULL, /* wave_hslider */
 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, /* named_markers 623 */
+-1, /* named_marker_lock_idx */
 0, /* made_gc_contexts_wavewindow_c_1 624 */
 NULL, /* gc_back_wavewindow_c_1 625 */
 NULL, /* gc_baseline_wavewindow_c_1 626 */
@@ -1390,6 +1391,7 @@ void reload_into_new_context(void)
  
  /* Marker positions */
  memcpy(new_globals->named_markers, GLOBALS->named_markers, sizeof(GLOBALS->named_markers));
+ new_globals->named_marker_lock_idx = GLOBALS->named_marker_lock_idx;
 
  /* notebook page flipping */
  new_globals->num_notebook_pages = GLOBALS->num_notebook_pages;

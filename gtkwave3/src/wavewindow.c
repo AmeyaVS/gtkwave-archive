@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -337,16 +337,12 @@ move_mouseover(t, xold, yold, marker);
 return(marker);
 }
 
-
-static void draw_named_markers(void)
+static void render_individual_named_marker(int i, GdkGC *gc, int blackout)
 {
 gdouble pixstep;
 gint xl, y;
-int i;
 TimeType t;
 
-for(i=0;i<26;i++)
-{
 if((t=GLOBALS->named_markers[i])!=-1)
 	{
 	if((t>=GLOBALS->tims.start)&&(t<=GLOBALS->tims.last)
@@ -365,28 +361,53 @@ if((t=GLOBALS->named_markers[i])!=-1)
 			for(y=GLOBALS->fontheight-1;y<=GLOBALS->waveheight-1;y+=8)
 				{
 				gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1,
-					GLOBALS->gc_mark_wavewindow_c_1,
+					gc,
         	        		xl, y, xl, y+5);
 				}
 
 			if((!GLOBALS->marker_names[i])||(!GLOBALS->marker_names[i][0]))
 				{
 				font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->wavefont_smaller,
-					GLOBALS->gc_mark_wavewindow_c_1,
+					gc,
 					xl-(font_engine_string_measure(GLOBALS->wavefont_smaller, nbuff)>>1), 
 					GLOBALS->fontheight-2, nbuff);
 				}
 				else
 				{
+				int width = font_engine_string_measure(GLOBALS->wavefont_smaller, GLOBALS->marker_names[i]);
+				if(blackout) /* blackout background so text is legible if overlaid with other marker labels */
+					{
+					gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_timeb_wavewindow_c_1, TRUE,
+						xl-(width>>1), GLOBALS->fontheight-2-GLOBALS->wavefont_smaller->ascent, 
+						width, GLOBALS->wavefont_smaller->ascent + GLOBALS->wavefont_smaller->descent);
+					}
+
 				font_engine_draw_string(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->wavefont_smaller,
-					GLOBALS->gc_mark_wavewindow_c_1,
-					xl-(font_engine_string_measure(GLOBALS->wavefont_smaller, GLOBALS->marker_names[i])>>1), 
+					gc,
+					xl-(width>>1), 
 					GLOBALS->fontheight-2, GLOBALS->marker_names[i]);
 				}
 			}
 		}
 	}
 }
+
+static void draw_named_markers(void)
+{
+int i;
+
+for(i=0;i<26;i++)
+	{
+	if(i != GLOBALS->named_marker_lock_idx)
+		{
+		render_individual_named_marker(i, GLOBALS->gc_mark_wavewindow_c_1, 0);
+		}
+	}
+
+if(GLOBALS->named_marker_lock_idx >= 0)
+	{
+	render_individual_named_marker(GLOBALS->named_marker_lock_idx, GLOBALS->gc_umark_wavewindow_c_1, 1);
+	}
 }
 
 
@@ -3898,6 +3919,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.54  2009/12/24 20:55:28  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.53  2009/12/24 03:02:14  gtkwave
  * move cached vtran up earlier to make more visually pleasing
  *

@@ -181,6 +181,9 @@ WV_MENU_MCANM,
 WV_MENU_MDPM,
 WV_MENU_SEP8,
 WV_MENU_MWSON,
+WV_MENU_MLKLT, 
+WV_MENU_MLKRT, 
+WV_MENU_MLKOFF,
 WV_MENU_VSG,
 WV_MENU_SEP9,
 #if !defined _MSC_VER && !defined __MINGW32__
@@ -340,6 +343,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2009/11/25 09:49:28  gtkwave
+ * added gray code support
+ *
  * Revision 1.28  2009/09/22 13:51:14  gtkwave
  * warnings fixes
  *

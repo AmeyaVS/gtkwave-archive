@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +43,133 @@
 
 static GtkItemFactoryEntry menu_items[WV_MENU_NUMITEMS];
 
+/* marker locking */
+
+static void lock_marker_left(GtkWidget *widget, gpointer data)
+{
+int ent_idx = GLOBALS->named_marker_lock_idx;
+int i;
+int success = 0;
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nLock to Lesser Named Marker");
+        help_text(
+                " locks the primary marker to a named marker."
+		" If no named marker is currently selected, the first defined one is used,"
+		" otherwise the marker selected will be one lower in the alphabet, scrolling"
+		" through to the end of the alphabet on wrap."
+		" If no named marker exists, one is dropped down for 'A' and the primary"
+		" marker is locked to it."
+        );
+
+	return;
+	}
+
+if(ent_idx < 0) ent_idx = 1;
+ent_idx--;
+if(ent_idx < 0) ent_idx = 25;
+
+for(i=0;i<26;i++)
+	{
+	if(GLOBALS->named_markers[ent_idx] >= 0)
+		{
+		success = 1;
+		break;
+		}
+	
+	ent_idx--;
+	if(ent_idx < 0) ent_idx = 25;
+	}
+
+if(!success)
+	{
+	ent_idx = 0;
+	GLOBALS->named_markers[ent_idx] = GLOBALS->tims.marker;
+	}
+
+GLOBALS->named_marker_lock_idx = ent_idx;
+GLOBALS->tims.marker = GLOBALS->named_markers[ent_idx];
+
+GLOBALS->signalwindow_width_dirty=1;
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+}
+
+static void lock_marker_right(GtkWidget *widget, gpointer data)
+{
+int ent_idx = GLOBALS->named_marker_lock_idx;
+int i;
+int success = 0;
+
+if(ent_idx < 0) ent_idx = -1; /* not really necessary */
+ent_idx++;
+if(ent_idx > 25) ent_idx = 0;
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nLock to Greater Named Marker");
+        help_text(
+                " locks the primary marker to a named marker."
+		" If no named marker is currently selected, the first defined one is used,"
+		" otherwise the marker selected will be one higher in the alphabet, scrolling"
+		" through to the beginning of the alphabet on wrap."
+		" If no named marker exists, one is dropped down for 'A' and the primary"
+		" marker is locked to it."
+        );
+
+	return;
+	}
+
+for(i=0;i<26;i++)
+	{
+	if(GLOBALS->named_markers[ent_idx] >= 0)
+		{
+		success = 1;
+		break;
+		}
+	
+	ent_idx++;
+	if(ent_idx > 25) ent_idx = 0;
+	}
+
+if(!success)
+	{
+	ent_idx = 0;
+	GLOBALS->named_markers[ent_idx] = GLOBALS->tims.marker;
+	}
+
+GLOBALS->named_marker_lock_idx = ent_idx;
+GLOBALS->tims.marker = GLOBALS->named_markers[ent_idx];
+
+GLOBALS->signalwindow_width_dirty=1;
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+}
+
+
+static void unlock_marker(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nUnlock from Named Marker");
+        help_text(
+                " unlocks the primary marker from the currently selected named marker."
+        );
+
+	return;
+	}
+
+GLOBALS->named_marker_lock_idx = -1;
+
+GLOBALS->signalwindow_width_dirty=1;
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+}
+
 
 /* toggles for time dimension conversion */
 
@@ -54,8 +181,6 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" turns off time dimension conversion."
         );
-
-	set_scale_to_time_dimension_toggles();
         }
 	else
 	{
@@ -74,8 +199,6 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" changes the time dimension conversion value to seconds."
         );
-
-	set_scale_to_time_dimension_toggles();
         }
 	else
 	{
@@ -94,8 +217,6 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" changes the time dimension conversion value to milliseconds."
         );
-
-	set_scale_to_time_dimension_toggles();
         }
 	else
 	{
@@ -115,8 +236,6 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" changes the time dimension conversion value to microseconds."
         );
-
-	set_scale_to_time_dimension_toggles();
         }
 	else
 	{
@@ -136,8 +255,6 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" changes the time dimension conversion value to nanoseconds."
         );
-
-	set_scale_to_time_dimension_toggles();
         }
 	else
 	{
@@ -157,8 +274,6 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" changes the time dimension conversion value to picoseconds."
         );
-
-	set_scale_to_time_dimension_toggles();
         }
 	else
 	{
@@ -178,8 +293,6 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" changes the time dimension conversion value to femtoseconds."
         );
-
-	set_scale_to_time_dimension_toggles();
         }
 	else
 	{
@@ -2970,7 +3083,7 @@ if(GLOBALS->tims.marker!=-1)
 			GLOBALS->named_markers[i]=-1;
 			signalarea_configure_event(GLOBALS->signalarea, NULL);
 			wavearea_configure_event(GLOBALS->wavearea, NULL);
-			return;
+			/* return; */
 			}
 		}
 	}
@@ -2996,10 +3109,14 @@ DEBUG(printf("drop_named_marker()\n"));
 
 if(GLOBALS->tims.marker!=-1)
 	{
+/* only one per slot requirement removed...
+#if 0
 	for(i=0;i<26;i++)
 		{
-		if(GLOBALS->named_markers[i]==GLOBALS->tims.marker) return; /* only one per slot */
+		if(GLOBALS->named_markers[i]==GLOBALS->tims.marker) return;
 		}
+#endif
+...only one per slot requirement removed */
 
 	for(i=0;i<26;i++)
 		{
@@ -5468,6 +5585,10 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Markers/<separator>", NULL, NULL, WV_MENU_SEP8, "<Separator>"),
     WAVE_GTKIFE("/Markers/Wave Scrolling", "F9", wave_scrolling_on, WV_MENU_MWSON, "<ToggleItem>"),
 
+    WAVE_GTKIFE("/Markers/Locking/Lock to Lesser Named Marker", "1", lock_marker_left, WV_MENU_MLKLT, "<Item>"),
+    WAVE_GTKIFE("/Markers/Locking/Lock to Greater Named Marker", "2", lock_marker_right, WV_MENU_MLKRT, "<Item>"),
+    WAVE_GTKIFE("/Markers/Locking/Unlock from Named Marker", "0", unlock_marker, WV_MENU_MLKOFF, "<Item>"),
+
     WAVE_GTKIFE("/View/Show Grid", "<Alt>G", menu_show_grid, WV_MENU_VSG, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP9, "<Separator>"),
 #if !defined _MSC_VER && !defined __MINGW32__
@@ -5991,6 +6112,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.84  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.83  2009/12/24 19:11:26  gtkwave
  * warnings fixes
  *

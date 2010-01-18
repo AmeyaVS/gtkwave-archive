@@ -519,6 +519,20 @@ if(!GLOBALS->use_maxtime_display)
 
 	gtk_label_set(GTK_LABEL(GLOBALS->maxtimewid_currenttime_c_1), GLOBALS->maxtext_currenttime_c_1);
 	}
+
+if(GLOBALS->named_marker_lock_idx>-1)
+	{
+	if(GLOBALS->tims.marker >= 0)
+		{
+		int ent_idx = GLOBALS->named_marker_lock_idx;
+
+		if(GLOBALS->named_markers[ent_idx] != GLOBALS->tims.marker)
+			{
+			GLOBALS->named_markers[ent_idx] = GLOBALS->tims.marker;
+			wavearea_configure_event(GLOBALS->wavearea, NULL);
+			}
+		}
+	}
 }
 
 
@@ -735,6 +749,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/09/08 15:31:48  gtkwave
+ * handle floating-point numbers in unformat_time()
+ *
  * Revision 1.13  2009/04/23 21:57:53  gtkwave
  * added mingw support for rtlbrowse
  *
