@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1379,8 +1379,8 @@ while(1)
 		}
 		else
 	   	{
-		if(basetime>=endtime) break;
-		}
+		if(basetime>endtime) break; /* formerly was >= which didn't mark the endpoint if true which is incorrect */
+		}			    /* i.e., if start is markable, end should be also */
 
 	GLOBALS->timearray_size++;
 
@@ -1645,6 +1645,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.11  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

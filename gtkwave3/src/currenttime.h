@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.2 (w)1999-2010 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.3_pre (w)1999-2010 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -176,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.65  2010/01/05 06:18:33  gtkwave
+ * emergency fix on missing comment causing bad code
+ *
  * Revision 1.64  2010/01/04 04:04:38  gtkwave
  * copyright date updates
  *
