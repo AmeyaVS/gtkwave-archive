@@ -753,3 +753,5 @@
 3.3.3	18jan10	Fix for Pattern Search where end marker time was not used
 		for dropping down a marker: for clock counts this would
 		mean that the clock count was off by one.
+		Added locking/unlocking of named markers against the
+		primary marker with 1/2/0 keys.
