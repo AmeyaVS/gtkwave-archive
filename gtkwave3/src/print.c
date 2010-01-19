@@ -1009,15 +1009,12 @@ pr_rendertimes (pr_context * prc)
 /*************************************************/
 
 static void
-pr_draw_named_markers (pr_context * prc)
+pr_render_individual_named_marker ( pr_context * prc, int i, gdouble gray, int blackout)
 {
   gdouble pixstep;
   gint xl, y;
-  int i;
   TimeType t;
 
-  for (i = 0; i < 26; i++)
-    {
       if ((t = GLOBALS->named_markers[i]) != -1)
 	{
 	  if ((t >= GLOBALS->tims.start) && (t <= GLOBALS->tims.last)
@@ -1034,11 +1031,10 @@ pr_draw_named_markers (pr_context * prc)
 	      if ((xl >= 0) && (xl < GLOBALS->wavewidth))
 		{
 		  char nbuff[2];
-		  int xsize;
 		  nbuff[0] = 'A' + i;
 		  nbuff[1] = 0x00;
 
-		  pr_setgray (prc, 0.40);
+		  pr_setgray (prc, gray);
 		  for (y = GLOBALS->fontheight - 1;
 		       y <= GLOBALS->liney_max - 5; y += 8)
 		    {
@@ -1047,7 +1043,7 @@ pr_draw_named_markers (pr_context * prc)
 
 		  if((!GLOBALS->marker_names[i])||(!GLOBALS->marker_names[i][0]))
 			{
-		  	xsize = font_engine_string_measure (GLOBALS->wavefont, nbuff);
+		  	int xsize = font_engine_string_measure (GLOBALS->wavefont, nbuff);
 		  	pr_setgray (prc, 0.00);
 		  	pr_draw_string (prc,
 				  xl - (xsize >> 1) + 1,
@@ -1059,20 +1055,47 @@ pr_draw_named_markers (pr_context * prc)
 			}
 			else
 			{
-		  	xsize = font_engine_string_measure (GLOBALS->wavefont, GLOBALS->marker_names[i]);
+			int boxheight = GLOBALS->wavefont-> ascent + GLOBALS->wavefont-> descent;
+		  	int xsize = font_engine_string_measure (GLOBALS->wavefont, GLOBALS->marker_names[i]);
+                        int ysize = (prc->gpd == &ps_print_device) ? GLOBALS->wavefont-> ascent / 2 : GLOBALS->wavefont->ascent;
+                        int boxysize = (prc->gpd == &ps_print_device) ? boxheight / 2 : boxheight;
+
+                        if(blackout) /* blackout background so text is legible if overlaid with other marker labels */
+                        	{
+			  	pr_setgray (prc, 1.00);
+                                pr_draw_box(prc,
+                                	xl-(xsize>>1) + 1, GLOBALS->fontheight-2-ysize,
+                                                (xl-(xsize>>1) + 1) + xsize, (GLOBALS->fontheight-2-ysize) + boxysize);
+				}
+
 		  	pr_setgray (prc, 0.00);
 		  	pr_draw_string (prc,
 				  xl - (xsize >> 1) + 1,
 				  GLOBALS->fontheight - 1, GLOBALS->marker_names[i],
-				  xsize,
-				  (prc->gpd ==
-				   &ps_print_device) ? GLOBALS->wavefont->
-				  ascent / 2 : GLOBALS->wavefont->ascent);
+				  xsize, ysize);
 			}
 		}
 	    }
 	}
-    }
+}
+
+static void
+pr_draw_named_markers (pr_context * prc)
+{
+int i;
+
+for(i=0;i<26;i++)
+        {
+        if(i != GLOBALS->named_marker_lock_idx)
+                {
+                pr_render_individual_named_marker(prc, i, 0.40, 0);
+                }
+        }
+
+if(GLOBALS->named_marker_lock_idx >= 0)
+        {
+        pr_render_individual_named_marker(prc, GLOBALS->named_marker_lock_idx, 0.65, 1);
+        }
 }
 
 
@@ -2895,6 +2918,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2009/06/26 19:56:18  gtkwave
+ * add arrowheads to all impulse arrows
+ *
  * Revision 1.21  2009/06/25 22:12:30  gtkwave
  * convert event impulses to strict 1/0 activity values regardless of val
  *
