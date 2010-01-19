@@ -91,6 +91,7 @@ if(!success)
 GLOBALS->named_marker_lock_idx = ent_idx;
 GLOBALS->tims.marker = GLOBALS->named_markers[ent_idx];
 
+update_markertime(GLOBALS->tims.marker);
 GLOBALS->signalwindow_width_dirty=1;
 MaxSignalLength();
 signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -142,6 +143,8 @@ if(!success)
 
 GLOBALS->named_marker_lock_idx = ent_idx;
 GLOBALS->tims.marker = GLOBALS->named_markers[ent_idx];
+
+update_markertime(GLOBALS->tims.marker);
 
 GLOBALS->signalwindow_width_dirty=1;
 MaxSignalLength();
@@ -6112,6 +6115,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.85  2010/01/18 20:47:02  gtkwave
+ * added named locker marking
+ *
  * Revision 1.84  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *
