@@ -56,7 +56,7 @@ if(GLOBALS->helpbox_is_active)
         help_text_bold("\n\nLock to Lesser Named Marker");
         help_text(
                 " locks the primary marker to a named marker."
-		" If no named marker is currently selected, the first defined one is used,"
+		" If no named marker is currently selected, the last defined one is used,"
 		" otherwise the marker selected will be one lower in the alphabet, scrolling"
 		" through to the end of the alphabet on wrap."
 		" If no named marker exists, one is dropped down for 'A' and the primary"
@@ -66,7 +66,7 @@ if(GLOBALS->helpbox_is_active)
 	return;
 	}
 
-if(ent_idx < 0) ent_idx = 1;
+if(ent_idx < 0) ent_idx = 26;
 ent_idx--;
 if(ent_idx < 0) ent_idx = 25;
 
@@ -6115,6 +6115,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.86  2010/01/19 02:06:28  gtkwave
+ * update stale marker time values on lock left/right ops
+ *
  * Revision 1.85  2010/01/18 20:47:02  gtkwave
  * added named locker marking
  *
