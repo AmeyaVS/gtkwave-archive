@@ -4335,7 +4335,15 @@ if(GLOBALS->entrybox_text)
 	GtkAdjustment *hadj;
 	TimeType pageinc;
 
-	gt=unformat_time(GLOBALS->entrybox_text, GLOBALS->time_dimension);
+	if((GLOBALS->entrybox_text[0] >= 'A' && GLOBALS->entrybox_text[0] <= 'Z')||(GLOBALS->entrybox_text[0] >= 'a' && GLOBALS->entrybox_text[0] <= 'z'))
+		{
+		int uch = toupper(GLOBALS->entrybox_text[0]);
+		gt=GLOBALS->named_markers[uch - 'A'];
+		}
+		else
+		{
+		gt=unformat_time(GLOBALS->entrybox_text, GLOBALS->time_dimension);
+		}
 	free_2(GLOBALS->entrybox_text);
 	GLOBALS->entrybox_text=NULL;
 
@@ -4372,6 +4380,7 @@ if(GLOBALS->helpbox_is_active)
         help_text(
                 " scrolls the waveform display such that the left border"
                 " is the time entered in the requester."
+		" Use one of the letters A-Z to move to a named marker."
         );
         return;
         }
@@ -6115,6 +6124,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.87  2010/01/19 02:19:43  gtkwave
+ * left lock starts at highest defined marker now
+ *
  * Revision 1.86  2010/01/19 02:06:28  gtkwave
  * update stale marker time values on lock left/right ops
  *

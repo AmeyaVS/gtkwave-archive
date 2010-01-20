@@ -756,3 +756,7 @@
 		Added locking/unlocking of named markers against the
 		primary marker with 1/2/0 keys.
 		Fixed broken "make distclean".
+		Added patch for move to time against named markers.
+		
+		<< Update docs for "Move to Time >>
+		<< Update docs with new marker locking ops >>
