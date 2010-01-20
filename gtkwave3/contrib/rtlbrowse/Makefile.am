@@ -3,7 +3,7 @@
 
 # FIXME -- how to figure out automatically when we need these?
 # 
-SUBDIRS= ../../src/liblzma
+SUBDIRS= 
 
 AET2LIB = 
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32

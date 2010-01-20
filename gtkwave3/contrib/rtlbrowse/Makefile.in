@@ -197,7 +197,7 @@ target_alias = @target_alias@
 
 # FIXME -- how to figure out automatically when we need these?
 # 
-SUBDIRS = ../../src/liblzma
+SUBDIRS = 
 AET2LIB = 
 AIXFLAGS = -bmaxdata:0xd0000000/dsa -D_WAVE_BE32
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
