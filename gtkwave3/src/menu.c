@@ -2764,10 +2764,16 @@ if(GLOBALS->helpbox_is_active)
 	    char buf[128];
 	    int which = ((int)data) - WV_MENU_SPS;
 
-	    if((which < 0) || (which >= WAVE_NUM_STRACE_WINDOWS)) { which = 0; } /* should never happen unless menus are defined wrong */
-
-	    sprintf(buf, "Waveform Display Search (%d)", which+1);
-	    tracesearchbox(buf, GTK_SIGNAL_FUNC(menu_tracesearchbox_callback), (gpointer)which);
+	    if((which < 0) || (which >= WAVE_NUM_STRACE_WINDOWS)) 
+			{ /* should never happen unless menus are defined wrong */
+			sprintf(buf, "Pattern search ID %d out of range of 1-%d available, ignoring.", which+1, WAVE_NUM_STRACE_WINDOWS);
+			status_text(buf);
+			}
+			else
+			{
+			sprintf(buf, "Waveform Display Search (%d)", which+1);
+			tracesearchbox(buf, GTK_SIGNAL_FUNC(menu_tracesearchbox_callback), (gpointer)which);
+			}
 	    return;
 	  }
 	}
@@ -6159,6 +6165,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.90  2010/01/22 16:51:21  gtkwave
+ * fixes to ensure WAVE_NUM_STRACE_WINDOWS is more maintainable
+ *
  * Revision 1.89  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *
