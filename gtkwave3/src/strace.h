@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2003.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +19,10 @@
 #include "analyzer.h"
 #include "currenttime.h"
 #include "bsearch.h"
+
+#define WAVE_NUM_STRACE_WINDOWS (2)
+#define WAVE_STRACE_ITERATOR(x) for((x)=((WAVE_NUM_STRACE_WINDOWS)-1); (x)>=0 ; (x)--)
+#define WAVE_STRACE_ITERATOR_FWD(x) for((x)=0;(x)<(WAVE_NUM_STRACE_WINDOWS);(x)++)
 
 enum strace_directions
 { STRACE_BACKWARD, STRACE_FORWARD };
@@ -75,6 +79,32 @@ struct item_mark_string {
    unsigned char idx;
 };
 
+
+/* for being able to handle multiple strace sessions at once, context is moved here */
+struct strace_ctx_t
+{
+TimeType *timearray; /* from strace.c 430 */
+int timearray_size; /* from strace.c 431 */
+GtkWidget *ptr_mark_count_label_strace_c_1; /* from strace.c 432 */
+struct strace *straces; /* from strace.c 433 */
+struct strace *shadow_straces; /* from strace.c 434 */
+struct strace_defer_free *strace_defer_free_head; /* from strace.c 435 */
+GtkWidget *window_strace_c_10; /* from strace.c 436 */
+void (*cleanup_strace_c_7)(); /* from strace.c 437 */
+char logical_mutex[6]; /* from strace.c 440 */   
+char shadow_logical_mutex[6]; /* from strace.c 441 */
+char shadow_active; /* from strace.c 442 */
+char shadow_type; /* from strace.c 443 */
+char *shadow_string; /* from strace.c 444 */
+signed char mark_idx_start; /* from strace.c 445 */
+signed char mark_idx_end; /* from strace.c 446 */
+signed char shadow_mark_idx_start; /* from strace.c 447 */
+signed char shadow_mark_idx_end; /* from strace.c 448 */
+struct mprintf_buff_t *mprintf_buff_head; /* from strace.c 451 */
+struct mprintf_buff_t *mprintf_buff_current; /* from strace.c 452 */
+};
+
+
 void strace_search(int direction);
 void strace_maketimetrace(int mode); /* 1=create, zero=delete */
 TimeType strace_adjust(TimeType a, TimeType b);
@@ -93,6 +123,9 @@ void delete_mprintf(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/10/17 14:42:35  gtkwave
+ * added findNextEdge/findPrevEdge to tcl interpreter
+ *
  * Revision 1.3  2007/12/30 04:27:39  gtkwave
  * added edge buttons to main window
  *

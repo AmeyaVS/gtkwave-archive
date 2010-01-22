@@ -1133,12 +1133,19 @@ if(GLOBALS->helpbox_is_active)
         }
 	else
 	{
-	if(GLOBALS->shadow_straces)
-		{
-		delete_strace_context();
-		}
+	int i;
 
-	strace_maketimetrace(0);
+	WAVE_STRACE_ITERATOR(i)
+		{
+		GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = i];
+
+		if(GLOBALS->strace_ctx->shadow_straces)
+			{
+			delete_strace_context();
+			}
+	
+		strace_maketimetrace(0);
+		}
   
 	MaxSignalLength();
 	signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -2753,7 +2760,9 @@ if(GLOBALS->helpbox_is_active)
 	if ((t->flags&TR_HIGHLIGHT)&&HasWave(t))
 	  {
 	    /* at least one good trace, so do it */
-	    tracesearchbox("Waveform Display Search", GTK_SIGNAL_FUNC(menu_tracesearchbox_callback));
+	    /* data contains WV_MENU_SPS or WV_MENU_SPS2 */
+	    const char *t = (data == (gpointer)WV_MENU_SPS) ? "Waveform Display Search (1)" : "Waveform Display Search (2)";
+	    tracesearchbox(t, GTK_SIGNAL_FUNC(menu_tracesearchbox_callback), data);
 	    return;
 	  }
 	}
@@ -3594,6 +3603,7 @@ void write_save_helper(FILE *wave) {
 	TimeType prevshift=LLDescriptor(0);
 	int root_x, root_y;
         struct strace *st;
+	int s_ctx_iter;
 
 	DEBUG(printf("Write Save Fini: %s\n", *fileselbox_text));
 
@@ -3737,16 +3747,21 @@ void write_save_helper(FILE *wave) {
 		t=t->t_next;
 		}
 
-	if(GLOBALS->timearray)
+	WAVE_STRACE_ITERATOR(s_ctx_iter)
+	{
+	GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+	fprintf(wave, "[pattern_trace] %d\n", s_ctx_iter);
+
+	if(GLOBALS->strace_ctx->timearray)
 		{
-		if(GLOBALS->shadow_straces)
+		if(GLOBALS->strace_ctx->shadow_straces)
 			{
 			swap_strace_contexts();
 
-			st=GLOBALS->straces;
-			if(GLOBALS->straces)
+			st=GLOBALS->strace_ctx->straces;
+			if(GLOBALS->strace_ctx->straces)
 				{
-				fprintf(wave, "!%d%d%d%d%d%d%c%c\n", GLOBALS->logical_mutex[0], GLOBALS->logical_mutex[1], GLOBALS->logical_mutex[2], GLOBALS->logical_mutex[3], GLOBALS->logical_mutex[4], GLOBALS->logical_mutex[5], '@'+GLOBALS->mark_idx_start, '@'+GLOBALS->mark_idx_end);
+				fprintf(wave, "!%d%d%d%d%d%d%c%c\n", GLOBALS->strace_ctx->logical_mutex[0], GLOBALS->strace_ctx->logical_mutex[1], GLOBALS->strace_ctx->logical_mutex[2], GLOBALS->strace_ctx->logical_mutex[3], GLOBALS->strace_ctx->logical_mutex[4], GLOBALS->strace_ctx->logical_mutex[5], '@'+GLOBALS->strace_ctx->mark_idx_start, '@'+GLOBALS->strace_ctx->mark_idx_end);
 				}
 
 			while(st)
@@ -3863,7 +3878,7 @@ void write_save_helper(FILE *wave) {
 				st=st->next;
 				} /* while(st)... */
 
-			if(GLOBALS->straces)
+			if(GLOBALS->strace_ctx->straces)
 				{
 				fprintf(wave, "!!\n");	/* mark end of strace region */
 				}
@@ -3872,7 +3887,7 @@ void write_save_helper(FILE *wave) {
 			}
 			else
 			{
-			struct mprintf_buff_t *mt = GLOBALS->mprintf_buff_head;
+			struct mprintf_buff_t *mt = GLOBALS->strace_ctx->mprintf_buff_head;
 
 			while(mt)	
 				{
@@ -3882,7 +3897,7 @@ void write_save_helper(FILE *wave) {
 			}
 
 		} /* if(timearray)... */
-
+	}
 }
 
 
@@ -3998,7 +4013,8 @@ void read_save_helper(char *wname) {
                 else
                 {
                 char *iline;      
-		char any_shadow = 0;
+		char any_shadow[WAVE_NUM_STRACE_WINDOWS] = { 0, 0 };
+		int s_ctx_iter;
 
 		if(GLOBALS->traces.total)
 			{
@@ -4038,25 +4054,31 @@ void read_save_helper(char *wname) {
 
                 GLOBALS->default_flags=TR_RJUSTIFY;
 		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
+		GLOBALS->strace_current_window = 0; /* in case there are shadow traces */
 
                 while((iline=fgetmalloc(wave)))
                         {
                         parsewavline(iline, NULL, 0);
-			any_shadow |= GLOBALS->shadow_active;
+			any_shadow[GLOBALS->strace_current_window] |= GLOBALS->strace_ctx->shadow_active;
                         free_2(iline);
                         }
 
-		if(any_shadow)
+		WAVE_STRACE_ITERATOR(s_ctx_iter)
 			{
-			if(GLOBALS->shadow_straces)
+			GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+
+			if(any_shadow[s_ctx_iter])
 				{
-				GLOBALS->shadow_active = 1;
-
-				swap_strace_contexts();
-				strace_maketimetrace(1);
-				swap_strace_contexts();
-
-				GLOBALS->shadow_active = 0;
+				if(GLOBALS->strace_ctx->shadow_straces)
+					{
+					GLOBALS->strace_ctx->shadow_active = 1;
+	
+					swap_strace_contexts();
+					strace_maketimetrace(1);
+					swap_strace_contexts();
+	
+					GLOBALS->strace_ctx->shadow_active = 0;
+					}
 				}
 			}
 
@@ -4335,15 +4357,15 @@ if(GLOBALS->entrybox_text)
 	GtkAdjustment *hadj;
 	TimeType pageinc;
 
-	if((GLOBALS->entrybox_text[0] >= 'A' && GLOBALS->entrybox_text[0] <= 'Z')||(GLOBALS->entrybox_text[0] >= 'a' && GLOBALS->entrybox_text[0] <= 'z'))
-		{
-		int uch = toupper(GLOBALS->entrybox_text[0]);
-		gt=GLOBALS->named_markers[uch - 'A'];
-		}
-		else
-		{
-		gt=unformat_time(GLOBALS->entrybox_text, GLOBALS->time_dimension);
-		}
+        if((GLOBALS->entrybox_text[0] >= 'A' && GLOBALS->entrybox_text[0] <= 'Z')||(GLOBALS->entrybox_text[0] >= 'a' && GLOBALS->entrybox_text[0] <= 'z'))
+                {
+                int uch = toupper(GLOBALS->entrybox_text[0]);
+                gt=GLOBALS->named_markers[uch - 'A'];
+                }
+                else
+                {
+                gt=unformat_time(GLOBALS->entrybox_text, GLOBALS->time_dimension);
+                }
 	free_2(GLOBALS->entrybox_text);
 	GLOBALS->entrybox_text=NULL;
 
@@ -4380,7 +4402,7 @@ if(GLOBALS->helpbox_is_active)
         help_text(
                 " scrolls the waveform display such that the left border"
                 " is the time entered in the requester."
-		" Use one of the letters A-Z to move to a named marker."
+                " Use one of the letters A-Z to move to a named marker."
         );
         return;
         }
@@ -5557,7 +5579,8 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Sort/Sigsort All", NULL, menu_lexize, WV_MENU_LEX, "<Item>"),
     WAVE_GTKIFE("/Edit/Sort/Reverse All", NULL, menu_reverse, WV_MENU_RVS, "<Item>"),
       /* 70 */
-    WAVE_GTKIFE("/Search/Pattern Search", NULL, menu_tracesearchbox, WV_MENU_SPS, "<Item>"),
+    WAVE_GTKIFE("/Search/Pattern Search 1", NULL, menu_tracesearchbox, WV_MENU_SPS, "<Item>"),
+    WAVE_GTKIFE("/Search/Pattern Search 2", NULL, menu_tracesearchbox, WV_MENU_SPS2, "<Item>"),
     WAVE_GTKIFE("/Search/<separator>", NULL, NULL, WV_MENU_SEP7B, "<Separator>"),
     WAVE_GTKIFE("/Search/Signal Search Regexp", "<Alt>S", menu_signalsearch, WV_MENU_SSR, "<Item>"),
     WAVE_GTKIFE("/Search/Signal Search Hierarchy", "<Alt>T", menu_hiersearch, WV_MENU_SSH, "<Item>"),
@@ -6124,6 +6147,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.88  2010/01/20 21:39:20  gtkwave
+ * move to time support of named markers
+ * 
  * Revision 1.87  2010/01/19 02:19:43  gtkwave
  * left lock starts at highest defined marker now
  *

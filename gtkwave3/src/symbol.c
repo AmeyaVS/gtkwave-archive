@@ -122,39 +122,63 @@ if(!GLOBALS->facs_are_sorted)
 		else
 		{
 		/* this is because . is > in ascii than chars like $ but . was converted to 0x1 on sort */
-		char *s2 = s;
+		char *s2;
 		int i;
-		int lmax = 0;
-		int mat = 0;
+		int mat;
 
-		while(*s2)
+		if(GLOBALS->facs_have_symbols_state_machine == 0)
 			{
-			if(*s2 < GLOBALS->hier_delimeter)
-				{
-				lmax = GLOBALS->numfacs;
-				break;
-				}
-			s2++;
+			mat = 0;
+			for(i=0;i<GLOBALS->numfacs;i++)
+			        {
+			        int was_packed;
+			        char *hfacname = NULL;
+	
+			        hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
+				s2 = hfacname;
+				while(*s2)
+					{
+					if(*s2 < GLOBALS->hier_delimeter)
+						{
+						mat = 1;
+						break;
+						}
+					s2++;
+					}
+
+			        if(was_packed) { free_2(hfacname); }
+				if(mat) { break; }
+			        }
+
+			if(mat) 
+				{ GLOBALS->facs_have_symbols_state_machine = 1; }
+				else
+				{ GLOBALS->facs_have_symbols_state_machine = 2; } /* prevent code below from executing */
 			}
 
-		for(i=0;i<lmax;i++)
-		        {
-		        int was_packed;
-		        char *hfacname = NULL;
+		if(GLOBALS->facs_have_symbols_state_machine == 1)
+			{
+			mat = 0;
+			for(i=0;i<GLOBALS->numfacs;i++)
+			        {
+			        int was_packed;
+			        char *hfacname = NULL;
+	
+			        hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
+				if(!strcmp(hfacname, s))
+					{
+					mat = 1;
+					}
+	
+			        if(was_packed) { free_2(hfacname); }
+				if(mat)
+					{
+					sr = GLOBALS->facs[i];
+					break;
+					}
+			        }
+			}
 
-		        hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
-			if(!strcmp(hfacname, s))
-				{
-				mat = 1;
-				}
-
-		        if(was_packed) { free_2(hfacname); }
-			if(mat)
-				{
-				sr = GLOBALS->facs[i];
-				break;
-				}
-		        }
 		}
 
 	return(sr);
@@ -164,6 +188,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2010/01/22 01:00:03  gtkwave
+ * fix for bsearch_facs fail when $ is in name at same pos as . in another
+ *
  * Revision 1.2  2007/08/26 21:35:45  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

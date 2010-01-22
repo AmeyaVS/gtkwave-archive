@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -628,6 +628,7 @@ return(0); \
 color_make(back)
 color_make(baseline)
 color_make(grid)
+color_make(grid2)
 color_make(high)
 color_make(low)
 color_make(1)
@@ -685,6 +686,7 @@ static struct rc_entry rcitems[]=
 { "color_dkgray", f_color_dkgray },
 { "color_gmstrd", f_color_gmstrd },
 { "color_grid", f_color_grid },
+{ "color_grid2", f_color_grid2 },
 { "color_high", f_color_high },
 { "color_low", f_color_low },
 { "color_ltblue", f_color_ltblue },
@@ -789,6 +791,7 @@ f_show_base_symbols	("off");
 f_color_back   		("000000"); /* black */
 f_color_baseline 	("ffffff"); /* white */
 f_color_grid		("202070"); /* dark dark blue */
+f_color_grid2		("79f6f2"); /* light light blue */
 f_color_high		("79f6f2"); /* light light blue */
 f_color_low		("5dbebb"); /* light blue */
 f_color_1		("00ff00"); /* green */
@@ -942,6 +945,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.18  2009/03/26 23:53:22  gtkwave
  * added disable_empty_gui rc variable which reverts to old behavior
  *

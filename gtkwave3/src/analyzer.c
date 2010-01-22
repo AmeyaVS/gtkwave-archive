@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -248,7 +248,7 @@ if(GLOBALS->default_flags & TR_PTRANSLATED)
 if(GLOBALS->shift_timebase_default_for_add)
 	t->shift=GLOBALS->shift_timebase_default_for_add;
 
-if(!GLOBALS->shadow_active)
+if(!GLOBALS->strace_ctx->shadow_active)
 	{
 	if( GLOBALS->traces.first == NULL )
 		{
@@ -268,14 +268,14 @@ if(!GLOBALS->shadow_active)
 	else	/* hide offscreen */
 	{
 	struct strace *st = calloc_2(1, sizeof(struct strace));
-	st->next = GLOBALS->shadow_straces;
-	st->value = GLOBALS->shadow_type;
+	st->next = GLOBALS->strace_ctx->shadow_straces;
+	st->value = GLOBALS->strace_ctx->shadow_type;
 	st->trace = t;
 
-	st->string = GLOBALS->shadow_string;	/* copy string over */
-	GLOBALS->shadow_string = NULL;
+	st->string = GLOBALS->strace_ctx->shadow_string; /* copy string over */
+	GLOBALS->strace_ctx->shadow_string = NULL;
 
-	GLOBALS->shadow_straces = st;
+	GLOBALS->strace_ctx->shadow_straces = st;
 	}
 }
 
@@ -584,13 +584,13 @@ if(GLOBALS->starting_unshifted_trace == t)
 	GLOBALS->starting_unshifted_trace = NULL; /* for new "standard" clicking routines */
 	}
 
-if(GLOBALS->straces)
+if(GLOBALS->strace_ctx->straces)
 	{
 	struct strace_defer_free *sd = calloc_2(1, sizeof(struct strace_defer_free));
-	sd->next = GLOBALS->strace_defer_free_head;
+	sd->next = GLOBALS->strace_ctx->strace_defer_free_head;
 	sd->defer = t;
 
-	GLOBALS->strace_defer_free_head = sd;
+	GLOBALS->strace_ctx->strace_defer_free_head = sd;
 	return;
 	}
 
@@ -1381,6 +1381,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.12  2009/11/05 23:11:09  gtkwave
  * added EnsureGroupsMatch()
  *

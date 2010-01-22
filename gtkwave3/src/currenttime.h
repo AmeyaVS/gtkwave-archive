@@ -124,7 +124,7 @@ void refresh_hier_tree(struct tree *t);
 
 void markerbox(char *title, GtkSignalFunc func);
 
-void tracesearchbox(char *title, GtkSignalFunc func);
+void tracesearchbox(const char *title, GtkSignalFunc func, gpointer data);
 
 int searchbox_is_active(void);	
 int treebox_is_active(void);
@@ -176,6 +176,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.66  2010/01/18 16:23:27  gtkwave
+ * clock count fix (>= rather than > in endcap check for loop break)
+ *
  * Revision 1.65  2010/01/05 06:18:33  gtkwave
  * emergency fix on missing comment causing bad code
  *

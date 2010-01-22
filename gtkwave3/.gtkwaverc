@@ -49,6 +49,7 @@ vcd_explicit_zero_subscripts no
 color_back   000000
 color_baseline ffffff
 color_grid   202070
+color_grid2  79f6f2
 color_high   79f6f2
 color_low    5dbebb
 color_1      00ff00
@@ -174,7 +175,8 @@ accel "/Edit/Sort/Alphabetize All" (null)
 accel "/Edit/Sort/Alphabetize All (CaseIns)" (null)
 accel "/Edit/Sort/Sigsort All" (null)
 accel "/Edit/Sort/Reverse All" (null)
-accel "/Search/Pattern Search" (null)
+accel "/Search/Pattern Search 1" (null)
+accel "/Search/Pattern Search 2" (null)
 accel "/Search/<separator>" (null)
 accel "/Search/Signal Search Regexp" <Alt>S
 accel "/Search/Signal Search Hierarchy" <Alt>T

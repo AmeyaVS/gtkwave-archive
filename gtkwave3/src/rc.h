@@ -42,6 +42,7 @@ int  f_color_ltblue (char *str);
 int  f_color_gmstrd (char *str);
 int  f_color_dkgray (char *str);
 int  f_color_grid (char *str);
+int  f_color_grid2 (char *str);
 int  f_color_high (char *str);
 int  f_color_low (char *str);
 int  f_color_ltgray (char *str);
@@ -120,6 +121,9 @@ int  f_zoom_pow10_snap (char *str);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.3  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

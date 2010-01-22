@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Kermin Elliott Fleming 2007-2009.
+ * Copyright (c) Kermin Elliott Fleming 2007-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -132,6 +132,7 @@ int busy_busy_c_1; /* from busy.c 24 */
 int color_back; /* from color.c 25  */
 int color_baseline; /* from color.c 26 */
 int color_grid; /* from color.c 27 */
+int color_grid2; /* from color.c */
 int color_high; /* from color.c 28 */
 int color_low; /* from color.c 29 */
 int color_mark; /* from color.c 30 */
@@ -792,25 +793,9 @@ GtkTextTag *bold_tag_status_c_3; /* from status.c 429 */
 /*
  * strace.c
  */
-TimeType *timearray; /* from strace.c 430 */
-int timearray_size; /* from strace.c 431 */
-GtkWidget *ptr_mark_count_label_strace_c_1; /* from strace.c 432 */
-struct strace *straces; /* from strace.c 433 */
-struct strace *shadow_straces; /* from strace.c 434 */
-struct strace_defer_free *strace_defer_free_head; /* from strace.c 435 */
-GtkWidget *window_strace_c_10; /* from strace.c 436 */
-void (*cleanup_strace_c_7)(); /* from strace.c 437 */
-char logical_mutex[6]; /* from strace.c 440 */
-char shadow_logical_mutex[6]; /* from strace.c 441 */
-char shadow_active; /* from strace.c 442 */
-char shadow_type; /* from strace.c 443 */
-char *shadow_string; /* from strace.c 444 */
-signed char mark_idx_start; /* from strace.c 445 */
-signed char mark_idx_end; /* from strace.c 446 */
-signed char shadow_mark_idx_start; /* from strace.c 447 */
-signed char shadow_mark_idx_end; /* from strace.c 448 */
-struct mprintf_buff_t *mprintf_buff_head; /* from strace.c 451 */
-struct mprintf_buff_t *mprintf_buff_current; /* from strace.c 452 */
+struct strace_ctx_t *strace_ctx; /* moved to strace.h */
+struct strace_ctx_t strace_windows[WAVE_NUM_STRACE_WINDOWS];
+int strace_current_window;
 
 
 /*
@@ -819,6 +804,7 @@ struct mprintf_buff_t *mprintf_buff_current; /* from strace.c 452 */
 struct symbol **sym; /* from symbol.c 453 */
 struct symbol **facs; /* from symbol.c 454 */
 char facs_are_sorted; /* from symbol.c 455 */
+char facs_have_symbols_state_machine; /* from symbol.c */
 int numfacs; /* from symbol.c 456 */
 int regions; /* from symbol.c 457 */
 int longestname; /* from symbol.c 458 */
@@ -1145,6 +1131,7 @@ char made_gc_contexts_wavewindow_c_1; /* from wavewindow.c 684 */
 GdkGC *gc_back_wavewindow_c_1; /* from wavewindow.c 685 */
 GdkGC *gc_baseline_wavewindow_c_1; /* from wavewindow.c 686 */
 GdkGC *gc_grid_wavewindow_c_1; /* from wavewindow.c 687 */
+GdkGC *gc_grid2_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gc_time_wavewindow_c_1; /* from wavewindow.c 688 */
 GdkGC *gc_timeb_wavewindow_c_1; /* from wavewindow.c 689 */
 GdkGC *gc_value_wavewindow_c_1; /* from wavewindow.c 690 */
@@ -1190,6 +1177,7 @@ GdkGC *gccache_gmstrd; /* from wavewindow.c */
 GdkGC *gccache_back_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gccache_baseline_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gccache_grid_wavewindow_c_1; /* from wavewindow.c */
+GdkGC *gccache_grid2_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gccache_time_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gccache_timeb_wavewindow_c_1; /* from wavewindow.c */
 GdkGC *gccache_value_wavewindow_c_1; /* from wavewindow.c */

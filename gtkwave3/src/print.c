@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2009. 
+ * Copyright (c) Tony Bybell 1999-2010. 
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -801,13 +801,25 @@ pr_renderhash (pr_context * prc, int x, TimeType tim)
   int fhminus2;
   int rhs;
   int iter = 0;
+  int s_ctx_iter;
+  int timearray_encountered = 0;
 
   fhminus2 = GLOBALS->fontheight - 2;
+
+  WAVE_STRACE_ITERATOR(s_ctx_iter)
+        {
+        GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+        if(GLOBALS->strace_ctx->timearray)
+                {
+                timearray_encountered = 1;
+                break;
+                }
+        }       
 
   pr_setgray (prc, 0.75);
 
   pr_draw_line (prc, x, 0,
-		x, ((!GLOBALS->timearray) && (GLOBALS->display_grid)
+		x, ((!timearray_encountered) && (GLOBALS->display_grid)
 		    && (GLOBALS->enable_vert_grid)) ? GLOBALS->
 		liney_max : fhminus2);
 
@@ -900,6 +912,7 @@ pr_rendertimes (pr_context * prc)
   TimeType tim, rem;
   int x, len, lenhalf;
   char timebuff[32];
+  int s_ctx_iter;  
 
   pr_renderblackout (prc);
 
@@ -908,7 +921,11 @@ pr_rendertimes (pr_context * prc)
     GLOBALS->tims.start + (((gdouble) GLOBALS->wavewidth) * GLOBALS->nspx);
 
 	/**********/
-  if (GLOBALS->timearray)
+  WAVE_STRACE_ITERATOR_FWD(s_ctx_iter)
+  {
+  GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+
+  if (GLOBALS->strace_ctx->timearray)
     {
       int pos, pos2;
       TimeType *t, tm;
@@ -917,11 +934,11 @@ pr_rendertimes (pr_context * prc)
 
       pos = bsearch_timechain (GLOBALS->tims.start);
     top:
-      if ((pos >= 0) && (pos < GLOBALS->timearray_size))
+      if ((pos >= 0) && (pos < GLOBALS->strace_ctx->timearray_size))
 	{
-	  pr_setgray (prc, 0.90);
-	  t = GLOBALS->timearray + pos;
-	  for (; pos < GLOBALS->timearray_size; t++, pos++)
+	  pr_setgray (prc, (s_ctx_iter==0) ? 0.90 : 0.75);
+	  t = GLOBALS->strace_ctx->timearray + pos;
+	  for (; pos < GLOBALS->strace_ctx->timearray_size; t++, pos++)
 	    {
 	      tm = *t;
 	      if (tm >= GLOBALS->tims.start)
@@ -954,6 +971,8 @@ pr_rendertimes (pr_context * prc)
 	    }
 	}
     }
+  }
+  GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = 0];
 	/**********/
 
   DEBUG (printf
@@ -2918,6 +2937,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/01/19 17:50:40  gtkwave
+ * updated print rendering to match wavewindow marker lock adds
+ *
  * Revision 1.22  2009/06/26 19:56:18  gtkwave
  * add arrowheads to all impulse arrows
  *

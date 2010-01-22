@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -463,6 +463,7 @@ if(!GLOBALS)
 	GLOBALS->color_back = old_g->color_back;
 	GLOBALS->color_baseline = old_g->color_baseline;
 	GLOBALS->color_grid = old_g->color_grid;
+	GLOBALS->color_grid2 = old_g->color_grid2;
 	GLOBALS->color_high = old_g->color_high;
 	GLOBALS->color_low = old_g->color_low;
 	GLOBALS->color_1 = old_g->color_1;
@@ -1361,7 +1362,8 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 	        else
 	        {
 	        char *iline;
-		char any_shadow = 0;
+		char any_shadow[WAVE_NUM_STRACE_WINDOWS] = { 0, 0 };
+		int s_ctx_iter;
 
 		if(GLOBALS->is_lx2)
 			{
@@ -1401,10 +1403,11 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 
 		GLOBALS->default_flags=TR_RJUSTIFY;
 		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
+		GLOBALS->strace_current_window = 0; /* in case there are shadow traces */
 	        while((iline=fgetmalloc(wave)))
 	                {
 	                parsewavline(iline, NULL, 0);
-			any_shadow |= GLOBALS->shadow_active;
+			any_shadow[GLOBALS->strace_current_window] |= GLOBALS->strace_ctx->shadow_active;
 			free_2(iline);
 	                }
 		GLOBALS->default_flags=TR_RJUSTIFY;
@@ -1414,18 +1417,23 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 
 		EnsureGroupsMatch();
 
-                if(any_shadow)
-                        {
-                        if(GLOBALS->shadow_straces)
-                                {
-                                GLOBALS->shadow_active = 1;
+		WAVE_STRACE_ITERATOR(s_ctx_iter)
+			{
+			GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
 
-                                swap_strace_contexts();
-                                strace_maketimetrace(1);
-                                swap_strace_contexts();
-
-				GLOBALS->shadow_active = 0;
-                                }
+	                if(any_shadow[s_ctx_iter])
+	                        {
+	                        if(GLOBALS->strace_ctx->shadow_straces)
+	                                {
+	                                GLOBALS->strace_ctx->shadow_active = 1;
+	
+	                                swap_strace_contexts();
+	                                strace_maketimetrace(1);
+	                                swap_strace_contexts();
+	
+					GLOBALS->strace_ctx->shadow_active = 0;
+	                                }
+				}
                         }
 	        }
 	}
@@ -2630,6 +2638,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.90  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.89  2009/12/16 17:41:21  gtkwave
  * code + documentation cleanups for --script
  *

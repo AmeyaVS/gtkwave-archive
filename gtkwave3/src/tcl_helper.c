@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell and Concept Engineering GmbH 2008-2009.
+ * Copyright (c) Tony Bybell and Concept Engineering GmbH 2008-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -886,6 +886,8 @@ match_type_list = calloc_2(c, sizeof(int *));
 most_recent_lbrack_list = calloc_2(c, sizeof(char *));
 
 GLOBALS->default_flags=TR_RJUSTIFY;
+
+GLOBALS->strace_current_window = 0; /* in case there are shadow traces; in reality this should never happen */
 
 for(ii=0;ii<c;ii++)
 	{
@@ -2709,6 +2711,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.67  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.66  2009/12/22 20:02:19  gtkwave
  * fixed usage of NULL for a char assign
  *

@@ -146,6 +146,7 @@ WV_MENU_ALPHA2,
 WV_MENU_LEX,
 WV_MENU_RVS,
 WV_MENU_SPS,
+WV_MENU_SPS2,
 WV_MENU_SEP7B,
 WV_MENU_SSR,
 WV_MENU_SSH,
@@ -343,6 +344,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2010/01/18 20:47:02  gtkwave
+ * added named locker marking
+ *
  * Revision 1.29  2009/11/25 09:49:28  gtkwave
  * added gray code support
  *

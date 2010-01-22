@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2389,25 +2389,25 @@ if(*w2=='!')
 			{
 			if(ch=='!')
 				{
-				GLOBALS->shadow_active = 0;
+				GLOBALS->strace_ctx->shadow_active = 0;
 				return(~0);
 				}
 
-			if((!i)&&(GLOBALS->shadow_straces))
+			if((!i)&&(GLOBALS->strace_ctx->shadow_straces))
 				{
 				delete_strace_context();
 				}
 
-			GLOBALS->shadow_logical_mutex[i] = (ch & 1);
+			GLOBALS->strace_ctx->shadow_logical_mutex[i] = (ch & 1);
 			}
 			else	/* in case of short read */
 			{
-			GLOBALS->shadow_logical_mutex[i] = 0;
+			GLOBALS->strace_ctx->shadow_logical_mutex[i] = 0;
 			}
 		}
 
-	GLOBALS->shadow_mark_idx_start = 0;
-	GLOBALS->shadow_mark_idx_end = 0;
+	GLOBALS->strace_ctx->shadow_mark_idx_start = 0;
+	GLOBALS->strace_ctx->shadow_mark_idx_end = 0;
 
 	if(i==6)
 		{
@@ -2415,18 +2415,18 @@ if(*w2=='!')
 		if(ch != 0)
 			{
 			if (isupper(ch) || ch=='@')
-				GLOBALS->shadow_mark_idx_start = ch - '@';
+				GLOBALS->strace_ctx->shadow_mark_idx_start = ch - '@';
 		
 			ch = *(w2+8);
 			if(ch != 0)
 				{
 				if (isupper(ch) || ch=='@')
-					GLOBALS->shadow_mark_idx_end = ch - '@';
+					GLOBALS->strace_ctx->shadow_mark_idx_end = ch - '@';
 				}
 			}
 		}
 
-	GLOBALS->shadow_active = 1;
+	GLOBALS->strace_ctx->shadow_active = 1;
 	return(~0);
 	}
 	else
@@ -2436,22 +2436,22 @@ if(*w2=='?')
 	if(*(w2+1)=='\"')
 		{
 		int lens = strlen(w2+2);
-		if(GLOBALS->shadow_string) free_2(GLOBALS->shadow_string);
-		GLOBALS->shadow_string=NULL;
+		if(GLOBALS->strace_ctx->shadow_string) free_2(GLOBALS->strace_ctx->shadow_string);
+		GLOBALS->strace_ctx->shadow_string=NULL;
 
 		if(lens)
 			{
-			GLOBALS->shadow_string = malloc_2(lens+1);		
-			strcpy(GLOBALS->shadow_string, w2+2);
+			GLOBALS->strace_ctx->shadow_string = malloc_2(lens+1);		
+			strcpy(GLOBALS->strace_ctx->shadow_string, w2+2);
 			}
 
-		GLOBALS->shadow_type = ST_STRING;
+		GLOBALS->strace_ctx->shadow_type = ST_STRING;
 		}
 		else
 		{
 		int hex;
 		sscanf(w2+1, "%x", &hex);	
-		GLOBALS->shadow_type = hex;
+		GLOBALS->strace_ctx->shadow_type = hex;
 		}
 
 	return(~0);
@@ -2524,6 +2524,15 @@ else if (*w2 == '[')
 	sscanf (w, "%d %d", &x, &y);
 	if(!GLOBALS->block_xy_update) set_window_xypos (x, y);
 	}
+      }
+    else if (strcmp (w2, "pattern_trace") == 0)
+      {
+      int which_ctx = 0;
+      sscanf (w, "%d", &which_ctx);
+      if((which_ctx>=0)&&(which_ctx<WAVE_NUM_STRACE_WINDOWS))
+		{
+		GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = which_ctx];
+		}
       }
     else if (strcmp (w2, "timestart") == 0)
       {
@@ -3048,6 +3057,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.17  2009/11/07 16:40:18  gtkwave
  * null pointer fix on symfind
  *

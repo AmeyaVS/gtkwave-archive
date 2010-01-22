@@ -13,6 +13,13 @@
 #include "strace.h"
 #include "currenttime.h"
 
+#define WV_STRACE_CTX "strace_ctx"
+
+/* need to do this every time you connect a signal */
+#define WV_STRACE_CURWIN(x) g_object_set_data(G_OBJECT(x), WV_STRACE_CTX, (gpointer)GLOBALS->strace_ctx)
+
+/* need to do this at top of every entry point function where a signal is connected */
+#define GET_WV_STRACE_CURWIN(x) GLOBALS->strace_ctx=g_object_get_data(G_OBJECT(x), WV_STRACE_CTX)
 
 static char *logical[]=
         {"AND", "OR", "XOR", "NAND", "NOR", "XNOR"};
@@ -134,7 +141,7 @@ struct strace *s, *skill;
 int i;
 struct strace_defer_free *sd, *sd2;
 
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 
 while(s)
 	{
@@ -148,9 +155,9 @@ while(s)
 	free_2(skill);
 	}
 
-GLOBALS->straces=NULL;
+GLOBALS->strace_ctx->straces=NULL;
 
-sd = GLOBALS->strace_defer_free_head;
+sd = GLOBALS->strace_ctx->strace_defer_free_head;
 
 while(sd)
 	{
@@ -159,7 +166,7 @@ while(sd)
 	free_2(sd);
 	sd = sd2;
 	}
-GLOBALS->strace_defer_free_head = NULL;
+GLOBALS->strace_ctx->strace_defer_free_head = NULL;
 }
 
 /*
@@ -170,7 +177,9 @@ static void logical_clicked(GtkWidget *widget, gpointer which)
 int i;
 char *which_char;
 
-for(i=0;i<6;i++) GLOBALS->logical_mutex[i]=0;
+GET_WV_STRACE_CURWIN(widget);
+
+for(i=0;i<6;i++) GLOBALS->strace_ctx->logical_mutex[i]=0;
 which_char=(char *)which;
 *which_char=1;			/* mark our choice */
 
@@ -182,6 +191,8 @@ static void stype_clicked(GtkWidget *widget, gpointer back)
 struct strace_back *b;
 struct strace *s;
 
+GET_WV_STRACE_CURWIN(widget);
+
 b=(struct strace_back *)back;
 s=b->parent;
 
@@ -192,10 +203,12 @@ DEBUG(printf("Trace %s Search Type: %s\n", s->trace->name, stype[(int)s->value])
 
 static void start_clicked(GtkWidget *widget, gpointer which)
 {
-GLOBALS->mark_idx_start=((struct item_mark_string*)which)->idx;
-if (GLOBALS->mark_idx_start<0 || GLOBALS->mark_idx_start>=(sizeof(item_mark_start_strings)/sizeof(struct item_mark_string)))
+GET_WV_STRACE_CURWIN(widget);
+
+GLOBALS->strace_ctx->mark_idx_start=((struct item_mark_string*)which)->idx;
+if (GLOBALS->strace_ctx->mark_idx_start<0 || GLOBALS->strace_ctx->mark_idx_start>=(sizeof(item_mark_start_strings)/sizeof(struct item_mark_string)))
 	{
-	fprintf(stderr, "Internal error: GLOBALS->mark_idx_start out of range %d\n", GLOBALS->mark_idx_start);
+	fprintf(stderr, "Internal error: GLOBALS->mark_idx_start out of range %d\n", GLOBALS->strace_ctx->mark_idx_start);
 	exit(255);
 	}
 DEBUG(printf("start: %s\n", ((struct item_mark_string*)which)->str));
@@ -203,10 +216,12 @@ DEBUG(printf("start: %s\n", ((struct item_mark_string*)which)->str));
 
 static void end_clicked(GtkWidget *widget, gpointer which)
 {
-GLOBALS->mark_idx_end=((struct item_mark_string*)which)->idx;
-if (GLOBALS->mark_idx_end<0 || GLOBALS->mark_idx_end>=(sizeof(item_mark_end_strings)/sizeof(struct item_mark_string)))
+GET_WV_STRACE_CURWIN(widget);
+
+GLOBALS->strace_ctx->mark_idx_end=((struct item_mark_string*)which)->idx;
+if (GLOBALS->strace_ctx->mark_idx_end<0 || GLOBALS->strace_ctx->mark_idx_end>=(sizeof(item_mark_end_strings)/sizeof(struct item_mark_string)))
 	{
-	fprintf(stderr, "Internal error: GLOBALS->mark_idx_end out of range %d\n",GLOBALS->mark_idx_end);
+	fprintf(stderr, "Internal error: GLOBALS->mark_idx_end out of range %d\n",GLOBALS->strace_ctx->mark_idx_end);
 	exit(255);
 	}
 DEBUG(printf("end: %s\n", ((struct item_mark_string*)which)->str));
@@ -217,6 +232,8 @@ static void enter_callback(GtkWidget *widget, gpointer strace_tmp)
 G_CONST_RETURN gchar *entry_text;
 struct strace *s;
 int i, len;
+
+GET_WV_STRACE_CURWIN(widget);
 
 s=(struct strace *)strace_tmp;
 if(s->string) { free_2(s->string); s->string=NULL; }
@@ -240,6 +257,8 @@ for(i=0;i<len;i++)
 
 static void forwards_callback(GtkWidget *widget, GtkWidget *nothing)
 {
+GET_WV_STRACE_CURWIN(widget);
+
 /* no cleanup necessary, but do real search */
 DEBUG(printf("Searching Forward..\n"));
 strace_search(STRACE_FORWARD);
@@ -247,6 +266,8 @@ strace_search(STRACE_FORWARD);
 
 static void backwards_callback(GtkWidget *widget, GtkWidget *nothing)
 {
+GET_WV_STRACE_CURWIN(widget);
+
 /* no cleanup necessary, but do real search */
 DEBUG(printf("Searching Backward..\n"));
 strace_search(STRACE_BACKWARD);
@@ -254,8 +275,10 @@ strace_search(STRACE_BACKWARD);
 
 static void mark_callback(GtkWidget *widget, GtkWidget *nothing)
 {
+GET_WV_STRACE_CURWIN(widget);
+
 DEBUG(printf("Marking..\n"));
-if(GLOBALS->shadow_straces)
+if(GLOBALS->strace_ctx->shadow_straces)
 	{
 	delete_strace_context();
 	}
@@ -270,8 +293,10 @@ wavearea_configure_event(GLOBALS->wavearea, NULL);
 
 static void clear_callback(GtkWidget *widget, GtkWidget *nothing)
 {
+GET_WV_STRACE_CURWIN(widget);
+
 DEBUG(printf("Clearing..\n"));
-if(GLOBALS->shadow_straces)
+if(GLOBALS->strace_ctx->shadow_straces)
 	{
 	delete_strace_context();
 	}
@@ -284,25 +309,27 @@ wavearea_configure_event(GLOBALS->wavearea, NULL);
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
+  GET_WV_STRACE_CURWIN(widget);
+
   free_straces();
-  GLOBALS->ptr_mark_count_label_strace_c_1=NULL;
-  gtk_widget_destroy(GLOBALS->window_strace_c_10);
-  GLOBALS->window_strace_c_10 = NULL;
+  GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1=NULL;
+  gtk_widget_destroy(GLOBALS->strace_ctx->window_strace_c_10);
+  GLOBALS->strace_ctx->window_strace_c_10 = NULL;
 }
 
 /* update mark count label on pattern search dialog */
 
 static void update_mark_count_label()
 {
-if(GLOBALS->ptr_mark_count_label_strace_c_1)
+if(GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1)
     {
     char mark_count_buf[64];
-    sprintf (mark_count_buf, "Mark Count: %d", GLOBALS->timearray_size);
-    gtk_label_set_text (GTK_LABEL(GLOBALS->ptr_mark_count_label_strace_c_1), mark_count_buf);
+    sprintf (mark_count_buf, "Mark Count: %d", GLOBALS->strace_ctx->timearray_size);
+    gtk_label_set_text (GTK_LABEL(GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1), mark_count_buf);
     }
 }
 
-void tracesearchbox(char *title, GtkSignalFunc func)
+void tracesearchbox(const char *title, GtkSignalFunc func, gpointer data)
 {
     GtkWidget *menu, *menuitem, *optionmenu;
     GSList *group; 
@@ -313,25 +340,32 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     int i;
     int numtraces;
 
-    if(GLOBALS->straces) 
+    GLOBALS->strace_current_window = (data == (gpointer)WV_MENU_SPS) ? 0 : 1; /* arg for which search box going in */
+    GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window];
+
+    if(GLOBALS->strace_ctx->straces) 
 	{
-	gdk_window_raise(GLOBALS->window_strace_c_10->window);
+	gdk_window_raise(GLOBALS->strace_ctx->window_strace_c_10->window);
 	return; /* is already active */
 	}
 
-    GLOBALS->cleanup_strace_c_7=func;
+    GLOBALS->strace_ctx->cleanup_strace_c_7=func;
     numtraces=0;
 
     /* create a new window */
-    GLOBALS->window_strace_c_10 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
-    install_focus_cb(GLOBALS->window_strace_c_10, ((char *)&GLOBALS->window_strace_c_10) - ((char *)GLOBALS));
+    GLOBALS->strace_ctx->window_strace_c_10 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
 
-    gtk_window_set_title(GTK_WINDOW (GLOBALS->window_strace_c_10), title);
-    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_strace_c_10), 420, -1); 
-    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_strace_c_10), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    GLOBALS->strace_windows[GLOBALS->strace_current_window].window_strace_c_10 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
+    install_focus_cb(GLOBALS->strace_windows[GLOBALS->strace_current_window].window_strace_c_10, 
+		((char *)&GLOBALS->strace_windows[GLOBALS->strace_current_window].window_strace_c_10) - ((char *)GLOBALS));
+
+    gtk_window_set_title(GTK_WINDOW (GLOBALS->strace_ctx->window_strace_c_10), title);
+    gtk_widget_set_usize( GTK_WIDGET (GLOBALS->strace_ctx->window_strace_c_10), 420, -1); 
+    gtkwave_signal_connect(GTK_OBJECT (GLOBALS->strace_ctx->window_strace_c_10), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
+    WV_STRACE_CURWIN(GLOBALS->strace_ctx->window_strace_c_10);
 
     vbox = gtk_vbox_new (FALSE, 0);
-    gtk_container_add (GTK_CONTAINER (GLOBALS->window_strace_c_10), vbox);
+    gtk_container_add (GTK_CONTAINER (GLOBALS->strace_ctx->window_strace_c_10), vbox);
     gtk_widget_show (vbox);
 
     vbox_g = gtk_vbox_new (FALSE, 0);
@@ -358,11 +392,12 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menuitem));
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
-        gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(logical_clicked), &GLOBALS->logical_mutex[i]);
-	GLOBALS->logical_mutex[i]=0;
+        gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(logical_clicked), &GLOBALS->strace_ctx->logical_mutex[i]);
+	WV_STRACE_CURWIN(menuitem);
+	GLOBALS->strace_ctx->logical_mutex[i]=0;
 	}
 
-	GLOBALS->logical_mutex[0]=1;	/* "and" */
+	GLOBALS->strace_ctx->logical_mutex[0]=1;	/* "and" */
 
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), menu);
@@ -394,8 +429,8 @@ void tracesearchbox(char *title, GtkSignalFunc func)
 	}
 
     s=(struct strace *)calloc_2(1,sizeof(struct strace));
-    s->next=GLOBALS->straces;
-    GLOBALS->straces=s;
+    s->next=GLOBALS->strace_ctx->straces;
+    GLOBALS->strace_ctx->straces=s;
     s->trace=t;
 
     if(t!=GLOBALS->traces.first)
@@ -428,6 +463,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     	gtk_menu_append (GTK_MENU (menu), menuitem);
     	gtk_widget_show (menuitem);
         gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(stype_clicked), b);
+	WV_STRACE_CURWIN(menuitem);
 	}
 
 	optionmenu = gtk_option_menu_new ();
@@ -438,6 +474,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     entry = gtk_entry_new_with_max_length (257); /* %+256ch */
     gtkwave_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(enter_callback), s);
     gtkwave_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(enter_callback), s);
+    WV_STRACE_CURWIN(entry);
 
     gtk_box_pack_start (GTK_BOX (small_hbox), entry, TRUE, FALSE, 0);
     gtk_widget_show (entry);
@@ -486,12 +523,13 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     		gtk_menu_append (GTK_MENU (ptr_mark_count_start), menuitem);
     		gtk_widget_show (menuitem);
         	gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(start_clicked), &item_mark_start_strings[idx]);
+		WV_STRACE_CURWIN(menuitem);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_start);
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_start), optionmenu, TRUE, FALSE, 0);
 	gtk_widget_show (optionmenu);
-	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), GLOBALS->mark_idx_start);
+	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), GLOBALS->strace_ctx->mark_idx_start);
 
 		/* add mark end GUI element */
 	mark_count_hbox_end=gtk_hbox_new (TRUE, 0);
@@ -510,17 +548,18 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     		gtk_menu_append (GTK_MENU (ptr_mark_count_end), menuitem);
     		gtk_widget_show (menuitem);
         	gtkwave_signal_connect(GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC(end_clicked), &item_mark_end_strings[idx]);
+		WV_STRACE_CURWIN(menuitem);
 		}
 	optionmenu = gtk_option_menu_new ();
 	gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), ptr_mark_count_end);
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_end), optionmenu, TRUE, FALSE, 0);
 	gtk_widget_show (optionmenu);
-	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), GLOBALS->mark_idx_end);
+	gtk_option_menu_set_history (GTK_OPTION_MENU (optionmenu), GLOBALS->strace_ctx->mark_idx_end);
 
 		/* add mark count GUI element */
-	GLOBALS->ptr_mark_count_label_strace_c_1=gtk_label_new ("");
-	gtk_widget_show (GLOBALS->ptr_mark_count_label_strace_c_1);
-	gtk_box_pack_start (GTK_BOX (count_vbox),GLOBALS->ptr_mark_count_label_strace_c_1,TRUE,FALSE,0);
+	GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1=gtk_label_new ("");
+	gtk_widget_show (GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1);
+	gtk_box_pack_start (GTK_BOX (count_vbox),GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1,TRUE,FALSE,0);
 	update_mark_count_label ();
 	} while (0);
 
@@ -531,6 +570,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     button1 = gtk_button_new_with_label ("Fwd");
     gtk_widget_set_usize(button1, 75, -1);
     gtkwave_signal_connect(GTK_OBJECT (button1), "clicked", GTK_SIGNAL_FUNC(forwards_callback), NULL);
+    WV_STRACE_CURWIN(button1);
     gtk_widget_show (button1);
     gtk_container_add (GTK_CONTAINER (hbox), button1);
     GTK_WIDGET_SET_FLAGS (button1, GTK_CAN_DEFAULT);
@@ -540,6 +580,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     button1a = gtk_button_new_with_label ("Bkwd");
     gtk_widget_set_usize(button1a, 75, -1);
     gtkwave_signal_connect(GTK_OBJECT (button1a), "clicked", GTK_SIGNAL_FUNC(backwards_callback), NULL);
+    WV_STRACE_CURWIN(button1a);
     gtk_widget_show (button1a);
     gtk_container_add (GTK_CONTAINER (hbox), button1a);
     GTK_WIDGET_SET_FLAGS (button1a, GTK_CAN_DEFAULT);
@@ -547,6 +588,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     button1b = gtk_button_new_with_label ("Mark");
     gtk_widget_set_usize(button1b, 75, -1);
     gtkwave_signal_connect(GTK_OBJECT (button1b), "clicked", GTK_SIGNAL_FUNC(mark_callback), NULL);
+    WV_STRACE_CURWIN(button1b);
     gtk_widget_show (button1b);
     gtk_container_add (GTK_CONTAINER (hbox), button1b);
     GTK_WIDGET_SET_FLAGS (button1b, GTK_CAN_DEFAULT);
@@ -554,6 +596,7 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     button1c = gtk_button_new_with_label ("Clear");
     gtk_widget_set_usize(button1c, 75, -1);
     gtkwave_signal_connect(GTK_OBJECT (button1c), "clicked", GTK_SIGNAL_FUNC(clear_callback), NULL);
+    WV_STRACE_CURWIN(button1c);
     gtk_widget_show (button1c);
     gtk_container_add (GTK_CONTAINER (hbox), button1c);
     GTK_WIDGET_SET_FLAGS (button1c, GTK_CAN_DEFAULT);
@@ -561,11 +604,12 @@ void tracesearchbox(char *title, GtkSignalFunc func)
     button2 = gtk_button_new_with_label ("Exit");
     gtk_widget_set_usize(button2, 75, -1);
     gtkwave_signal_connect(GTK_OBJECT (button2), "clicked", GTK_SIGNAL_FUNC(destroy_callback), NULL);
+    WV_STRACE_CURWIN(button2);
     GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
     gtk_widget_show (button2);
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
-    gtk_widget_show(GLOBALS->window_strace_c_10);
+    gtk_widget_show(GLOBALS->strace_ctx->window_strace_c_10);
 }
 
 
@@ -614,7 +658,7 @@ for(whichpass=0;;whichpass++)
 if(direction==STRACE_BACKWARD) /* backwards */
 {
 maxbase=-1;
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 while(s)
 	{
 	t=s->trace;
@@ -658,7 +702,7 @@ while(s)
 else /* go forward */
 {
 maxbase=MAX_HISTENT_TIME;
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 while(s)
 	{
 	t=s->trace;
@@ -696,7 +740,7 @@ while(s)
 	}
 }
 
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 totaltraces=0;	/* increment when not don't care */
 while(s)
 	{
@@ -915,7 +959,7 @@ while(s)
 if((maxbase<sttim)||(maxbase>fintim)) return;
 
 DEBUG(printf("Maxbase: "TTFormat", total traces: %d\n",maxbase, totaltraces));
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 passcount=0;
 while(s)
 	{
@@ -926,32 +970,32 @@ while(s)
 
 if(totaltraces)
 	{
-	if(GLOBALS->logical_mutex[0])	/* and */
+	if(GLOBALS->strace_ctx->logical_mutex[0])	/* and */
 		{
 		if(totaltraces==passcount) break;		
 		}
 	else
-	if(GLOBALS->logical_mutex[1])	/* or */
+	if(GLOBALS->strace_ctx->logical_mutex[1])	/* or */
 		{
 		if(passcount) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[2])	/* xor */
+	if(GLOBALS->strace_ctx->logical_mutex[2])	/* xor */
 		{
 		if(passcount&1) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[3])	/* nand */
+	if(GLOBALS->strace_ctx->logical_mutex[3])	/* nand */
 		{
 		if(totaltraces!=passcount) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[4])	/* nor */
+	if(GLOBALS->strace_ctx->logical_mutex[4])	/* nor */
 		{
 		if(!passcount) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[5])	/* xnor */
+	if(GLOBALS->strace_ctx->logical_mutex[5])	/* xnor */
 		{
 		if(!(passcount&1)) break;
 		}
@@ -1006,7 +1050,7 @@ fintim=GLOBALS->tims.last;
 for(whichpass=0;;whichpass++)
 {
 maxbase=MAX_HISTENT_TIME;
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 while(s)
 	{
 	t=s->trace;
@@ -1042,7 +1086,7 @@ while(s)
 	s=s->next;
 	}
 
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 totaltraces=0;	/* increment when not don't care */
 while(s)
 	{
@@ -1264,7 +1308,7 @@ while(s)
 if(maxbase>fintim) return(MAX_HISTENT_TIME);
 
 DEBUG(printf("Maxbase: "TTFormat", total traces: %d\n",maxbase, totaltraces));
-s=GLOBALS->straces;
+s=GLOBALS->strace_ctx->straces;
 passcount=0;
 while(s)
 	{
@@ -1275,32 +1319,32 @@ while(s)
 
 if(totaltraces)
 	{
-	if(GLOBALS->logical_mutex[0])	/* and */
+	if(GLOBALS->strace_ctx->logical_mutex[0])	/* and */
 		{
 		if(totaltraces==passcount) break;		
 		}
 	else
-	if(GLOBALS->logical_mutex[1])	/* or */
+	if(GLOBALS->strace_ctx->logical_mutex[1])	/* or */
 		{
 		if(passcount) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[2])	/* xor */
+	if(GLOBALS->strace_ctx->logical_mutex[2])	/* xor */
 		{
 		if(passcount&1) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[3])	/* nand */
+	if(GLOBALS->strace_ctx->logical_mutex[3])	/* nand */
 		{
 		if(totaltraces!=passcount) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[4])	/* nor */
+	if(GLOBALS->strace_ctx->logical_mutex[4])	/* nor */
 		{
 		if(!passcount) break;
 		}
 	else
-	if(GLOBALS->logical_mutex[5])	/* xnor */
+	if(GLOBALS->strace_ctx->logical_mutex[5])	/* xnor */
 		{
 		if(!(passcount&1)) break;
 		}
@@ -1322,41 +1366,41 @@ int i, notfirst=0;
 struct timechain *tchead=NULL, *tc=NULL, *tcnext;
 TimeType *t;
 
-if(GLOBALS->timearray)
+if(GLOBALS->strace_ctx->timearray)
 	{
-	free_2(GLOBALS->timearray);
-	GLOBALS->timearray=NULL;
+	free_2(GLOBALS->strace_ctx->timearray);
+	GLOBALS->strace_ctx->timearray=NULL;
 	}
 
-GLOBALS->timearray_size=0;
+GLOBALS->strace_ctx->timearray_size=0;
 
-if((!mode)&&(!GLOBALS->shadow_active))
+if((!mode)&&(!GLOBALS->strace_ctx->shadow_active))
 	{
 	update_mark_count_label();
 	delete_mprintf();
 	return;	/* merely free stuff up */
 	}
 
-if(GLOBALS->mark_idx_start>0)
+if(GLOBALS->strace_ctx->mark_idx_start>0)
 	{
-	if(GLOBALS->named_markers[GLOBALS->mark_idx_start-1]>=0)
-		basetime=GLOBALS->named_markers[GLOBALS->mark_idx_start-1];
+	if(GLOBALS->named_markers[GLOBALS->strace_ctx->mark_idx_start-1]>=0)
+		basetime=GLOBALS->named_markers[GLOBALS->strace_ctx->mark_idx_start-1];
 	else
 		{
 		char notused[129];
-		sprintf(notused, "%s not in use.\n", item_mark_start_strings[(unsigned int)GLOBALS->mark_idx_start].str);
+		sprintf(notused, "%s not in use.\n", item_mark_start_strings[(unsigned int)GLOBALS->strace_ctx->mark_idx_start].str);
 		status_text(notused);
 		}
 	}
 
-if(GLOBALS->mark_idx_end>0)
+if(GLOBALS->strace_ctx->mark_idx_end>0)
 	{
-	if(GLOBALS->named_markers[GLOBALS->mark_idx_end-1]>=0)
-		endtime=GLOBALS->named_markers[GLOBALS->mark_idx_end-1];
+	if(GLOBALS->named_markers[GLOBALS->strace_ctx->mark_idx_end-1]>=0)
+		endtime=GLOBALS->named_markers[GLOBALS->strace_ctx->mark_idx_end-1];
 	else
 		{
 		char notused[129];
-		sprintf(notused, "%s not in use.\n", item_mark_end_strings[(unsigned int)GLOBALS->mark_idx_end].str);
+		sprintf(notused, "%s not in use.\n", item_mark_end_strings[(unsigned int)GLOBALS->strace_ctx->mark_idx_end].str);
 		status_text(notused);
 		}
 	}
@@ -1382,7 +1426,7 @@ while(1)
 		if(basetime>endtime) break; /* formerly was >= which didn't mark the endpoint if true which is incorrect */
 		}			    /* i.e., if start is markable, end should be also */
 
-	GLOBALS->timearray_size++;
+	GLOBALS->strace_ctx->timearray_size++;
 
 	if(!tc)
 		{
@@ -1398,10 +1442,10 @@ while(1)
 	tc->next=NULL;
 	}
 
-if(GLOBALS->timearray_size)
+if(GLOBALS->strace_ctx->timearray_size)
 	{
-	GLOBALS->timearray=t=malloc_2(sizeof(TimeType)*GLOBALS->timearray_size);
-	for(i=0;i<GLOBALS->timearray_size;i++)
+	GLOBALS->strace_ctx->timearray=t=malloc_2(sizeof(TimeType)*GLOBALS->strace_ctx->timearray_size);
+	for(i=0;i<GLOBALS->strace_ctx->timearray_size;i++)
 		{
 		*(t++)=tchead->t;
 		tcnext=tchead->next;
@@ -1411,10 +1455,10 @@ if(GLOBALS->timearray_size)
 	}
 	else
 	{
-	GLOBALS->timearray = NULL;
+	GLOBALS->strace_ctx->timearray = NULL;
 	}
 
-if(!GLOBALS->shadow_active) update_mark_count_label();
+if(!GLOBALS->strace_ctx->shadow_active) update_mark_count_label();
 }
 
 
@@ -1427,21 +1471,21 @@ struct strace *stemp;
 char logical_mutex_temp[6];
 char  mark_idx_start_temp, mark_idx_end_temp;
 
-stemp = GLOBALS->straces;
-GLOBALS->straces = GLOBALS->shadow_straces;
-GLOBALS->shadow_straces = stemp;
+stemp = GLOBALS->strace_ctx->straces;
+GLOBALS->strace_ctx->straces = GLOBALS->strace_ctx->shadow_straces;
+GLOBALS->strace_ctx->shadow_straces = stemp;
 
-memcpy(logical_mutex_temp, GLOBALS->logical_mutex, 6);
-memcpy(GLOBALS->logical_mutex, GLOBALS->shadow_logical_mutex, 6);
-memcpy(GLOBALS->shadow_logical_mutex, logical_mutex_temp, 6);
+memcpy(logical_mutex_temp, GLOBALS->strace_ctx->logical_mutex, 6);
+memcpy(GLOBALS->strace_ctx->logical_mutex, GLOBALS->strace_ctx->shadow_logical_mutex, 6);
+memcpy(GLOBALS->strace_ctx->shadow_logical_mutex, logical_mutex_temp, 6);
 
-mark_idx_start_temp   = GLOBALS->mark_idx_start;
-GLOBALS->mark_idx_start        = GLOBALS->shadow_mark_idx_start;
-GLOBALS->shadow_mark_idx_start = mark_idx_start_temp;
+mark_idx_start_temp   = GLOBALS->strace_ctx->mark_idx_start;
+GLOBALS->strace_ctx->mark_idx_start = GLOBALS->strace_ctx->shadow_mark_idx_start;
+GLOBALS->strace_ctx->shadow_mark_idx_start = mark_idx_start_temp;
 
-mark_idx_end_temp   = GLOBALS->mark_idx_end;
-GLOBALS->mark_idx_end        = GLOBALS->shadow_mark_idx_end;
-GLOBALS->shadow_mark_idx_end = mark_idx_end_temp;
+mark_idx_end_temp   = GLOBALS->strace_ctx->mark_idx_end;
+GLOBALS->strace_ctx->mark_idx_end = GLOBALS->strace_ctx->shadow_mark_idx_end;
+GLOBALS->strace_ctx->shadow_mark_idx_end = mark_idx_end_temp;
 }
 
 
@@ -1456,33 +1500,33 @@ struct strace *strace_cache;
 
 for(i=0;i<6;i++)
 	{
-	GLOBALS->shadow_logical_mutex[i] = 0;
+	GLOBALS->strace_ctx->shadow_logical_mutex[i] = 0;
 	}
 
-GLOBALS->shadow_mark_idx_start = 0;
-GLOBALS->shadow_mark_idx_end   = 0;
+GLOBALS->strace_ctx->shadow_mark_idx_start = 0;
+GLOBALS->strace_ctx->shadow_mark_idx_end   = 0;
 
-strace_cache = GLOBALS->straces;	/* so the trace actually deletes */
-GLOBALS->straces=NULL;
+strace_cache = GLOBALS->strace_ctx->straces;	/* so the trace actually deletes */
+GLOBALS->strace_ctx->straces=NULL;
 
-stemp = GLOBALS->shadow_straces;
+stemp = GLOBALS->strace_ctx->shadow_straces;
 while(stemp)
 	{
-	GLOBALS->shadow_straces = stemp->next;
+	GLOBALS->strace_ctx->shadow_straces = stemp->next;
 	if(stemp->string) free_2(stemp->string);
 
 	FreeTrace(stemp->trace);
 	free_2(stemp);
-	stemp = GLOBALS->shadow_straces;
+	stemp = GLOBALS->strace_ctx->shadow_straces;
 	}
 
-if(GLOBALS->shadow_string)
+if(GLOBALS->strace_ctx->shadow_string)
 	{
-	free_2(GLOBALS->shadow_string);
-	GLOBALS->shadow_string = NULL;
+	free_2(GLOBALS->strace_ctx->shadow_string);
+	GLOBALS->strace_ctx->shadow_string = NULL;
 	}
 
-GLOBALS->straces = strace_cache;
+GLOBALS->strace_ctx->straces = strace_cache;
 }
 
 /*************************************************************************/
@@ -1505,14 +1549,14 @@ len = strlen(buff);
 bt->str = malloc_2(len+1);
 strcpy(bt->str, buff);
                  
-if(!GLOBALS->mprintf_buff_current)
+if(!GLOBALS->strace_ctx->mprintf_buff_current)
         {
-        GLOBALS->mprintf_buff_head = GLOBALS->mprintf_buff_current = bt;
+        GLOBALS->strace_ctx->mprintf_buff_head = GLOBALS->strace_ctx->mprintf_buff_current = bt;
         }
         else
         {
-        GLOBALS->mprintf_buff_current->next = bt;
-        GLOBALS->mprintf_buff_current = bt;
+        GLOBALS->strace_ctx->mprintf_buff_current->next = bt;
+        GLOBALS->strace_ctx->mprintf_buff_current = bt;
         }
 
 va_end(args);                        
@@ -1524,9 +1568,9 @@ return(rc);
  */
 void delete_mprintf(void)
 {
-if(GLOBALS->mprintf_buff_head)
+if(GLOBALS->strace_ctx->mprintf_buff_head)
 	{
-	struct mprintf_buff_t *mb = GLOBALS->mprintf_buff_head;
+	struct mprintf_buff_t *mb = GLOBALS->strace_ctx->mprintf_buff_head;
 	struct mprintf_buff_t *mbt;		
 		
 	while(mb)
@@ -1537,7 +1581,7 @@ if(GLOBALS->mprintf_buff_head)
 		mb = mbt;
 		}
 
-	GLOBALS->mprintf_buff_head = GLOBALS->mprintf_buff_current = NULL;
+	GLOBALS->strace_ctx->mprintf_buff_head = GLOBALS->strace_ctx->mprintf_buff_current = NULL;
 	}
 }
 
@@ -1554,10 +1598,10 @@ struct strace *st;
 
 delete_mprintf();
 
-if(GLOBALS->timearray)
+if(GLOBALS->strace_ctx->timearray)
 	{
-	mprintf("!%d%d%d%d%d%d%c%c\n", GLOBALS->logical_mutex[0], GLOBALS->logical_mutex[1], GLOBALS->logical_mutex[2], GLOBALS->logical_mutex[3], GLOBALS->logical_mutex[4], GLOBALS->logical_mutex[5], '@'+GLOBALS->mark_idx_start, '@'+GLOBALS->mark_idx_end);
-	st=GLOBALS->straces;
+	mprintf("!%d%d%d%d%d%d%c%c\n", GLOBALS->strace_ctx->logical_mutex[0], GLOBALS->strace_ctx->logical_mutex[1], GLOBALS->strace_ctx->logical_mutex[2], GLOBALS->strace_ctx->logical_mutex[3], GLOBALS->strace_ctx->logical_mutex[4], GLOBALS->strace_ctx->logical_mutex[5], '@'+GLOBALS->strace_ctx->mark_idx_start, '@'+GLOBALS->strace_ctx->mark_idx_end);
+	st=GLOBALS->strace_ctx->straces;
 
 	while(st)
 		{
@@ -1572,7 +1616,7 @@ if(GLOBALS->timearray)
 
 		t=st->trace;
 
-		if((t->flags!=def)||(st==GLOBALS->straces))
+		if((t->flags!=def)||(st==GLOBALS->strace_ctx->straces))
 			{
 			mprintf("@%x\n",def=t->flags);
 			}
@@ -1645,6 +1689,9 @@ if(GLOBALS->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/01/18 16:23:27  gtkwave
+ * clock count fix (>= rather than > in endcap check for loop break)
+ *
  * Revision 1.12  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

@@ -750,13 +750,19 @@
 		Fixed missing dependencies in various Makefile.am files.
 3.3.2	05jan10	Emergency fix for ghw.c as it was missing a close comment
 		causing problems with iterative generate.
-3.3.3	20jan10	Fix for Pattern Search where end marker time was not used
+3.3.3	21jan10	Fix for Pattern Search where end marker time was not used
 		for dropping down a marker: for clock counts this would
 		mean that the clock count was off by one.
 		Added locking/unlocking of named markers against the
 		primary marker with 1/2/0 keys.
 		Fixed broken "make distclean".
 		Added patch for move to time against named markers.
-		
+		Added a secondary pattern search function.
+		Added fix for broken bsearch_facs() when characters like
+		"$" are in a facname and it matches a hierarchy boundary.
+
 		<< Update docs for "Move to Time >>
 		<< Update docs with new marker locking ops >>
+		<< Update docs for pattern search -> pattern search 1
+		and pattern search 2 >>
+		<< add color_grid2 to documentation from gtkwaverc manfile >>

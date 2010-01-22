@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,15 +46,15 @@ void *bsearch_dummy_rv;
 
 GLOBALS->max_compare_time_tc_bsearch_c_1=-2+GLOBALS->shift_timebase; GLOBALS->max_compare_pos_tc_bsearch_c_1=NULL; 
 
-if(!GLOBALS->timearray) return(-1);
+if(!GLOBALS->strace_ctx->timearray) return(-1);
 
-bsearch_dummy_rv = bsearch(&key, GLOBALS->timearray, GLOBALS->timearray_size, sizeof(TimeType), compar_timechain);
+bsearch_dummy_rv = bsearch(&key, GLOBALS->strace_ctx->timearray, GLOBALS->strace_ctx->timearray_size, sizeof(TimeType), compar_timechain);
 if((!GLOBALS->max_compare_pos_tc_bsearch_c_1)||(GLOBALS->max_compare_time_tc_bsearch_c_1<GLOBALS->shift_timebase)) 
 	{
-	GLOBALS->max_compare_pos_tc_bsearch_c_1=GLOBALS->timearray; /* aix bsearch fix */
+	GLOBALS->max_compare_pos_tc_bsearch_c_1=GLOBALS->strace_ctx->timearray; /* aix bsearch fix */
 	}
 
-return(GLOBALS->max_compare_pos_tc_bsearch_c_1-GLOBALS->timearray);
+return(GLOBALS->max_compare_pos_tc_bsearch_c_1-GLOBALS->strace_ctx->timearray);
 }
 
 /*****************************************************************************************/
@@ -273,6 +273,9 @@ if(rc) return(*rc); else return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/07/18 17:27:00  gtkwave
+ * adding hierpack code
+ *
  * Revision 1.5  2008/02/19 22:56:11  gtkwave
  * rtlbrowse update to handle aet time substitutions
  *

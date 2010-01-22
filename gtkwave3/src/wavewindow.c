@@ -1199,6 +1199,7 @@ if(!GLOBALS->made_gc_contexts_wavewindow_c_1)
 	GLOBALS->gc_back_wavewindow_c_1   = alloc_color(GLOBALS->wavearea, GLOBALS->color_back, GLOBALS->wavearea->style->white_gc);    
 	GLOBALS->gc_baseline_wavewindow_c_1 = alloc_color(GLOBALS->wavearea, GLOBALS->color_baseline, GLOBALS->wavearea->style->bg_gc[GTK_STATE_SELECTED]);    
 	GLOBALS->gc_grid_wavewindow_c_1   = alloc_color(GLOBALS->wavearea, GLOBALS->color_grid, GLOBALS->wavearea->style->bg_gc[GTK_STATE_PRELIGHT]);
+	GLOBALS->gc_grid2_wavewindow_c_1  = alloc_color(GLOBALS->wavearea, GLOBALS->color_grid2, GLOBALS->wavearea->style->bg_gc[GTK_STATE_ACTIVE]);
 	GLOBALS->gc_time_wavewindow_c_1   = alloc_color(GLOBALS->wavearea, GLOBALS->color_time, GLOBALS->wavearea->style->black_gc);
 	GLOBALS->gc_timeb_wavewindow_c_1  = alloc_color(GLOBALS->wavearea, GLOBALS->color_timeb, GLOBALS->wavearea->style->bg_gc[GTK_STATE_ACTIVE]);
 	GLOBALS->gc_value_wavewindow_c_1  = alloc_color(GLOBALS->wavearea, GLOBALS->color_value, GLOBALS->wavearea->style->black_gc);
@@ -1260,6 +1261,7 @@ if(!GLOBALS->made_gc_contexts_wavewindow_c_1)
 	GLOBALS->gccache_back_wavewindow_c_1 = GLOBALS->gc_back_wavewindow_c_1 ; 
 	GLOBALS->gccache_baseline_wavewindow_c_1 = GLOBALS->gc_baseline_wavewindow_c_1 ; 
 	GLOBALS->gccache_grid_wavewindow_c_1 = GLOBALS->gc_grid_wavewindow_c_1 ; 
+	GLOBALS->gccache_grid2_wavewindow_c_1 = GLOBALS->gc_grid2_wavewindow_c_1 ; 
 	GLOBALS->gccache_time_wavewindow_c_1 = GLOBALS->gc_time_wavewindow_c_1 ; 
 	GLOBALS->gccache_timeb_wavewindow_c_1 = GLOBALS->gc_timeb_wavewindow_c_1 ; 
 	GLOBALS->gccache_value_wavewindow_c_1 = GLOBALS->gc_value_wavewindow_c_1 ; 
@@ -1334,6 +1336,7 @@ GLOBALS->gc_gmstrd= GLOBALS->gc_black ;
 GLOBALS->gc_back_wavewindow_c_1   = GLOBALS->gc_white ;
 GLOBALS->gc_baseline_wavewindow_c_1 = GLOBALS->gc_black;
 GLOBALS->gc_grid_wavewindow_c_1   = GLOBALS->gc_black;
+GLOBALS->gc_grid2_wavewindow_c_1  = GLOBALS->gc_black;
 GLOBALS->gc_time_wavewindow_c_1   = GLOBALS->gc_black;
 GLOBALS->gc_timeb_wavewindow_c_1  = GLOBALS->gc_white;
 GLOBALS->gc_value_wavewindow_c_1  = GLOBALS->gc_black;
@@ -1370,6 +1373,7 @@ GLOBALS->gc_gmstrd = GLOBALS->gccache_gmstrd ;
 GLOBALS->gc_back_wavewindow_c_1 = GLOBALS->gccache_back_wavewindow_c_1 ;
 GLOBALS->gc_baseline_wavewindow_c_1 = GLOBALS->gccache_baseline_wavewindow_c_1 ;
 GLOBALS->gc_grid_wavewindow_c_1 = GLOBALS->gccache_grid_wavewindow_c_1 ;
+GLOBALS->gc_grid2_wavewindow_c_1 = GLOBALS->gccache_grid2_wavewindow_c_1 ;
 GLOBALS->gc_time_wavewindow_c_1 = GLOBALS->gccache_time_wavewindow_c_1 ;
 GLOBALS->gc_timeb_wavewindow_c_1 = GLOBALS->gccache_timeb_wavewindow_c_1 ;
 GLOBALS->gc_value_wavewindow_c_1 = GLOBALS->gccache_value_wavewindow_c_1 ;
@@ -2098,10 +2102,23 @@ int rhs;
 gdouble dx;
 gdouble hashoffset;
 int iter = 0;
+int s_ctx_iter;
+int timearray_encountered = 0;
 
 fhminus2=GLOBALS->fontheight-2;
 
-gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_grid_wavewindow_c_1,x, 0,x, ((!GLOBALS->timearray)&&(GLOBALS->display_grid)&&(GLOBALS->enable_vert_grid))?GLOBALS->waveheight:fhminus2);
+WAVE_STRACE_ITERATOR(s_ctx_iter)
+	{
+	GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+	if(GLOBALS->strace_ctx->timearray)
+		{
+		timearray_encountered = 1;
+		break;
+		}
+	}
+
+gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_grid_wavewindow_c_1,x, 0,x, 
+	((!timearray_encountered)&&(GLOBALS->display_grid)&&(GLOBALS->enable_vert_grid))?GLOBALS->waveheight:fhminus2);
 
 if(tim==GLOBALS->tims.last) return;
 
@@ -2135,49 +2152,79 @@ TimeType tim, rem;
 char timebuff[32];
 char prevover=0;
 gdouble realx;
+int s_ctx_iter;
 
 renderblackout();
 
 tim=GLOBALS->tims.start;
 GLOBALS->tims.end=GLOBALS->tims.start+(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
 
-/***********/
-if(GLOBALS->timearray)
-	{
-	int pos, pos2;
-	TimeType *t, tm;
-	int y=GLOBALS->fontheight+2;
-	int oldx=-1;
+wave_gdk_draw_line_flush(GLOBALS->wavepixmap_wavewindow_c_1); /* clear out state */
 
-	pos=bsearch_timechain(GLOBALS->tims.start);
-	top:
-	if((pos>=0)&&(pos<GLOBALS->timearray_size))
+/***********/
+WAVE_STRACE_ITERATOR_FWD(s_ctx_iter)
+	{
+	GdkGC * gc;
+
+	if(!s_ctx_iter)
+		{ 
+		gc = GLOBALS->gc_grid_wavewindow_c_1;
+		}
+		else
 		{
-		t=GLOBALS->timearray+pos;
-		for(;pos<GLOBALS->timearray_size;t++, pos++)
+		gc = GLOBALS->gc_grid2_wavewindow_c_1;
+		gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+		}
+
+	GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+
+	if(GLOBALS->strace_ctx->timearray)
+		{
+		int pos, pos2;
+		TimeType *t, tm;
+		int y=GLOBALS->fontheight+2;
+		int oldx=-1;
+
+		pos=bsearch_timechain(GLOBALS->tims.start);
+		top:
+		if((pos>=0)&&(pos<GLOBALS->strace_ctx->timearray_size))
 			{
-			tm=*t;
-			if(tm>=GLOBALS->tims.start)
+			t=GLOBALS->strace_ctx->timearray+pos;
+			for(;pos<GLOBALS->strace_ctx->timearray_size;t++, pos++)
 				{
-				if(tm<=GLOBALS->tims.end)
+				tm=*t;
+				if(tm>=GLOBALS->tims.start)
 					{
-					x=(tm-GLOBALS->tims.start)*GLOBALS->pxns;
-					if(oldx==x) 
+					if(tm<=GLOBALS->tims.end)
 						{
-						pos2=bsearch_timechain(GLOBALS->tims.start+(((gdouble)(x+1))*GLOBALS->nspx));
-						if(pos2>pos) { pos=pos2; goto top; } else continue;
+						x=(tm-GLOBALS->tims.start)*GLOBALS->pxns;
+						if(oldx==x) 
+							{
+							pos2=bsearch_timechain(GLOBALS->tims.start+(((gdouble)(x+1))*GLOBALS->nspx));
+							if(pos2>pos) { pos=pos2; goto top; } else continue;
+							}
+						oldx=x;
+						gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, gc, x, y, x, GLOBALS->waveheight);
 						}
-					oldx=x;
-					gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_grid_wavewindow_c_1, x, y, x, GLOBALS->waveheight);
-					}
-					else
-					{
-					break;
+						else
+						{
+						break;
+						}
 					}
 				}
 			}
 		}
+
+	
+	wave_gdk_draw_line_flush(GLOBALS->wavepixmap_wavewindow_c_1); /* clear out state */
+
+	if(s_ctx_iter)
+		{
+		gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+		}
 	}
+
+GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = 0];
 /***********/
 
 
@@ -3919,6 +3966,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.55  2010/01/18 20:47:02  gtkwave
+ * added named locker marking
+ *
  * Revision 1.54  2009/12/24 20:55:28  gtkwave
  * warnings cleanups
  *

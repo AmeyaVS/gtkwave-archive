@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Kermin Elliott Fleming 2007-2009.
+ * Copyright (c) Kermin Elliott Fleming 2007-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -135,6 +135,7 @@ NULL, /* busycursor_busy_c_1 23 */
 -1, /* color_back 25 */
 -1, /* color_baseline 26 */
 -1, /* color_grid 27 */
+-1, /* color_grid2 27 */
 -1, /* color_high 28 */
 -1, /* color_low 29 */
 -1, /* color_mark 30 */
@@ -797,25 +798,10 @@ NULL, /* bold_tag_status_c_3 401 */
 /*
  * strace.c
  */
-NULL, /* timearray 402 */
-0, /* timearray_size 403 */
-NULL, /* ptr_mark_count_label_strace_c_1 404 */
-NULL, /* straces 405 */
-NULL, /* shadow_straces 406 */
-NULL, /* strace_defer_free_head 407 */
-NULL, /* window_strace_c_10 408 */
-NULL, /* cleanup_strace_c_7 409 */
-{0,0,0,0,0,0}, /* logical_mutex 412 */
-{0,0,0,0,0,0}, /* shadow_logical_mutex 413 */
-0, /* shadow_active 414 */
-0, /* shadow_type 415 */
-NULL, /* shadow_string 416 */
-0, /* mark_idx_start 417 */
-0, /* mark_idx_end 418 */
-0, /* shadow_mark_idx_start 419 */
-0, /* shadow_mark_idx_end 420 */
-NULL, /* mprintf_buff_head 423 */
-NULL, /* mprintf_buff_current */
+NULL, /* strace_ctx (defined in strace.h for multiple strace sessions) */
+{{NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,NULL,0,0,0,0,NULL,NULL}, /* strace_windows[0] */
+{NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,NULL,0,0,0,0,NULL,NULL}}, /* strace_windows[1] */
+0, /* strace_current_window */
 
 
 /*
@@ -824,6 +810,7 @@ NULL, /* mprintf_buff_current */
 NULL, /* sym 424 */
 NULL, /* facs 425 */
 0, /* facs_are_sorted 426 */
+0, /* facs_have_symbols_state_machine */
 0, /* numfacs 427 */
 0, /* regions 428 */
 0, /* longestname 429 */
@@ -1150,6 +1137,7 @@ NULL, /* wave_hslider */
 NULL, /* gc_back_wavewindow_c_1 625 */
 NULL, /* gc_baseline_wavewindow_c_1 626 */
 NULL, /* gc_grid_wavewindow_c_1 627 */
+NULL, /* gc_grid2_wavewindow_c_1 627 */
 NULL, /* gc_time_wavewindow_c_1 628 */
 NULL, /* gc_timeb_wavewindow_c_1 629 */
 NULL, /* gc_value_wavewindow_c_1 630 */
@@ -1195,6 +1183,7 @@ NULL, /* gccache_gmstrd */
 NULL, /* gccache_back_wavewindow_c_1 */
 NULL, /* gccache_baseline_wavewindow_c_1 */
 NULL, /* gccache_grid_wavewindow_c_1 */
+NULL, /* gccache_grid2_wavewindow_c_1 */
 NULL, /* gccache_time_wavewindow_c_1 */
 NULL, /* gccache_timeb_wavewindow_c_1 */
 NULL, /* gccache_value_wavewindow_c_1 */
@@ -1247,6 +1236,8 @@ g->buf_menu_c_1 = calloc_2_into_context(g, 1, 65537);	/* do remaining mallocs in
 g->regexp_string_menu_c_1 = calloc_2_into_context(g, 1, 129);
 g->regex_ok_regex_c_1 = calloc_2_into_context(g, WAVE_REGEX_TOTAL, sizeof(int));
 g->preg_regex_c_1 = calloc_2_into_context(g, WAVE_REGEX_TOTAL, sizeof(regex_t));
+
+g->strace_ctx = &g->strace_windows[0];			/* arbitrarily point to first one */
 
 return(g);						/* what to do with ctx is at discretion of caller */
 }
@@ -1307,6 +1298,7 @@ void reload_into_new_context(void)
  char *save_tmpfilename = NULL;
  char *reload_tmpfilename = NULL;
  int fd_dummy = -1;
+ int s_ctx_iter;
 
  /* save these in case we decide to write out the rc file later as a user option */
  char cached_ignore_savefile_pos = GLOBALS->ignore_savefile_pos;
@@ -1438,6 +1430,7 @@ void reload_into_new_context(void)
  new_globals->gc_back_wavewindow_c_1 = GLOBALS->gc_back_wavewindow_c_1;
  new_globals->gc_baseline_wavewindow_c_1 = GLOBALS->gc_baseline_wavewindow_c_1;
  new_globals->gc_grid_wavewindow_c_1 = GLOBALS->gc_grid_wavewindow_c_1;
+ new_globals->gc_grid2_wavewindow_c_1 = GLOBALS->gc_grid2_wavewindow_c_1;
  new_globals->gc_time_wavewindow_c_1 = GLOBALS->gc_time_wavewindow_c_1;
  new_globals->gc_timeb_wavewindow_c_1 = GLOBALS->gc_timeb_wavewindow_c_1;
  new_globals->gc_value_wavewindow_c_1 = GLOBALS->gc_value_wavewindow_c_1;
@@ -1471,7 +1464,7 @@ void reload_into_new_context(void)
  new_globals->gccache_gmstrd = GLOBALS->gccache_gmstrd;
  new_globals->gccache_back_wavewindow_c_1 = GLOBALS->gccache_back_wavewindow_c_1;
  new_globals->gccache_baseline_wavewindow_c_1 = GLOBALS->gccache_baseline_wavewindow_c_1;
- new_globals->gccache_grid_wavewindow_c_1 = GLOBALS->gccache_grid_wavewindow_c_1;
+ new_globals->gccache_grid2_wavewindow_c_1 = GLOBALS->gccache_grid2_wavewindow_c_1;
  new_globals->gccache_time_wavewindow_c_1 = GLOBALS->gccache_time_wavewindow_c_1;
  new_globals->gccache_timeb_wavewindow_c_1 = GLOBALS->gccache_timeb_wavewindow_c_1;
  new_globals->gccache_value_wavewindow_c_1 = GLOBALS->gccache_value_wavewindow_c_1;
@@ -1570,6 +1563,7 @@ void reload_into_new_context(void)
  new_globals->color_back = GLOBALS->color_back;
  new_globals->color_baseline = GLOBALS->color_baseline;
  new_globals->color_grid = GLOBALS->color_grid;
+ new_globals->color_grid2 = GLOBALS->color_grid2;
  new_globals->color_high = GLOBALS->color_high;
  new_globals->color_low = GLOBALS->color_low;
  new_globals->color_1 = GLOBALS->color_1;
@@ -1800,7 +1794,11 @@ void reload_into_new_context(void)
 
  /* remaining windows which are completely destroyed and haven't migrated over */
  widget_only_destroy(&GLOBALS->window_ptranslate_c_5);		/* ptranslate.c */
- widget_only_destroy(&GLOBALS->window_strace_c_10);		/* strace.c */
+ WAVE_STRACE_ITERATOR(s_ctx_iter)
+	{
+	GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+	widget_only_destroy(&GLOBALS->strace_ctx->window_strace_c_10);	/* strace.c */
+	}
  widget_only_destroy(&GLOBALS->window_translate_c_11);		/* translate.c */
  widget_only_destroy(&GLOBALS->window_treesearch_gtk1_c);	/* treesearch_gtk1.c */
  widget_only_destroy(&GLOBALS->window_help_c_2); 		/* help.c : reload is gated off during help so this should never execute */
@@ -2308,6 +2306,8 @@ void reload_into_new_context(void)
  */
 void free_and_destroy_page_context(void)
 {
+ int s_ctx_iter;
+
  /* deallocate any loader-related stuff */
  switch(GLOBALS->loaded_file_type) {
    case LXT_FILE:
@@ -2340,7 +2340,12 @@ void free_and_destroy_page_context(void)
  /* window destruction (of windows that aren't the parent window) */
 
  widget_only_destroy(&GLOBALS->window_ptranslate_c_5);		/* ptranslate.c */
- widget_only_destroy(&GLOBALS->window_strace_c_10);		/* strace.c */
+
+ WAVE_STRACE_ITERATOR(s_ctx_iter)                                
+        {
+        GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+	widget_only_destroy(&GLOBALS->strace_ctx->window_strace_c_10);	/* strace.c */
+	}
  widget_only_destroy(&GLOBALS->window_translate_c_11);		/* translate.c */
  widget_only_destroy(&GLOBALS->window_treesearch_gtk1_c);	/* treesearch_gtk1.c */
  widget_only_destroy(&GLOBALS->window_treesearch_gtk2_c_12);	/* treesearch_gtk2.c */

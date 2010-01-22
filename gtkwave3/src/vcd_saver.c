@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005-2009.
+ * Copyright (c) Tony Bybell 2005-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -430,26 +430,38 @@ while(t)
 	if(!strace_append)
 		{
 		t=t->t_next;
-		if(!t) 
-			{
-	                if(GLOBALS->shadow_straces)
-	                        {
-	                        swap_strace_contexts();
-				st = GLOBALS->straces;
-
-				strace_append = 1;
-				t = st ? st->trace : NULL;
-				}
-			}
+		if(t) continue;
 		}
 		else
 		{
 		st = st->next;
 		t = st ? st->trace : NULL;
+		if(t) 
+			{
+			continue;
+			}
+			else
+			{
+			swap_strace_contexts();
+			}
 		}
+
+strace_concat:
+	GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = strace_append];	
+	strace_append++;
+	if(strace_append == WAVE_NUM_STRACE_WINDOWS) break;
+
+	if(!GLOBALS->strace_ctx->shadow_straces)
+		{
+		goto strace_concat;		
+		}
+
+	swap_strace_contexts();
+	st = GLOBALS->strace_ctx->straces;
+	t = st ? st->trace : NULL;
+	if(!t) {swap_strace_contexts(); goto strace_concat; }
 	}
 
-if(strace_append) swap_strace_contexts();
 if(!nodecnt) return(VCDSAV_EMPTY);
 
 
@@ -1459,6 +1471,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/07/07 20:12:53  gtkwave
+ * convert hex capitalization to match verilog
+ *
  * Revision 1.10  2009/04/30 19:18:41  gtkwave
  * added space before final brackets in VCD writers
  *
