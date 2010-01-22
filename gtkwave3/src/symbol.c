@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2001-2004
+ * Copyright (c) Tony Bybell 2001-2010
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include "vcd.h"
 #include "lxt.h"
 #include "bsearch.h"
+#include "hierpack.h"
 
 /*
  * Generic hash function for symbol names...
@@ -106,19 +107,66 @@ if(!GLOBALS->facs_are_sorted)
 	        if(!temp->next) break;
 	        temp=temp->next;
 	        }
-	
+
 	return(NULL); /* not found, add here if you want to add*/
 	}
 	else	/* no sense hashing if the facs table is built */
 	{	
+	struct symbol *sr;
 	DEBUG(printf("BSEARCH: %s\n",s));
-	return(bsearch_facs(s, rows_return));
+
+	sr = bsearch_facs(s, rows_return);
+	if(sr)
+		{
+		}
+		else
+		{
+		/* this is because . is > in ascii than chars like $ but . was converted to 0x1 on sort */
+		char *s2 = s;
+		int i;
+		int lmax = 0;
+		int mat = 0;
+
+		while(*s2)
+			{
+			if(*s2 < GLOBALS->hier_delimeter)
+				{
+				lmax = GLOBALS->numfacs;
+				break;
+				}
+			s2++;
+			}
+
+		for(i=0;i<lmax;i++)
+		        {
+		        int was_packed;
+		        char *hfacname = NULL;
+
+		        hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
+			if(!strcmp(hfacname, s))
+				{
+				mat = 1;
+				}
+
+		        if(was_packed) { free_2(hfacname); }
+			if(mat)
+				{
+				sr = GLOBALS->facs[i];
+				break;
+				}
+		        }
+		}
+
+	return(sr);
 	}
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:45  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.4  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *
