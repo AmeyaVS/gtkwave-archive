@@ -2760,9 +2760,14 @@ if(GLOBALS->helpbox_is_active)
 	if ((t->flags&TR_HIGHLIGHT)&&HasWave(t))
 	  {
 	    /* at least one good trace, so do it */
-	    /* data contains WV_MENU_SPS or WV_MENU_SPS2 */
-	    const char *t = (data == (gpointer)WV_MENU_SPS) ? "Waveform Display Search (1)" : "Waveform Display Search (2)";
-	    tracesearchbox(t, GTK_SIGNAL_FUNC(menu_tracesearchbox_callback), data);
+	    /* data contains WV_MENU_SPS or WV_MENU_SPS2 or ... but the base is WV_MENU_SPS*/
+	    char buf[128];
+	    int which = ((int)data) - WV_MENU_SPS;
+
+	    if((which < 0) || (which >= WAVE_NUM_STRACE_WINDOWS)) { which = 0; } /* should never happen unless menus are defined wrong */
+
+	    sprintf(buf, "Waveform Display Search (%d)", which+1);
+	    tracesearchbox(buf, GTK_SIGNAL_FUNC(menu_tracesearchbox_callback), (gpointer)which);
 	    return;
 	  }
 	}
@@ -4013,8 +4018,13 @@ void read_save_helper(char *wname) {
                 else
                 {
                 char *iline;      
-		char any_shadow[WAVE_NUM_STRACE_WINDOWS] = { 0, 0 };
 		int s_ctx_iter;
+
+                WAVE_STRACE_ITERATOR(s_ctx_iter)
+                        {
+                        GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+                        GLOBALS->strace_ctx->shadow_encountered_parsewavline = 0;
+                        }
 
 		if(GLOBALS->traces.total)
 			{
@@ -4059,7 +4069,7 @@ void read_save_helper(char *wname) {
                 while((iline=fgetmalloc(wave)))
                         {
                         parsewavline(iline, NULL, 0);
-			any_shadow[GLOBALS->strace_current_window] |= GLOBALS->strace_ctx->shadow_active;
+			GLOBALS->strace_ctx->shadow_encountered_parsewavline |= GLOBALS->strace_ctx->shadow_active;
                         free_2(iline);
                         }
 
@@ -4067,8 +4077,10 @@ void read_save_helper(char *wname) {
 			{
 			GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
 
-			if(any_shadow[s_ctx_iter])
+			if(GLOBALS->strace_ctx->shadow_encountered_parsewavline)
 				{
+				GLOBALS->strace_ctx->shadow_encountered_parsewavline = 0;
+
 				if(GLOBALS->strace_ctx->shadow_straces)
 					{
 					GLOBALS->strace_ctx->shadow_active = 1;
@@ -6147,6 +6159,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.89  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.88  2010/01/20 21:39:20  gtkwave
  * move to time support of named markers
  * 

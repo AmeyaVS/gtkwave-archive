@@ -1362,8 +1362,13 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 	        else
 	        {
 	        char *iline;
-		char any_shadow[WAVE_NUM_STRACE_WINDOWS] = { 0, 0 };
 		int s_ctx_iter;
+
+                WAVE_STRACE_ITERATOR(s_ctx_iter)
+                        {
+                        GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
+                        GLOBALS->strace_ctx->shadow_encountered_parsewavline = 0;
+			}
 
 		if(GLOBALS->is_lx2)
 			{
@@ -1407,7 +1412,7 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 	        while((iline=fgetmalloc(wave)))
 	                {
 	                parsewavline(iline, NULL, 0);
-			any_shadow[GLOBALS->strace_current_window] |= GLOBALS->strace_ctx->shadow_active;
+			GLOBALS->strace_ctx->shadow_encountered_parsewavline |= GLOBALS->strace_ctx->shadow_active;
 			free_2(iline);
 	                }
 		GLOBALS->default_flags=TR_RJUSTIFY;
@@ -1421,8 +1426,10 @@ if((wname)||(vcd_save_handle_cached)||(is_smartsave))
 			{
 			GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window = s_ctx_iter];
 
-	                if(any_shadow[s_ctx_iter])
+	                if(GLOBALS->strace_ctx->shadow_encountered_parsewavline)
 	                        {
+				GLOBALS->strace_ctx->shadow_encountered_parsewavline = 0;
+
 	                        if(GLOBALS->strace_ctx->shadow_straces)
 	                                {
 	                                GLOBALS->strace_ctx->shadow_active = 1;
@@ -2638,6 +2645,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.91  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.90  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

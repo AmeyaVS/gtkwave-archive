@@ -340,7 +340,7 @@ void tracesearchbox(const char *title, GtkSignalFunc func, gpointer data)
     int i;
     int numtraces;
 
-    GLOBALS->strace_current_window = (data == (gpointer)WV_MENU_SPS) ? 0 : 1; /* arg for which search box going in */
+    GLOBALS->strace_current_window = (int)data; /* arg for which search box going in */
     GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window];
 
     if(GLOBALS->strace_ctx->straces) 
@@ -1689,6 +1689,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.13  2010/01/18 16:23:27  gtkwave
  * clock count fix (>= rather than > in endcap check for loop break)
  *

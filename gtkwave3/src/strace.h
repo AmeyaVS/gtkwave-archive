@@ -94,6 +94,7 @@ void (*cleanup_strace_c_7)(); /* from strace.c 437 */
 char logical_mutex[6]; /* from strace.c 440 */   
 char shadow_logical_mutex[6]; /* from strace.c 441 */
 char shadow_active; /* from strace.c 442 */
+char shadow_encountered_parsewavline; /* for scaling */
 char shadow_type; /* from strace.c 443 */
 char *shadow_string; /* from strace.c 444 */
 signed char mark_idx_start; /* from strace.c 445 */
@@ -123,6 +124,9 @@ void delete_mprintf(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.4  2008/10/17 14:42:35  gtkwave
  * added findNextEdge/findPrevEdge to tcl interpreter
  *

@@ -799,8 +799,11 @@ NULL, /* bold_tag_status_c_3 401 */
  * strace.c
  */
 NULL, /* strace_ctx (defined in strace.h for multiple strace sessions) */
-{{NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,NULL,0,0,0,0,NULL,NULL}, /* strace_windows[0] */
-{NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,NULL,0,0,0,0,NULL,NULL}}, /* strace_windows[1] */
+{{NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,0,NULL,0,0,0,0,NULL,NULL}, /* strace_windows[0] */
+{NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,0,NULL,0,0,0,0,NULL,NULL}}, /* strace_windows[1] */
+#if WAVE_NUM_STRACE_WINDOWS != 2
+#error the number of strace windows as defined in strace.h does not match globals.c!
+#endif
 0, /* strace_current_window */
 
 
