@@ -791,7 +791,7 @@ f_show_base_symbols	("off");
 f_color_back   		("000000"); /* black */
 f_color_baseline 	("ffffff"); /* white */
 f_color_grid		("202070"); /* dark dark blue */
-f_color_grid2		("79f6f2"); /* light light blue */
+f_color_grid2		("6a5acd"); /* slate blue */
 f_color_high		("79f6f2"); /* light light blue */
 f_color_low		("5dbebb"); /* light blue */
 f_color_1		("00ff00"); /* green */
@@ -945,6 +945,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.19  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

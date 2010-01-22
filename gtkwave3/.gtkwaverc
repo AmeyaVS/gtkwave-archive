@@ -49,7 +49,7 @@ vcd_explicit_zero_subscripts no
 color_back   000000
 color_baseline ffffff
 color_grid   202070
-color_grid2  79f6f2
+color_grid2  6a5acd
 color_high   79f6f2
 color_low    5dbebb
 color_1      00ff00
