@@ -814,7 +814,9 @@ NULL, /* strace_ctx (defined in strace.h for multiple strace sessions) */
 NULL, /* sym 424 */
 NULL, /* facs 425 */
 0, /* facs_are_sorted 426 */
+#ifdef WAVE_HIERFIX
 0, /* facs_have_symbols_state_machine */
+#endif
 0, /* numfacs 427 */
 0, /* regions 428 */
 0, /* longestname 429 */

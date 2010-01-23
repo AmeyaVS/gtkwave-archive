@@ -269,16 +269,21 @@ recurse_tree_build_whichcache(GLOBALS->treeroot);
 
 for(i=0;i<GLOBALS->numfacs;i++)
         {
-        char *subst, ch;
+        char *subst;
+#ifdef WAVE_HIERFIX
+        char ch;
+#endif
         int len;
         struct symbol *curnode = GLOBALS->facs[i];
 
         if((len=strlen(subst=curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+#ifdef WAVE_HIERFIX
         while((ch=(*subst)))
                 { 
                 if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
                 subst++;
                 }
+#endif
         }
 
 wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
@@ -298,6 +303,7 @@ if(GLOBALS->gwt_corr_ghw_c_1)
 	incinerate_whichcache_tree(GLOBALS->gwt_corr_ghw_c_1); GLOBALS->gwt_corr_ghw_c_1 = NULL;
 	}
  
+#ifdef WAVE_HIERFIX
 for(i=0;i<GLOBALS->numfacs;i++)
         {
         char *subst, ch;
@@ -309,6 +315,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
                 subst++;
                 }
         }
+#endif
 
 GLOBALS->facs_are_sorted=1;
 }
@@ -1118,6 +1125,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/01/05 06:18:33  gtkwave
+ * emergency fix on missing comment causing bad code
+ *
  * Revision 1.9  2009/12/29 07:07:49  gtkwave
  * fixes for ghw files
  *

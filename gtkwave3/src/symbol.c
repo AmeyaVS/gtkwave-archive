@@ -116,6 +116,7 @@ if(!GLOBALS->facs_are_sorted)
 	DEBUG(printf("BSEARCH: %s\n",s));
 
 	sr = bsearch_facs(s, rows_return);
+#ifdef WAVE_HIERFIX
 	if(sr)
 		{
 		}
@@ -180,7 +181,7 @@ if(!GLOBALS->facs_are_sorted)
 			}
 
 		}
-
+#endif
 	return(sr);
 	}
 }
@@ -188,6 +189,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.3  2010/01/22 01:00:03  gtkwave
  * fix for bsearch_facs fail when $ is in name at same pos as . in another
  *

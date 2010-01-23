@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2003-2009.
+ * Copyright (c) Tony Bybell 2003-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -394,7 +394,11 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
 		while((ch=(*subst)))
 			{	
+#ifdef WAVE_HIERFIX
 	                if(ch==GLOBALS->hier_delimeter) { *subst=(!esc) ? VCDNAM_HIERSORT : VCDNAM_ESCAPE; }    /* forces sort at hier boundaries */
+#else
+	                if((ch==GLOBALS->hier_delimeter)&&(esc)) { *subst = VCDNAM_ESCAPE; }    /* forces sort at hier boundaries */
+#endif
 	                else if(ch=='\\') { esc = 1; GLOBALS->escaped_names_found_vcd_c_1 = 1; }
 	                subst++;
 			}
@@ -403,7 +407,8 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 /* SPLASH */                            splash_sync(3, 5);
 	fprintf(stderr, LXT2_RDLOAD"Sorting facilities at hierarchy boundaries.\n");
 	wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
-	
+
+#ifdef WAVE_HIERFIX	
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
@@ -415,6 +420,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 			subst++;
 			}
 		}
+#endif
 
 	GLOBALS->facs_are_sorted=1;
 
@@ -885,6 +891,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/08/06 20:03:31  gtkwave
+ * warnings fixes
+ *
  * Revision 1.9  2009/07/01 07:39:12  gtkwave
  * decorating hierarchy tree with module type info
  *

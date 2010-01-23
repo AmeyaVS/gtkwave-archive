@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2273,22 +2273,28 @@ GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *
 GLOBALS->curnode=GLOBALS->firstnode;
 for(i=0;i<GLOBALS->numfacs;i++)
         {
-        char *subst, ch;
+        char *subst;
+#ifdef WAVE_HIERFIX
+        char ch;
+#endif
         int len;
                  
         GLOBALS->facs[i]=GLOBALS->curnode;
         if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
         GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+#ifdef WAVE_HIERFIX
         while((ch=(*subst)))
                 {
                 if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
                 subst++;
                 }
+#endif
         }
 
 /* quicksort(facs,0,numfacs-1); */	/* quicksort deprecated because it degenerates on sorted traces..badly.  very badly. */
 wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
 
+#ifdef WAVE_HIERFIX
 for(i=0;i<GLOBALS->numfacs;i++)
         {
         char *subst, ch;
@@ -2304,6 +2310,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
         printf("%-4d %s\n",i,facs[i]->name);
 #endif
         }
+#endif
 
 GLOBALS->facs_are_sorted=1;
 
@@ -2551,6 +2558,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2009/08/28 19:58:42  gtkwave
+ * added malform_eof_fix
+ *
  * Revision 1.21  2009/07/07 19:46:03  gtkwave
  * make evcd->vcd conversion table const
  *

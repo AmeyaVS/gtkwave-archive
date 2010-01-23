@@ -1035,7 +1035,9 @@ int TracesReorder(int mode)
 {
 Trptr t, prev = NULL;
 Trptr *tsort, *tsort_pnt;
+#ifdef WAVE_HIERFIX
 char *subst, ch;
+#endif
 int i;
 int (*cptr)(const void*, const void*);
    
@@ -1052,12 +1054,14 @@ for(i=0;i<GLOBALS->traces.total;i++)
                 }
         *(tsort_pnt++)=t;
 
+#ifdef WAVE_HIERFIX
 	if((subst=t->name))
 	        while((ch=(*subst)))
         	        {
         	        if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; } /* forces sort at hier boundaries */
         	        subst++;
         	        }
+#endif
 
         t=t->t_next;
         }
@@ -1171,12 +1175,14 @@ for(i=0;i<GLOBALS->traces.total;i++)
 
 	prev=t;
 
+#ifdef WAVE_HIERFIX
 	if((subst=t->name))
 	        while((ch=(*subst)))
         	        {
         	        if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; } /* restore hier */
         	        subst++;
         	        }
+#endif
         }
 
 GLOBALS->traces.last=prev;
@@ -1381,6 +1387,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.13  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

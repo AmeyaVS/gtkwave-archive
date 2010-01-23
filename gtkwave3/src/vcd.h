@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,7 +49,11 @@
 		exit(x); \
 		}
 
-enum VCDName_ByteSubstitutions { VCDNAM_NULL=0, VCDNAM_HIERSORT, VCDNAM_ESCAPE };
+enum VCDName_ByteSubstitutions { VCDNAM_NULL=0, 
+#ifdef WAVE_HIERFIX
+VCDNAM_HIERSORT, 
+#endif
+VCDNAM_ESCAPE };
 
 /* fix for contrib/rtlbrowse */
 #ifndef VLEX_DEFINES_H
@@ -125,6 +129,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/07/02 18:50:47  gtkwave
+ * decorate VCD module trees with type info, add move to front to buildname
+ *
  * Revision 1.5  2009/06/25 18:31:19  gtkwave
  * added event types for VCD+FST and impulse arrows on event types
  *

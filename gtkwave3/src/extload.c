@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2009.
+ * Copyright (c) Tony Bybell 2009-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -656,23 +656,29 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 	GLOBALS->curnode=GLOBALS->firstnode;
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
-		char *subst, ch;
+		char *subst;
+#ifdef WAVE_HIERFIX
+		char ch;
+#endif
 		int len;
 
 		GLOBALS->facs[i]=GLOBALS->curnode;
 	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+#ifdef WAVE_HIERFIX
 		while((ch=(*subst)))
 			{	
 			if(ch==GLOBALS->hier_delimeter) { *subst=VCDNAM_HIERSORT; }	/* forces sort at hier boundaries */
 			subst++;
 			}
+#endif
 		}
 
 /* SPLASH */                            splash_sync(3, 5);  
 	fprintf(stderr, EXTLOAD"Sorting facilities at hierarchy boundaries.\n");
 	wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
 	
+#ifdef WAVE_HIERFIX
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
@@ -684,7 +690,8 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 			subst++;
 			}
 		}
-	
+#endif	
+
 	GLOBALS->facs_are_sorted=1;
 
 /* SPLASH */                            splash_sync(4, 5);  
@@ -1020,6 +1027,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/07/01 07:39:12  gtkwave
+ * decorating hierarchy tree with module type info
+ *
  * Revision 1.4  2009/02/16 17:16:05  gtkwave
  * extload error hardening and recovery
  *
