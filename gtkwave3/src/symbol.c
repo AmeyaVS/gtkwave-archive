@@ -116,7 +116,6 @@ if(!GLOBALS->facs_are_sorted)
 	DEBUG(printf("BSEARCH: %s\n",s));
 
 	sr = bsearch_facs(s, rows_return);
-#ifdef WAVE_HIERFIX
 	if(sr)
 		{
 		}
@@ -127,29 +126,44 @@ if(!GLOBALS->facs_are_sorted)
 		int i;
 		int mat;
 
+#ifndef WAVE_HIERFIX
+		if(!GLOBALS->escaped_names_found_vcd_c_1)
+			{
+			return(sr);
+			}
+#endif
+
 		if(GLOBALS->facs_have_symbols_state_machine == 0)
 			{
-			mat = 0;
-			for(i=0;i<GLOBALS->numfacs;i++)
-			        {
-			        int was_packed;
-			        char *hfacname = NULL;
-	
-			        hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
-				s2 = hfacname;
-				while(*s2)
-					{
-					if(*s2 < GLOBALS->hier_delimeter)
-						{
-						mat = 1;
-						break;
-						}
-					s2++;
-					}
+			if(GLOBALS->escaped_names_found_vcd_c_1)
+				{
+				mat = 1;
+				}
+				else
+				{
+				mat = 0;
 
-			        if(was_packed) { free_2(hfacname); }
-				if(mat) { break; }
-			        }
+				for(i=0;i<GLOBALS->numfacs;i++)
+				        {
+				        int was_packed;
+				        char *hfacname = NULL;
+		
+				        hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
+					s2 = hfacname;
+					while(*s2)
+						{
+						if(*s2 < GLOBALS->hier_delimeter)
+							{
+							mat = 1;
+							break;
+							}
+						s2++;
+						}
+	
+				        if(was_packed) { free_2(hfacname); }
+					if(mat) { break; }
+				        }
+				}
 
 			if(mat) 
 				{ GLOBALS->facs_have_symbols_state_machine = 1; }
@@ -181,7 +195,7 @@ if(!GLOBALS->facs_are_sorted)
 			}
 
 		}
-#endif
+
 	return(sr);
 	}
 }
@@ -189,6 +203,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.4  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *

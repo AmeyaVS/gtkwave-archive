@@ -804,9 +804,7 @@ int strace_current_window;
 struct symbol **sym; /* from symbol.c 453 */
 struct symbol **facs; /* from symbol.c 454 */
 char facs_are_sorted; /* from symbol.c 455 */
-#ifdef WAVE_HIERFIX
 char facs_have_symbols_state_machine; /* from symbol.c */
-#endif
 int numfacs; /* from symbol.c 456 */
 int regions; /* from symbol.c 457 */
 int longestname; /* from symbol.c 458 */
