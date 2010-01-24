@@ -761,10 +761,3 @@
 		Added sanity checking on WAVE_NUM_STRACE_WINDOWS.
 		Added fix for broken bsearch_facs() when characters like
 		"$" are in a facname and it matches a hierarchy boundary.
-
-		<< Update docs for "Move to Time >>
-		<< Update docs with new marker locking ops >>
-		<< Update docs for pattern search -> pattern search 1
-		and pattern search 2 >>
-		<< add color_grid2 to documentation from gtkwaverc manfile >>
-		
