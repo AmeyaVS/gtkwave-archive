@@ -7,7 +7,6 @@ Trace group support is  Copyright (C) 2009-2010 Donald Baltus.
 GHW and additional GUI support is Copyright (C) 2005-2010 Tristan Gingold.
 Analog support is Copyright (C) 2005-2010 Thomas Sailer.
 External DnD support is Copyright (C) 2008-2010 Concept Engineering GmbH.
-tla2vcd is Copyright (C) 2005-2010 Emil.
 LZMA SDK was written and placed in the public domain by Igor Pavlov.
 FastLZ is Copyright (C) 2005-2010 Ariya Hidayat.
 

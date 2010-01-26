@@ -38,9 +38,8 @@ LIBOBJDIR =
 bin_PROGRAMS = evcd2vcd$(EXEEXT) fst2vcd$(EXEEXT) vcd2fst$(EXEEXT) \
 	ghwdump$(EXEEXT) lxt2miner$(EXEEXT) lxt2vcd$(EXEEXT) \
 	mvl2lxt$(EXEEXT) mvl2vcd$(EXEEXT) shmidcat$(EXEEXT) \
-	tex2vcd$(EXEEXT) tla2vcd$(EXEEXT) vcd2lxt$(EXEEXT) \
-	vcd2lxt2$(EXEEXT) vcd2vzt$(EXEEXT) vzt2vcd$(EXEEXT) \
-	vztminer$(EXEEXT)
+	tex2vcd$(EXEEXT) vcd2lxt$(EXEEXT) vcd2lxt2$(EXEEXT) \
+	vcd2vzt$(EXEEXT) vzt2vcd$(EXEEXT) vztminer$(EXEEXT)
 subdir = src/helpers
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -83,9 +82,6 @@ shmidcat_LDADD = $(LDADD)
 tex2vcd_SOURCES = tex2vcd.c
 tex2vcd_OBJECTS = tex2vcd.$(OBJEXT)
 tex2vcd_LDADD = $(LDADD)
-am_tla2vcd_OBJECTS = tla2vcd.$(OBJEXT) gnu_regex.$(OBJEXT)
-tla2vcd_OBJECTS = $(am_tla2vcd_OBJECTS)
-tla2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_vcd2fst_OBJECTS = vcd2fst.$(OBJEXT) fastlz.$(OBJEXT) \
 	fstapi.$(OBJEXT) jrb.$(OBJEXT)
 vcd2fst_OBJECTS = $(am_vcd2fst_OBJECTS)
@@ -122,15 +118,14 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(evcd2vcd_SOURCES) $(fst2vcd_SOURCES) $(ghwdump_SOURCES) \
 	$(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) \
-	mvl2vcd.c shmidcat.c tex2vcd.c $(tla2vcd_SOURCES) \
-	$(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) \
-	$(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) $(vztminer_SOURCES)
+	mvl2vcd.c shmidcat.c tex2vcd.c $(vcd2fst_SOURCES) \
+	$(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) \
+	$(vzt2vcd_SOURCES) $(vztminer_SOURCES)
 DIST_SOURCES = $(evcd2vcd_SOURCES) $(fst2vcd_SOURCES) \
 	$(ghwdump_SOURCES) $(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) \
 	$(mvl2lxt_SOURCES) mvl2vcd.c shmidcat.c tex2vcd.c \
-	$(tla2vcd_SOURCES) $(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) \
-	$(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) \
-	$(vztminer_SOURCES)
+	$(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) \
+	$(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) $(vztminer_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -273,8 +268,6 @@ vztminer_SOURCES = vztminer.c vzt_read.c vzt_read.h
 vztminer_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD)
 lxt2miner_SOURCES = lxt2miner.c lxt2_read.c lxt2_read.h
 lxt2miner_LDADD = $(LIBZ_LDADD)
-tla2vcd_SOURCES = tla2vcd.c $(srcdir)/../gnu_regex.c $(srcdir)/../gnu_regex.h
-tla2vcd_LDADD = $(LIBZ_LDADD) $(GTK_LIBS)
 ghwdump_SOURCES = ghwdump.c $(srcdir)/../ghwlib.c
 evcd2vcd_SOURCES = evcd2vcd.c ../../contrib/rtlbrowse/jrb.h ../../contrib/rtlbrowse/jrb.c
 all: all-am
@@ -360,9 +353,6 @@ shmidcat$(EXEEXT): $(shmidcat_OBJECTS) $(shmidcat_DEPENDENCIES)
 tex2vcd$(EXEEXT): $(tex2vcd_OBJECTS) $(tex2vcd_DEPENDENCIES) 
 	@rm -f tex2vcd$(EXEEXT)
 	$(LINK) $(tex2vcd_LDFLAGS) $(tex2vcd_OBJECTS) $(tex2vcd_LDADD) $(LIBS)
-tla2vcd$(EXEEXT): $(tla2vcd_OBJECTS) $(tla2vcd_DEPENDENCIES) 
-	@rm -f tla2vcd$(EXEEXT)
-	$(LINK) $(tla2vcd_LDFLAGS) $(tla2vcd_OBJECTS) $(tla2vcd_LDADD) $(LIBS)
 vcd2fst$(EXEEXT): $(vcd2fst_OBJECTS) $(vcd2fst_DEPENDENCIES) 
 	@rm -f vcd2fst$(EXEEXT)
 	$(LINK) $(vcd2fst_LDFLAGS) $(vcd2fst_OBJECTS) $(vcd2fst_LDADD) $(LIBS)
@@ -394,7 +384,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fstapi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwdump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ghwlib.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnu_regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jrb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2_read.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2_write.Po@am__quote@
@@ -406,7 +395,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scopenav.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shmidcat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tex2vcd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tla2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v2l_debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v2l_debug_lxt2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd2fst.Po@am__quote@
@@ -487,20 +475,6 @@ ghwlib.obj: $(srcdir)/../ghwlib.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../ghwlib.c' object='ghwlib.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ghwlib.obj `if test -f '$(srcdir)/../ghwlib.c'; then $(CYGPATH_W) '$(srcdir)/../ghwlib.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../ghwlib.c'; fi`
-
-gnu_regex.o: $(srcdir)/../gnu_regex.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnu_regex.o -MD -MP -MF "$(DEPDIR)/gnu_regex.Tpo" -c -o gnu_regex.o `test -f '$(srcdir)/../gnu_regex.c' || echo '$(srcdir)/'`$(srcdir)/../gnu_regex.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gnu_regex.Tpo" "$(DEPDIR)/gnu_regex.Po"; else rm -f "$(DEPDIR)/gnu_regex.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../gnu_regex.c' object='gnu_regex.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnu_regex.o `test -f '$(srcdir)/../gnu_regex.c' || echo '$(srcdir)/'`$(srcdir)/../gnu_regex.c
-
-gnu_regex.obj: $(srcdir)/../gnu_regex.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gnu_regex.obj -MD -MP -MF "$(DEPDIR)/gnu_regex.Tpo" -c -o gnu_regex.obj `if test -f '$(srcdir)/../gnu_regex.c'; then $(CYGPATH_W) '$(srcdir)/../gnu_regex.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../gnu_regex.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gnu_regex.Tpo" "$(DEPDIR)/gnu_regex.Po"; else rm -f "$(DEPDIR)/gnu_regex.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../gnu_regex.c' object='gnu_regex.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gnu_regex.obj `if test -f '$(srcdir)/../gnu_regex.c'; then $(CYGPATH_W) '$(srcdir)/../gnu_regex.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../gnu_regex.c'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)

@@ -761,3 +761,5 @@
 		Added sanity checking on WAVE_NUM_STRACE_WINDOWS.
 		Added fix for broken bsearch_facs() when characters like
 		"$" are in a facname and it matches a hierarchy boundary.
+		Removed tla2vcd from distribution because of incompatibility
+		with some TLA700 traces.

@@ -9,7 +9,7 @@ LIBLZMA_LDADD  = -L../liblzma -lgwlzma $(LIBXZ_LDADD)
 AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) -I./fst -I../../contrib/rtlbrowse
 
 bin_PROGRAMS= evcd2vcd fst2vcd vcd2fst ghwdump lxt2miner lxt2vcd mvl2lxt mvl2vcd \
-	shmidcat tex2vcd tla2vcd vcd2lxt vcd2lxt2 vcd2vzt \
+	shmidcat tex2vcd vcd2lxt vcd2lxt2 vcd2vzt \
 	vzt2vcd vztminer
 
 vcd2fst_SOURCES= vcd2fst.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/fstapi.h ../../contrib/rtlbrowse/jrb.h ../../contrib/rtlbrowse/jrb.c
@@ -41,9 +41,6 @@ vztminer_LDADD= $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD)
 
 lxt2miner_SOURCES= lxt2miner.c lxt2_read.c lxt2_read.h
 lxt2miner_LDADD= $(LIBZ_LDADD)
-
-tla2vcd_SOURCES= tla2vcd.c $(srcdir)/../gnu_regex.c $(srcdir)/../gnu_regex.h
-tla2vcd_LDADD= $(LIBZ_LDADD) $(GTK_LIBS)
 
 ghwdump_SOURCES= ghwdump.c $(srcdir)/../ghwlib.c
 
