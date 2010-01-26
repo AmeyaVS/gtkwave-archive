@@ -37,8 +37,7 @@ POST_UNINSTALL = :
 LIBOBJDIR =
 bin_PROGRAMS = evcd2vcd$(EXEEXT) fst2vcd$(EXEEXT) vcd2fst$(EXEEXT) \
 	ghwdump$(EXEEXT) lxt2miner$(EXEEXT) lxt2vcd$(EXEEXT) \
-	mvl2lxt$(EXEEXT) mvl2vcd$(EXEEXT) shmidcat$(EXEEXT) \
-	tex2vcd$(EXEEXT) vcd2lxt$(EXEEXT) vcd2lxt2$(EXEEXT) \
+	shmidcat$(EXEEXT) vcd2lxt$(EXEEXT) vcd2lxt2$(EXEEXT) \
 	vcd2vzt$(EXEEXT) vzt2vcd$(EXEEXT) vztminer$(EXEEXT)
 subdir = src/helpers
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -70,18 +69,9 @@ am_lxt2vcd_OBJECTS = lxt2_read.$(OBJEXT) lxt2vcd.$(OBJEXT) \
 	scopenav.$(OBJEXT)
 lxt2vcd_OBJECTS = $(am_lxt2vcd_OBJECTS)
 lxt2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am_mvl2lxt_OBJECTS = mvl2lxt.$(OBJEXT) lxt_write.$(OBJEXT)
-mvl2lxt_OBJECTS = $(am_mvl2lxt_OBJECTS)
-mvl2lxt_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-mvl2vcd_SOURCES = mvl2vcd.c
-mvl2vcd_OBJECTS = mvl2vcd.$(OBJEXT)
-mvl2vcd_LDADD = $(LDADD)
 shmidcat_SOURCES = shmidcat.c
 shmidcat_OBJECTS = shmidcat.$(OBJEXT)
 shmidcat_LDADD = $(LDADD)
-tex2vcd_SOURCES = tex2vcd.c
-tex2vcd_OBJECTS = tex2vcd.$(OBJEXT)
-tex2vcd_LDADD = $(LDADD)
 am_vcd2fst_OBJECTS = vcd2fst.$(OBJEXT) fastlz.$(OBJEXT) \
 	fstapi.$(OBJEXT) jrb.$(OBJEXT)
 vcd2fst_OBJECTS = $(am_vcd2fst_OBJECTS)
@@ -117,15 +107,14 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(evcd2vcd_SOURCES) $(fst2vcd_SOURCES) $(ghwdump_SOURCES) \
-	$(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) $(mvl2lxt_SOURCES) \
-	mvl2vcd.c shmidcat.c tex2vcd.c $(vcd2fst_SOURCES) \
-	$(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) \
-	$(vzt2vcd_SOURCES) $(vztminer_SOURCES)
-DIST_SOURCES = $(evcd2vcd_SOURCES) $(fst2vcd_SOURCES) \
-	$(ghwdump_SOURCES) $(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) \
-	$(mvl2lxt_SOURCES) mvl2vcd.c shmidcat.c tex2vcd.c \
+	$(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) shmidcat.c \
 	$(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) $(vcd2lxt2_SOURCES) \
 	$(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) $(vztminer_SOURCES)
+DIST_SOURCES = $(evcd2vcd_SOURCES) $(fst2vcd_SOURCES) \
+	$(ghwdump_SOURCES) $(lxt2miner_SOURCES) $(lxt2vcd_SOURCES) \
+	shmidcat.c $(vcd2fst_SOURCES) $(vcd2lxt_SOURCES) \
+	$(vcd2lxt2_SOURCES) $(vcd2vzt_SOURCES) $(vzt2vcd_SOURCES) \
+	$(vztminer_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -252,8 +241,6 @@ vcd2fst_SOURCES = vcd2fst.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/f
 vcd2fst_LDADD = $(LIBZ_LDADD)
 fst2vcd_SOURCES = fst2vcd.c ./fst/fastlz.c ./fst/fastlz.h ./fst/fstapi.c ./fst/fstapi.h
 fst2vcd_LDADD = $(LIBZ_LDADD)
-mvl2lxt_SOURCES = mvl2lxt.c lxt_write.c lxt_write.h
-mvl2lxt_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD)
 vcd2lxt_SOURCES = vcd2lxt.c lxt_write.c lxt_write.h v2l_analyzer.h v2l_debug.c v2l_debug.h
 vcd2lxt_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD)
 lxt2vcd_SOURCES = lxt2_read.c lxt2_read.h lxt2vcd.c scopenav.c
@@ -341,18 +328,9 @@ lxt2miner$(EXEEXT): $(lxt2miner_OBJECTS) $(lxt2miner_DEPENDENCIES)
 lxt2vcd$(EXEEXT): $(lxt2vcd_OBJECTS) $(lxt2vcd_DEPENDENCIES) 
 	@rm -f lxt2vcd$(EXEEXT)
 	$(LINK) $(lxt2vcd_LDFLAGS) $(lxt2vcd_OBJECTS) $(lxt2vcd_LDADD) $(LIBS)
-mvl2lxt$(EXEEXT): $(mvl2lxt_OBJECTS) $(mvl2lxt_DEPENDENCIES) 
-	@rm -f mvl2lxt$(EXEEXT)
-	$(LINK) $(mvl2lxt_LDFLAGS) $(mvl2lxt_OBJECTS) $(mvl2lxt_LDADD) $(LIBS)
-mvl2vcd$(EXEEXT): $(mvl2vcd_OBJECTS) $(mvl2vcd_DEPENDENCIES) 
-	@rm -f mvl2vcd$(EXEEXT)
-	$(LINK) $(mvl2vcd_LDFLAGS) $(mvl2vcd_OBJECTS) $(mvl2vcd_LDADD) $(LIBS)
 shmidcat$(EXEEXT): $(shmidcat_OBJECTS) $(shmidcat_DEPENDENCIES) 
 	@rm -f shmidcat$(EXEEXT)
 	$(LINK) $(shmidcat_LDFLAGS) $(shmidcat_OBJECTS) $(shmidcat_LDADD) $(LIBS)
-tex2vcd$(EXEEXT): $(tex2vcd_OBJECTS) $(tex2vcd_DEPENDENCIES) 
-	@rm -f tex2vcd$(EXEEXT)
-	$(LINK) $(tex2vcd_LDFLAGS) $(tex2vcd_OBJECTS) $(tex2vcd_LDADD) $(LIBS)
 vcd2fst$(EXEEXT): $(vcd2fst_OBJECTS) $(vcd2fst_DEPENDENCIES) 
 	@rm -f vcd2fst$(EXEEXT)
 	$(LINK) $(vcd2fst_LDFLAGS) $(vcd2fst_OBJECTS) $(vcd2fst_LDADD) $(LIBS)
@@ -390,11 +368,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2miner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt_write.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mvl2lxt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mvl2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scopenav.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shmidcat.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tex2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v2l_debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v2l_debug_lxt2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd2fst.Po@am__quote@
