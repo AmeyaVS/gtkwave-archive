@@ -25,13 +25,6 @@
 
 #define WAVE_MAX_CLIST_LENGTH 15000
 
-struct memchunk
-{
-struct memchunk *next;
-void *ptr;
-size_t size;
-};
-
 
 /*
  * If you have problems viewing traces (mangled timevalues),
@@ -202,6 +195,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2009/10/08 15:32:53  gtkwave
+ * remove all instances of "long long"
+ *
  * Revision 1.9  2009/06/07 08:40:44  gtkwave
  * adding FST support
  *
