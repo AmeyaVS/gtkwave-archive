@@ -750,7 +750,7 @@
 		Fixed missing dependencies in various Makefile.am files.
 3.3.2	05jan10	Emergency fix for ghw.c as it was missing a close comment
 		causing problems with iterative generate.
-3.3.3	26jan10	Fix for Pattern Search where end marker time was not used
+3.3.3	07feb10	Fix for Pattern Search where end marker time was not used
 		for dropping down a marker: for clock counts this would
 		mean that the clock count was off by one.
 		Added locking/unlocking of named markers against the
@@ -764,3 +764,6 @@
 		Removed tla2vcd from distribution because of incompatibility
 		with some TLA700 traces.
 		Removed obsolete helper executables.
+		Activated preliminary line clipping for analog rendering as
+		line clipping in GTK does not always work for extreme
+		value ranges.

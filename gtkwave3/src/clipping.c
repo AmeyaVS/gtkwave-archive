@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005
+ * Copyright (c) Tony Bybell 2005-2010
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,13 +22,9 @@
 #define rx2 rect[2]
 #define ry2 rect[3]
 
-/* function currently unused...for future use */
-
 int wave_lineclip(int *coords, int *rect)
 {
 int msk1, msk2;
-
-return(1);
 
 msk1 = (x1<rx1);
 msk1|= (x1>rx2)<<1;
@@ -56,8 +52,8 @@ if(x1==x2)
 	}
 else
 	{
-	float m = (y2-y1)/(x2-x1);
-	float b = y1 - m*x1;
+	double m = (y2-y1)/(x2-x1); /* use double as larger ints could "appear" equal when converted to float */
+	double b = y1 - m*x1;
 
 	if(x1<rx1) { x1 = rx1; y1 = m*x1 + b; }
 	else if(x1>rx2) { x1 = rx2; y1 = m*x1 + b; }
@@ -88,6 +84,9 @@ return(!msk1 && !msk2); /* see if points are really inside */
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:39  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/06 03:50:45  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

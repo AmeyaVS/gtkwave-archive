@@ -1720,6 +1720,29 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	  if ((is_nan2) && (h2tim > GLOBALS->max_time))
 	    is_nan2 = 0;
 
+/* clipping... */
+{
+int coords[4];
+int rect[4];
+                        
+coords[0] = _x0; 
+coords[1] = yt1;
+coords[2] = _x1;
+coords[3] = yt0;
+                                
+rect[0] = -10;   
+rect[1] = _y1;
+rect[2] = GLOBALS->wavewidth + 10;
+rect[3] = _y0;          
+                                
+wave_lineclip(coords, rect);
+_x0 = coords[0];
+yt1 = coords[1];
+_x1 = coords[2];
+yt0 = coords[3];
+}
+/* ...clipping */
+
 	  if (is_nan || is_nan2)
 	    {
 	      if (is_nan)
@@ -2937,6 +2960,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.23  2010/01/19 17:50:40  gtkwave
  * updated print rendering to match wavewindow marker lock adds
  *

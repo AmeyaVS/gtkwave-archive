@@ -68,7 +68,7 @@ seg_mid[WAVE_SEG_BUF_CNT], seg_x[WAVE_SEG_BUF_CNT], seg_vtrans[WAVE_SEG_BUF_CNT]
 seg_1[WAVE_SEG_BUF_CNT], seg_vbox[WAVE_SEG_BUF_CNT];
 
 
-static void wave_gdk_draw_line(GdkDrawable *drawable, GdkGC *gc, gint x1, gint y1, gint x2, gint y2)
+static void wave_gdk_draw_line(GdkDrawable *drawable, GdkGC *gc, gint _x1, gint _y1, gint _x2, gint _y2)
 {
 GdkSegment *seg;
 int *seg_cnt;
@@ -82,12 +82,12 @@ else if(gc == GLOBALS->gc_vtrans_wavewindow_c_1){ seg = seg_vtrans; seg_cnt = &s
 else if(gc == GLOBALS->gc_0_wavewindow_c_1) 	{ seg = seg_0;  seg_cnt = &seg_0_cnt; }
 else if(gc == GLOBALS->gc_1_wavewindow_c_1)	{ seg = seg_1; seg_cnt = &seg_1_cnt; }
 else if(gc == GLOBALS->gc_vbox_wavewindow_c_1)	{ seg = seg_vbox; seg_cnt = &seg_vbox_cnt; }
-else 						{ gdk_draw_line(drawable, gc, x1, y1, x2, y2); return; }
+else 						{ gdk_draw_line(drawable, gc, _x1, _y1, _x2, _y2); return; }
 
-seg[*seg_cnt].x1 = x1;
-seg[*seg_cnt].y1 = y1;
-seg[*seg_cnt].x2 = x2;
-seg[*seg_cnt].y2 = y2;
+seg[*seg_cnt].x1 = _x1;
+seg[*seg_cnt].y1 = _y1;
+seg[*seg_cnt].x2 = _x2;
+seg[*seg_cnt].y2 = _y2;
 (*seg_cnt)++;
 
 if(*seg_cnt == WAVE_SEG_BUF_CNT)
@@ -2920,6 +2920,29 @@ if(_x0!=_x1)
 	cfixed = is_inf ? cinf : c;
 	if((is_nan2) && (h2tim > GLOBALS->max_time)) is_nan2 = 0;
 
+/* clipping... */
+{
+int coords[4];
+int rect[4];
+
+coords[0] = _x0;
+coords[1] = yt1;
+coords[2] = _x1;
+coords[3] = yt0;
+
+rect[0] = -10;
+rect[1] = _y1;
+rect[2] = GLOBALS->wavewidth + 10;
+rect[3] = _y0;
+
+wave_lineclip(coords, rect);
+_x0 = coords[0];
+yt1 = coords[1];
+_x1 = coords[2];
+yt0 = coords[3];
+}
+/* ...clipping */
+
 	if(is_nan || is_nan2)
 		{
 		if(is_nan)
@@ -3966,6 +3989,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.56  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.55  2010/01/18 20:47:02  gtkwave
  * added named locker marking
  *
