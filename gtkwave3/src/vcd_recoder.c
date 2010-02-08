@@ -1932,6 +1932,11 @@ for(;;)
 						}
 						else
 						{
+						if(tim < GLOBALS->current_time_vcd_recoder_c_3) /* avoid backtracking time counts which can happen on malformed files */
+							{
+							tim = GLOBALS->current_time_vcd_recoder_c_3;
+							}
+
 						if(GLOBALS->time_vlist_vcd_recoder_write)
 							{					
 							vlist_packer_emit_utt((struct vlist_packer_t **)(void *)&GLOBALS->time_vlist_vcd_recoder_write, tim - GLOBALS->current_time_vcd_recoder_c_3);
@@ -3171,6 +3176,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2009/12/25 18:12:16  gtkwave
+ * more warnings fixes
+ *
  * Revision 1.32  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

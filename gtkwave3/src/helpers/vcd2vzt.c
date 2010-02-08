@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999-2009 Tony Bybell.
+ * Copyright (c) 1999-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1393,6 +1393,12 @@ for(;;)
 						{
 						start_time=time;
 						}
+
+                                        if(time < current_time) /* avoid backtracking time counts which can happen on malformed files */
+                                                {
+                                                time = current_time;
+                                                }
+
                                         current_time=time;
                                         if(end_time<time) end_time=time;        /* in case of malformed vcd files */
 
@@ -2013,6 +2019,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/07/07 19:46:03  gtkwave
+ * make evcd->vcd conversion table const
+ *
  * Revision 1.8  2009/07/07 15:48:37  gtkwave
  * EVCD "f" value fix (should be z not x)
  *

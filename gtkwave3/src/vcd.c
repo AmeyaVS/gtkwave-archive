@@ -1641,6 +1641,13 @@ for(;;)
 						{
 						GLOBALS->start_time_vcd_c_1=tim;
 						}
+						else
+						{
+						if(tim < GLOBALS->current_time_vcd_c_1)	/* avoid backtracking time counts which can happen on malformed files */
+							{
+							tim = GLOBALS->current_time_vcd_c_1;
+							}
+						}
 
 					GLOBALS->current_time_vcd_c_1=tim;
 					if(GLOBALS->end_time_vcd_c_1<tim) GLOBALS->end_time_vcd_c_1=tim;	/* in case of malformed vcd files */
@@ -2558,6 +2565,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.22  2009/08/28 19:58:42  gtkwave
  * added malform_eof_fix
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Tony Bybell.
+ * Copyright (c) 2009-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -86,6 +86,7 @@ int line = 0;
 size_t ss;
 fstHandle returnedhandle;
 JRB node;
+uint64_t prev_tim = 0;
 char bin_fixbuff[32769];
 
 if(!strcmp("-", vname))
@@ -523,7 +524,11 @@ while(!feof(f))
 
 		case '#':
 			sscanf(buf+1, "%"SCNu64, &tim);
-			fstWriterEmitTimeChange(ctx, tim);
+			if((tim >= prev_tim)||(!prev_tim))
+				{
+				prev_tim = tim;
+				fstWriterEmitTimeChange(ctx, tim);
+				}
 			break;
 
 		default:
@@ -696,6 +701,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/08/06 20:03:31  gtkwave
+ * warnings fixes
+ *
  * Revision 1.7  2009/07/26 20:18:08  gtkwave
  * signify error on null FST context rather than run with it
  *
