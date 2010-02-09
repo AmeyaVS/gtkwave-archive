@@ -479,8 +479,8 @@ int NpInitInterp(Tcl_Interp *interp, int install_tk) {
   if (install_tk) {
     NpLog("Tcl_PkgRequire(\"Tk\", \"%s\", 0)\n", TK_VERSION);
     if (1 && Tcl_PkgRequire(interp, "Tk", TK_VERSION, 0) == NULL) {
-      NpPlatformMsg(Tcl_GetStringResult(interp),
-		    "NpInitInterp Tcl_PkgRequire(Tk)");
+      CONST char *msg = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);      
+      NpPlatformMsg(msg, "NpInitInterp Tcl_PkgRequire(Tk)");
       NpPlatformMsg("Failed to create initialize Tk", "NpInitInterp");
       return TCL_ERROR;
     }
@@ -771,6 +771,9 @@ static void dummy_compilation_unit(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.10  2009/12/12 01:12:57  gtkwave
  * tcl cross-platform fixes
  *
