@@ -750,7 +750,7 @@
 		Fixed missing dependencies in various Makefile.am files.
 3.3.2	05jan10	Emergency fix for ghw.c as it was missing a close comment
 		causing problems with iterative generate.
-3.3.3	09feb10	Fix for Pattern Search where end marker time was not used
+3.3.3	15feb10	Fix for Pattern Search where end marker time was not used
 		for dropping down a marker: for clock counts this would
 		mean that the clock count was off by one.
 		Added locking/unlocking of named markers against the
@@ -771,3 +771,5 @@
 		truncated files).
 		Replaced Tcl_GetStringResult() in tcl_np.c with Tcl_GetVar()
 		on Tk init fail.
+		Added AC_CHECK_LIB([dl], [dlopen]) (Fedora requirement).
+		Added --disable-xz (requested by Gentoo).
