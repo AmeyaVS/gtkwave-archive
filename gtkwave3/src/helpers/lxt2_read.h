@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2009 Tony Bybell.
+ * Copyright (c) 2003-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,6 +22,10 @@
 
 #ifndef DEFS_LXTR_H
 #define DEFS_LXTR_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -288,11 +292,18 @@ _LXT2_RD_INLINE void *		lxt2_rd_get_user_callback_data_pointer(struct lxt2_rd_tr
 unsigned int			lxt2_rd_limit_time_range(struct lxt2_rd_trace *lt, lxtint64_t strt_time, lxtint64_t end_time);
 unsigned int			lxt2_rd_unlimit_time_range(struct lxt2_rd_trace *lt);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.2  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

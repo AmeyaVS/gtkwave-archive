@@ -23,6 +23,10 @@
 #ifndef DEFS_LXT_H
 #define DEFS_LXT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -246,11 +250,18 @@ int 			lt_emit_value_double(struct lt_trace *lt, struct lt_symbol *s, unsigned i
 int 			lt_emit_value_string(struct lt_trace *lt, struct lt_symbol *s, unsigned int row, char *value);
 int 			lt_emit_value_bit_string(struct lt_trace *lt, struct lt_symbol *s, unsigned int row, char *value);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:28:15  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:18  gtkwave
  * initial release
  *

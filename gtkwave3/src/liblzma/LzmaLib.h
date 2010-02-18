@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Tony Bybell.
+ * Copyright (c) 2009-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,10 +23,18 @@
 #ifndef LIBLZMA_H
 #define LIBLZMA_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void *LZMA_fdopen(int fd, const char *mode);
 void LZMA_close(void *handle);
 size_t LZMA_flush(void *handle);
 size_t LZMA_write(void *handle, void *mem, size_t len);
 size_t LZMA_read(void *handle, void *mem, size_t len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

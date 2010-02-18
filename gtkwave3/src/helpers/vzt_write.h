@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-9 Tony Bybell.
+ * Copyright (c) 2004-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,6 +22,10 @@
 
 #ifndef DEFS_VZTW_H
 #define DEFS_VZTW_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -284,11 +288,18 @@ int 			vzt_wr_emit_value_double(struct vzt_wr_trace *lt, struct vzt_wr_symbol *s
 int 			vzt_wr_emit_value_string(struct vzt_wr_trace *lt, struct vzt_wr_symbol *s, unsigned int row, char *value);
 int 			vzt_wr_emit_value_bit_string(struct vzt_wr_trace *lt, struct vzt_wr_symbol *s, unsigned int row, char *value);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/03/31 06:21:13  gtkwave
+ * added support for lzma
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:18  gtkwave
  * Imported sources
  *
@@ -296,4 +307,3 @@ int 			vzt_wr_emit_value_bit_string(struct vzt_wr_trace *lt, struct vzt_wr_symbo
  * initial release
  *
  */
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Tony Bybell.
+ * Copyright (c) 2009-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,6 +22,10 @@
 
 #ifndef FST_API_H
 #define FST_API_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -204,5 +208,9 @@ int fstReaderIterBlocks(void *ctx,
         void *user_callback_data_pointer, FILE *vcdhandle);
 
 char *fstReaderGetValueFromHandleAtTime(void *ctx, uint64_t tim, fstHandle facidx, char *buf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

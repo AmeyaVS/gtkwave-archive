@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2009 Tony Bybell.
+ * Copyright (c) 2004-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,6 +22,10 @@
 
 #ifndef DEFS_VZTR_H
 #define DEFS_VZTR_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -279,11 +283,18 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
 				/* experimental function for reconstituting bitblasted nets */
 				void vzt_rd_vectorize(struct vzt_rd_trace *lt);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.3  2009/03/31 06:21:12  gtkwave
  * added support for lzma
  *
@@ -297,4 +308,3 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
  * initial release
  *
  */
-
