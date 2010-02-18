@@ -52,7 +52,7 @@ if(x1==x2)
 	}
 else
 	{
-	double m = (y2-y1)/(x2-x1); /* use double as larger ints could "appear" equal when converted to float */
+	double m = ((double)y2-(double)y1)/((double)x2-(double)x1); /* use double as larger ints could "appear" equal when converted to float */
 	double b = y1 - m*x1;
 
 	if(x1<rx1) { x1 = rx1; y1 = m*x1 + b; }
@@ -84,6 +84,9 @@ return(!msk1 && !msk2); /* see if points are really inside */
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2010/02/07 20:16:34  gtkwave
+ * experiment with adding line clipping to analog rendering
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *
@@ -101,4 +104,3 @@ return(!msk1 && !msk2); /* see if points are really inside */
  * initial release
  *
  */
-

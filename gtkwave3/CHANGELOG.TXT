@@ -774,3 +774,6 @@
 		Added AC_CHECK_LIB([dl], [dlopen]) (Fedora requirement).
 		Added --disable-xz (requested by Gentoo).
 		Added extern "C" { } bookends to headers for C++.
+3.3.4	18feb10	Change slope calculation "m" in clipping.c to all doubles
+		in order to avoid integer overflow errors.
+
