@@ -388,7 +388,7 @@ if(GLOBALS->lock_menu_c_1 == 1) return; /* avoid recursion */
 GLOBALS->lock_menu_c_1 = 1;
 
 status_text("Saving LXT...\n");
-gtkwave_gtk_main_iteration(); /* make requester disappear requester */
+gtkwave_main_iteration(); /* make requester disappear requester */
 
 rc = save_nodes_to_export(*GLOBALS->fileselbox_text, WAVE_EXPORT_LXT);
 
@@ -458,7 +458,7 @@ if(GLOBALS->lock_menu_c_2 == 1) return; /* avoid recursion */
 GLOBALS->lock_menu_c_2 = 1;
 
 status_text("Saving VCD...\n");
-gtkwave_gtk_main_iteration(); /* make requester disappear requester */
+gtkwave_main_iteration(); /* make requester disappear requester */
 
 rc = save_nodes_to_export(*GLOBALS->fileselbox_text, WAVE_EXPORT_VCD);
 
@@ -520,7 +520,7 @@ if(GLOBALS->lock_menu_c_2 == 1) return; /* avoid recursion */
 GLOBALS->lock_menu_c_2 = 1;
 
 status_text("Saving TIM...\n");
-gtkwave_gtk_main_iteration(); /* make requester disappear requester */
+gtkwave_main_iteration(); /* make requester disappear requester */
 
 rc = save_nodes_to_export(*GLOBALS->fileselbox_text, WAVE_EXPORT_TIM);
 
@@ -1529,7 +1529,7 @@ gtk_notebook_set_current_page(GTK_NOTEBOOK(n), new_page);
 set_GLOBALS((*GLOBALS->contexts)[new_page]);
 saved_g = GLOBALS;
 
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 
 set_GLOBALS(old_g);
 free_and_destroy_page_context();
@@ -2841,7 +2841,7 @@ if(GLOBALS->filesel_ok)
 	GLOBALS->vcd_jmp_buf = calloc(1, sizeof(jmp_buf));
 
 	set_window_busy(NULL);
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 
 	if(!setjmp(*(GLOBALS->vcd_jmp_buf)))
 		{
@@ -6157,7 +6157,7 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 
       gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /* force bar update */
       gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /* force text update */
-      gtkwave_gtk_main_iteration();
+      gtkwave_main_iteration();
 
     }
 }
@@ -6165,6 +6165,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.91  2010/01/22 20:24:43  gtkwave
+ * sanity checking on pattern search ID value
+ *
  * Revision 1.90  2010/01/22 16:51:21  gtkwave
  * fixes to ensure WAVE_NUM_STRACE_WINDOWS is more maintainable
  *

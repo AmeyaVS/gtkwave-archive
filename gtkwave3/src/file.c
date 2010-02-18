@@ -38,7 +38,7 @@ if((alloclen=strlen(allocbuf)))
 DEBUG(printf("Filesel OK %s\n",allocbuf));
 gtk_grab_remove(GLOBALS->fs_file_c_1);
 gtk_widget_destroy(GLOBALS->fs_file_c_1);
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 GLOBALS->cleanup_file_c_2();
 }
 
@@ -47,14 +47,14 @@ static void cancel_callback(GtkWidget *widget, GtkWidget *nothing)
 DEBUG(printf("Filesel Entry Cancel\n"));
 gtk_grab_remove(GLOBALS->fs_file_c_1);
 gtk_widget_destroy(GLOBALS->fs_file_c_1);
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 if(GLOBALS->bad_cleanup_file_c_1) GLOBALS->bad_cleanup_file_c_1();
 }
 
 static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 DEBUG(printf("Filesel Destroy\n"));
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 if(GLOBALS->bad_cleanup_file_c_1) GLOBALS->bad_cleanup_file_c_1();
 }
 
@@ -300,7 +300,7 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 	gtk_grab_remove(pFileChoose);
 	gtk_widget_destroy(pFileChoose);
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	ok_func();
 	}
 	else
@@ -309,7 +309,7 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 	gtk_grab_remove(pFileChoose);
 	gtk_widget_destroy(pFileChoose);
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	if(GLOBALS->bad_cleanup_file_c_1) notok_func();
 	}
 #endif
@@ -318,6 +318,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.13  2009/08/18 17:21:05  gtkwave
  * added gtk_window_set_resizable to the file chooser mode select
  *

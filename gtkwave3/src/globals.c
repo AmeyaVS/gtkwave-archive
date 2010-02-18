@@ -1321,7 +1321,7 @@ void reload_into_new_context(void)
  if(GLOBALS->text_status_c_2)
 	{
 	gtk_grab_add(GLOBALS->text_status_c_2);			/* grab focus to a known widget with no real side effects */
-	gtkwave_gtk_main_iteration();				/* spin on GTK event loop */
+	gtkwave_main_iteration();				/* spin on GTK event loop */
 	gtk_grab_remove(GLOBALS->text_status_c_2);		/* ungrab focus */
 	}
 
@@ -1898,7 +1898,7 @@ void reload_into_new_context(void)
  dead_context_sweep();
 
  /* let any destructors finalize on GLOBALS dereferences... */
- gtkwave_gtk_main_iteration();
+ gtkwave_main_iteration();
 
  /* Free the old context */
  free_outstanding();
@@ -2380,7 +2380,7 @@ void free_and_destroy_page_context(void)
  (*GLOBALS->dead_context)[0] = GLOBALS;
 
  /* let any destructors finalize on GLOBALS dereferences... */
- gtkwave_gtk_main_iteration();
+ gtkwave_main_iteration();
 }
 
 

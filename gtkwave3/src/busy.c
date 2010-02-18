@@ -60,7 +60,7 @@ if(!GLOBALS->busy_busy_c_1)
 }
 
 
-void gtkwave_gtk_main_iteration(void)
+void gtkwave_main_iteration(void)
 {
 if(GLOBALS->partial_vcd)
 	{
@@ -80,7 +80,7 @@ if(GLOBALS->partial_vcd)
 			{	
 			/* this should never happen! */
 			/* if it does, the program state is probably screwed */
-			printf("GTKWAVE | WARNING: globals changed during gtkwave_gtk_main_iteration()!\n");
+			printf("GTKWAVE | WARNING: globals changed during gtkwave_main_iteration()!\n");
 			gcache = GLOBALS;
 			}
 		}
@@ -163,6 +163,9 @@ if(GLOBALS->busy_busy_c_1)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/11/07 22:37:49  gtkwave
+ * allow more events in GuiDoEvent
+ *
  * Revision 1.11  2009/11/07 22:11:10  gtkwave
  * underflow handling on idle
  *

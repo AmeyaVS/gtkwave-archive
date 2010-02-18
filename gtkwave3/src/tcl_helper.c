@@ -2485,14 +2485,14 @@ if(objc > 1)
 		}
 
 	ife->callback();
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 
 	GLOBALS->wave_script_args = NULL;
 	}
 	else
 	{
 	ife->callback();
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
 
 GLOBALS->enable_fast_exit = fexit;
@@ -2711,6 +2711,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.68  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.67  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

@@ -2446,18 +2446,21 @@ if(GLOBALS->partial_vcd)
 
 		update_maxmarker_labels();
 
-		gtkwave_gtk_main_iteration();
+		gtkwave_main_iteration();
 		}
 	}
 
 #endif
 
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2009/12/22 20:00:41  gtkwave
+ * warnings fixes
+ *
  * Revision 1.21  2009/07/07 19:46:03  gtkwave
  * make evcd->vcd conversion table const
  *

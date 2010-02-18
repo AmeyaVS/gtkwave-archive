@@ -776,4 +776,6 @@
 		Added extern "C" { } bookends to headers for C++.
 3.3.4	18feb10	Change slope calculation "m" in clipping.c to all doubles
 		in order to avoid integer overflow errors.
-
+		Change main resync loop name from gtkwave_gtk_main_iteration
+		to gtkwave_main_iteration.  (Start of separation of GUI code
+		from functional code.)

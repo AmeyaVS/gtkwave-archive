@@ -67,7 +67,7 @@ return(TCL_ERROR);
 static int gtkwavetcl_nop(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 /* nothing, this is simply to call gtk's main loop */
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 return(TCL_OK);
 }
 
@@ -581,7 +581,7 @@ if(objc == 3)
 		        MaxSignalLength();
 		        signalarea_configure_event(GLOBALS->signalarea, NULL);
 		        wavearea_configure_event(GLOBALS->wavearea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
 
 			if(t->asciivalue)
 				{
@@ -598,7 +598,7 @@ if(objc == 3)
 			        MaxSignalLength();
 			        signalarea_configure_event(GLOBALS->signalarea, NULL);
 			        wavearea_configure_event(GLOBALS->wavearea, NULL);
-				gtkwave_gtk_main_iteration();
+				gtkwave_main_iteration();
 
 				return(TCL_OK);
 				}
@@ -609,7 +609,7 @@ if(objc == 3)
 		        MaxSignalLength();
 		        signalarea_configure_event(GLOBALS->signalarea, NULL);
 		        wavearea_configure_event(GLOBALS->wavearea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
 			}
 		}
 	}
@@ -693,7 +693,7 @@ if(objc == 2)
         signalarea_configure_event(GLOBALS->signalarea, NULL);
         wavearea_configure_event(GLOBALS->wavearea, NULL);
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -726,7 +726,7 @@ if(objc == 2)
         signalarea_configure_event(GLOBALS->signalarea, NULL);
         wavearea_configure_event(GLOBALS->wavearea, NULL);
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -774,7 +774,7 @@ if(objc == 2)
 
         signalarea_configure_event(GLOBALS->signalarea, NULL);
         wavearea_configure_event(GLOBALS->wavearea, NULL);
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -810,7 +810,7 @@ if(objc == 2)
         gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed");
         gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed");
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -846,7 +846,7 @@ if(objc == 3)
         signalarea_configure_event(GLOBALS->signalarea, NULL);
         wavearea_configure_event(GLOBALS->wavearea, NULL);
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -867,7 +867,7 @@ if(objc == 2)
         MaxSignalLength();
         signalarea_configure_event(GLOBALS->signalarea, NULL);
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -919,7 +919,7 @@ if((objc == 3)||(objc == 4))
 			}
 
 	        wavearea_configure_event(GLOBALS->wavearea, NULL);
-		gtkwave_gtk_main_iteration();
+		gtkwave_main_iteration();
                 } 
 	}
         else  
@@ -953,7 +953,7 @@ if(objc == 2)
 
 /*         gtk_signal_emit_by_name (GTK_OBJECT (wadj), "changed"); /\* force bar update *\/ */
 /*         gtk_signal_emit_by_name (GTK_OBJECT (wadj), "value_changed"); /\* force text update *\/ */
-/*	gtkwave_gtk_main_iteration(); */
+/*	gtkwave_main_iteration(); */
 	}
         else  
         {
@@ -1000,7 +1000,7 @@ if(objc==2)
         		MaxSignalLength();
         		signalarea_configure_event(GLOBALS->signalarea, NULL);
         		wavearea_configure_event(GLOBALS->wavearea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
         		}
                 }
 	}
@@ -1091,7 +1091,7 @@ if(objc==2)
         		MaxSignalLength();
         		signalarea_configure_event(GLOBALS->signalarea, NULL);
         		wavearea_configure_event(GLOBALS->wavearea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
         		}
                 }
 	}
@@ -1178,7 +1178,7 @@ if(objc==2)
         		MaxSignalLength();
         		signalarea_configure_event(GLOBALS->signalarea, NULL);
         		wavearea_configure_event(GLOBALS->wavearea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
         		}
                 }
 	}
@@ -1244,7 +1244,7 @@ if(objc==2)
         		MaxSignalLength();
         		signalarea_configure_event(GLOBALS->signalarea, NULL);
         		wavearea_configure_event(GLOBALS->wavearea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
         		}
                 }
 	}
@@ -1310,7 +1310,7 @@ if(objc==2)
         		MaxSignalLength();
         		signalarea_configure_event(GLOBALS->signalarea, NULL);
         		wavearea_configure_event(GLOBALS->wavearea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
         		}
                 }
 	}
@@ -1354,7 +1354,7 @@ if(objc == 3)
 					t->flags &= (~TR_HIGHLIGHT);
 					}
 	        		signalarea_configure_event(GLOBALS->signalarea, NULL);
-				gtkwave_gtk_main_iteration();
+				gtkwave_main_iteration();
 				break;
 				}
 
@@ -1407,7 +1407,7 @@ if(objc == 3)
 		if(mat)
 			{
         		signalarea_configure_event(GLOBALS->signalarea, NULL);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
 			}
 
 		return(gtkwavetcl_printInteger(clientData, interp, objc, objv, mat));
@@ -1528,7 +1528,7 @@ static int gtkwavetcl_signalChangeList(ClientData clientData, Tcl_Interp *interp
 static int gtkwavetcl_findNextEdge(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 edge_search(STRACE_FORWARD);
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
 }
 
@@ -1536,7 +1536,7 @@ return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
 static int gtkwavetcl_findPrevEdge(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 edge_search(STRACE_BACKWARD);
-gtkwave_gtk_main_iteration();
+gtkwave_main_iteration();
 return(gtkwavetcl_getMarker(clientData, interp, objc, objv));
 }
 
@@ -1566,7 +1566,7 @@ if(objc == 2)
 #endif
 	    }
 	}
-      gtkwave_gtk_main_iteration(); /* check if this is needed */
+      gtkwave_main_iteration(); /* check if this is needed */
     }
   else  
     {
@@ -1589,7 +1589,7 @@ if(objc == 2)
 		from_entry_callback(NULL, GLOBALS->from_entry);		
 		}
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -1612,7 +1612,7 @@ if(objc == 2)
 		to_entry_callback(NULL, GLOBALS->to_entry);		
 		}
 
-	gtkwave_gtk_main_iteration();
+	gtkwave_main_iteration();
 	}
         else  
         {
@@ -1708,7 +1708,7 @@ static int gtkwavetcl_loadFile(ClientData clientData, Tcl_Interp *interp, int ob
       /*	read_save_helper(s); */
       process_url_file(s);
       /*	process_url_list(s); */
-      /*	gtkwave_gtk_main_iteration(); */
+      /*	gtkwave_main_iteration(); */
 
 
     }
@@ -1829,7 +1829,7 @@ if(objc == 2)
         MaxSignalLength();
         signalarea_configure_event(GLOBALS->signalarea, NULL);
         
-        gtkwave_gtk_main_iteration();
+        gtkwave_main_iteration();
 	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, rc));
         }
         else
@@ -1929,6 +1929,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.34  2009/11/29 19:16:13  gtkwave
  * added gtkwave::setTabActive and gtkwave::getNumTabs
  *

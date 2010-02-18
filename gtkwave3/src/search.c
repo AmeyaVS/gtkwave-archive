@@ -321,7 +321,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 		if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))		
 			{
 			gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-			gtkwave_gtk_main_iteration();
+			gtkwave_main_iteration();
 			}
 		GLOBALS->pdata->oldvalue = i;
 
@@ -470,7 +470,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))
                         {
                         gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-                        gtkwave_gtk_main_iteration();
+                        gtkwave_main_iteration();
                         }
                 GLOBALS->pdata->oldvalue = i;
 
@@ -615,7 +615,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                 if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))
                         {
                         gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-                        gtkwave_gtk_main_iteration();
+                        gtkwave_main_iteration();
                         }
                 GLOBALS->pdata->oldvalue = i;
 
@@ -746,7 +746,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))		
 		{
 		gtk_progress_set_value (GTK_PROGRESS (GLOBALS->pdata->pbar), i);
-		gtkwave_gtk_main_iteration();
+		gtkwave_main_iteration();
 		}
 	GLOBALS->pdata->oldvalue = i;
 
@@ -1111,6 +1111,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2008/12/18 01:31:30  gtkwave
+ * integrated experimental autoscroll code on signal adds
+ *
  * Revision 1.12  2008/09/24 15:37:38  gtkwave
  * move "selected" to top bit on blasted vector selection w/coalesce
  *
