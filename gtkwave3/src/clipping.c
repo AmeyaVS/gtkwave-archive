@@ -26,6 +26,15 @@ int wave_lineclip(int *coords, int *rect)
 {
 int msk1, msk2;
 
+/* 
+     these comparisons assume the bounding rectangle is set up as follows:
+
+           rx1    rx2
+     ry1   +--------+
+           |        |
+     ry2   +--------+
+*/
+
 msk1 = (x1<rx1);
 msk1|= (x1>rx2)<<1;
 msk1|= (y1<ry1)<<2;
@@ -84,6 +93,9 @@ return(!msk1 && !msk2); /* see if points are really inside */
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/02/18 18:27:33  gtkwave
+ * modified clipping slope equation to use doubles for intermediate steps
+ *
  * Revision 1.3  2010/02/07 20:16:34  gtkwave
  * experiment with adding line clipping to analog rendering
  *
