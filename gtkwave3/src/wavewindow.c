@@ -2620,6 +2620,7 @@ double tmin = mynan, tmax = mynan, tv, tv2;
 gint rmargin;
 int is_nan = 0, is_nan2 = 0, is_inf = 0, is_inf2 = 0;
 int any_infs = 0, any_infp = 0, any_infm = 0;
+int skipcnt = 0;
 
 ci = GLOBALS->gc_baseline_wavewindow_c_1;
 
@@ -2898,8 +2899,17 @@ if((is_nan2 = isnan(tv2)))
 	yt1 = _y0 + (tv2 - tmin) * tmax;
 	}
 
-if(_x0!=_x1)
+if((_x0!=_x1)||(skipcnt < GLOBALS->analog_redraw_skip_count)) /* lower number = better performance */
 	{
+	if(_x0==_x1) 
+		{
+		skipcnt++;
+		}
+		else
+		{
+		skipcnt = 0;
+		}
+
 	if(type == AN_0) 
 		{
 		c = GLOBALS->gc_vbox_wavewindow_c_1; 
@@ -2926,9 +2936,9 @@ int coords[4];
 int rect[4];
 
 coords[0] = _x0;
-coords[1] = yt1;
+coords[1] = yt0;
 coords[2] = _x1;
-coords[3] = yt0;
+coords[3] = yt1;
 
 rect[0] = -10;
 rect[1] = _y1;
@@ -2937,9 +2947,9 @@ rect[3] = _y0;
 
 wave_lineclip(coords, rect);
 _x0 = coords[0];
-yt1 = coords[1];
+yt0 = coords[1];
 _x1 = coords[2];
-yt0 = coords[3];
+yt1 = coords[3];
 }
 /* ...clipping */
 
@@ -3989,6 +3999,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.57  2010/02/07 20:16:34  gtkwave
+ * experiment with adding line clipping to analog rendering
+ *
  * Revision 1.56  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *

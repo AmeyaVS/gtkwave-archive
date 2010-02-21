@@ -70,6 +70,18 @@ if(strlen(str)) { GLOBALS->alt_hier_delimeter=str[0]; }
 return(0);
 }
 
+int f_analog_redraw_skip_count(char *str)
+{
+DEBUG(printf("f_analog_redraw_skip_count(\"%s\")\n",str));
+GLOBALS->analog_redraw_skip_count=atoi_64(str);
+if(GLOBALS->analog_redraw_skip_count < 0) 
+	{
+	GLOBALS->analog_redraw_skip_count = 0;
+	}
+
+return(0);
+}
+
 int f_append_vcd_hier(char *str)
 {
 DEBUG(printf("f_append_vcd_hier(\"%s\")\n",str));
@@ -669,6 +681,7 @@ static struct rc_entry rcitems[]=
 {
 { "accel", f_accel },
 { "alt_hier_delimeter", f_alt_hier_delimeter },
+{ "analog_redraw_skip_count", f_analog_redraw_skip_count },
 { "append_vcd_hier", f_append_vcd_hier },
 { "atomic_vectors", f_atomic_vectors },
 { "autocoalesce", f_autocoalesce },
@@ -945,6 +958,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2010/01/22 07:28:28  gtkwave
+ * change grid2 color to slate blue
+ *
  * Revision 1.20  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *

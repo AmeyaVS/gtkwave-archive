@@ -2,6 +2,7 @@
 # sample rc file
 #
 disable_empty_gui off
+analog_redraw_skip_count 50
 splash_disable on
 sst_dynamic_filter on
 use_standard_clicking on

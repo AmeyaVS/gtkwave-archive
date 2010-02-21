@@ -1209,7 +1209,7 @@ NULL, /* gccache_wfill_wavewindow_c_1 */
 NULL, /* gccache_w_wavewindow_c_1 */
 NULL, /* gccache_dashfill_wavewindow_c_1 */
 NULL, /* gccache_dash_wavewindow_c_1 */
-
+20, /* analog_redraw_skip_count */
 /*
  * zoombuttons.c
  */

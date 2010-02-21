@@ -1438,6 +1438,7 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
   double tmin = mynan, tmax = mynan, tv, tv2;
   int is_nan = 0, is_nan2 = 0, is_inf = 0, is_inf2 = 0;
   int any_infs = 0, any_infp = 0, any_infm = 0;
+  int skipcnt = 0;
 
   liney = ((which + 2 + num_extension) * GLOBALS->fontheight) - 2;
   _y1 = ((which + 1) * GLOBALS->fontheight) + 2;
@@ -1707,8 +1708,17 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	  yt1 = _y0 + (tv2 - tmin) * tmax;
 	}
 
-      if (_x0 != _x1)
+      if ((_x0 != _x1) || (skipcnt < GLOBALS->analog_redraw_skip_count)) /* lower number = better performance */
 	{
+        if(_x0==_x1)
+                {
+                skipcnt++;
+                }
+                else
+                {
+                skipcnt = 0;
+                }
+
 	  if (h->next)
 	    {
 	      if (h->next->time > GLOBALS->max_time)
@@ -1726,9 +1736,9 @@ int coords[4];
 int rect[4];
                         
 coords[0] = _x0; 
-coords[1] = yt1;
+coords[1] = yt0;
 coords[2] = _x1;
-coords[3] = yt0;
+coords[3] = yt1;
                                 
 rect[0] = -10;   
 rect[1] = _y1;
@@ -1737,9 +1747,9 @@ rect[3] = _y0;
                                 
 wave_lineclip(coords, rect);
 _x0 = coords[0];
-yt1 = coords[1];
+yt0 = coords[1];
 _x1 = coords[2];
-yt0 = coords[3];
+yt1 = coords[3];
 }
 /* ...clipping */
 
@@ -2960,6 +2970,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2010/02/07 20:16:34  gtkwave
+ * experiment with adding line clipping to analog rendering
+ *
  * Revision 1.24  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *
