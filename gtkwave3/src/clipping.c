@@ -66,17 +66,17 @@ else
 	double m = (dy2-dy1)/(dx2-dx1);
 	double b = dy1 - m*dx1;
 
-	if(x1<rx1) { dx1 = rx1; dy1 = m*dx1 + b; }
-	else if(x1>rx2) { dx1 = rx2; dy1 = m*dx1 + b; }
+	if((x1<rx1)&&(x2>=rx1)) { dx1 = rx1; dy1 = m*dx1 + b; }
+	else if((x1>rx2)&&(x2<=rx2)) { dx1 = rx2; dy1 = m*dx1 + b; }
 
-	if(y1<ry1) { dy1 = ry1; dx1 = (dy1 - b) / m; } 
-	else if(y1>ry2) { dy1 = ry2; dx1 = (dy1 - b) / m; }
+	if((y1<ry1)&&(y2>=ry1)) { dy1 = ry1; dx1 = (dy1 - b) / m; } 
+	else if((y1>ry2)&&(y2<=ry2)) { dy1 = ry2; dx1 = (dy1 - b) / m; }
 
-	if(x2<rx1) { dx2 = rx1; dy2 = m*dx2 + b; }
-	else if(x2>rx2) { dx2 = rx2; dy2 = m*dx2 + b; }
+	if((x2<rx1)&&(x1>=rx1)) { dx2 = rx1; dy2 = m*dx2 + b; }
+	else if((x2>rx2)&&(x1<=rx2)) { dx2 = rx2; dy2 = m*dx2 + b; }
 
-	if(y2<ry1) { dy2 = ry1; dx2 = (dy2 - b) / m; } 
-	else if(y2>ry2) { dy2 = ry2; dx2 = (dy2 - b) / m; }
+	if((y2<ry1)&&(y1>=ry1)) { dy2 = ry1; dx2 = (dy2 - b) / m; } 
+	else if((y2>ry2)&&(y1<=ry2)) { dy2 = ry2; dx2 = (dy2 - b) / m; }
 
 	x1 = dx1; y1 = dy1;
 	x2 = dx2; y2 = dy2;
@@ -98,6 +98,9 @@ return(!msk1 && !msk2); /* see if points are really inside */
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2010/02/22 17:15:11  gtkwave
+ * add y-coord clamping to avoid integer round off errors
+ *
  * Revision 1.5  2010/02/20 21:18:37  gtkwave
  * clarified boundary rectangle coords in a comment
  *
