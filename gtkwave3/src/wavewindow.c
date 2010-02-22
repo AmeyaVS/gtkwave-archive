@@ -2930,6 +2930,14 @@ if((_x0!=_x1)||(skipcnt < GLOBALS->analog_redraw_skip_count)) /* lower number = 
 	cfixed = is_inf ? cinf : c;
 	if((is_nan2) && (h2tim > GLOBALS->max_time)) is_nan2 = 0;
 
+/* clamp to top/bottom because of integer rounding errors */
+
+if(yt0 < _y1) yt0 = _y1;
+else if(yt0 > _y0) yt0 = _y0;
+
+if(yt1 < _y1) yt1 = _y1;
+else if(yt1 > _y0) yt1 = _y0;
+
 /* clipping... */
 {
 int coords[4];
@@ -3999,6 +4007,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.58  2010/02/21 05:15:16  gtkwave
+ * analog drawing fix for clipping + overdraw
+ *
  * Revision 1.57  2010/02/07 20:16:34  gtkwave
  * experiment with adding line clipping to analog rendering
  *

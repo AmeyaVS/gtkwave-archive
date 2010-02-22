@@ -1730,6 +1730,14 @@ pr_draw_hptr_trace_vector_analog (pr_context * prc, Trptr t, hptr h,
 	  if ((is_nan2) && (h2tim > GLOBALS->max_time))
 	    is_nan2 = 0;
 
+/* clamp to top/bottom because of integer rounding errors */
+
+if(yt0 < _y1) yt0 = _y1;
+else if(yt0 > _y0) yt0 = _y0;
+                        
+if(yt1 < _y1) yt1 = _y1;
+else if(yt1 > _y0) yt1 = _y0;
+
 /* clipping... */
 {
 int coords[4];
@@ -2970,6 +2978,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2010/02/21 05:15:16  gtkwave
+ * analog drawing fix for clipping + overdraw
+ *
  * Revision 1.25  2010/02/07 20:16:34  gtkwave
  * experiment with adding line clipping to analog rendering
  *
