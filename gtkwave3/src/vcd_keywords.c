@@ -43,7 +43,7 @@ error "gperf generated tables don't work with this execution character set. Plea
 struct vcd_keyword { const char *name; int token; };
 
 
-#define TOTAL_KEYWORDS 23
+#define TOTAL_KEYWORDS 24
 #define MIN_WORD_LENGTH 2
 #define MAX_WORD_LENGTH 14
 #define MIN_HASH_VALUE 5
@@ -68,14 +68,14 @@ keyword_hash (str, len)
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 26, 42, 42, 42,
-      42, 42, 42, 42, 42, 42, 42, 42, 19, 31,
+      42, 42, 42, 42, 42, 42, 42, 42,  9,  1,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-      11, 16, 42,  1, 42,  6, 42, 42, 14, 42,
-       1, 16,  1, 42,  1,  1,  1, 42, 42, 11,
+      11,  6, 42,  1, 42, 16, 42, 42, 24, 42,
+       1,  6, 16, 42,  1,  1,  1, 42, 42, 21,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
@@ -108,59 +108,59 @@ check_identifier (str, len)
   static const struct vcd_keyword wordlist[] =
     {
       {""}, {""}, {""}, {""}, {""},
-#line 22 "./vcd_keywords.gperf"
+#line 23 "./vcd_keywords.gperf"
       {"reg", V_REG},
-#line 35 "./vcd_keywords.gperf"
-      {"port", V_PORT},
-#line 28 "./vcd_keywords.gperf"
-      {"trior", V_TRIOR},
+#line 32 "./vcd_keywords.gperf"
+      {"tri1", V_TRI1},
 #line 29 "./vcd_keywords.gperf"
+      {"trior", V_TRIOR},
+#line 30 "./vcd_keywords.gperf"
       {"trireg", V_TRIREG},
-#line 36 "./vcd_keywords.gperf"
-      {"in", V_IN},
-#line 26 "./vcd_keywords.gperf"
-      {"tri", V_TRI},
-#line 18 "./vcd_keywords.gperf"
-      {"parameter", V_PARAMETER},
-#line 38 "./vcd_keywords.gperf"
-      {"inout", V_INOUT},
-      {""},
-#line 19 "./vcd_keywords.gperf"
-      {"integer", V_INTEGER},
-#line 34 "./vcd_keywords.gperf"
-      {"wor", V_WOR},
-#line 21 "./vcd_keywords.gperf"
-      {"real_parameter", V_REAL_PARAMETER},
-      {""},
-#line 27 "./vcd_keywords.gperf"
-      {"triand", V_TRIAND},
-#line 20 "./vcd_keywords.gperf"
-      {"real", V_REAL},
-#line 37 "./vcd_keywords.gperf"
-      {"out", V_OUT},
 #line 25 "./vcd_keywords.gperf"
+      {"supply1", V_SUPPLY1},
+#line 38 "./vcd_keywords.gperf"
+      {"out", V_OUT},
+#line 26 "./vcd_keywords.gperf"
       {"time", V_TIME},
 #line 17 "./vcd_keywords.gperf"
       {"event", V_EVENT},
       {""},
-#line 30 "./vcd_keywords.gperf"
+#line 31 "./vcd_keywords.gperf"
       {"tri0", V_TRI0},
-      {""},
-#line 32 "./vcd_keywords.gperf"
-      {"wand", V_WAND},
-#line 23 "./vcd_keywords.gperf"
+#line 22 "./vcd_keywords.gperf"
+      {"realtime", V_REALTIME},
+#line 21 "./vcd_keywords.gperf"
+      {"real_parameter", V_REAL_PARAMETER},
+#line 24 "./vcd_keywords.gperf"
       {"supply0", V_SUPPLY0},
-      {""}, {""}, {""},
-#line 33 "./vcd_keywords.gperf"
+#line 28 "./vcd_keywords.gperf"
+      {"triand", V_TRIAND},
+#line 37 "./vcd_keywords.gperf"
+      {"in", V_IN},
+#line 27 "./vcd_keywords.gperf"
+      {"tri", V_TRI},
+#line 36 "./vcd_keywords.gperf"
+      {"port", V_PORT},
+#line 39 "./vcd_keywords.gperf"
+      {"inout", V_INOUT},
+      {""},
+#line 19 "./vcd_keywords.gperf"
+      {"integer", V_INTEGER},
+#line 35 "./vcd_keywords.gperf"
+      {"wor", V_WOR},
+#line 18 "./vcd_keywords.gperf"
+      {"parameter", V_PARAMETER},
+      {""}, {""},
+#line 20 "./vcd_keywords.gperf"
+      {"real", V_REAL},
+      {""},
+#line 34 "./vcd_keywords.gperf"
       {"wire", V_WIRE},
       {""}, {""}, {""}, {""},
-#line 31 "./vcd_keywords.gperf"
-      {"tri1", V_TRI1},
-      {""}, {""},
-#line 24 "./vcd_keywords.gperf"
-      {"supply1", V_SUPPLY1},
-      {""},
-#line 39 "./vcd_keywords.gperf"
+#line 33 "./vcd_keywords.gperf"
+      {"wand", V_WAND},
+      {""}, {""}, {""}, {""},
+#line 40 "./vcd_keywords.gperf"
       {"$end", V_END}
     };
 
@@ -178,7 +178,7 @@ check_identifier (str, len)
     }
   return 0;
 }
-#line 40 "./vcd_keywords.gperf"
+#line 41 "./vcd_keywords.gperf"
 
 
 int vcd_keyword_code(const char *s, unsigned int len)

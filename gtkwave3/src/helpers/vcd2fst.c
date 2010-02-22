@@ -167,6 +167,11 @@ while(!feof(f))
 					{
 					vartype = FST_VT_VCD_REAL_PARAMETER;
 					}
+				else
+				if(!strcmp(st, "realtime"))
+					{
+					vartype = FST_VT_VCD_REALTIME;
+					}
 				break;
 				
 			case 'p':
@@ -701,6 +706,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/02/08 17:31:19  gtkwave
+ * backtracking time fix
+ *
  * Revision 1.8  2009/08/06 20:03:31  gtkwave
  * warnings fixes
  *

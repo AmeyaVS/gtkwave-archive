@@ -361,6 +361,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
                 case FST_VT_VCD_PARAMETER: 	nvt = ND_VCD_PARAMETER; break;
                 case FST_VT_VCD_REAL: 		nvt = ND_VCD_REAL; break;
                 case FST_VT_VCD_REAL_PARAMETER: nvt = ND_VCD_REAL_PARAMETER; break;
+                case FST_VT_VCD_REALTIME:       nvt = ND_VCD_REALTIME; break;
                 case FST_VT_VCD_REG: 		nvt = ND_VCD_REG; break;
                 case FST_VT_VCD_SUPPLY0: 	nvt = ND_VCD_SUPPLY0; break;
                 case FST_VT_VCD_SUPPLY1: 	nvt = ND_VCD_SUPPLY1; break;
@@ -387,6 +388,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		case FST_VT_VCD_REAL:
 		case FST_VT_VCD_REAL_PARAMETER:
+		case FST_VT_VCD_REALTIME:
 			GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
 			break;
 
@@ -1194,6 +1196,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2009/08/06 20:03:31  gtkwave
+ * warnings fixes
+ *
  * Revision 1.18  2009/07/26 20:18:43  gtkwave
  * fix "x" value for time -1 on reals to be "NaN"
  *

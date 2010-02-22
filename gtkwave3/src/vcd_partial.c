@@ -145,7 +145,7 @@ static char *tokens[]={ "var", "end", "scope", "upscope",
 
 #ifdef DEBUG_PRINTF
 static char *vartypes[]={ "event", "parameter",
-                "integer", "real", "real_parameter", "reg", "supply0",
+                "integer", "real", "real_parameter", "realtime", "reg", "supply0",
                 "supply1", "time", "tri", "triand", "trior",
                 "trireg", "tri0", "tri1", "wand", "wire", "wor", "port", "in", "out", "inout",
                 "$end", "", "", "", ""};  
@@ -2458,6 +2458,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/02/18 23:06:04  gtkwave
+ * change name of main iteration loop calls
+ *
  * Revision 1.22  2009/12/22 20:00:41  gtkwave
  * warnings fixes
  *

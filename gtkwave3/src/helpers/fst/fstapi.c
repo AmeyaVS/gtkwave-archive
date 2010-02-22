@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Tony Bybell.
+ * Copyright (c) 2009-2010 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1321,7 +1321,7 @@ if(xc && nam)
 	fputc(0, xc->hier_handle);
 	xc->hier_file_len += (nlen+3);
 
-	if((vt == FST_VT_VCD_REAL) || (vt == FST_VT_VCD_REAL_PARAMETER))
+	if((vt == FST_VT_VCD_REAL) || (vt == FST_VT_VCD_REAL_PARAMETER) || (vt == FST_VT_VCD_REALTIME))
 		{
 		is_real = 1;
 		len = 8; /* recast number of bytes to that of what a double is */
@@ -1553,7 +1553,7 @@ static const char *vartypes[] = {
 	"event", "integer", "parameter", "real", "real_parameter",
 	"reg", "supply0", "supply1", "time", "tri",
 	"triand", "trior", "trireg", "tri0", "tri1", 
-	"wand", "wire", "wor", "port", "array"
+	"wand", "wire", "wor", "port", "array", "realtime"
 	};
 
 static const char *modtypes[] = {
@@ -2178,6 +2178,7 @@ if(!(isfeof=feof(xc->fh)))
 		case FST_VT_VCD_WOR:
 		case FST_VT_VCD_PORT:
 		case FST_VT_VCD_ARRAY:
+		case FST_VT_VCD_REALTIME:
 			xc->hier.htyp = FST_HT_VAR;
 
 			xc->hier.u.var.typ = tag;
@@ -2338,6 +2339,7 @@ while(!feof(xc->fh))
 		case FST_VT_VCD_WOR:
 		case FST_VT_VCD_PORT:
 		case FST_VT_VCD_ARRAY:
+		case FST_VT_VCD_REALTIME:
 			vartype = tag;
 			vardir = fgetc(xc->fh);
 			pnt = str;
@@ -2366,7 +2368,7 @@ while(!feof(xc->fh))
 					xc->longest_signal_value_len = len;
 					}
 
-				if((vartype == FST_VT_VCD_REAL) || (vartype == FST_VT_VCD_REAL_PARAMETER))
+				if((vartype == FST_VT_VCD_REAL) || (vartype == FST_VT_VCD_REAL_PARAMETER) || (vartype == FST_VT_VCD_REALTIME))
 					{
 					len = 64;
 					xc->signal_typs[xc->maxhandle] = FST_VT_VCD_REAL;
@@ -2380,7 +2382,7 @@ while(!feof(xc->fh))
 				}
 				else
 				{
-				if((vartype == FST_VT_VCD_REAL) || (vartype == FST_VT_VCD_REAL_PARAMETER))
+				if((vartype == FST_VT_VCD_REAL) || (vartype == FST_VT_VCD_REAL_PARAMETER) || (vartype == FST_VT_VCD_REALTIME))
 					{
 					len = 64;
 					xc->signal_typs[xc->maxhandle] = FST_VT_VCD_REAL;

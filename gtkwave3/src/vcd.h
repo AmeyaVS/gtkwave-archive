@@ -58,7 +58,7 @@ VCDNAM_ESCAPE };
 /* fix for contrib/rtlbrowse */
 #ifndef VLEX_DEFINES_H
 enum VarTypes { V_EVENT, V_PARAMETER,
-                V_INTEGER, V_REAL, V_REAL_PARAMETER=V_REAL, V_REG, V_SUPPLY0,
+                V_INTEGER, V_REAL, V_REAL_PARAMETER=V_REAL, V_REALTIME=V_REAL, V_REG, V_SUPPLY0,
                 V_SUPPLY1, V_TIME, V_TRI, V_TRIAND, V_TRIOR,
                 V_TRIREG, V_TRI0, V_TRI1, V_WAND, V_WIRE, V_WOR, V_PORT, V_IN=V_PORT, V_OUT=V_PORT, V_INOUT=V_PORT,
                 V_END, V_LB, V_COLON, V_RB, V_STRING };
@@ -129,6 +129,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.6  2009/07/02 18:50:47  gtkwave
  * decorate VCD module trees with type info, add move to front to buildname
  *

@@ -184,6 +184,7 @@ static const char *vartype_strings[] = { \
     "wire", \
     "wor", \
     "array", \
+    "realtime", \
     "port" \
 };
 
@@ -210,9 +211,10 @@ enum nodeVarType {
     ND_VCD_WIRE            = 17,
     ND_VCD_WOR             = 18,
     ND_VCD_ARRAY           = 19,    /* used to define the rownum (index) port on the array */
+    ND_VCD_REALTIME        = 20,
 
-    ND_VCD_PORT		   = 20,
-    ND_VARTYPE_MAX	   = 20,
+    ND_VCD_PORT		   = 21,
+    ND_VARTYPE_MAX	   = 21,
                 
     ND_GEN_STRING          = 254,   /* generic string type */
     ND_GEN_MEMBLOCK        = 255    /* generic memblock type */
@@ -439,6 +441,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.21  2009/11/25 09:49:28  gtkwave
  * added gray code support
  *
