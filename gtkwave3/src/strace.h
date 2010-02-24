@@ -20,7 +20,12 @@
 #include "currenttime.h"
 #include "bsearch.h"
 
+#if WAVE_USE_GTK2
 #define WAVE_NUM_STRACE_WINDOWS (2)
+#else
+#define WAVE_NUM_STRACE_WINDOWS (1)
+#endif
+
 #define WAVE_STRACE_ITERATOR(x) for((x)=((WAVE_NUM_STRACE_WINDOWS)-1); (x)>=0 ; (x)--)
 #define WAVE_STRACE_ITERATOR_FWD(x) for((x)=0;(x)<(WAVE_NUM_STRACE_WINDOWS);(x)++)
 
@@ -127,6 +132,9 @@ void delete_mprintf(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/01/22 22:30:14  gtkwave
+ * reordering of strace_ctx_t
+ *
  * Revision 1.6  2010/01/22 16:51:21  gtkwave
  * fixes to ensure WAVE_NUM_STRACE_WINDOWS is more maintainable
  *

@@ -16,10 +16,18 @@
 #define WV_STRACE_CTX "strace_ctx"
 
 /* need to do this every time you connect a signal */
+#ifdef WAVE_USE_GTK2
 #define WV_STRACE_CURWIN(x) g_object_set_data(G_OBJECT(x), WV_STRACE_CTX, (gpointer)GLOBALS->strace_ctx)
+#else
+#define WV_STRACE_CURWIN
+#endif
 
 /* need to do this at top of every entry point function where a signal is connected */
+#ifdef WAVE_USE_GTK2
 #define GET_WV_STRACE_CURWIN(x) GLOBALS->strace_ctx=g_object_get_data(G_OBJECT(x), WV_STRACE_CTX)
+#else
+#define GET_WV_STRACE_CURWIN
+#endif
 
 static char *logical[]=
         {"AND", "OR", "XOR", "NAND", "NOR", "XNOR"};
@@ -1689,6 +1697,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/01/22 16:51:21  gtkwave
+ * fixes to ensure WAVE_NUM_STRACE_WINDOWS is more maintainable
+ *
  * Revision 1.14  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *

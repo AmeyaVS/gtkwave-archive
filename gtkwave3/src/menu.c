@@ -5598,7 +5598,9 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Sort/Reverse All", NULL, menu_reverse, WV_MENU_RVS, "<Item>"),
       /* 70 */
     WAVE_GTKIFE("/Search/Pattern Search 1", NULL, menu_tracesearchbox, WV_MENU_SPS, "<Item>"),
+#ifdef WAVE_USE_GTK2
     WAVE_GTKIFE("/Search/Pattern Search 2", NULL, menu_tracesearchbox, WV_MENU_SPS2, "<Item>"),
+#endif
     WAVE_GTKIFE("/Search/<separator>", NULL, NULL, WV_MENU_SEP7B, "<Separator>"),
     WAVE_GTKIFE("/Search/Signal Search Regexp", "<Alt>S", menu_signalsearch, WV_MENU_SSR, "<Item>"),
     WAVE_GTKIFE("/Search/Signal Search Hierarchy", "<Alt>T", menu_hiersearch, WV_MENU_SSH, "<Item>"),
@@ -6165,6 +6167,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.92  2010/02/18 23:06:04  gtkwave
+ * change name of main iteration loop calls
+ *
  * Revision 1.91  2010/01/22 20:24:43  gtkwave
  * sanity checking on pattern search ID value
  *

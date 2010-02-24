@@ -146,7 +146,9 @@ WV_MENU_ALPHA2,
 WV_MENU_LEX,
 WV_MENU_RVS,
 WV_MENU_SPS,
+#ifdef WAVE_USE_GTK2
 WV_MENU_SPS2,
+#endif
 WV_MENU_SEP7B,
 WV_MENU_SSR,
 WV_MENU_SSH,
@@ -344,6 +346,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.30  2010/01/18 20:47:02  gtkwave
  * added named locker marking
  *

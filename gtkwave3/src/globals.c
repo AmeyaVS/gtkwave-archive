@@ -800,10 +800,20 @@ NULL, /* bold_tag_status_c_3 401 */
  */
 NULL, /* strace_ctx (defined in strace.h for multiple strace sessions) */
 
-{{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,0,0,0,0,0},  /* strace_windows[0] */
- {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,0,0,0,0,0}}, /* strace_windows[1] */
+{
+{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,0,0,0,0,0},  /* strace_windows[0] */
+#ifdef WAVE_USE_GTK2
+ {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,{0,0,0,0,0,0},{0,0,0,0,0,0},0,0,0,0,0,0,0}
+#endif
+}, /* strace_windows[1] */
 #if WAVE_NUM_STRACE_WINDOWS != 2
+#ifdef WAVE_USE_GTK2
 #error the number of strace windows as defined in strace.h does not match globals.c!
+#else
+#if WAVE_NUM_STRACE_WINDOWS != 1
+#error gtk1 only supports 1 strace window, sorry!
+#endif
+#endif
 #endif
 0, /* strace_current_window */
 
