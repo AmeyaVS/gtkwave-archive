@@ -783,3 +783,4 @@
 		added analog_redraw_skip_count env var.
 		Added support for "realtime" VCD variable.
 		GTK1 compile compatibility fixes for pattern trace.
+		Removed "Reduce Single Bit Vectors" menu option.

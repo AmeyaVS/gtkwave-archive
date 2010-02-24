@@ -2620,6 +2620,8 @@ menu_combine_up(GtkWidget *widget, gpointer data)
 }
 
 /**/
+#if 0
+/* this function should be obsolete with the new group handling, so commented out... */
 
 void
 menu_reduce_singlebit_vex(GtkWidget *widget, gpointer data)
@@ -2719,6 +2721,7 @@ if(dirty)
 	must_sel_nb();
 	}
 }
+#endif
 
 /**/
 void menu_tracesearchbox_callback(GtkWidget *widget, gpointer data)
@@ -5533,7 +5536,6 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Expand", "F3", menu_expand, WV_MENU_EE, "<Item>"),
     WAVE_GTKIFE("/Edit/Combine Down", "F4", menu_combine_down, WV_MENU_ECD, "<Item>"),
     WAVE_GTKIFE("/Edit/Combine Up", "F5", menu_combine_up, WV_MENU_ECU, "<Item>"),
-    WAVE_GTKIFE("/Edit/Reduce Single Bit Vectors", "F6", menu_reduce_singlebit_vex, WV_MENU_ERSBV, "<Item>"),
     WAVE_GTKIFE("/Edit/<separator>", NULL, NULL, WV_MENU_SEP5, "<Separator>"),
     WAVE_GTKIFE("/Edit/Data Format/Hex", "<Alt>X", menu_dataformat_hex, WV_MENU_EDFH, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Decimal", "<Alt>D", menu_dataformat_dec, WV_MENU_EDFD, "<Item>"),
@@ -6167,6 +6169,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.93  2010/02/24 17:35:35  gtkwave
+ * gtk1 compile fixes
+ *
  * Revision 1.92  2010/02/18 23:06:04  gtkwave
  * change name of main iteration loop calls
  *

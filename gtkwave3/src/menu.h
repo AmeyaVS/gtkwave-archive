@@ -88,7 +88,6 @@ WV_MENU_SEP4,
 WV_MENU_EE,
 WV_MENU_ECD,
 WV_MENU_ECU,
-WV_MENU_ERSBV,
 WV_MENU_SEP5,
 WV_MENU_EDFH,
 WV_MENU_EDFD,
@@ -346,6 +345,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2010/02/24 17:35:35  gtkwave
+ * gtk1 compile fixes
+ *
  * Revision 1.31  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *

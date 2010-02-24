@@ -123,7 +123,6 @@ accel "/Edit/<separator>" (null)
 accel "/Edit/Expand" F3
 accel "/Edit/Combine Down" F4
 accel "/Edit/Combine Up" F5
-accel "/Edit/Reduce Single Bit Vectors" F6
 accel "/Edit/<separator>" (null)
 accel "/Edit/Data Format/Hex" <Alt>X
 accel "/Edit/Data Format/Decimal" <Alt>D
