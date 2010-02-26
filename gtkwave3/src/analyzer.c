@@ -753,6 +753,7 @@ Trptr PasteBuffer(void)
 {
   Trptr t, tinsert=NULL, tinsertnext;
   int count;
+  Trptr prev;
 
   if(!GLOBALS->traces.buffer) return(NULL);
 
@@ -761,8 +762,10 @@ Trptr PasteBuffer(void)
   if(!(t=GLOBALS->traces.first))
     {
       t=GLOBALS->traces.last=GLOBALS->traces.first=GLOBALS->traces.buffer;
+      prev = NULL;
       while(t)
 	{
+          t->t_prev = prev; /* defensive re-link move */
 	  GLOBALS->traces.last=t;
 	  GLOBALS->traces.total++;
 	  t=t->t_next;
@@ -858,6 +861,7 @@ t=GLOBALS->traces.buffer;
 
 while(t)
 	{
+	t->t_prev = prev; /* defensive re-link move */
 	prev=t;
 	t->flags&=(~TR_HIGHLIGHT);
 	GLOBALS->traces.total++;
@@ -1387,6 +1391,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.14  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *
