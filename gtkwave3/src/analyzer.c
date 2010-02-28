@@ -840,6 +840,16 @@ Trptr PasteBuffer(void)
   GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
   GLOBALS->traces.buffercount=0;
 
+  /* defensive re-link */
+  t=GLOBALS->traces.first;
+  prev = NULL;
+  while(t)
+	{
+        t->t_prev = prev;
+	prev = t;
+	t=t->t_next;
+	}	
+
   return(GLOBALS->traces.first);
 }
 
@@ -906,9 +916,19 @@ if(GLOBALS->traces.first)
       }
    }
 
- /* clean out the buffer */
+/* clean out the buffer */
 GLOBALS->traces.buffer=GLOBALS->traces.bufferlast=NULL;
 GLOBALS->traces.buffercount=0;
+
+/* defensive re-link */
+t=GLOBALS->traces.first;
+prev = NULL;
+while(t)
+	{
+        t->t_prev = prev;
+	prev = t;
+	t=t->t_next;
+	}	
 
 return(GLOBALS->traces.first);
 }
@@ -1391,6 +1411,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/02/26 18:19:00  gtkwave
+ * defensive re-link of t_prev
+ *
  * Revision 1.15  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *
