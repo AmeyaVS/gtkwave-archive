@@ -144,7 +144,7 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 	                }
 	        }
 
-	while(t->t_next && IsGroupEnd(t->t_next) && IsCollapsed(t->t_next)) {
+	while(t && t->t_next && IsGroupEnd(t->t_next) && IsCollapsed(t->t_next)) { /* added missing "t &&" because of possible while termination above */
 	  t = t->t_next;
 	}
         
@@ -1338,6 +1338,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.47  2009/10/30 18:05:51  gtkwave
  * removed use_standard_clicking off click semantics
  *
