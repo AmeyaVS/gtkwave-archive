@@ -33,7 +33,6 @@
 #include "wavealloca.h"
 #include "debug.h"
 #include "tree.h"
-#include "jrb.h"
 
 #define VCD_SIZE_WARN (256)	/* number of MB size where converter warning message appears */
 #define VCD_BSIZ 32768	/* size of getch() emulation buffer--this val should be ok */
@@ -129,6 +128,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/02/22 21:13:36  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.7  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *

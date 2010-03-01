@@ -25,6 +25,14 @@ if(lst)
         }
 }
 
+
+void free_hier_tree(void)
+{
+/* strings are removed by mass cleanup of _2 allocated memory */
+if(GLOBALS->hier_pfx) { jrb_free_tree(GLOBALS->hier_pfx); GLOBALS->hier_pfx = NULL; }
+}
+
+
 char *hier_decompress(char *n)
 {
 char *recon;
@@ -178,6 +186,9 @@ return(name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/03/01 05:16:26  gtkwave
+ * move compressed hier tree traversal to hierpack
+ *
  * Revision 1.4  2008/07/20 20:48:08  gtkwave
  * compressed hierarchy support
  *

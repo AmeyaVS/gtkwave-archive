@@ -1677,8 +1677,7 @@ void reload_into_new_context(void)
  new_globals->repscript_period = GLOBALS->repscript_period;
 
  /* hierarchy handling from vcd.c */
- if(GLOBALS->hier_pfx) { jrb_free_tree(GLOBALS->hier_pfx); GLOBALS->hier_pfx = NULL; }
-
+ free_hier_tree();
 
  /* vlist.c */
  if(GLOBALS->vlist_handle)
