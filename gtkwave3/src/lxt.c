@@ -434,8 +434,6 @@ char *pnt = NULL;
 int total_mem = get_32(GLOBALS->facname_offset_lxt_c_1+4);
 gzFile zhandle = NULL;
 char *decmem=NULL;
-JRB ptr, lst;
-
 
 #if defined __MINGW32__ || defined _MSC_VER
 FILE *tmp;
@@ -514,15 +512,7 @@ if(GLOBALS->do_hier_compress)
 	        }
 	}
 
-GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
-lst = GLOBALS->hier_pfx;
-if(lst)
-        {
-        jrb_traverse(ptr, lst)
-                {
-                GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
-                }
-        }
+create_hier_array();
 
 if(GLOBALS->prev_hier_uncompressed_name) { free_2(GLOBALS->prev_hier_uncompressed_name); GLOBALS->prev_hier_uncompressed_name = NULL; }
 
@@ -2424,6 +2414,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.11  2009/07/01 07:39:12  gtkwave
  * decorating hierarchy tree with module type info
  *

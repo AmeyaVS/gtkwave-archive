@@ -12,6 +12,8 @@
 
 #include "globals.h"
 
+void create_hier_array(void);
+
 char *hier_decompress(char *n);
 char *hier_decompress_flagged(char *n, int *was_packed);
 
@@ -24,6 +26,9 @@ enum { HIERPACK_DO_NOT_ADD = 0, HIERPACK_ADD };
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/18 17:29:50  gtkwave
+ * adding cvs headers
+ *
  * Revision 1.1  2008/07/18 17:27:01  gtkwave
  * adding hierpack code   
  *

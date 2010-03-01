@@ -196,7 +196,6 @@ unsigned int numalias = 0;
 unsigned int numvars = 0;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
-JRB ptr, lst;
 struct fstHier *h = NULL;
 int msb, lsb;
 char *nnam = NULL, *pnam = NULL, *pnam2 = NULL;
@@ -601,16 +600,7 @@ GLOBALS->fst_maxhandle = numvars;
 /* SPLASH */                            splash_sync(2, 5);  
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
-GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
-         
-lst = GLOBALS->hier_pfx;
-if(lst)  
-        {
-        jrb_traverse(ptr, lst)
-                {
-                GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
-                }
-        }
+create_hier_array();
 
 if(1)
         {
@@ -1196,6 +1186,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/02/22 21:13:36  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.19  2009/08/06 20:03:31  gtkwave
  * warnings fixes
  *

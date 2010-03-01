@@ -41,7 +41,6 @@ signed char scale;
 unsigned int numalias = 0;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
-JRB ptr, lst;
 
 GLOBALS->vzt_vzt_c_1 = vzt_rd_init_smp(fname, GLOBALS->num_cpus);
 if(!GLOBALS->vzt_vzt_c_1)
@@ -273,16 +272,7 @@ for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 /* SPLASH */                            splash_sync(2, 5);  
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
-GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
-         
-lst = GLOBALS->hier_pfx;
-if(lst)  
-        {
-        jrb_traverse(ptr, lst)
-                {
-                GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
-                }
-        }
+create_hier_array();
 
 if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         {
@@ -859,6 +849,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.8  2009/07/01 07:39:12  gtkwave
  * decorating hierarchy tree with module type info
  *

@@ -2264,17 +2264,8 @@ if(sym_chain)
 void vcd_sortfacs(void)
 {
 int i;
-JRB ptr, lst;
 
-GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
-lst = GLOBALS->hier_pfx;
-if(lst)
-	{
-	jrb_traverse(ptr, lst)
-		{
-		GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
-		}
-	}
+create_hier_array();
 
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 GLOBALS->curnode=GLOBALS->firstnode;
@@ -2565,6 +2556,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/02/08 17:31:19  gtkwave
+ * backtracking time fix
+ *
  * Revision 1.23  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *

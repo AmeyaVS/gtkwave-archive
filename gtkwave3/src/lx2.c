@@ -41,7 +41,6 @@ signed char scale;
 unsigned int numalias = 0;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
-JRB ptr, lst;
 
 GLOBALS->lx2_lx2_c_1 = lxt2_rd_init(fname);
 if(!GLOBALS->lx2_lx2_c_1)
@@ -268,16 +267,7 @@ for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 		}
 	}
 
-GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
-
-lst = GLOBALS->hier_pfx;
-if(lst)
-        {
-        jrb_traverse(ptr, lst)
-                {
-                GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
-                }
-        }
+create_hier_array();
 
 /* SPLASH */                            splash_sync(2, 5);
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
@@ -891,6 +881,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.10  2009/08/06 20:03:31  gtkwave
  * warnings fixes
  *

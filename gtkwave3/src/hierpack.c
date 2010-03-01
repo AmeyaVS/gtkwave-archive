@@ -9,6 +9,22 @@
 
 #include "hierpack.h"
 
+void create_hier_array(void)
+{
+JRB ptr, lst;
+
+GLOBALS->pfx_hier_array = calloc_2(GLOBALS->hier_pfx_cnt ? GLOBALS->hier_pfx_cnt : 1, sizeof(char *));
+
+lst = GLOBALS->hier_pfx;
+if(lst)
+        {
+        jrb_traverse(ptr, lst)
+                {
+                GLOBALS->pfx_hier_array[ptr->val.ui] = ptr->key.s;
+                }
+        }
+}
+
 char *hier_decompress(char *n)
 {
 char *recon;
@@ -162,6 +178,9 @@ return(name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2008/07/20 20:48:08  gtkwave
+ * compressed hierarchy support
+ *
  * Revision 1.3  2008/07/20 01:29:36  gtkwave
  * added command line option --comphier
  *
