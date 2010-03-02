@@ -1873,8 +1873,9 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 
   if ((GLOBALS->display_grid) && (GLOBALS->enable_horiz_grid))
     {
-      if ((t->flags & TR_ANALOGMASK) && (t->t_next)
-	  && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+      Trptr tn = GiveNextTrace(t);
+      if ((t->flags & TR_ANALOGMASK) && (tn)
+	  && (tn->flags & TR_ANALOG_BLANK_STRETCH))
 	{
 	}
       else
@@ -1895,7 +1896,7 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
   if ((t->flags & TR_ANALOGMASK)
       && (!(h->flags & HIST_STRING) || !(h->flags & HIST_REAL)))
     {
-      Trptr te = t->t_next;
+      Trptr te = GiveNextTrace(t);
       int ext = 0;
       int num_traces_displayable =
 	GLOBALS->signalarea->allocation.height / GLOBALS->fontheight;
@@ -1905,7 +1906,7 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 	  if (te->flags & TR_ANALOG_BLANK_STRETCH)
 	    {
 	      ext++;
-	      te = te->t_next;
+	      te = GiveNextTrace(te);
 	    }
 	  else
 	    {
@@ -2486,8 +2487,9 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 
   if ((GLOBALS->display_grid) && (GLOBALS->enable_horiz_grid))
     {
-      if ((t->flags & TR_ANALOGMASK) && (t->t_next)
-	  && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+      Trptr tn = GiveNextTrace(t);
+      if ((t->flags & TR_ANALOGMASK) && (tn)
+	  && (tn->flags & TR_ANALOG_BLANK_STRETCH))
 	{
 	}
       else
@@ -2507,7 +2509,7 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 
   if (t->flags & TR_ANALOGMASK)
     {
-      Trptr te = t->t_next;
+      Trptr te = GiveNextTrace(t);
       int ext = 0;
 
       while (te)
@@ -2515,7 +2517,7 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 	  if (te->flags & TR_ANALOG_BLANK_STRETCH)
 	    {
 	      ext++;
-	      te = te->t_next;
+	      te = GiveNextTrace(te);
 	    }
 	  else
 	    {
@@ -2749,11 +2751,12 @@ pr_rendertraces (pr_context * prc)
 
 	      if (kill_dodraw_grid)
 		{
-		  if (!(t->t_next))
+		  Trptr tn = GiveNextTrace(t);
+		  if (!tn)
 		    {
 		      kill_dodraw_grid = 0;
 		    }
-		  else if (!(t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+		  else if (!(tn->flags & TR_ANALOG_BLANK_STRETCH))
 		    {
 		      kill_dodraw_grid = 0;
 		    }
@@ -2978,6 +2981,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2010/02/22 17:15:11  gtkwave
+ * add y-coord clamping to avoid integer round off errors
+ *
  * Revision 1.26  2010/02/21 05:15:16  gtkwave
  * analog drawing fix for clipping + overdraw
  *

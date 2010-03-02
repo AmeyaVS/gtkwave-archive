@@ -774,7 +774,7 @@
 		Added AC_CHECK_LIB([dl], [dlopen]) (Fedora requirement).
 		Added --disable-xz (requested by Gentoo).
 		Added extern "C" { } bookends to headers for C++.
-3.3.4	26feb10	Change slope calculation "m" in clipping.c to all doubles
+3.3.4	02mar10	Change slope calculation "m" in clipping.c to all doubles
 		in order to avoid integer overflow errors.
 		Change main resync loop name from gtkwave_gtk_main_iteration
 		to gtkwave_main_iteration.  (Start of separation of GUI code
@@ -785,3 +785,5 @@
 		GTK1 compile compatibility fixes for pattern trace.
 		Removed "Reduce Single Bit Vectors" menu option.
 		Added defensive re-link of t_prev on prepend and cut ops.
+		Fix for analog stretch traces when analog trace was
+		expanded and then collapsed.

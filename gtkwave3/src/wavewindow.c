@@ -236,7 +236,7 @@ if((t->flags&(TR_BLANK|TR_EXCLUDE)))
 
 if(t->flags & TR_ANALOG_BLANK_STRETCH)	/* seek to real analog trace is present... */
 	{
-	while((t) && (t = t->t_prev))
+	while((t) && (t = GivePrevTrace(t)))
 		{
 		if(!(t->flags & TR_ANALOG_BLANK_STRETCH))
 			{
@@ -2336,12 +2336,13 @@ if(GLOBALS->topmost_trace)
 
 			if(kill_dodraw_grid)
 				{
-				if(!(t->t_next)) 
+				Trptr tn = GiveNextTrace(t);
+				if(!tn) 
 					{
 					kill_dodraw_grid = 0;
 					}
 				else
-				if(!(t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+				if(!(tn->flags & TR_ANALOG_BLANK_STRETCH))
 					{
 					kill_dodraw_grid = 0;
 					}
@@ -3082,7 +3083,8 @@ ytext=yu-(GLOBALS->wavefont->ascent/2)+GLOBALS->wavefont->ascent;
 
 if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 	{
-	if((t->flags & TR_ANALOGMASK) && (t->t_next) && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+	Trptr tn = GiveNextTrace(t);
+	if((t->flags & TR_ANALOGMASK) && (tn) && (tn->flags & TR_ANALOG_BLANK_STRETCH))
 		{
 		}
 		else
@@ -3093,7 +3095,7 @@ if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 
 if((t->flags & TR_ANALOGMASK) && (!(h->flags&HIST_STRING) || !(h->flags&HIST_REAL)))
 	{
-	Trptr te = t->t_next;
+	Trptr te = GiveNextTrace(t);
 	int ext = 0;
 
 	while(te)
@@ -3101,7 +3103,7 @@ if((t->flags & TR_ANALOGMASK) && (!(h->flags&HIST_STRING) || !(h->flags&HIST_REA
 		if(te->flags & TR_ANALOG_BLANK_STRETCH)
 			{
 			ext++;
-			te = te->t_next;
+			te = GiveNextTrace(te);
 			}
 			else
 			{
@@ -3754,7 +3756,8 @@ ytext=yu-(GLOBALS->wavefont->ascent/2)+GLOBALS->wavefont->ascent;
 
 if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 	{
-	if((t->flags & TR_ANALOGMASK) && (t->t_next) && (t->t_next->flags & TR_ANALOG_BLANK_STRETCH))
+	Trptr tn = GiveNextTrace(t);
+	if((t->flags & TR_ANALOGMASK) && (tn) && (tn->flags & TR_ANALOG_BLANK_STRETCH))
 		{
 		}
 		else
@@ -3765,17 +3768,17 @@ if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 
 if(t->flags & TR_ANALOGMASK)
 	{
-        Trptr te = t->t_next;
+        Trptr te = GiveNextTrace(t);
         int ext = 0;
-                 
+
         while(te)
                 {
                 if(te->flags & TR_ANALOG_BLANK_STRETCH)
                         {
                         ext++;
-                        te = te->t_next;
+                        te = GiveNextTrace(te);
                         }
-                        else
+		else
                         {
                         break;
                         }
@@ -4007,6 +4010,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.59  2010/02/22 17:15:11  gtkwave
+ * add y-coord clamping to avoid integer round off errors
+ *
  * Revision 1.58  2010/02/21 05:15:16  gtkwave
  * analog drawing fix for clipping + overdraw
  *
