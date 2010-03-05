@@ -122,7 +122,7 @@ strm.avail_out = destlen;
 lrc = lzma_code(&strm, LZMA_FINISH);
 lzma_end(&strm);
 
-if((lrc == LZMA_OK)||(lrc == LZMA_STREAM_END))
+if(((lrc == LZMA_OK)||(lrc == LZMA_STREAM_END))&&(strm.total_out<srclen))
 	{
 	LZMA_write_varint(h, srclen);
 	LZMA_write_varint(h, strm.total_out);
