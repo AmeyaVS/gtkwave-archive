@@ -788,3 +788,6 @@
 		Fix for analog stretch traces when analog trace was
 		expanded and then collapsed.
 		Fix to LZMA_write_compress to detect xz compression failures.
+3.3.5	09mar10	Fix for usage of deallocated next pointer in the
+		force_open_tree_nodes loop (spotted using an alternate
+		allocator).
