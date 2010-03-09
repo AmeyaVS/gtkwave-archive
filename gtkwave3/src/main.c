@@ -1957,10 +1957,10 @@ if(GLOBALS->treeopen_chain_head)
 			force_open_tree_node(t->str);
 			}
 
-		t2 = t;
+		t2 = t->next;
 		if(t->str) free_2(t->str);
 		free_2(t);
-		t = t2->next;
+		t = t2;
 		}
 
 	GLOBALS->treeopen_chain_head = GLOBALS->treeopen_chain_curr = NULL;
@@ -2645,6 +2645,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.92  2010/01/22 16:51:21  gtkwave
+ * fixes to ensure WAVE_NUM_STRACE_WINDOWS is more maintainable
+ *
  * Revision 1.91  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *
