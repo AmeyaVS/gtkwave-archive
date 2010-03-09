@@ -2002,19 +2002,19 @@ void reload_into_new_context(void)
 #ifdef _WAVE_HAVE_JUDY
 				{
 				Pvoid_t  PJArray = (Pvoid_t)setjmp_globals->alloc2_chain;
-				PPvoid_t PPValue;
+				int rcValue;
 				Word_t Index;
 				JError_t JError;
 
 				Index = 0;
-				for (PPValue = JudyLFirst(PJArray, &Index, &JError); PPValue != (PPvoid_t) NULL; PPValue = JudyLNext(PJArray, &Index, &JError))
+				for (rcValue = Judy1First(PJArray, &Index, &JError); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, &JError))
 					{
 				        JError_t JError;
-				        PPvoid_t PPValue = JudyLIns ((Pvoid_t)&GLOBALS->alloc2_chain, Index, &JError);
+				        Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, Index, &JError);
 					}
 
 				GLOBALS->outstanding += setjmp_globals->outstanding;
-				JudyLFreeArray(&PJArray, &JError);
+				Judy1FreeArray(&PJArray, &JError);
 				}
 #else
 				{

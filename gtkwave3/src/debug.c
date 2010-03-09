@@ -26,7 +26,7 @@
 void free_outstanding(void)
 {
 Pvoid_t  PJArray = (Pvoid_t)GLOBALS->alloc2_chain;
-PPvoid_t PPValue;
+int rcValue;
 Word_t Index;
 JError_t JError;
 int ctr = 0;
@@ -38,12 +38,12 @@ system("date");
 #endif
 
 Index = 0;
-for (PPValue = JudyLFirst(PJArray, &Index, &JError); PPValue != (PPvoid_t) NULL; PPValue = JudyLNext(PJArray, &Index, &JError))
+for (rcValue = Judy1First(PJArray, &Index, &JError); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, &JError))
 	{
 	free((void *)Index);
 	ctr++;
 	}
-JudyLFreeArray(&PJArray, &JError);
+Judy1FreeArray(&PJArray, &JError);
 
 GLOBALS->alloc2_chain = NULL;
 GLOBALS->outstanding = 0;
@@ -96,7 +96,8 @@ ret=malloc(size);
 if(ret)  
         {
 	JError_t JError;
-	PPvoid_t PPValue = JudyLIns ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError);
+
+	Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError);
 
         GLOBALS->outstanding++;
         
@@ -142,12 +143,12 @@ void *realloc_2(void *ptr, size_t size)
 {
 void *ret=realloc(ptr, size);
 
-if(ret!=ptr)
+if(ptr != ret)
 	{
 	JError_t JError1, JError2;
-	int delstat = JudyLDel ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError1);
-	PPvoid_t PPValue2 = JudyLIns ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError2);
-	}        
+	Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError1);
+	Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError2);
+	}
 
 if(ret)
         {
@@ -214,7 +215,7 @@ ret=calloc(nmemb, size);
 if(ret)
 	{
 	JError_t JError;
-	PPvoid_t PPValue = JudyLIns ((Pvoid_t)&g->alloc2_chain, (Word_t)ret, &JError);
+	Judy1Set ((Pvoid_t)&g->alloc2_chain, (Word_t)ret, &JError);
 
 	g->outstanding++;
 
@@ -267,7 +268,7 @@ void free_2(void *ptr)
 if(ptr)
 	{
 	JError_t JError;
-	int delstat = JudyLDel ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError);
+	int delstat = Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError);
 
 	if(delstat)
 		{
@@ -482,6 +483,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/03/09 22:21:29  gtkwave
+ * added optional preliminary Judy array support
+ *
  * Revision 1.9  2009/03/25 09:20:26  gtkwave
  * fixing reloader crashes in vcd_build_symbols if times is zero
  *
