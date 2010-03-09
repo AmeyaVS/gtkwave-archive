@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2004.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -195,6 +195,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/01/26 23:08:01  gtkwave
+ * removed unused obsolete structure definition
+ *
  * Revision 1.10  2009/10/08 15:32:53  gtkwave
  * remove all instances of "long long"
  *

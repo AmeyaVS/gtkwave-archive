@@ -791,3 +791,4 @@
 3.3.5	09mar10	Fix for usage of deallocated next pointer in the
 		force_open_tree_nodes loop (spotted using an alternate
 		allocator).
+		Added optional preliminary Judy array support.

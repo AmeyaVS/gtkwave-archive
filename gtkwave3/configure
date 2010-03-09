@@ -607,6 +607,8 @@ PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
 GTK_CONFIG
+LIBJUDY_CFLAGS
+LIBJUDY_LDADD
 LIBXZ_CFLAGS
 LIBXZ_LDADD
 LIBBZ2_DIR
@@ -738,6 +740,7 @@ enable_dependency_tracking
 enable_local_libz
 enable_local_libbz2
 enable_xz
+enable_judy
 enable_largefile
 '
       ac_precious_vars='build_alias
@@ -1388,6 +1391,7 @@ Optional Features:
                           first look for an installed libbz2 and fall back to
                           using the bundled one.
   --disable-xz            Disables LZMA support for VZT
+  --enable-judy           Enables Judy array support
   --disable-largefile     omit support for large files
 
 Optional Packages:
@@ -5143,6 +5147,99 @@ fi
 
 
 
+# ------------- Judy -------------------
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if Judy array support should be enabled" >&5
+$as_echo_n "checking if Judy array support should be enabled... " >&6; }
+
+EJUDY=no
+# Check whether --enable-judy was given.
+if test "${enable_judy+set}" = set; then :
+  enableval=$enable_judy;
+if test "X$enable_judy" = "Xno" ; then
+	EJUDY=no
+else
+	EJUDY=yes
+fi
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $EJUDY" >&5
+$as_echo "$EJUDY" >&6; }
+
+LIBJUDY_LDADD=
+LIBJUDY_CFLAGS=
+if test "X$EJUDY" == "Xyes"; then
+	have_libjudy=no
+	cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <Judy.h>
+int
+main ()
+{
+ JudySLIns (NULL, NULL, NULL);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+else
+  have_libjudy=yes
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JudySLIns in -lJudy" >&5
+$as_echo_n "checking for JudySLIns in -lJudy... " >&6; }
+if test "${ac_cv_lib_Judy_JudySLIns+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lJudy  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char JudySLIns ();
+int
+main ()
+{
+return JudySLIns ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_Judy_JudySLIns=yes
+else
+  ac_cv_lib_Judy_JudySLIns=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_Judy_JudySLIns" >&5
+$as_echo "$ac_cv_lib_Judy_JudySLIns" >&6; }
+if test "x$ac_cv_lib_Judy_JudySLIns" = x""yes; then :
+  LIBJUDY_LDADD=-lJudy
+else
+  have_libjudy=yes
+fi
+
+	if test "$have_libjudy" = "yes" ; then
+		as_fn_error "Judy support is enabled, but could not be found.
+Please install Judy, see the http://judy.sourceforge.net website or use the --disable-judy flag." "$LINENO" 5
+	fi
+	LIBJUDY_LDADD='-lJudy'
+	LIBJUDY_CFLAGS='-D_WAVE_HAVE_JUDY'
+fi
+
+
+
 # ------------- GTK -------------------
 if test "X$GTK1" = "Xyes" ; then
 	# Extract the first word of "gtk-config", so it can be a program name with args.
@@ -8034,6 +8131,9 @@ ac_config_files="$ac_config_files Makefile doc/Makefile contrib/Makefile contrib
   LIBXZ_CFLAGS     : $LIBXZ_CFLAGS
   LIBXZ_LDADD      : $LIBXZ_LDADD
 
+  LIBJUDY_CFLAGS   : $LIBJUDY_CFLAGS
+  LIBJUDY_LDADD    : $LIBJUDY_LDADD
+
   AET2_CFLAGS      : $AET2_CFLAGS
   AET2_LDADD       : $AET2_LDADD
 
@@ -8071,6 +8171,9 @@ $as_echo "$as_me:
 
   LIBXZ_CFLAGS     : $LIBXZ_CFLAGS
   LIBXZ_LDADD      : $LIBXZ_LDADD
+
+  LIBJUDY_CFLAGS   : $LIBJUDY_CFLAGS
+  LIBJUDY_LDADD    : $LIBJUDY_LDADD
 
   AET2_CFLAGS      : $AET2_CFLAGS
   AET2_LDADD       : $AET2_LDADD

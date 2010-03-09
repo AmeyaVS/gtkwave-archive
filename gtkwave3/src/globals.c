@@ -45,6 +45,10 @@
 #include "vzt_read.h"
 #include "fst.h"
 
+#ifdef _WAVE_HAVE_JUDY
+#include <Judy.h>
+#endif
+
 #ifdef __MINGW32__
 #define sleep(x) Sleep(x)
 #endif
@@ -1987,8 +1991,6 @@ void reload_into_new_context(void)
 
 			if(!setjmp(*(GLOBALS->vcd_jmp_buf)))			/* loader exception handling */
 				{
-				void **t, **t2;
-
 				switch(GLOBALS->loaded_file_type)		/* on fail, longjmp called in these loaders */
 					{			
 			   		case LXT_FILE: lxt_main(GLOBALS->loaded_file_name); break;
@@ -1997,6 +1999,27 @@ void reload_into_new_context(void)
 					default: break;
 					}
 				
+#ifdef _WAVE_HAVE_JUDY
+				{
+				Pvoid_t  PJArray = (Pvoid_t)setjmp_globals->alloc2_chain;
+				PPvoid_t PPValue;
+				Word_t Index;
+				JError_t JError;
+
+				Index = 0;
+				for (PPValue = JudyLFirst(PJArray, &Index, &JError); PPValue != (PPvoid_t) NULL; PPValue = JudyLNext(PJArray, &Index, &JError))
+					{
+				        JError_t JError;
+				        PPvoid_t PPValue = JudyLIns ((Pvoid_t)&GLOBALS->alloc2_chain, Index, &JError);
+					}
+
+				GLOBALS->outstanding += setjmp_globals->outstanding;
+				JudyLFreeArray(&PJArray, &JError);
+				}
+#else
+				{
+				void **t, **t2;
+
 				t = (void **)setjmp_globals->alloc2_chain;
 				while(t)
 					{
@@ -2018,6 +2041,8 @@ void reload_into_new_context(void)
 						break;					
 						}
 					}
+				}
+#endif
 				free(GLOBALS->vcd_jmp_buf); GLOBALS->vcd_jmp_buf = NULL;
 				free(setjmp_globals); setjmp_globals = NULL;
 

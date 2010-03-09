@@ -334,6 +334,38 @@ fi
 AC_SUBST(LIBXZ_LDADD)
 AC_SUBST(LIBXZ_CFLAGS)
 
+# ------------- Judy -------------------
+
+AC_MSG_CHECKING([if Judy array support should be enabled])
+
+EJUDY=no
+AC_ARG_ENABLE([judy],
+[  --enable-judy           Enables Judy array support],
+[
+if test "X$enable_judy" = "Xno" ; then
+	EJUDY=no
+else
+	EJUDY=yes
+fi
+])
+AC_MSG_RESULT([$EJUDY])
+
+LIBJUDY_LDADD=
+LIBJUDY_CFLAGS=
+if test "X$EJUDY" == "Xyes"; then
+	have_libjudy=no
+	AC_TRY_COMPILE([#include <Judy.h>], [ JudySLIns (NULL, NULL, NULL);],, [have_libjudy=yes])
+	AC_CHECK_LIB([Judy], [JudySLIns], [LIBJUDY_LDADD=-lJudy] , [have_libjudy=yes])
+	if test "$have_libjudy" = "yes" ; then
+		AC_MSG_ERROR([Judy support is enabled, but could not be found.
+Please install Judy, see the http://judy.sourceforge.net website or use the --disable-judy flag.])
+	fi
+	LIBJUDY_LDADD='-lJudy'
+	LIBJUDY_CFLAGS='-D_WAVE_HAVE_JUDY'
+fi
+AC_SUBST(LIBJUDY_LDADD)
+AC_SUBST(LIBJUDY_CFLAGS)
+
 # ------------- GTK -------------------
 if test "X$GTK1" = "Xyes" ; then
 	AC_PATH_PROG(GTK_CONFIG, [gtk-config], [notfound])
@@ -529,6 +561,9 @@ AC_MSG_NOTICE([
 
   LIBXZ_CFLAGS     : $LIBXZ_CFLAGS
   LIBXZ_LDADD      : $LIBXZ_LDADD
+
+  LIBJUDY_CFLAGS   : $LIBJUDY_CFLAGS
+  LIBJUDY_LDADD    : $LIBJUDY_LDADD
 
   AET2_CFLAGS      : $AET2_CFLAGS
   AET2_LDADD       : $AET2_LDADD

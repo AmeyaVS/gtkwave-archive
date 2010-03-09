@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999.
+ * Copyright (c) Tony Bybell 1999-2010
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,9 +16,44 @@
 #include <config.h>
 #include "globals.h"
 #include "debug.h"
+#ifdef _WAVE_HAVE_JUDY
+#include <Judy.h>
+#endif
 
 #undef free_2
 
+#ifdef _WAVE_HAVE_JUDY
+void free_outstanding(void)
+{
+Pvoid_t  PJArray = (Pvoid_t)GLOBALS->alloc2_chain;
+PPvoid_t PPValue;
+Word_t Index;
+JError_t JError;
+int ctr = 0;
+
+#ifdef DEBUG_PRINTF
+printf("\n*** cleanup ***\n");
+printf("Freeing %d chunks\n", GLOBALS->outstanding);
+system("date");
+#endif
+
+Index = 0;
+for (PPValue = JudyLFirst(PJArray, &Index, &JError); PPValue != (PPvoid_t) NULL; PPValue = JudyLNext(PJArray, &Index, &JError))
+	{
+	free((void *)Index);
+	ctr++;
+	}
+JudyLFreeArray(&PJArray, &JError);
+
+GLOBALS->alloc2_chain = NULL;
+GLOBALS->outstanding = 0;
+
+#ifdef DEBUG_PRINTF
+printf("Freed %d chunks\n", ctr);
+system("date");
+#endif
+}
+#else
 void free_outstanding(void)
 {
 void **t = (void **)GLOBALS->alloc2_chain;
@@ -47,11 +82,33 @@ printf("Freed %d chunks\n", ctr);
 system("date");
 #endif
 }
-
+#endif
 
 /*
  * wrapped malloc family...
  */
+#ifdef _WAVE_HAVE_JUDY
+void *malloc_2(size_t size)
+{
+void *ret;
+
+ret=malloc(size);
+if(ret)  
+        {
+	JError_t JError;
+	PPvoid_t PPValue = JudyLIns ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError);
+
+        GLOBALS->outstanding++;
+        
+        return(ret);
+        }   
+        else
+        {
+        fprintf(stderr, "FATAL ERROR : Out of memory, sorry.\n");
+        exit(1);
+        }
+}
+#else
 void *malloc_2(size_t size)
 {
 void *ret;
@@ -78,7 +135,31 @@ if(ret)
 	exit(1);
 	}
 }
+#endif
 
+#ifdef _WAVE_HAVE_JUDY
+void *realloc_2(void *ptr, size_t size)
+{
+void *ret=realloc(ptr, size);
+
+if(ret!=ptr)
+	{
+	JError_t JError1, JError2;
+	int delstat = JudyLDel ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError1);
+	PPvoid_t PPValue2 = JudyLIns ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError2);
+	}        
+
+if(ret)
+        {
+        return(ret);
+        }
+        else
+        {
+        fprintf(stderr, "FATAL ERROR : Out of memory, sorry.\n");
+        exit(1);
+        }
+}
+#else
 void *realloc_2(void *ptr, size_t size)
 {
 void *ret;
@@ -122,8 +203,30 @@ if(ret)
 	exit(1);
 	}
 }
+#endif
 
+#ifdef _WAVE_HAVE_JUDY
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size)
+{
+void *ret;
 
+ret=calloc(nmemb, size);
+if(ret)
+	{
+	JError_t JError;
+	PPvoid_t PPValue = JudyLIns ((Pvoid_t)&g->alloc2_chain, (Word_t)ret, &JError);
+
+	g->outstanding++;
+
+	return(ret);
+	}
+	else
+	{
+	fprintf(stderr, "FATAL ERROR: Out of memory, sorry.\n");
+	exit(1);
+	}
+}
+#else
 void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size)
 {
 void *ret;
@@ -150,7 +253,7 @@ if(ret)
 	exit(1);
 	}
 }
-
+#endif
 
 void *calloc_2(size_t nmemb, size_t size)
 {
@@ -158,7 +261,30 @@ return(calloc_2_into_context(GLOBALS, nmemb, size));
 }
 
 
+#ifdef _WAVE_HAVE_JUDY
+void free_2(void *ptr)
+{
+if(ptr)
+	{
+	JError_t JError;
+	int delstat = JudyLDel ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError);
 
+	if(delstat)
+		{
+		GLOBALS->outstanding--;
+		free(ptr);
+		}
+		else
+		{
+		printf("JUDYMEM | free to non-malloc'd address %p blocked\n", ptr);
+		}
+	}
+	else
+	{
+	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught.\n");
+	}
+}
+#else
 void free_2(void *ptr)
 {
 if(ptr)
@@ -190,7 +316,7 @@ if(ptr)
 	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught.\n");
 	}
 }
-
+#endif
 
 char *strdup_2(const char *s)
 {
@@ -356,6 +482,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2009/03/25 09:20:26  gtkwave
+ * fixing reloader crashes in vcd_build_symbols if times is zero
+ *
  * Revision 1.8  2009/01/20 06:11:48  gtkwave
  * added gtkwave::getDisplayedSignals command
  *
