@@ -98,6 +98,7 @@ TR_RJUSTIFY, /* default_flags 5 */
 {0, 0, 0, 0, 0, 0, 0}, /* tims 6 */
 {0, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL}, /* traces 9 */
 0, /* hier_max_level 8 */
+0, /* hier_max_level_shadow */
 0, /* timestart_from_savefile */
 0, /* timestart_from_savefile_valid */
 0, /* group_depth */
@@ -1636,6 +1637,7 @@ void reload_into_new_context(void)
  new_globals->sst_expanded = GLOBALS->sst_expanded;
  new_globals->hier_grouping = GLOBALS->hier_grouping;
  new_globals->hier_max_level = GLOBALS->hier_max_level;
+ new_globals->hier_max_level_shadow = GLOBALS->hier_max_level_shadow;
  new_globals->paned_pack_semantics = GLOBALS->paned_pack_semantics;
  new_globals->left_justify_sigs = GLOBALS->left_justify_sigs;
  new_globals->lxt_clock_compress_to_z = GLOBALS->lxt_clock_compress_to_z;

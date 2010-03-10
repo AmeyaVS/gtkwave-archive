@@ -973,6 +973,8 @@ if(GLOBALS->entrybox_text)
 
     i = atoi_64(GLOBALS->entrybox_text);
     set_hier_cleanup(widget, data, i);
+    GLOBALS->hier_max_level_shadow = GLOBALS->hier_max_level; /* used for the toggle function */
+
     free_2(GLOBALS->entrybox_text);
     GLOBALS->entrybox_text=NULL;
   }
@@ -1004,22 +1006,19 @@ entrybox("Max Hier Depth",200,za,NULL,20,GTK_SIGNAL_FUNC(max_hier_cleanup));
 
 void menu_toggle_hier(GtkWidget *widget, gpointer data)
 {
-
 if(GLOBALS->helpbox_is_active)
         {
         help_text_bold("\n\nToggle Trace Hier");
         help_text(
-		" toggles the maximum hierarchy depth from zero to one."
+		" toggles the maximum hierarchy depth from zero to whatever was previously set."
         );
         return;
         }
 
-
- if (GLOBALS->hier_max_level == 1)
+ if (GLOBALS->hier_max_level)
    set_hier_cleanup(widget, data, 0);
  else
-   set_hier_cleanup(widget, data, 1);
-
+   set_hier_cleanup(widget, data, GLOBALS->hier_max_level_shadow); /* instead of just '1' */
 }
 
 
@@ -6169,6 +6168,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.95  2010/03/10 04:00:07  gtkwave
+ * fixed compiler warnings for 64-bit
+ *
  * Revision 1.94  2010/02/24 18:06:14  gtkwave
  * removed reduce single bit vectors
  *

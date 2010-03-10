@@ -290,7 +290,7 @@ return(0);
 int f_hier_max_level(char *str)
 {
 DEBUG(printf("f_hier_max_level(\"%s\")\n",str));
-GLOBALS->hier_max_level=atoi_64(str);
+GLOBALS->hier_max_level_shadow=GLOBALS->hier_max_level=atoi_64(str);
 return(0);
 }
 
@@ -958,6 +958,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2010/02/21 05:15:16  gtkwave
+ * analog drawing fix for clipping + overdraw
+ *
  * Revision 1.21  2010/01/22 07:28:28  gtkwave
  * change grid2 color to slate blue
  *

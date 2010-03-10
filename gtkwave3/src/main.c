@@ -517,6 +517,7 @@ if(!GLOBALS)
 	GLOBALS->sst_expanded = old_g->sst_expanded;
 	GLOBALS->hier_grouping = old_g->hier_grouping;
 	GLOBALS->hier_max_level = old_g->hier_max_level;
+	GLOBALS->hier_max_level_shadow = old_g->hier_max_level_shadow;
 	GLOBALS->paned_pack_semantics = old_g->paned_pack_semantics;
 	GLOBALS->left_justify_sigs = old_g->left_justify_sigs;
 	GLOBALS->lxt_clock_compress_to_z = old_g->lxt_clock_compress_to_z;
@@ -2645,6 +2646,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.93  2010/03/09 21:20:00  gtkwave
+ * crash fix for using ->next on a struct after free
+ *
  * Revision 1.92  2010/01/22 16:51:21  gtkwave
  * fixes to ensure WAVE_NUM_STRACE_WINDOWS is more maintainable
  *

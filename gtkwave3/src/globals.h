@@ -91,6 +91,7 @@ unsigned int default_flags; /* from analyzer.c 5 */
 Times tims; /* from analyzer.c 6 */
 Traces traces; /* from analyzer.c 7 */
 int hier_max_level; /* from analyzer.c 8 */
+int hier_max_level_shadow; /* from analyzer.c */
 TimeType timestart_from_savefile;
 char timestart_from_savefile_valid;
 int group_depth;
