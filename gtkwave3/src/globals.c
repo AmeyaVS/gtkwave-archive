@@ -44,6 +44,7 @@
 #include "lxt2_read.h"
 #include "vzt_read.h"
 #include "fst.h"
+#include "hierpack.h"
 
 #ifdef _WAVE_HAVE_JUDY
 #include <Judy.h>

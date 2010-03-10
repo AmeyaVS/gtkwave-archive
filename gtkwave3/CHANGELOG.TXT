@@ -792,3 +792,5 @@
 		force_open_tree_nodes loop (spotted using an alternate
 		allocator).
 		Added optional preliminary Judy array support.
+		Fixed compiler warnings.		
+

@@ -2765,16 +2765,16 @@ if(GLOBALS->helpbox_is_active)
 	    /* at least one good trace, so do it */
 	    /* data contains WV_MENU_SPS or WV_MENU_SPS2 or ... but the base is WV_MENU_SPS*/
 	    char buf[128];
-	    int which = ((int)data) - WV_MENU_SPS;
+	    long which = ((long)data) - WV_MENU_SPS;
 
 	    if((which < 0) || (which >= WAVE_NUM_STRACE_WINDOWS)) 
 			{ /* should never happen unless menus are defined wrong */
-			sprintf(buf, "Pattern search ID %d out of range of 1-%d available, ignoring.", which+1, WAVE_NUM_STRACE_WINDOWS);
+			sprintf(buf, "Pattern search ID %d out of range of 1-%d available, ignoring.", (int)(which+1), WAVE_NUM_STRACE_WINDOWS);
 			status_text(buf);
 			}
 			else
 			{
-			sprintf(buf, "Waveform Display Search (%d)", which+1);
+			sprintf(buf, "Waveform Display Search (%d)", (int)(which+1));
 			tracesearchbox(buf, GTK_SIGNAL_FUNC(menu_tracesearchbox_callback), (gpointer)which);
 			}
 	    return;
@@ -6169,6 +6169,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.94  2010/02/24 18:06:14  gtkwave
+ * removed reduce single bit vectors
+ *
  * Revision 1.93  2010/02/24 17:35:35  gtkwave
  * gtk1 compile fixes
  *

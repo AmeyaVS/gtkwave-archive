@@ -348,7 +348,7 @@ void tracesearchbox(const char *title, GtkSignalFunc func, gpointer data)
     int i;
     int numtraces;
 
-    GLOBALS->strace_current_window = (int)data; /* arg for which search box going in */
+    GLOBALS->strace_current_window = (int)(long)data; /* arg for which search box going in */
     GLOBALS->strace_ctx = &GLOBALS->strace_windows[GLOBALS->strace_current_window];
 
     if(GLOBALS->strace_ctx->straces) 
@@ -1697,6 +1697,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/02/24 17:35:35  gtkwave
+ * gtk1 compile fixes
+ *
  * Revision 1.15  2010/01/22 16:51:21  gtkwave
  * fixes to ensure WAVE_NUM_STRACE_WINDOWS is more maintainable
  *
