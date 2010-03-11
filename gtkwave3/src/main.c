@@ -74,6 +74,14 @@
 #include <tk.h>
 #endif
 
+
+static int suffix_check(const char *s, const char *sfx)
+{
+int sfxlen = strlen(sfx);
+return((strlen(s)>=sfxlen)&&(!strcasecmp(s+strlen(s)-sfxlen,sfx)));
+}
+
+
 static void switch_page(GtkNotebook     *notebook,
 			GtkNotebookPage *page,
 			guint            page_num,
@@ -344,6 +352,7 @@ void addPidToExecutableName(int argc, char* argv[], char* argv_mod[])
 	  
   argv_mod[0] = buffer;
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -1097,8 +1106,7 @@ if(is_missing_file)
 	}
 else
 #ifdef EXTLOAD_SUFFIX
-if( (strlen(GLOBALS->loaded_file_name)>strlen(EXTLOAD_SUFFIX))&&
-	((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-strlen(EXTLOAD_SUFFIX),EXTLOAD_SUFFIX))) )
+if(suffix_check(GLOBALS->loaded_file_name, EXTLOAD_SUFFIX))
 	{
 	TimeType extload_max;
 
@@ -1112,7 +1120,7 @@ if( (strlen(GLOBALS->loaded_file_name)>strlen(EXTLOAD_SUFFIX))&&
 	}
 else
 #endif
-if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lxt"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".lx2"))))
+if(suffix_check(GLOBALS->loaded_file_name, ".lxt") || suffix_check(GLOBALS->loaded_file_name, ".lx2") || suffix_check(GLOBALS->loaded_file_name, ".lxt2"))
 	{
 	FILE *f = fopen(GLOBALS->loaded_file_name, "rb");
 	int typ = 0;
@@ -1153,7 +1161,7 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_nam
 		}	
 	}
 else
-if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".fst")))
+if(suffix_check(GLOBALS->loaded_file_name, ".fst"))
 	{
 #if !defined _MSC_VER
 	GLOBALS->stems_type = WAVE_ANNO_FST;
@@ -1169,7 +1177,7 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name
 		}
 	}
 else
-if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".vzt")))
+if(suffix_check(GLOBALS->loaded_file_name, ".vzt"))
 	{
 #if !defined _MSC_VER
 	GLOBALS->stems_type = WAVE_ANNO_VZT;
@@ -1184,7 +1192,7 @@ if((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name
 		vcd_exit(255);
 		}
 	}
-else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".aet"))||(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ae2"))))
+else if(suffix_check(GLOBALS->loaded_file_name, ".aet") || suffix_check(GLOBALS->loaded_file_name, ".ae2"))
 	{
 #if !defined _MSC_VER
 	GLOBALS->stems_type = WAVE_ANNO_AE2;
@@ -1199,11 +1207,8 @@ else if ((strlen(GLOBALS->loaded_file_name)>3)&&((!strcasecmp(GLOBALS->loaded_fi
 		vcd_exit(255);
 		}
 	}
-else if (
-	((strlen(GLOBALS->loaded_file_name)>3)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-4,".ghw"))) ||
-	((strlen(GLOBALS->loaded_file_name)>6)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-7,".ghw.gz"))) ||
-	((strlen(GLOBALS->loaded_file_name)>7)&&(!strcasecmp(GLOBALS->loaded_file_name+strlen(GLOBALS->loaded_file_name)-8,".ghw.bz2")))
-	)
+else if (suffix_check(GLOBALS->loaded_file_name, ".ghw") || suffix_check(GLOBALS->loaded_file_name, ".ghw.gz") ||
+		suffix_check(GLOBALS->loaded_file_name, ".ghw.bz2"))
 	{
           GLOBALS->loaded_file_type = GHW_FILE;
 	  if(!ghw_main(GLOBALS->loaded_file_name))
@@ -2646,6 +2651,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.94  2010/03/10 18:14:13  gtkwave
+ * Toggle Trace Hier fix (cache old value for more usability)
+ *
  * Revision 1.93  2010/03/09 21:20:00  gtkwave
  * crash fix for using ->next on a struct after free
  *

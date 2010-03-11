@@ -2193,10 +2193,11 @@ if(dot)
 		(!strcasecmp("dmp", dot+1)) ||
 		(!strcasecmp("lxt", dot+1)) ||
 		(!strcasecmp("lx2", dot+1)) ||
+		(!strcasecmp("lxt2", dot+1)) ||
 		(!strcasecmp("vzt", dot+1)) ||
 		(!strcasecmp("fst", dot+1)) ||
 		(!strcasecmp("ghw", dot+1)) ||
-		(!strcasecmp("aet", dot+1)) ||
+		(!strcasecmp("aet", dot+1)) ||	/* ignore .aet? filename types */
 		(!strcasecmp("ae2", dot+1))
 		)
 		{
@@ -2711,6 +2712,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.69  2010/02/18 23:06:04  gtkwave
+ * change name of main iteration loop calls
+ *
  * Revision 1.68  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *
