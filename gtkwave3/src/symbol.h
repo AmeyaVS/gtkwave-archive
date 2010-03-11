@@ -36,13 +36,12 @@ typedef long off_t;
 
 struct fac
 {
-int array_height;
-int msb, lsb, len;
-char *name;
-unsigned int lastchange;
-unsigned int flags;
 struct Node *resolve_lxt_alias_to;
 struct Node *working_node;
+int array_height;
+int msb, lsb, len;
+unsigned int lastchange;
+unsigned int flags;
 };
 
 
@@ -119,6 +118,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.3  2008/09/26 17:05:10  gtkwave
  * force open tree nodes in ctree on initial .sav file read (didn't happen
  * before as ctree was not built yet)

@@ -201,6 +201,7 @@ int msb, lsb;
 char *nnam = NULL, *pnam = NULL, *pnam2 = NULL;
 uint32_t activity_idx, num_activity_changes;
 struct tree *npar = NULL, *ppar = NULL;
+char **f_name = NULL;
 
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
 if(!GLOBALS->fst_fst_c_1)
@@ -214,6 +215,7 @@ exponent_to_time_scale(scale);
 
 GLOBALS->numfacs=fstReaderGetVarCount(GLOBALS->fst_fst_c_1);
 GLOBALS->mvlfacs_fst_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
+f_name = calloc_2(GLOBALS->numfacs,sizeof(char *));
 GLOBALS->fst_table_fst_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry));
 sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
@@ -321,13 +323,13 @@ if(GLOBALS->numfacs)
 
 	if(was_packed)
 		{
-		GLOBALS->mvlfacs_fst_c_3[0].name = pnt;
+		f_name[0] = pnt;
 		}
 		else
 		{
 		int flen = strlen(fnam);
-		GLOBALS->mvlfacs_fst_c_3[0].name=malloc_2(flen+1);
-		strcpy(GLOBALS->mvlfacs_fst_c_3[0].name, fnam);
+		f_name[0]=malloc_2(flen+1);
+		strcpy(f_name[0], fnam);
 		}
 	}
 
@@ -452,27 +454,27 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(was_packed)
 			{
-			GLOBALS->mvlfacs_fst_c_3[i+1].name = pnt;
+			f_name[i+1] = pnt;
 			}
 			else
 			{
 			int flen = strlen(fnam);
-			GLOBALS->mvlfacs_fst_c_3[i+1].name=malloc_2(flen+1);
-			strcpy(GLOBALS->mvlfacs_fst_c_3[i+1].name, fnam);
+			f_name[i+1]=malloc_2(flen+1);
+			strcpy(f_name[i+1], fnam);
 			}
 		}
 
 	if(i>1)
 		{
-		free_2(GLOBALS->mvlfacs_fst_c_3[i-2].name);
-		GLOBALS->mvlfacs_fst_c_3[i-2].name = NULL;
+		free_2(f_name[i-2]);
+		f_name[i-2] = NULL;
 		}
 
 	f=GLOBALS->mvlfacs_fst_c_3+i;
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
-		int len=sprintf(buf, "%s[%d:%d]", GLOBALS->mvlfacs_fst_c_3[i].name,GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
+		int len=sprintf(buf, "%s[%d:%d]", f_name[i],GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
 		str=malloc_2(len+1);
 
 		if(!GLOBALS->alt_hier_delimeter)
@@ -492,13 +494,13 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
-			((i!=GLOBALS->numfacs-1)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i+1].name))))
+			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[i], f_name[i+1]))))
 			||
-			(((i!=0)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i-1].name))) &&
+			(((i!=0)&&(!strcmp(f_name[i], f_name[i-1]))) &&
 			(GLOBALS->mvlfacs_fst_c_3[i].msb!=-1)&&(GLOBALS->mvlfacs_fst_c_3[i].lsb!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", GLOBALS->mvlfacs_fst_c_3[i].name,GLOBALS->mvlfacs_fst_c_3[i].msb);
+		int len = sprintf(buf, "%s[%d]", f_name[i],GLOBALS->mvlfacs_fst_c_3[i].msb);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -510,7 +512,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->mvlfacs_fst_c_3[i-1].name)))	/* allow chaining for search functions.. */
+		if((prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1])))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -527,14 +529,14 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 		else
 		{
-		str=malloc_2(strlen(GLOBALS->mvlfacs_fst_c_3[i].name)+1);
+		str=malloc_2(strlen(f_name[i])+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
-			strcpy(str, GLOBALS->mvlfacs_fst_c_3[i].name);
+			strcpy(str, f_name[i]);
 			}
 			else
 			{
-			strcpy_vcdalt(str, GLOBALS->mvlfacs_fst_c_3[i].name, GLOBALS->alt_hier_delimeter);
+			strcpy_vcdalt(str, f_name[i], GLOBALS->alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
@@ -584,12 +586,13 @@ if(pnam) { free_2(pnam); pnam = NULL; }
 
 for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
 	{
-	if(GLOBALS->mvlfacs_fst_c_3[i].name)
+	if(f_name[i])
 		{
-		free_2(GLOBALS->mvlfacs_fst_c_3[i].name);
-		GLOBALS->mvlfacs_fst_c_3[i].name = NULL;
+		free_2(f_name[i]);
+		f_name[i] = NULL;
 		}
 	}
+free_2(f_name); f_name = NULL;
 
 fprintf(stderr, FST_RDLOAD"Built %d signal%s and %d alias%s.\n", 
 	numvars, (numvars == 1) ? "" : "s", 
@@ -1186,6 +1189,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2010/03/01 05:16:26  gtkwave
+ * move compressed hier tree traversal to hierpack
+ *
  * Revision 1.20  2010/02/22 21:13:36  gtkwave
  * added "realtime" VCD variable
  *

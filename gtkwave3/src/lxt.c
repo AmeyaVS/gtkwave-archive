@@ -425,7 +425,7 @@ fprintf(stderr, LXTHDR"...expanded %d entries from %08x into %08x bytes.\n", GLO
 /*
  * decompress facility names and build up fac geometry
  */
-static void build_facs(char *fname)
+static void build_facs(char *fname, char **f_name)
 {
 char *buf, *bufprev = NULL, *bufcurr;
 off_t offs=GLOBALS->facname_offset_lxt_c_1+8;
@@ -486,11 +486,11 @@ if(GLOBALS->do_hier_compress)
 		string_ret =  hier_compress(workspace, HIERPACK_ADD, &was_packed);
 		if(was_packed)
 			{
-			GLOBALS->mvlfacs_lxt_c_2[i].name=string_ret;
+			f_name[i]=string_ret;
 			}
 			else
 			{
-		        GLOBALS->mvlfacs_lxt_c_2[i].name=strdup_2(workspace);
+		        f_name[i]=strdup_2(workspace);
 			}
 	        }
 	}
@@ -506,7 +506,7 @@ if(GLOBALS->do_hier_compress)
 			*(pnt++) = *(bufprev++);
 			}
 	        while((*(pnt++)=get_byte(offs++)));
-	        GLOBALS->mvlfacs_lxt_c_2[i].name=bufcurr;
+	        f_name[i]=bufcurr;
 		DEBUG(printf(LXTHDR"Encountered facility %d: '%s'\n", i, bufcurr));
 		bufprev=bufcurr;
 	        }
@@ -568,7 +568,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	GLOBALS->mvlfacs_lxt_c_2[i].len=(GLOBALS->mvlfacs_lxt_c_2[i].lsb>GLOBALS->mvlfacs_lxt_c_2[i].msb)?(GLOBALS->mvlfacs_lxt_c_2[i].lsb-GLOBALS->mvlfacs_lxt_c_2[i].msb+1):(GLOBALS->mvlfacs_lxt_c_2[i].msb-GLOBALS->mvlfacs_lxt_c_2[i].lsb+1);
 
 	if(GLOBALS->mvlfacs_lxt_c_2[i].len>GLOBALS->lt_len_lxt_c_1) GLOBALS->lt_len_lxt_c_1 = GLOBALS->mvlfacs_lxt_c_2[i].len;
-	DEBUG(printf(LXTHDR"%s[%d:%d]\n", mvlfacs[i].name, mvlfacs[i].msb, mvlfacs[i].lsb));
+	DEBUG(printf(LXTHDR"%s[%d:%d]\n", mvlfacs[i].f_name, mvlfacs[i].msb, mvlfacs[i].lsb));
 
 	offs+=0x10;
 	}
@@ -797,7 +797,7 @@ if(GLOBALS->sync_table_offset_lxt_c_1)
 		chg=get_32(offs);  offs+=4;
 		if(chg>maxchg) {maxchg=chg; maxindx=i; }
 		GLOBALS->mvlfacs_lxt_c_2[i].lastchange=chg;
-		DEBUG(printf(LXTHDR"Changes: %d '%s' %08x\n", i, mvlfacs[i].name, chg));
+		DEBUG(printf(LXTHDR"Changes: %d '%s' %08x\n", i, mvlfacs[i].f_name, chg));
 		}
 
 	if(GLOBALS->zsync_table_size_lxt_c_1)
@@ -810,7 +810,7 @@ if(GLOBALS->sync_table_offset_lxt_c_1)
 #endif
 		}
 
-	DEBUG(printf(LXTHDR"Maxchange at: %08x for symbol '%s' of len %d\n", maxchg, mvlfacs[maxindx].name,  mvlfacs[maxindx].len));
+	DEBUG(printf(LXTHDR"Maxchange at: %08x for symbol '%s' of len %d\n", maxchg, mvlfacs[maxindx].f_name,  mvlfacs[maxindx].len));
 
 	GLOBALS->maxchange_lxt_c_1=maxchg;
 	GLOBALS->maxindex_lxt_c_1=maxindx;
@@ -1119,7 +1119,7 @@ if(!GLOBALS->sync_table_offset_lxt_c_1)
 			}
 
 
-		/* printf("%08x : %04x %02x (%d) %s[%d:%d]\n", offscache, facidx, cmd, mvlfacs[facidx].len, mvlfacs[facidx].name, mvlfacs[facidx].msb, mvlfacs[facidx].lsb); */
+		/* printf("%08x : %04x %02x (%d) %s[%d:%d]\n", offscache, facidx, cmd, mvlfacs[facidx].len, mvlfacs[facidx].f_name, mvlfacs[facidx].msb, mvlfacs[facidx].lsb); */
 
 		if(!cmdkill)
 		switch(cmd)
@@ -1438,6 +1438,7 @@ off_t tagpnt;
 int tag;
 struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
+char **f_name = NULL;
 
 GLOBALS->fd_lxt_c_1=open(fname, O_RDONLY);
 if(GLOBALS->fd_lxt_c_1<0)
@@ -1562,6 +1563,7 @@ if(!GLOBALS->facname_offset_lxt_c_1)
 GLOBALS->numfacs=get_32(GLOBALS->facname_offset_lxt_c_1);
 DEBUG(printf(LXTHDR"Number of facs: %d\n", numfacs));
 GLOBALS->mvlfacs_lxt_c_2=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
+f_name = calloc_2(GLOBALS->numfacs,sizeof(char *));
 
 if(GLOBALS->initial_value_offset_lxt_c_1)
 	{
@@ -1594,7 +1596,7 @@ if(GLOBALS->zdictionary_offset_lxt_c_1)
 		}
 	}
 
-build_facs(fname);
+build_facs(fname, f_name);
 /* SPLASH */                            splash_sync(1, 5);
 build_facs2(fname);
 /* SPLASH */                            splash_sync(2, 5);
@@ -1632,7 +1634,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)&& (!(f->flags&(LT_SYM_F_INTEGER|LT_SYM_F_DOUBLE|LT_SYM_F_STRING))) )
 		{
-		int len = sprintf(buf, "%s[%d:%d]", GLOBALS->mvlfacs_lxt_c_2[i].name,GLOBALS->mvlfacs_lxt_c_2[i].msb, GLOBALS->mvlfacs_lxt_c_2[i].lsb);
+		int len = sprintf(buf, "%s[%d:%d]", f_name[i],GLOBALS->mvlfacs_lxt_c_2[i].msb, GLOBALS->mvlfacs_lxt_c_2[i].lsb);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -1648,13 +1650,13 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(LT_SYM_F_INTEGER|LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))&&
-			((i!=GLOBALS->numfacs-1)&&(!strcmp(GLOBALS->mvlfacs_lxt_c_2[i].name, GLOBALS->mvlfacs_lxt_c_2[i+1].name))))
+			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[i], f_name[i+1]))))
 			||
-			(((i!=0)&&(!strcmp(GLOBALS->mvlfacs_lxt_c_2[i].name, GLOBALS->mvlfacs_lxt_c_2[i-1].name))) &&
+			(((i!=0)&&(!strcmp(f_name[i], f_name[i-1]))) &&
 			(GLOBALS->mvlfacs_lxt_c_2[i].msb!=-1)&&(GLOBALS->mvlfacs_lxt_c_2[i].lsb!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", GLOBALS->mvlfacs_lxt_c_2[i].name,GLOBALS->mvlfacs_lxt_c_2[i].msb);
+		int len = sprintf(buf, "%s[%d]", f_name[i],GLOBALS->mvlfacs_lxt_c_2[i].msb);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -1666,7 +1668,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
                 s=&sym_block[i];
                 symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(GLOBALS->mvlfacs_lxt_c_2[i].name, GLOBALS->mvlfacs_lxt_c_2[i-1].name)))	/* allow chaining for search functions.. */
+		if((prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1])))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -1680,14 +1682,14 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 		else
 		{
-		str=malloc_2(strlen(GLOBALS->mvlfacs_lxt_c_2[i].name)+1);
+		str=malloc_2(strlen(f_name[i])+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
-			strcpy(str, GLOBALS->mvlfacs_lxt_c_2[i].name);
+			strcpy(str, f_name[i]);
 			}
 			else
 			{
-			strcpy_vcdalt(str, GLOBALS->mvlfacs_lxt_c_2[i].name, GLOBALS->alt_hier_delimeter);
+			strcpy_vcdalt(str, f_name[i], GLOBALS->alt_hier_delimeter);
 			}
                 s=&sym_block[i];
                 symadd_name_exists_sym_exists(s,str,0);
@@ -1728,11 +1730,12 @@ for(i=0;i<GLOBALS->numfacs;i++)
         s->n=n;
         }
 
-free_2(GLOBALS->mvlfacs_lxt_c_2[0].name);	/* the start of the big decompression buffer */
+free_2(f_name[0]);	/* the start of the big decompression buffer */
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	GLOBALS->mvlfacs_lxt_c_2[i].name = NULL;
+	f_name[i] = NULL;
 	}
+free_2(f_name); f_name = NULL;
 
 /* SPLASH */                            splash_sync(3, 5);
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
@@ -2414,6 +2417,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/01 05:16:26  gtkwave
+ * move compressed hier tree traversal to hierpack
+ *
  * Revision 1.12  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *

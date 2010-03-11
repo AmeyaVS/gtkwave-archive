@@ -796,3 +796,4 @@
 		Fixed toggle max hier so it toggles back and forth between
 		the most previously set hierarchy depth.
 		Added ".lxt2" to list of suffixes allowed by gtkwave.		
+		Remove name field from struct fac.
