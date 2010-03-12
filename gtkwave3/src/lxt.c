@@ -1563,6 +1563,7 @@ if(!GLOBALS->facname_offset_lxt_c_1)
 GLOBALS->numfacs=get_32(GLOBALS->facname_offset_lxt_c_1);
 DEBUG(printf(LXTHDR"Number of facs: %d\n", numfacs));
 GLOBALS->mvlfacs_lxt_c_2=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
+GLOBALS->resolve_lxt_alias_to=(struct Node **)calloc_2(GLOBALS->numfacs,sizeof(struct Node *));
 f_name = calloc_2(GLOBALS->numfacs,sizeof(char *));
 
 if(GLOBALS->initial_value_offset_lxt_c_1)
@@ -1897,38 +1898,38 @@ if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
 	int alias = np->mv.mvlfac->array_height;
 	f=GLOBALS->mvlfacs_lxt_c_2+alias;
 
-	if(f->resolve_lxt_alias_to)
+	if(GLOBALS->resolve_lxt_alias_to[alias])
 		{
-		if(!np->mv.mvlfac->resolve_lxt_alias_to) np->mv.mvlfac->resolve_lxt_alias_to = f->resolve_lxt_alias_to;
+		if(!GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2]) GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2] = GLOBALS->resolve_lxt_alias_to[alias];
 		}
 		else
 		{
-		f->resolve_lxt_alias_to = np;
+		GLOBALS->resolve_lxt_alias_to[alias] = np;
 		}
 
 	while(f->flags&LT_SYM_F_ALIAS)
 		{
 		f=GLOBALS->mvlfacs_lxt_c_2+f->array_height;
 
-		if(f->resolve_lxt_alias_to)
+		if(GLOBALS->resolve_lxt_alias_to[f->array_height])
 			{
-			if(!np->mv.mvlfac->resolve_lxt_alias_to) np->mv.mvlfac->resolve_lxt_alias_to = f->resolve_lxt_alias_to;
+			if(!GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2]) GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2] = GLOBALS->resolve_lxt_alias_to[f->array_height];
 			}
 			else
 			{
-			f->resolve_lxt_alias_to = np; 
+			GLOBALS->resolve_lxt_alias_to[f->array_height] = np; 
 			}
 		}
 	}
 
 /* f is the head minus any aliases, np->mv.mvlfac is us... */
-if(np->mv.mvlfac->resolve_lxt_alias_to)	/* in case we're an alias head for later.. */
+if(GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2])	/* in case we're an alias head for later.. */
 	{
-	lxt_resolver(np, np->mv.mvlfac->resolve_lxt_alias_to);
+	lxt_resolver(np, GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2]);
 	return;
 	}
 
-np->mv.mvlfac->resolve_lxt_alias_to = np;	/* in case we're an alias head for later.. */
+GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2] = np;	/* in case we're an alias head for later.. */
 offs=f->lastchange;
 
 tmval=LLDescriptor(-1);
@@ -2417,6 +2418,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/03/11 23:31:52  gtkwave
+ * remove name field from struct fac
+ *
  * Revision 1.13  2010/03/01 05:16:26  gtkwave
  * move compressed hier tree traversal to hierpack
  *

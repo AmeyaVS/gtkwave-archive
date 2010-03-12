@@ -36,7 +36,6 @@ typedef long off_t;
 
 struct fac
 {
-struct Node *resolve_lxt_alias_to;
 struct Node *working_node;
 int array_height;
 int msb, lsb, len;
@@ -118,6 +117,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/03/11 23:31:52  gtkwave
+ * remove name field from struct fac
+ *
  * Revision 1.4  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

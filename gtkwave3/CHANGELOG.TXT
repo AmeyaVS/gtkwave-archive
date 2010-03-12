@@ -788,7 +788,7 @@
 		Fix for analog stretch traces when analog trace was
 		expanded and then collapsed.
 		Fix to LZMA_write_compress to detect xz compression failures.
-3.3.5	10mar10	Fix for usage of deallocated next pointer in the
+3.3.5	12mar10	Fix for usage of deallocated next pointer in the
 		force_open_tree_nodes loop (spotted using an alternate
 		allocator).
 		Added optional preliminary Judy array support.
@@ -799,3 +799,4 @@
 		Remove name field from struct fac.
 		Added missing hierarchy boundary sort for FST in order to
 		allow compatibility with compressed names (-C flag).
+		Removed resolve_lxt_alias_to field from struct fac.
