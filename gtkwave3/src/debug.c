@@ -143,15 +143,15 @@ void *realloc_2(void *ptr, size_t size)
 {
 void *ret=realloc(ptr, size);
 
-if(ptr != ret)
-	{
-	JError_t JError1, JError2;
-	Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError1);
-	Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError2);
-	}
-
 if(ret)
         {
+	if(ptr != ret)
+		{
+		JError_t JError1, JError2;
+		Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError1);
+		Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError2);
+		}
+
         return(ret);
         }
         else
@@ -483,6 +483,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/03/09 23:23:31  gtkwave
+ * use Judy1 rather than JudyL functions for memory tracking
+ *
  * Revision 1.10  2010/03/09 22:21:29  gtkwave
  * added optional preliminary Judy array support
  *
