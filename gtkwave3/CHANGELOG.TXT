@@ -797,3 +797,5 @@
 		the most previously set hierarchy depth.
 		Added ".lxt2" to list of suffixes allowed by gtkwave.		
 		Remove name field from struct fac.
+		Added missing hierarchy boundary sort for FST in order to
+		allow compatibility with compressed names (-C flag).

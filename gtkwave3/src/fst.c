@@ -605,7 +605,7 @@ GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *
 
 create_hier_array();
 
-if(1)
+if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         {
         GLOBALS->curnode=GLOBALS->firstnode;
         for(i=0;i<GLOBALS->numfacs;i++)
@@ -630,6 +630,91 @@ if(1)
         order_facs_from_treesort(GLOBALS->treeroot, &GLOBALS->facs);
         GLOBALS->facs_are_sorted=1;
         }
+        else
+	{
+	GLOBALS->curnode=GLOBALS->firstnode;
+	for(i=0;i<GLOBALS->numfacs;i++)
+		{
+		char *subst, ch;
+		int len;
+		int esc = 0;
+
+		GLOBALS->facs[i]=GLOBALS->curnode;
+	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+		while((ch=(*subst)))
+			{	
+#ifdef WAVE_HIERFIX
+	                if(ch==GLOBALS->hier_delimeter) { *subst=(!esc) ? VCDNAM_HIERSORT : VCDNAM_ESCAPE; }    /* forces sort at hier boundaries */
+#else
+	                if((ch==GLOBALS->hier_delimeter)&&(esc)) { *subst = VCDNAM_ESCAPE; }    /* forces sort at hier boundaries */
+#endif
+	                else if(ch=='\\') { esc = 1; GLOBALS->escaped_names_found_vcd_c_1 = 1; }
+	                subst++;
+			}
+		}
+
+/* SPLASH */                            splash_sync(3, 5);
+	fprintf(stderr, FST_RDLOAD"Sorting facilities at hierarchy boundaries.\n");
+	wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
+
+#ifdef WAVE_HIERFIX	
+	for(i=0;i<GLOBALS->numfacs;i++)
+		{
+		char *subst, ch;
+	
+		subst=GLOBALS->facs[i]->name;
+		while((ch=(*subst)))
+			{	
+			if(ch==VCDNAM_HIERSORT) { *subst=GLOBALS->hier_delimeter; }	/* restore back to normal */
+			subst++;
+			}
+		}
+#endif
+
+	GLOBALS->facs_are_sorted=1;
+
+/* SPLASH */                            splash_sync(4, 5);
+	fprintf(stderr, FST_RDLOAD"Building facility hierarchy tree.\n");
+
+	init_tree();		
+	for(i=0;i<GLOBALS->numfacs;i++)	
+		{
+		char *nf = GLOBALS->facs[i]->name;
+		int was_packed;
+		char *recon = hier_decompress_flagged(nf, &was_packed);
+                
+		if(was_packed)   
+		        {
+		        build_tree_from_name(recon, i);
+		        free_2(recon);
+		        }
+		        else
+		        {
+		        build_tree_from_name(nf, i);
+		        }
+		}
+/* SPLASH */                            splash_sync(5, 5);
+	if(GLOBALS->escaped_names_found_vcd_c_1)
+	        {
+		for(i=0;i<GLOBALS->numfacs;i++)
+			{
+		        char *subst, ch;
+		        subst=GLOBALS->facs[i]->name;
+		        while((ch=(*subst)))
+		                {
+		                if(ch==VCDNAM_ESCAPE) { *subst=GLOBALS->hier_delimeter; } /* restore back to normal */
+		                subst++;
+		                }
+			}
+	        }
+	treegraft(&GLOBALS->treeroot);
+	treesort(GLOBALS->treeroot, NULL);
+	if(GLOBALS->escaped_names_found_vcd_c_1)  
+	        {
+	        treenamefix(GLOBALS->treeroot);   
+	        }
+	}
 
 if(GLOBALS->prev_hier_uncompressed_name) 
 	{
@@ -1189,6 +1274,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2010/03/11 23:31:52  gtkwave
+ * remove name field from struct fac
+ *
  * Revision 1.21  2010/03/01 05:16:26  gtkwave
  * move compressed hier tree traversal to hierpack
  *
