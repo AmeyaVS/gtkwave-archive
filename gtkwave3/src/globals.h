@@ -425,6 +425,7 @@ char double_is_native_lxt_c_1; /* from lxt.c 197 */
 int max_compare_time_tc_lxt_c_2; /* from lxt.c 199 */
 int max_compare_pos_tc_lxt_c_2; /* from lxt.c 200 */
 struct Node **resolve_lxt_alias_to;
+unsigned int *lastchange;
 
 
 /*

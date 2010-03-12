@@ -433,6 +433,7 @@ NULL, /* lt_buf_lxt_c_1 183 */
 0, /* max_compare_time_tc_lxt_c_2 189 */
 0, /* max_compare_pos_tc_lxt_c_2 */
 NULL, /* resolve_lxt_alias_to */
+NULL, /* lastchange */
 
 
 /* 

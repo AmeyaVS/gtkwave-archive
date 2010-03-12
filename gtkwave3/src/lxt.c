@@ -796,7 +796,7 @@ if(GLOBALS->sync_table_offset_lxt_c_1)
 		{
 		chg=get_32(offs);  offs+=4;
 		if(chg>maxchg) {maxchg=chg; maxindx=i; }
-		GLOBALS->mvlfacs_lxt_c_2[i].lastchange=chg;
+		GLOBALS->lastchange[i]=chg;
 		DEBUG(printf(LXTHDR"Changes: %d '%s' %08x\n", i, mvlfacs[i].f_name, chg));
 		}
 
@@ -1195,8 +1195,8 @@ if(!GLOBALS->sync_table_offset_lxt_c_1)
 				}
 			}
 
-		last_change_delta = GLOBALS->fpos_lxt_c_1 - GLOBALS->mvlfacs_lxt_c_2[facidx].lastchange - 2;
-		GLOBALS->mvlfacs_lxt_c_2[facidx].lastchange = GLOBALS->fpos_lxt_c_1;
+		last_change_delta = GLOBALS->fpos_lxt_c_1 - GLOBALS->lastchange[facidx] - 2;
+		GLOBALS->lastchange[facidx] = GLOBALS->fpos_lxt_c_1;
 
 		GLOBALS->maxchange_lxt_c_1=GLOBALS->fpos_lxt_c_1;
 		GLOBALS->maxindex_lxt_c_1=facidx;
@@ -1564,6 +1564,7 @@ GLOBALS->numfacs=get_32(GLOBALS->facname_offset_lxt_c_1);
 DEBUG(printf(LXTHDR"Number of facs: %d\n", numfacs));
 GLOBALS->mvlfacs_lxt_c_2=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
 GLOBALS->resolve_lxt_alias_to=(struct Node **)calloc_2(GLOBALS->numfacs,sizeof(struct Node *));
+GLOBALS->lastchange=(unsigned int *)calloc_2(GLOBALS->numfacs,sizeof(unsigned int));
 f_name = calloc_2(GLOBALS->numfacs,sizeof(char *));
 
 if(GLOBALS->initial_value_offset_lxt_c_1)
@@ -1930,7 +1931,7 @@ if(GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2])	/* i
 	}
 
 GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2] = np;	/* in case we're an alias head for later.. */
-offs=f->lastchange;
+offs=GLOBALS->lastchange[f-GLOBALS->mvlfacs_lxt_c_2];
 
 tmval=LLDescriptor(-1);
 prevtmval = LLDescriptor(-1);
@@ -2418,6 +2419,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/03/12 20:37:15  gtkwave
+ * removed resolve_lxt_alias_to field from struct fac
+ *
  * Revision 1.14  2010/03/11 23:31:52  gtkwave
  * remove name field from struct fac
  *

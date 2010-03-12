@@ -39,7 +39,6 @@ struct fac
 struct Node *working_node;
 int array_height;
 int msb, lsb, len;
-unsigned int lastchange;
 unsigned int flags;
 };
 
@@ -117,6 +116,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2010/03/12 20:37:15  gtkwave
+ * removed resolve_lxt_alias_to field from struct fac
+ *
  * Revision 1.5  2010/03/11 23:31:52  gtkwave
  * remove name field from struct fac
  *

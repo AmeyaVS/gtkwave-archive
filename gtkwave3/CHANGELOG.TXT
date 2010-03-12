@@ -800,3 +800,4 @@
 		Added missing hierarchy boundary sort for FST in order to
 		allow compatibility with compressed names (-C flag).
 		Removed resolve_lxt_alias_to field from struct fac.
+		Removed lxt-only lastchange field from struct fac.
