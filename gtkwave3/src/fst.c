@@ -558,7 +558,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	GLOBALS->mvlfacs_fst_c_3[i].working_node = n;
 	n->vartype = nvt;
 
-	if((f->len>1)||(f->flags&&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
+	if((f->len>1)||(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 		{
 		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
 		ext->msi = GLOBALS->mvlfacs_fst_c_3[i].msb;
@@ -1260,6 +1260,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/03/13 19:16:00  gtkwave
+ * removal of useless symbol->nextinaet code
+ *
  * Revision 1.23  2010/03/12 16:11:49  gtkwave
  * added missing hierarchy boundary sort
  *

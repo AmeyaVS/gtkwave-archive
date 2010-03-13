@@ -804,3 +804,4 @@
 		Removed unused h field in struct symbol.
 		Removed nextinaet field if unused, recoded to symchain
 		when used.
+		Fixed && used in logical operation for generating ExtNode.

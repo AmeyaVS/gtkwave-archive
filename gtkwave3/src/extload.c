@@ -574,7 +574,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
         n->mv.mvlfac = GLOBALS->mvlfacs_vzt_c_3+i;
 	GLOBALS->mvlfacs_vzt_c_3[i].working_node = n;
 
-	if((f->len>1)||(f->flags&&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
+	if((f->len>1)||(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 		{
 		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
 		ext->msi = GLOBALS->mvlfacs_vzt_c_3[i].msb;
@@ -1003,6 +1003,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/03/13 19:16:00  gtkwave
+ * removal of useless symbol->nextinaet code
+ *
  * Revision 1.7  2010/03/01 05:16:26  gtkwave
  * move compressed hier tree traversal to hierpack
  *

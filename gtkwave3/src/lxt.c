@@ -1709,7 +1709,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
         n->nname=s->name;
         n->mv.mvlfac = GLOBALS->mvlfacs_lxt_c_2+i;
 
-	if((f->len>1)||(f->flags&&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
+	if((f->len>1)||(f->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 		{
 		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
 		ext->msi = GLOBALS->mvlfacs_lxt_c_2[i].msb;
@@ -2407,6 +2407,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/03/13 19:16:00  gtkwave
+ * removal of useless symbol->nextinaet code
+ *
  * Revision 1.16  2010/03/12 21:12:39  gtkwave
  * removed lastchange field
  *
