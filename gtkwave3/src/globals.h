@@ -811,8 +811,8 @@ char facs_have_symbols_state_machine; /* from symbol.c */
 int numfacs; /* from symbol.c 456 */
 int regions; /* from symbol.c 457 */
 int longestname; /* from symbol.c 458 */
-struct symbol *firstnode; /* from symbol.c 459 */
-struct symbol *curnode; /* from symbol.c 460 */
+struct symchain *firstnode; /* from symbol.c 459 */
+struct symchain *curnode; /* from symbol.c 460 */
 int hashcache; /* from symbol.c 461 */
 
 

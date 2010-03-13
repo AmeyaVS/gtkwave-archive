@@ -802,3 +802,5 @@
 		Removed resolve_lxt_alias_to field from struct fac.
 		Removed lxt-only lastchange field from struct fac.
 		Removed unused h field in struct symbol.
+		Removed nextinaet field if unused, recoded to symchain
+		when used.

@@ -2357,14 +2357,16 @@ while(v)
 	
 					s->n->nname=s->name;
 					if(!GLOBALS->firstnode)
-						{
-						GLOBALS->firstnode=GLOBALS->curnode=s;
-						}
-						else
-						{
-						GLOBALS->curnode->nextinaet=s;
-						GLOBALS->curnode=s;
-						}
+					        {
+					        GLOBALS->firstnode=
+					        GLOBALS->curnode=calloc_2(1, sizeof(struct symchain));
+					        }   
+					        else                                     
+					        {
+					        GLOBALS->curnode->next=calloc_2(1, sizeof(struct symchain));
+					        GLOBALS->curnode=GLOBALS->curnode->next;
+					        }
+					GLOBALS->curnode->symbol=s;
 	
 					GLOBALS->numfacs++;
 					DEBUG(fprintf(stderr,"Added: %s\n",str));
@@ -2450,14 +2452,16 @@ while(v)
 
 				s->n->nname=s->name;
 				if(!GLOBALS->firstnode)
-					{
-					GLOBALS->firstnode=GLOBALS->curnode=s;
-					}
-					else
-					{
-					GLOBALS->curnode->nextinaet=s;
-					GLOBALS->curnode=s;
-					}
+				        {
+				        GLOBALS->firstnode=
+				        GLOBALS->curnode=calloc_2(1, sizeof(struct symchain));
+				        }   
+				        else                                     
+				        {
+				        GLOBALS->curnode->next=calloc_2(1, sizeof(struct symchain));
+				        GLOBALS->curnode=GLOBALS->curnode->next;
+				        }
+				GLOBALS->curnode->symbol=s;
 
 				GLOBALS->numfacs++;
 				DEBUG(fprintf(stderr,"Added: %s\n",str));
@@ -3174,6 +3178,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/03/13 07:56:41  gtkwave
+ * removed unused h field in struct symbol
+ *
  * Revision 1.34  2010/02/08 17:31:19  gtkwave
  * backtracking time fix
  *

@@ -2128,15 +2128,17 @@ while(v)
 	
 					s->n->nname=s->name;
 					if(!GLOBALS->firstnode)
-						{
-						GLOBALS->firstnode=GLOBALS->curnode=s;
-						}
-						else
-						{
-						GLOBALS->curnode->nextinaet=s;
-						GLOBALS->curnode=s;
-						}
-	
+					        {
+					        GLOBALS->firstnode=
+					        GLOBALS->curnode=calloc_2(1, sizeof(struct symchain));
+					        }   
+					        else                                     
+					        {
+					        GLOBALS->curnode->next=calloc_2(1, sizeof(struct symchain));
+					        GLOBALS->curnode=GLOBALS->curnode->next;
+					        }
+					GLOBALS->curnode->symbol=s;
+                                                               	
 					GLOBALS->numfacs++;
 					DEBUG(fprintf(stderr,"Added: %s\n",str));
 					}
@@ -2220,14 +2222,16 @@ while(v)
 
 				s->n->nname=s->name;
 				if(!GLOBALS->firstnode)
-					{
-					GLOBALS->firstnode=GLOBALS->curnode=s;
-					}
-					else
-					{
-					GLOBALS->curnode->nextinaet=s;
-					GLOBALS->curnode=s;
-					}
+				        {
+				        GLOBALS->firstnode=
+				        GLOBALS->curnode=calloc_2(1, sizeof(struct symchain));
+				        }   
+				        else                                     
+				        {
+				        GLOBALS->curnode->next=calloc_2(1, sizeof(struct symchain));
+				        GLOBALS->curnode=GLOBALS->curnode->next;
+				        }
+				GLOBALS->curnode->symbol=s;
 
 				GLOBALS->numfacs++;
 				DEBUG(fprintf(stderr,"Added: %s\n",str));
@@ -2274,10 +2278,13 @@ for(i=0;i<GLOBALS->numfacs;i++)
         char ch;
 #endif
         int len;
+	struct symchain *sc;
                  
-        GLOBALS->facs[i]=GLOBALS->curnode;
-        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-        GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+        GLOBALS->facs[i]=GLOBALS->curnode->symbol;
+        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+	sc = GLOBALS->curnode;
+        GLOBALS->curnode=GLOBALS->curnode->next;
+	free_2(sc);
 #ifdef WAVE_HIERFIX
         while((ch=(*subst)))
                 {
@@ -2286,6 +2293,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
                 }
 #endif
         }
+GLOBALS->firstnode=GLOBALS->curnode=NULL;
 
 /* quicksort(facs,0,numfacs-1); */	/* quicksort deprecated because it degenerates on sorted traces..badly.  very badly. */
 wave_heapsort(GLOBALS->facs,GLOBALS->numfacs);
@@ -2554,6 +2562,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2010/03/13 07:56:41  gtkwave
+ * removed unused h field in struct symbol
+ *
  * Revision 1.25  2010/03/01 05:16:26  gtkwave
  * move compressed hier tree traversal to hierpack
  *

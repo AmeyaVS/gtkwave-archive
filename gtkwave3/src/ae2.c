@@ -492,16 +492,17 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		prevsymroot = prevsym = NULL;
 		}
 		
-        if(!GLOBALS->firstnode)
-                {
-                GLOBALS->firstnode=GLOBALS->curnode=s;   
-                }
-                else
-                {
-                GLOBALS->curnode->nextinaet=s;
-                GLOBALS->curnode=s;   
-                }
-
+	if(!GLOBALS->firstnode)
+	        {
+	        GLOBALS->firstnode=
+	        GLOBALS->curnode=calloc_2(1, sizeof(struct symchain));
+	        }   
+	        else                                     
+	        {
+	        GLOBALS->curnode->next=calloc_2(1, sizeof(struct symchain));
+	        GLOBALS->curnode=GLOBALS->curnode->next;
+	        }
+	GLOBALS->curnode->symbol=s;
 
         mx_row = (GLOBALS->ae2_fr[match_idx].row < 1) ? 1 : GLOBALS->ae2_fr[match_idx].row;
 	mx_row_adjusted = (mx_row < 2) ? 0 : mx_row;
@@ -548,10 +549,14 @@ if(GLOBALS->fast_tree_sort)
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		int len;
-		GLOBALS->facs[i]=GLOBALS->curnode;
-	        if((len=strlen(GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+		struct symchain *sc;
+		GLOBALS->facs[i]=GLOBALS->curnode->symbol;
+	        if((len=strlen(GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+		sc = GLOBALS->curnode;
+		GLOBALS->curnode=GLOBALS->curnode->next;
+		free_2(sc);
 		}
+	GLOBALS->firstnode=GLOBALS->curnode=NULL;
 
 /* SPLASH */                            splash_sync(3, 5);
 	fprintf(stderr, AET2_RDLOAD"Building facility hierarchy tree.\n");
@@ -581,10 +586,13 @@ if(GLOBALS->fast_tree_sort)
 		char ch;	
 #endif
 		int len;
+		struct symchain *sc;
 
 		GLOBALS->facs[i]=GLOBALS->curnode;
-	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+	        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+		sc = GLOBALS->curnode;
+		GLOBALS->curnode=GLOBALS->curnode->next;
+		free_2(sc);
 #ifdef WAVE_HIERFIX
 		while((ch=(*subst)))
 			{	
@@ -593,6 +601,7 @@ if(GLOBALS->fast_tree_sort)
 			}
 #endif
 		}
+	GLOBALS->firstnode=GLOBALS->curnode=NULL;
 	
 /* SPLASH */                            splash_sync(3, 5);
 	fprintf(stderr, AET2_RDLOAD"Sorting facilities at hierarchy boundaries.\n");
@@ -1273,6 +1282,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.10  2009/07/01 07:39:12  gtkwave
  * decorating hierarchy tree with module type info
  *

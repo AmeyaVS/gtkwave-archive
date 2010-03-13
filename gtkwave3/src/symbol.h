@@ -46,7 +46,6 @@ unsigned int flags;
 struct symbol
 {
 struct symbol *next;	  /* for hash chain */
-struct symbol *nextinaet; /* for aet node chaining */
 struct symbol *vec_root, *vec_chain;
 char *name;
 struct Node *n;
@@ -113,6 +112,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/03/13 07:56:41  gtkwave
+ * removed unused h field in struct symbol
+ *
  * Revision 1.7  2010/03/12 21:12:39  gtkwave
  * removed lastchange field
  *
