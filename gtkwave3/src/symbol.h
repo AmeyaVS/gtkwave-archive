@@ -45,12 +45,9 @@ unsigned int flags;
 
 struct symbol
 {
-struct symbol *nextinaet;/* for aet node chaining */
-struct HistEnt *h;	 /* points to previous one */
-
+struct symbol *next;	  /* for hash chain */
+struct symbol *nextinaet; /* for aet node chaining */
 struct symbol *vec_root, *vec_chain;
-	
-struct symbol *next;	/* for hash chain */
 char *name;
 struct Node *n;
 
@@ -116,6 +113,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/03/12 21:12:39  gtkwave
+ * removed lastchange field
+ *
  * Revision 1.6  2010/03/12 20:37:15  gtkwave
  * removed resolve_lxt_alias_to field from struct fac
  *

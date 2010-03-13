@@ -2002,7 +2002,6 @@ while(v)
 						}
 	
 					s->n->nname=s->name;
-					s->h=s->n->curr;
 					if(!GLOBALS->firstnode)
 						{
 						GLOBALS->firstnode=GLOBALS->curnode=s;
@@ -2095,7 +2094,6 @@ while(v)
 					}
 
 				s->n->nname=s->name;
-				s->h=s->n->curr;
 				if(!GLOBALS->firstnode)
 					{
 					GLOBALS->firstnode=GLOBALS->curnode=s;
@@ -2458,6 +2456,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/02/22 21:13:36  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.23  2010/02/18 23:06:04  gtkwave
  * change name of main iteration loop calls
  *

@@ -2356,7 +2356,6 @@ while(v)
 						}
 	
 					s->n->nname=s->name;
-					s->h=s->n->curr;
 					if(!GLOBALS->firstnode)
 						{
 						GLOBALS->firstnode=GLOBALS->curnode=s;
@@ -2450,7 +2449,6 @@ while(v)
 					}
 
 				s->n->nname=s->name;
-				s->h=s->n->curr;
 				if(!GLOBALS->firstnode)
 					{
 					GLOBALS->firstnode=GLOBALS->curnode=s;
@@ -3176,6 +3174,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/02/08 17:31:19  gtkwave
+ * backtracking time fix
+ *
  * Revision 1.33  2009/12/25 18:12:16  gtkwave
  * more warnings fixes
  *

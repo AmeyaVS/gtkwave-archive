@@ -2127,7 +2127,6 @@ while(v)
 						}
 	
 					s->n->nname=s->name;
-					s->h=s->n->curr;
 					if(!GLOBALS->firstnode)
 						{
 						GLOBALS->firstnode=GLOBALS->curnode=s;
@@ -2220,7 +2219,6 @@ while(v)
 					}
 
 				s->n->nname=s->name;
-				s->h=s->n->curr;
 				if(!GLOBALS->firstnode)
 					{
 					GLOBALS->firstnode=GLOBALS->curnode=s;
@@ -2556,6 +2554,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2010/03/01 05:16:26  gtkwave
+ * move compressed hier tree traversal to hierpack
+ *
  * Revision 1.24  2010/02/08 17:31:19  gtkwave
  * backtracking time fix
  *
