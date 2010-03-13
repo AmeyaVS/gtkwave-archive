@@ -232,16 +232,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		}
 		
-        if(!GLOBALS->firstnode)
-                {
-                GLOBALS->firstnode=GLOBALS->curnode=s;   
-                }
-                else
-                {
-                GLOBALS->curnode->nextinaet=s;
-                GLOBALS->curnode=s;   
-                }
-
 	n=&node_block[i];
         n->nname=s->name;
         n->mv.mvlfac = GLOBALS->mvlfacs_lx2_c_1+i;
@@ -277,13 +267,11 @@ GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *
 
 if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         {
-        GLOBALS->curnode=GLOBALS->firstnode;
         for(i=0;i<GLOBALS->numfacs;i++)
                 {
                 int len;
-                GLOBALS->facs[i]=GLOBALS->curnode;
-                if((len=strlen(GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-                GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+                GLOBALS->facs[i]=&sym_block[i];
+                if((len=strlen(GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
                 }
 
 	if(numalias)
@@ -375,16 +363,14 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         }
         else
 	{
-	GLOBALS->curnode=GLOBALS->firstnode;
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
 		int len;
 		int esc = 0;
 
-		GLOBALS->facs[i]=GLOBALS->curnode;
-	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+		GLOBALS->facs[i]=&sym_block[i];
+	        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 		while((ch=(*subst)))
 			{	
 #ifdef WAVE_HIERFIX
@@ -884,6 +870,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/11 23:31:52  gtkwave
+ * remove name field from struct fac
+ *
  * Revision 1.12  2010/03/01 05:16:26  gtkwave
  * move compressed hier tree traversal to hierpack
  *

@@ -552,16 +552,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
 		}
 		
-        if(!GLOBALS->firstnode)
-                {
-       	        GLOBALS->firstnode=GLOBALS->curnode=s;   
-                }
-                else
-                {
-                GLOBALS->curnode->nextinaet=s;
-                GLOBALS->curnode=s;   
-                }
-
         n=&node_block[i];
         n->nname=s->name;
         n->mv.mvlfac = GLOBALS->mvlfacs_fst_c_3+i;
@@ -607,13 +597,11 @@ create_hier_array();
 
 if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         {
-        GLOBALS->curnode=GLOBALS->firstnode;
         for(i=0;i<GLOBALS->numfacs;i++)
                 {
                 int len;
-                GLOBALS->facs[i]=GLOBALS->curnode; 
-                if((len=strlen(GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-                GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+                GLOBALS->facs[i]=&sym_block[i]; 
+                if((len=strlen(GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
                 }
                                 
 /* SPLASH */                            splash_sync(3, 5);  
@@ -632,16 +620,14 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         }
         else
 	{
-	GLOBALS->curnode=GLOBALS->firstnode;
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
 		int len;
 		int esc = 0;
 
-		GLOBALS->facs[i]=GLOBALS->curnode;
-	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+		GLOBALS->facs[i]=&sym_block[i];
+	        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 		while((ch=(*subst)))
 			{	
 #ifdef WAVE_HIERFIX
@@ -1274,6 +1260,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/03/12 16:11:49  gtkwave
+ * added missing hierarchy boundary sort
+ *
  * Revision 1.22  2010/03/11 23:31:52  gtkwave
  * remove name field from struct fac
  *

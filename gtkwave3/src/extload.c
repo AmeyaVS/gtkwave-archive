@@ -569,16 +569,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		}
 		
-        if(!GLOBALS->firstnode)
-                {
-                GLOBALS->firstnode=GLOBALS->curnode=s;   
-                }
-                else
-                {
-                GLOBALS->curnode->nextinaet=s;
-                GLOBALS->curnode=s;   
-                }
-
         n=&node_block[i];
         n->nname=s->name;
         n->mv.mvlfac = GLOBALS->mvlfacs_vzt_c_3+i;
@@ -614,13 +604,11 @@ create_hier_array();
 
 if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         {
-        GLOBALS->curnode=GLOBALS->firstnode;
         for(i=0;i<GLOBALS->numfacs;i++)
                 {
                 int len;
-                GLOBALS->facs[i]=GLOBALS->curnode; 
-                if((len=strlen(GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-                GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+                GLOBALS->facs[i]=&sym_block[i]; 
+                if((len=strlen(GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
                 }
                                 
 /* SPLASH */                            splash_sync(3, 5);  
@@ -643,7 +631,6 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
         }
         else
 	{
-	GLOBALS->curnode=GLOBALS->firstnode;
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst;
@@ -652,9 +639,8 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 #endif
 		int len;
 
-		GLOBALS->facs[i]=GLOBALS->curnode;
-	        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-		GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+		GLOBALS->facs[i]=&sym_block[i];
+	        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 #ifdef WAVE_HIERFIX
 		while((ch=(*subst)))
 			{	
@@ -1017,6 +1003,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/03/01 05:16:26  gtkwave
+ * move compressed hier tree traversal to hierpack
+ *
  * Revision 1.6  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *

@@ -1705,16 +1705,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		}
 		
-        if(!GLOBALS->firstnode)
-                {
-                GLOBALS->firstnode=GLOBALS->curnode=s;   
-                }
-                else
-                {
-                GLOBALS->curnode->nextinaet=s;
-                GLOBALS->curnode=s;   
-                }
-
 	n=&node_block[i];
         n->nname=s->name;
         n->mv.mvlfac = GLOBALS->mvlfacs_lxt_c_2+i;
@@ -1741,16 +1731,14 @@ free_2(f_name); f_name = NULL;
 
 /* SPLASH */                            splash_sync(3, 5);
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
-GLOBALS->curnode=GLOBALS->firstnode;
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
 	char *subst, ch;
 	int len;
 	int esc = 0;
 
-	GLOBALS->facs[i]=GLOBALS->curnode;
-        if((len=strlen(subst=GLOBALS->curnode->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-	GLOBALS->curnode=GLOBALS->curnode->nextinaet;
+	GLOBALS->facs[i]=&sym_block[i];
+        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 	while((ch=(*subst)))
 		{	
 #ifdef WAVE_HIERFIX
@@ -2419,6 +2407,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/03/12 21:12:39  gtkwave
+ * removed lastchange field
+ *
  * Revision 1.15  2010/03/12 20:37:15  gtkwave
  * removed resolve_lxt_alias_to field from struct fac
  *
