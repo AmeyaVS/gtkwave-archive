@@ -1151,22 +1151,22 @@ for(ii=0;ii<c;ii++)
 		{
 		struct symbol *s = GLOBALS->facs[match_idx_list[ii]];
 
-		if((match_type_list[ii] >= 2)&&(s->n->ext))
+		if((match_type_list[ii] >= 2)&&(s->n->extvals))
 			{
 			nptr nexp;
 			int bit = atoi(most_recent_lbrack_list[ii]+1 + (match_type_list[ii] == 3)); /* == 3 for adjustment when lbrack is escaped */
 			int which, cnt;
 			
-			if(s->n->ext->lsi > s->n->ext->msi)
+			if(s->n->lsi > s->n->msi)
 				{
-				for(which=0,cnt=s->n->ext->lsi ; cnt>=s->n->ext->msi ; cnt--,which++)
+				for(which=0,cnt=s->n->lsi ; cnt>=s->n->msi ; cnt--,which++)
 					{
 					if(cnt==bit) break;
 					}
 				}
 				else
 				{
-				for(which=0,cnt=s->n->ext->msi ; cnt>=s->n->ext->lsi ; cnt--,which++)
+				for(which=0,cnt=s->n->msi ; cnt>=s->n->lsi ; cnt--,which++)
 					{
 					if(cnt==bit) break;
 					}
@@ -1451,7 +1451,7 @@ if(t)
 			hptr h_ptr = bsearch_node(t->n.nd, GLOBALS->tims.marker);
 			if(h_ptr)
 				{
-				if(!t->n.nd->ext)
+				if(!t->n.nd->extvals)
 					{
 					rc = (char *)calloc_2(2, 2*sizeof(char));
 					rc[0] = AN_STR[h_ptr->v.h_val];
@@ -1695,16 +1695,16 @@ while(t)
 					char *p = strrchr(str, '[');
 					if(p) { *p = 0; }					
               
-                        		if(n->ext->lsi > n->ext->msi)
+                        		if(n->lsi > n->msi)
                                 		{
-                                		for(which=0,cnt=n->ext->lsi ; cnt>=n->ext->msi ; cnt--,which++)
+                                		for(which=0,cnt=n->lsi ; cnt>=n->msi ; cnt--,which++)
                                         		{
                                         		if(cnt==bit) break;
                                         		}
                                 		}
                                 		else
                                 		{
-                                		for(which=0,cnt=n->ext->msi ; cnt>=n->ext->lsi ; cnt--,which++)
+                                		for(which=0,cnt=n->msi ; cnt>=n->lsi ; cnt--,which++)
                                         		{
                                         		if(cnt==bit) break;
                                         		}
@@ -1756,16 +1756,16 @@ while(t)
 				char *p = strrchr(str, '[');
 				if(p) { *p = 0; }					
               
-                       		if(n->ext->lsi > n->ext->msi)
+                       		if(n->lsi > n->msi)
                                		{
-                               		for(which=0,cnt=n->ext->lsi ; cnt>=n->ext->msi ; cnt--,which++)
+                               		for(which=0,cnt=n->lsi ; cnt>=n->msi ; cnt--,which++)
                                        		{
                                        		if(cnt==bit) break;
                                        		}
                                		}
                                		else
                                		{
-                               		for(which=0,cnt=n->ext->msi ; cnt>=n->ext->lsi ; cnt--,which++)
+                               		for(which=0,cnt=n->msi ; cnt>=n->lsi ; cnt--,which++)
                                        		{
                                        		if(cnt==bit) break;
                                        		}
@@ -2712,6 +2712,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.70  2010/03/11 16:32:38  gtkwave
+ * fix to add .lxt2 suffix recognition
+ *
  * Revision 1.69  2010/02/18 23:06:04  gtkwave
  * change name of main iteration loop calls
  *

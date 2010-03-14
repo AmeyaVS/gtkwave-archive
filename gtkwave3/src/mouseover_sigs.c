@@ -160,7 +160,7 @@ if(tname)
 			hptr h_ptr;
 			if((h_ptr=bsearch_node(t->n.nd,tim)))
 				{
-				if(!t->n.nd->ext)
+				if(!t->n.nd->extvals)
 					{
 					unsigned char h_val = h_ptr->v.h_val;
 					if(t->n.nd->vartype == ND_VCD_EVENT)
@@ -445,6 +445,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/11/25 09:49:28  gtkwave
+ * added gray code support
+ *
  * Revision 1.5  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

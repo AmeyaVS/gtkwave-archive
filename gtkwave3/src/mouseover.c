@@ -115,7 +115,7 @@ if(t->name)
 			hptr h_ptr;
 			if((h_ptr=bsearch_node(t->n.nd,tim)))
 				{
-				if(!t->n.nd->ext)
+				if(!t->n.nd->extvals)
 					{
 					unsigned char h_val = h_ptr->v.h_val;
 					if(t->n.nd->vartype == ND_VCD_EVENT)
@@ -398,6 +398,9 @@ if(flagged_name) { free_2(flagged_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/11/25 09:49:28  gtkwave
+ * added gray code support
+ *
  * Revision 1.11  2009/06/25 22:12:30  gtkwave
  * convert event impulses to strict 1/0 activity values regardless of val
  *

@@ -212,7 +212,7 @@ while(s)
 	s->search_result=0;	/* explicitly must set this */
 	GLOBALS->shift_timebase=t->shift;
 	
-	if((!t->vector)&&(!(t->n.nd->ext)))
+	if((!t->vector)&&(!(t->n.nd->extvals)))
 		{
 		if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 			{
@@ -575,6 +575,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/07/07 20:12:53  gtkwave
+ * convert hex capitalization to match verilog
+ *
  * Revision 1.6  2008/06/11 08:01:48  gtkwave
  * gcc 4.3.x compiler warning fixes
  *

@@ -132,17 +132,10 @@ int    actual;			/* bit number to be used in [] */
 int    refcnt;
 } ExpandReferences;
 
-typedef struct ExtNode
-  {
-  int msi, lsi;
-  } ExtNode;
-
-
 struct Node
   {
     exptr    expansion; /* indicates which nptr this node was expanded from (if it was expanded at all) and (when implemented) refcnts */
     char     *nname;	/* ascii name of node */
-    ExtNode  *ext;	/* extension to node for vectors */    
     HistEnt  head;	/* first entry in transition history */
     hptr     curr;      /* ptr. to current history entry */
 
@@ -155,10 +148,14 @@ struct Node
       char *value;	/* for use when unrolling ae2 values */
     } mv; 		/* anon union is a gcc extension so use mv instead.  using this union avoids crazy casting warnings */
 
+    int msi, lsi;	/* for 64-bit, more efficient than having as an external struct ExtNode*/
+
     int      numhist;	/* number of elements in the harray */
     unsigned int array_height, this_row;
     unsigned char vartype; /* see nodeVarType, this is an internal value */
     unsigned char vardir; /* see nodeVarDir, this is an internal value */
+
+    unsigned extvals : 1; /* was formerly a pointer to ExtNode "ext", now simply a flag */
   };
 
 
@@ -441,6 +438,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/02/22 21:13:36  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.22  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

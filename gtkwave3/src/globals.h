@@ -290,7 +290,6 @@ char *asbuf; /* from ghw.c 103 */
 int nbr_sig_ref_ghw_c_1; /* from ghw.c 104 */
 int num_glitches_ghw_c_1; /* from ghw.c 105 */
 int num_glitch_regions_ghw_c_1; /* from ghw.c 106 */
-struct ExtNode dummy_en_ghw_c_1; /* from ghw.c 107 */
 char *fac_name_ghw_c_1; /* from ghw.c 108 */
 int fac_name_len_ghw_c_1; /* from ghw.c 109 */
 int fac_name_max_ghw_c_1; /* from ghw.c 110 */

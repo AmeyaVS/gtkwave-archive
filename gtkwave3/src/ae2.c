@@ -519,10 +519,9 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(GLOBALS->ae2_fr[match_idx].length>1)
 			{
-			ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
-			ext->msi = 0;
-			ext->lsi = GLOBALS->ae2_fr[match_idx].length-1;
-			n[row_iter].ext = ext;
+			n[row_iter].msi = 0;
+			n[row_iter].lsi = GLOBALS->ae2_fr[match_idx].length-1;
+			n[row_iter].extvals = 1;
 			}
                  
 	        n[row_iter].head.time=-1;        /* mark 1st node as negative time */
@@ -1282,6 +1281,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/03/13 19:48:53  gtkwave
+ * remove nextinaet field and replace with temp symchain
+ *
  * Revision 1.11  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *

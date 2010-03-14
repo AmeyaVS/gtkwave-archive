@@ -2195,11 +2195,11 @@ static bvptr combine_traces(int direction)
 	    }
 	  else
 	    {
-	      if(t->n.nd->ext)
+	      if(t->n.nd->extvals)
 		{
 		  int msb, lsb, width;
-		  msb = t->n.nd->ext->msi;
-		  lsb = t->n.nd->ext->lsi;
+		  msb = t->n.nd->msi;
+		  lsb = t->n.nd->lsi;
 		  if(msb>lsb) width = msb-lsb+1; else width = lsb-msb+1;
 		  dirty += width;
 		}
@@ -6168,6 +6168,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.96  2010/03/10 18:14:13  gtkwave
+ * Toggle Trace Hier fix (cache old value for more usability)
+ *
  * Revision 1.95  2010/03/10 04:00:07  gtkwave
  * fixed compiler warnings for 64-bit
  *

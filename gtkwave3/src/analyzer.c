@@ -482,11 +482,11 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
 	}
     }
 
-  if(nd->ext)	/* expansion vectors */
+  if(nd->extvals) /* expansion vectors */
     {	
       int n;
 
-      n = nd->ext->msi - nd->ext->lsi;
+      n = nd->msi - nd->lsi;
       if(n<0)n=-n;
       n++;
 
@@ -1411,6 +1411,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/02/28 21:59:50  gtkwave
+ * defensive relinking of t_prev in cut and paste buffers
+ *
  * Revision 1.16  2010/02/26 18:19:00  gtkwave
  * defensive re-link of t_prev
  *

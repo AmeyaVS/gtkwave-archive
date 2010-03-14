@@ -757,7 +757,7 @@ while(s)
 	s->search_result=0;	/* explicitly must set this */
 	GLOBALS->shift_timebase=t->shift;
 	
-	if((!t->vector)&&(!(t->n.nd->ext)))
+	if((!t->vector)&&(!(t->n.nd->extvals)))
 		{
 		if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 			{
@@ -1103,7 +1103,7 @@ while(s)
 	s->search_result=0;	/* explicitly must set this */
 	GLOBALS->shift_timebase=t->shift;
 	
-	if((!t->vector)&&(!(t->n.nd->ext)))
+	if((!t->vector)&&(!(t->n.nd->extvals)))
 		{
 		if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 			{
@@ -1697,6 +1697,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/03/10 04:00:07  gtkwave
+ * fixed compiler warnings for 64-bit
+ *
  * Revision 1.16  2010/02/24 17:35:35  gtkwave
  * gtk1 compile fixes
  *

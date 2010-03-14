@@ -363,10 +363,10 @@ Trptr Node_to_Trptr(nptr nd)
     }
   }
 
-  if(nd->ext) {	/* expansion vectors */
+  if(nd->extvals) { /* expansion vectors */
     int n;
 
-    n = nd->ext->msi - nd->ext->lsi;
+    n = nd->msi - nd->lsi;
     if(n<0)n=-n;
     n++;
     
@@ -518,8 +518,8 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
     if (!t->vector) {
       hptr h, h1;
       int len = 0  ;
-      if(t->n.nd->ext && (t->n.nd->ext != 0)) {
-	bw = abs(t->n.nd->ext->msi - t->n.nd->ext->lsi) + 1 ;
+      if(t->n.nd->extvals) {
+	bw = abs(t->n.nd->msi - t->n.nd->lsi) + 1 ;
       }
       h = bsearch_node(t->n.nd, tstart) ;
       for(h1 = h; h1; h1 = h1->next) {
@@ -565,7 +565,7 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
       l1_head = llist_append(l1_head, l_elem, &l1_tail) ;
       if(!l1_tail) l1_tail = l1_head ;
       if(t->vector == 0) {
-	if(!t->n.nd->ext) {	/* really single bit */
+	if(!t->n.nd->extvals) {	/* really single bit */
 	  switch(((hptr)lp->u.p)->v.h_val) {
 	  case AN_0: llp.str = "0"; l_elem = llist_new(llp, LL_STR, -1) ; break ;
 	  case AN_1: llp.str = "1"; l_elem = llist_new(llp, LL_STR, -1) ; break ;

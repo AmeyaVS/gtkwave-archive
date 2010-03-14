@@ -677,7 +677,7 @@ int vtype(Trptr t, char *vec)
 
 	if (vec == NULL)
 		return(AN_X);
-	nbits=t->n.nd->ext->msi-t->n.nd->ext->lsi;
+	nbits=t->n.nd->msi-t->n.nd->lsi;
 	if(nbits<0)nbits=-nbits;
 	nbits++;
 	res = AN_1;
@@ -742,7 +742,7 @@ static const char xrev[AN_COUNT]= AN_INVERSE ;
 
 flags=t->flags;
 
-nbits=t->n.nd->ext->msi-t->n.nd->ext->lsi;
+nbits=t->n.nd->msi-t->n.nd->lsi;
 if(nbits<0)nbits=-nbits;
 nbits++;
 
@@ -781,34 +781,34 @@ if(vec)
                 }
         }
 
-if((flags&(TR_ZEROFILL|TR_ONEFILL))&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->ext->lsi))
+if((flags&(TR_ZEROFILL|TR_ONEFILL))&&(nbits>1)&&(t->n.nd->msi)&&(t->n.nd->lsi))
 	{
 	char whichfill = (flags&TR_ZEROFILL) ? AN_0 : AN_1;
 
-	if(t->n.nd->ext->msi > t->n.nd->ext->lsi)
+	if(t->n.nd->msi > t->n.nd->lsi)
 		{
-		if(t->n.nd->ext->lsi > 0)
+		if(t->n.nd->lsi > 0)
 			{
-			pnt=wave_alloca(t->n.nd->ext->msi + 1);
+			pnt=wave_alloca(t->n.nd->msi + 1);
 
 			memcpy(pnt, bits, nbits);
 
-        		for(i=nbits;i<t->n.nd->ext->msi+1;i++)
+        		for(i=nbits;i<t->n.nd->msi+1;i++)
                 		{
                 		pnt[i]=whichfill;
                 		}
 
 			bits = pnt;
-			nbits = t->n.nd->ext->msi + 1;
+			nbits = t->n.nd->msi + 1;
 			}
 		}
 		else
 		{
-		if(t->n.nd->ext->msi > 0)
+		if(t->n.nd->msi > 0)
 			{
-			pnt=wave_alloca(t->n.nd->ext->lsi + 1);
+			pnt=wave_alloca(t->n.nd->lsi + 1);
 			
-        		for(i=0;i<t->n.nd->ext->msi;i++)
+        		for(i=0;i<t->n.nd->msi;i++)
                 		{
                 		pnt[i]=whichfill;
                 		}
@@ -816,7 +816,7 @@ if((flags&(TR_ZEROFILL|TR_ONEFILL))&&(nbits>1)&&(t->n.nd->ext->msi)&&(t->n.nd->e
 			memcpy(pnt+i, bits, nbits);
 
 			bits = pnt;
-			nbits = t->n.nd->ext->lsi + 1;
+			nbits = t->n.nd->lsi + 1;
 			}
 		}
 	}
@@ -1402,7 +1402,7 @@ static const char xrev[AN_COUNT]= AN_INVERSE ;
 
 flags=t->flags;
 
-nbits=t->n.nd->ext->msi-t->n.nd->ext->lsi;
+nbits=t->n.nd->msi-t->n.nd->lsi;
 if(nbits<0)nbits=-nbits;
 nbits++;
 
@@ -1657,6 +1657,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2009/11/25 09:49:28  gtkwave
+ * added gray code support
+ *
  * Revision 1.11  2009/07/12 20:23:17  gtkwave
  * vtype2() fix (remove magic number and replace with AN_ constant)
  *

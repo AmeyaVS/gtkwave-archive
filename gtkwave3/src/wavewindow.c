@@ -1799,7 +1799,7 @@ while(t)
 			hptr h_ptr;
 			if((h_ptr=bsearch_node(t->n.nd,GLOBALS->tims.marker)))
 				{
-				if(!t->n.nd->ext)
+				if(!t->n.nd->extvals)
 					{
 					unsigned char h_val = h_ptr->v.h_val;
 
@@ -1980,7 +1980,7 @@ if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 			hptr h_ptr;
 			if((h_ptr=bsearch_node(t->n.nd,GLOBALS->tims.marker)))
 				{
-				if(!t->n.nd->ext)
+				if(!t->n.nd->extvals)
 					{
 					unsigned char h_val = h_ptr->v.h_val;
 					if(t->n.nd->vartype == ND_VCD_EVENT)
@@ -2313,7 +2313,7 @@ if(GLOBALS->topmost_trace)
 				DEBUG(printf("Bit Trace: %s, %s\n", t->name, t->n.nd->nname));
 				DEBUG(printf("Start time: "TTFormat", Histent time: "TTFormat"\n", tims.start,(h->time+shift_timebase)));
 
-				if(!t->n.nd->ext)
+				if(!t->n.nd->extvals)
 					{
 					draw_hptr_trace(t,h,i,1,0);
 					}
@@ -4010,6 +4010,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.60  2010/03/02 18:30:07  gtkwave
+ * fix for analog stretch traces when expanded then collapsed
+ *
  * Revision 1.59  2010/02/22 17:15:11  gtkwave
  * add y-coord clamping to avoid integer round off errors
  *

@@ -1631,14 +1631,14 @@ exptr exp1;
 if(n->mv.mvlfac) import_trace(n);
 
 DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
-if(!n->ext)
+if(!n->extvals)
 	{
 	DEBUG(fprintf(stderr, "Nothing to expand\n"));
 	}
 	else
 	{
-	msb = n->ext->msi;
-	lsb = n->ext->lsi;
+	msb = n->msi;
+	lsb = n->lsi;
 	if(msb>lsb)
 		{
 		width = msb - lsb + 1;
@@ -1821,22 +1821,22 @@ exptr exp1;
 if(n->mv.mvlfac) import_trace(n);
 
 DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
-if(!n->ext)
+if(!n->extvals)
 	{
 	DEBUG(fprintf(stderr, "Nothing to expand\n"));
 	return(NULL);
 	}
 	else
 	{
-	if(n->ext->lsi > n->ext->msi)
+	if(n->lsi > n->msi)
 		{
-		rgh = n->ext->lsi; lft = n->ext->msi;
-		actual = n->ext->msi + bit;
+		rgh = n->lsi; lft = n->msi;
+		actual = n->msi + bit;
 		}
 		else
 		{
-		rgh = n->ext->msi; lft = n->ext->lsi;
-		actual = n->ext->msi - bit;
+		rgh = n->msi; lft = n->lsi;
+		actual = n->msi - bit;
 		}
 
 	if((actual>rgh)||(actual<lft))
@@ -1895,7 +1895,7 @@ if(!n->ext)
 		h=h->next;
 		}
 
-	DEBUG(fprintf(stderr, "Extracting: (%d to %d) for offset #%d over %d entries.\n", n->ext->msi, n->ext->lsi, bit, n->numhist));
+	DEBUG(fprintf(stderr, "Extracting: (%d to %d) for offset #%d over %d entries.\n", n->msi, n->lsi, bit, n->numhist));
 
 	np = (nptr)calloc_2(1, sizeof(struct Node));
 	sprintf(nam+offset, "[%d]", actual);
@@ -3057,6 +3057,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.18  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

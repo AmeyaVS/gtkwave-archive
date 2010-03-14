@@ -239,10 +239,9 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)||(f->flags&(LXT2_RD_SYM_F_DOUBLE|LXT2_RD_SYM_F_STRING)))
 		{
-		ExtNode *ext = (ExtNode *)calloc_2(1,sizeof(struct ExtNode));
-		ext->msi = GLOBALS->mvlfacs_lx2_c_1[i].msb;
-		ext->lsi = GLOBALS->mvlfacs_lx2_c_1[i].lsb;
-		n->ext = ext;
+		n->msi = GLOBALS->mvlfacs_lx2_c_1[i].msb;
+		n->lsi = GLOBALS->mvlfacs_lx2_c_1[i].lsb;
+		n->extvals = 1;
 		}
                  
         n->head.time=-1;        /* mark 1st node as negative time */
@@ -565,7 +564,9 @@ l2e->numtrans++;
  */
 static void lx2_resolver(nptr np, nptr resolve)
 { 
-np->ext = resolve->ext;
+np->extvals = resolve->extvals;
+np->msi = resolve->msi;
+np->lsi = resolve->lsi;
 memcpy(&np->head, &resolve->head, sizeof(struct HistEnt));
 np->curr = resolve->curr;
 np->harray = resolve->harray;
@@ -870,6 +871,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/03/13 21:38:16  gtkwave
+ * fixed && used in logical operations for allocating ExtNode
+ *
  * Revision 1.14  2010/03/13 19:16:00  gtkwave
  * removal of useless symbol->nextinaet code
  *

@@ -2438,16 +2438,16 @@ while(v)
 					n->curr=(hptr)n2;
 					/* harray calculated later */
 					n->numhist=n2->numhist;
-					n->ext=n2->ext;
+					n->extvals=n2->extvals;
+					n->msi=n2->msi;
+					n->lsi=n2->lsi;
 					}
 					else
 					{
-					struct ExtNode *en;
-					en=(struct ExtNode *)malloc_2(sizeof(struct ExtNode));
-					en->msi=v->msi;
-					en->lsi=v->lsi;
+					s->n->msi=v->msi;
+					s->n->lsi=v->lsi;
 
-					s->n->ext=en;
+					s->n->extvals=1;
 					}
 
 				s->n->nname=s->name;
@@ -3178,6 +3178,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2010/03/13 19:48:53  gtkwave
+ * remove nextinaet field and replace with temp symchain
+ *
  * Revision 1.35  2010/03/13 07:56:41  gtkwave
  * removed unused h field in struct symbol
  *

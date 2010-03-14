@@ -637,8 +637,8 @@ facs_debug (void)
 
       n = GLOBALS->facs[i]->n;
       printf ("%d: %s\n", i, n->nname);
-      if (n->ext)
-	printf ("  ext: %d - %d\n", n->ext->msi, n->ext->lsi);
+      if (n->extvals)
+	printf ("  ext: %d - %d\n", n->msi, n->lsi);
       for (h = &n->head; h; h = h->next)
 	printf ("  time:"GHWLLD" flags:%02x vect:%p\n",
 		h->time, h->flags, h->v.h_vector);
@@ -672,14 +672,14 @@ create_facs (struct ghw_handler *h)
 	  case ghdl_rtik_type_b2:
 	    if (h->sigs[i].type->en.wkt == ghw_wkt_bit)
 	      {
-		n->ext = NULL;
+		n->extvals = 0;
 		break;
 	      }
 	    /* FALLTHROUGH */
 	  case ghdl_rtik_type_e8:
 	    if (GLOBALS->xlat_1164_ghw_c_1 && h->sigs[i].type->en.wkt == ghw_wkt_std_ulogic)
 	      {
-		n->ext = NULL;
+		n->extvals = 0;
 		break;
 	      }
 	    /* FALLTHROUGH */
@@ -689,12 +689,13 @@ create_facs (struct ghw_handler *h)
 	  case ghdl_rtik_type_f64:
 	  case ghdl_rtik_type_p32:
 	  case ghdl_rtik_type_p64:
-	    n->ext = &GLOBALS->dummy_en_ghw_c_1;
+	    n->extvals = 1;
+	    n->msi = n->lsi = 0;
 	    break;
 	  default:
 	    fprintf (stderr, "ghw:create_facs: unhandled kind %d\n",
 		     h->sigs[i].type->kind);
-	    n->ext = NULL;
+	    n->extvals = 0;
 	  }
     }
 
@@ -1125,6 +1126,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/01/23 03:21:11  gtkwave
+ * hierarchy fixes when characters < "." are in the signal names
+ *
  * Revision 1.10  2010/01/05 06:18:33  gtkwave
  * emergency fix on missing comment causing bad code
  *

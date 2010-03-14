@@ -299,7 +299,6 @@ NULL, /* asbuf */
 0, /* nbr_sig_ref_ghw_c_1 101 */
 0, /* num_glitches_ghw_c_1 102 */
 0, /*  num_glitch_regions_ghw_c_1 */
-{0, 0 }, /* dummy_en_ghw_c_1 103 */
 0, /* fac_name_ghw_c_1 104 */
 0, /* fac_name_len_ghw_c_1 105 */
 0, /* fac_name_max_ghw_c_1 106 */

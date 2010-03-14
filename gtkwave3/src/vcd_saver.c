@@ -374,8 +374,6 @@ while(t)
 			{
 			n = t->n.nd;
 			if(n->expansion) n = n->expansion->parent;
-			/* e = n->ext; */
-			/* if(e) { msi = e->msi; lsi = e->lsi; } else { msi = lsi = -1; } */
 			vt = vcdsav_splay(n, vt);
 			if(!vt || vt->item != n)
 				{
@@ -406,8 +404,6 @@ while(t)
 						n = bt->nodes[i];
 	
 						if(n->expansion) n = n->expansion->parent;
-						/* e = n->ext; */
-						/* if(e) { msi = e->msi; lsi = e->lsi; } else { msi = lsi = -1; } */
 						vt = vcdsav_splay(n, vt);
 						if(!vt || vt->item != n)
 							{
@@ -523,10 +519,10 @@ for(i=0;i<nodecnt;i++)
 		{
 		int msi = -1, lsi = -1;
 
-		if(GLOBALS->hp_vcd_saver_c_1[i]->item->ext)
+		if(GLOBALS->hp_vcd_saver_c_1[i]->item->extvals)
 			{
-			msi = GLOBALS->hp_vcd_saver_c_1[i]->item->ext->msi;
-			lsi = GLOBALS->hp_vcd_saver_c_1[i]->item->ext->lsi;
+			msi = GLOBALS->hp_vcd_saver_c_1[i]->item->msi;
+			lsi = GLOBALS->hp_vcd_saver_c_1[i]->item->lsi;
 			}
 		
 		if(msi==lsi)
@@ -1385,7 +1381,7 @@ if(!(t->flags&(TR_EXCLUDE|TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
         GLOBALS->shift_timebase=t->shift;
         if(!t->vector)
         	{
-                if(!t->n.nd->ext)
+                if(!t->n.nd->extvals)
                 	{
 			write_hptr_trace(t, whichptr, tmin, tmax); /* single-bit */
                         }
@@ -1471,6 +1467,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.11  2009/07/07 20:12:53  gtkwave
  * convert hex capitalization to match verilog
  *

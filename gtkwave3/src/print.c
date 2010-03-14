@@ -685,7 +685,7 @@ ps_MaxSignalLength (void)
 
 		  if ((h_ptr = bsearch_node (t->n.nd, GLOBALS->tims.marker)))
 		    {
-		      if (!t->n.nd->ext)
+		      if (!t->n.nd->extvals)
 			{
 			  unsigned char h_val = h_ptr->v.h_val;
 			
@@ -2724,7 +2724,7 @@ pr_rendertraces (pr_context * prc)
 			 ("Start time: " TTFormat ", Histent time: " TTFormat
 			  "\n", tims.start, (h->time + shift_timebase)));
 
-		  if (!t->n.nd->ext)
+		  if (!t->n.nd->extvals)
 		    {
 		      pr_draw_hptr_trace (prc, t, h, i, 1, 0);
 		    }
@@ -2981,6 +2981,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2010/03/02 18:30:07  gtkwave
+ * fix for analog stretch traces when expanded then collapsed
+ *
  * Revision 1.27  2010/02/22 17:15:11  gtkwave
  * add y-coord clamping to avoid integer round off errors
  *
