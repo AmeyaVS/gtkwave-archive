@@ -45,7 +45,7 @@ unsigned int flags;
 
 struct symbol
 {
-struct symbol *next;	  /* for hash chain */
+struct symbol *sym_next;  /* for hash chain */
 struct symbol *vec_root, *vec_chain;
 char *name;
 struct Node *n;
@@ -76,7 +76,7 @@ int hash(char *s);
 /* typically use zero for hashval as it doesn't matter if facs are sorted as symfind will bsearch... */
 #define symadd_name_exists_sym_exists(s, nam, hv) \
 (s)->name = (nam); \
-(s)->next=GLOBALS->sym[(hv)]; \
+(s)->sym_next=GLOBALS->sym[(hv)]; \
 GLOBALS->sym[(hv)]=(s);
 
 void facsplit(char *, int *, int *);
@@ -112,6 +112,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/03/13 19:48:53  gtkwave
+ * remove nextinaet field and replace with temp symchain
+ *
  * Revision 1.8  2010/03/13 07:56:41  gtkwave
  * removed unused h field in struct symbol
  *

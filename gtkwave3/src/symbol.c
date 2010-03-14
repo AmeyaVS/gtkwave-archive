@@ -69,7 +69,7 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 strcpy(s->name=(char *)malloc_2(strlen(name)+1),name);
-s->next=GLOBALS->sym[hv];
+s->sym_next=GLOBALS->sym[hv];
 GLOBALS->sym[hv]=s;
 return(s);
 }
@@ -80,7 +80,7 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 s->name = name;
-s->next=GLOBALS->sym[hv];
+s->sym_next=GLOBALS->sym[hv];
 GLOBALS->sym[hv]=s;
 return(s);
 }
@@ -104,8 +104,8 @@ if(!GLOBALS->facs_are_sorted)
 	                {
 	                return(temp); /* in table already */    
 	                }
-	        if(!temp->next) break;
-	        temp=temp->next;
+	        if(!temp->sym_next) break;
+	        temp=temp->sym_next;
 	        }
 
 	return(NULL); /* not found, add here if you want to add*/
@@ -203,6 +203,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2010/01/23 21:26:38  gtkwave
+ * additional fix for escaped names w/optimization
+ *
  * Revision 1.5  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *

@@ -446,7 +446,7 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
 		}
 		else
 		{
-		GLOBALS->sym_curr_ghw_c_1->next = s; GLOBALS->sym_curr_ghw_c_1 = s;
+		GLOBALS->sym_curr_ghw_c_1->sym_next = s; GLOBALS->sym_curr_ghw_c_1 = s;
 		}
 
       GLOBALS->nbr_sig_ref_ghw_c_1++;
@@ -659,7 +659,7 @@ create_facs (struct ghw_handler *h)
   while(s)
 	{
 	GLOBALS->facs[i++] = s;
-	s = s->next;
+	s = s->sym_next;
 	}
 
   for (i = 0; i < h->nbr_sigs; i++)
@@ -748,7 +748,7 @@ set_fac_name_1 (struct tree *t)
 
 	t->which = GLOBALS->sym_which_ghw_c_1++; /* patch in gtkwave "which" as node is correct */
 
-	GLOBALS->sym_head_ghw_c_1 = GLOBALS->sym_head_ghw_c_1->next;
+	GLOBALS->sym_head_ghw_c_1 = GLOBALS->sym_head_ghw_c_1->sym_next;
 	}
 
       if (t->child)
@@ -1126,6 +1126,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.11  2010/01/23 03:21:11  gtkwave
  * hierarchy fixes when characters < "." are in the signal names
  *
