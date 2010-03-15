@@ -1926,10 +1926,6 @@ void reload_into_new_context(void)
  set_GLOBALS(new_globals);
  *(GLOBALS->gtk_context_bridge_ptr) = GLOBALS;
 
-
- /* Initialize new variables */
- GLOBALS->sym_hash=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
-
  init_filetrans_data();
  init_proctrans_data();
  /* load_all_fonts(); */
@@ -2123,7 +2119,7 @@ void reload_into_new_context(void)
 	}
 
  /* deallocate the symbol hash table */
- free_2(GLOBALS->sym_hash); GLOBALS->sym_hash = NULL;
+ sym_hash_destroy(GLOBALS);
 
  /* Setup timings we probably need to redraw here */
  GLOBALS->tims.last=GLOBALS->max_time;

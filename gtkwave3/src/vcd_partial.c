@@ -2218,6 +2218,7 @@ fprintf(stderr, "Interactive VCD mode does not work with Windows, exiting.\n");
 exit(255);
 #endif
 
+sym_hash_initialize(GLOBALS);
 getch_alloc();		/* alloc membuff for vcd getch buffer */
 build_slisthier();
 
@@ -2460,6 +2461,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.26  2010/03/13 19:48:53  gtkwave
  * remove nextinaet field and replace with temp symchain
  *

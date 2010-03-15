@@ -68,6 +68,11 @@ char *str;
 };
 
 
+/* hash create/destroy */
+void sym_hash_initialize(void *g);
+void sym_hash_destroy(void *g);
+
+
 struct symbol *symfind(char *, unsigned int *);
 struct symbol *symadd(char *, int);
 struct symbol *symadd_name_exists(char *name, int hv);
@@ -75,9 +80,7 @@ int hash(char *s);
 
 /* typically use zero for hashval as it doesn't matter if facs are sorted as symfind will bsearch... */
 #define symadd_name_exists_sym_exists(s, nam, hv) \
-(s)->name = (nam); \
-(s)->sym_next=GLOBALS->sym_hash[(hv)]; \
-GLOBALS->sym_hash[(hv)]=(s);
+(s)->name = (nam); /* (s)->sym_next=GLOBALS->sym_hash[(hv)]; GLOBALS->sym_hash[(hv)]=(s); (obsolete) */
 
 void facsplit(char *, int *, int *);
 int sigcmp(char *, char *);
@@ -112,6 +115,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/03/15 03:14:53  gtkwave
+ * deallocated symbol hash table after no longer needed
+ *
  * Revision 1.10  2010/03/14 20:12:28  gtkwave
  * rename next hash pointer in struct symbol
  *

@@ -32,6 +32,25 @@
 #include "hierpack.h"
 
 /*
+ * hash create/destroy
+ */
+void sym_hash_initialize(void *g)
+{
+((struct Global *)g)->sym_hash=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
+}
+
+
+void sym_hash_destroy(void *g)
+{
+struct Global *gg = (struct Global *)g;
+if(gg->sym_hash)
+	{
+	free_2(gg->sym_hash); gg->sym_hash = NULL;
+	}
+}
+
+
+/*
  * Generic hash function for symbol names...
  */
 int hash(char *s)
@@ -203,6 +222,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/03/15 03:14:53  gtkwave
+ * deallocated symbol hash table after no longer needed
+ *
  * Revision 1.7  2010/03/14 20:12:28  gtkwave
  * rename next hash pointer in struct symbol
  *

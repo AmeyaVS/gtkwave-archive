@@ -262,6 +262,7 @@ free_2(info_fname); info_fname = NULL;
 
 /* SPLASH */                            splash_create();
 
+sym_hash_initialize(GLOBALS);
 GLOBALS->ae2_num_sections=ae2_read_num_sections(GLOBALS->ae2);
 GLOBALS->numfacs=ae2_read_num_symbols(GLOBALS->ae2);
 GLOBALS->ae2_process_mask = calloc_2(1, GLOBALS->numfacs/8+1);
@@ -1281,6 +1282,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.12  2010/03/13 19:48:53  gtkwave
  * remove nextinaet field and replace with temp symchain
  *

@@ -2663,6 +2663,7 @@ if(!GLOBALS->vcd_handle_vcd_recoder_c_2)
 
 /* SPLASH */				splash_create(); 
 
+sym_hash_initialize(GLOBALS);
 getch_alloc();		/* alloc membuff for vcd getch buffer */
 
 build_slisthier();
@@ -3178,6 +3179,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.36  2010/03/13 19:48:53  gtkwave
  * remove nextinaet field and replace with temp symchain
  *
