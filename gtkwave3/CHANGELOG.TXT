@@ -788,7 +788,7 @@
 		Fix for analog stretch traces when analog trace was
 		expanded and then collapsed.
 		Fix to LZMA_write_compress to detect xz compression failures.
-3.3.5	14mar10	Fix for usage of deallocated next pointer in the
+3.3.5	15mar10	Fix for usage of deallocated next pointer in the
 		force_open_tree_nodes loop (spotted using an alternate
 		allocator).
 		Added optional preliminary Judy array support.
@@ -807,3 +807,4 @@
 		Fixed && used in logical operation for generating ExtNode.
 		Removed ExtNode, made inline with Node.
 		Deallocate symbol hash table after no longer needed.
+		Only allocate hash when necessary.
