@@ -440,14 +440,18 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
     case ghdl_rtik_type_p64:
 
       s = calloc_2(1, sizeof(struct symbol));
-      if(!GLOBALS->sym_head_ghw_c_1)
-		{
-		GLOBALS->sym_head_ghw_c_1 = GLOBALS->sym_curr_ghw_c_1 = s;
-		}
-		else
-		{
-		GLOBALS->sym_curr_ghw_c_1->sym_next = s; GLOBALS->sym_curr_ghw_c_1 = s;
-		}
+
+        if(!GLOBALS->firstnode)
+                {                                
+                GLOBALS->firstnode=
+                GLOBALS->curnode=calloc_2(1, sizeof(struct symchain)); 
+                }                                
+                else
+                {                                
+                GLOBALS->curnode->next=calloc_2(1, sizeof(struct symchain)); 
+                GLOBALS->curnode=GLOBALS->curnode->next; 
+                }                                
+        GLOBALS->curnode->symbol=s;
 
       GLOBALS->nbr_sig_ref_ghw_c_1++;
       res = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(pfx));
@@ -650,16 +654,16 @@ static void
 create_facs (struct ghw_handler *h)
 {
   int i;
-  struct symbol *s = GLOBALS->sym_head_ghw_c_1;
+  struct symchain *sc = GLOBALS->firstnode;
 
   GLOBALS->numfacs = GLOBALS->nbr_sig_ref_ghw_c_1;
   GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
   i = 0;
-  while(s)
+  while(sc)
 	{
-	GLOBALS->facs[i++] = s;
-	s = s->sym_next;
+	GLOBALS->facs[i++] = sc->symbol;
+	sc = sc->next;
 	}
 
   for (i = 0; i < h->nbr_sigs; i++)
@@ -740,7 +744,8 @@ set_fac_name_1 (struct tree *t)
 
       if (t->which >= 0)
 	{
-        struct symbol *s = GLOBALS->sym_head_ghw_c_1;
+        struct symchain *sc = GLOBALS->firstnode;
+	struct symbol *s = sc->symbol;
 
 	s->name = strdup_2(GLOBALS->fac_name_ghw_c_1);
 	s->n = GLOBALS->nxp_ghw_c_1[t->which];
@@ -748,7 +753,9 @@ set_fac_name_1 (struct tree *t)
 
 	t->which = GLOBALS->sym_which_ghw_c_1++; /* patch in gtkwave "which" as node is correct */
 
-	GLOBALS->sym_head_ghw_c_1 = GLOBALS->sym_head_ghw_c_1->sym_next;
+	GLOBALS->curnode = GLOBALS->firstnode->next;
+	free_2(GLOBALS->firstnode);
+	GLOBALS->firstnode = GLOBALS->curnode;
 	}
 
       if (t->child)
@@ -1126,6 +1133,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/14 20:12:28  gtkwave
+ * rename next hash pointer in struct symbol
+ *
  * Revision 1.12  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *
