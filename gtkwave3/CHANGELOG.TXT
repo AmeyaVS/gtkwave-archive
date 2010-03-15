@@ -806,3 +806,4 @@
 		when used.
 		Fixed && used in logical operation for generating ExtNode.
 		Removed ExtNode, made inline with Node.
+		Deallocate symbol hash table after no longer needed.

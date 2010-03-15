@@ -1061,7 +1061,7 @@ if((!wname)&&(GLOBALS->make_vcd_save_file))
 	is_smartsave = (GLOBALS->vcd_save_handle != NULL); /* use smartsave if for some reason can't open auto savefile */
 	}
 
-GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
+GLOBALS->sym_hash=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
 if(!GLOBALS->loaded_file_name)
 	{
@@ -1288,6 +1288,10 @@ load_vcd:
 	}
 
 
+/* deallocate the symbol hash table */
+free_2(GLOBALS->sym_hash); GLOBALS->sym_hash = NULL;
+
+/* reset/initialize various markers and time values */
 for(i=0;i<26;i++) GLOBALS->named_markers[i]=-1;	/* reset all named markers */
 
 GLOBALS->tims.last=GLOBALS->max_time;
@@ -2651,6 +2655,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.95  2010/03/11 16:32:38  gtkwave
+ * fix to add .lxt2 suffix recognition
+ *
  * Revision 1.94  2010/03/10 18:14:13  gtkwave
  * Toggle Trace Hier fix (cache old value for more usability)
  *

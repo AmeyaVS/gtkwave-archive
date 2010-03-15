@@ -826,7 +826,7 @@ NULL, /* strace_ctx (defined in strace.h for multiple strace sessions) */
 /*
  * symbol.c
  */
-NULL, /* sym 424 */
+NULL, /* sym_hash 424 */
 NULL, /* facs 425 */
 0, /* facs_are_sorted 426 */
 0, /* facs_have_symbols_state_machine */
@@ -1928,7 +1928,7 @@ void reload_into_new_context(void)
 
 
  /* Initialize new variables */
- GLOBALS->sym=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
+ GLOBALS->sym_hash=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
 
  init_filetrans_data();
  init_proctrans_data();
@@ -2121,6 +2121,9 @@ void reload_into_new_context(void)
 			}
 		}
 	}
+
+ /* deallocate the symbol hash table */
+ free_2(GLOBALS->sym_hash); GLOBALS->sym_hash = NULL;
 
  /* Setup timings we probably need to redraw here */
  GLOBALS->tims.last=GLOBALS->max_time;

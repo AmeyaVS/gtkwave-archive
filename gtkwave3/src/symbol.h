@@ -76,8 +76,8 @@ int hash(char *s);
 /* typically use zero for hashval as it doesn't matter if facs are sorted as symfind will bsearch... */
 #define symadd_name_exists_sym_exists(s, nam, hv) \
 (s)->name = (nam); \
-(s)->sym_next=GLOBALS->sym[(hv)]; \
-GLOBALS->sym[(hv)]=(s);
+(s)->sym_next=GLOBALS->sym_hash[(hv)]; \
+GLOBALS->sym_hash[(hv)]=(s);
 
 void facsplit(char *, int *, int *);
 int sigcmp(char *, char *);
@@ -112,6 +112,9 @@ void splash_sync(off_t current, off_t total);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/03/14 20:12:28  gtkwave
+ * rename next hash pointer in struct symbol
+ *
  * Revision 1.9  2010/03/13 19:48:53  gtkwave
  * remove nextinaet field and replace with temp symchain
  *

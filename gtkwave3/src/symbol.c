@@ -69,8 +69,8 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 strcpy(s->name=(char *)malloc_2(strlen(name)+1),name);
-s->sym_next=GLOBALS->sym[hv];
-GLOBALS->sym[hv]=s;
+s->sym_next=GLOBALS->sym_hash[hv];
+GLOBALS->sym_hash[hv]=s;
 return(s);
 }
 
@@ -80,8 +80,8 @@ struct symbol *s;
 
 s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 s->name = name;
-s->sym_next=GLOBALS->sym[hv];
-GLOBALS->sym[hv]=s;
+s->sym_next=GLOBALS->sym_hash[hv];
+GLOBALS->sym_hash[hv]=s;
 return(s);
 }
 
@@ -96,7 +96,7 @@ struct symbol *temp;
 if(!GLOBALS->facs_are_sorted)
 	{
 	hv=hash(s);
-	if(!(temp=GLOBALS->sym[hv])) return(NULL); /* no hash entry, add here wanted to add */
+	if(!(temp=GLOBALS->sym_hash[hv])) return(NULL); /* no hash entry, add here wanted to add */
 	
 	while(temp)
 	        {
@@ -203,6 +203,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/03/14 20:12:28  gtkwave
+ * rename next hash pointer in struct symbol
+ *
  * Revision 1.6  2010/01/23 21:26:38  gtkwave
  * additional fix for escaped names w/optimization
  *

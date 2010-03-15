@@ -801,7 +801,7 @@ int strace_current_window;
 /*
  * symbol.c
  */
-struct symbol **sym; /* from symbol.c 453 */
+struct symbol **sym_hash; /* from symbol.c 453 */
 struct symbol **facs; /* from symbol.c 454 */
 char facs_are_sorted; /* from symbol.c 455 */
 char facs_have_symbols_state_machine; /* from symbol.c */
