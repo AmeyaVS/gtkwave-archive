@@ -808,3 +808,7 @@
 		Removed ExtNode, made inline with Node.
 		Deallocate symbol hash table after no longer needed.
 		Only allocate hash when necessary.
+		Added marker vs maxtime marker conflict check in
+		kick_partial_vcd() to ensure signal window values reflect
+		data value rather than x when maxtime scrolls over the
+		marker time and makes the marker visible.

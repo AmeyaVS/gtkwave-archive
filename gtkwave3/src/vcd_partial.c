@@ -2399,7 +2399,8 @@ if(GLOBALS->partial_vcd)
 	while(*GLOBALS->consume_ptr_vcd_partial_c_1)
 		{
 		Trptr t;
-	
+		int old_maxtime_marker_conflict = (GLOBALS->tims.marker > GLOBALS->max_time);
+
 		vcd_parse();
 	
 		GLOBALS->min_time=GLOBALS->start_time_vcd_partial_c_2*GLOBALS->time_scale;
@@ -2416,6 +2417,11 @@ if(GLOBALS->partial_vcd)
 	
 		update_endcap_times_for_partial_vcd();
 		update_maxmarker_labels();
+
+		if(old_maxtime_marker_conflict)
+			{
+			old_maxtime_marker_conflict = (GLOBALS->tims.marker<=GLOBALS->max_time); /* data is now past what was invisible marker */
+			}
 	
 		t = GLOBALS->traces.first; while(t) { regen_trace_mark(t); t = t->t_next; }
 		t = GLOBALS->traces.buffer; while(t) { regen_trace_mark(t); t = t->t_next; }
@@ -2441,6 +2447,13 @@ if(GLOBALS->partial_vcd)
 		        MaxSignalLength();
 		        signalarea_configure_event(GLOBALS->signalarea, NULL);
 			}
+		else if ((old_maxtime_marker_conflict) && (!GLOBALS->helpbox_is_active))
+			{
+			GLOBALS->signalwindow_width_dirty=1;
+			MaxSignalLength();
+			signalarea_configure_event(GLOBALS->signalarea, NULL);
+		        wavearea_configure_event(GLOBALS->wavearea, NULL);
+			}
 			else
 			{
 		        signalarea_configure_event(GLOBALS->signalarea, NULL);
@@ -2461,6 +2474,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2010/03/15 15:57:29  gtkwave
+ * only allocate hash when necessary
+ *
  * Revision 1.27  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *
