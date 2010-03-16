@@ -812,3 +812,4 @@
 		kick_partial_vcd() to ensure signal window values reflect
 		data value rather than x when maxtime scrolls over the
 		marker time and makes the marker visible.
+		More Judy array adds for VCD.
