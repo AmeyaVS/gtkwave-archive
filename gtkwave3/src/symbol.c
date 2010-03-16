@@ -31,22 +31,98 @@
 #include "bsearch.h"
 #include "hierpack.h"
 
+#ifdef _WAVE_HAVE_JUDY
+#include <Judy.h>
+#endif
+
+/*
+ * s_selected accessors
+ */
+#ifdef _WAVE_HAVE_JUDY
+
+char get_s_selected(struct symbol *s)
+{
+JError_t JError;
+int rc = Judy1Test(GLOBALS->s_selected, s, &JError);
+
+return(rc);
+}
+
+char set_s_selected(struct symbol *s, char value)
+{
+JError_t JError;
+
+if(value)
+	{
+	Judy1Set ((Pvoid_t)&GLOBALS->s_selected, (Word_t)s, &JError);
+	}
+	else
+	{
+	Judy1Unset ((Pvoid_t)&GLOBALS->s_selected, (Word_t)s, &JError);
+	}
+
+return(value);
+}
+
+void destroy_s_selected(void)
+{
+JError_t JError;
+Judy1FreeArray(&GLOBALS->s_selected, &JError);
+
+GLOBALS->s_selected = NULL;
+}
+
+#else
+
+char get_s_selected(struct symbol *s)
+{
+return(s->s_selected);
+}
+
+char set_s_selected(struct symbol *s, char value)
+{
+return((s->s_selected = value));
+}
+
+void destroy_s_selected(void)
+{
+/* nothing */
+}
+
+#endif
+
+
 /*
  * hash create/destroy
  */
 void sym_hash_initialize(void *g)
 {
+#ifdef _WAVE_HAVE_JUDY
+((struct Global *)g)->sym_judy = NULL;
+#else
 ((struct Global *)g)->sym_hash=(struct symbol **)calloc_2(SYMPRIME,sizeof(struct symbol *));
+#endif
 }
 
 
 void sym_hash_destroy(void *g)
 {
 struct Global *gg = (struct Global *)g;
+
+#ifdef _WAVE_HAVE_JUDY
+JError_t JError;
+
+JudySLFreeArray(&gg->sym_judy, &JError);
+gg->sym_judy = NULL;
+
+#else
+
 if(gg->sym_hash)
 	{
 	free_2(gg->sym_hash); gg->sym_hash = NULL;
 	}
+
+#endif
 }
 
 
@@ -55,6 +131,7 @@ if(gg->sym_hash)
  */
 int hash(char *s)
 {
+#ifndef _WAVE_HAVE_JUDY
 char *p;
 char ch;
 unsigned int h=0, h2=0, pos=0, g;
@@ -74,6 +151,7 @@ for(p=s;*p;p++)
 
 h^=h2;						/* combine the two hashes */
 GLOBALS->hashcache=h%SYMPRIME;
+#endif
 return(GLOBALS->hashcache);
 }
 
@@ -84,23 +162,44 @@ return(GLOBALS->hashcache);
  */
 struct symbol *symadd(char *name, int hv)
 {
-struct symbol *s;
+struct symbol *s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 
-s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
+#ifdef _WAVE_HAVE_JUDY
+
+JError_t JError;
+PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, name, &JError);
+*((struct symbol **)PPValue) = s;
+
+#else
+
 strcpy(s->name=(char *)malloc_2(strlen(name)+1),name);
 s->sym_next=GLOBALS->sym_hash[hv];
 GLOBALS->sym_hash[hv]=s;
+
+#endif
 return(s);
 }
 
 struct symbol *symadd_name_exists(char *name, int hv)
 {
-struct symbol *s;
+struct symbol *s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 
-s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
+#ifdef _WAVE_HAVE_JUDY
+
+JError_t JError;
+PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, name, &JError);
+*((struct symbol **)PPValue) = s;
+
+s->name = name; /* redundant for now */
+
+#else
+
 s->name = name;
 s->sym_next=GLOBALS->sym_hash[hv];
 GLOBALS->sym_hash[hv]=s;
+
+#endif
+
 return(s);
 }
 
@@ -114,6 +213,15 @@ struct symbol *temp;
 
 if(!GLOBALS->facs_are_sorted)
 	{
+#ifdef _WAVE_HAVE_JUDY
+	JError_t JError;
+	PPvoid_t PPValue = JudySLGet(GLOBALS->sym_judy, s, &JError);
+
+	if(PPValue)
+		{
+		return(*(struct symbol **)PPValue);
+		}
+#else
 	hv=hash(s);
 	if(!(temp=GLOBALS->sym_hash[hv])) return(NULL); /* no hash entry, add here wanted to add */
 	
@@ -126,7 +234,7 @@ if(!GLOBALS->facs_are_sorted)
 	        if(!temp->sym_next) break;
 	        temp=temp->sym_next;
 	        }
-
+#endif
 	return(NULL); /* not found, add here if you want to add*/
 	}
 	else	/* no sense hashing if the facs table is built */
@@ -222,6 +330,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/03/15 15:57:28  gtkwave
+ * only allocate hash when necessary
+ *
  * Revision 1.8  2010/03/15 03:14:53  gtkwave
  * deallocated symbol hash table after no longer needed
  *

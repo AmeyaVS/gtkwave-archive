@@ -277,7 +277,7 @@ if(GLOBALS->is_lx2)
 		{
 		struct symbol *s, *t;
 		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-		if(s->selected)
+		if(get_s_selected(s))
 			{
 			if((!s->vec_root)||(!GLOBALS->autocoalesce))
 				{
@@ -315,7 +315,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 	int len;
 	struct symbol *s, *t;
 	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-	if(s->selected)
+	if(get_s_selected(s))
 		{
 		GLOBALS->pdata->value = i;
 		if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))		
@@ -333,12 +333,12 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 			{
 			len=0;
 			t=s->vec_root;
-			t->selected = 1; /* move selected to head */
+			set_s_selected(t, 1); /* move selected to head */
 			while(t)
 				{
-				if(t->selected)
+				if(get_s_selected(t))
 					{
-					if(len) t->selected=0;
+					if(len) set_s_selected(t, 0);
 					symc_current=(struct symchain *)calloc_2(1,sizeof(struct symchain));	
 					symc_current->next=symc;
 					symc_current->symbol=t;
@@ -354,7 +354,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 
 while(symc)
 	{
-	symc->symbol->selected=1;
+	set_s_selected(symc->symbol, 1);
 	symc_current=symc;
 	symc=symc->next;
 	free_2(symc_current);
@@ -426,7 +426,7 @@ if(GLOBALS->is_lx2)
 		{
 		struct symbol *s, *t;
 		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-		if(s->selected)
+		if(get_s_selected(s))
 			{
 			if((!s->vec_root)||(!GLOBALS->autocoalesce))
 				{
@@ -464,7 +464,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 	int len;
 	struct symbol *s, *t;
 	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-	if(s->selected)
+	if(get_s_selected(s))
 		{
                 GLOBALS->pdata->value = i;
                 if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))
@@ -484,9 +484,9 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 			t=s->vec_root;
 			while(t)
 				{
-				if(t->selected)
+				if(get_s_selected(t))
 					{
-					if(len) t->selected=0;
+					if(len) set_s_selected(t, 0);
 					symc_current=(struct symchain *)calloc_2(1,sizeof(struct symchain));	
 					symc_current->next=symc;
 					symc_current->symbol=t;
@@ -502,7 +502,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 
 while(symc)
 	{
-	symc->symbol->selected=1;
+	set_s_selected(symc->symbol, 1);
 	symc_current=symc;
 	symc=symc->next;
 	free_2(symc_current);
@@ -571,7 +571,7 @@ if(GLOBALS->is_lx2)
 		{
 		struct symbol *s, *t;
 		s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-		if(s->selected)
+		if(get_s_selected(s))
 			{
 			if((!s->vec_root)||(!GLOBALS->autocoalesce))
 				{
@@ -609,7 +609,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 	int len;
 	struct symbol *s, *t;
 	s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-	if(s->selected)
+	if(get_s_selected(s))
 		{
                 GLOBALS->pdata->value = i;
                 if(((int)(GLOBALS->pdata->value/interval))!=((int)(GLOBALS->pdata->oldvalue/interval)))
@@ -629,9 +629,9 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 			t=s->vec_root;
 			while(t)
 				{
-				if(t->selected)
+				if(get_s_selected(t))
 					{
-					if(len) t->selected=0;
+					if(len) set_s_selected(t, 0);
 					symc_current=(struct symchain *)calloc_2(1,sizeof(struct symchain));	
 					symc_current->next=symc;
 					symc_current->symbol=t;
@@ -648,7 +648,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 
 while(symc)
 	{
-	symc->symbol->selected=1;
+	set_s_selected(symc->symbol, 1);
 	symc_current=symc;
 	symc=symc->next;
 	free_2(symc_current);
@@ -674,7 +674,7 @@ struct symbol *s;
 
 s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), row);
 DEBUG(printf("Select: %p %s\n",s, s->name));
-s->selected=1;
+set_s_selected(s, 1);
 GLOBALS->selected_rows_search_c_2++;
 }
 
@@ -685,7 +685,7 @@ struct symbol *s;
 
 s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), row);
 DEBUG(printf("Unselect: %p %s\n",s, s->name));
-s->selected=0;
+set_s_selected(s, 0);
 GLOBALS->selected_rows_search_c_2--;
 }
 
@@ -730,7 +730,7 @@ strcat(entry_suffixed,regex_type[GLOBALS->regex_which_search_c_1]);
 wave_regex_compile(entry_suffixed, WAVE_REGEX_SEARCH);
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	GLOBALS->facs[i]->selected=0;
+	set_s_selected(GLOBALS->facs[i], 0);
 	}
 
 GTK_ADJUSTMENT(GLOBALS->pdata->adj)->upper = (gfloat)((GLOBALS->numfacs>1)?GLOBALS->numfacs-1:1);
@@ -1111,6 +1111,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/02/18 23:06:04  gtkwave
+ * change name of main iteration loop calls
+ *
  * Revision 1.13  2008/12/18 01:31:30  gtkwave
  * integrated experimental autoscroll code on signal adds
  *

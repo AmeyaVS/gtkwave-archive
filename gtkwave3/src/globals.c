@@ -46,10 +46,6 @@
 #include "fst.h"
 #include "hierpack.h"
 
-#ifdef _WAVE_HAVE_JUDY
-#include <Judy.h>
-#endif
-
 #ifdef __MINGW32__
 #define sleep(x) Sleep(x)
 #endif
@@ -826,6 +822,10 @@ NULL, /* strace_ctx (defined in strace.h for multiple strace sessions) */
 /*
  * symbol.c
  */
+#ifdef _WAVE_HAVE_JUDY
+NULL, /* sym_judy */
+NULL, /* s_selected */
+#endif
 NULL, /* sym_hash 424 */
 NULL, /* facs 425 */
 0, /* facs_are_sorted 426 */

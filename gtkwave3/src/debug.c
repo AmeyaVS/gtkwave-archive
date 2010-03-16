@@ -37,6 +37,11 @@ printf("Freeing %d chunks\n", GLOBALS->outstanding);
 system("date");
 #endif
 
+if(GLOBALS->s_selected)
+	{
+	destroy_s_selected();
+	}
+
 Index = 0;
 for (rcValue = Judy1First(PJArray, &Index, &JError); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, &JError))
 	{
@@ -483,6 +488,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/03/12 18:45:31  gtkwave
+ * updated realloc_2 by moving bit clear/set inside if() guard
+ *
  * Revision 1.11  2010/03/09 23:23:31  gtkwave
  * use Judy1 rather than JudyL functions for memory tracking
  *

@@ -749,7 +749,7 @@ struct Bits *b=NULL;
 if(!direction)
 for(i=GLOBALS->numfacs-1;i>=0;i--)	/* to keep vectors in hi..lo order */
 	{
-	if(GLOBALS->facs[i]->selected)
+	if(get_s_selected(GLOBALS->facs[i]))
 		{
 		n[nodepnt++]=GLOBALS->facs[i]->n;
 		if((nodepnt==512)||(numrows==nodepnt)) break;
@@ -758,7 +758,7 @@ for(i=GLOBALS->numfacs-1;i>=0;i--)	/* to keep vectors in hi..lo order */
 else
 for(i=0;i<GLOBALS->numfacs;i++)		/* to keep vectors in lo..hi order */
 	{
-	if(GLOBALS->facs[i]->selected)
+	if(get_s_selected(GLOBALS->facs[i]))
 		{
 		n[nodepnt++]=GLOBALS->facs[i]->n;
 		if((nodepnt==512)||(numrows==nodepnt)) break;
@@ -3057,6 +3057,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.19  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *

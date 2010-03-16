@@ -343,7 +343,7 @@ for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOB
         s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS->autocoalesce;
+		set_s_selected(s->vec_root, GLOBALS->autocoalesce);
 		}
         }
 
@@ -359,7 +359,7 @@ if(GLOBALS->is_lx2)
                 t=s->vec_root;
                 if((t)&&(GLOBALS->autocoalesce))
                         {
-                        if(t->selected)
+                        if(get_s_selected(t))
                                 {
                                 while(t)
                                         {
@@ -397,9 +397,9 @@ for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOB
 	t=s->vec_root;
 	if((t)&&(GLOBALS->autocoalesce))
 		{
-		if(t->selected)
+		if(get_s_selected(t))
 			{
-			t->selected=0;
+			set_s_selected(t, 0);
 			len=0;
 			while(t)
 				{
@@ -455,7 +455,7 @@ for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOB
         s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS->autocoalesce;
+		set_s_selected(s->vec_root, GLOBALS->autocoalesce);
 		}
         }
 
@@ -471,7 +471,7 @@ if(GLOBALS->is_lx2)
                 t=s->vec_root;
                 if((t)&&(GLOBALS->autocoalesce))
                         {
-                        if(t->selected)
+                        if(get_s_selected(t))
                                 {
                                 while(t)
                                         {
@@ -509,9 +509,9 @@ for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOB
 	t=s->vec_root;
 	if((t)&&(GLOBALS->autocoalesce))
 		{
-		if(t->selected)
+		if(get_s_selected(t))
 			{
-			t->selected=0;
+			set_s_selected(t, 0);
 			len=0;
 			while(t)
 				{
@@ -572,7 +572,7 @@ for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOB
         s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS->autocoalesce;
+		set_s_selected(s->vec_root, GLOBALS->autocoalesce);
 		}
         }
 
@@ -588,7 +588,7 @@ if(GLOBALS->is_lx2)
                 t=s->vec_root;
                 if((t)&&(GLOBALS->autocoalesce))
                         {
-                        if(t->selected)
+                        if(get_s_selected(t))
                                 {
                                 while(t)
                                         {
@@ -626,9 +626,9 @@ for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOB
 	t=s->vec_root;
 	if((t)&&(GLOBALS->autocoalesce))
 		{
-		if(t->selected)
+		if(get_s_selected(t))
 			{
-			t->selected=0;
+			set_s_selected(t, 0);
 			len=0;
 			while(t)
 				{
@@ -815,6 +815,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2008/12/18 01:31:30  gtkwave
+ * integrated experimental autoscroll code on signal adds
+ *
  * Revision 1.11  2008/10/04 15:15:20  gtkwave
  * gtk1 compatibility fixes
  *

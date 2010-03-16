@@ -57,6 +57,10 @@
 #include "jrb.h"
 #include "extload.h"
 
+#ifdef _WAVE_HAVE_JUDY
+#include <Judy.h>
+#endif
+
 
 struct Global{ 
 
@@ -801,6 +805,10 @@ int strace_current_window;
 /*
  * symbol.c
  */
+#ifdef _WAVE_HAVE_JUDY
+Pvoid_t sym_judy; /* from symbol.c */
+Pvoid_t s_selected; /* from symbol.c */
+#endif
 struct symbol **sym_hash; /* from symbol.c 453 */
 struct symbol **facs; /* from symbol.c 454 */
 char facs_are_sorted; /* from symbol.c 455 */

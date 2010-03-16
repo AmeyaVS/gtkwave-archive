@@ -2271,6 +2271,9 @@ int duphier=0;
 char hashdirty;
 struct vcdsymbol *v, *vprime;
 char *str = NULL;
+#ifdef _WAVE_HAVE_JUDY
+int ss_len, longest = 0;
+#endif
 
 v=GLOBALS->vcdsymroot_vcd_recoder_c_3;
 while(v)
@@ -2326,7 +2329,9 @@ while(v)
 				if(symfind(str, NULL))
 					{
 					char *dupfix=(char *)malloc_2(max_slen+32);
+#ifndef _WAVE_HAVE_JUDY
 					hashdirty=1;
+#endif
 					DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 					do sprintf(dupfix, "$DUP%d%s%s", duphier++, GLOBALS->vcd_hier_delimeter, str);
@@ -2339,7 +2344,9 @@ while(v)
 					/* fallthrough */
 					{
 					s=symadd(str,hashdirty?hash(str):GLOBALS->hashcache);
-	
+#ifdef _WAVE_HAVE_JUDY
+					ss_len = strlen(str); if(ss_len >= longest) { longest = ss_len + 1; }
+#endif	
 					s->n=v->narray[j];
 					if(substnode)
 						{
@@ -2355,7 +2362,9 @@ while(v)
 						n->numhist=n2->numhist;
 						}
 	
+#ifndef _WAVE_HAVE_JUDY
 					s->n->nname=s->name;
+#endif
 					if(!GLOBALS->firstnode)
 					        {
 					        GLOBALS->firstnode=
@@ -2409,7 +2418,9 @@ while(v)
 			if(symfind(str, NULL))
 				{
 				char *dupfix=(char *)malloc_2(max_slen+32);
+#ifndef _WAVE_HAVE_JUDY
 				hashdirty=1;
+#endif
 				DEBUG(fprintf(stderr,"Warning: %s is a duplicate net name.\n",str));
 
 				do sprintf(dupfix, "$DUP%d%s%s", duphier++, GLOBALS->vcd_hier_delimeter, str);
@@ -2424,7 +2435,9 @@ while(v)
 				struct symbol *s;
 
 				s=symadd(str,hashdirty?hash(str):GLOBALS->hashcache);	/* cut down on double lookups.. */
-
+#ifdef _WAVE_HAVE_JUDY
+                                ss_len = strlen(str); if(ss_len >= longest) { longest = ss_len + 1; }
+#endif        
 				s->n=v->narray[0];
 				if(substnode)
 					{
@@ -2450,7 +2463,9 @@ while(v)
 					s->n->extvals=1;
 					}
 
+#ifndef _WAVE_HAVE_JUDY
 				s->n->nname=s->name;
+#endif
 				if(!GLOBALS->firstnode)
 				        {
 				        GLOBALS->firstnode=
@@ -2471,6 +2486,26 @@ while(v)
 
 	v=v->next;
 	}
+
+#ifdef _WAVE_HAVE_JUDY
+{
+Pvoid_t  PJArray = GLOBALS->sym_judy;
+PPvoid_t PPValue;
+char *Index = malloc_2(longest);
+JError_t JError;  
+
+for (PPValue  = JudySLFirst (PJArray, Index, &JError);
+         PPValue != (PPvoid_t) NULL;
+         PPValue  = JudySLNext  (PJArray, Index, &JError))
+    {        
+	struct symbol *s = *(struct symbol **)PPValue;
+	s->name = strdup_2(Index);
+	s->n->nname = s->name;	
+    }   
+
+free_2(Index);
+}
+#endif
 
 if(sym_chain)
 	{
@@ -3179,6 +3214,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2010/03/15 15:57:29  gtkwave
+ * only allocate hash when necessary
+ *
  * Revision 1.37  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

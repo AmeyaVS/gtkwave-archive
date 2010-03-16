@@ -45,12 +45,17 @@ unsigned int flags;
 
 struct symbol
 {
-struct symbol *sym_next;  /* for hash chain */
+#ifndef _WAVE_HAVE_JUDY
+struct symbol *sym_next;  /* for hash chain, judy uses sym_judy in globals */
+#endif
+
 struct symbol *vec_root, *vec_chain;
 char *name;
 struct Node *n;
 
-char selected;		/* for the clist object */
+#ifndef _WAVE_HAVE_JUDY
+char s_selected;		/* for the clist object */
+#endif
 };
 
 
@@ -110,11 +115,19 @@ char *makename_chain(struct symbol *sym);
 void splash_create(void);
 void splash_sync(off_t current, off_t total);  
 
+/* accessor functions for sym->selected moved (potentially) to sparse array */
+char get_s_selected(struct symbol *s);
+char set_s_selected(struct symbol *s, char value);
+void destroy_s_selected(void);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/03/15 15:57:28  gtkwave
+ * only allocate hash when necessary
+ *
  * Revision 1.11  2010/03/15 03:14:53  gtkwave
  * deallocated symbol hash table after no longer needed
  *

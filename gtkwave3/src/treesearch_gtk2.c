@@ -793,9 +793,9 @@ sig_selection_foreach (GtkTreeModel *model,
 	t=s->vec_root;
 	if((t)&&(GLOBALS->autocoalesce))
 		{
-		if(t->selected)
+		if(get_s_selected(t))
 			{
-			t->selected=0;
+			set_s_selected(t,0);
 			len=0;
 			while(t)
 				{
@@ -887,7 +887,7 @@ sig_selection_foreach_preload_lx2
         s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
-		s->vec_root->selected=GLOBALS->autocoalesce;
+		set_s_selected(s->vec_root, GLOBALS->autocoalesce);
 		}
         }
 
@@ -901,7 +901,7 @@ sig_selection_foreach_preload_lx2
                 t=s->vec_root;
                 if((t)&&(GLOBALS->autocoalesce))
                         {
-                        if(t->selected)
+                        if(get_s_selected(t))
                                 {
                                 while(t)
                                         {
@@ -2050,6 +2050,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2009/09/28 05:58:05  gtkwave
+ * changes to support signal_change_list
+ *
  * Revision 1.40  2009/09/20 21:45:50  gtkwave
  * tree force open node handling changed for tcl
  *

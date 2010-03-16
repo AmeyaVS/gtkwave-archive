@@ -1505,7 +1505,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
         {
         struct symbol *s, *t;
         s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-        if(s->selected)
+        if(get_s_selected(s))
                 {
                 if((!s->vec_root)||(!GLOBALS->autocoalesce))
                         {
@@ -1513,13 +1513,13 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
                         else
                         {
                         t=s->vec_root;
-			t->selected = 1;
+			set_s_selected(t, 1);
 			t=t->vec_chain;
                         while(t)
                                 {
-                                if(t->selected)
+                                if(get_s_selected(t))
                                         {
-                                        t->selected=0;
+                                        set_s_selected(t, 0);
                                         }
                                 t=t->vec_chain;
                                 }
@@ -1532,7 +1532,7 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
         int len;
         struct symbol *s, *t;
         s=(struct symbol *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->clist_search_c_3), i);
-        if(s->selected)
+        if(get_s_selected(s))
                 {
                 if((!s->vec_root)||(!GLOBALS->autocoalesce))
                         {
@@ -1548,9 +1548,9 @@ for(i=0;i<GLOBALS->num_rows_search_c_2;i++)
 				one_entry = make_single_tcl_list_name(t->n->nname, NULL, 1);
 				WAVE_OE_ME
 
-                                if(t->selected)
+                                if(get_s_selected(t))
                                         {
-                                        if(len) t->selected=0;
+                                        if(len) set_s_selected(t, 0);
                                         }
                                 len++;
 				break; /* t=t->vec_chain; ...no longer needed because of for() loop above and handler in process_tcl_list() */
@@ -2712,6 +2712,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.71  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.70  2010/03/11 16:32:38  gtkwave
  * fix to add .lxt2 suffix recognition
  *
