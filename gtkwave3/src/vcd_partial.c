@@ -2136,7 +2136,7 @@ while(v)
 {
 Pvoid_t  PJArray = GLOBALS->sym_judy;
 PPvoid_t PPValue;
-char *Index = malloc_2(longest);
+char *Index = calloc_2(1, longest);
 JError_t JError;
                                         
 for (PPValue  = JudySLFirst (PJArray, Index, &JError);
@@ -2509,6 +2509,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2010/03/16 21:01:12  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.29  2010/03/15 16:40:56  gtkwave
  * fixed kick_partial_vcd to handle maxtime scrolling over markertime
  *

@@ -2491,7 +2491,7 @@ while(v)
 {
 Pvoid_t  PJArray = GLOBALS->sym_judy;
 PPvoid_t PPValue;
-char *Index = malloc_2(longest);
+char *Index = calloc_2(1, longest);
 JError_t JError;  
 
 for (PPValue  = JudySLFirst (PJArray, Index, &JError);
@@ -3214,6 +3214,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2010/03/16 21:01:12  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.38  2010/03/15 15:57:29  gtkwave
  * only allocate hash when necessary
  *
