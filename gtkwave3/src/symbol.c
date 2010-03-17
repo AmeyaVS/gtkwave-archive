@@ -43,7 +43,7 @@
 char get_s_selected(struct symbol *s)
 {
 JError_t JError;
-int rc = Judy1Test(GLOBALS->s_selected, s, &JError);
+int rc = Judy1Test(GLOBALS->s_selected, (Word_t)s, &JError);
 
 return(rc);
 }
@@ -330,6 +330,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/03/16 21:01:10  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.9  2010/03/15 15:57:28  gtkwave
  * only allocate hash when necessary
  *
