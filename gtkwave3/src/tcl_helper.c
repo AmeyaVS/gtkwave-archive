@@ -782,7 +782,10 @@ if(elem)
 	{
 	if((!strcmp("net", elem[0])) || (!strcmp("netBus", elem[0])))
 		{
-		char delim_str[2] = { GLOBALS->hier_delimeter, 0 };
+		char delim_str[2];
+
+		delim_str[0] = GLOBALS->hier_delimeter;
+		delim_str[1] = 0;
 
 		len = 0;
 		for(i=1;i<l;i++)
@@ -2127,9 +2130,13 @@ if(mult_entry)
 	{
 	const char *hdr = "{gtkwave SAVELIST ";
 	int hdr_len = strlen(hdr);
-	const char *av[1] = { mult_entry };
-	char *zm = zMergeTclList(1, av);
-	int zm_len = strlen(zm);
+	const char *av[1];
+	char *zm;
+	int zm_len;
+
+	av[0] = mult_entry;
+	zm = zMergeTclList(1, av);
+	zm_len = strlen(zm);
 
 	free_2(mult_entry);
 
@@ -2712,6 +2719,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.72  2010/03/16 21:01:11  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.71  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

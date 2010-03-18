@@ -207,7 +207,10 @@ return(gtkwavetcl_printTimeType(clientData, interp, objc, objv, value));
 static int gtkwavetcl_getTimeDimension(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 Tcl_Obj *aobj;
-char reportString[2] = { GLOBALS->time_dimension, 0 };
+char reportString[2];
+
+reportString[0] = GLOBALS->time_dimension;
+reportString[1] = 0;
 
 aobj = Tcl_NewStringObj(reportString, -1);
 Tcl_SetObjResult(interp, aobj);
@@ -1765,7 +1768,7 @@ static int gtkwavetcl_showSignal(ClientData clientData, Tcl_Interp *interp, int 
       if (row < 0) { row = 0; };
 
       s1 = Tcl_GetString(objv[2]);
-      sscanf(s1, "%d", &location);
+      sscanf(s1, "%u", &location);
 
       SetTraceScrollbarRowValue(row, location);
     }
@@ -1929,6 +1932,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2010/02/18 23:06:04  gtkwave
+ * change name of main iteration loop calls
+ *
  * Revision 1.35  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

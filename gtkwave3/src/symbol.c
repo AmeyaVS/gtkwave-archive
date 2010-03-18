@@ -167,7 +167,7 @@ struct symbol *s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 #ifdef _WAVE_HAVE_JUDY
 
 JError_t JError;
-PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, name, &JError);
+PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, (uint8_t *)name, &JError);
 *((struct symbol **)PPValue) = s;
 
 #else
@@ -187,7 +187,7 @@ struct symbol *s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 #ifdef _WAVE_HAVE_JUDY
 
 JError_t JError;
-PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, name, &JError);
+PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, (uint8_t *)name, &JError);
 *((struct symbol **)PPValue) = s;
 
 s->name = name; /* redundant for now */
@@ -208,14 +208,16 @@ return(s);
  */
 struct symbol *symfind(char *s, unsigned int *rows_return)
 {
+#ifndef _WAVE_HAVE_JUDY
 int hv;
 struct symbol *temp;
+#endif
 
 if(!GLOBALS->facs_are_sorted)
 	{
 #ifdef _WAVE_HAVE_JUDY
 	JError_t JError;
-	PPvoid_t PPValue = JudySLGet(GLOBALS->sym_judy, s, &JError);
+	PPvoid_t PPValue = JudySLGet(GLOBALS->sym_judy, (uint8_t *)s, &JError);
 
 	if(PPValue)
 		{
@@ -330,6 +332,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/03/17 13:46:56  gtkwave
+ * cast long to pointer to avoid warnings in Judy1Set
+ *
  * Revision 1.10  2010/03/16 21:01:10  gtkwave
  * remove selected member of struct symbol
  *

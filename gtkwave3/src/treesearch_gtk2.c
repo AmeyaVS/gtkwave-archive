@@ -276,7 +276,10 @@ GtkCTreeRow **gctr;
 int depth, i;
 int len = 1;
 char *tstring;
-char hier_suffix[2] = {GLOBALS->hier_delimeter,0};
+char hier_suffix[2];
+
+hier_suffix[0] = GLOBALS->hier_delimeter;
+hier_suffix[1] = 0;
 
 if(!node) return;
 
@@ -409,7 +412,10 @@ if(node)
 	int depth, i;
 	int len = 1;
 	char *tstring;
-	char hier_suffix[2] = {GLOBALS->hier_delimeter,0};
+	char hier_suffix[2];
+
+	hier_suffix[0] = GLOBALS->hier_delimeter;
+	hier_suffix[1] = 0;
                 
 	depth = GTK_CTREE_ROW(node)->level;
 	gctr = wave_alloca(depth * sizeof(GtkCTreeRow *));
@@ -2050,6 +2056,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2010/03/16 21:01:12  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.41  2009/09/28 05:58:05  gtkwave
  * changes to support signal_change_list
  *

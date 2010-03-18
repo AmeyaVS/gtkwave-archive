@@ -2449,7 +2449,7 @@ if(*w2=='?')
 		}
 		else
 		{
-		int hex;
+		unsigned int hex;
 		sscanf(w2+1, "%x", &hex);	
 		GLOBALS->strace_ctx->shadow_type = hex;
 		}
@@ -3057,6 +3057,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2010/03/16 21:01:07  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.20  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

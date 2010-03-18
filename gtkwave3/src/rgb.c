@@ -827,7 +827,8 @@ if((match=(struct wave_rgb_color *)bsearch((void *)str, (void *)colors, C_ARRAY_
 	unsigned char *pnt=(unsigned char *)str;
 	int l=strlen(str);
 	unsigned char ch;
-	int i, rc;
+	int i;
+	unsigned int rc;
 
 	for(i=0;i<l;i++)
 		{
@@ -854,6 +855,9 @@ if((match=(struct wave_rgb_color *)bsearch((void *)str, (void *)colors, C_ARRAY_
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/12/17 17:11:06  gtkwave
+ * collapsed separate arrays into an array of a single struct
+ *
  * Revision 1.3  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

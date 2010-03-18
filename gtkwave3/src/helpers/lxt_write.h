@@ -35,6 +35,7 @@ extern "C" {
 #include <unistd.h>
 #include <zlib.h>
 #include <bzlib.h>
+#include <inttypes.h>
 
 #ifndef HAVE_FSEEKO
 #define fseeko fseek
@@ -66,8 +67,14 @@ struct dslxt_tree_node {
 enum 	lt_zmode_types 	{ LT_ZMODE_NONE, LT_ZMODE_GZIP, LT_ZMODE_BZIP2 };
 
 
-typedef unsigned long long lxttime_t;
+#ifndef _MSC_VER
+typedef uint64_t                lxttime_t;
 #define ULLDescriptor(x) x##ULL
+#else
+typedef unsigned __int64        lxttime_t;
+#define ULLDescriptor(x) x##i64
+#endif
+
 
 struct lt_timetrail
 {
@@ -259,6 +266,9 @@ int 			lt_emit_value_bit_string(struct lt_trace *lt, struct lt_symbol *s, unsign
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2010/02/18 17:27:07  gtkwave
+ * extern "C" headers / version bump
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:15  gtkwave
  * Imported sources
  *

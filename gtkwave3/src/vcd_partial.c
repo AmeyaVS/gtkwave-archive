@@ -2139,9 +2139,9 @@ PPvoid_t PPValue;
 char *Index = calloc_2(1, longest);
 JError_t JError;
                                         
-for (PPValue  = JudySLFirst (PJArray, Index, &JError);
+for (PPValue  = JudySLFirst (PJArray, (uint8_t *)Index, &JError);
          PPValue != (PPvoid_t) NULL;
-         PPValue  = JudySLNext  (PJArray, Index, &JError))
+         PPValue  = JudySLNext  (PJArray, (uint8_t *)Index, &JError))
     {                   
         struct symbol *s = *(struct symbol **)PPValue;  
         s->name = strdup_2(Index);
@@ -2194,6 +2194,7 @@ GLOBALS->slistroot=GLOBALS->slistcurr=NULL; GLOBALS->slisthier_len=0;
 
 TimeType vcd_partial_main(char *fname)
 {
+unsigned int shmidu = ~(0L);
 int shmid;
 
 GLOBALS->pv_vcd_partial_c_2=GLOBALS->rootv_vcd_partial_c_2=NULL;
@@ -2211,12 +2212,13 @@ if(!GLOBALS->hier_was_explicitly_set) /* set default hierarchy split char */
 
 if(!strcmp(fname, "-vcd"))
 	{
-	if(!fscanf(stdin, "%x", &shmid)) shmid = -1; /* allow use of -v flag to pass straight from stdin */
+	if(!fscanf(stdin, "%x", &shmidu)) shmidu = ~(0L); /* allow use of -v flag to pass straight from stdin */
 	}
 	else
 	{
-	sscanf(fname, "%x", &shmid);	/* passed as a filename */
+	sscanf(fname, "%x", &shmidu);	/* passed as a filename */
 	}
+shmid = (int)shmidu;
 
 #if !defined _MSC_VER
 #ifdef __MINGW32__
@@ -2509,6 +2511,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2010/03/17 17:32:45  gtkwave
+ * use calloc'd memory for SL iterator initialization
+ *
  * Revision 1.30  2010/03/16 21:01:12  gtkwave
  * remove selected member of struct symbol
  *

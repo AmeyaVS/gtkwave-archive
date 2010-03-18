@@ -1483,13 +1483,13 @@ if(!GLOBALS->enable_fast_exit)
 	}
 	else
 	{
-	menu_quit_callback(NULL, (gpointer)menu_quit_callback); /* dummy arg */
+	menu_quit_callback(NULL, &GLOBALS->enable_fast_exit); /* nonzero dummy arg */
 	}
 }
 
 /**/
 
-void menu_quit_close_callback(GtkWidget *widget, gpointer data)
+void menu_quit_close_callback(GtkWidget *widget, gpointer dummy_data)
 {
 unsigned int i, j=0;
 unsigned int this_page = GLOBALS->this_context_page;
@@ -1571,11 +1571,11 @@ if((GLOBALS->num_notebook_pages < 2) && (!GLOBALS->enable_fast_exit))
 	{
 	if(GLOBALS->num_notebook_pages < 2)
 		{
-		menu_quit_callback(NULL, (gpointer)menu_quit_callback); /* dummy arg */
+		menu_quit_callback(NULL, &GLOBALS->num_notebook_pages); /* nonzero dummy arg */
 		}
 		else
 		{
-		menu_quit_close_callback(NULL, (gpointer)menu_quit_close_callback); /* dummy arg */
+		menu_quit_close_callback(NULL, NULL); /* dummy arg, not needed to be nonzero */
 		}
 	}
 }
@@ -6168,6 +6168,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.97  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.96  2010/03/10 18:14:13  gtkwave
  * Toggle Trace Hier fix (cache old value for more usability)
  *

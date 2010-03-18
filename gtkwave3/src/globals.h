@@ -465,7 +465,7 @@ char *aet_name; /* from main.c 205 */
 struct gtkwave_annotate_ipc_t *anno_ctx; /* from main.c 206 */
 struct gtkwave_dual_ipc_t *dual_ctx; /* from main.c 207 */
 int dual_id; /* from main.c 208 */
-int dual_attach_id_main_c_1; /* from main.c 209 */
+unsigned int dual_attach_id_main_c_1; /* from main.c 209 */
 int dual_race_lock; /* from main.c 210 */
 GtkWidget *mainwindow; /* from main.c 211 */
 GtkWidget *signalwindow; /* from main.c 212 */

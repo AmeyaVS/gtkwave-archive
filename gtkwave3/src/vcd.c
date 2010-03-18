@@ -2264,9 +2264,9 @@ PPvoid_t PPValue;
 char *Index = calloc_2(1, longest);
 JError_t JError;
                                 
-for (PPValue  = JudySLFirst (PJArray, Index, &JError);
+for (PPValue  = JudySLFirst (PJArray, (uint8_t *)Index, &JError);
          PPValue != (PPvoid_t) NULL;
-         PPValue  = JudySLNext  (PJArray, Index, &JError))
+         PPValue  = JudySLNext  (PJArray, (uint8_t *)Index, &JError))
     {
         struct symbol *s = *(struct symbol **)PPValue;
         s->name = strdup_2(Index);
@@ -2598,6 +2598,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2010/03/17 17:32:45  gtkwave
+ * use calloc'd memory for SL iterator initialization
+ *
  * Revision 1.30  2010/03/16 21:01:12  gtkwave
  * remove selected member of struct symbol
  *
