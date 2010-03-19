@@ -588,7 +588,7 @@ if(GLOBALS->fast_tree_sort)
 		int len;
 		struct symchain *sc;
 
-		GLOBALS->facs[i]=GLOBALS->curnode;
+		GLOBALS->facs[i]=GLOBALS->curnode->symbol;
 	        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
 		sc = GLOBALS->curnode;
 		GLOBALS->curnode=GLOBALS->curnode->next;
@@ -1282,6 +1282,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/03/15 15:57:28  gtkwave
+ * only allocate hash when necessary
+ *
  * Revision 1.13  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *
