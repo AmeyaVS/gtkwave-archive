@@ -1465,7 +1465,7 @@ if(t)
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
-							rc = convert_ascii_real((double *)h_ptr->v.h_vector);
+							rc = convert_ascii_real(t, (double *)h_ptr->v.h_vector);
 							}
 							else
 							{
@@ -2719,6 +2719,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.73  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.72  2010/03/16 21:01:11  gtkwave
  * remove selected member of struct symbol
  *

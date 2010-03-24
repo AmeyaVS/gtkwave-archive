@@ -4640,6 +4640,42 @@ dataformat( ~(TR_NUMMASK), TR_REAL );
 }
 
 void
+menu_dataformat_real2bon(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-RealToBits On");
+        help_text(
+		" will step through all highlighted traces and ensure that"
+		" Real vectors with this qualifier will be displayed as Hex"
+		" values.  Note that this only works for Real quantities"
+		" and other ones will remain to display as binary.  This is a pre-filter"
+		" so it is possible to invert, reverse, apply Decimal, etc.  It will not be"
+		" possible however to expand those values into their constituent bits."
+        );
+        return;
+        }
+
+dataformat( ~(TR_REAL2BITS|TR_NUMMASK), TR_REAL2BITS|TR_HEX );
+}
+
+void
+menu_dataformat_real2boff(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-RealToBits Off");
+        help_text(
+		" will step through all highlighted traces and ensure that"
+		" the Real To Bits qualifier is removed from those traces."
+        );
+        return;
+        }
+
+dataformat( ~(TR_REAL2BITS), 0 );
+}
+
+void
 menu_dataformat_hex(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
@@ -5447,6 +5483,7 @@ if(GLOBALS->helpbox_is_active)
                 " S = Analog Step\n"
                 " I = Analog Interpolated\n"
                 " R = Real\n"
+		" r = Real To Bits\n"
                 " 0 = Range Fill with 0s\n"
                 " 1 = Range Fill with 1s\n"
 		" G = Binary to Gray\n"
@@ -5544,6 +5581,8 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Octal", "<Alt>O", menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/ASCII", NULL, menu_dataformat_ascii, WV_MENU_EDFA, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/BitsToReal", NULL, menu_dataformat_real, WV_MENU_EDRL, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/RealToBits/On", NULL, menu_dataformat_real2bon, WV_MENU_EDR2BON, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/RealToBits/Off", NULL, menu_dataformat_real2boff, WV_MENU_EDR2BOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Right Justify/On", "<Alt>J", menu_dataformat_rjustify_on, WV_MENU_EDFRJON, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Right Justify/Off", "<Shift><Alt>J", menu_dataformat_rjustify_off, WV_MENU_EDFRJOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Invert/On", "<Alt>I", menu_dataformat_invert_on, WV_MENU_EDFION, "<Item>"),
@@ -6054,6 +6093,8 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Octal", NULL, menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
     WAVE_GTKIFE("/Data Format/ASCII", NULL, menu_dataformat_ascii, WV_MENU_EDFA, "<Item>"),
     WAVE_GTKIFE("/Data Format/BitsToReal", NULL, menu_dataformat_real, WV_MENU_EDRL, "<Item>"),
+    WAVE_GTKIFE("/Data Format/RealToBits/On", NULL, menu_dataformat_real2bon, WV_MENU_EDR2BON, "<Item>"),
+    WAVE_GTKIFE("/Data Format/RealToBits/Off", NULL, menu_dataformat_real2boff, WV_MENU_EDR2BOFF, "<Item>"),
     WAVE_GTKIFE("/Data Format/Right Justify/On", NULL, menu_dataformat_rjustify_on, WV_MENU_EDFRJON, "<Item>"),
     WAVE_GTKIFE("/Data Format/Right Justify/Off", NULL, menu_dataformat_rjustify_off, WV_MENU_EDFRJOFF, "<Item>"),
     WAVE_GTKIFE("/Data Format/Invert/On", NULL, menu_dataformat_invert_on, WV_MENU_EDFION, "<Item>"),
@@ -6168,6 +6209,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.98  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.97  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

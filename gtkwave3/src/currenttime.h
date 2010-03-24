@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.5 (w)1999-2010 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.6_pre (w)1999-2010 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -45,8 +45,9 @@ TimeType bstart, bend;
 void fractional_timescale_fix(char *);
 char *convert_ascii(Trptr t, vptr v);
 char *convert_ascii_vec(Trptr t, char *vec);
-char *convert_ascii_real(double *d);
+char *convert_ascii_real(Trptr t, double *d);
 char *convert_ascii_string(char *s);
+char *convert_ascii_vec_2(Trptr t, char *vec);
 double convert_real_vec(Trptr t, char *vec);
 double convert_real(Trptr t, vptr v);
 
@@ -176,6 +177,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.72  2010/03/19 16:36:47  gtkwave
+ * version bump
+ *
  * Revision 1.71  2010/03/09 21:32:01  gtkwave
  * bumping to next revision
  *

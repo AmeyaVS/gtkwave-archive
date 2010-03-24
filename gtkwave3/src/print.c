@@ -717,7 +717,7 @@ ps_MaxSignalLength (void)
 			      if (!(h_ptr->flags & HIST_STRING))
 				{
 				  str =
-				    convert_ascii_real ((double *) h_ptr->v.
+				    convert_ascii_real (t, (double *) h_ptr->v.
 							h_vector);
 				}
 			      else
@@ -2040,7 +2040,7 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 		      if (!(h->flags & HIST_STRING))
 			{
 			  ascii =
-			    convert_ascii_real ((double *) h->v.h_vector);
+			    convert_ascii_real (t, (double *) h->v.h_vector);
 			}
 		      else
 			{
@@ -2981,6 +2981,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.28  2010/03/02 18:30:07  gtkwave
  * fix for analog stretch traces when expanded then collapsed
  *

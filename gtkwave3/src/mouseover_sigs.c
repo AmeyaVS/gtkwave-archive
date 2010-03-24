@@ -88,16 +88,19 @@ else if((flags & TR_ANALOG_INTERPOLATED) != 0) { ch[pos++] = 'I'; }
 if((flags & TR_REAL) != 0) { ch[pos++] = 'R'; }
 
 /* [7] */
+if((flags & TR_REAL2BITS) != 0) { ch[pos++] = 'r'; }
+
+/* [8] */
 if((flags & TR_ZEROFILL) != 0) { ch[pos++] = '0'; }
 else
 if((flags & TR_ONEFILL) != 0) { ch[pos++] = '1'; }
 
-/* [8] */
-if((flags & TR_BINGRAY) != 0) { ch[pos++] = 'G'; }
 /* [9] */
+if((flags & TR_BINGRAY) != 0) { ch[pos++] = 'G'; }
+/* [10] */
 if((flags & TR_GRAYBIN) != 0) { ch[pos++] = 'g'; }
 
-/* [10]  (at worst case this front part needs 11 characters) */
+/* [11]  (at worst case this front part needs 12 characters) */
 ch[pos] = 0;
 
 if(!t->vector)
@@ -186,7 +189,7 @@ if(tname)
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
-							str=convert_ascii_real((double *)h_ptr->v.h_vector);
+							str=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
 							}
 							else
 							{
@@ -445,6 +448,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.6  2009/11/25 09:49:28  gtkwave
  * added gray code support
  *

@@ -96,6 +96,8 @@ WV_MENU_EDFB,
 WV_MENU_EDFO,
 WV_MENU_EDFA,
 WV_MENU_EDRL,
+WV_MENU_EDR2BON,
+WV_MENU_EDR2BOFF,
 WV_MENU_EDFRJON,
 WV_MENU_EDFRJOFF,
 WV_MENU_EDFION,
@@ -345,6 +347,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2010/02/24 18:06:14  gtkwave
+ * removed reduce single bit vectors
+ *
  * Revision 1.32  2010/02/24 17:35:35  gtkwave
  * gtk1 compile fixes
  *

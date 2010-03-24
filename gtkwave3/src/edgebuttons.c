@@ -312,7 +312,7 @@ while(s)
 				{
 				if(!(s->his.h->flags&HIST_STRING))
 					{
-					chval=convert_ascii_real((double *)s->his.h->v.h_vector);
+					chval=convert_ascii_real(t, (double *)s->his.h->v.h_vector);
 					}
 					else
 					{
@@ -575,6 +575,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.7  2009/07/07 20:12:53  gtkwave
  * convert hex capitalization to match verilog
  *

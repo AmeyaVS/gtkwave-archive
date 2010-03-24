@@ -1058,7 +1058,7 @@ if(h->flags&HIST_REAL)
 	{
         if(!(h->flags&HIST_STRING))
         	{               
-                ascii=convert_ascii_real((double *)h->v.h_vector);
+                ascii=convert_ascii_real(t, (double *)h->v.h_vector);
                 }
                 else
                 {
@@ -1467,6 +1467,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.12  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *

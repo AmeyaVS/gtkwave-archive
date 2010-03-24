@@ -853,7 +853,7 @@ while(s)
 				{
 				if(!(s->his.h->flags&HIST_STRING))
 					{
-					chval=convert_ascii_real((double *)s->his.h->v.h_vector);
+					chval=convert_ascii_real(t, (double *)s->his.h->v.h_vector);
 					}
 					else
 					{
@@ -1201,7 +1201,7 @@ while(s)
 				{
 				if(!(s->his.h->flags&HIST_STRING))
 					{
-					chval=convert_ascii_real((double *)s->his.h->v.h_vector);
+					chval=convert_ascii_real(t, (double *)s->his.h->v.h_vector);
 					}
 					else
 					{
@@ -1697,6 +1697,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.17  2010/03/10 04:00:07  gtkwave
  * fixed compiler warnings for 64-bit
  *

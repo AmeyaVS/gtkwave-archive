@@ -1829,7 +1829,7 @@ while(t)
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
-							str=convert_ascii_real((double *)h_ptr->v.h_vector);
+							str=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
 							}
 							else
 							{
@@ -2008,7 +2008,7 @@ if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
-							str=convert_ascii_real((double *)h_ptr->v.h_vector);
+							str=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
 							}
 							else
 							{
@@ -3227,7 +3227,7 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 			{
 			if(!(h->flags&HIST_STRING))
 				{
-				ascii=convert_ascii_real((double *)h->v.h_vector);
+				ascii=convert_ascii_real(t, (double *)h->v.h_vector);
 				}
 				else
 				{
@@ -3290,7 +3290,7 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 			{
 			if(!(h->flags&HIST_STRING))
 				{
-				ascii=convert_ascii_real((double *)h->v.h_vector);
+				ascii=convert_ascii_real(t, (double *)h->v.h_vector);
 				}
 				else
 				{
@@ -4010,6 +4010,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.61  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.60  2010/03/02 18:30:07  gtkwave
  * fix for analog stretch traces when expanded then collapsed
  *

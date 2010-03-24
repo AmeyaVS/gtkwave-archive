@@ -636,19 +636,50 @@ return(os);
 /*
  * convert trptr+hptr vectorstring into an ascii string
  */
-char *convert_ascii_real(double *d)
+char *convert_ascii_real(Trptr t, double *d)
 {
 char *rv;
 
-rv=malloc_2(24);	/* enough for .16e format */
+if(t && (t->flags & TR_REAL2BITS) && d) /* "real2bits" also allows other filters such as "bits2real" on top of it */
+        {
+	struct TraceEnt t2;
+	char vec[64];
+	int i;
+	guint64 swapmem;
 
-if(d)
+	memcpy(&swapmem, d, sizeof(guint64));
+	for(i=0;i<64;i++)
+		{
+		if(swapmem & (ULLDescriptor(1)<<(63-i)))
+			{
+			vec[i] = AN_1;
+			}
+			else
+			{
+			vec[i] = AN_0;
+			}
+		}
+
+	memcpy(&t2, t, sizeof(struct TraceEnt));
+
+	t2.n.nd->msi = 63;
+	t2.n.nd->lsi = 0;
+	t2.flags &= ~(TR_REAL2BITS); /* to avoid possible recursion in the future */
+
+	rv = convert_ascii_vec_2(&t2, vec);
+        }
+	else
 	{
-	sprintf(rv,"%.16g",*d);	
-	}
-else
-	{
-	strcpy(rv,"UNDEF");
+	rv=malloc_2(24);	/* enough for .16e format */
+
+	if(d)
+		{
+		sprintf(rv,"%.16g",*d);	
+		}
+	else
+		{
+		strcpy(rv,"UNDEF");
+		}
 	}
 
 return(rv);
@@ -728,7 +759,7 @@ int vtype2(Trptr t, vptr v)
 /*
  * convert trptr+hptr vectorstring into an ascii string
  */
-static char *convert_ascii_vec_2(Trptr t, char *vec)
+char *convert_ascii_vec_2(Trptr t, char *vec)
 {
 Ulong flags;
 int nbits;
@@ -1657,6 +1688,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.12  2009/11/25 09:49:28  gtkwave
  * added gray code support
  *

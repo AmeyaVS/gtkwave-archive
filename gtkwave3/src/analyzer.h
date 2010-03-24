@@ -336,7 +336,8 @@ enum TraceEntFlagBits
   TR_ANALOG_INTERPOLATED_B, TR_ANALOG_BLANK_STRETCH_B, TR_REAL_B, TR_ANALOG_FULLSCALE_B, 
   TR_ZEROFILL_B, TR_ONEFILL_B, TR_CLOSED_B, TR_GRP_BEGIN_B, 
   TR_GRP_END_B,
-  TR_BINGRAY_B, TR_GRAYBIN_B
+  TR_BINGRAY_B, TR_GRAYBIN_B,
+  TR_REAL2BITS_B
 };
  
 #define TR_HIGHLIGHT 		(1<<TR_HIGHLIGHT_B)
@@ -367,6 +368,8 @@ enum TraceEntFlagBits
 #define TR_BINGRAY		(1<<TR_BINGRAY_B)
 #define TR_GRAYBIN		(1<<TR_GRAYBIN_B)
 #define TR_GRAYMASK		(TR_BINGRAY|TR_GRAYBIN)
+
+#define TR_REAL2BITS            (1<<TR_REAL2BITS_B)
 
 #define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL)
 
@@ -438,6 +441,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.23  2010/02/22 21:13:36  gtkwave
  * added "realtime" VCD variable
  *
