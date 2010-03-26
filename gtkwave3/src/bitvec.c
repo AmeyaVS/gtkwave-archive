@@ -316,13 +316,13 @@ while(h[0])	/* should never exit through this point the way we set up histents w
 					enc = AN_X; break;
 
 				case 'z': case 'Z':
-					enc = AN_Z;
+					enc = AN_Z; break;
 
 				case 'u': case 'U':
-					enc = AN_U;
+					enc = AN_U; break;
 
 				case 'w': case 'W':
-					enc = AN_W;
+					enc = AN_W; break;
 
 				default: enc = enc & AN_MSK; break;
 				}
@@ -3057,6 +3057,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.21  2010/03/16 21:01:07  gtkwave
  * remove selected member of struct symbol
  *

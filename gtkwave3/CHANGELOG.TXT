@@ -815,5 +815,7 @@
 		More Judy array adds for VCD.
 		Removed sym->selected member and replaced with 1-bit
 		Judy array if enabled.
-3.3.6	24mar10	Added RealToBits menu options for displaying real numbers
+3.3.6	26mar10	Added RealToBits menu options for displaying real numbers
 		as binary values.
+		Added missing break statements to terminate cases in
+		bits2vector().
