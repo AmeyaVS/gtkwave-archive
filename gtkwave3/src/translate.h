@@ -29,7 +29,7 @@ struct xl_tree_node {
 };
 
 
-#define FILE_FILTER_MAX 1024
+#define FILE_FILTER_MAX (128)
 
 
 
@@ -48,6 +48,9 @@ void set_current_translate_file(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:46  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

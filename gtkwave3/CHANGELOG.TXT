@@ -819,3 +819,6 @@
 		as binary values.
 		Added missing break statements to terminate cases in
 		bits2vector().
+		Fixed cut and paste error on FILE_FILTER_MAX versus
+		PROC_FILTER_MAX.
+		Reduced FILE_FILTER_MAX from 1024 down to 128.

@@ -18,7 +18,7 @@
 #include "fgetdynamic.h"
 #include "debug.h"
 
-#define PROC_FILTER_MAX 20
+#define PROC_FILTER_MAX (128)
 
 
 void ptrans_searchbox(char *title);
@@ -32,6 +32,9 @@ void remove_all_proc_filters(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2007/08/26 21:35:43  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:46  gtkwave
  * header cleanups
  *

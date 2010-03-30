@@ -24,8 +24,8 @@ void init_proctrans_data(void)
 {
 int i;
 
-if(!GLOBALS->procsel_filter) { GLOBALS->procsel_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(char *)); }
-if(!GLOBALS->proc_filter) { GLOBALS->proc_filter = calloc_2(FILE_FILTER_MAX+1, sizeof(struct pipe_ctx *)); }
+if(!GLOBALS->procsel_filter) { GLOBALS->procsel_filter = calloc_2(PROC_FILTER_MAX+1, sizeof(char *)); }
+if(!GLOBALS->proc_filter) { GLOBALS->proc_filter = calloc_2(PROC_FILTER_MAX+1, sizeof(struct pipe_ctx *)); }
 
 for(i=0;i<PROC_FILTER_MAX+1;i++)
 	{
@@ -433,6 +433,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.6  2009/09/22 13:51:14  gtkwave
  * warnings fixes
  *
