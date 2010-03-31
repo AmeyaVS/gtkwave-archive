@@ -462,14 +462,17 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 		{
 		struct VectorEnt *vt_head = NULL, *vt_curr = NULL;
 		struct VectorEnt *vt;
+		struct VectorEnt *vprev;
 		bvptr bv;
 		int regions = 2;
-		TimeType prev_tim = LLDescriptor(0);
+		TimeType prev_tim = LLDescriptor(-1);
 
 		cvt_ok = 1;
 
 		vt_head = vt_curr = vt = calloc_2(1, sizeof(struct VectorEnt));
 		vt->time = LLDescriptor(-2);
+
+		vprev = vt; /* for duplicate removal */
 
 		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
 		vt->time = LLDescriptor(-1);
@@ -513,13 +516,24 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 				vt = calloc_2(1, sizeof(struct VectorEnt) + slen);
 				if(sp) strcpy(vt->v, sp);
 
-				if(tim > prev_tim) { prev_tim = tim; }
-				vt->time = prev_tim;
-
-				vt_curr->next = vt;
-				vt_curr = vt;
-				
-				regions++;
+				if(tim > prev_tim) 
+					{ 
+					prev_tim = vt->time = tim;
+					vt_curr->next = vt;
+					vt_curr = vt;
+					vprev = vprev->next; /* bump forward the -2 node pointer */
+					regions++;
+					}
+				else if(tim == prev_tim)
+					{
+					vt->time = prev_tim;
+					free_2(vt_curr);
+					vt_curr = vprev->next = vt; /* splice new one in -1 node place */
+					}
+				else
+					{
+					free_2(vt); /* throw it away */
+					}
 				}
 
 			if(strstr(buf, "$finish")) break;
@@ -527,11 +541,11 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 
 
 		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
-		vt->time = LLDescriptor(MAX_HISTENT_TIME-2);
+		vt->time = MAX_HISTENT_TIME - 1;
 		regions++;
 
 		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
-		vt->time = LLDescriptor(MAX_HISTENT_TIME-1);
+		vt->time = MAX_HISTENT_TIME;
 		regions++;
 
 		bv = calloc_2(1, sizeof(struct BitVector) + (sizeof(vptr) * (regions-1)));
@@ -565,6 +579,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2010/03/31 19:38:56  gtkwave
+ * added missing timescale multiplier
+ *
  * Revision 1.2  2010/03/31 19:31:03  gtkwave
  * hardening of times in ttranslate received from client
  *
