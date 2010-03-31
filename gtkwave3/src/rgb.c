@@ -35,7 +35,7 @@ struct wave_rgb_color {
  * case insensitive string bsearch
  */
 
-static const struct wave_rgb_color colors[] = {
+static struct wave_rgb_color colors[] = {
 WAVE_RGB_COLOR("alice blue", 240, 248, 255),
 WAVE_RGB_COLOR("AliceBlue", 240, 248, 255),
 WAVE_RGB_COLOR("antique white", 250, 235, 215),
@@ -796,6 +796,7 @@ static int compar(const void *v1, const void *v2)
 {
 const char *key = (const char *)v1;
 const struct wave_rgb_color *color = (const struct wave_rgb_color *)v2;
+
 return((int)strcasecmp(key, color->name));
 }
 
@@ -805,9 +806,7 @@ struct wave_rgb_color *match;
 
 if((match=(struct wave_rgb_color *)bsearch((void *)str, (void *)colors, C_ARRAY_SIZE, sizeof(struct wave_rgb_color), compar)))
 	{
-
 	if(!match->context) match->context = alloc_color(GLOBALS->wavearea, match->rgb, GLOBALS->wavearea->style->white_gc);
-
 	return(match->context);
 	}
 
@@ -855,6 +854,9 @@ if((match=(struct wave_rgb_color *)bsearch((void *)str, (void *)colors, C_ARRAY_
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.4  2009/12/17 17:11:06  gtkwave
  * collapsed separate arrays into an array of a single struct
  *
