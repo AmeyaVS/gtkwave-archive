@@ -1647,7 +1647,7 @@ if(GLOBALS->strace_ctx->timearray)
 				mprintf("#{%s}",t->name);
 
 				nodes=t->n.vec->bits->nodes;
-				for(i=0;i<t->n.vec->nbits;i++)
+				for(i=0;i<t->n.vec->bits->nnbits;i++)
 					{
 					if(nodes[i]->expansion)
 						{
@@ -1697,6 +1697,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2010/03/24 23:05:10  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.18  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

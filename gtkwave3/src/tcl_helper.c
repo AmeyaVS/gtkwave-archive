@@ -1618,7 +1618,7 @@ while(t)
                                         
                         nodes=t->n.vec->bits->nodes;
 
-			for(i=0;i<t->n.vec->nbits;i++)
+			for(i=0;i<t->n.vec->bits->nnbits;i++)
 				{
 				if(!nodes[i]->expansion)
 					{
@@ -1644,7 +1644,7 @@ while(t)
 
 			if(coalesce_pass)
 				{
-				if(t->n.vec->nbits < 2)
+				if(t->n.vec->bits->nnbits < 2)
 					{
 					coalesce_pass = 0;
 					}
@@ -1655,7 +1655,7 @@ while(t)
 					char *pl = strrchr(strl, '[');
 					int lidx = atoi(pl+1);
 
-					nptr nr = nodes[t->n.vec->nbits - 1];
+					nptr nr = nodes[t->n.vec->bits->nnbits - 1];
 					char *strr = append_array_row(nr);
 					char *pr = strrchr(strr, '[');
 					int ridx = atoi(pr+1);
@@ -1687,7 +1687,7 @@ while(t)
 				}
 
 			if(!coalesce_pass)
-                        for(i=0;i<t->n.vec->nbits;i++)
+                        for(i=0;i<t->n.vec->bits->nnbits;i++)
                                 {
                                 if(nodes[i]->expansion)
                                         {
@@ -2065,7 +2065,7 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 				WAVE_OE_ME
 
 				nodes=t->n.vec->bits->nodes;
-				for(i=0;i<t->n.vec->nbits;i++)
+				for(i=0;i<t->n.vec->bits->nnbits;i++)
 					{
 					if(nodes[i]->expansion)
 						{
@@ -2719,6 +2719,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.74  2010/03/24 23:05:10  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.73  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *
