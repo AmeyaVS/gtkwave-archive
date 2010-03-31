@@ -464,6 +464,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 		struct VectorEnt *vt;
 		bvptr bv;
 		int regions = 2;
+		TimeType prev_tim = LLDescriptor(0);
 
 		cvt_ok = 1;
 
@@ -512,7 +513,8 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 				vt = calloc_2(1, sizeof(struct VectorEnt) + slen);
 				if(sp) strcpy(vt->v, sp);
 
-				vt->time = tim;
+				if(tim > prev_tim) { prev_tim = tim; }
+				vt->time = prev_tim;
 
 				vt_curr->next = vt;
 				vt_curr = vt;
@@ -563,4 +565,7 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  */
