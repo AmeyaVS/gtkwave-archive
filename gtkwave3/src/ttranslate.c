@@ -491,7 +491,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 
 			if(*pnt=='#')
 				{
-				TimeType tim = atoi_64(pnt+1);
+				TimeType tim = atoi_64(pnt+1) * GLOBALS->time_scale;
 				int slen;
 				char *sp;
 
@@ -565,6 +565,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2010/03/31 19:31:03  gtkwave
+ * hardening of times in ttranslate received from client
+ *
  * Revision 1.1  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *
