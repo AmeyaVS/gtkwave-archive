@@ -237,6 +237,7 @@ if(GLOBALS->default_flags & TR_PTRANSLATED)
 if(GLOBALS->default_flags & TR_TTRANSLATED)
 	{
 	t->t_filter = GLOBALS->current_translate_ttrans;
+	traverse_vector_nodes(t);
 	}
 
  if (IsGroupBegin(t)) {
@@ -1418,6 +1419,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.18  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

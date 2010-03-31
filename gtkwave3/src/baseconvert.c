@@ -1398,6 +1398,20 @@ if(!t->t_filter_converted)
 	else
 	{
 	s = strdup_2(v->v);
+
+	if((*s == '?') && (!GLOBALS->color_active_in_filter))
+	        {  
+	        char *s2a;
+	        char *s2 = strchr(s+1, '?');
+	        if(s2)
+	                {
+	                s2++;
+	                s2a = malloc_2(strlen(s2)+1);
+	                strcpy(s2a, s2);
+	                free_2(s);
+	                s = s2a;
+	                }   
+	        }
 	}
 
 #if defined _MSC_VER || defined __MINGW32__
@@ -1706,6 +1720,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.14  2010/03/24 23:05:09  gtkwave
  * added RealToBits menu option
  *
