@@ -21,6 +21,7 @@
 #include "debug.h"
 #include "translate.h"
 #include "ptranslate.h"
+#include "ttranslate.h"
 #include "pipeio.h"
 
 #ifdef _MSC_VER
@@ -733,8 +734,16 @@ int vtype2(Trptr t, vptr v)
 	int i, nbits, res;
 	char *vec=(char *)v->v;
 
-	if (vec == NULL)
-		return(1);
+	if(!t->t_filter_converted)
+		{
+		if (vec == NULL)
+			return(AN_X);
+		}
+		else
+		{
+		return ( ((vec == NULL) || (vec[0] == 0)) ? AN_Z : AN_0 );
+		}
+
 	nbits=t->n.vec->nbits;
 	res = AN_1;
 	for (i = 0; i < nbits; i++)
@@ -1380,7 +1389,16 @@ return(s);
 
 char *convert_ascii(Trptr t, vptr v)
 {
-char *s = convert_ascii_2(t, v);
+char *s;
+
+if(!t->t_filter_converted)
+	{
+	s = convert_ascii_2(t, v);
+	}
+	else
+	{
+	s = strdup_2(v->v);
+	}
 
 #if defined _MSC_VER || defined __MINGW32__
 
@@ -1688,6 +1706,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/03/24 23:05:09  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.13  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

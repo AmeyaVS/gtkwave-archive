@@ -29,7 +29,8 @@ gtkwave_SOURCES= \
 	regex.c regex_wave.h renderopt.c rgb.c search.c shiftbuttons.c showchange.c \
 	signalwindow.c simplereq.c splash.c status.c strace.c strace.h symbol.c symbol.h \
         tcl_commands.c tcl_helper.c tcl_helper.h tcl_np.c tcl_np.h tcl_support_commands.c tcl_support_commands.h \
-	timeentry.c translate.c translate.h tree.c tree.h treesearch.c vcd.c vcd.h vcd_keywords.c \
+	timeentry.c translate.c translate.h tree.c tree.h treesearch.c \
+	ttranslate.c ttranslate.h vcd.c vcd.h vcd_keywords.c \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c ./liblzma/libgwlzma.a ./helpers/fst/libfst.a
 

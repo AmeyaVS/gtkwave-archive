@@ -71,7 +71,7 @@ wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
-void remove_proc_filter(int which, int regen)
+static void remove_proc_filter(int which, int regen)
 {
 if(GLOBALS->proc_filter[which])
 	{
@@ -86,7 +86,7 @@ if(GLOBALS->proc_filter[which])
 }
 
 
-void load_proc_filter(int which, char *name)
+static void load_proc_filter(int which, char *name)
 {
 
   FILE *stream;
@@ -433,6 +433,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/03/30 18:33:27  gtkwave
+ * fixed cut and paste errors from file to proc
+ *
  * Revision 1.7  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

@@ -166,7 +166,7 @@ if(t->trans) free_2(t->trans);
 free_2(t);
 }
 
-void remove_file_filter(int which, int regen)
+static void remove_file_filter(int which, int regen)
 {
 if(GLOBALS->xl_file_filter[which])
 	{
@@ -180,7 +180,7 @@ if(regen)
         }
 }
 
-void load_file_filter(int which, char *name)
+static void load_file_filter(int which, char *name)
 {
 FILE *f = fopen(name, "rb");
 if(!f)
@@ -515,6 +515,9 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

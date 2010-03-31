@@ -26,6 +26,7 @@
 #include "strace.h"
 #include "translate.h"
 #include "ptranslate.h"
+#include "ttranslate.h"
 #include "main.h"
 #include "menu.h"
 #include "busy.h"
@@ -244,11 +245,11 @@ TimeType tshift, tmod;
 
 if(!b) return(NULL);
 
-h=(hptr *)calloc_2(b->nbits, sizeof(hptr));
+h=(hptr *)calloc_2(b->nnbits, sizeof(hptr));
 
-numextrabytes=(b->nbits)-1;
+numextrabytes=(b->nnbits)-1;
 
-for(i=0;i<b->nbits;i++)
+for(i=0;i<b->nnbits;i++)
 	{
 	n=b->nodes[i];
 	h[i]=&(n->head);
@@ -260,7 +261,7 @@ while(h[0])	/* should never exit through this point the way we set up histents w
 
 	vadd=(vptr)calloc_2(1,sizeof(struct VectorEnt)+numextrabytes);
 	
-	for(i=0;i<b->nbits;i++)	/* was 1...big mistake */
+	for(i=0;i<b->nnbits;i++) /* was 1...big mistake */
 		{
 		tshift = (b->attribs) ? b->attribs[i].shift : 0;
 
@@ -289,7 +290,7 @@ while(h[0])	/* should never exit through this point the way we set up histents w
 
 	regions++;
 
-	for(i=0;i<b->nbits;i++)
+	for(i=0;i<b->nnbits;i++)
 		{
 		unsigned char enc;
 
@@ -382,7 +383,7 @@ bitvec=(bvptr)calloc_2(1,sizeof(struct BitVector)+
 		(regions*sizeof(vptr)));
 
 strcpy(bitvec->name=(char *)malloc_2(strlen(b->name)+1),b->name);
-bitvec->nbits=b->nbits;
+bitvec->nbits=b->nnbits;
 bitvec->numregions=regions;
 
 vcurr=vhead;
@@ -506,7 +507,7 @@ char *pnt, *pnt2, *wild=NULL;
 char ch, ch2, wild_active;
 int len, nodepnt=0;
 int i;
-struct Node *n[512];
+struct Node *n[BITATTRIBUTES_MAX];
 struct Bits *b=NULL;
 unsigned int rows = 0;
 
@@ -561,7 +562,7 @@ if(len)
 						if(nexp)
 							{
 							n[nodepnt++]=nexp;
-							if(nodepnt==512) { free_2(wild); goto ifnode; }
+							if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
 							}		
 						}
 					break;
@@ -573,7 +574,7 @@ if(len)
 			if((s=symfind(wild, &rows)))	
 				{
 				n[nodepnt++]=&s->n[rows];
-				if(nodepnt==512) { free_2(wild); goto ifnode; }
+				if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
 				}
 			}
 		}
@@ -585,7 +586,7 @@ if(len)
 			if(wave_regex_match(GLOBALS->facs[i]->name, WAVE_REGEX_WILD))
 				{
 				n[nodepnt++]=GLOBALS->facs[i]->n;
-				if(nodepnt==512) { free_2(wild); goto ifnode; }
+				if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
 				}
 			}
 		}
@@ -608,7 +609,7 @@ if(nodepnt)
 		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
-	b->nbits=nodepnt;
+	b->nnbits=nodepnt;
 	strcpy(b->name=(char *)malloc_2(strlen(vec)+1),vec);
 	}
 
@@ -624,8 +625,8 @@ char *pnt, *wild=NULL;
 char ch;
 int len, nodepnt=0;
 int i;
-struct Node *n[512];
-struct BitAttributes ba[512];
+struct Node *n[BITATTRIBUTES_MAX];
+struct BitAttributes ba[BITATTRIBUTES_MAX];
 struct Bits *b=NULL;
 int state = 0;
 unsigned int rows = 0;
@@ -669,7 +670,7 @@ if(len)
 		{
 		struct symbol *s;
 
-		if(nodepnt==512) { free_2(wild); goto ifnode; }
+		if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
 
 		if(wild[0]=='(')
 			{
@@ -688,7 +689,7 @@ if(len)
 						if(nexp)
 							{
 							n[nodepnt++]=nexp;
-							if(nodepnt==512) { free_2(wild); goto ifnode; }
+							if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
 							}		
 						}
 					break;
@@ -728,7 +729,7 @@ if(nodepnt)
 		b->attribs[i].flags = ba[i].flags;
 		}
 
-	b->nbits=nodepnt;
+	b->nnbits=nodepnt;
 	strcpy(b->name=(char *)malloc_2(strlen(vec)+1),vec);
 	}
 
@@ -743,7 +744,7 @@ struct Bits *makevec_selected(char *vec, int numrows, char direction)
 {
 int nodepnt=0;
 int i;
-struct Node *n[512];
+struct Node *n[BITATTRIBUTES_MAX];
 struct Bits *b=NULL;
 
 if(!direction)
@@ -752,7 +753,7 @@ for(i=GLOBALS->numfacs-1;i>=0;i--)	/* to keep vectors in hi..lo order */
 	if(get_s_selected(GLOBALS->facs[i]))
 		{
 		n[nodepnt++]=GLOBALS->facs[i]->n;
-		if((nodepnt==512)||(numrows==nodepnt)) break;
+		if((nodepnt==BITATTRIBUTES_MAX)||(numrows==nodepnt)) break;
 		}
 	}
 else
@@ -761,7 +762,7 @@ for(i=0;i<GLOBALS->numfacs;i++)		/* to keep vectors in lo..hi order */
 	if(get_s_selected(GLOBALS->facs[i]))
 		{
 		n[nodepnt++]=GLOBALS->facs[i]->n;
-		if((nodepnt==512)||(numrows==nodepnt)) break;
+		if((nodepnt==BITATTRIBUTES_MAX)||(numrows==nodepnt)) break;
 		}
 	}
 
@@ -776,7 +777,7 @@ if(nodepnt)
 		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
-	b->nbits=nodepnt;
+	b->nnbits=nodepnt;
 	strcpy(b->name=(char *)malloc_2(strlen(vec)+1),vec);
 	}
 
@@ -872,7 +873,7 @@ if(nodepnt)
 		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
-	b->nbits=nodepnt;
+	b->nnbits=nodepnt;
 
 	if(vec)
 		{
@@ -1043,20 +1044,20 @@ struct Bits *makevec_range(char *vec, int lo, int hi, char direction)
 {
 int nodepnt=0;
 int i;
-struct Node *n[512];
+struct Node *n[BITATTRIBUTES_MAX];
 struct Bits *b=NULL;
 
 if(!direction)
 for(i=hi;i>=lo;i--)	/* to keep vectors in hi..lo order */
 	{
 	n[nodepnt++]=GLOBALS->facs[i]->n;
-	if(nodepnt==512) break;
+	if(nodepnt==BITATTRIBUTES_MAX) break;
 	}
 else
 for(i=lo;i<=hi;i++)	/* to keep vectors in lo..hi order */
 	{
 	n[nodepnt++]=GLOBALS->facs[i]->n;
-	if(nodepnt==512) break;
+	if(nodepnt==BITATTRIBUTES_MAX) break;
 	}
 
 if(nodepnt)
@@ -1070,7 +1071,7 @@ if(nodepnt)
 		if(n[i]->mv.mvlfac) import_trace(n[i]);
 		}
 
-	b->nbits=nodepnt;
+	b->nnbits=nodepnt;
 
 	if(vec)
 		{
@@ -2476,6 +2477,25 @@ else if(*w2=='^')
 				}
 			}
 		}
+	else
+	if(*(w2+1) == '<')
+		{
+		GLOBALS->current_translate_ttrans = 0;	/* will overwrite if loadable/translatable */
+
+		if(*(w2+2) != '0')
+			{
+			  /*			char *fn = strstr(w2+3, " "); */
+			char *fn = w2+3;
+			if(fn)
+				{
+				while(*fn && isspace(*fn)) fn++;
+				if(*fn && !isspace(*fn)) 
+					{
+					set_current_translate_ttrans(fn);
+					}
+				}
+			}
+		}
 		else
 		{
 		GLOBALS->current_translate_file = 0;	/* will overwrite if loadable/translatable */
@@ -3057,6 +3077,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/03/26 16:11:48  gtkwave
+ * added missing break statements in bits2vector switch cases
+ *
  * Revision 1.22  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

@@ -23,6 +23,7 @@
 #include "vcd_saver.h"
 #include "translate.h"
 #include "ptranslate.h"
+#include "ttranslate.h"
 #include "lx2.h"
 #include "hierpack.h"
 #include "tcl_helper.h"
@@ -306,6 +307,38 @@ if(GLOBALS->helpbox_is_active)
 	}
 }
 
+
+/********** transaction procsel filter install ********/
+
+#if !defined __MINGW32__ && !defined _MSC_VER
+void menu_dataformat_xlate_ttrans_1(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nTransaction Filter Process");
+        help_text(
+                " will enable transaction filtering on marked traces using a filter process.  A requester will appear to get the filter filename."
+        );
+        return;
+        }
+
+ttrans_searchbox("Select Transaction Filter Process");
+}
+
+void menu_dataformat_xlate_ttrans_0(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nTransaction Filter Process Disable");
+        help_text(
+                " will remove transaction filtering."
+        );
+        return;
+        }
+
+install_ttrans_filter(0); /* disable, 0 is always NULL */
+}
+#endif
 
 /********** procsel filter install ********/
 
@@ -1852,7 +1885,7 @@ static unsigned expand_trace(Trptr t_top)
 	  bits=t->n.vec->bits;
 	  if(!(t->flags&TR_REVERSE))
 	    {
-	      for(i=0;i<bits->nbits;i++)
+	      for(i=0;i<bits->nnbits;i++)
 		{
 		  if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
 		  AddNodeTraceReturn(bits->nodes[i],NULL, &tfix);
@@ -1864,7 +1897,7 @@ static unsigned expand_trace(Trptr t_top)
 	    }
 	  else
 	    {
-	      for(i=(bits->nbits-1);i>-1;i--)
+	      for(i=(bits->nnbits-1);i>-1;i--)
 		{
 		  if(bits->nodes[i]->expansion) bits->nodes[i]->expansion->refcnt++;
 		  AddNodeTraceReturn(bits->nodes[i],NULL, &tfix);
@@ -2217,19 +2250,19 @@ static bvptr combine_traces(int direction)
       must_sel_nb();
       return NULL;
     }
-  if(dirty>512)
+  if(dirty>BITATTRIBUTES_MAX)
     {
-      char buf[512];
+      char buf[128];
 
-      sprintf(buf,"%d bits selected, please use <= 512.\n",dirty);
+      sprintf(buf, "%d bits selected, please use <= %d.\n", dirty, BITATTRIBUTES_MAX);
       status_text(buf);
       return NULL;
     }
   else
     {
       int i,nodepnt=0;
-      struct Node *n[512];
-      struct BitAttributes ba[512];
+      struct Node *n[BITATTRIBUTES_MAX];
+      struct BitAttributes ba[BITATTRIBUTES_MAX];
       struct Bits *b=NULL;
       bvptr v=NULL;
 
@@ -2262,7 +2295,7 @@ static bvptr combine_traces(int direction)
 
 		      if(!(t->flags&TR_REVERSE))
 			{
-			  for(ix=0;ix<bits->nbits;ix++)
+			  for(ix=0;ix<bits->nnbits;ix++)
 			    {
 			      if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
 			      ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
@@ -2272,7 +2305,7 @@ static bvptr combine_traces(int direction)
 			}
 		      else
 			{
-			  for(ix=(bits->nbits-1);ix>-1;ix--)
+			  for(ix=(bits->nnbits-1);ix>-1;ix--)
 			    {
 			      if(bits->nodes[ix]->expansion) bits->nodes[ix]->expansion->refcnt++;
 			      ba[nodepnt].shift = t->shift + (oldba ? oldba[ix].shift : 0);
@@ -2412,7 +2445,7 @@ static bvptr combine_traces(int direction)
 	    }
 	}
 
-      b->nbits=nodepnt;
+      b->nnbits=nodepnt;
 
       if(!bitblast_parent)
 	{
@@ -2619,110 +2652,7 @@ menu_combine_up(GtkWidget *widget, gpointer data)
 }
 
 /**/
-#if 0
-/* this function should be obsolete with the new group handling, so commented out... */
 
-void
-menu_reduce_singlebit_vex(GtkWidget *widget, gpointer data)
-{
-Trptr t, tmp;
-int tmpi,dirty=0;
-
-if(GLOBALS->helpbox_is_active)
-        {
-        help_text_bold("\n\nReduce Single Bit Vectors");
-        help_text(
-		" decomposes the highlighted traces into their individual"
-		" bits only if the highlighted traces are one bit wide vectors."
-		" In effect, this function allows single-bit vectors"
-		" to be viewed as signals."
-		" The resulting bits are converted to traces and inserted after the"
-		" last converted trace with the pre-conversion traces"
-		" being placed in the cut buffer."
-        );
-        return;
-        }
-
-
-if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-
-DEBUG(printf("Reduce Singlebit Vex\n"));
-
-t=GLOBALS->traces.first;
-while(t)
-	{
-	if((t->flags&TR_HIGHLIGHT)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
-		{
-		dirty=1;
-		break;
-		}
-	t=t->t_next;
-	}
-
-if(dirty)
-	{
-	FreeCutBuffer();
-	GLOBALS->traces.buffer=GLOBALS->traces.first;
-	GLOBALS->traces.bufferlast=GLOBALS->traces.last;
-	GLOBALS->traces.buffercount=GLOBALS->traces.total;
-
-	GLOBALS->traces.first=GLOBALS->traces.last=NULL; GLOBALS->traces.total=0;
-
-	t=GLOBALS->traces.buffer;
-
-	while(t)
-		{
-		  if(t->flags&TR_HIGHLIGHT)
-		    {
-		      if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))
-			{
-			  AddBlankTrace(t->name);
-			}
-		      else
-			{
-			  if(t->vector)
-			    {
-			      bptr bits;
-			      bits=t->n.vec->bits;
-			      if(bits->nbits==1)
-				{
-				  AddNode(bits->nodes[0],NULL);
-				}
-			      else
-				{
-				  /* reset the cut criteria */
-				  t->flags&=(~TR_HIGHLIGHT);
-				}
-			    }
-			  else
-			    {
-			      AddNode(t->n.nd,NULL);
-			    }
-			}
-		    }
-		  t=t->t_next;
-		}
-
-	tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
-	tmp=GLOBALS->traces.bufferlast; GLOBALS->traces.bufferlast=GLOBALS->traces.last; GLOBALS->traces.last=tmp;
-	tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
-				GLOBALS->traces.total=tmpi;
-	PasteBuffer();
-	/* CutBuffer(); */
-	
-	GLOBALS->signalwindow_width_dirty=1;
-	MaxSignalLength();
-	signalarea_configure_event(GLOBALS->signalarea, NULL);
-	wavearea_configure_event(GLOBALS->wavearea, NULL);
-	}
-	else
-	{
-	must_sel_nb();
-	}
-}
-#endif
-
-/**/
 void menu_tracesearchbox_callback(GtkWidget *widget, gpointer data)
 {
 }
@@ -2860,6 +2790,7 @@ if(GLOBALS->filesel_ok)
 		g_now->vcd_jmp_buf = NULL;
 
 		/* copy old file req strings into new context */
+		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_ttranslate_c_1, &g_old->fcurr_ttranslate_c_1);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_ptranslate_c_1, &g_old->fcurr_ptranslate_c_1);
 		strcpy2_into_new_context(GLOBALS, &GLOBALS->fcurr_translate_c_2, &g_old->fcurr_translate_c_2);
 
@@ -3660,6 +3591,7 @@ void write_save_helper(FILE *wave) {
 			{
 			if((t->flags & TR_PTRANSLATED) && (!t->p_filter)) t->flags &= (~TR_PTRANSLATED);
 			if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
+			if((t->flags & TR_TTRANSLATED) && (!t->t_filter)) t->flags &= (~TR_TTRANSLATED);
 			fprintf(wave,"@%x\n",def=t->flags);
 			}
 
@@ -3695,6 +3627,19 @@ void write_save_helper(FILE *wave) {
 					}
 				}
 
+			/* NOT an else! */
+			if(t->flags & TR_TTRANSLATED)
+				{
+				if(t->t_filter && GLOBALS->ttranssel_filter[t->t_filter])
+					{
+					fprintf(wave, "^<%d %s\n", t->t_filter, GLOBALS->ttranssel_filter[t->t_filter]);
+					}
+					else
+					{
+					fprintf(wave, "^<%d %s\n", 0, "disabled");
+					}
+				}
+
 			if(t->vector)
 				{
 				int ix;
@@ -3709,7 +3654,7 @@ void write_save_helper(FILE *wave) {
 				fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
 
 				nodes=t->n.vec->bits->nodes;
-				for(ix=0;ix<t->n.vec->nbits;ix++)
+				for(ix=0;ix<t->n.vec->bits->nnbits;ix++)
 					{
 					if(nodes[ix]->expansion)
 						{
@@ -3794,6 +3739,7 @@ void write_save_helper(FILE *wave) {
 					{
 					if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
 					if((t->flags & TR_PTRANSLATED) && (!t->p_filter)) t->flags &= (~TR_PTRANSLATED);
+					if((t->flags & TR_TTRANSLATED) && (!t->t_filter)) t->flags &= (~TR_TTRANSLATED);
 					fprintf(wave,"@%x\n",def=t->flags);
 					}
 
@@ -3829,6 +3775,20 @@ void write_save_helper(FILE *wave) {
 							}
 						}
 
+					/* NOT an else! */
+					if(t->flags & TR_TTRANSLATED)
+						{
+						if(t->t_filter && GLOBALS->ttranssel_filter[t->t_filter])
+							{
+							fprintf(wave, "^<%d %s\n", t->t_filter, GLOBALS->ttranssel_filter[t->t_filter]);
+							}
+							else
+							{
+							fprintf(wave, "^<%d %s\n", 0, "disabled");
+							}
+						}
+
+
 					if(t->vector)
 						{
 						int ix;
@@ -3844,7 +3804,7 @@ void write_save_helper(FILE *wave) {
 						fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
 
 						nodes=t->n.vec->bits->nodes;
-						for(ix=0;ix<t->n.vec->nbits;ix++)
+						for(ix=0;ix<t->n.vec->bits->nnbits;ix++)
 							{
 							if(nodes[ix]->expansion)
 								{
@@ -5595,6 +5555,8 @@ static GtkItemFactoryEntry menu_items[] =
 #if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter Process/Disable", NULL, menu_dataformat_xlate_proc_0, WV_MENU_XLP_0, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter Process/Enable and Select", NULL, menu_dataformat_xlate_proc_1, WV_MENU_XLP_1, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Transaction Filter Process/Disable", NULL, menu_dataformat_xlate_ttrans_0, WV_MENU_TTXLP_0, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Transaction Filter Process/Enable and Select", NULL, menu_dataformat_xlate_ttrans_1, WV_MENU_TTXLP_1, "<Item>"),
 #endif
     WAVE_GTKIFE("/Edit/Data Format/Analog/Off", NULL, menu_dataformat_analog_off, WV_MENU_EDFAOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
@@ -6106,6 +6068,8 @@ static GtkItemFactoryEntry popmenu_items[] =
 #if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Data Format/Translate Filter Process/Disable", NULL, menu_dataformat_xlate_proc_0, WV_MENU_XLP_0, "<Item>"),
     WAVE_GTKIFE("/Data Format/Translate Filter Process/Enable and Select", NULL, menu_dataformat_xlate_proc_1, WV_MENU_XLP_1, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Transaction Filter Process/Disable", NULL, menu_dataformat_xlate_ttrans_0, WV_MENU_TTXLP_0, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Transaction Filter Process/Enable and Select", NULL, menu_dataformat_xlate_ttrans_1, WV_MENU_TTXLP_1, "<Item>"),
 #endif
     WAVE_GTKIFE("/Data Format/Analog/Off", NULL, menu_dataformat_analog_off, WV_MENU_EDFAOFF, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
@@ -6209,6 +6173,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.99  2010/03/24 23:05:09  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.98  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

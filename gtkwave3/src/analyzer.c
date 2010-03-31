@@ -24,6 +24,7 @@
 #include "strace.h"
 #include "translate.h"
 #include "ptranslate.h"
+#include "ttranslate.h"
 #include "hierpack.h"
 #include "analyzer.h"
 
@@ -230,6 +231,12 @@ else
 if(GLOBALS->default_flags & TR_PTRANSLATED)
 	{
 	t->p_filter = GLOBALS->current_translate_proc;
+	}
+
+/* NOT an else! */
+if(GLOBALS->default_flags & TR_TTRANSLATED)
+	{
+	t->t_filter = GLOBALS->current_translate_ttrans;
 	}
 
  if (IsGroupBegin(t)) {
@@ -1411,6 +1418,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.17  2010/02/28 21:59:50  gtkwave
  * defensive relinking of t_prev in cut and paste buffers
  *

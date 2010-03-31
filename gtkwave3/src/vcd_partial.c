@@ -2351,7 +2351,7 @@ if(t->vector)
 	bptr bts = b->bits;
 	int i;
 
-	for(i=0;i<bts->nbits;i++)
+	for(i=0;i<bts->nnbits;i++)
 		{
 		if(!bts->nodes[i]->harray)
 			{
@@ -2380,7 +2380,7 @@ else if(t->interactive_vector_needs_regeneration)
 	int i;
 	bvptr b2;
 
-	for(i=0;i<bts->nbits;i++)
+	for(i=0;i<bts->nnbits;i++)
 		{
 		if(!bts->nodes[i]->harray)
 			{
@@ -2511,6 +2511,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.31  2010/03/17 17:32:45  gtkwave
  * use calloc'd memory for SL iterator initialization
  *

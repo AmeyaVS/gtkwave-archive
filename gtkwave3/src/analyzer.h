@@ -27,6 +27,8 @@ typedef struct _SearchProgressData {
 } SearchProgressData;
 
 
+#define BITATTRIBUTES_MAX 32768
+
 typedef struct ExpandInfo *eptr;
 typedef struct ExpandReferences *exptr;
 typedef struct Node	  *nptr;
@@ -233,7 +235,7 @@ typedef struct BitAttributes
 typedef struct Bits
   {
     char    *name;		/* name of this vector of bits   */
-    int     nbits;		/* number of bits in this vector */
+    int     nnbits;		/* number of bits in this vector */
     baptr attribs;  		/* for keeping track of combined timeshifts and inversions (and for savefile) */
     
     nptr    nodes[1];		/* pointers to the bits (nodes)  */
@@ -241,6 +243,8 @@ typedef struct Bits
 
 typedef struct BitVector
   {
+    bvptr   transaction_cache;  /* for TR_TTRANSLATED traces */
+
     char    *name;		/* name of this vector of bits           */
     int     nbits;		/* number of bits in this vector         */
     int     numregions;		/* number of regions that follow         */
@@ -304,10 +308,20 @@ typedef struct TraceEnt
     TimeType shift;		/* offset added to all entries in the trace */
     TimeType shift_drag;	/* cached initial offset for CTRL+LMB drag on highlighted */
 
+    double   d_minval, d_maxval; /* cached value for when auto scaling is turned off */
+
+    union
+      {
+	nptr    nd;		/* what makes up this trace */
+	bvptr   vec;
+      } n;
+
+    unsigned int flags;		/* see def below in TraceEntFlagBits */
+    unsigned int cached_flags;	/* used for tcl for saving flags during cut and paste */
+
     int	     f_filter;		/* file filter */
     int	     p_filter;		/* process filter */
-
-    double   d_minval, d_maxval; /* cached value for when auto scaling is turned off */
+    int	     t_filter;		/* transaction process filter */
 
     unsigned is_alias : 1;	/* set when it's an alias (safe to free t->name then) */
     unsigned is_depacked : 1;	/* set when it's been depacked from a compressed entry (safe to free t->name then) */
@@ -316,15 +330,7 @@ typedef struct TraceEnt
     unsigned interactive_vector_needs_regeneration : 1; /* for interactive VCDs */
     unsigned minmax_valid : 1;	/* for d_minval, d_maxval */
     unsigned is_sort_group : 1; /* only used for sorting purposes */
-
-    unsigned int flags;		/* see def below in TraceEntFlagBits */
-    unsigned int cached_flags;	/* used for tcl for saving flags during cut and paste */
-
-    union
-      {
-	nptr    nd;		/* what makes up this trace */
-	bvptr   vec;
-      } n;
+    unsigned t_filter_converted : 1; /* used to mark that data conversion already occurred if t_filter != 0*/
   } TraceEnt;
 
 
@@ -337,7 +343,7 @@ enum TraceEntFlagBits
   TR_ZEROFILL_B, TR_ONEFILL_B, TR_CLOSED_B, TR_GRP_BEGIN_B, 
   TR_GRP_END_B,
   TR_BINGRAY_B, TR_GRAYBIN_B,
-  TR_REAL2BITS_B
+  TR_REAL2BITS_B, TR_TTRANSLATED_B
 };
  
 #define TR_HIGHLIGHT 		(1<<TR_HIGHLIGHT_B)
@@ -378,6 +384,7 @@ enum TraceEntFlagBits
 
 #define TR_FTRANSLATED	(1<<TR_FTRANSLATED_B)
 #define TR_PTRANSLATED	(1<<TR_PTRANSLATED_B)
+#define TR_TTRANSLATED  (1<<TR_TTRANSLATED_B)
 
 #define TR_ANALOGMASK	(TR_ANALOG_STEP|TR_ANALOG_INTERPOLATED)
 
@@ -441,6 +448,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2010/03/24 23:05:09  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.24  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

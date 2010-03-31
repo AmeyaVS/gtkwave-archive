@@ -109,6 +109,8 @@ WV_MENU_XLF_1,
 #if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_XLP_0,
 WV_MENU_XLP_1,
+WV_MENU_TTXLP_0,
+WV_MENU_TTXLP_1,
 #endif
 WV_MENU_EDFAOFF,
 WV_MENU_EDFASTEP,
@@ -347,6 +349,9 @@ void SetTraceScrollbarRowValue(int row, unsigned center);
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/03/24 23:05:10  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.33  2010/02/24 18:06:14  gtkwave
  * removed reduce single bit vectors
  *

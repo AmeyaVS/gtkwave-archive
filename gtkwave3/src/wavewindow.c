@@ -3747,7 +3747,6 @@ GdkGC    *c;
 GLOBALS->tims.start-=GLOBALS->shift_timebase;
 GLOBALS->tims.end-=GLOBALS->shift_timebase;
 
-h=v;
 liney=((which+2)*GLOBALS->fontheight)-2;
 _y1=((which+1)*GLOBALS->fontheight)+2;	
 _y0=liney-2;
@@ -3764,6 +3763,16 @@ if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 		{
 		gdk_draw_line(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc_grid_wavewindow_c_1,(GLOBALS->tims.start<GLOBALS->tims.first)?(GLOBALS->tims.first-GLOBALS->tims.start)*GLOBALS->pxns:0, liney,(GLOBALS->tims.last<=GLOBALS->tims.end)?(GLOBALS->tims.last-GLOBALS->tims.start)*GLOBALS->pxns:GLOBALS->wavewidth-1, liney);
 		}
+	}
+
+if(t->flags & TR_TTRANSLATED)
+	{
+	traverse_vector_nodes(t);
+	h=v=bsearch_vector(t->n.vec, GLOBALS->tims.start);
+	}
+	else
+	{
+	h=v;
 	}
 
 if(t->flags & TR_ANALOGMASK)
@@ -4010,6 +4019,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.62  2010/03/24 23:05:10  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.61  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

@@ -2035,6 +2035,8 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 
 	      if (width > GLOBALS->vector_padding)
 		{
+		char *t_ascii; /* to skip past color ? ? string */
+
 		  if (h->flags & HIST_REAL)
 		    {
 		      if (!(h->flags & HIST_STRING))
@@ -2053,15 +2055,16 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 		      ascii = convert_ascii_vec (t, h->v.h_vector);
 		    }
 
+		  if((*ascii=='?')&&((t_ascii=strchr(ascii+1, '?')))) { t_ascii++; } else { t_ascii = ascii; }
 
 		  if (((pixlen =
 			font_engine_string_measure (GLOBALS->wavefont,
-					    ascii)) +
+					    t_ascii)) +
 		       GLOBALS->vector_padding <= width)
 		      || ((_x1 >= GLOBALS->wavewidth)
 			  && (prc->gpd == &ps_print_device)))
 		    {
-		      pr_draw_string (prc, _x0 + 2, ytext, ascii, pixlen,
+		      pr_draw_string (prc, _x0 + 2, ytext, t_ascii, pixlen,
 				      ysiz);
 		    }
 		  else
@@ -2069,13 +2072,13 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 		      char *mod;
 
 		      mod =
-			bsearch_trunc (ascii,
+			bsearch_trunc (t_ascii,
 				       width - GLOBALS->vector_padding);
 		      if (mod)
 			{
 			  *mod = '+';
 			  *(mod + 1) = 0;
-			  pr_draw_string (prc, _x0 + 2, ytext, ascii,
+			  pr_draw_string (prc, _x0 + 2, ytext, t_ascii,
 					  GLOBALS->maxlen_trunc, ysiz);
 			}
 		    }
@@ -2474,7 +2477,6 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
   GLOBALS->tims.start -= GLOBALS->shift_timebase;
   GLOBALS->tims.end -= GLOBALS->shift_timebase;
 
-  h = v;
   liney = ((which + 2) * GLOBALS->fontheight) - 2;
   _y1 = ((which + 1) * GLOBALS->fontheight) + 2;
   _y0 = liney - 2;
@@ -2506,6 +2508,16 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 			GLOBALS->pxns : GLOBALS->wavewidth - 1, liney);
 	}
     }
+
+  if(t->flags & TR_TTRANSLATED)
+        {
+        traverse_vector_nodes(t);
+        h=v=bsearch_vector(t->n.vec, GLOBALS->tims.start);
+        }
+        else
+        {
+        h=v;
+        }
 
   if (t->flags & TR_ANALOGMASK)
     {
@@ -2634,16 +2646,19 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 
 	      if (width > GLOBALS->vector_padding)
 		{
+		  char *t_ascii;
 		  ascii = convert_ascii (t, h);
+
+		  if((*ascii=='?')&&((t_ascii=strchr(ascii+1, '?')))) { t_ascii++; } else { t_ascii = ascii; }
 
 		  if (((pixlen =
 			font_engine_string_measure (GLOBALS->wavefont,
-					    ascii)) +
+					    t_ascii)) +
 		       GLOBALS->vector_padding <= width)
 		      || ((_x1 >= GLOBALS->wavewidth)
 			  && (prc->gpd == &ps_print_device)))
 		    {
-		      pr_draw_string (prc, _x0 + 2, ytext, ascii, pixlen,
+		      pr_draw_string (prc, _x0 + 2, ytext, t_ascii, pixlen,
 				      ysiz);
 		    }
 		  else
@@ -2651,14 +2666,14 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 		      char *mod;
 
 		      mod =
-			bsearch_trunc (ascii,
+			bsearch_trunc (t_ascii,
 				       width - GLOBALS->vector_padding);
 		      if (mod)
 			{
 			  *mod = '+';
 			  *(mod + 1) = 0;
 
-			  pr_draw_string (prc, _x0 + 2, ytext, ascii,
+			  pr_draw_string (prc, _x0 + 2, ytext, t_ascii,
 					  GLOBALS->maxlen_trunc, ysiz);
 			}
 		    }
@@ -2981,6 +2996,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2010/03/24 23:05:10  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.29  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

@@ -67,6 +67,7 @@
 #include "rc.h"
 #include "translate.h"
 #include "ptranslate.h"
+#include "ttranslate.h"
 
 #include "tcl_helper.h"
 #if defined(HAVE_LIBTCL)
@@ -611,9 +612,11 @@ do_primary_inits:
 
 init_filetrans_data(); /* for file translation splay trees */
 init_proctrans_data(); /* for proc translation structs */
+init_ttrans_data();    /* for transaction proc translation structs */
 if(!mainwindow_already_built) 
 	{
 	atexit(remove_all_proc_filters);
+	atexit(remove_all_ttrans_filters);
 #if defined __MINGW32__
 	atexit(close_all_fst_files);
 #endif
@@ -2653,6 +2656,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.97  2010/03/15 15:57:28  gtkwave
+ * only allocate hash when necessary
+ *
  * Revision 1.96  2010/03/15 03:14:53  gtkwave
  * deallocated symbol hash table after no longer needed
  *

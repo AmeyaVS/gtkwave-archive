@@ -29,6 +29,7 @@
 #include "pixmaps.h"
 #include "print.h"
 #include "ptranslate.h"
+#include "ttranslate.h"
 #include "rc.h"
 #include "regex_wave.h"
 #include "strace.h"
@@ -928,6 +929,21 @@ NULL, /* cleanup_treesearch_gtk2_c_8 468 */
 0, /* dnd_tgt_on_wavearea_treesearch_gtk2_c_1 */
 NULL, /* dnd_sigview */
 
+
+/*
+ * ttranslate.c
+ */
+0, /* current_translate_ttrans */
+0, /* current_filter_ttranslate_c_1 */
+0, /* num_ttrans_filters */
+NULL, /* ttranssel_filter */
+NULL, /* ttrans_filter */
+0, /* is_active_ttranslate_c_2 */
+NULL, /* fcurr_ttranslate_c_1 */
+NULL, /* window_ttranslate_c_5 */
+NULL, /* clist_ttranslate_c_2 */
+
+
 /*
  * vcd.c
  */
@@ -1379,6 +1395,7 @@ void reload_into_new_context(void)
 
  /* Kill any open processes */
  remove_all_proc_filters();
+ remove_all_ttrans_filters();
 
  /* Instantiate new global status */
  new_globals = initialize_globals();
@@ -1716,6 +1733,7 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->stems_name, &GLOBALS->stems_name); /* remaining fileselbox() vars not handled elsewhere */
  strcpy2_into_new_context(new_globals, &new_globals->filesel_logfile_menu_c_1, &GLOBALS->filesel_logfile_menu_c_1);
  strcpy2_into_new_context(new_globals, &new_globals->filesel_scriptfile_menu, &GLOBALS->filesel_scriptfile_menu);
+ strcpy2_into_new_context(new_globals, &new_globals->fcurr_ttranslate_c_1, &GLOBALS->fcurr_ttranslate_c_1);
  strcpy2_into_new_context(new_globals, &new_globals->fcurr_ptranslate_c_1, &GLOBALS->fcurr_ptranslate_c_1);
  strcpy2_into_new_context(new_globals, &new_globals->fcurr_translate_c_2, &GLOBALS->fcurr_translate_c_2);
  
@@ -1928,6 +1946,7 @@ void reload_into_new_context(void)
 
  init_filetrans_data();
  init_proctrans_data();
+ init_ttrans_data();
  /* load_all_fonts(); */
 
  /* attempt to reload file and recover on loader errors until successful */

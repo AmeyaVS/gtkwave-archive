@@ -70,9 +70,10 @@ am_gtkwave_OBJECTS = globals.$(OBJEXT) ae2.$(OBJEXT) \
 	tcl_commands.$(OBJEXT) tcl_helper.$(OBJEXT) tcl_np.$(OBJEXT) \
 	tcl_support_commands.$(OBJEXT) timeentry.$(OBJEXT) \
 	translate.$(OBJEXT) tree.$(OBJEXT) treesearch.$(OBJEXT) \
-	vcd.$(OBJEXT) vcd_keywords.$(OBJEXT) vcd_partial.$(OBJEXT) \
-	vcd_recoder.$(OBJEXT) vcd_saver.$(OBJEXT) vlist.$(OBJEXT) \
-	vzt.$(OBJEXT) wavewindow.$(OBJEXT) zoombuttons.$(OBJEXT)
+	ttranslate.$(OBJEXT) vcd.$(OBJEXT) vcd_keywords.$(OBJEXT) \
+	vcd_partial.$(OBJEXT) vcd_recoder.$(OBJEXT) \
+	vcd_saver.$(OBJEXT) vlist.$(OBJEXT) vzt.$(OBJEXT) \
+	wavewindow.$(OBJEXT) zoombuttons.$(OBJEXT)
 gtkwave_OBJECTS = $(am_gtkwave_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
@@ -240,7 +241,8 @@ gtkwave_SOURCES = \
 	regex.c regex_wave.h renderopt.c rgb.c search.c shiftbuttons.c showchange.c \
 	signalwindow.c simplereq.c splash.c status.c strace.c strace.h symbol.c symbol.h \
         tcl_commands.c tcl_helper.c tcl_helper.h tcl_np.c tcl_np.h tcl_support_commands.c tcl_support_commands.h \
-	timeentry.c translate.c translate.h tree.c tree.h treesearch.c vcd.c vcd.h vcd_keywords.c \
+	timeentry.c translate.c translate.h tree.c tree.h treesearch.c \
+	ttranslate.c ttranslate.h vcd.c vcd.h vcd_keywords.c \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c ./liblzma/libgwlzma.a ./helpers/fst/libfst.a
 
@@ -387,6 +389,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/translate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/treesearch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttranslate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/twinwave.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcd_keywords.Po@am__quote@

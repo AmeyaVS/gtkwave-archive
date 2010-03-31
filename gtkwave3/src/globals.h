@@ -42,6 +42,7 @@
 #include "pixmaps.h"
 #include "print.h"
 #include "ptranslate.h"
+#include "ttranslate.h"
 #include "rc.h"
 #include "regex_wave.h"
 #include "strace.h"
@@ -910,6 +911,21 @@ Traces tcache_treesearch_gtk2_c_2; /* from treesearch_gtk2.c 500 */
 unsigned char dnd_tgt_on_signalarea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 501 */
 unsigned char dnd_tgt_on_wavearea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c */
 GtkWidget *dnd_sigview; /* from treesearch_gtk2.c */
+
+
+/*
+ * ttranslate.c
+ */
+int current_translate_ttrans;
+int current_filter_ttranslate_c_1;
+int num_ttrans_filters;
+char **ttranssel_filter;
+struct pipe_ctx **ttrans_filter;
+int is_active_ttranslate_c_2;
+char *fcurr_ttranslate_c_1;
+GtkWidget *window_ttranslate_c_5;
+GtkWidget *clist_ttranslate_c_2;
+
 
 /*
  * vcd.c
