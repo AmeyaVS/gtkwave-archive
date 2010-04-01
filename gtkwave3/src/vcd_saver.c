@@ -506,9 +506,10 @@ if(lxt)
 		else
 		{
 		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment data_start %p $end\n", trans_head); /* arbitrary hex identifier */
+		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment name %s $end\n", trans_head->name ? trans_head->name : "UNKNOWN");
 		fprintf(GLOBALS->f_vcd_saver_c_1, "$timescale %d%c%s $end\n", (int)GLOBALS->time_scale, GLOBALS->time_dimension, (GLOBALS->time_dimension=='s') ? "" : "s");
-		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment min_time "TTFormat" $end\n", GLOBALS->min_time);
-		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment max_time "TTFormat" $end\n", GLOBALS->max_time);
+		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment min_time "TTFormat" $end\n", GLOBALS->min_time / GLOBALS->time_scale);
+		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment max_time "TTFormat" $end\n", GLOBALS->max_time / GLOBALS->time_scale);
 		}
 	}
 
@@ -1518,6 +1519,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.14  2010/03/24 23:05:10  gtkwave
  * added RealToBits menu option
  *
