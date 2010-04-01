@@ -109,7 +109,7 @@ void *bsearch_dummy_rv;
 GLOBALS->max_compare_time_bsearch_c_1=-2; GLOBALS->max_compare_pos_bsearch_c_1=NULL; GLOBALS->max_compare_index=NULL;
 
 bsearch_dummy_rv = bsearch(&key, n->harray, n->numhist, sizeof(hptr), compar_histent);
-if((!GLOBALS->max_compare_pos_bsearch_c_1)||(GLOBALS->max_compare_time_bsearch_c_1<GLOBALS->shift_timebase)) 
+if((!GLOBALS->max_compare_pos_bsearch_c_1)||(GLOBALS->max_compare_time_bsearch_c_1<LLDescriptor(0))) 
 	{
 	GLOBALS->max_compare_pos_bsearch_c_1=n->harray[1]; /* aix bsearch fix */
 	GLOBALS->max_compare_index=&(n->harray[1]); 
@@ -154,7 +154,7 @@ void *bsearch_dummy_rv;
 GLOBALS->vmax_compare_time_bsearch_c_1=-2; GLOBALS->vmax_compare_pos_bsearch_c_1=NULL; GLOBALS->vmax_compare_index=NULL;
 
 bsearch_dummy_rv = bsearch(&key, b->vectors, b->numregions, sizeof(vptr), compar_vectorent);
-if((!GLOBALS->vmax_compare_pos_bsearch_c_1)||(GLOBALS->vmax_compare_time_bsearch_c_1<GLOBALS->shift_timebase)) 
+if((!GLOBALS->vmax_compare_pos_bsearch_c_1)||(GLOBALS->vmax_compare_time_bsearch_c_1<LLDescriptor(0))) 
 	{
 	GLOBALS->vmax_compare_pos_bsearch_c_1=b->vectors[1]; /* aix bsearch fix */
 	GLOBALS->vmax_compare_index=&(b->vectors[1]);
@@ -275,6 +275,9 @@ if(rc) return(*rc); else return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.7  2010/01/22 02:10:49  gtkwave
  * added second pattern search capability
  *
