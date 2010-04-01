@@ -133,7 +133,7 @@ while(s)
 		UTimeType utt;
 		TimeType  tt;
 
-		h=bsearch_node(t->n.nd, basetime);
+		h=bsearch_node(t->n.nd, basetime - t->shift);
 		hp=GLOBALS->max_compare_index;
 		if((hp==&(t->n.nd->harray[1]))||(hp==&(t->n.nd->harray[0]))) return;
 		if(basetime == ((*hp)->time+GLOBALS->shift_timebase)) hp--;
@@ -149,7 +149,7 @@ while(s)
 		UTimeType utt;
 		TimeType  tt;
 
-		v=bsearch_vector(t->n.vec, basetime);
+		v=bsearch_vector(t->n.vec, basetime - t->shift);
 		vp=GLOBALS->vmax_compare_index;
 		if((vp==&(t->n.vec->vectors[1]))||(vp==&(t->n.vec->vectors[0]))) return;
 		if(basetime == ((*vp)->time+GLOBALS->shift_timebase)) vp--;
@@ -176,7 +176,7 @@ while(s)
 		UTimeType utt;
 		TimeType  tt;
 
-		h=bsearch_node(t->n.nd, basetime);
+		h=bsearch_node(t->n.nd, basetime - t->shift);
 		while(h->next && h->time==h->next->time) h=h->next;
 		if((whichpass)||(GLOBALS->tims.marker>=0)) h=h->next;
 		if(!h) return;
@@ -190,7 +190,7 @@ while(s)
 		UTimeType utt;
 		TimeType  tt;
 
-		v=bsearch_vector(t->n.vec, basetime);
+		v=bsearch_vector(t->n.vec, basetime - t->shift);
 		while(v->next && v->time==v->next->time) v=v->next;
 		if((whichpass)||(GLOBALS->tims.marker>=0)) v=v->next;
 		if(!v) return;
@@ -216,7 +216,7 @@ while(s)
 		{
 		if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 			{
-			s->his.h=bsearch_node(t->n.nd, maxbase);
+			s->his.h=bsearch_node(t->n.nd, maxbase - t->shift);
 			while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
 			}
 		if(t->flags&TR_INVERT)  
@@ -296,7 +296,7 @@ while(s)
 			{
 			if(strace_adjust(s->his.v->time,GLOBALS->shift_timebase)!=maxbase) 
 				{
-				s->his.v=bsearch_vector(t->n.vec, maxbase);
+				s->his.v=bsearch_vector(t->n.vec, maxbase - t->shift);
 				while(s->his.v->next && s->his.v->time==s->his.v->next->time) s->his.v=s->his.v->next;
 				}
 			chval=convert_ascii(t,s->his.v);
@@ -305,7 +305,7 @@ while(s)
 			{
 			if(strace_adjust(s->his.h->time,GLOBALS->shift_timebase)!=maxbase) 
 				{
-				s->his.h=bsearch_node(t->n.nd, maxbase);
+				s->his.h=bsearch_node(t->n.nd, maxbase - t->shift);
 				while(s->his.h->next && s->his.h->time==s->his.h->next->time) s->his.h=s->his.h->next;
 				}
 			if(s->his.h->flags&HIST_REAL)
@@ -575,6 +575,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/03/24 23:05:09  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.8  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

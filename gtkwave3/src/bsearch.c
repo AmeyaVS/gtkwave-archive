@@ -44,7 +44,7 @@ int bsearch_timechain(TimeType key)
 {
 void *bsearch_dummy_rv;
 
-GLOBALS->max_compare_time_tc_bsearch_c_1=-2+GLOBALS->shift_timebase; GLOBALS->max_compare_pos_tc_bsearch_c_1=NULL; 
+GLOBALS->max_compare_time_tc_bsearch_c_1=-2; GLOBALS->max_compare_pos_tc_bsearch_c_1=NULL; 
 
 if(!GLOBALS->strace_ctx->timearray) return(-1);
 
@@ -85,7 +85,7 @@ hptr cpos;
 int rv;
 
 key=*((TimeType *)s1);
-obj=(cpos=(*((hptr *)s2)))->time+GLOBALS->shift_timebase;
+obj=(cpos=(*((hptr *)s2)))->time;
 
 if((obj<=key)&&(obj>GLOBALS->max_compare_time_bsearch_c_1))
 	{
@@ -106,7 +106,7 @@ hptr bsearch_node(nptr n, TimeType key)
 {
 void *bsearch_dummy_rv;
 
-GLOBALS->max_compare_time_bsearch_c_1=-2+GLOBALS->shift_timebase; GLOBALS->max_compare_pos_bsearch_c_1=NULL; GLOBALS->max_compare_index=NULL;
+GLOBALS->max_compare_time_bsearch_c_1=-2; GLOBALS->max_compare_pos_bsearch_c_1=NULL; GLOBALS->max_compare_index=NULL;
 
 bsearch_dummy_rv = bsearch(&key, n->harray, n->numhist, sizeof(hptr), compar_histent);
 if((!GLOBALS->max_compare_pos_bsearch_c_1)||(GLOBALS->max_compare_time_bsearch_c_1<GLOBALS->shift_timebase)) 
@@ -128,7 +128,9 @@ vptr cpos;
 int rv;
 
 key=*((TimeType *)s1);
-obj=(cpos=(*((vptr *)s2)))->time+GLOBALS->shift_timebase;
+/* obj=(cpos=(*((vptr *)s2)))->time+GLOBALS->shift_timebase; */
+
+obj=(cpos=(*((vptr *)s2)))->time;
 
 if((obj<=key)&&(obj>GLOBALS->vmax_compare_time_bsearch_c_1))
 	{
@@ -149,7 +151,7 @@ vptr bsearch_vector(bvptr b, TimeType key)
 {
 void *bsearch_dummy_rv;
 
-GLOBALS->vmax_compare_time_bsearch_c_1=-2+GLOBALS->shift_timebase; GLOBALS->vmax_compare_pos_bsearch_c_1=NULL; GLOBALS->vmax_compare_index=NULL;
+GLOBALS->vmax_compare_time_bsearch_c_1=-2; GLOBALS->vmax_compare_pos_bsearch_c_1=NULL; GLOBALS->vmax_compare_index=NULL;
 
 bsearch_dummy_rv = bsearch(&key, b->vectors, b->numregions, sizeof(vptr), compar_vectorent);
 if((!GLOBALS->vmax_compare_pos_bsearch_c_1)||(GLOBALS->vmax_compare_time_bsearch_c_1<GLOBALS->shift_timebase)) 
@@ -273,6 +275,9 @@ if(rc) return(*rc); else return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.6  2008/07/18 17:27:00  gtkwave
  * adding hierpack code
  *

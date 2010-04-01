@@ -471,7 +471,6 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 
 		vt_head = vt_curr = vt = calloc_2(1, sizeof(struct VectorEnt));
 		vt->time = LLDescriptor(-2);
-
 		vprev = vt; /* for duplicate removal */
 
 		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
@@ -487,8 +486,12 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 			buf[0] = 0;
 			pnt = fgets(buf, 1024, GLOBALS->ttrans_filter[t->t_filter]->sin);
 			if(!pnt) break;
-			rtn = strchr(pnt, '\n'); if(rtn) *rtn = 0;
-			rtn = strchr(pnt, '\r'); if(rtn) *rtn = 0;
+			rtn = pnt;
+			while(*rtn)
+				{
+				if((*rtn == '\n') || (*rtn == '\r')) { *rtn = 0; break; }
+				rtn++;
+				}
 
 			while(*pnt) { if(isspace(*pnt)) pnt++; else break;}
 
@@ -579,6 +582,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/03/31 21:40:53  gtkwave
+ * duplicate removal of VectorEnt structs at same time
+ *
  * Revision 1.3  2010/03/31 19:38:56  gtkwave
  * added missing timescale multiplier
  *

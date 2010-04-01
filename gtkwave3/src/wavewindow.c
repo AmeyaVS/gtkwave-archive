@@ -1774,7 +1774,7 @@ while(t)
 			char *str, *str2;
 			vptr v;
 
-                        v=bsearch_vector(t->n.vec,GLOBALS->tims.marker);
+                        v=bsearch_vector(t->n.vec,GLOBALS->tims.marker - t->shift);
                         str=convert_ascii(t,v);
 			if(str)
 				{
@@ -1797,7 +1797,7 @@ while(t)
 			{
 			char *str;
 			hptr h_ptr;
-			if((h_ptr=bsearch_node(t->n.nd,GLOBALS->tims.marker)))
+			if((h_ptr=bsearch_node(t->n.nd,GLOBALS->tims.marker - t->shift)))
 				{
 				if(!t->n.nd->extvals)
 					{
@@ -1957,7 +1957,7 @@ if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 			char *str, *str2;
 			vptr v;
 
-                        v=bsearch_vector(t->n.vec,GLOBALS->tims.marker);
+                        v=bsearch_vector(t->n.vec,GLOBALS->tims.marker - t->shift);
                         str=convert_ascii(t,v);
 			if(str)
 				{
@@ -1978,7 +1978,7 @@ if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 			{
 			char *str;
 			hptr h_ptr;
-			if((h_ptr=bsearch_node(t->n.nd,GLOBALS->tims.marker)))
+			if((h_ptr=bsearch_node(t->n.nd,GLOBALS->tims.marker - t->shift)))
 				{
 				if(!t->n.nd->extvals)
 					{
@@ -2309,7 +2309,7 @@ if(GLOBALS->topmost_trace)
 			GLOBALS->shift_timebase=t->shift;
 			if(!t->vector)
 				{
-				h=bsearch_node(t->n.nd, GLOBALS->tims.start);
+				h=bsearch_node(t->n.nd, GLOBALS->tims.start - t->shift);
 				DEBUG(printf("Bit Trace: %s, %s\n", t->name, t->n.nd->nname));
 				DEBUG(printf("Start time: "TTFormat", Histent time: "TTFormat"\n", tims.start,(h->time+shift_timebase)));
 
@@ -2324,7 +2324,7 @@ if(GLOBALS->topmost_trace)
 				}
 				else
 				{
-				v=bsearch_vector(t->n.vec, GLOBALS->tims.start);
+				v=bsearch_vector(t->n.vec, GLOBALS->tims.start - t->shift);
 				DEBUG(printf("Vector Trace: %s, %s\n", t->name, t->n.vec->name));
 				DEBUG(printf("Start time: "TTFormat", Vectorent time: "TTFormat"\n", tims.start,(v->time+shift_timebase)));
 				draw_vptr_trace(t,v,i);
@@ -3053,9 +3053,6 @@ lasttype=type;
 }
 
 wave_gdk_draw_line_flush(GLOBALS->wavepixmap_wavewindow_c_1);
-
-GLOBALS->tims.start+=GLOBALS->shift_timebase;
-GLOBALS->tims.end+=GLOBALS->shift_timebase;
 }
 
 /*
@@ -3112,6 +3109,8 @@ if((t->flags & TR_ANALOGMASK) && (!(h->flags&HIST_STRING) || !(h->flags&HIST_REA
 		}	
 
 	draw_hptr_trace_vector_analog(t, h, which, ext);
+	GLOBALS->tims.start+=GLOBALS->shift_timebase;
+	GLOBALS->tims.end+=GLOBALS->shift_timebase;
 	return;
 	}
 
@@ -3794,6 +3793,9 @@ if(t->flags & TR_ANALOGMASK)
                 }
 
 	draw_vptr_trace_analog(t, v, which, ext);
+
+	GLOBALS->tims.start+=GLOBALS->shift_timebase;
+	GLOBALS->tims.end+=GLOBALS->shift_timebase;
 	return;
 	}
 
@@ -4019,6 +4021,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.63  2010/03/31 15:42:48  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.62  2010/03/24 23:05:10  gtkwave
  * added RealToBits menu option
  *

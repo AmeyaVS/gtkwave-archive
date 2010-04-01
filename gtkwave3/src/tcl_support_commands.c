@@ -521,7 +521,7 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
       if(t->n.nd->extvals) {
 	bw = abs(t->n.nd->msi - t->n.nd->lsi) + 1 ;
       }
-      h = bsearch_node(t->n.nd, tstart) ;
+      h = bsearch_node(t->n.nd, tstart - t->shift) ;
       for(h1 = h; h1; h1 = h1->next) {
 	if (h1->time <= tend) {
 	  if (len++ < max_elements) {
@@ -547,7 +547,7 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
       }
     } else {
       vptr v, v1;
-      v = bsearch_vector(t->n.vec, tstart) ;
+      v = bsearch_vector(t->n.vec, tstart - t->shift) ;
       for(v1 = v; v1; v1 = v1->next) {
 	if (v1->time <= tend) {
 	  llist_u llp; llp.p = v1;

@@ -1446,12 +1446,12 @@ if(t)
 		if(t->vector)
 			{
 			/* this is currently unused as vectors are exploded into single bits */
-			vptr v = bsearch_vector(t->n.vec, GLOBALS->tims.marker);
+			vptr v = bsearch_vector(t->n.vec, GLOBALS->tims.marker - t->shift);
                         rc = convert_ascii(t, v);
 			}
 			else
 			{
-			hptr h_ptr = bsearch_node(t->n.nd, GLOBALS->tims.marker);
+			hptr h_ptr = bsearch_node(t->n.nd, GLOBALS->tims.marker - t->shift);
 			if(h_ptr)
 				{
 				if(!t->n.nd->extvals)
@@ -1611,7 +1611,7 @@ while(t)
                         {
                         int i;
                         nptr *nodes;
-                        vptr v = (GLOBALS->tims.marker != -1) ? bsearch_vector(t->n.vec, GLOBALS->tims.marker) : NULL;
+                        vptr v = (GLOBALS->tims.marker != -1) ? bsearch_vector(t->n.vec, GLOBALS->tims.marker - t->shift) : NULL;
 			unsigned char *bits = v ? (v->v) : NULL;
 			char *first_str = NULL;
 			int coalesce_pass = 1;
@@ -2719,6 +2719,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.75  2010/03/31 20:41:03  gtkwave
+ * nbits versus nnbits fix
+ *
  * Revision 1.74  2010/03/24 23:05:10  gtkwave
  * added RealToBits menu option
  *

@@ -99,7 +99,7 @@ if(t->name)
 			char *str;
 			vptr v;
 
-                        v=bsearch_vector(t->n.vec,tim);
+                        v=bsearch_vector(t->n.vec,tim - t->shift);
                         str=convert_ascii(t,v);
 			if(str)
 				{
@@ -117,7 +117,7 @@ if(t->name)
 			{
 			char *str;
 			hptr h_ptr;
-			if((h_ptr=bsearch_node(t->n.nd,tim)))
+			if((h_ptr=bsearch_node(t->n.nd,tim - t->shift)))
 				{
 				if(!t->n.nd->extvals)
 					{
@@ -402,6 +402,9 @@ if(flagged_name) { free_2(flagged_name); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/03/24 23:05:10  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.13  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

@@ -645,7 +645,7 @@ ps_MaxSignalLength (void)
 		  char *str, *str2;
 		  vptr v;
 
-		  v = bsearch_vector (t->n.vec, GLOBALS->tims.marker);
+		  v = bsearch_vector (t->n.vec, GLOBALS->tims.marker - t->shift);
 		  str = convert_ascii (t, v);
 		  if (str)
 		    {
@@ -683,7 +683,7 @@ ps_MaxSignalLength (void)
 		  char *str;
 		  hptr h_ptr;
 
-		  if ((h_ptr = bsearch_node (t->n.nd, GLOBALS->tims.marker)))
+		  if ((h_ptr = bsearch_node (t->n.nd, GLOBALS->tims.marker - t->shift)))
 		    {
 		      if (!t->n.nd->extvals)
 			{
@@ -1840,9 +1840,6 @@ yt1 = coords[3];
       h = h->next;
       lasttype = type;
     }
-
-  GLOBALS->tims.start += GLOBALS->shift_timebase;
-  GLOBALS->tims.end += GLOBALS->shift_timebase;
 }
 
 static void
@@ -1922,6 +1919,8 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 	}
 
       pr_draw_hptr_trace_vector_analog (prc, t, h, which, ext);
+      GLOBALS->tims.start -= GLOBALS->shift_timebase;
+      GLOBALS->tims.end -= GLOBALS->shift_timebase;
       return;
     }
 
@@ -2538,6 +2537,9 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 	}
 
       pr_draw_vptr_trace_analog (prc, t, v, which, ext);
+
+      GLOBALS->tims.start+=GLOBALS->shift_timebase;
+      GLOBALS->tims.end+=GLOBALS->shift_timebase;
       return;
     }
 
@@ -2732,7 +2734,7 @@ pr_rendertraces (pr_context * prc)
 	      GLOBALS->shift_timebase = t->shift;
 	      if (!t->vector)
 		{
-		  h = bsearch_node (t->n.nd, GLOBALS->tims.start);
+		  h = bsearch_node (t->n.nd, GLOBALS->tims.start - t->shift);
 		  DEBUG (printf
 			 ("Bit Trace: %s, %s\n", t->name, t->n.nd->nname));
 		  DEBUG (printf
@@ -2750,7 +2752,7 @@ pr_rendertraces (pr_context * prc)
 		}
 	      else
 		{
-		  v = bsearch_vector (t->n.vec, GLOBALS->tims.start);
+		  v = bsearch_vector (t->n.vec, GLOBALS->tims.start - t->shift);
 		  DEBUG (printf
 			 ("Vector Trace: %s, %s\n", t->name, t->n.vec->name));
 		  DEBUG (printf
@@ -2996,6 +2998,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.30  2010/03/24 23:05:10  gtkwave
  * added RealToBits menu option
  *
