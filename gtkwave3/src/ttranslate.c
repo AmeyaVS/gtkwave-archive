@@ -537,6 +537,43 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 					{
 					free_2(vt); /* throw it away */
 					}
+
+				continue;
+				}
+			else
+			if((*pnt=='M')||(*pnt=='m'))
+				{
+				pnt++;
+				if(((*pnt>='A')&&(*pnt<='Z')) || ((*pnt>='a')&&(*pnt<='z')))
+					{
+					int which_marker = ((*pnt>='A')&&(*pnt<='Z')) ? (*pnt - 'A') : (*pnt - 'a');
+					TimeType tim = atoi_64(pnt+1) * GLOBALS->time_scale;
+					int slen;
+					char *sp;
+
+					if(tim < LLDescriptor(0)) tim = LLDescriptor(-1);
+					GLOBALS->named_markers[which_marker] = tim;
+
+					while(*pnt) { if(!isspace(*pnt)) pnt++; else break; }
+					while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+	
+					sp = pnt;
+					slen = strlen(sp);
+	
+					if(slen)
+						{
+						pnt = sp + slen - 1;
+						do
+							{
+							if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
+							} while(pnt != (sp-1));
+						}
+
+                                	if(GLOBALS->marker_names[which_marker]) free_2(GLOBALS->marker_names[which_marker]);
+                                	GLOBALS->marker_names[which_marker] = (sp && (*sp) && (tim >= LLDescriptor(0))) ? strdup_2(sp) : NULL;
+					}
+
+				continue;
 				}
 
 			if(strstr(buf, "$finish")) break;
@@ -582,6 +619,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.4  2010/03/31 21:40:53  gtkwave
  * duplicate removal of VectorEnt structs at same time
  *
