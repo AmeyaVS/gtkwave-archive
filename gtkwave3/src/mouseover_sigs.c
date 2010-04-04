@@ -35,7 +35,7 @@ if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 	{
 	if(t->vector==TRUE)
 		{
-		s = strdup_2(t->n.vec->name);
+		s = strdup_2(t->n.vec->bvname);
 		}
 		else 
 		{
@@ -448,6 +448,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.8  2010/03/24 23:05:10  gtkwave
  * added RealToBits menu option
  *

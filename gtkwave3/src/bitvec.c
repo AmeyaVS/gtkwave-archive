@@ -382,7 +382,7 @@ regions++;
 bitvec=(bvptr)calloc_2(1,sizeof(struct BitVector)+
 		(regions*sizeof(vptr)));
 
-strcpy(bitvec->name=(char *)malloc_2(strlen(b->name)+1),b->name);
+strcpy(bitvec->bvname=(char *)malloc_2(strlen(b->name)+1),b->name);
 bitvec->nbits=b->nnbits;
 bitvec->numregions=regions;
 
@@ -3077,6 +3077,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.23  2010/03/26 16:11:48  gtkwave
  * added missing break statements in bits2vector switch cases
  *

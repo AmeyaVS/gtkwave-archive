@@ -589,7 +589,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 		regions++;
 
 		bv = calloc_2(1, sizeof(struct BitVector) + (sizeof(vptr) * (regions-1)));
-		bv->name = t->n.vec->name;
+		bv->bvname = t->n.vec->bvname;
 		bv->nbits = 1;
 		bv->numregions = regions;
 		bv->bits = t->n.vec->bits;
@@ -619,6 +619,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/04/04 07:12:40  gtkwave
+ * deallocate transaction cache on FreeTrace
+ *
  * Revision 1.6  2010/04/04 06:07:03  gtkwave
  * add M named marker placement command
  *

@@ -557,7 +557,7 @@ int AddVector(bvptr vec, char *aliasname)
     if( t == NULL )
       {
 	fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	  vec->name );
+	  vec->bvname );
 	return( 0 );
       }
 
@@ -568,7 +568,7 @@ int AddVector(bvptr vec, char *aliasname)
       }
     else
       {
-	t->name = vec->name;
+	t->name = vec->bvname;
       }
 
     if(GLOBALS->hier_max_level)
@@ -638,7 +638,7 @@ if(t->vector)
 		free_2(bv->bits);
 		}
 
-	if(bv->name) free_2(bv->name);
+	if(bv->bvname) free_2(bv->bvname);
       	if(t->n.vec) free_2(t->n.vec);
       	}
 	else
@@ -1355,7 +1355,7 @@ char* GetFullName( Trptr t )
     }
   else if (t->vector)
     {
-      return (t->n.vec->name);
+      return (t->n.vec->bvname);
       
     }
   else
@@ -1433,6 +1433,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2010/04/04 07:12:40  gtkwave
+ * deallocate transaction cache on FreeTrace
+ *
  * Revision 1.20  2010/03/31 16:32:20  gtkwave
  * stale marker fix for ttranslate on save file loads before GUI initialized
  *

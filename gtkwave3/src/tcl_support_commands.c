@@ -245,11 +245,11 @@ Trptr BitVector_to_Trptr(bvptr vec) {
   t = (Trptr) calloc_2(1, sizeof( TraceEnt ) );
   if( t == NULL ) {
     fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	     vec->name );
+	     vec->bvname );
     return( 0 );
   }
 
-  t->name = vec->name;
+  t->name = vec->bvname;
 
   if(GLOBALS->hier_max_level)
     t->name = hier_extract(t->name, GLOBALS->hier_max_level);
@@ -287,7 +287,7 @@ Trptr is_signal_displayed(char *name) {
     *p = '\0' ;
   len = strlen(name) ;
   while(t) {
-    p = (!t->vector) ?  t->n.nd->nname : t->n.vec->name ;
+    p = (!t->vector) ?  t->n.nd->nname : t->n.vec->bvname ;
     p1 = strchr(p,'[') ;
     len1 = (p1) ? p1 - p : strlen(p) ;
     if((len == len1) && !strncmp(name, p, len))

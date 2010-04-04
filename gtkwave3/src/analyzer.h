@@ -245,7 +245,7 @@ typedef struct BitVector
   {
     bvptr   transaction_cache;  /* for TR_TTRANSLATED traces */
 
-    char    *name;		/* name of this vector of bits           */
+    char    *bvname;		/* name of this vector of bits           */
     int     nbits;		/* number of bits in this vector         */
     int     numregions;		/* number of regions that follow         */
     bptr    bits;		/* pointer to Bits structs for save file */
@@ -448,6 +448,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.25  2010/03/24 23:05:09  gtkwave
  * added RealToBits menu option
  *

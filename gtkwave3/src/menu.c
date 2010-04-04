@@ -950,7 +950,7 @@ void set_hier_cleanup(GtkWidget *widget, gpointer data, int level)
 		}
 	      else if(t->vector==TRUE)
 		{
-		  t->name = t->n.vec->name;
+		  t->name = t->n.vec->bvname;
 		  if(GLOBALS->hier_max_level)
 		    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
 		}
@@ -2151,14 +2151,14 @@ static void rename_cleanup(GtkWidget *widget, gpointer data)
 	      free_2(t->name_full);
 	      t->name_full = NULL;
 	    }
-	  if (t->n.vec->name)
+	  if (t->n.vec->bvname)
 	    {
-	      free_2(t->n.vec->name);
+	      free_2(t->n.vec->bvname);
 	    }
 
-	  t->n.vec->name = (char *)malloc_2(1+strlen(GLOBALS->entrybox_text));
-	  strcpy(t->n.vec->name, GLOBALS->entrybox_text);
-	  t->name = t->n.vec->name;
+	  t->n.vec->bvname = (char *)malloc_2(1+strlen(GLOBALS->entrybox_text));
+	  strcpy(t->n.vec->bvname, GLOBALS->entrybox_text);
+	  t->name = t->n.vec->bvname;
 	  if(GLOBALS->hier_max_level)
 	    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
 
@@ -3246,7 +3246,7 @@ void menu_remove_aliases(GtkWidget *widget, gpointer data)
 	  free_2(t->name_full);
 	  t->name_full = NULL;
 
-	  name_full = (t->vector) ? t->n.vec->name : t->n.nd->nname;
+	  name_full = (t->vector) ? t->n.vec->bvname : t->n.nd->nname;
 	  t->name = name_full;
 	  if (GLOBALS->hier_max_level) 
 	    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
@@ -3651,7 +3651,7 @@ void write_save_helper(FILE *wave) {
 				bits = t->n.vec->bits;
 				ba = bits ? bits->attribs : NULL;
 
-				fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
+				fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->bvname);
 
 				nodes=t->n.vec->bits->nodes;
 				for(ix=0;ix<t->n.vec->bits->nnbits;ix++)
@@ -3801,7 +3801,7 @@ void write_save_helper(FILE *wave) {
 						bits = t->n.vec->bits;
 						ba = bits ? bits->attribs : NULL;
 
-						fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->name);
+						fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->bvname);
 
 						nodes=t->n.vec->bits->nodes;
 						for(ix=0;ix<t->n.vec->bits->nnbits;ix++)
@@ -6173,6 +6173,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.100  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.99  2010/03/24 23:05:09  gtkwave
  * added RealToBits menu option
  *

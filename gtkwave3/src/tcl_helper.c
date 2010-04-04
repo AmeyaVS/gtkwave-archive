@@ -2061,7 +2061,7 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 				bits = t->n.vec->bits;
 				ba = bits ? bits->attribs : NULL;
 
-				one_entry = make_message("%c{%s}", ba ? ':' : '#', t->n.vec->name);
+				one_entry = make_message("%c{%s}", ba ? ':' : '#', t->n.vec->bvname);
 				WAVE_OE_ME
 
 				nodes=t->n.vec->bits->nodes;
@@ -2719,6 +2719,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.76  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.75  2010/03/31 20:41:03  gtkwave
  * nbits versus nnbits fix
  *

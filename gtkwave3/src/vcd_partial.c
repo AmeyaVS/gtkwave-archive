@@ -2403,8 +2403,8 @@ else if(t->interactive_vector_needs_regeneration)
 	t->n.vec = b2;
 	b2->bits=bts;
 
-	free_2(b2->name);
-	b2->name = b->name;
+	free_2(b2->bvname);
+	b2->bvname = b->bvname;
 
 	for(i=0;i<b->numregions;i++)
 		{
@@ -2511,6 +2511,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.32  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

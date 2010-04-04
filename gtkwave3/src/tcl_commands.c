@@ -132,7 +132,7 @@ char *name = NULL;
        }
      else if (t->vector)
        {
-	 name = strdup_2(t->n.vec->name);
+	 name = strdup_2(t->n.vec->bvname);
        }
      else
        {
@@ -1932,6 +1932,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.36  2010/02/18 23:06:04  gtkwave
  * change name of main iteration loop calls
  *
