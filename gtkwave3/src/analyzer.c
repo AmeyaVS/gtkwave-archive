@@ -608,6 +608,20 @@ if(t->vector)
 	int i;
 
 	bv=t->n.vec;
+	/* back out allocation to revert (if any) */
+        if(bv->transaction_cache)
+		{ 
+                for(i=0;i<bv->numregions;i++)
+			{
+                        free_2(bv->vectors[i]);
+                        }
+
+		t->n.vec = bv->transaction_cache;
+                free_2(bv);
+		bv=t->n.vec;
+                }
+
+	/* normal vector deallocation */
 	for(i=0;i<bv->numregions;i++)
 		{
 		if(bv->vectors[i]) free_2(bv->vectors[i]);
@@ -1419,6 +1433,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/03/31 16:32:20  gtkwave
+ * stale marker fix for ttranslate on save file loads before GUI initialized
+ *
  * Revision 1.19  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

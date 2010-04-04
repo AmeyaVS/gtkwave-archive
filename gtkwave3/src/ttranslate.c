@@ -619,6 +619,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2010/04/04 06:07:03  gtkwave
+ * add M named marker placement command
+ *
  * Revision 1.5  2010/04/01 03:10:58  gtkwave
  * time warp fixes
  *
