@@ -64,10 +64,13 @@ void set_current_translate_ttrans(char *name) { }
 
 static void regen_display(void)
 {
-GLOBALS->signalwindow_width_dirty=1;
-MaxSignalLength();
-signalarea_configure_event(GLOBALS->signalarea, NULL);
-wavearea_configure_event(GLOBALS->wavearea, NULL);
+if(GLOBALS->signalarea && GLOBALS->wavearea)
+	{
+	GLOBALS->signalwindow_width_dirty=1;
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
 }
 
 
@@ -166,6 +169,8 @@ if(GLOBALS->traces.first)
 					int i;
 					bvptr bv = t->n.vec;
 
+					free_2(bv->bvname);
+
 					for(i=0;i<bv->numregions;i++)
 						{
 						free_2(bv->vectors[i]);
@@ -173,6 +178,10 @@ if(GLOBALS->traces.first)
 
 					t->n.vec = bv->transaction_cache;
 					free_2(bv);
+
+					t->name = t->n.vec->bvname;
+	                  		if(GLOBALS->hier_max_level)
+	                    			t->name = hier_extract(t->name, GLOBALS->hier_max_level);
 					}
 
 				if(!which)
@@ -466,6 +475,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 		bvptr bv;
 		int regions = 2;
 		TimeType prev_tim = LLDescriptor(-1);
+		char *trace_name;
 
 		cvt_ok = 1;
 
@@ -476,6 +486,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
 		vt->time = LLDescriptor(-1);
 
+		trace_name = NULL;
 		for(;;)
 			{
 			char buf[1025];
@@ -575,6 +586,33 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 
 				continue;
 				}
+			else
+			if((*pnt=='N')||(*pnt=='n'))
+				{
+				int slen;
+				char *sp;
+
+				pnt++;
+				while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+	
+				sp = pnt;
+				slen = strlen(sp);
+	
+				if(slen)
+					{
+					pnt = sp + slen - 1;
+					do
+						{
+						if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
+						} while(pnt != (sp-1));
+					}
+
+				if(sp && *sp)
+					{
+					if(trace_name) free_2(trace_name);
+					trace_name = strdup_2(sp);
+					}
+				}				
 
 			if(strstr(buf, "$finish")) break;
 			}
@@ -589,7 +627,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 		regions++;
 
 		bv = calloc_2(1, sizeof(struct BitVector) + (sizeof(vptr) * (regions-1)));
-		bv->bvname = t->n.vec->bvname;
+		bv->bvname = strdup_2(trace_name ? trace_name : t->n.vec->bvname);
 		bv->nbits = 1;
 		bv->numregions = regions;
 		bv->bits = t->n.vec->bits;
@@ -605,6 +643,15 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 		t->n.vec = bv;
 
 		t->t_filter_converted = 1;
+
+		if(trace_name)	/* if NULL, no need to regen display as trace name didn't change */
+			{
+			t->name = t->n.vec->bvname;
+	               		if(GLOBALS->hier_max_level)
+	               			t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+	
+			regen_display();
+			}
 		}
 		else
 		{
@@ -619,6 +666,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.7  2010/04/04 07:12:40  gtkwave
  * deallocate transaction cache on FreeTrace
  *
