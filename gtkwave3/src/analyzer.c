@@ -611,6 +611,8 @@ if(t->vector)
 	/* back out allocation to revert (if any) */
         if(bv->transaction_cache)
 		{ 
+		if(bv->bvname) { free_2(bv->bvname); }
+
                 for(i=0;i<bv->numregions;i++)
 			{
                         free_2(bv->vectors[i]);
@@ -1433,6 +1435,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.21  2010/04/04 07:12:40  gtkwave
  * deallocate transaction cache on FreeTrace
  *
