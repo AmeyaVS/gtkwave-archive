@@ -2049,6 +2049,21 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 					}
 				}
 
+			/* NOT an else! */
+			if(t->flags & TR_TTRANSLATED)
+				{
+				if(t->t_filter && GLOBALS->ttranssel_filter[t->t_filter])
+					{
+					one_entry = make_message("^<%d %s\n", t->t_filter, GLOBALS->ttranssel_filter[t->t_filter]);
+					WAVE_OE_ME
+					}
+					else
+					{
+					one_entry = make_message("^<%d %s\n", 0, "disabled");
+					WAVE_OE_ME
+					}
+				}
+
 			if(t->vector)
 				{
 				int i;
@@ -2061,7 +2076,8 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 				bits = t->n.vec->bits;
 				ba = bits ? bits->attribs : NULL;
 
-				one_entry = make_message("%c{%s}", ba ? ':' : '#', t->n.vec->bvname);
+				one_entry = make_message("%c{%s}", ba ? ':' : '#',
+					t->n.vec->transaction_cache ? t->n.vec->transaction_cache->bvname : t->n.vec->bvname);
 				WAVE_OE_ME
 
 				nodes=t->n.vec->bits->nodes;
@@ -2719,6 +2735,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.77  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.76  2010/04/01 03:10:58  gtkwave
  * time warp fixes
  *

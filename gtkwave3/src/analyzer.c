@@ -604,22 +604,29 @@ if(GLOBALS->strace_ctx->straces)
 
 if(t->vector)
       	{
-      	bvptr bv;
+      	bvptr bv, bv2;
 	int i;
 
 	bv=t->n.vec;
 	/* back out allocation to revert (if any) */
         if(bv->transaction_cache)
 		{ 
-		if(bv->bvname) { free_2(bv->bvname); }
-
-                for(i=0;i<bv->numregions;i++)
-			{
-                        free_2(bv->vectors[i]);
-                        }
-
 		t->n.vec = bv->transaction_cache;
-                free_2(bv);
+
+		while(bv)
+			{
+			bv2 = bv->transaction_chain;
+			if(bv->bvname) { free_2(bv->bvname); }
+
+	                for(i=0;i<bv->numregions;i++)
+				{
+	                        free_2(bv->vectors[i]);
+	                        }
+
+	                free_2(bv);
+			bv = bv2;
+			}			
+
 		bv=t->n.vec;
                 }
 
@@ -1435,6 +1442,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/04/06 06:19:06  gtkwave
+ * deallocate transaction trace name
+ *
  * Revision 1.22  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *

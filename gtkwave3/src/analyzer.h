@@ -244,6 +244,7 @@ typedef struct Bits
 typedef struct BitVector
   {
     bvptr   transaction_cache;  /* for TR_TTRANSLATED traces */
+    bvptr   transaction_chain;	/* for TR_TTRANSLATED traces */
 
     char    *bvname;		/* name of this vector of bits           */
     int     nbits;		/* number of bits in this vector         */
@@ -448,6 +449,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.26  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

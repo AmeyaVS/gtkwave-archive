@@ -3651,7 +3651,8 @@ void write_save_helper(FILE *wave) {
 				bits = t->n.vec->bits;
 				ba = bits ? bits->attribs : NULL;
 
-				fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->bvname);
+				fprintf(wave,"%c{%s}", ba ? ':' : '#', 
+						t->n.vec->transaction_cache ? t->n.vec->transaction_cache->bvname : t->n.vec->bvname);
 
 				nodes=t->n.vec->bits->nodes;
 				for(ix=0;ix<t->n.vec->bits->nnbits;ix++)
@@ -3801,7 +3802,8 @@ void write_save_helper(FILE *wave) {
 						bits = t->n.vec->bits;
 						ba = bits ? bits->attribs : NULL;
 
-						fprintf(wave,"%c{%s}", ba ? ':' : '#', t->n.vec->bvname);
+						fprintf(wave,"%c{%s}", ba ? ':' : '#', 
+							t->n.vec->transaction_cache ? t->n.vec->transaction_cache->bvname : t->n.vec->bvname);
 
 						nodes=t->n.vec->bits->nodes;
 						for(ix=0;ix<t->n.vec->bits->nnbits;ix++)
@@ -6173,6 +6175,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.101  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.100  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

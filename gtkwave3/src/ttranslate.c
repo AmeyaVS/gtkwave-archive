@@ -168,16 +168,27 @@ if(GLOBALS->traces.first)
 					{
 					int i;
 					bvptr bv = t->n.vec;
-
-					free_2(bv->bvname);
-
-					for(i=0;i<bv->numregions;i++)
-						{
-						free_2(bv->vectors[i]);
-						}
+					bvptr bv2;
 
 					t->n.vec = bv->transaction_cache;
-					free_2(bv);
+
+					while(bv)
+						{
+						bv2 = bv->transaction_chain;
+
+						if(bv->bvname)
+							{
+							free_2(bv->bvname);
+							}
+
+						for(i=0;i<bv->numregions;i++)
+							{
+							free_2(bv->vectors[i]);
+							}
+
+						free_2(bv);
+						bv = bv2;
+						}
 
 					t->name = t->n.vec->bvname;
 	                  		if(GLOBALS->hier_max_level)
@@ -187,11 +198,11 @@ if(GLOBALS->traces.first)
 				if(!which)
 					{
 					t->flags &= (~TR_TTRANSLATED);
-					traverse_vector_nodes(t);
 					}
 					else
 					{
 					t->flags |= TR_TTRANSLATED;
+					traverse_vector_nodes(t);
 					}
                                 found = 1;
                                 }
@@ -467,104 +478,58 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 	{
 	int rc = save_nodes_to_trans(GLOBALS->ttrans_filter[t->t_filter]->sout, t);
 
+printf("Install...\n");
+
 	if(rc == VCDSAV_OK)
 		{
-		struct VectorEnt *vt_head = NULL, *vt_curr = NULL;
-		struct VectorEnt *vt;
-		struct VectorEnt *vprev;
-		bvptr bv;
-		int regions = 2;
-		TimeType prev_tim = LLDescriptor(-1);
-		char *trace_name;
+		int is_finish = 0;
+		bvptr prev_transaction_trace = NULL;
 
-		cvt_ok = 1;
-
-		vt_head = vt_curr = vt = calloc_2(1, sizeof(struct VectorEnt));
-		vt->time = LLDescriptor(-2);
-		vprev = vt; /* for duplicate removal */
-
-		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
-		vt->time = LLDescriptor(-1);
-
-		trace_name = NULL;
-		for(;;)
+		while(!is_finish)
 			{
-			char buf[1025];
-			char *pnt, *rtn;
+			struct VectorEnt *vt_head = NULL, *vt_curr = NULL;
+			struct VectorEnt *vt;
+			struct VectorEnt *vprev;
+			bvptr bv;
+			int regions = 2;
+			TimeType prev_tim = LLDescriptor(-1);
+			char *trace_name = NULL;
+			char *orig_name = t->n.vec->bvname;
 
-			if(feof(GLOBALS->ttrans_filter[t->t_filter]->sin)) break; /* should never happen */
+			cvt_ok = 1;
 
-			buf[0] = 0;
-			pnt = fgets(buf, 1024, GLOBALS->ttrans_filter[t->t_filter]->sin);
-			if(!pnt) break;
-			rtn = pnt;
-			while(*rtn)
+			vt_head = vt_curr = vt = calloc_2(1, sizeof(struct VectorEnt));
+			vt->time = LLDescriptor(-2);
+			vprev = vt; /* for duplicate removal */
+
+			vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
+			vt->time = LLDescriptor(-1);
+
+			for(;;)
 				{
-				if((*rtn == '\n') || (*rtn == '\r')) { *rtn = 0; break; }
-				rtn++;
-				}
-
-			while(*pnt) { if(isspace(*pnt)) pnt++; else break;}
-
-			if(*pnt=='#')
-				{
-				TimeType tim = atoi_64(pnt+1) * GLOBALS->time_scale;
-				int slen;
-				char *sp;
-
-				while(*pnt) { if(!isspace(*pnt)) pnt++; else break; }
-				while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
-
-				sp = pnt;
-				slen = strlen(sp);
-
-				if(slen)
+				char buf[1025];
+				char *pnt, *rtn;
+	
+				if(feof(GLOBALS->ttrans_filter[t->t_filter]->sin)) break; /* should never happen */
+	
+				buf[0] = 0;
+				pnt = fgets(buf, 1024, GLOBALS->ttrans_filter[t->t_filter]->sin);
+				if(!pnt) break;
+				rtn = pnt;
+				while(*rtn)
 					{
-					pnt = sp + slen - 1;
-					do
-						{
-						if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
-						} while(pnt != (sp-1));
+					if((*rtn == '\n') || (*rtn == '\r')) { *rtn = 0; break; }
+					rtn++;
 					}
-					
-				vt = calloc_2(1, sizeof(struct VectorEnt) + slen);
-				if(sp) strcpy(vt->v, sp);
-
-				if(tim > prev_tim) 
-					{ 
-					prev_tim = vt->time = tim;
-					vt_curr->next = vt;
-					vt_curr = vt;
-					vprev = vprev->next; /* bump forward the -2 node pointer */
-					regions++;
-					}
-				else if(tim == prev_tim)
+	
+				while(*pnt) { if(isspace(*pnt)) pnt++; else break;}
+	
+				if(*pnt=='#')
 					{
-					vt->time = prev_tim;
-					free_2(vt_curr);
-					vt_curr = vprev->next = vt; /* splice new one in -1 node place */
-					}
-				else
-					{
-					free_2(vt); /* throw it away */
-					}
-
-				continue;
-				}
-			else
-			if((*pnt=='M')||(*pnt=='m'))
-				{
-				pnt++;
-				if(((*pnt>='A')&&(*pnt<='Z')) || ((*pnt>='a')&&(*pnt<='z')))
-					{
-					int which_marker = ((*pnt>='A')&&(*pnt<='Z')) ? (*pnt - 'A') : (*pnt - 'a');
 					TimeType tim = atoi_64(pnt+1) * GLOBALS->time_scale;
 					int slen;
 					char *sp;
-
-					if(tim < LLDescriptor(0)) tim = LLDescriptor(-1);
-					GLOBALS->named_markers[which_marker] = tim;
-
+	
 					while(*pnt) { if(!isspace(*pnt)) pnt++; else break; }
 					while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
 	
@@ -579,78 +544,151 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 							if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
 							} while(pnt != (sp-1));
 						}
-
-                                	if(GLOBALS->marker_names[which_marker]) free_2(GLOBALS->marker_names[which_marker]);
-                                	GLOBALS->marker_names[which_marker] = (sp && (*sp) && (tim >= LLDescriptor(0))) ? strdup_2(sp) : NULL;
-					}
-
-				continue;
-				}
-			else
-			if((*pnt=='N')||(*pnt=='n'))
-				{
-				int slen;
-				char *sp;
-
-				pnt++;
-				while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+						
+					vt = calloc_2(1, sizeof(struct VectorEnt) + slen);
+					if(sp) strcpy(vt->v, sp);
 	
-				sp = pnt;
-				slen = strlen(sp);
-	
-				if(slen)
-					{
-					pnt = sp + slen - 1;
-					do
+					if(tim > prev_tim) 
+						{ 
+						prev_tim = vt->time = tim;
+						vt_curr->next = vt;
+						vt_curr = vt;
+						vprev = vprev->next; /* bump forward the -2 node pointer */
+						regions++;
+						}
+					else if(tim == prev_tim)
 						{
-						if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
-						} while(pnt != (sp-1));
-					}
-
-				if(sp && *sp)
-					{
-					if(trace_name) free_2(trace_name);
-					trace_name = strdup_2(sp);
-					}
-				}				
-
-			if(strstr(buf, "$finish")) break;
-			}
-
-
-		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
-		vt->time = MAX_HISTENT_TIME - 1;
-		regions++;
-
-		vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
-		vt->time = MAX_HISTENT_TIME;
-		regions++;
-
-		bv = calloc_2(1, sizeof(struct BitVector) + (sizeof(vptr) * (regions-1)));
-		bv->bvname = strdup_2(trace_name ? trace_name : t->n.vec->bvname);
-		bv->nbits = 1;
-		bv->numregions = regions;
-		bv->bits = t->n.vec->bits;
-		
-		vt = vt_head;
-		for(i=0;i<regions;i++)
-			{
-			bv->vectors[i] = vt;
-			vt = vt->next;
-			}
-
-		bv->transaction_cache = t->n.vec; /* for possible restore later */
-		t->n.vec = bv;
-
-		t->t_filter_converted = 1;
-
-		if(trace_name)	/* if NULL, no need to regen display as trace name didn't change */
-			{
-			t->name = t->n.vec->bvname;
-	               		if(GLOBALS->hier_max_level)
-	               			t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+						vt->time = prev_tim;
+						free_2(vt_curr);
+						vt_curr = vprev->next = vt; /* splice new one in -1 node place */
+						}
+					else
+						{
+						free_2(vt); /* throw it away */
+						}
 	
-			regen_display();
+					continue;
+					}
+				else
+				if((*pnt=='M')||(*pnt=='m'))
+					{
+					pnt++;
+					if(((*pnt>='A')&&(*pnt<='Z')) || ((*pnt>='a')&&(*pnt<='z')))
+						{
+						int which_marker = ((*pnt>='A')&&(*pnt<='Z')) ? (*pnt - 'A') : (*pnt - 'a');
+						TimeType tim = atoi_64(pnt+1) * GLOBALS->time_scale;
+						int slen;
+						char *sp;
+	
+						if(tim < LLDescriptor(0)) tim = LLDescriptor(-1);
+						GLOBALS->named_markers[which_marker] = tim;
+	
+						while(*pnt) { if(!isspace(*pnt)) pnt++; else break; }
+						while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+		
+						sp = pnt;
+						slen = strlen(sp);
+		
+						if(slen)
+							{
+							pnt = sp + slen - 1;
+							do
+								{
+								if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
+								} while(pnt != (sp-1));
+							}
+	
+	                                	if(GLOBALS->marker_names[which_marker]) free_2(GLOBALS->marker_names[which_marker]);
+	                                	GLOBALS->marker_names[which_marker] = (sp && (*sp) && (tim >= LLDescriptor(0))) ? strdup_2(sp) : NULL;
+						}
+	
+					continue;
+					}
+				else if(*pnt == '$')
+					{
+					if(!strncmp(pnt+1, "finish", 6)) 
+						{
+						is_finish = 1;
+						break;
+						}
+					else
+					if(!strncmp(pnt+1, "next", 4)) 
+						{
+						break;
+						}
+					else 
+					if(!strncmp(pnt+1, "name", 4))
+						{
+						int slen;
+						char *sp;
+	
+						pnt+=5;
+						while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+		
+						sp = pnt;
+						slen = strlen(sp);
+		
+						if(slen)
+							{
+							pnt = sp + slen - 1;
+							do
+								{
+								if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
+								} while(pnt != (sp-1));
+							}
+	
+						if(sp && *sp)
+							{
+							if(trace_name) free_2(trace_name);
+							trace_name = strdup_2(sp);
+							}
+						}				
+					}
+				}
+	
+			vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
+			vt->time = MAX_HISTENT_TIME - 1;
+			regions++;
+	
+			vt_curr = vt_curr->next = vt = calloc_2(1, sizeof(struct VectorEnt));
+			vt->time = MAX_HISTENT_TIME;
+			regions++;
+	
+			bv = calloc_2(1, sizeof(struct BitVector) + (sizeof(vptr) * (regions-1)));
+			bv->bvname = strdup_2(trace_name ? trace_name : orig_name);
+			bv->nbits = 1;
+			bv->numregions = regions;
+			bv->bits = t->n.vec->bits;
+		
+			vt = vt_head;
+			for(i=0;i<regions;i++)
+				{
+				bv->vectors[i] = vt;
+				vt = vt->next;
+				}
+	
+			if(!prev_transaction_trace)
+				{
+				prev_transaction_trace = bv;
+				bv->transaction_cache = t->n.vec; /* for possible restore later */
+				t->n.vec = bv;
+	
+				t->t_filter_converted = 1;
+	
+				if(trace_name)	/* if NULL, no need to regen display as trace name didn't change */
+					{
+					t->name = t->n.vec->bvname;
+			               		if(GLOBALS->hier_max_level)
+			               			t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+			
+					regen_display();
+					}
+				}
+				else
+				{
+				prev_transaction_trace->transaction_chain = bv;
+				prev_transaction_trace = bv;
+				}
 			}
 		}
 		else
@@ -666,6 +704,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/04/06 06:17:21  gtkwave
+ * added N named trace flag
+ *
  * Revision 1.8  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *
