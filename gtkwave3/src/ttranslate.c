@@ -478,8 +478,6 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 	{
 	int rc = save_nodes_to_trans(GLOBALS->ttrans_filter[t->t_filter]->sout, t);
 
-printf("Install...\n");
-
 	if(rc == VCDSAV_OK)
 		{
 		int is_finish = 0;
@@ -704,6 +702,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/04/07 01:50:45  gtkwave
+ * improved name handling for bvname, add $next transaction operation
+ *
  * Revision 1.9  2010/04/06 06:17:21  gtkwave
  * added N named trace flag
  *
