@@ -2508,15 +2508,7 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 	}
     }
 
-  if(t->flags & TR_TTRANSLATED)
-        {
-        traverse_vector_nodes(t);
-        h=v=bsearch_vector(t->n.vec, GLOBALS->tims.start);
-        }
-        else
-        {
-        h=v;
-        }
+  h = v;
 
   if (t->flags & TR_ANALOGMASK)
     {
@@ -2752,14 +2744,40 @@ pr_rendertraces (pr_context * prc)
 		}
 	      else
 		{
-		  v = bsearch_vector (t->n.vec, GLOBALS->tims.start - t->shift);
-		  DEBUG (printf
+		Trptr t_orig, tn;
+                bvptr bv = t->n.vec;
+
+		v = bsearch_vector (bv, GLOBALS->tims.start - t->shift);
+		DEBUG (printf
 			 ("Vector Trace: %s, %s\n", t->name, t->n.vec->name));
-		  DEBUG (printf
+		DEBUG (printf
 			 ("Start time: " TTFormat ", Vectorent time: "
 			  TTFormat "\n", tims.start,
 			  (v->time + shift_timebase)));
-		  pr_draw_vptr_trace (prc, t, v, i);
+		pr_draw_vptr_trace (prc, t, v, i);
+
+                if((bv->transaction_chain) && (t->flags & TR_TTRANSLATED))
+                	{
+                        t_orig = t;
+                        for(;;)
+                        	{
+                                tn = GiveNextTrace(t);
+                                bv = bv->transaction_chain;
+        
+                                if(bv && tn && (tn->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                                	{
+                                        i++;
+                                        if(i<num_traces_displayable)
+                                        	{
+                                                v=bsearch_vector(bv, GLOBALS->tims.start - t->shift);
+                                                pr_draw_vptr_trace(prc, t_orig,v,i);
+                                                t = tn;
+                                                continue;
+                                                }
+                                        }
+                                break;
+				}
+                        }
 		}
 	    }
 	  else
@@ -2998,6 +3016,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.31  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

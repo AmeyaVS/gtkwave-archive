@@ -2324,10 +2324,36 @@ if(GLOBALS->topmost_trace)
 				}
 				else
 				{
-				v=bsearch_vector(t->n.vec, GLOBALS->tims.start - t->shift);
-				DEBUG(printf("Vector Trace: %s, %s\n", t->name, t->n.vec->name));
+				Trptr t_orig, tn;
+				bvptr bv = t->n.vec;
+
+				v=bsearch_vector(bv, GLOBALS->tims.start - t->shift);
+				DEBUG(printf("Vector Trace: %s, %s\n", t->name, bv->name));
 				DEBUG(printf("Start time: "TTFormat", Vectorent time: "TTFormat"\n", tims.start,(v->time+shift_timebase)));
 				draw_vptr_trace(t,v,i);
+
+				if((bv->transaction_chain) && (t->flags & TR_TTRANSLATED))
+					{
+					t_orig = t;
+					for(;;)
+						{
+						tn = GiveNextTrace(t);
+						bv = bv->transaction_chain;
+
+						if(bv && tn && (tn->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+							{
+							i++;
+							if(i<num_traces_displayable)
+								{
+								v=bsearch_vector(bv, GLOBALS->tims.start - t->shift);
+								draw_vptr_trace(t_orig,v,i);
+								t = tn;
+								continue;
+								}
+							}
+						break;
+						}
+					}
 				}
 			}
 			else
@@ -2351,6 +2377,7 @@ if(GLOBALS->topmost_trace)
 			draw_hptr_trace(NULL,NULL,i,0,kill_dodraw_grid);
 			}
 		t=GiveNextTrace(t);
+bot:		1;
 		}
 	}
 
@@ -3764,6 +3791,8 @@ if((GLOBALS->display_grid)&&(GLOBALS->enable_horiz_grid))
 		}
 	}
 
+h = v;
+/*
 if(t->flags & TR_TTRANSLATED)
 	{
 	traverse_vector_nodes(t);
@@ -3773,6 +3802,7 @@ if(t->flags & TR_TTRANSLATED)
 	{
 	h=v;
 	}
+*/
 
 if(t->flags & TR_ANALOGMASK)
 	{
@@ -4021,6 +4051,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.64  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.63  2010/03/31 15:42:48  gtkwave
  * added preliminary transaction filter support
  *
