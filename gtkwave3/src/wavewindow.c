@@ -1746,7 +1746,6 @@ t=GLOBALS->traces.first;
 
 while(t)
   {
-
     populateBuffer(t, buf);
     if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))	/* for "comment" style blank traces */
       {
@@ -2293,16 +2292,40 @@ if(!GLOBALS->topmost_trace)
 
 if(GLOBALS->topmost_trace)
 	{
-	Trptr t;
+	Trptr t = GLOBALS->topmost_trace;
+	Trptr tback = t;
 	hptr h;
 	vptr v;
-	int i, num_traces_displayable;
+	int i = 0, num_traces_displayable;
+	int iback = 0;
 
 	num_traces_displayable=GLOBALS->wavearea->allocation.height/(GLOBALS->fontheight);
 	num_traces_displayable--;   /* for the time trace that is always there */
 
-	t=GLOBALS->topmost_trace;
-	for(i=0;((i<num_traces_displayable)&&(t));i++)
+	/* ensure that transaction traces are visible even if the topmost traces are blanks */
+	while(tback)
+		{
+		if(tback->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))
+			{
+			tback = GivePrevTrace(tback);			
+			iback--;
+			}
+		else if(tback->flags & TR_TTRANSLATED)
+			{
+			if(tback != t) 
+				{ 
+				t = tback;
+				i = iback;
+				}
+			break;
+			}
+		else
+			{
+			break;
+			}
+		}
+
+	for(;((i<num_traces_displayable)&&(t));i++)
 		{
 		if(!(t->flags&(TR_EXCLUDE|TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 			{
@@ -2315,11 +2338,11 @@ if(GLOBALS->topmost_trace)
 
 				if(!t->n.nd->extvals)
 					{
-					draw_hptr_trace(t,h,i,1,0);
+					if(i>=0) draw_hptr_trace(t,h,i,1,0);
 					}
 					else
 					{
-					draw_hptr_trace_vector(t,h,i);
+					if(i>=0) draw_hptr_trace_vector(t,h,i);
 					}
 				}
 				else
@@ -2330,7 +2353,7 @@ if(GLOBALS->topmost_trace)
 				v=bsearch_vector(bv, GLOBALS->tims.start - t->shift);
 				DEBUG(printf("Vector Trace: %s, %s\n", t->name, bv->name));
 				DEBUG(printf("Start time: "TTFormat", Vectorent time: "TTFormat"\n", tims.start,(v->time+shift_timebase)));
-				draw_vptr_trace(t,v,i);
+				if(i>=0) draw_vptr_trace(t,v,i);
 
 				if((bv->transaction_chain) && (t->flags & TR_TTRANSLATED))
 					{
@@ -2346,7 +2369,7 @@ if(GLOBALS->topmost_trace)
 							if(i<num_traces_displayable)
 								{
 								v=bsearch_vector(bv, GLOBALS->tims.start - t->shift);
-								draw_vptr_trace(t_orig,v,i);
+								if(i>=0) draw_vptr_trace(t_orig,v,i);
 								t = tn;
 								continue;
 								}
@@ -2374,7 +2397,7 @@ if(GLOBALS->topmost_trace)
 					}
 				}
 			
-			draw_hptr_trace(NULL,NULL,i,0,kill_dodraw_grid);
+			if(i>=0) draw_hptr_trace(NULL,NULL,i,0,kill_dodraw_grid);
 			}
 		t=GiveNextTrace(t);
 bot:		1;
@@ -4051,6 +4074,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.65  2010/04/09 20:52:33  gtkwave
+ * add extension traces for extension transactions
+ *
  * Revision 1.64  2010/04/01 03:10:58  gtkwave
  * time warp fixes
  *
