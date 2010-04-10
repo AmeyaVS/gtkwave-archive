@@ -182,6 +182,7 @@ gdouble xlftd, xrghd;
 TimeType closest_named = MAX_HISTENT_TIME;
 int closest_which = -1;
 gint xold = x, yold = y;
+TraceEnt t_trans;
 
 if(!GLOBALS->cursor_snap) return(marker);
 
@@ -228,13 +229,64 @@ for(i=0;i<y;i++)
 	}
 
 if(!t) goto bot;
-if((t->flags&(TR_BLANK|TR_EXCLUDE)))
+if((t->flags&(/*TR_BLANK|*/TR_EXCLUDE))) /* TR_BLANK removed because of transaction handling below... */
 	{
 	t = NULL;
 	goto bot;
 	}
 
-if(t->flags & TR_ANALOG_BLANK_STRETCH)	/* seek to real analog trace is present... */
+if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+	Trptr tscan = t;
+	int bcnt = 0;
+        while((tscan) && (tscan = GivePrevTrace(tscan)))
+                {
+                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                        {
+                        if(tscan->flags & TR_TTRANSLATED)
+                                {
+                                break; /* found it */
+                                }
+                                else 
+                                {
+                                tscan = NULL;
+                                }
+                        }
+			else
+			{
+			bcnt++; /* bcnt is number of blank traces */
+			}
+                }
+
+	if((tscan)&&(tscan->vector))
+		{
+		bvptr bv = tscan->n.vec;
+		do
+			{
+			bv = bv->transaction_chain; /* correlate to blank trace */
+			} while(bv && (bcnt--));
+		if(bv)
+			{
+			memcpy(&t_trans, tscan, sizeof(TraceEnt)); /* substitute into a synthetic trace */
+			t_trans.n.vec = bv;
+
+                        t_trans.name = bv->bvname;
+                        if(GLOBALS->hier_max_level)
+                        	t_trans.name = hier_extract(t_trans.name, GLOBALS->hier_max_level);
+
+			t = &t_trans;
+			goto process_trace;
+			}
+		}
+        }
+
+if((t->flags&TR_BLANK))
+        {
+        t = NULL;
+        goto bot;
+        }
+
+if(t->flags & TR_ANALOG_BLANK_STRETCH)	/* seek to real analog trace if present... */
 	{
 	while((t) && (t = GivePrevTrace(t)))
 		{
@@ -253,6 +305,7 @@ if(t->flags & TR_ANALOG_BLANK_STRETCH)	/* seek to real analog trace is present..
 	}
 if(!t) goto bot;
 
+process_trace:
 if(t->vector)
 	{
 	vptr v = bsearch_vector(t->n.vec, marker - t->shift);
@@ -4074,6 +4127,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.66  2010/04/10 03:32:00  gtkwave
+ * allow transaction traces to scroll off top of screen yet still be visible
+ *
  * Revision 1.65  2010/04/09 20:52:33  gtkwave
  * add extension traces for extension transactions
  *
