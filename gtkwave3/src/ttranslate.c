@@ -155,9 +155,19 @@ if(GLOBALS->traces.first)
         Trptr t = GLOBALS->traces.first;
         while(t)
                 {
-                if(t->vector && (t->flags&TR_HIGHLIGHT))
+                if(t->flags&TR_HIGHLIGHT)
                         {
-                        if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+			if(!t->vector)
+				{
+				bvptr v = combine_traces(0, t); /* make single signal a vector */
+				if(v)
+					{
+					t->vector = 1;
+					t->n.vec = v;		/* splice in */
+					}
+				}
+
+                        if((t->vector) && (!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
                                 {
                                 t->t_filter = which;
 
@@ -702,6 +712,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/04/08 22:23:53  gtkwave
+ * remove debug statement
+ *
  * Revision 1.10  2010/04/07 01:50:45  gtkwave
  * improved name handling for bvname, add $next transaction operation
  *

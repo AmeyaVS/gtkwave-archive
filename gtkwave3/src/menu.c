@@ -2208,7 +2208,8 @@ static void menu_rename(GtkWidget *widget, gpointer data)
     }
 }
 
-static bvptr combine_traces(int direction)
+
+bvptr combine_traces(int direction, Trptr single_trace_only)
 {
   Trptr t, tmp;
   int tmpi,dirty=0, attrib_reqd=0;
@@ -2217,7 +2218,7 @@ static bvptr combine_traces(int direction)
 
   DEBUG(printf("Combine Traces\n"));
 
-  t=GLOBALS->traces.first;
+  t=single_trace_only ? single_trace_only : GLOBALS->traces.first;
   while(t)
     {
       if((t->flags&TR_HIGHLIGHT)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
@@ -2242,20 +2243,24 @@ static bvptr combine_traces(int direction)
 		}
 	    }
 	}
+      if(t == single_trace_only) break;
       t=t->t_next;
     }
 
   if(!dirty)
     {
-      must_sel_nb();
+      if(!single_trace_only) must_sel_nb();
       return NULL;
     }
   if(dirty>BITATTRIBUTES_MAX)
     {
       char buf[128];
 
-      sprintf(buf, "%d bits selected, please use <= %d.\n", dirty, BITATTRIBUTES_MAX);
-      status_text(buf);
+      if(!single_trace_only)
+		{
+	      	sprintf(buf, "%d bits selected, please use <= %d.\n", dirty, BITATTRIBUTES_MAX);
+	      	status_text(buf);
+		}
       return NULL;
     }
   else
@@ -2266,14 +2271,21 @@ static bvptr combine_traces(int direction)
       struct Bits *b=NULL;
       bvptr v=NULL;
 
-      FreeCutBuffer();
-      GLOBALS->traces.buffer=GLOBALS->traces.first;
-      GLOBALS->traces.bufferlast=GLOBALS->traces.last;
-      GLOBALS->traces.buffercount=GLOBALS->traces.total;
+      if(!single_trace_only)
+	{
+      	FreeCutBuffer();
+      	GLOBALS->traces.buffer=GLOBALS->traces.first;
+      	GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+      	GLOBALS->traces.buffercount=GLOBALS->traces.total;
 
-      GLOBALS->traces.first=GLOBALS->traces.last=NULL; GLOBALS->traces.total=0;
+      	GLOBALS->traces.first=GLOBALS->traces.last=NULL; GLOBALS->traces.total=0;
 
-      t=GLOBALS->traces.buffer;
+      	t=GLOBALS->traces.buffer;
+	}
+	else
+	{
+	t = single_trace_only;
+	}
 
       while(t)
 	{
@@ -2341,6 +2353,7 @@ static bvptr combine_traces(int direction)
 		}
 	    }
 	  if(nodepnt==dirty) break;
+	  if(t == single_trace_only) break;
 	  t=t->t_next;
 	}
 
@@ -2540,14 +2553,16 @@ static bvptr combine_traces(int direction)
 	  return NULL;
 	}
 
-      tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
-      tmp=GLOBALS->traces.bufferlast; GLOBALS->traces.bufferlast=GLOBALS->traces.last; GLOBALS->traces.last=tmp;
-      tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
-      GLOBALS->traces.total=tmpi;
-      PasteBuffer();
+      if(!single_trace_only)
+	{
+      	tmp=GLOBALS->traces.buffer; GLOBALS->traces.buffer=GLOBALS->traces.first; GLOBALS->traces.first=tmp;
+      	tmp=GLOBALS->traces.bufferlast; GLOBALS->traces.bufferlast=GLOBALS->traces.last; GLOBALS->traces.last=tmp;
+      	tmpi=GLOBALS->traces.buffercount; GLOBALS->traces.buffercount=GLOBALS->traces.total;
+      	GLOBALS->traces.total=tmpi;
+      	PasteBuffer();
+	}
 
       return v;
-
     }
 }
 
@@ -2571,7 +2586,7 @@ menu_combine_down(GtkWidget *widget, gpointer data)
     }
 
   if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-  v = combine_traces(1); /* down */
+  v = combine_traces(1, NULL); /* down */
 
   if (v)
     {
@@ -2621,7 +2636,7 @@ menu_combine_up(GtkWidget *widget, gpointer data)
     }
 
   if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd active */
-  v = combine_traces(0); /* up */
+  v = combine_traces(0, NULL); /* up */
 
   if (v)
     {
@@ -6175,6 +6190,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.102  2010/04/07 01:50:45  gtkwave
+ * improved name handling for bvname, add $next transaction operation
+ *
  * Revision 1.101  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *

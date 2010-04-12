@@ -344,11 +344,16 @@ void read_save_helper(char *wname);
 
 void SetTraceScrollbarRowValue(int row, unsigned center);
 
+bvptr combine_traces(int direction, Trptr single_trace_only);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.34  2010/03/24 23:05:10  gtkwave
  * added RealToBits menu option
  *
