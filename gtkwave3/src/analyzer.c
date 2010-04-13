@@ -32,6 +32,8 @@
 #define strcasecmp _stricmp
 #endif
 
+void UpdateTraceSelection(Trptr t);
+
 
 /*
  * extract last n levels of hierarchy
@@ -1246,19 +1248,6 @@ prev->t_next=NULL;
 return(1);
 }  
 
-/* propogate selection info down into groups */
-void UpdateTraceSelection(Trptr t)
-{
-  if ((t->t_match) && (IsGroupBegin(t) || IsGroupEnd(t)) && (IsSelected(t) || IsSelected(t->t_match)))
-    {
-      t->flags          |= TR_HIGHLIGHT;
-      t->t_match->flags |= TR_HIGHLIGHT;
-    }
-  if ((t->t_grp) && IsSelected(t->t_grp))
-    {
-      t->flags |= TR_HIGHLIGHT;
-    }
-}
 
 Trptr GiveNextTrace(Trptr t)
 {
@@ -1280,10 +1269,10 @@ Trptr GiveNextTrace(Trptr t)
     }
 }
 
-Trptr GivePrevTrace(Trptr t)
+static Trptr GivePrevTraceSkipUpdate(Trptr t, int skip)
 {
   /* if(t->name) { printf("PREV: %s\n", t->name); } */
-  UpdateTraceSelection(t);
+  if(!skip) { UpdateTraceSelection(t); }
   if (IsGroupEnd(t) && IsClosed(t))
     {
       Trptr prev = t->t_match;
@@ -1300,6 +1289,66 @@ Trptr GivePrevTrace(Trptr t)
     }
 }
 
+Trptr GivePrevTrace(Trptr t)
+{
+return(GivePrevTraceSkipUpdate(t, 0));
+}
+
+
+/* propogate selection info down into groups */
+void UpdateTraceSelection(Trptr t)
+{
+  if ((t->t_match) && (IsGroupBegin(t) || IsGroupEnd(t)) && (IsSelected(t) || IsSelected(t->t_match)))
+    {
+      t->flags          |= TR_HIGHLIGHT;
+      t->t_match->flags |= TR_HIGHLIGHT;
+    }
+  else
+  if ((t->t_grp) && IsSelected(t->t_grp))
+    {
+      t->flags |= TR_HIGHLIGHT;
+    }
+  else
+  if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+	if(!(t->flags & TR_HIGHLIGHT))
+		{
+	        Trptr tscan = t;
+	        int bcnt = 0;
+	        while((tscan) && (tscan = GivePrevTraceSkipUpdate(tscan, 1)))
+	                {
+	                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+	                        {
+	                        if(tscan->flags & TR_TTRANSLATED)
+	                                {
+	                                break; /* found it */
+	                                }
+	                                else
+	                                {
+	                                tscan = NULL;
+	                                }
+	                        }
+	                        else
+	                        {
+	                        bcnt++; /* bcnt is number of blank traces */
+	                        }        
+	                }
+	         
+	        if((tscan)&&(tscan->vector)&&(IsSelected(tscan)))
+	                {
+	                bvptr bv = tscan->n.vec;
+	                do
+	                        {
+	                        bv = bv->transaction_chain; /* correlate to blank trace */
+	                        } while(bv && (bcnt--));
+	                if(bv)
+	                        {
+				t->flags |= TR_HIGHLIGHT;
+	                        }
+	                }
+		}
+        }
+}
 
 
 int UpdateTracesVisible(void)
@@ -1442,6 +1491,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/04/07 01:50:45  gtkwave
+ * improved name handling for bvname, add $next transaction operation
+ *
  * Revision 1.23  2010/04/06 06:19:06  gtkwave
  * deallocate transaction trace name
  *
