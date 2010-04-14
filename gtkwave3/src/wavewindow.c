@@ -1703,6 +1703,7 @@ int RenderSig(Trptr t, int i, int dobackground)
   GdkGC* text_color;
   unsigned left_justify;
   char *subname = NULL; 
+  bvptr bv = NULL;
 
   buf[0] = 0;
 
@@ -1731,7 +1732,7 @@ int RenderSig(Trptr t, int i, int dobackground)
 
         if((tscan)&&(tscan->vector))
                 {
-                bvptr bv = tscan->n.vec;
+                bv = tscan->n.vec;
                 do
                         {
                         bv = bv->transaction_chain; /* correlate to blank trace */
@@ -1804,7 +1805,7 @@ int RenderSig(Trptr t, int i, int dobackground)
       
     }
 
-  if (HasWave(t))
+  if (HasWave(t) || bv)
     {
       if((t->asciivalue)&&(!(t->flags&TR_EXCLUDE)))
 	font_engine_draw_string(GLOBALS->signalpixmap,
@@ -1828,6 +1829,8 @@ int len=0,maxlen=0;
 int vlen=0, vmaxlen=0;
 char buf[2048];
 char dirty_kick;
+bvptr bv;
+Trptr tscan;
 
 DEBUG(printf("signalwindow_width_dirty: %d\n",signalwindow_width_dirty));
 
@@ -1842,10 +1845,12 @@ t=GLOBALS->traces.first;
 while(t)
   {
   char *subname = NULL;
+  bv = NULL;
+  tscan = NULL;
 
   if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
         {
-        Trptr tscan = t;
+        tscan = t;
         int bcnt = 0;
         while((tscan) && (tscan = GivePrevTrace(tscan)))
                 {
@@ -1868,7 +1873,7 @@ while(t)
   
         if((tscan)&&(tscan->vector))
                 {
-                bvptr bv = tscan->n.vec;
+                bv = tscan->n.vec;
                 do
                         {
                         bv = bv->transaction_chain; /* correlate to blank trace */
@@ -1884,13 +1889,18 @@ while(t)
 
     populateBuffer(t, subname, buf);
 
-    if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))	/* for "comment" style blank traces */
+    if(!bv && (t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))	/* for "comment" style blank traces */
       {
 	if(t->name || subname)
 	  {
 	    len=font_engine_string_measure(GLOBALS->signalfont, buf);
 	    if(len>maxlen) maxlen=len;
 	  }
+
+	if(t->asciivalue)
+		{
+		free_2(t->asciivalue); t->asciivalue = NULL;
+		}
 	t=GiveNextTrace(t);
       }
     else
@@ -1902,15 +1912,31 @@ while(t)
 	  if((GLOBALS->tims.marker!=-1)&&(!(t->flags&TR_EXCLUDE)))
 		{
 		t->asciitime=GLOBALS->tims.marker;
-		if(t->asciivalue) free_2(t->asciivalue);
+		if(t->asciivalue) { free_2(t->asciivalue); } t->asciivalue = NULL;
 
-		if(t->vector)
+		if(bv || t->vector)
 			{
 			char *str, *str2;
 			vptr v;
+			Trptr ts;
+			TraceEnt t_temp;
 
-                        v=bsearch_vector(t->n.vec,GLOBALS->tims.marker - t->shift);
-                        str=convert_ascii(t,v);
+			if(bv)
+				{
+				ts = &t_temp;
+				memcpy(ts, tscan, sizeof(TraceEnt));
+				ts->vector = 1;
+				ts->n.vec = bv;
+				}
+				else
+				{
+				ts = t;
+				bv = t->n.vec;
+				}
+
+
+                        v=bsearch_vector(bv, GLOBALS->tims.marker - ts->shift);
+                        str=convert_ascii(ts,v);
 			if(str)
 				{
 				str2=(char *)malloc_2(strlen(str)+2);
@@ -1926,7 +1952,6 @@ while(t)
 				vlen=0;
 				t->asciivalue=NULL;
 				}
-
 			}
 			else
 			{
@@ -2074,10 +2099,51 @@ if(!GLOBALS->in_button_press_wavewindow_c_1)
 
 void UpdateSigValue(Trptr t)
 {
+bvptr bv = NULL;
+Trptr tscan = NULL;
+
 if(!t) return;
 if((t->asciivalue)&&(t->asciitime==GLOBALS->tims.marker))return;
 
-if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
+if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+        tscan = t;   
+        int bcnt = 0;
+        while((tscan) && (tscan = GivePrevTrace(tscan)))
+                {
+                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                        {
+                        if(tscan->flags & TR_TTRANSLATED)
+                                {
+                                break; /* found it */
+                                }   
+                                else
+                                {
+                                tscan = NULL;
+                                }
+                        }   
+                        else
+                        {
+                        bcnt++; /* bcnt is number of blank traces */
+                        }
+                }
+
+        if((tscan)&&(tscan->vector))
+                {
+                bv = tscan->n.vec;
+                do
+                        {
+                        bv = bv->transaction_chain; /* correlate to blank trace */
+                        } while(bv && (bcnt--));
+                if(bv)   
+                        {
+			/* nothing, we just want to set bv */
+                        }
+                }
+        }
+
+
+if((t->name || bv)&&(bv || !(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 	{
 	GLOBALS->shift_timebase=t->shift;
 	DEBUG(printf("UpdateSigValue: %s\n",t->name));
@@ -2087,13 +2153,28 @@ if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 		t->asciitime=GLOBALS->tims.marker;
 		if(t->asciivalue) free_2(t->asciivalue);
 
-		if(t->vector)
+		if(bv || t->vector)
 			{
 			char *str, *str2;
 			vptr v;
+                        Trptr ts;
+                        TraceEnt t_temp;
+         
+                        if(bv)
+                                {
+                                ts = &t_temp;
+                                memcpy(ts, tscan, sizeof(TraceEnt));
+                                ts->vector = 1;
+                                ts->n.vec = bv;
+                                }
+                                else
+                                {
+                                ts = t;
+                                bv = t->n.vec;
+				}
 
-                        v=bsearch_vector(t->n.vec,GLOBALS->tims.marker - t->shift);
-                        str=convert_ascii(t,v);
+                        v=bsearch_vector(bv,GLOBALS->tims.marker - ts->shift);
+                        str=convert_ascii(ts,v);
 			if(str)
 				{
 				str2=(char *)malloc_2(strlen(str)+2);
@@ -2107,7 +2188,6 @@ if((t->name)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 				{
 				t->asciivalue=NULL;
 				}
-
 			}
 			else
 			{
@@ -4210,6 +4290,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.69  2010/04/14 07:49:02  gtkwave
+ * updated mouseover handling
+ *
  * Revision 1.68  2010/04/14 04:21:46  gtkwave
  * update populateBuffer() usage
  *

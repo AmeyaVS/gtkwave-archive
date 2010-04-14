@@ -568,6 +568,9 @@ ps_MaxSignalLength (void)
   int i, trwhich, trtarget, num_traces_displayable;
   GtkAdjustment *sadj;
   char buf[2048];
+  bvptr bv;
+  Trptr tscan;
+
 
   GLOBALS->ps_nummaxchars_print_c_1 = 7;	/* allows a good spacing if 60 pixel default
 						 * is used */
@@ -595,13 +598,14 @@ ps_MaxSignalLength (void)
 
   for (i = 0; (i < num_traces_displayable) && (t); i++)
     {
-
-  char *subname = NULL;  
-                        
+    char *subname = NULL;  
+    bv = NULL;
+    tscan = NULL;  
+                      
   if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
         {
-        Trptr tscan = t;
         int bcnt = 0;
+        tscan = t;
         while((tscan) && (tscan = GivePrevTrace(tscan)))
                 {
                 if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
@@ -623,7 +627,7 @@ ps_MaxSignalLength (void)
            
         if((tscan)&&(tscan->vector))
                 {
-                bvptr bv = tscan->n.vec;
+                bv = tscan->n.vec;
                 do
                         {
                         bv = bv->transaction_chain; /* correlate to blank trace */
@@ -639,7 +643,7 @@ ps_MaxSignalLength (void)
                         
     populateBuffer(t, subname, buf);
 
-      if (t->flags & (TR_BLANK | TR_ANALOG_BLANK_STRETCH))
+      if (!bv && (t->flags & (TR_BLANK | TR_ANALOG_BLANK_STRETCH))) /* for "comment" style blank traces */
 	{
 	  if (buf[0])
 	    {
@@ -651,9 +655,14 @@ ps_MaxSignalLength (void)
 		maxlen = len;
 	      if (numchars > GLOBALS->ps_nummaxchars_print_c_1)
 		GLOBALS->ps_nummaxchars_print_c_1 = numchars;
+
+              if(t->asciivalue)
+                {
+                free_2(t->asciivalue); t->asciivalue = NULL;
+                }
 	    }
 	}
-      else if (buf[0])
+      else if (buf[0] || subname)
 	{
 	  len = font_engine_string_measure (GLOBALS->signalfont, buf);
 	  numchars = strlen (buf);
@@ -663,13 +672,28 @@ ps_MaxSignalLength (void)
 	      if (t->asciivalue)
 		free_2 (t->asciivalue);
 
-	      if (t->vector)
+	      if (bv || t->vector)
 		{
 		  char *str, *str2;
 		  vptr v;
+                  Trptr ts;
+                  TraceEnt t_temp;
 
-		  v = bsearch_vector (t->n.vec, GLOBALS->tims.marker - t->shift);
-		  str = convert_ascii (t, v);
+                  if(bv)
+			{
+                        ts = &t_temp;
+                        memcpy(ts, tscan, sizeof(TraceEnt));
+                        ts->vector = 1;
+                        ts->n.vec = bv;
+                        }
+                        else
+                        {
+                        ts = t;
+                        bv = t->n.vec;
+                        }
+
+		  v = bsearch_vector (bv, GLOBALS->tims.marker - ts->shift);
+		  str = convert_ascii (ts, v);
 		  if (str)
 		    {
 		      int slen;
@@ -3087,6 +3111,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/04/14 04:21:46  gtkwave
+ * update populateBuffer() usage
+ *
  * Revision 1.34  2010/04/10 03:32:00  gtkwave
  * allow transaction traces to scroll off top of screen yet still be visible
  *
