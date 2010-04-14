@@ -214,7 +214,7 @@ accel "/Markers/<separator>" (null)
 accel "/Markers/Wave Scrolling" F9
 accel "/Markers/Locking/Lock to Lesser Named Marker" Q
 accel "/Markers/Locking/Lock to Greater Named Marker" W
-accel "/Markers/Locking/Unlock from Named Marker" P
+accel "/Markers/Locking/Unlock from Named Marker" O
 accel "/View/Show Grid" <Alt>G
 accel "/View/<separator>" (null)
 accel "/View/Show Mouseover" (null)

@@ -5661,7 +5661,7 @@ static GtkItemFactoryEntry menu_items[] =
 
     WAVE_GTKIFE("/Markers/Locking/Lock to Lesser Named Marker", "Q", lock_marker_left, WV_MENU_MLKLT, "<Item>"),
     WAVE_GTKIFE("/Markers/Locking/Lock to Greater Named Marker", "W", lock_marker_right, WV_MENU_MLKRT, "<Item>"),
-    WAVE_GTKIFE("/Markers/Locking/Unlock from Named Marker", "P", unlock_marker, WV_MENU_MLKOFF, "<Item>"),
+    WAVE_GTKIFE("/Markers/Locking/Unlock from Named Marker", "O", unlock_marker, WV_MENU_MLKOFF, "<Item>"),
 
     WAVE_GTKIFE("/View/Show Grid", "<Alt>G", menu_show_grid, WV_MENU_VSG, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP9, "<Separator>"),
@@ -6190,6 +6190,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.104  2010/04/14 03:28:39  gtkwave
+ * change lock/unlock from 1/2/0 to Q/W/P
+ *
  * Revision 1.103  2010/04/12 23:07:12  gtkwave
  * add ability to make single signals transactions
  *
