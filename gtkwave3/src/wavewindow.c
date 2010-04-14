@@ -269,6 +269,7 @@ if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if
 			{
 			memcpy(&t_trans, tscan, sizeof(TraceEnt)); /* substitute into a synthetic trace */
 			t_trans.n.vec = bv;
+			t_trans.vector = 1;
 
                         t_trans.name = bv->bvname;
                         if(GLOBALS->hier_max_level)
@@ -4209,6 +4210,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.68  2010/04/14 04:21:46  gtkwave
+ * update populateBuffer() usage
+ *
  * Revision 1.67  2010/04/10 19:07:38  gtkwave
  * support for mouseover with extension traces
  *

@@ -610,6 +610,7 @@ static gboolean mouseover_timer(gpointer dummy)
 static gboolean run_once = FALSE;
 gdouble x,y;
 GdkModifierType state;
+TraceEnt t_trans;
                  
 #ifdef WAVE_USE_GTK2
 gint xi, yi;
@@ -679,11 +680,63 @@ if(GLOBALS->mouseover_counter == 10)
 	        }
          
 	if(!t) goto bot;
-	if((t->flags&(TR_BLANK|TR_EXCLUDE)))
+	if((t->flags&(/*TR_BLANK|*/TR_EXCLUDE))) /* TR_BLANK removed because of transaction handling below... */
 	        {
 	        t = NULL;
 	        goto bot; 
 	        }
+
+if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+        Trptr tscan = t;
+        int bcnt = 0;
+        while((tscan) && (tscan = GivePrevTrace(tscan)))
+                {
+                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                        {
+                        if(tscan->flags & TR_TTRANSLATED)
+                                {
+                                break; /* found it */
+                                }
+                                else
+                                {
+                                tscan = NULL;
+                                }
+                        }
+                        else
+                        {
+                        bcnt++; /* bcnt is number of blank traces */
+                        }
+                }
+
+        if((tscan)&&(tscan->vector))
+                {
+                bvptr bv = tscan->n.vec;
+                do
+                        {
+                        bv = bv->transaction_chain; /* correlate to blank trace */
+                        } while(bv && (bcnt--));
+                if(bv)
+                        {
+                        memcpy(&t_trans, tscan, sizeof(TraceEnt)); /* substitute into a synthetic trace */
+                        t_trans.n.vec = bv;
+			t_trans.vector = 1;
+
+                        t_trans.name = bv->bvname;
+                        if(GLOBALS->hier_max_level)
+                                t_trans.name = hier_extract(t_trans.name, GLOBALS->hier_max_level);
+
+                        t = &t_trans;
+                        goto bot; /* is goto process_trace; in wavewindow.c */
+                        }
+                }
+        }        
+                
+if((t->flags&TR_BLANK))
+        {                
+        t = NULL;
+        goto bot;       
+        }
 	         
 	if(t->flags & TR_ANALOG_BLANK_STRETCH)  /* seek to real analog trace is present... */
 	        {
@@ -1338,6 +1391,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2010/02/28 19:05:15  gtkwave
+ * missing null pointer guard added
+ *
  * Revision 1.48  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *
