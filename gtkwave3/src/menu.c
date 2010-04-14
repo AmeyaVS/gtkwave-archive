@@ -5659,9 +5659,9 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Markers/<separator>", NULL, NULL, WV_MENU_SEP8, "<Separator>"),
     WAVE_GTKIFE("/Markers/Wave Scrolling", "F9", wave_scrolling_on, WV_MENU_MWSON, "<ToggleItem>"),
 
-    WAVE_GTKIFE("/Markers/Locking/Lock to Lesser Named Marker", "1", lock_marker_left, WV_MENU_MLKLT, "<Item>"),
-    WAVE_GTKIFE("/Markers/Locking/Lock to Greater Named Marker", "2", lock_marker_right, WV_MENU_MLKRT, "<Item>"),
-    WAVE_GTKIFE("/Markers/Locking/Unlock from Named Marker", "0", unlock_marker, WV_MENU_MLKOFF, "<Item>"),
+    WAVE_GTKIFE("/Markers/Locking/Lock to Lesser Named Marker", "Q", lock_marker_left, WV_MENU_MLKLT, "<Item>"),
+    WAVE_GTKIFE("/Markers/Locking/Lock to Greater Named Marker", "W", lock_marker_right, WV_MENU_MLKRT, "<Item>"),
+    WAVE_GTKIFE("/Markers/Locking/Unlock from Named Marker", "P", unlock_marker, WV_MENU_MLKOFF, "<Item>"),
 
     WAVE_GTKIFE("/View/Show Grid", "<Alt>G", menu_show_grid, WV_MENU_VSG, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP9, "<Separator>"),
@@ -6190,6 +6190,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.103  2010/04/12 23:07:12  gtkwave
+ * add ability to make single signals transactions
+ *
  * Revision 1.102  2010/04/07 01:50:45  gtkwave
  * improved name handling for bvname, add $next transaction operation
  *
