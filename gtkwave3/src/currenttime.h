@@ -66,6 +66,7 @@ void UpdateSigValue(Trptr t);
 void MaxSignalLength(void);
 void RenderSigs(int trtarget, int update_waves);
 int RenderSig(Trptr t, int i, int dobackground);
+void populateBuffer(Trptr t, char *altname, char* buf);
 void calczoom(double z0);
 void fix_wavehadj(void);
 void service_zoom_in(GtkWidget *text, gpointer data);
@@ -177,6 +178,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.73  2010/03/24 23:05:09  gtkwave
+ * added RealToBits menu option
+ *
  * Revision 1.72  2010/03/19 16:36:47  gtkwave
  * version bump
  *

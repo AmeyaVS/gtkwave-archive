@@ -1616,18 +1616,19 @@ if((GLOBALS->wavepixmap_wavewindow_c_1)&&(update_waves))
 }
 
 
-void populateBuffer (Trptr t, char* buf)
+void populateBuffer (Trptr t, char *altname, char* buf)
 {
   char* ptr = buf;
+  char *tname = altname ? altname : t->name;
 
   if (HasWave(t))
     {
-      if (t->name) 
+      if (tname) 
 	{
-	  strcpy(ptr, t->name);
+	  strcpy(ptr, tname);
 	  ptr = ptr + strlen(ptr);
 
-	  if((t->name)&&(t->shift))
+	  if((tname)&&(t->shift))
 	    {
 	      ptr[0]='`';
 	      reformat_time(ptr+1, t->shift, GLOBALS->time_dimension);
@@ -1658,7 +1659,7 @@ void populateBuffer (Trptr t, char* buf)
     }
   else
     {
-      if (t->name) 
+      if (tname) 
 	{
 
 	  if (IsGroupEnd(t))
@@ -1667,7 +1668,7 @@ void populateBuffer (Trptr t, char* buf)
 	      ptr = ptr + strlen(ptr);
 	    }
 
-	  strcpy(ptr, t->name);
+	  strcpy(ptr, tname);
 	  ptr = ptr + strlen(ptr);
 
 	  if (IsGroupBegin(t))
@@ -1692,7 +1693,7 @@ int RenderSig(Trptr t, int i, int dobackground)
 {
   int texty, liney;
   int retval;
-  char buf[256];
+  char buf[2048];
   GdkGC *clr_comment;
   GdkGC *clr_group;
   GdkGC *clr_shadowed;
@@ -1700,10 +1701,50 @@ int RenderSig(Trptr t, int i, int dobackground)
   GdkGC* bg_color;  
   GdkGC* text_color;
   unsigned left_justify;
- 
+  char *subname = NULL; 
+
   buf[0] = 0;
 
-  populateBuffer(t, buf);
+  if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+        Trptr tscan = t;
+        int bcnt = 0;
+        while((tscan) && (tscan = GivePrevTrace(tscan)))
+                {
+                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                        {
+                        if(tscan->flags & TR_TTRANSLATED)
+                                {
+                                break; /* found it */
+                                }
+                                else
+                                {
+                                tscan = NULL;
+                                }
+                        }
+                        else
+                        {
+                        bcnt++; /* bcnt is number of blank traces */
+                        }
+                }
+
+        if((tscan)&&(tscan->vector))
+                {
+                bvptr bv = tscan->n.vec;
+                do
+                        {
+                        bv = bv->transaction_chain; /* correlate to blank trace */
+                        } while(bv && (bcnt--));
+                if(bv)
+                        {
+                        subname = bv->bvname;
+                        if(GLOBALS->hier_max_level)
+                                subname = hier_extract(subname, GLOBALS->hier_max_level);
+                        }
+                }
+        }
+
+  populateBuffer(t, subname, buf);
 
   clr_comment  = GLOBALS->gc_brkred;
   clr_group    = GLOBALS->gc_gmstrd;
@@ -1749,7 +1790,7 @@ int RenderSig(Trptr t, int i, int dobackground)
 		0, liney,
 		GLOBALS->signal_fill_width-1, liney);
 
-  if(t->name)
+  if((t->name)||(subname))
     {
       font_engine_draw_string(GLOBALS->signalpixmap,
 			      GLOBALS->signalfont,
@@ -1784,7 +1825,7 @@ void MaxSignalLength(void)
 Trptr t;
 int len=0,maxlen=0;
 int vlen=0, vmaxlen=0;
-char buf[256];
+char buf[2048];
 char dirty_kick;
 
 DEBUG(printf("signalwindow_width_dirty: %d\n",signalwindow_width_dirty));
@@ -1799,10 +1840,52 @@ t=GLOBALS->traces.first;
 
 while(t)
   {
-    populateBuffer(t, buf);
+  char *subname = NULL;
+
+  if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+        Trptr tscan = t;
+        int bcnt = 0;
+        while((tscan) && (tscan = GivePrevTrace(tscan)))
+                {
+                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                        {
+                        if(tscan->flags & TR_TTRANSLATED)
+                                {
+                                break; /* found it */
+                                }
+                                else
+                                {
+                                tscan = NULL;
+                                }
+                        }
+                        else
+                        {
+                        bcnt++; /* bcnt is number of blank traces */
+                        }
+                }
+  
+        if((tscan)&&(tscan->vector))
+                {
+                bvptr bv = tscan->n.vec;
+                do
+                        {
+                        bv = bv->transaction_chain; /* correlate to blank trace */
+                        } while(bv && (bcnt--));
+                if(bv)
+                        {
+                        subname = bv->bvname;
+                        if(GLOBALS->hier_max_level)
+                                subname = hier_extract(subname, GLOBALS->hier_max_level);
+                        }
+                }
+        }
+
+    populateBuffer(t, subname, buf);
+
     if(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))	/* for "comment" style blank traces */
       {
-	if(t->name)
+	if(t->name || subname)
 	  {
 	    len=font_engine_string_measure(GLOBALS->signalfont, buf);
 	    if(len>maxlen) maxlen=len;
@@ -1810,9 +1893,8 @@ while(t)
 	t=GiveNextTrace(t);
       }
     else
-      if(t->name)
+      if(t->name || subname)
 	{
-
 	  len=font_engine_string_measure(GLOBALS->signalfont, buf);
 	  if(len>maxlen) maxlen=len;
 
@@ -4127,6 +4209,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.67  2010/04/10 19:07:38  gtkwave
+ * support for mouseover with extension traces
+ *
  * Revision 1.66  2010/04/10 03:32:00  gtkwave
  * allow transaction traces to scroll off top of screen yet still be visible
  *

@@ -567,9 +567,7 @@ ps_MaxSignalLength (void)
   int vlen = 0;
   int i, trwhich, trtarget, num_traces_displayable;
   GtkAdjustment *sadj;
-  char sbuf[128];
-  int bufxlen;
-  int bufclen;
+  char buf[2048];
 
   GLOBALS->ps_nummaxchars_print_c_1 = 7;	/* allows a good spacing if 60 pixel default
 						 * is used */
@@ -598,31 +596,56 @@ ps_MaxSignalLength (void)
   for (i = 0; (i < num_traces_displayable) && (t); i++)
     {
 
-      sbuf[0] = 0;
-      bufxlen = bufclen = 0;
-      if ((GLOBALS->shift_timebase = t->shift))
-	{
-	  sbuf[0] = '(';
-	  reformat_time (sbuf + 1, t->shift, GLOBALS->time_dimension);
-	  strcpy (sbuf + (bufclen = strlen (sbuf + 1) + 1), ")");
-	  bufclen++;
-	  bufxlen = font_engine_string_measure (GLOBALS->signalfont, sbuf);
-	}
-
-      if ((!t->vector) && (t->n.nd) && (t->n.nd->array_height))
-	{
-	  bufclen +=
-	    sprintf (sbuf + strlen (sbuf), "{%d}", t->n.nd->this_row);
-	  bufxlen = font_engine_string_measure (GLOBALS->signalfont, sbuf);
-	}
+  char *subname = NULL;  
+                        
+  if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+        Trptr tscan = t;
+        int bcnt = 0;
+        while((tscan) && (tscan = GivePrevTrace(tscan)))
+                {
+                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                        {
+                        if(tscan->flags & TR_TTRANSLATED)
+                                {
+                                break; /* found it */
+                                }
+                                else
+                                {
+                                tscan = NULL;
+                                }
+                        }
+                        else
+                        {
+                        bcnt++; /* bcnt is number of blank traces */
+                        }
+                }
+           
+        if((tscan)&&(tscan->vector))
+                {
+                bvptr bv = tscan->n.vec;
+                do
+                        {
+                        bv = bv->transaction_chain; /* correlate to blank trace */
+                        } while(bv && (bcnt--));
+                if(bv)
+                        {
+                        subname = bv->bvname;
+                        if(GLOBALS->hier_max_level)
+                                subname = hier_extract(subname, GLOBALS->hier_max_level);
+                        }
+                }
+        }
+                        
+    populateBuffer(t, subname, buf);
 
       if (t->flags & (TR_BLANK | TR_ANALOG_BLANK_STRETCH))
 	{
-	  if (t->name)
+	  if (buf[0])
 	    {
 	      len =
-		font_engine_string_measure (GLOBALS->signalfont, t->name) + bufxlen;
-	      numchars = strlen (t->name) + bufclen;
+		font_engine_string_measure (GLOBALS->signalfont, buf);
+	      numchars = strlen (buf);
 
 	      if (len > maxlen)
 		maxlen = len;
@@ -630,10 +653,10 @@ ps_MaxSignalLength (void)
 		GLOBALS->ps_nummaxchars_print_c_1 = numchars;
 	    }
 	}
-      else if (t->name)
+      else if (buf[0])
 	{
-	  len = font_engine_string_measure (GLOBALS->signalfont, t->name) + bufxlen;
-	  numchars = strlen (t->name) + bufclen;
+	  len = font_engine_string_measure (GLOBALS->signalfont, buf);
+	  numchars = strlen (buf);
 	  if ((GLOBALS->tims.marker != -1) && (!(t->flags & TR_EXCLUDE)))
 	    {
 	      t->asciitime = GLOBALS->tims.marker;
@@ -2837,27 +2860,53 @@ pr_RenderSig (pr_context * prc, Trptr t, int i)
 {
   int texty, liney;
   int retval;
-  char sbuf[128];
-  int bufclen;
+  char buf[2048];
+  char *subname = NULL;  
+                        
+  buf[0] = 0;
+                 
+  if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+        {
+        Trptr tscan = t;
+        int bcnt = 0;
+        while((tscan) && (tscan = GivePrevTrace(tscan)))
+                {
+                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
+                        {
+                        if(tscan->flags & TR_TTRANSLATED)
+                                {
+                                break; /* found it */
+                                }
+                                else
+                                {
+                                tscan = NULL;
+                                }
+                        }
+                        else
+                        {
+                        bcnt++; /* bcnt is number of blank traces */
+                        }
+                }
+
+        if((tscan)&&(tscan->vector))
+                {
+                bvptr bv = tscan->n.vec;
+                do
+                        {
+                        bv = bv->transaction_chain; /* correlate to blank trace */
+                        } while(bv && (bcnt--));
+                if(bv)
+                        {
+                        subname = bv->bvname;
+                        if(GLOBALS->hier_max_level)
+                                subname = hier_extract(subname, GLOBALS->hier_max_level);
+                        }
+                }
+        }
+                         
+  populateBuffer(t, subname, buf);
 
   UpdateSigValue (t);		/* in case it's stale on nonprop */
-
-  bufclen = 0;
-  sbuf[0] = 0;
-
-  if ((t->name) && (t->shift))
-    {
-      sbuf[0] = '(';
-      reformat_time (sbuf + 1, t->shift, GLOBALS->time_dimension);
-      strcpy (sbuf + (bufclen = strlen (sbuf + 1) + 1), ")");
-      bufclen++;
-    }
-
-  if ((!t->vector) && (t->n.nd) && (t->n.nd->array_height))
-    {
-      bufclen += sprintf (sbuf + strlen (sbuf), "{%d}", t->n.nd->this_row);
-    }
-
 
   liney = ((i + 2) * GLOBALS->fontheight) - 2;
 
@@ -2882,31 +2931,29 @@ pr_RenderSig (pr_context * prc, Trptr t, int i)
   {
     int maxwidth = 0;
 
-    if (t->name)
-      maxwidth = strlen (t->name) + bufclen;
+    if (buf)
+      maxwidth = strlen (buf);
     if ((t->asciivalue) && (!(t->flags & TR_EXCLUDE)))
       maxwidth += strlen (t->asciivalue);
     if (maxwidth)
       {
 	gdouble realwidth;
-	char *buf;
-	buf = wave_alloca (maxwidth + 1);
-	buf[0] = 0;
-	if (t->name)
+	char *cbuf;
+	cbuf = wave_alloca (maxwidth + 1);
+	cbuf[0] = 0;
+	if (buf[0])
 	  {
-	    strcpy (buf, t->name);
-	    if (bufclen)
-	      strcat (buf, sbuf);
+	    strcpy (cbuf, buf);
 	  }
 	if ((t->asciivalue) && (!(t->flags & TR_EXCLUDE)))
-	  strcat (buf, t->asciivalue);
+	  strcat (cbuf, t->asciivalue);
 
 	realwidth = maxwidth * GLOBALS->ps_chwidth_print_c_1;
 
 	if (maxwidth == 0)
 	  return (retval);
 	pr_setgray (prc, 0.0);
-	pr_draw_string (prc, 3, texty - 1, buf, realwidth,
+	pr_draw_string (prc, 3, texty - 1, cbuf, realwidth,
 			GLOBALS->signalfont->ascent -
 			GLOBALS->signalfont->descent);
       }
@@ -3040,6 +3087,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/04/10 03:32:00  gtkwave
+ * allow transaction traces to scroll off top of screen yet still be visible
+ *
  * Revision 1.33  2010/04/09 20:52:33  gtkwave
  * add extension traces for extension transactions
  *
