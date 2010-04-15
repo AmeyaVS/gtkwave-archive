@@ -1251,6 +1251,8 @@ return(1);
 
 Trptr GiveNextTrace(Trptr t)
 {
+  if(!t) return(t); /* should not happen */
+
   /* if(t->name) { printf("NEXT: %s %x\n", t->name, t->flags); } */
   UpdateTraceSelection(t);
   if (IsGroupBegin(t) && IsClosed(t))
@@ -1271,6 +1273,8 @@ Trptr GiveNextTrace(Trptr t)
 
 static Trptr GivePrevTraceSkipUpdate(Trptr t, int skip)
 {
+  if(!t) return(t); /* should not happen */
+
   /* if(t->name) { printf("PREV: %s\n", t->name); } */
   if(!skip) { UpdateTraceSelection(t); }
   if (IsGroupEnd(t) && IsClosed(t))
@@ -1491,6 +1495,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2010/04/13 18:11:42  gtkwave
+ * propagate trace highlighting into transactions
+ *
  * Revision 1.24  2010/04/07 01:50:45  gtkwave
  * improved name handling for bvname, add $next transaction operation
  *

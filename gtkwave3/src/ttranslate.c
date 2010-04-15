@@ -215,9 +215,19 @@ if(GLOBALS->traces.first)
 					traverse_vector_nodes(t);
 					}
                                 found = 1;
+
+				if(t->t_match)
+					{
+					Trptr curr_trace = t;
+					t = t->t_next;
+					while(t && (t->t_match != curr_trace))					
+						{
+						t = t->t_next;
+						}
+					}
                                 }
                         }
-                t=t->t_next;
+                t=GiveNextTrace(t);
                 }
         }
 
@@ -712,6 +722,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/04/12 23:07:12  gtkwave
+ * add ability to make single signals transactions
+ *
  * Revision 1.11  2010/04/08 22:23:53  gtkwave
  * remove debug statement
  *
