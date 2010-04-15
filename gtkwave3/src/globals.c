@@ -1124,7 +1124,8 @@ NULL, /* mvlfacs_vzt_c_3 587 */
  */
 0, /* use_scrollwheel_as_y */
 0, /* m1x_wavewindow_c_1 589 */
-0, /* m2x */
+0, /* m2x_wavewindow_c_1 */
+0, /* black_and_white */
 1, /* signalwindow_width_dirty 590 */
 1, /* enable_ghost_marker 591 */
 1, /* enable_horiz_grid 592 */
@@ -1451,6 +1452,8 @@ void reload_into_new_context(void)
  new_globals->wave_splash_pixmap = GLOBALS->wave_splash_pixmap;
  new_globals->wave_splash_mask = GLOBALS->wave_splash_mask;
 
+ new_globals->black_and_white = GLOBALS->black_and_white;
+
  new_globals->gc_white = GLOBALS->gc_white;
  new_globals->gc_black = GLOBALS->gc_black;
  new_globals->gc_ltgray = GLOBALS->gc_ltgray;
@@ -1500,6 +1503,7 @@ void reload_into_new_context(void)
  new_globals->gccache_gmstrd = GLOBALS->gccache_gmstrd;
  new_globals->gccache_back_wavewindow_c_1 = GLOBALS->gccache_back_wavewindow_c_1;
  new_globals->gccache_baseline_wavewindow_c_1 = GLOBALS->gccache_baseline_wavewindow_c_1;
+ new_globals->gccache_grid_wavewindow_c_1 = GLOBALS->gccache_grid_wavewindow_c_1;
  new_globals->gccache_grid2_wavewindow_c_1 = GLOBALS->gccache_grid2_wavewindow_c_1;
  new_globals->gccache_time_wavewindow_c_1 = GLOBALS->gccache_time_wavewindow_c_1;
  new_globals->gccache_timeb_wavewindow_c_1 = GLOBALS->gccache_timeb_wavewindow_c_1;

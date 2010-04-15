@@ -815,7 +815,7 @@
 		More Judy array adds for VCD.
 		Removed sym->selected member and replaced with 1-bit
 		Judy array if enabled.
-3.3.6	14apr10	Added RealToBits menu options for displaying real numbers
+3.3.6	15apr10	Added RealToBits menu options for displaying real numbers
 		as binary values.
 		Added missing break statements to terminate cases in
 		bits2vector().
@@ -827,3 +827,9 @@
 		Updated print routine to use populateBuffer().
 		Added raise to front when filename selected in filter
 		dialogs.  This helps with some window managers.
+		Remove color for translated/transaction traces in
+		black and white mode.
+		Copy gc_grid_wavewindow_c_1 from gccache on reload
+		as this was accidentally overwritten with
+		gc_grid2_wavewindow_c_1 without adding back
+		gc_grid_wavewindow_c_1.

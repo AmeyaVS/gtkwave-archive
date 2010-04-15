@@ -1379,6 +1379,8 @@ return(TRUE);
  */ 
 void force_screengrab_gcs(void)
 {
+GLOBALS->black_and_white = 1;
+
 GLOBALS->gc_ltgray= GLOBALS->gc_white ;
 GLOBALS->gc_normal= GLOBALS->gc_white ;
 GLOBALS->gc_mdgray= GLOBALS->gc_white ;
@@ -1416,6 +1418,8 @@ GLOBALS->gc_dash_wavewindow_c_1   = GLOBALS->gc_black;
 
 void force_normal_gcs(void)
 {
+GLOBALS->black_and_white = 0;
+
 GLOBALS->gc_ltgray = GLOBALS->gccache_ltgray ;
 GLOBALS->gc_normal = GLOBALS->gccache_normal ;
 GLOBALS->gc_mdgray = GLOBALS->gccache_mdgray ;
@@ -3518,7 +3522,7 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 					ascii2 =  srch_for_color + 1;
 					if(GLOBALS->gc_back_wavewindow_c_1 != GLOBALS->gc_white)
 						{
-						gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0+1, _y1+1, width-1, (_y0-1) - (_y1+1) + 1);
+						if(!GLOBALS->black_and_white) gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0+1, _y1+1, width-1, (_y0-1) - (_y1+1) + 1);
 						}
 					GLOBALS->fill_in_smaller_rgb_areas_wavewindow_c_1 = 1;
 					}
@@ -3581,7 +3585,7 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 					ascii2 =  srch_for_color + 1;
 					if(GLOBALS->gc_back_wavewindow_c_1 != GLOBALS->gc_white)
 						{
-						gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0, _y1+1, width, (_y0-1) - (_y1+1) + 1);
+						if(!GLOBALS->black_and_white) gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0, _y1+1, width, (_y0-1) - (_y1+1) + 1);
 						}
 					}
 					else
@@ -4201,7 +4205,7 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 				if(cb)
 					{	
 					ascii2 =  srch_for_color + 1;
-					gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0+1, _y1+1, width-1, (_y0-1) - (_y1+1) + 1);
+					if(!GLOBALS->black_and_white) gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0+1, _y1+1, width-1, (_y0-1) - (_y1+1) + 1);
 					GLOBALS->fill_in_smaller_rgb_areas_wavewindow_c_1 = 1;
 					}
 					else
@@ -4250,7 +4254,7 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 					ascii2 =  srch_for_color + 1;
 					if(GLOBALS->gc_back_wavewindow_c_1 != GLOBALS->gc_white)
 						{
-						gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0, _y1+1, width, (_y0-1) - (_y1+1) + 1);
+						if(!GLOBALS->black_and_white) gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, cb, TRUE, _x0, _y1+1, width, (_y0-1) - (_y1+1) + 1);
 						}
 					}
 					else
@@ -4290,6 +4294,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.70  2010/04/14 18:45:38  gtkwave
+ * allow data values for secondary transaction traces
+ *
  * Revision 1.69  2010/04/14 07:49:02  gtkwave
  * updated mouseover handling
  *
