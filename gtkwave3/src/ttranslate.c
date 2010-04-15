@@ -36,21 +36,29 @@ for(i=0;i<TTRANS_FILTER_MAX+1;i++)
 
 void remove_all_ttrans_filters(void)
 {
-int i;
+struct Global *GLOBALS_cache = GLOBALS;
+int i, j;
 
-for(i=1;i<TTRANS_FILTER_MAX+1;i++)
-	{
-	if(GLOBALS->ttrans_filter[i])
+for(j=0;j<GLOBALS->num_notebook_pages;j++)
+        {
+        GLOBALS = (*GLOBALS->contexts)[j];
+
+	for(i=1;i<TTRANS_FILTER_MAX+1;i++)
 		{
-		pipeio_destroy(GLOBALS->ttrans_filter[i]);
-		GLOBALS->ttrans_filter[i] = NULL;
+		if(GLOBALS->ttrans_filter[i])
+			{
+			pipeio_destroy(GLOBALS->ttrans_filter[i]);
+			GLOBALS->ttrans_filter[i] = NULL;
+			}
+	
+		if(GLOBALS->ttranssel_filter[i])
+			{
+			free_2(GLOBALS->ttranssel_filter[i]);
+			GLOBALS->ttranssel_filter[i] = NULL;
+			}
 		}
 
-	if(GLOBALS->ttranssel_filter[i])
-		{
-		free_2(GLOBALS->ttranssel_filter[i]);
-		GLOBALS->ttranssel_filter[i] = NULL;
-		}
+	GLOBALS = GLOBALS_cache;
 	}
 }
 
@@ -74,6 +82,9 @@ if(GLOBALS->signalarea && GLOBALS->wavearea)
 }
 
 
+/*
+ * this is likely obsolete
+ */
 static void remove_ttrans_filter(int which, int regen)
 {
 if(GLOBALS->ttrans_filter[which])
@@ -141,9 +152,11 @@ static void load_ttrans_filter(int which, char *name)
   pclose(stream);
   free_2(cmd);
 
-  remove_ttrans_filter(which, 0); /* should never happen from GUI, but possible from save files or other weirdness */
-
-  GLOBALS->ttrans_filter[which] = pipeio_create(abs_path, arg);
+  /* remove_ttrans_filter(which, 0); ... should never happen from GUI, but perhaps possible from save files or other weirdness */
+  if(!GLOBALS->ttrans_filter[which])
+	{
+  	GLOBALS->ttrans_filter[which] = pipeio_create(abs_path, arg);
+	}
 }
 
 void install_ttrans_filter(int which)
@@ -725,6 +738,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/04/15 01:55:03  gtkwave
+ * raise to front on filename select
+ *
  * Revision 1.13  2010/04/15 00:30:23  gtkwave
  * don't propagate ttranslate filter into groups
  *

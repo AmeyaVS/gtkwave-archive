@@ -36,21 +36,29 @@ for(i=0;i<PROC_FILTER_MAX+1;i++)
 
 void remove_all_proc_filters(void)
 {
-int i;
+struct Global *GLOBALS_cache = GLOBALS;
+int i, j;
 
-for(i=1;i<PROC_FILTER_MAX+1;i++)
+for(j=0;j<GLOBALS->num_notebook_pages;j++)
 	{
-	if(GLOBALS->proc_filter[i])
+	GLOBALS = (*GLOBALS->contexts)[j];
+
+	for(i=1;i<PROC_FILTER_MAX+1;i++)
 		{
-		pipeio_destroy(GLOBALS->proc_filter[i]);
-		GLOBALS->proc_filter[i] = NULL;
+		if(GLOBALS->proc_filter[i])
+			{
+			pipeio_destroy(GLOBALS->proc_filter[i]);
+			GLOBALS->proc_filter[i] = NULL;
+			}
+	
+		if(GLOBALS->procsel_filter[i])
+			{
+			free_2(GLOBALS->procsel_filter[i]);
+			GLOBALS->procsel_filter[i] = NULL;
+			}
 		}
 
-	if(GLOBALS->procsel_filter[i])
-		{
-		free_2(GLOBALS->procsel_filter[i]);
-		GLOBALS->procsel_filter[i] = NULL;
-		}
+	GLOBALS = GLOBALS_cache;
 	}
 }
 
@@ -71,6 +79,9 @@ wavearea_configure_event(GLOBALS->wavearea, NULL);
 }
 
 
+/*
+ * this is likely obsolete
+ */
 static void remove_proc_filter(int which, int regen)
 {
 if(GLOBALS->proc_filter[which])
@@ -138,9 +149,11 @@ static void load_proc_filter(int which, char *name)
   pclose(stream);
   free_2(cmd);
 
-  remove_proc_filter(which, 0); /* should never happen from GUI, but possible from save files or other weirdness */
-
-  GLOBALS->proc_filter[which] = pipeio_create(abs_path, arg);
+  /* remove_proc_filter(which, 0); ... should never happen from GUI, but perhaps possible from save files or other weirdness */
+  if(!GLOBALS->ttrans_filter[which])
+	{
+	GLOBALS->proc_filter[which] = pipeio_create(abs_path, arg);
+	}
 }
 
 void install_proc_filter(int which)
@@ -436,6 +449,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/04/15 01:55:03  gtkwave
+ * raise to front on filename select
+ *
  * Revision 1.9  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *
