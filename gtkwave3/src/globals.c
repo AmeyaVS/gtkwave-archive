@@ -2026,7 +2026,6 @@ void reload_into_new_context(void)
 				Index = 0;
 				for (rcValue = Judy1First(PJArray, &Index, &JError); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, &JError))
 					{
-				        JError_t JError;
 				        Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, Index, &JError);
 					}
 
