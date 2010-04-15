@@ -225,6 +225,7 @@ if(*GLOBALS->fileselbox_text)
 			if(!strcmp(GLOBALS->procsel_filter[i], *GLOBALS->fileselbox_text)) 
 				{
 				status_text("Filter already imported.\n");
+				if(GLOBALS->is_active_ptranslate_c_2) gdk_window_raise(GLOBALS->window_ptranslate_c_5->window);
 				return;
 				}
 			}
@@ -250,6 +251,8 @@ if(GLOBALS->proc_filter[GLOBALS->num_proc_filters])
 	{
 	GLOBALS->num_proc_filters--;
 	}
+
+if(GLOBALS->is_active_ptranslate_c_2) gdk_window_raise(GLOBALS->window_ptranslate_c_5->window);
 }
 
 static void add_filter_callback(GtkWidget *widget, GtkWidget *nothing)
@@ -433,6 +436,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.8  2010/03/30 18:33:27  gtkwave
  * fixed cut and paste errors from file to proc
  *

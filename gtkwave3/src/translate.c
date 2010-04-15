@@ -309,6 +309,7 @@ if(*GLOBALS->fileselbox_text)
 			if(!strcmp(GLOBALS->filesel_filter[i], *GLOBALS->fileselbox_text)) 
 				{
 				status_text("Filter already imported.\n");
+				if(GLOBALS->is_active_translate_c_5) gdk_window_raise(GLOBALS->window_translate_c_11->window);
 				return;
 				}
 			}
@@ -334,6 +335,8 @@ if(GLOBALS->xl_file_filter[GLOBALS->num_file_filters])
 	{
 	GLOBALS->num_file_filters--;
 	}
+
+if(GLOBALS->is_active_translate_c_5) gdk_window_raise(GLOBALS->window_translate_c_11->window);
 }
 
 static void add_filter_callback(GtkWidget *widget, GtkWidget *nothing)
@@ -515,6 +518,9 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

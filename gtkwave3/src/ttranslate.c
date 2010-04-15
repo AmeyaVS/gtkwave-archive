@@ -283,6 +283,7 @@ if(*GLOBALS->fileselbox_text)
 			if(!strcmp(GLOBALS->ttranssel_filter[i], *GLOBALS->fileselbox_text)) 
 				{
 				status_text("Filter already imported.\n");
+				if(GLOBALS->is_active_ttranslate_c_2) gdk_window_raise(GLOBALS->window_ttranslate_c_5->window);
 				return;
 				}
 			}
@@ -308,6 +309,8 @@ if(GLOBALS->ttrans_filter[GLOBALS->num_ttrans_filters])
 	{
 	GLOBALS->num_ttrans_filters--;
 	}
+
+if(GLOBALS->is_active_ttranslate_c_2) gdk_window_raise(GLOBALS->window_ttranslate_c_5->window);
 }
 
 static void add_filter_callback(GtkWidget *widget, GtkWidget *nothing)
@@ -722,6 +725,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/04/15 00:30:23  gtkwave
+ * don't propagate ttranslate filter into groups
+ *
  * Revision 1.12  2010/04/12 23:07:12  gtkwave
  * add ability to make single signals transactions
  *
