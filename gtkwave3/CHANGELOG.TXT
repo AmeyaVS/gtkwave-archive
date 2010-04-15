@@ -825,3 +825,5 @@
 		Added preliminary transaction filter support.
 		Updated time warp handling.
 		Updated print routine to use populateBuffer().
+		Added raise to front when filename selected in filter
+		dialogs.  This helps with some window managers.
