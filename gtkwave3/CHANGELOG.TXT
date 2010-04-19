@@ -802,21 +802,21 @@
 		Removed resolve_lxt_alias_to field from struct fac.
 		Removed lxt-only lastchange field from struct fac.
 		Removed unused h field in struct symbol.
-		Removed nextinaet field if unused, recoded to symchain
-		when used.
+		Removed nextinaet field if unused, recoded to symchain when
+		used.
 		Fixed && used in logical operation for generating ExtNode.
 		Removed ExtNode, made inline with Node.
 		Deallocate symbol hash table after no longer needed.
 		Only allocate hash when necessary.
 		Added marker vs maxtime marker conflict check in
-		kick_partial_vcd() to ensure signal window values reflect
-		data value rather than x when maxtime scrolls over the
-		marker time and makes the marker visible.
+		kick_partial_vcd() to ensure signal window values reflect data
+		value rather than x when maxtime scrolls over the marker time
+		and makes the marker visible.
 		More Judy array adds for VCD.
-		Removed sym->selected member and replaced with 1-bit
-		Judy array if enabled.
-3.3.6	19apr10	Added RealToBits menu options for displaying real numbers
-		as binary values.
+		Removed sym->selected member and replaced with 1-bit Judy array
+		if enabled.
+3.3.6	19apr10	Added RealToBits menu options for displaying real numbers as
+		binary values.
 		Added missing break statements to terminate cases in
 		bits2vector().
 		Fixed cut and paste error on FILE_FILTER_MAX versus
@@ -826,11 +826,10 @@
 		Added transaction parser in examples/ directory.
 		Updated time warp handling.
 		Updated print routine to use populateBuffer().
-		Added raise to front when filename selected in filter
-		dialogs.  This helps with some window managers.
-		Remove color for translated/transaction traces in
-		black and white mode.
-		Copy gc_grid_wavewindow_c_1 from gccache on reload
-		as this was accidentally overwritten with
-		gc_grid2_wavewindow_c_1 without adding back
-		gc_grid_wavewindow_c_1.
+		Added raise to front when filename selected in filter dialogs.
+		This helps with some window managers.
+		Remove color for translated/transaction traces in black and
+		white mode.
+		Copy gc_grid_wavewindow_c_1 from gccache on reload as this was
+		accidentally overwritten with gc_grid2_wavewindow_c_1 without
+		adding back gc_grid_wavewindow_c_1.
