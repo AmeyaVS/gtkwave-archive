@@ -815,7 +815,7 @@
 		More Judy array adds for VCD.
 		Removed sym->selected member and replaced with 1-bit
 		Judy array if enabled.
-3.3.6	15apr10	Added RealToBits menu options for displaying real numbers
+3.3.6	19apr10	Added RealToBits menu options for displaying real numbers
 		as binary values.
 		Added missing break statements to terminate cases in
 		bits2vector().
@@ -823,6 +823,7 @@
 		PROC_FILTER_MAX.
 		Reduced FILE_FILTER_MAX from 1024 down to 128.
 		Added preliminary transaction filter support.
+		Added transaction parser in examples/ directory.
 		Updated time warp handling.
 		Updated print routine to use populateBuffer().
 		Added raise to front when filename selected in filter
