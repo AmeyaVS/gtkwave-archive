@@ -915,6 +915,8 @@ unsigned char *scratchpnt;
 unsigned char *tmem;
 off_t tlen;
 off_t unc_memreq = 0; /* for reader */
+unsigned char *packmem;
+unsigned int packmemlen;
 
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 
@@ -929,6 +931,9 @@ f = xc->handle;
 fstWriterVarint(f, xc->maxhandle);	/* emit current number of handles */
 fputc(xc->fastpack ? 'F' : 'Z', f);
 fpos = 1;
+
+packmemlen = 1024;			/* maintain a running "longest" allocation to */
+packmem = malloc(packmemlen);		/* prevent continual malloc...free every loop iter */
 
 for(i=0;i<xc->maxhandle;i++)
 	{
@@ -1052,7 +1057,16 @@ for(i=0;i<xc->maxhandle;i++)
 
 			if(!xc->fastpack)
 				{
-				dmem = malloc(wrlen);
+				if(wrlen <= packmemlen)
+					{
+					dmem = packmem;
+					}
+					else
+					{
+					free(packmem);
+					dmem = packmem = malloc(packmemlen = wrlen);
+					}
+
 		        	rc = compress2(dmem, &destlen, scratchpad, wrlen, 4);
 				if(rc == Z_OK)
 					{
@@ -1066,11 +1080,19 @@ for(i=0;i<xc->maxhandle;i++)
 					fpos += wrlen;
 					fstFwrite(scratchpad, wrlen, 1, f);
 					}
-				free(dmem);
 				}
 				else
 				{
-				dmem = malloc((wrlen * 2) + 2);
+				if(((wrlen * 2) + 2) <= packmemlen)
+					{
+					dmem = packmem;
+					}
+					else
+					{
+					free(packmem);
+					dmem = packmem = malloc(packmemlen = (wrlen * 2) + 2);
+					}
+
 				rc = fastlz_compress(scratchpad, wrlen, dmem);
 				if(rc < destlen)
         				{
@@ -1084,7 +1106,6 @@ for(i=0;i<xc->maxhandle;i++)
 					fpos += wrlen;
 					fstFwrite(scratchpad, wrlen, 1, f);
         				}
-				free(dmem);
 				}
 			}
 			else
@@ -1098,6 +1119,8 @@ for(i=0;i<xc->maxhandle;i++)
 		cnt++;
 		}
 	}
+
+free(packmem); packmem = NULL; packmemlen = 0;
 
 prevpos = 0; zerocnt = 0;
 free(scratchpad); scratchpad = NULL;
@@ -1265,6 +1288,50 @@ if(xc)
 	fflush(xc->handle);
 	fseeko(xc->handle, fpos, SEEK_SET);
 	}
+}
+
+
+void fstWriterSetTimescaleFromString(void *ctx, const char *s)
+{
+struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
+if(xc && s)
+        {
+        int mat = 0;
+	int exp = -9;
+	int tv = atoi(s);
+	const char *pnt = s;
+
+	while(*pnt)
+        	{
+                switch(*pnt)
+                	{
+                        case 'm': exp = -3; mat = 1; break;
+                        case 'u': exp = -6; mat = 1; break;
+                        case 'n': exp = -9; mat = 1; break;
+                        case 'p': exp = -12; mat = 1; break;
+                        case 'f': exp = -15; mat = 1; break;
+                        case 'a': exp = -18; mat = 1; break;
+                        case 'z': exp = -21; mat = 1; break;
+                        case 's': exp = -0; mat = 1; break;
+                        default: break;
+                        }
+
+		if(mat) break;
+                pnt++;
+                }
+
+	if(tv == 10)
+        	{
+                exp++;
+                } 
+        else
+        if(tv == 100)
+        	{
+                exp+=2;
+                }
+                              
+	fstWriterSetTimescale(ctx, exp);
+        }
 }
 
 

@@ -826,10 +826,12 @@
 		Added transaction parser in examples/ directory.
 		Updated time warp handling.
 		Updated print routine to use populateBuffer().
-		Added raise to front when filename selected in filter dialogs.
-		This helps with some window managers.
+		Added raise to front when filename selected in filter dialogs
+		as this helps with some window managers.
 		Remove color for translated/transaction traces in black and
 		white mode.
 		Copy gc_grid_wavewindow_c_1 from gccache on reload as this was
 		accidentally overwritten with gc_grid2_wavewindow_c_1 without
 		adding back gc_grid_wavewindow_c_1.
+		Added fstWriterSetTimescaleFromString() to fstapi.c which
+		allows usage of strings such as "1ns" for the timescale.

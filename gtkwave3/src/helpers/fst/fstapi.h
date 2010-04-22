@@ -152,6 +152,7 @@ void fstWriterClose(void *ctx);
 void fstWriterSetDate(void *ctx, const char *dat);
 void fstWriterSetVersion(void *ctx, const char *vers);
 void fstWriterSetTimescale(void *ctx, int ts);
+void fstWriterSetTimescaleFromString(void *ctx, const char *s);
 void fstWriterSetScope(void *ctx, enum fstScopeType scopetype,
                 const char *scopename, const char *scopecomp);
 void fstWriterSetUpscope(void *ctx);
