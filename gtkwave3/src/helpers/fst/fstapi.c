@@ -229,21 +229,26 @@ return(rc);
 }
 
 
-static int fstCopyVarint32(unsigned char *pnt, uint32_t v)
+static unsigned char *fstCopyVarint32ToLeft(unsigned char *pnt, uint32_t v)
 {
-unsigned char *spnt = pnt;
+unsigned char buf[5];
+unsigned char *spnt = buf;  
 uint32_t nxt;
 
 while((nxt = v>>7))
         {
-        *(pnt++) = (v&0x7f) | 0x80;
+        *(spnt++) = (v&0x7f) | 0x80;
         v = nxt;
         }
-*(pnt++) = (v&0x7f);
+*(spnt++) = (v&0x7f);
 
-return(pnt - spnt);
+do      {
+        *(--pnt) = *(--spnt);
+        } while(spnt != buf);
+
+return(pnt);
 }
-
+ 
 
 static uint64_t fstGetVarint64(unsigned char *mem, int *skiplen)
 {
@@ -940,22 +945,12 @@ for(i=0;i<xc->maxhandle;i++)
 	if(xc->valpos_mem[4*i+2]) 
 		{
 		uint32_t offs = xc->valpos_mem[4*i+2];
-		uint32_t next_offs = 0;
+		uint32_t next_offs;
 		int wrlen;
-		uint32_t offs2;
-
-		while(offs)	/* go backwards and relink forwards */
-			{
-			offs2 = fstGetUint32(vchg_mem + offs);
-			fstWriterSetUint32(vchg_mem + offs, next_offs);
-			next_offs = offs;
-			offs = offs2;
-			}
 
 		xc->valpos_mem[4*i+2] = fpos;
 
-		offs = next_offs;
-		scratchpnt = scratchpad;
+		scratchpnt = scratchpad + xc->vchn_siz;		/* build this buffer backwards */
 		if(xc->valpos_mem[4*i+1] == 1)
 			{
                         while(offs)
@@ -967,6 +962,7 @@ for(i=0;i<xc->maxhandle;i++)
                         
                                 time_delta = fstGetVarint32(vchg_mem + offs, &wrlen);
                                 val = vchg_mem[offs+wrlen];
+				offs = next_offs;
 
                                 switch(val)
                                         {
@@ -983,8 +979,7 @@ for(i=0;i<xc->maxhandle;i++)
                                         default:                rcv = FST_RCV_D | (time_delta<<4); break;
                                         }
                 
-                                scratchpnt += fstCopyVarint32(scratchpnt, rcv);
-				offs = next_offs;
+                                scratchpnt = fstCopyVarint32ToLeft(scratchpnt, rcv);
 				}
 			}
 			else
@@ -1002,6 +997,8 @@ for(i=0;i<xc->maxhandle;i++)
 				time_delta = fstGetVarint32(vchg_mem + offs, &wrlen);
 
 				pnt = vchg_mem+offs+wrlen;
+				offs = next_offs;
+
 				for(idx=0;idx<xc->valpos_mem[4*i+1];idx++)
 					{
 					if((pnt[idx] == '0') || (pnt[idx] == '1'))
@@ -1018,36 +1015,32 @@ for(i=0;i<xc->maxhandle;i++)
 				if(is_binary)
 					{
 					unsigned char acc = 0;
-					int shift = 7;
-	                                scratchpnt += fstCopyVarint32(scratchpnt, (time_delta << 1));
-					for(idx=0;idx<xc->valpos_mem[4*i+1];idx++)
+					int shift = 7 - ((xc->valpos_mem[4*i+1]-1) & 7);
+					for(idx=xc->valpos_mem[4*i+1]-1;idx>=0;idx--)
 						{
 						acc |= (pnt[idx] & 1) << shift;
-						shift--;
-						if(shift < 0)
+						shift++;
+						if(shift == 8)
 							{
-							*(scratchpnt++) = acc;
-							shift = 7;
+							*(--scratchpnt) = acc;
+							shift = 0;
 							acc = 0;
 							}						
 						}					
-					if(shift != 7)
-						{
-						*(scratchpnt++) = acc;
-						}
+
+	                                scratchpnt = fstCopyVarint32ToLeft(scratchpnt, (time_delta << 1));
 					}
 					else
 					{
-	                                scratchpnt += fstCopyVarint32(scratchpnt, (time_delta << 1) | 1);
+					scratchpnt -= xc->valpos_mem[4*i+1];
 					memcpy(scratchpnt, pnt, xc->valpos_mem[4*i+1]);
-					scratchpnt += xc->valpos_mem[4*i+1];
-					}
 
-				offs = next_offs;
+	                                scratchpnt = fstCopyVarint32ToLeft(scratchpnt, (time_delta << 1) | 1);
+					}
 				}
 			}
 
-		wrlen = scratchpnt - scratchpad;
+		wrlen = scratchpad + xc->vchn_siz - scratchpnt;
 		unc_memreq += wrlen;
 		if(wrlen > 32)
 			{
@@ -1067,7 +1060,7 @@ for(i=0;i<xc->maxhandle;i++)
 					dmem = packmem = malloc(packmemlen = wrlen);
 					}
 
-		        	rc = compress2(dmem, &destlen, scratchpad, wrlen, 4);
+		        	rc = compress2(dmem, &destlen, scratchpnt, wrlen, 4);
 				if(rc == Z_OK)
 					{
 					fpos += fstWriterVarint(f, wrlen);
@@ -1078,7 +1071,7 @@ for(i=0;i<xc->maxhandle;i++)
 					{
 					fpos += fstWriterVarint(f, 0);
 					fpos += wrlen;
-					fstFwrite(scratchpad, wrlen, 1, f);
+					fstFwrite(scratchpnt, wrlen, 1, f);
 					}
 				}
 				else
@@ -1093,7 +1086,7 @@ for(i=0;i<xc->maxhandle;i++)
 					dmem = packmem = malloc(packmemlen = (wrlen * 2) + 2);
 					}
 
-				rc = fastlz_compress(scratchpad, wrlen, dmem);
+				rc = fastlz_compress(scratchpnt, wrlen, dmem);
 				if(rc < destlen)
         				{
 					fpos += fstWriterVarint(f, wrlen);
@@ -1104,7 +1097,7 @@ for(i=0;i<xc->maxhandle;i++)
         				{
 					fpos += fstWriterVarint(f, 0);
 					fpos += wrlen;
-					fstFwrite(scratchpad, wrlen, 1, f);
+					fstFwrite(scratchpnt, wrlen, 1, f);
         				}
 				}
 			}
@@ -1112,7 +1105,7 @@ for(i=0;i<xc->maxhandle;i++)
 			{
 			fpos += fstWriterVarint(f, 0);
 			fpos += wrlen;
-			fstFwrite(scratchpad, wrlen, 1, f);
+			fstFwrite(scratchpnt, wrlen, 1, f);
 			}
 
 		xc->valpos_mem[4*i+3] = 0;
