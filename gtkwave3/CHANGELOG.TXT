@@ -815,7 +815,7 @@
 		More Judy array adds for VCD.
 		Removed sym->selected member and replaced with 1-bit Judy array
 		if enabled.
-3.3.6	19apr10	Added RealToBits menu options for displaying real numbers as
+3.3.6	24apr10	Added RealToBits menu options for displaying real numbers as
 		binary values.
 		Added missing break statements to terminate cases in
 		bits2vector().
@@ -835,3 +835,4 @@
 		adding back gc_grid_wavewindow_c_1.
 		Added fstWriterSetTimescaleFromString() to fstapi.c which
 		allows usage of strings such as "1ns" for the timescale.
+		Incorporated FST writer optimizations.
