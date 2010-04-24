@@ -67,6 +67,7 @@ for(j=0;j<GLOBALS->num_notebook_pages;j++)
 void ttrans_searchbox(char *title) { }
 void install_ttrans_filter(int which) { } 
 void set_current_translate_ttrans(char *name) { }
+int traverse_vector_nodes(Trptr t) { if(t) { t->t_filter = 0; } return(NULL; }
 
 #else
 
@@ -502,8 +503,6 @@ if(GLOBALS->num_ttrans_filters < TTRANS_FILTER_MAX)
 	}
 }
 
-#endif
-
 
 int traverse_vector_nodes(Trptr t)
 {
@@ -735,9 +734,14 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 return(cvt_ok);
 }
 
+#endif
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/04/15 18:39:35  gtkwave
+ * remove invocations of pipeio_destroy where unnecessary
+ *
  * Revision 1.14  2010/04/15 01:55:03  gtkwave
  * raise to front on filename select
  *
