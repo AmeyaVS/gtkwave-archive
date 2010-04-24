@@ -922,6 +922,7 @@ off_t tlen;
 off_t unc_memreq = 0; /* for reader */
 unsigned char *packmem;
 unsigned int packmemlen;
+uint32_t *vm4ip;
 
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 
@@ -942,16 +943,18 @@ packmem = malloc(packmemlen);		/* prevent continual malloc...free every loop ite
 
 for(i=0;i<xc->maxhandle;i++)
 	{
-	if(xc->valpos_mem[4*i+2]) 
+	vm4ip = &(xc->valpos_mem[4*i]);
+
+	if(vm4ip[2]) 
 		{
-		uint32_t offs = xc->valpos_mem[4*i+2];
+		uint32_t offs = vm4ip[2];
 		uint32_t next_offs;
 		int wrlen;
 
-		xc->valpos_mem[4*i+2] = fpos;
+		vm4ip[2] = fpos;
 
 		scratchpnt = scratchpad + xc->vchn_siz;		/* build this buffer backwards */
-		if(xc->valpos_mem[4*i+1] == 1)
+		if(vm4ip[1] == 1)
 			{
                         while(offs)
                                 {
@@ -999,7 +1002,7 @@ for(i=0;i<xc->maxhandle;i++)
 				pnt = vchg_mem+offs+wrlen;
 				offs = next_offs;
 
-				for(idx=0;idx<xc->valpos_mem[4*i+1];idx++)
+				for(idx=0;idx<vm4ip[1];idx++)
 					{
 					if((pnt[idx] == '0') || (pnt[idx] == '1'))
 						{
@@ -1015,8 +1018,8 @@ for(i=0;i<xc->maxhandle;i++)
 				if(is_binary)
 					{
 					unsigned char acc = 0;
-					int shift = 7 - ((xc->valpos_mem[4*i+1]-1) & 7);
-					for(idx=xc->valpos_mem[4*i+1]-1;idx>=0;idx--)
+					int shift = 7 - ((vm4ip[1]-1) & 7);
+					for(idx=vm4ip[1]-1;idx>=0;idx--)
 						{
 						acc |= (pnt[idx] & 1) << shift;
 						shift++;
@@ -1032,8 +1035,8 @@ for(i=0;i<xc->maxhandle;i++)
 					}
 					else
 					{
-					scratchpnt -= xc->valpos_mem[4*i+1];
-					memcpy(scratchpnt, pnt, xc->valpos_mem[4*i+1]);
+					scratchpnt -= vm4ip[1];
+					memcpy(scratchpnt, pnt, vm4ip[1]);
 
 	                                scratchpnt = fstCopyVarint32ToLeft(scratchpnt, (time_delta << 1) | 1);
 					}
@@ -1108,7 +1111,7 @@ for(i=0;i<xc->maxhandle;i++)
 			fstFwrite(scratchpnt, wrlen, 1, f);
 			}
 
-		xc->valpos_mem[4*i+3] = 0;
+		vm4ip[3] = 0;
 		cnt++;
 		}
 	}
@@ -1123,7 +1126,9 @@ xc->secnum++;
 
 for(i=0;i<xc->maxhandle;i++)
 	{
-	if(xc->valpos_mem[4*i+2])
+	vm4ip = &(xc->valpos_mem[4*i]);
+
+	if(vm4ip[2])
 		{
 		if(zerocnt)
 			{
@@ -1131,10 +1136,10 @@ for(i=0;i<xc->maxhandle;i++)
 			zerocnt = 0;
 			}
 
-		fpos += fstWriterVarint(f, ((xc->valpos_mem[4*i+2] - prevpos) << 1) | 1);
-		prevpos = xc->valpos_mem[4*i+2];
-		xc->valpos_mem[4*i+2] = 0;
-		xc->valpos_mem[4*i+3] = 0; /* clear out tchn idx */
+		fpos += fstWriterVarint(f, ((vm4ip[2] - prevpos) << 1) | 1);
+		prevpos = vm4ip[2];
+		vm4ip[2] = 0;
+		vm4ip[3] = 0; /* clear out tchn idx */
 		}
 		else
 		{
@@ -1488,6 +1493,7 @@ if((xc) && (handle <= xc->maxhandle))
 	{
 	uint32_t prev_chg;
 	uint32_t fpos;
+	uint32_t *vm4ip;
 
 	if(!xc->valpos_mem)
 		{
@@ -1497,20 +1503,21 @@ if((xc) && (handle <= xc->maxhandle))
 	xc->vc_emitted = 1;
 
 	handle--; /* move starting at 1 index to starting at 0 */
-	offs = xc->valpos_mem[4*handle];
-	len  = xc->valpos_mem[4*handle+1];
+	vm4ip = &(xc->valpos_mem[4*handle]);
+	offs = vm4ip[0];
+	len  = vm4ip[1];
 	memcpy(xc->curval_mem + offs, buf, len);
 
 	if(!xc->is_initial_time)
 		{
-		prev_chg = xc->valpos_mem[4*handle+2];
+		prev_chg = vm4ip[2];
 		fpos = xc->vchn_siz;
 
 		fstFwrite(&prev_chg, 1, sizeof(uint32_t), xc->vchn_handle);
 		xc->vchn_siz += 4;
-		xc->valpos_mem[4*handle+2] = fpos;
-		xc->vchn_siz += fstWriterVarint(xc->vchn_handle, xc->tchn_idx - xc->valpos_mem[4*handle+3]);
-		xc->valpos_mem[4*handle+3] = xc->tchn_idx;
+		vm4ip[2] = fpos;
+		xc->vchn_siz += fstWriterVarint(xc->vchn_handle, xc->tchn_idx - vm4ip[3]);
+		vm4ip[3] = xc->tchn_idx;
 		fstFwrite(buf, len, 1, xc->vchn_handle);
 		xc->vchn_siz += len;
 		}
