@@ -40,7 +40,7 @@
 	#define GHWLD "%d"
 #else
 	#define GHWLLD "%lld"
-	#define GHWLLD "%ld"
+	#define GHWLD "%ld"
 #endif
 #endif
 #endif
@@ -424,6 +424,9 @@ void ghw_disp_types (struct ghw_handler *h);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/12/29 07:07:49  gtkwave
+ * fixes for ghw files
+ *
  * Revision 1.4  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *
