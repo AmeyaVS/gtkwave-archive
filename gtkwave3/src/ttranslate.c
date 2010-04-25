@@ -67,7 +67,7 @@ for(j=0;j<GLOBALS->num_notebook_pages;j++)
 void ttrans_searchbox(char *title) { }
 void install_ttrans_filter(int which) { } 
 void set_current_translate_ttrans(char *name) { }
-int traverse_vector_nodes(Trptr t) { if(t) { t->t_filter = 0; } return(NULL; }
+int traverse_vector_nodes(Trptr t) { if(t) { t->t_filter = 0; } return(0); }
 
 #else
 
@@ -739,6 +739,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/04/24 16:32:46  gtkwave
+ * compile fix for MinGW
+ *
  * Revision 1.15  2010/04/15 18:39:35  gtkwave
  * remove invocations of pipeio_destroy where unnecessary
  *
