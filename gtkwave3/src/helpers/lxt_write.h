@@ -35,7 +35,9 @@ extern "C" {
 #include <unistd.h>
 #include <zlib.h>
 #include <bzlib.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 
 #ifndef HAVE_FSEEKO
 #define fseeko fseek
@@ -266,6 +268,9 @@ int 			lt_emit_value_bit_string(struct lt_trace *lt, struct lt_symbol *s, unsign
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.2  2010/02/18 17:27:07  gtkwave
  * extern "C" headers / version bump
  *

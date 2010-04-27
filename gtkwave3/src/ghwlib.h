@@ -25,7 +25,7 @@
 #include <stdlib.h>
 
 
-#if HAVE_INTTYPES_H
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #define GHWLLD "%"PRId64
 #define GHWLD  "%"PRId32
@@ -424,6 +424,9 @@ void ghw_disp_types (struct ghw_handler *h);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2010/04/25 01:04:21  gtkwave
+ * typo fix
+ *
  * Revision 1.5  2009/12/29 07:07:49  gtkwave
  * fixes for ghw files
  *

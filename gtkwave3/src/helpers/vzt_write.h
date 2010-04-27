@@ -33,7 +33,9 @@ extern "C" {
 #include <ctype.h>
 #include <errno.h>
 #include <unistd.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 #include <zlib.h>
 #include <bzlib.h>
 #include <LzmaLib.h>
@@ -297,6 +299,9 @@ int 			vzt_wr_emit_value_bit_string(struct vzt_wr_trace *lt, struct vzt_wr_symbo
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2010/02/18 17:27:07  gtkwave
+ * extern "C" headers / version bump
+ *
  * Revision 1.2  2009/03/31 06:21:13  gtkwave
  * added support for lzma
  *

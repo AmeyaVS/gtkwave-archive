@@ -35,7 +35,9 @@ extern "C" {
 
 #ifndef _MSC_VER
 #include <unistd.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 #else
 typedef long off_t;
 #include <windows.h>
@@ -292,6 +294,9 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/02/18 17:27:07  gtkwave
+ * extern "C" headers / version bump
+ *
  * Revision 1.4  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *

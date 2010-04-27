@@ -32,7 +32,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 #include <unistd.h>
 
 size_t getline_replace(char **buf, size_t *len, FILE *f)
@@ -501,6 +503,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/08/06 20:03:31  gtkwave
+ * warnings fixes
+ *
  * Revision 1.1  2009/07/31 19:55:48  gtkwave
  * add evcd2vcd to the distribution
  *

@@ -12,7 +12,7 @@
 #ifndef WAVE_LX2RDR_H
 #define WAVE_LX2RDR_H
 
-#ifndef _MSC_VER
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
 
@@ -39,6 +39,9 @@ void lx2_import_masked(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/06/07 08:40:44  gtkwave
+ * adding FST support
+ *
  * Revision 1.2  2007/08/26 21:35:41  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

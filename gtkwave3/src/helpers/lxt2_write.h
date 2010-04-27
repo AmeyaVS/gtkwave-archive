@@ -33,7 +33,9 @@ extern "C" {
 #include <ctype.h>
 #include <errno.h>
 #include <unistd.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 #include <zlib.h>
 
 #ifndef HAVE_FSEEKO
@@ -313,6 +315,9 @@ int 			lxt2_wr_emit_value_bit_string(struct lxt2_wr_trace *lt, struct lxt2_wr_sy
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2010/02/18 17:27:07  gtkwave
+ * extern "C" headers / version bump
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:25  gtkwave
  * Imported sources
  *

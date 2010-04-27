@@ -12,7 +12,7 @@
 #ifndef WAVE_FSTRDR_H
 #define WAVE_FSTRDR_H
 
-#ifndef _MSC_VER
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
 
@@ -29,5 +29,8 @@ void fst_import_masked(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/08/06 20:03:15  gtkwave
+ * creation
+ *
  */
 

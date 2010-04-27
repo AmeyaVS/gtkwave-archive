@@ -28,7 +28,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 
 #define OPTIONAL_DEBUG if(1)
 

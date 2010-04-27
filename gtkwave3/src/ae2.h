@@ -10,7 +10,7 @@
 #ifndef WAVE_AE2RDR_H
 #define WAVE_AE2RDR_H
 
-#ifndef _MSC_VER
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
 #include "vcd.h"
@@ -88,6 +88,9 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/09/27 19:08:39  gtkwave
+ * compiler warning fixes
+ *
  * Revision 1.5  2008/02/19 22:00:28  gtkwave
  * added aetinfo support
  *

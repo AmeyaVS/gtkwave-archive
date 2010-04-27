@@ -27,7 +27,9 @@
 
 #ifndef _MSC_VER
 #include <unistd.h>
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 #else
 typedef long off_t;
 #include <windows.h>
@@ -125,6 +127,9 @@ void destroy_s_selected(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/16 21:01:10  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.12  2010/03/15 15:57:28  gtkwave
  * only allocate hash when necessary
  *

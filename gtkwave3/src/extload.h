@@ -12,7 +12,7 @@
 #ifndef WAVE_EXTRDR_H
 #define WAVE_EXTRDR_H
 
-#ifndef _MSC_VER
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
 
@@ -28,5 +28,8 @@ void 		import_extload_trace(nptr np);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2009/01/27 07:04:28  gtkwave
+ * added extload external process loader capability
+ *
  *
  */
