@@ -1497,10 +1497,9 @@ if((xc) && (handle <= xc->maxhandle))
 
 	if(!xc->valpos_mem)
 		{
+		xc->vc_emitted = 1;
 		fstWriterCreateMmaps(xc);
 		}
-
-	xc->vc_emitted = 1;
 
 	handle--; /* move starting at 1 index to starting at 0 */
 	vm4ip = &(xc->valpos_mem[4*handle]);
