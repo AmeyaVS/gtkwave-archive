@@ -624,7 +624,7 @@ return(xc);
 void fstWriterClose(void *ctx)
 {
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
-if(xc && !xc->already_in_close)
+if(xc && !xc->already_in_close && !xc->already_in_flush)
 	{
 	unsigned char *tmem;
 	off_t fixup_offs, tlen, hlen;
