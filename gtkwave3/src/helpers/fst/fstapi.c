@@ -1514,11 +1514,11 @@ if((xc) && (handle <= xc->maxhandle))
 
 		fstFwrite(&prev_chg, 1, sizeof(uint32_t), xc->vchn_handle);
 		xc->vchn_siz += 4;
-		vm4ip[2] = fpos;
 		xc->vchn_siz += fstWriterVarint(xc->vchn_handle, xc->tchn_idx - vm4ip[3]);
-		vm4ip[3] = xc->tchn_idx;
 		fstFwrite(buf, len, 1, xc->vchn_handle);
 		xc->vchn_siz += len;
+		vm4ip[3] = xc->tchn_idx;
+		vm4ip[2] = fpos;
 		}
 	}
 }
