@@ -448,6 +448,10 @@ unsigned compress_hier : 1;
 unsigned repack_on_close : 1;
 unsigned skip_writing_section_hdr : 1;
 unsigned size_limit_locked : 1;
+
+/* should really be semaphores, but are bytes to cut down on read-modify-write window size */
+unsigned char already_in_flush; /* in case control-c handlers interrupt */
+unsigned char already_in_close; /* in case control-c handlers interrupt */
 };
 
 
@@ -620,10 +624,12 @@ return(xc);
 void fstWriterClose(void *ctx)
 {
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
-if(xc)
+if(xc && !xc->already_in_close)
 	{
 	unsigned char *tmem;
 	off_t fixup_offs, tlen, hlen;
+
+	xc->already_in_close = 1; /* never need to zero this out as it is freed at bottom */
 
 	xc->skip_writing_section_hdr = 1;
 	if(!xc->size_limit_locked)
@@ -926,7 +932,8 @@ uint32_t *vm4ip;
 
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 
-if((!xc)||(xc->vchn_siz <= 1)) return;
+if((!xc)||(xc->vchn_siz <= 1)||(xc->already_in_flush)) return;
+xc->already_in_flush = 1; /* should really do this with a semaphore */
 
 scratchpad = malloc(xc->vchn_siz);
 
@@ -1231,6 +1238,8 @@ if(!xc->skip_writing_section_hdr)
 	fstWriterEmitSectionHeader(xc);				/* emit next section header */
 	}
 fflush(xc->handle);
+
+xc->already_in_flush = 0;
 }
 
 
