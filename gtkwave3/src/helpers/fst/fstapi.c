@@ -416,7 +416,6 @@ uint32_t *valpos_mem;
 unsigned char *curval_mem;
 
 char *filename;
-time_t simdate;
 
 fstHandle maxhandle;
 fstHandle numsigs;
@@ -914,7 +913,9 @@ if(xc)
 
 void fstWriterFlushContext(void *ctx)
 {
+#ifdef FST_DEBUG
 int cnt = 0;
+#endif
 int i;
 unsigned char *vchg_mem;
 FILE *f;
@@ -1119,7 +1120,9 @@ for(i=0;i<xc->maxhandle;i++)
 			}
 
 		vm4ip[3] = 0;
+#ifdef FST_DEBUG
 		cnt++;
+#endif
 		}
 	}
 
@@ -2416,7 +2419,7 @@ while(!feof(xc->fh))
 		case FST_VT_VCD_ARRAY:
 		case FST_VT_VCD_REALTIME:
 			vartype = tag;
-			vardir = fgetc(xc->fh);
+			vardir = fgetc(xc->fh); /* unused in VCD reader */
 			pnt = str;
 			while((ch = fgetc(xc->fh))) 
 				{
