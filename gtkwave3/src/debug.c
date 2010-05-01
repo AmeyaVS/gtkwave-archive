@@ -29,9 +29,9 @@ Pvoid_t  PJArray = (Pvoid_t)GLOBALS->alloc2_chain;
 int rcValue;
 Word_t Index;
 JError_t JError;
+#ifdef DEBUG_PRINTF
 int ctr = 0;
 
-#ifdef DEBUG_PRINTF
 printf("\n*** cleanup ***\n");
 printf("Freeing %d chunks\n", GLOBALS->outstanding);
 system("date");
@@ -46,7 +46,9 @@ Index = 0;
 for (rcValue = Judy1First(PJArray, &Index, &JError); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, &JError))
 	{
 	free((void *)Index);
+#ifdef DEBUG_PRINTF
 	ctr++;
+#endif
 	}
 Judy1FreeArray(&PJArray, &JError);
 
@@ -488,6 +490,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/16 21:01:08  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.12  2010/03/12 18:45:31  gtkwave
  * updated realloc_2 by moving bit clear/set inside if() guard
  *
