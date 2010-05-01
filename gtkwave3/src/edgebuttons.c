@@ -67,7 +67,10 @@ struct strace s_tmp;
 struct strace *s_head, *s;
 TimeType basetime, maxbase, sttim, fintim;
 Trptr t = find_first_highlighted_trace();
-int totaltraces, passcount;
+int totaltraces;
+#ifdef DEBUG_PRINTF
+int passcount;
+#endif
 int whichpass;
 TimeType middle=0, width;
 
@@ -429,6 +432,7 @@ while(s)
 
 if((maxbase<sttim)||(maxbase>fintim)) return;
 
+#ifdef DEBUG_PRINTF
 DEBUG(printf("Maxbase: "TTFormat", total traces: %d\n",maxbase, totaltraces));
 s=s_head;
 passcount=0;
@@ -438,6 +442,7 @@ while(s)
 	if(s->search_result) passcount++;
 	s=s->next;
 	}
+#endif
 
 if(totaltraces)
 	{
@@ -575,6 +580,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.9  2010/03/24 23:05:09  gtkwave
  * added RealToBits menu option
  *
