@@ -728,7 +728,7 @@ if((lt)&&(lt->numfacs))
 		lt->numfacs = facs_encountered;				/* don't process alias value changes ever */
 		}
 
-	if(aliascache) free(aliascache);
+	free(aliascache);
 	}
 }
 
@@ -2150,8 +2150,8 @@ if(lt)
 		
 		while(s)
 			{
-			if(s->name) { free(s->name); }
-			if(s->value) { free(s->value); }
+			free(s->name);
+			free(s->value);
 			s2=s->symchain;
 			free(s);
 			s=s2;
@@ -2183,6 +2183,9 @@ if(lt)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/12/20 05:08:26  gtkwave
+ * -Wshadow warning cleanups
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:21  gtkwave
  * Imported sources
  *
