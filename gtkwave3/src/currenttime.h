@@ -20,7 +20,7 @@
 #include "regex_wave.h"
 #include "translate.h"
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.6_pre (w)1999-2010 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.6 (w)1999-2010 BSI"
 
 #define WAVE_INF_SCALING (0.5)
 #define WAVE_SI_UNITS " munpfaz"
@@ -178,6 +178,9 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 /*
  * $Id$
  * $Log$
+ * Revision 1.74  2010/04/14 04:21:46  gtkwave
+ * update populateBuffer() usage
+ *
  * Revision 1.73  2010/03/24 23:05:09  gtkwave
  * added RealToBits menu option
  *
