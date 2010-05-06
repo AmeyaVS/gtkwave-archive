@@ -837,3 +837,4 @@
 		allows usage of strings such as "1ns" for the timescale.
 		Incorporated FST writer optimizations.
 		Incorporated some fixes suggested by cppcheck.
+3.3.7	06may10	Made enable_fast_exit rc variable default to yes.

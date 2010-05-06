@@ -790,6 +790,7 @@ static struct rc_entry rcitems[]=
 
 static void vanilla_rc(void)
 {
+f_enable_fast_exit 	("on");
 f_splash_disable 	("off");
 f_zoom_pow10_snap	("on");
 f_hier_max_level	("1");
@@ -958,6 +959,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/03/10 18:14:13  gtkwave
+ * Toggle Trace Hier fix (cache old value for more usability)
+ *
  * Revision 1.22  2010/02/21 05:15:16  gtkwave
  * analog drawing fix for clipping + overdraw
  *
