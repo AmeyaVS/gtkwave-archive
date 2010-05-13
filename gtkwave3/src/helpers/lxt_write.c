@@ -1585,7 +1585,7 @@ if(lt)
 /*
  * emission for trace values..
  */
-static int lt_optimask[]=
+static unsigned int lt_optimask[]=
 {
 0x00000000,
 
@@ -2811,6 +2811,9 @@ if((lt)&&(lt->dumpoff_active))
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/05/03 20:11:03  gtkwave
+ * cppcheck warning fixes
+ *
  * Revision 1.4  2009/03/29 00:50:00  gtkwave
  * update lt_close() to zero out written section offset/size.
  *
