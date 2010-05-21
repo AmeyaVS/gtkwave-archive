@@ -823,6 +823,12 @@ int hashcache; /* from symbol.c 461 */
 
 
 /*
+ * tcl_commands.c
+ */
+char *previous_braced_tcl_string;
+
+
+/*
  * timeentry.c
  */
 GtkWidget *from_entry; /* from timeentry.c 462 */

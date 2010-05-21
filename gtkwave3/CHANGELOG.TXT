@@ -840,3 +840,4 @@
 3.3.7	21may10	Made enable_fast_exit rc variable default to yes.
 		Compiler warning fix in lxt_write.c for Open Solaris.
 		Added fstWriterGetDumpSizeLimitReached() to fstapi.c.
+		Fixes to Tcl string handling.

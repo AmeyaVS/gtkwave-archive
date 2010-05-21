@@ -35,6 +35,14 @@ GtkCTreeNode *SST_find_node_by_path(GtkCTreeRow *root, char *path) {
   GtkCTreeRow *gctr = root ;
   GtkCTreeNode *node = gctr->parent ;
   struct tree *t ;
+  /* in the cases of path that where generated inside a `generate-for' block
+   * path name will contain '[]'. This will prompt TCL to soround PATH with
+   * '{' and '}'
+   */
+  if (*p == '{' && (p1 = strrchr(p, '}'))) {
+    p++ ;
+    *p1 = '\0' ;
+  }
   while (gctr)  {
     if ((p1 = strchr(p, '.'))) 
       *p1 = '\0' ;
@@ -287,11 +295,13 @@ Trptr is_signal_displayed(char *name) {
     *p = '\0' ;
   len = strlen(name) ;
   while(t) {
-    p = (!t->vector) ?  t->n.nd->nname : t->n.vec->bvname ;
-    p1 = strchr(p,'[') ;
-    len1 = (p1) ? p1 - p : strlen(p) ;
-    if((len == len1) && !strncmp(name, p, len))
-      break ;
+    if((p = (t->vector) ?  t->n.vec->bvname :
+	(t->n.vec ? t->n.nd->nname : NULL))) {
+      p1 = strchr(p,'[') ;
+      len1 = (p1) ? p1 - p : strlen(p) ;
+      if((len == len1) && !strncmp(name, p, len))
+	break ;
+    }
     t = t->t_next ;
   }
   return t ;

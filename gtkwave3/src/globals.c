@@ -840,6 +840,12 @@ NULL, /* curnode 431 */
 
 
 /*
+ * tcl_commands.c
+ */
+NULL, /* previous_braced_tcl_string */
+
+
+/*
  * timeentry.c
  */
 NULL, /* from_entry 433 */

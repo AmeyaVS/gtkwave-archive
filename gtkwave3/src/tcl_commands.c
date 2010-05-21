@@ -151,6 +151,24 @@ char *name = NULL;
 
 /* tcl interface functions */
 
+char *get_Tcl_string(Tcl_Obj *obj) {
+  char *s = Tcl_GetString(obj) ;
+  if (*s == '{') {		/* braced string */
+    char *p = strrchr(s, '}') ;
+    if(p) {
+      if(GLOBALS->previous_braced_tcl_string)
+		{
+		free_2(GLOBALS->previous_braced_tcl_string);
+		}
+
+      GLOBALS->previous_braced_tcl_string = strdup_2(s);
+      GLOBALS->previous_braced_tcl_string[p-s] = 0;
+      s = GLOBALS->previous_braced_tcl_string + 1;
+    }
+  }
+  return s ;
+}
+
 static int gtkwavetcl_getNumFacs(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 int value = GLOBALS->numfacs;
@@ -169,7 +187,7 @@ Tcl_Obj *aobj;
 
 if(objc == 2)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	int which = atoi(s);
 
 	if((which >= 0) && (which < GLOBALS->numfacs))
@@ -303,7 +321,7 @@ static int gtkwavetcl_getNamedMarker(ClientData clientData, Tcl_Interp *interp, 
 {
 if(objc == 2)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	int which;
 
 	if((s[0]>='A')&&(s[0]<='Z'))
@@ -385,7 +403,7 @@ static int gtkwavetcl_getTraceNameFromIndex(ClientData clientData, Tcl_Interp *i
 {
 if(objc == 2)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	int which = atoi(s);
 
 	if((which >= 0) && (which < GLOBALS->traces.total))
@@ -423,7 +441,7 @@ static int gtkwavetcl_getTraceFlagsFromIndex(ClientData clientData, Tcl_Interp *
 {
 if(objc == 2)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	int which = atoi(s);
 
 	if((which >= 0) && (which < GLOBALS->traces.total))
@@ -454,7 +472,7 @@ static int gtkwavetcl_getTraceValueAtMarkerFromIndex(ClientData clientData, Tcl_
 {
 if(objc == 2)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	int which = atoi(s);
 
 	if((which >= 0) && (which < GLOBALS->traces.total))
@@ -495,7 +513,7 @@ static int gtkwavetcl_getTraceValueAtMarkerFromName(ClientData clientData, Tcl_I
 {
 if(objc == 2)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	Trptr t = GLOBALS->traces.first;
 
 	while(t)
@@ -536,7 +554,7 @@ static int gtkwavetcl_getTraceValueAtNamedMarkerFromName(ClientData clientData, 
 {
 if(objc == 3)
 	{
-	char *sv = Tcl_GetString(objv[1]);
+	char *sv = get_Tcl_string(objv[1]);
 	int which = -1;
 	TimeType oldmarker = GLOBALS->tims.marker;
 	TimeType value = LLDescriptor(-1);
@@ -557,7 +575,7 @@ if(objc == 3)
 
 	if((which >= 0) && (which < 26))
 		{
-		char *s = Tcl_GetString(objv[2]);
+		char *s = get_Tcl_string(objv[2]);
 		Trptr t = GLOBALS->traces.first;
 
 		value = GLOBALS->named_markers[which];
@@ -678,7 +696,7 @@ static int gtkwavetcl_setMarker(ClientData clientData, Tcl_Interp *interp, int o
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
         TimeType mrk = unformat_time(s, GLOBALS->time_dimension);
 
 	if((mrk >= GLOBALS->min_time) && (mrk <= GLOBALS->max_time))
@@ -711,7 +729,7 @@ static int gtkwavetcl_setBaselineMarker(ClientData clientData, Tcl_Interp *inter
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
         TimeType mrk = unformat_time(s, GLOBALS->time_dimension);
 
 	if((mrk >= GLOBALS->min_time) && (mrk <= GLOBALS->max_time))
@@ -744,7 +762,7 @@ static int gtkwavetcl_setWindowStartTime(ClientData clientData, Tcl_Interp *inte
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 
 	if(s)
 	        {
@@ -791,7 +809,7 @@ static int gtkwavetcl_setZoomFactor(ClientData clientData, Tcl_Interp *interp, i
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
         float f;
          
         sscanf(s, "%f", &f);
@@ -831,9 +849,9 @@ if(objc == 3)
 	TimeType time1, time2;
 	TimeType oldmarker = GLOBALS->tims.marker;
 
-	s = Tcl_GetString(objv[1]);
+	s = get_Tcl_string(objv[1]);
 	time1 = unformat_time(s, GLOBALS->time_dimension);
-        t = Tcl_GetString(objv[2]);
+        t = get_Tcl_string(objv[2]);
 	time2 = unformat_time(t, GLOBALS->time_dimension);
 
 	if(time1 < GLOBALS->tims.first) { time1 = GLOBALS->tims.first; }
@@ -863,7 +881,7 @@ static int gtkwavetcl_setLeftJustifySigs(ClientData clientData, Tcl_Interp *inte
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
         TimeType val = atoi_64(s);
 	GLOBALS->left_justify_sigs = (val != LLDescriptor(0)) ? ~0 : 0;
 
@@ -884,7 +902,7 @@ static int gtkwavetcl_setNamedMarker(ClientData clientData, Tcl_Interp *interp, 
 {
 if((objc == 3)||(objc == 4))
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 	int which = -1;
 
         if((s[0]>='A')&&(s[0]<='Z'))  
@@ -903,7 +921,7 @@ if((objc == 3)||(objc == 4))
 
         if((which >= 0) && (which < 26))
                 {
-	        char *t = Tcl_GetString(objv[2]);
+	        char *t = get_Tcl_string(objv[2]);
 		TimeType gt=unformat_time(t, GLOBALS->time_dimension);
 
                 GLOBALS->named_markers[which] = gt;
@@ -916,7 +934,7 @@ if((objc == 3)||(objc == 4))
 
 		if(objc == 4)
 			{
-			char *u = Tcl_GetString(objv[3]);
+			char *u = get_Tcl_string(objv[3]);
 
 			GLOBALS->marker_names[which] = strdup_2(u);
 			}
@@ -938,7 +956,7 @@ static int gtkwavetcl_setTraceScrollbarRowValue(ClientData clientData, Tcl_Inter
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
         int target = atoi(s);
 
  	SetTraceScrollbarRowValue(target, 0);
@@ -978,7 +996,7 @@ Tcl_Obj *aobj;
 
 if(objc==2)
 	{
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 	char** elem = NULL;
 	int l = 0;
 
@@ -1029,7 +1047,7 @@ Tcl_Obj *aobj;
 
 if(objc==2)
 	{
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 	char** elem = NULL;
 	int l = 0;
 
@@ -1120,7 +1138,7 @@ Tcl_Obj *aobj;
 
 if(objc==2)
 	{
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 	char** elem = NULL;
 	int l = 0;
 
@@ -1207,7 +1225,7 @@ Tcl_Obj *aobj;
 
 if(objc==2)
 	{
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 	char** elem = NULL;
 	int l = 0;
 
@@ -1273,7 +1291,7 @@ Tcl_Obj *aobj;
 
 if(objc==2)
 	{
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 	char** elem = NULL;
 	int l = 0;
 
@@ -1335,9 +1353,9 @@ static int gtkwavetcl_setTraceHighlightFromIndex(ClientData clientData, Tcl_Inte
 {
 if(objc == 3)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	int which = atoi(s);
-	char *ts = Tcl_GetString(objv[2]);
+	char *ts = get_Tcl_string(objv[2]);
 	int onoff = atoi_64(ts);
 
 	if((which >= 0) && (which < GLOBALS->traces.total))
@@ -1378,9 +1396,9 @@ static int gtkwavetcl_setTraceHighlightFromNameMatch(ClientData clientData, Tcl_
 {
 if(objc == 3)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	int which = atoi(s);
-	char *ts = Tcl_GetString(objv[2]);
+	char *ts = get_Tcl_string(objv[2]);
 	int onoff = atoi_64(ts);
 	int mat = 0;
 
@@ -1550,7 +1568,7 @@ static int gtkwavetcl_forceOpenTreeNode(ClientData clientData, Tcl_Interp *inter
   int rv = -100;		/* Tree does not exist */
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 
 	if(s)
 		{
@@ -1584,7 +1602,7 @@ static int gtkwavetcl_setFromEntry(ClientData clientData, Tcl_Interp *interp, in
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 
 	if(s)
 		{
@@ -1607,7 +1625,7 @@ static int gtkwavetcl_setToEntry(ClientData clientData, Tcl_Interp *interp, int 
 {
 if(objc == 2)
         {
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
 
 	if(s)
 		{
@@ -1671,7 +1689,7 @@ static int gtkwavetcl_getTraceFlagsFromName(ClientData clientData, Tcl_Interp *i
 {
 if(objc == 2)
 	{
-	char *s = Tcl_GetString(objv[1]);
+	char *s = get_Tcl_string(objv[1]);
 	Trptr t = GLOBALS->traces.first;
 
 	while(t)
@@ -1706,7 +1724,7 @@ static int gtkwavetcl_loadFile(ClientData clientData, Tcl_Interp *interp, int ob
 {
   if(objc == 2)
     {
-      char *s = Tcl_GetString(objv[1]);
+      char *s = get_Tcl_string(objv[1]);
 	
       /*	read_save_helper(s); */
       process_url_file(s);
@@ -1759,7 +1777,7 @@ static int gtkwavetcl_showSignal(ClientData clientData, Tcl_Interp *interp, int 
 {
   if(objc == 3)
     {
-      char *s0 = Tcl_GetString(objv[1]);
+      char *s0 = get_Tcl_string(objv[1]);
       char *s1;
       int row;
       unsigned location;
@@ -1767,7 +1785,7 @@ static int gtkwavetcl_showSignal(ClientData clientData, Tcl_Interp *interp, int 
       sscanf(s0, "%d", &row);
       if (row < 0) { row = 0; };
 
-      s1 = Tcl_GetString(objv[2]);
+      s1 = get_Tcl_string(objv[2]);
       sscanf(s1, "%u", &location);
 
       SetTraceScrollbarRowValue(row, location);
@@ -1825,7 +1843,7 @@ static int gtkwavetcl_setTabActive(ClientData clientData, Tcl_Interp *interp, in
 {
 if(objc == 2)
         {       
-        char *s = Tcl_GetString(objv[1]);
+        char *s = get_Tcl_string(objv[1]);
         unsigned int tabnum = atoi(s);
 	gint rc = switch_to_tab_number(tabnum);
         
@@ -1932,6 +1950,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.37  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *
