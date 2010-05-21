@@ -1382,6 +1382,8 @@ if(xc)
         {
         return(xc->size_limit_locked != 0);
         }
+
+return(0);
 }
 
 
