@@ -837,5 +837,6 @@
 		allows usage of strings such as "1ns" for the timescale.
 		Incorporated FST writer optimizations.
 		Incorporated some fixes suggested by cppcheck.
-3.3.7	13may10	Made enable_fast_exit rc variable default to yes.
+3.3.7	21may10	Made enable_fast_exit rc variable default to yes.
 		Compiler warning fix in lxt_write.c for Open Solaris.
+		Added fstWriterGetDumpSizeLimitReached() to fstapi.c.

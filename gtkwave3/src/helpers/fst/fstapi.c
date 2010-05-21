@@ -1375,6 +1375,16 @@ if(xc)
 }
 
 
+int fstWriterGetDumpSizeLimitReached(void *ctx)
+{
+struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
+if(xc)
+        {
+        return(xc->size_limit_locked != 0);
+        }
+}
+
+
 /*
  * writer scope/var creation
  */
