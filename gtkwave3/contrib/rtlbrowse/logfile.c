@@ -259,7 +259,7 @@ void tr_search_forward(char *str, gboolean noskip)
 {
 struct text_find_t *tr = selected_text_via_tab;
 
-if(tr)
+if((tr) && (tr->text))
 	{
 	GtkTextBuffer *tb = GTK_TEXT_VIEW(tr->text)->buffer;
 	GtkTextMark *tm = gtk_text_buffer_get_insert(tb);
@@ -375,7 +375,7 @@ void tr_search_backward(char *str)
 {
 struct text_find_t *tr = selected_text_via_tab;
 
-if(tr)
+if((tr) && (tr->text))
 	{
 	GtkTextBuffer *tb = GTK_TEXT_VIEW(tr->text)->buffer;
 	GtkTextMark *tm = gtk_text_buffer_get_insert(tb);
@@ -1349,7 +1349,7 @@ gboolean update_ctx_when_idle(gpointer textview_or_dummy)
 {
 struct text_find_t *t;
 
-if(anno_ctx->cygwin_remote_kill)
+if((anno_ctx) && (anno_ctx->cygwin_remote_kill))
 	{
 	anno_ctx->cygwin_remote_kill = 0;
 	exit(0); /* remote kill command from gtkwave */
@@ -1457,6 +1457,7 @@ while(t)
 	if((which ? t->button : t->window)==widget)
 		{
 		matched = t->window;
+		if(t==selected_text_via_tab) selected_text_via_tab = NULL;
 		if(tprev)	/* prune out struct text_find_t */
 			{
 			tprev->next = t->next;
@@ -1485,6 +1486,9 @@ if(ctx)
 	JRB varnames = ctx->varnames;
 
 	if(ctx->title) free(ctx->title);
+
+	/* Avoid dereferencing null pointers. */
+	if (varnames == NULL) return;
 
         /* free up variables list */
         jrb_traverse(node, varnames)
@@ -2678,6 +2682,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2009/12/24 21:03:32  gtkwave
+ * warnings fixes
+ *
  * Revision 1.31  2009/07/07 20:22:52  gtkwave
  * use standard verilog capitalization for x/X z/Z values in hexify()
  *
