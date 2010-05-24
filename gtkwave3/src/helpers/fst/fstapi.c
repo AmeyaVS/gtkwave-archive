@@ -555,7 +555,7 @@ if(!xc->curval_mem)
 }
 
 
-static void fstDestroyMmaps(struct fstWriterContext *xc)
+static void fstDestroyMmaps(struct fstWriterContext *xc, int is_closing)
 {
 if(xc->valpos_mem)
 	{
@@ -564,6 +564,24 @@ if(xc->valpos_mem)
 	}
 if(xc->curval_mem)
 	{
+#if defined __CYGWIN__ || defined __MINGW32__
+	if(!is_closing) /* need to flush out for next emulated mmap() read */
+		{
+		unsigned char *pnt = xc->curval_mem;
+		int __fd = fileno(xc->curval_handle);
+		off_t cur_offs = lseek(__fd, 0, SEEK_CUR);
+		size_t i;
+		size_t __len = xc->maxvalpos;
+
+		lseek(__fd, 0, SEEK_SET);
+		for(i=0;i<__len;i+=SSIZE_MAX)
+		        {
+		        write(__fd, pnt + i, ((__len - i) >= SSIZE_MAX) ? SSIZE_MAX : (__len - i));
+		        }
+		lseek(__fd, cur_offs, SEEK_SET);
+		}
+#endif
+
 	fstMunmap(xc->curval_mem, xc->maxvalpos);
 	xc->curval_mem = NULL;
 	}
@@ -650,7 +668,7 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
 			}
 		fstWriterFlushContext(xc);
 		}
-	fstDestroyMmaps(xc);
+	fstDestroyMmaps(xc, 1);
 
 	/* write out geom section */
 	fflush(xc->geom_handle);
@@ -1405,7 +1423,7 @@ if(xc && nam)
         {
 	if(xc->valpos_mem)
 		{
-		fstDestroyMmaps(xc);
+		fstDestroyMmaps(xc, 0);
 		}
 
 	fputc(vt, xc->hier_handle);
