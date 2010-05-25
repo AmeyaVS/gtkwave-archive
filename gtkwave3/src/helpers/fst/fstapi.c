@@ -878,8 +878,7 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
 	}
 #endif
 
-	if(xc->filename) { free(xc->filename); xc->filename = NULL; }
-
+	free(xc->filename); xc->filename = NULL;
 	free(xc);
 	}
 }
@@ -1766,7 +1765,7 @@ static void fstReaderDeallocateScopeData(struct fstReaderContext *xc)
 {
 struct fstCurrHier *chp;
 
-if(xc->curr_flat_hier_nam) { free(xc->curr_flat_hier_nam); xc->curr_flat_hier_nam = NULL; }
+free(xc->curr_flat_hier_nam); xc->curr_flat_hier_nam = NULL;
 while(xc->curr_hier)
 	{
 	chp = xc->curr_hier->prev;
@@ -2403,10 +2402,10 @@ if(fv)
 xc->maxhandle = 0;
 xc->num_alias = 0;
 
-if(xc->signal_lens) free(xc->signal_lens);
+free(xc->signal_lens);
 xc->signal_lens = malloc(num_signal_dyn*sizeof(uint32_t));
 
-if(xc->signal_typs) free(xc->signal_typs);
+free(xc->signal_typs);
 xc->signal_typs = malloc(num_signal_dyn*sizeof(unsigned char));
 
 fseeko(xc->fh, 0, SEEK_SET);
@@ -2519,10 +2518,10 @@ if(fv) fprintf(fv, "$enddefinitions $end\n");
 xc->signal_lens = realloc(xc->signal_lens, xc->maxhandle*sizeof(uint32_t));
 xc->signal_typs = realloc(xc->signal_typs, xc->maxhandle*sizeof(unsigned char));
 
-if(xc->process_mask) { free(xc->process_mask); }
+free(xc->process_mask);
 xc->process_mask = calloc(1, (xc->maxhandle+7)/8);
 
-if(xc->temp_signal_value_buf) free(xc->temp_signal_value_buf);
+free(xc->temp_signal_value_buf);
 xc->temp_signal_value_buf = malloc(xc->longest_signal_value_len + 1);
 
 xc->var_count = xc->maxhandle + xc->num_alias;
@@ -2680,7 +2679,7 @@ while(blkpos < endfile)
 			xc->maxhandle = fstReaderUint64(xc->f);
 			xc->longest_signal_value_len = 32; /* arbitrarily set at 32...this is much longer than an expanded double */
 
-			if(xc->process_mask) { free(xc->process_mask); }
+			free(xc->process_mask);
 			xc->process_mask = calloc(1, (xc->maxhandle+7)/8);
 
 			if(clen != uclen)
@@ -2706,9 +2705,9 @@ while(blkpos < endfile)
 				fstFread(ucdata, uclen, 1, xc->f);
 				}
 	
-			if(xc->signal_lens) free(xc->signal_lens);
+			free(xc->signal_lens);
 			xc->signal_lens = malloc(sizeof(uint32_t) * xc->maxhandle);
-			if(xc->signal_typs) free(xc->signal_typs);
+			free(xc->signal_typs);
 			xc->signal_typs = malloc(sizeof(unsigned char) * xc->maxhandle);
 	
 			for(i=0;i<xc->maxhandle;i++)
@@ -2735,7 +2734,7 @@ while(blkpos < endfile)
 					}
 				}
 
-			if(xc->temp_signal_value_buf) free(xc->temp_signal_value_buf);
+			free(xc->temp_signal_value_buf);
 			xc->temp_signal_value_buf = malloc(xc->longest_signal_value_len + 1); 
 	
 			free(ucdata);
@@ -2753,9 +2752,9 @@ while(blkpos < endfile)
 		uint64_t delta;
 
 		xc->num_blackouts = fstReaderVarint32(xc->f);
-		if(xc->blackout_times) free(xc->blackout_times);
+		free(xc->blackout_times);
 		xc->blackout_times = calloc(xc->num_blackouts, sizeof(uint64_t));
-		if(xc->blackout_activity) free(xc->blackout_activity);
+		free(xc->blackout_activity);
 		xc->blackout_activity = calloc(xc->num_blackouts, sizeof(unsigned char));
 
 		for(i=0;i<xc->num_blackouts;i++)
@@ -2836,11 +2835,11 @@ static void fstReaderDeallocateRvatData(void *ctx)
 struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
 if(xc)
 	{
-	if(xc->rvat_chain_mem) { free(xc->rvat_chain_mem); xc->rvat_chain_mem = NULL; }
-	if(xc->rvat_frame_data) { free(xc->rvat_frame_data); xc->rvat_frame_data = NULL; }
-	if(xc->rvat_time_table) { free(xc->rvat_time_table); xc->rvat_time_table = NULL; }
-	if(xc->rvat_chain_table) { free(xc->rvat_chain_table); xc->rvat_chain_table = NULL; }
-	if(xc->rvat_chain_table_lengths) { free(xc->rvat_chain_table_lengths); xc->rvat_chain_table_lengths = NULL; }
+	free(xc->rvat_chain_mem); xc->rvat_chain_mem = NULL;
+	free(xc->rvat_frame_data); xc->rvat_frame_data = NULL;
+	free(xc->rvat_time_table); xc->rvat_time_table = NULL;
+	free(xc->rvat_chain_table); xc->rvat_chain_table = NULL;
+	free(xc->rvat_chain_table_lengths); xc->rvat_chain_table_lengths = NULL;
 
 	xc->rvat_data_valid = 0;
 	}
@@ -2855,15 +2854,15 @@ if(xc)
 	{
 	fstReaderDeallocateScopeData(xc);
 	fstReaderDeallocateRvatData(xc);
-	if(xc->rvat_sig_offs) { free(xc->rvat_sig_offs); xc->rvat_sig_offs = NULL; }
+	free(xc->rvat_sig_offs); xc->rvat_sig_offs = NULL;
 
-	if(xc->process_mask) { free(xc->process_mask); xc->process_mask = NULL; }
-	if(xc->blackout_times) { free(xc->blackout_times); xc->blackout_times = NULL; }
-	if(xc->blackout_activity) { free(xc->blackout_activity); xc->blackout_activity = NULL; }
-	if(xc->temp_signal_value_buf) { free(xc->temp_signal_value_buf); xc->temp_signal_value_buf = NULL; }
-	if(xc->signal_typs) { free(xc->signal_typs); xc->signal_typs = NULL; }
-	if(xc->signal_lens) { free(xc->signal_lens); xc->signal_lens = NULL; }
-	if(xc->filename) { free(xc->filename); xc->filename = NULL; }
+	free(xc->process_mask); xc->process_mask = NULL;
+	free(xc->blackout_times); xc->blackout_times = NULL;
+	free(xc->blackout_activity); xc->blackout_activity = NULL;
+	free(xc->temp_signal_value_buf); xc->temp_signal_value_buf = NULL;
+	free(xc->signal_typs); xc->signal_typs = NULL;
+	free(xc->signal_lens); xc->signal_lens = NULL;
+	free(xc->filename); xc->filename = NULL;
 
 	if(xc->fh) 
 		{ 
@@ -3032,7 +3031,7 @@ for(;;)
 		fstFread(ucdata, tsec_uclen, 1, xc->f);
 		}
 	
-	if(time_table) free(time_table);
+	free(time_table);
 	time_table = calloc(tsec_nitems, sizeof(uint64_t));
 	tpnt = ucdata;
 	tpval = 0;
@@ -3647,7 +3646,7 @@ if(chain_table)
 	free(chain_table_lengths);
 	}
 
-if(time_table) free(time_table);
+free(time_table);
 
 return(1);
 }
