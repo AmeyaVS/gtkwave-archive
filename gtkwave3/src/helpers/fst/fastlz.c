@@ -77,10 +77,6 @@
 #endif
 #endif
 
-#if defined(MAC_OS_X) && !defined(FASTLZ_STRICT_ALIGN)
-#define FASTLZ_STRICT_ALIGN
-#endif
-
 /* prototypes */
 int fastlz_compress(const void* input, int length, void* output);
 int fastlz_compress_level(int level, const void* input, int length, void* output);
