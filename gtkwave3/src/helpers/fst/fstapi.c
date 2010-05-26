@@ -817,7 +817,6 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
 			if(fp)
 				{
 				void *dsth;
-				int rc;
 				char gz_membuf[FST_GZIO_LEN];
 
 				fseeko(xc->handle, 0, SEEK_END);
@@ -834,7 +833,7 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
 				for(offpnt = 0; offpnt < uclen; offpnt += FST_GZIO_LEN)
 					{
 					size_t this_len = ((uclen - offpnt) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - offpnt);
-					rc = fstFread(gz_membuf, this_len, 1, xc->handle);
+					fstFread(gz_membuf, this_len, 1, xc->handle);
 					gzwrite(dsth, gz_membuf, this_len);
 					}
 				gzclose(dsth);
@@ -2340,7 +2339,7 @@ struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
 char str[FST_ID_NAM_SIZ+1];
 char *pnt;
 int ch, scopetype;
-int vartype, vardir;
+int vartype;
 uint32_t len, alias;
 uint32_t maxvalpos=0;
 int num_signal_dyn = 65536;
@@ -2453,7 +2452,7 @@ while(!feof(xc->fh))
 		case FST_VT_VCD_ARRAY:
 		case FST_VT_VCD_REALTIME:
 			vartype = tag;
-			vardir = fgetc(xc->fh); /* unused in VCD reader */
+			/* vardir = */ fgetc(xc->fh); /* unused in VCD reader, but need to advance read pointer */
 			pnt = str;
 			while((ch = fgetc(xc->fh))) 
 				{
