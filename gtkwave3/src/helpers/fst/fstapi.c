@@ -2549,7 +2549,14 @@ if(sectype == FST_BL_ZWRAPPER)
 	char gz_membuf[FST_GZIO_LEN];
 	void *zhandle;
         int flen = strlen(xc->filename);
-        char *hf = calloc(1, flen + 16 + 32 + 1);
+        char *hf;
+
+	seclen = fstReaderUint64(xc->f);
+	uclen = fstReaderUint64(xc->f);
+
+	if(!seclen) return(0); /* not finished compressing, this is a failed read */
+
+        hf = calloc(1, flen + 16 + 32 + 1);
 
 	sprintf(hf, "%s.upk_%d_%p", xc->filename, getpid(), (void *)xc);
 	fcomp = fopen(hf, "w+b");
@@ -2561,11 +2568,6 @@ if(sectype == FST_BL_ZWRAPPER)
 	unlink(hf);
 	free(hf);
 #endif
-
-	seclen = fstReaderUint64(xc->f);
-	uclen = fstReaderUint64(xc->f);
-
-	if(!seclen) return(0); /* not finished compressing, this is a failed read */
 
 	fseeko(xc->f, 1+8+8, SEEK_SET);
 	fflush(xc->f);
