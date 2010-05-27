@@ -849,3 +849,5 @@
 		printf format warnings.
 		Fixed "format not a string literal and no format arguments"
 		warnings.
+		Added missing HAVE_INTTYPES_H in compile note for
+		transaction.c.
