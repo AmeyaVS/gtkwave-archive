@@ -77,13 +77,8 @@ typedef uint16_t 		lxtint16_t;
 typedef uint32_t		lxtint32_t;
 typedef uint64_t	 	lxtint64_t;
 #ifndef __MINGW32__
-#if __WORDSIZE == 64
-        #define LXT2_RD_LLD "%ld"
-        #define LXT2_RD_LD  "%d"
-#else
-        #define LXT2_RD_LLD "%lld"
-        #define LXT2_RD_LD "%ld"
-#endif
+#define LXT2_RD_LLD "%"PRId64   
+#define LXT2_RD_LD "%"PRId32
 #else
 #define LXT2_RD_LLD "%I64d"
 #define LXT2_RD_LD "%d"
@@ -301,6 +296,9 @@ unsigned int			lxt2_rd_unlimit_time_range(struct lxt2_rd_trace *lt);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/02/18 17:27:07  gtkwave
+ * extern "C" headers / version bump
+ *
  * Revision 1.3  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *

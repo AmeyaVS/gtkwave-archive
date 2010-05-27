@@ -845,3 +845,5 @@
 		rtlbrowse.
 		Moved gtk_grab_add() after gtk_widget_show() in order to work
 		with newer versions of GTK.
+		Use PRId64/PRId32 in lxt2_read.h and vzt_read.h to remove
+		printf format warnings.
