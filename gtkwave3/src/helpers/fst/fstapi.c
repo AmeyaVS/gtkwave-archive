@@ -115,7 +115,7 @@ return(pnt);
 #define FST_CADDR_T_CAST
 #endif
 #define fstMmap(__addr,__len,__prot,__flags,__fd,__off) (void*)mmap(FST_CADDR_T_CAST (__addr),(__len),(__prot),(__flags),(__fd),(__off))
-#define fstMunmap(__addr,__len) 			munmap(FST_CADDR_T_CAST (__addr),(__len))
+#define fstMunmap(__addr,__len) 			{ if(__addr) munmap(FST_CADDR_T_CAST (__addr),(__len)); }
 #endif
 
 
@@ -557,14 +557,12 @@ if(!xc->curval_mem)
 
 static void fstDestroyMmaps(struct fstWriterContext *xc, int is_closing)
 {
-if(xc->valpos_mem)
-	{
-	fstMunmap(xc->valpos_mem, xc->maxhandle * 4 * sizeof(uint32_t));
-	xc->valpos_mem = NULL;
-	}
+fstMunmap(xc->valpos_mem, xc->maxhandle * 4 * sizeof(uint32_t));
+xc->valpos_mem = NULL;
+
+#if defined __CYGWIN__ || defined __MINGW32__
 if(xc->curval_mem)
 	{
-#if defined __CYGWIN__ || defined __MINGW32__
 	if(!is_closing) /* need to flush out for next emulated mmap() read */
 		{
 		unsigned char *pnt = xc->curval_mem;
@@ -580,11 +578,11 @@ if(xc->curval_mem)
 		        }
 		lseek(__fd, cur_offs, SEEK_SET);
 		}
+	}
 #endif
 
-	fstMunmap(xc->curval_mem, xc->maxvalpos);
-	xc->curval_mem = NULL;
-	}
+fstMunmap(xc->curval_mem, xc->maxvalpos);
+xc->curval_mem = NULL;
 }
 
 
