@@ -56,7 +56,6 @@ void simplereqbox(char *title, int width, char *default_text,
     GLOBALS->window_simplereq_c_9 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     install_focus_cb(GLOBALS->window_simplereq_c_9, ((char *)&GLOBALS->window_simplereq_c_9) - ((char *)GLOBALS));
 
-    gtk_grab_add(GLOBALS->window_simplereq_c_9);
     gtk_window_set_transient_for(GTK_WINDOW(GLOBALS->window_simplereq_c_9), GTK_WINDOW(GLOBALS->mainwindow));
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_simplereq_c_9), width, 55 + 52);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_simplereq_c_9), title);
@@ -109,11 +108,15 @@ void simplereqbox(char *title, int width, char *default_text,
 	}
 
     gtk_widget_show(GLOBALS->window_simplereq_c_9);
+    gtk_grab_add(GLOBALS->window_simplereq_c_9);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.5  2008/11/14 19:01:28  gtkwave
  * updated simplereq so the window is transient
  *

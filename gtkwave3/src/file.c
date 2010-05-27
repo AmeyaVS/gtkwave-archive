@@ -77,8 +77,8 @@ if(*GLOBALS->fileselbox_text) gtk_file_selection_set_filename(GTK_FILE_SELECTION
  * if((pattn)&&(pattn[0])) gtk_file_selection_complete(GTK_FILE_SELECTION(fs), pattn);
  */
 
-gtk_grab_add(GLOBALS->fs_file_c_1);
 gtk_widget_show(GLOBALS->fs_file_c_1);
+gtk_grab_add(GLOBALS->fs_file_c_1);
 }
 
 
@@ -248,8 +248,8 @@ if(pWindowMain)
 	{
 	gtk_window_set_transient_for(GTK_WINDOW(pFileChoose), GTK_WINDOW(pWindowMain));
 	}
-gtk_grab_add(pFileChoose);
 gtk_widget_show(pFileChoose);
+gtk_grab_add(pFileChoose);
 
 if (gtk_dialog_run(GTK_DIALOG (pFileChoose)) == GTK_RESPONSE_ACCEPT)
 	{
@@ -318,6 +318,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/02/18 23:06:04  gtkwave
+ * change name of main iteration loop calls
+ *
  * Revision 1.14  2009/12/15 23:40:59  gtkwave
  * removed old style scripts; also removed tempfiles for Tcl args
  *

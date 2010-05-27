@@ -149,7 +149,6 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     GLOBALS->window1_treesearch_gtk1_c = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     install_focus_cb(GLOBALS->window1_treesearch_gtk1_c, ((char *)&GLOBALS->window1_treesearch_gtk1_c) - ((char *)GLOBALS));
 
-    gtk_grab_add(GLOBALS->window1_treesearch_gtk1_c);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_treesearch_gtk1_c), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_treesearch_gtk1_c), title);
     gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window1_treesearch_gtk1_c), "delete_event", (GtkSignalFunc) destroy_callback_e, NULL);
@@ -186,6 +185,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
     gtk_widget_show(GLOBALS->window1_treesearch_gtk1_c);
+    gtk_grab_add(GLOBALS->window1_treesearch_gtk1_c);
 }
 
 /***************************************************************************/
@@ -815,6 +815,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/03/16 21:01:11  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.12  2008/12/18 01:31:30  gtkwave
  * integrated experimental autoscroll code on signal adds
  *

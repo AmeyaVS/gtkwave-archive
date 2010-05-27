@@ -120,8 +120,6 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
   GLOBALS->window_showchange_c_8 = gtk_window_new (GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
   install_focus_cb(GLOBALS->window_showchange_c_8, ((char *)&GLOBALS->window_showchange_c_8) - ((char *)GLOBALS));
 
-  gtk_grab_add(GLOBALS->window_showchange_c_8);  
-
   gtkwave_signal_connect (GTK_OBJECT (GLOBALS->window_showchange_c_8), "delete_event",GTK_SIGNAL_FUNC(destroy_callback),NULL);
 
   gtk_window_set_title (GTK_WINDOW (GLOBALS->window_showchange_c_8), title);
@@ -261,11 +259,15 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 
   gtk_container_add (GTK_CONTAINER (GLOBALS->window_showchange_c_8), main_vbox);
   gtk_widget_show (GLOBALS->window_showchange_c_8);
+  gtk_grab_add(GLOBALS->window_showchange_c_8);  
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2007/09/12 17:26:45  gtkwave
+ * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
+ *
  * Revision 1.3  2007/09/10 18:08:49  gtkwave
  * tabs selection can swap dynamically based on external window focus
  *

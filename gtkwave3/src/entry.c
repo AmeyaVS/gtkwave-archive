@@ -72,7 +72,6 @@ void entrybox(char *title, int width, char *dflt_text, char *comment, int maxch,
     GLOBALS->window_entry_c_1 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     install_focus_cb(GLOBALS->window_entry_c_1, ((char *)&GLOBALS->window_entry_c_1) - ((char *)GLOBALS));
 
-    gtk_grab_add(GLOBALS->window_entry_c_1);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window_entry_c_1), width, height);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_entry_c_1), title);
     gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_entry_c_1), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
@@ -125,11 +124,15 @@ void entrybox(char *title, int width, char *dflt_text, char *comment, int maxch,
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
     gtk_widget_show(GLOBALS->window_entry_c_1);
+    gtk_grab_add(GLOBALS->window_entry_c_1);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.5  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

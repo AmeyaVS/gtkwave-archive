@@ -227,7 +227,6 @@ void markerbox(char *title, GtkSignalFunc func)
     GLOBALS->window_markerbox_c_4 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     install_focus_cb(GLOBALS->window_markerbox_c_4, ((char *)&GLOBALS->window_markerbox_c_4) - ((char *)GLOBALS));
 
-    gtk_grab_add(GLOBALS->window_markerbox_c_4);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_markerbox_c_4), title);
     gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window_markerbox_c_4), "delete_event",(GtkSignalFunc) destroy_callback, NULL);
 
@@ -332,11 +331,15 @@ void markerbox(char *title, GtkSignalFunc func)
 
     gtk_container_add (GTK_CONTAINER (GLOBALS->window_markerbox_c_4), table); /* need this table to keep ok/cancel buttons from stretching! */
     gtk_widget_show(GLOBALS->window_markerbox_c_4);
+    gtk_grab_add(GLOBALS->window_markerbox_c_4);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2008/12/28 03:03:33  gtkwave
+ * Added scale_to_time_dimension rc variable and menu options.
+ *
  * Revision 1.7  2008/12/16 19:28:20  gtkwave
  * more warnings cleanups
  *

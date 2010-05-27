@@ -126,7 +126,6 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     GLOBALS->window1_search_c_2 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     install_focus_cb(GLOBALS->window1_search_c_2, ((char *)&GLOBALS->window1_search_c_2) - ((char *)GLOBALS));
 
-    gtk_grab_add(GLOBALS->window1_search_c_2);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_search_c_2), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_search_c_2), title);
     gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window1_search_c_2), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
@@ -162,6 +161,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
     gtk_widget_show(GLOBALS->window1_search_c_2);
+    gtk_grab_add(GLOBALS->window1_search_c_2);
 }
 
 /***************************************************************************/
@@ -1111,6 +1111,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/03/16 21:01:10  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.14  2010/02/18 23:06:04  gtkwave
  * change name of main iteration loop calls
  *

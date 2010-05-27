@@ -262,7 +262,6 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     GLOBALS->window1_hiersearch_c_1 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
     install_focus_cb(GLOBALS->window1_hiersearch_c_1, ((char *)&GLOBALS->window1_hiersearch_c_1) - ((char *)GLOBALS));
 
-    gtk_grab_add(GLOBALS->window1_hiersearch_c_1);
     gtk_widget_set_usize( GTK_WIDGET (GLOBALS->window1_hiersearch_c_1), width, 60);
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_hiersearch_c_1), title);
     gtkwave_signal_connect(GTK_OBJECT (GLOBALS->window1_hiersearch_c_1), "delete_event",(GtkSignalFunc) destroy_callback_e, NULL);
@@ -298,6 +297,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_container_add (GTK_CONTAINER (hbox), button2);
 
     gtk_widget_show(GLOBALS->window1_hiersearch_c_1);
+    gtk_grab_add(GLOBALS->window1_hiersearch_c_1);
 }
 
 /***************************************************************************/
@@ -981,6 +981,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/03/16 21:01:09  gtkwave
+ * remove selected member of struct symbol
+ *
  * Revision 1.7  2008/12/18 01:31:30  gtkwave
  * integrated experimental autoscroll code on signal adds
  *
