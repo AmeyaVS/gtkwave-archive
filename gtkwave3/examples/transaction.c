@@ -21,7 +21,7 @@
  */
 
 /*
- * to compile: gcc -o transaction transaction.c
+ * to compile: gcc -o transaction transaction.c -DHAVE_INTTYPES_H
  * then in this directory run: gtkwave transaction.fst transaction.sav
  */
 
