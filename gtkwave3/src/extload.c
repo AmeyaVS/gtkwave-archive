@@ -36,7 +36,7 @@ const char *extload_loader_fail_msg = "Sorry, EXTLOAD support was not compiled i
 
 TimeType extload_main(char *fname, char *skip_start, char *skip_end)
 {
-fprintf(stderr, extload_loader_fail_msg);
+fprintf(stderr, "%s", extload_loader_fail_msg);
 exit(255);
 
 return(0); /* for vc++ */
@@ -44,7 +44,7 @@ return(0); /* for vc++ */
 
 void import_extload_trace(nptr np)
 {
-fprintf(stderr, extload_loader_fail_msg);
+fprintf(stderr, "%s", extload_loader_fail_msg);
 exit(255);
 }
 
@@ -1007,6 +1007,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/03/19 17:50:57  gtkwave
+ * compatibility fixes from fac struct changes
+ *
  * Revision 1.9  2010/03/13 21:38:16  gtkwave
  * fixed && used in logical operations for allocating ExtNode
  *

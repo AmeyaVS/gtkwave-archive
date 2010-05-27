@@ -37,7 +37,7 @@ const char *ae2_loader_fail_msg = "Sorry, AET2 support was not compiled into thi
 
 TimeType ae2_main(char *fname, char *skip_start, char *skip_end, char *indirect_fname)
 {
-fprintf(stderr, ae2_loader_fail_msg);
+fprintf(stderr, "%s", ae2_loader_fail_msg);
 exit(255);
 
 return(0); /* for vc++ */
@@ -45,7 +45,7 @@ return(0); /* for vc++ */
 
 void ae2_import_masked(void)
 {
-fprintf(stderr, ae2_loader_fail_msg);
+fprintf(stderr, "%s", ae2_loader_fail_msg);
 exit(255);
 }
 
@@ -1282,6 +1282,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/03/19 17:07:22  gtkwave
+ * added missing ->symbol after structure type changed
+ *
  * Revision 1.14  2010/03/15 15:57:28  gtkwave
  * only allocate hash when necessary
  *
