@@ -1035,7 +1035,7 @@ FILE *f;
     id = p;                    /* here is where id is */
     p = s;
     while ( p!=id ) {fputc(*p, f); p++;} /* dump until just before variable */
-	fprintf(f, prefix);
+	fprintf(f, "%s", prefix);
     while ( isspace(*p) ) p++;
     while ( *p!='\0' )                   /* dump rest */
     {
