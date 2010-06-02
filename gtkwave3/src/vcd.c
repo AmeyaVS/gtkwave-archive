@@ -1320,7 +1320,7 @@ for(;;)
 
                                 if(GLOBALS->pv_vcd_c_1)
                                         { 
-                                        if(!strcmp(GLOBALS->pv_vcd_c_1->name,v->name) && !disable_autocoalesce)
+                                        if(!strcmp(GLOBALS->pv_vcd_c_1->name,v->name) && !disable_autocoalesce && (!strchr(v->name, '\\')))
                                                 {
                                                 GLOBALS->pv_vcd_c_1->chain=v;
                                                 v->root=GLOBALS->rootv_vcd_c_1;
@@ -2620,6 +2620,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2010/06/02 03:23:04  gtkwave
+ * disable autocoalesce if Icarus Verilog is detected
+ *
  * Revision 1.32  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

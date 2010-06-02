@@ -1286,7 +1286,7 @@ for(;;)
 
                                 if(GLOBALS->pv_vcd_partial_c_2)
                                         { 
-                                        if(!strcmp(GLOBALS->pv_vcd_partial_c_2->name,v->name) && !disable_autocoalesce)
+                                        if(!strcmp(GLOBALS->pv_vcd_partial_c_2->name,v->name) && !disable_autocoalesce && (!strchr(v->name, '\\')))
                                                 {
                                                 GLOBALS->pv_vcd_partial_c_2->chain=v;
                                                 v->root=GLOBALS->rootv_vcd_partial_c_2;
@@ -2533,6 +2533,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/06/02 03:23:04  gtkwave
+ * disable autocoalesce if Icarus Verilog is detected
+ *
  * Revision 1.34  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *

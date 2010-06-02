@@ -1640,7 +1640,7 @@ for(;;)
 
                                 if(GLOBALS->pv_vcd_recoder_c_3)
                                         { 
-                                        if(!strcmp(GLOBALS->prev_hier_uncompressed_name,v->name) && !disable_autocoalesce)
+                                        if(!strcmp(GLOBALS->prev_hier_uncompressed_name,v->name) && !disable_autocoalesce && (!strchr(v->name, '\\')))
                                                 {
                                                 GLOBALS->pv_vcd_recoder_c_3->chain=v;
                                                 v->root=GLOBALS->rootv_vcd_recoder_c_3;
@@ -3236,6 +3236,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2010/06/02 03:23:04  gtkwave
+ * disable autocoalesce if Icarus Verilog is detected
+ *
  * Revision 1.41  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

@@ -197,7 +197,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
                 s=&sym_block[i];
                 symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1])))	/* allow chaining for search functions.. */
+		if((prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1]))&&(!strchr(f_name[i], '\\')))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -871,6 +871,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.15  2010/03/13 21:38:16  gtkwave
  * fixed && used in logical operations for allocating ExtNode
  *

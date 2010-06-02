@@ -519,7 +519,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
-		if((allowed_to_autocoalesce)&&(prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1])))	/* allow chaining for search functions.. */
+		if((allowed_to_autocoalesce)&&(prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1]))&&(!strchr(f_name[i], '\\')))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -1268,6 +1268,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2010/06/02 03:23:04  gtkwave
+ * disable autocoalesce if Icarus Verilog is detected
+ *
  * Revision 1.26  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *
