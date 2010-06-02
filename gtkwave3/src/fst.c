@@ -202,6 +202,7 @@ char *nnam = NULL, *pnam = NULL, *pnam2 = NULL;
 uint32_t activity_idx, num_activity_changes;
 struct tree *npar = NULL, *ppar = NULL;
 char **f_name = NULL;
+int allowed_to_autocoalesce;
 
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
 if(!GLOBALS->fst_fst_c_1)
@@ -209,6 +210,12 @@ if(!GLOBALS->fst_fst_c_1)
 	return(LLDescriptor(0));	/* look at GLOBALS->fst_fst_c_1 in caller for success status... */
         }
 /* SPLASH */                            splash_create();
+
+allowed_to_autocoalesce = (strstr(fstReaderGetVersionString(GLOBALS->fst_fst_c_1), "Icarus") == NULL);
+if(!allowed_to_autocoalesce)
+	{
+	GLOBALS->autocoalesce = 0;
+	}
 
 scale=(signed char)fstReaderGetTimescale(GLOBALS->fst_fst_c_1);
 exponent_to_time_scale(scale);
@@ -512,7 +519,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1])))	/* allow chaining for search functions.. */
+		if((allowed_to_autocoalesce)&&(prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1])))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -1261,6 +1268,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2010/03/14 07:09:49  gtkwave
+ * removed ExtNode and merged with Node
+ *
  * Revision 1.25  2010/03/13 21:38:16  gtkwave
  * fixed && used in logical operations for allocating ExtNode
  *

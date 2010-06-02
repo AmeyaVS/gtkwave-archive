@@ -1138,9 +1138,30 @@ for(;;)
 	{
 	tok=get_token();
 	if((tok==T_END)||(tok==T_EOF)) break;
-	if(hdr)DEBUG(fprintf(stderr," %s",yytext));
+	if(hdr)DEBUG(fprintf(stderr," %s",GLOBALS->yytext_vcd_recoder_c_3));
 	}
 if(hdr) DEBUG(fprintf(stderr,"\n"));
+}
+
+static int version_sync_end(char *hdr)
+{
+int tok;
+int rc = 0;
+
+if(hdr) DEBUG(fprintf(stderr,"%s",hdr));
+for(;;)
+	{
+	tok=get_token();
+	if((tok==T_END)||(tok==T_EOF)) break;
+	if(hdr)DEBUG(fprintf(stderr," %s",GLOBALS->yytext_vcd_recoder_c_3));
+	if(strstr(GLOBALS->yytext_vcd_recoder_c_3, "Icarus"))	/* turn off autocoalesce for Icarus */
+		{
+		GLOBALS->autocoalesce = 0;
+		rc = 1;
+		}
+	}
+if(hdr) DEBUG(fprintf(stderr,"\n"));
+return(rc);
 }
 
 static void parse_valuechange(void)
@@ -1357,6 +1378,7 @@ static void vcd_parse(void)
 {
 int tok;
 unsigned char ttype;
+int disable_autocoalesce = 0;
 
 for(;;)
 	{
@@ -1369,7 +1391,7 @@ for(;;)
 			sync_end("DATE:");
 			break;
 		case T_VERSION:
-			sync_end("VERSION:");
+			disable_autocoalesce = version_sync_end("VERSION:");
 			break;
 		case T_TIMESCALE:
 			{
@@ -1618,7 +1640,7 @@ for(;;)
 
                                 if(GLOBALS->pv_vcd_recoder_c_3)
                                         { 
-                                        if(!strcmp(GLOBALS->prev_hier_uncompressed_name,v->name))
+                                        if(!strcmp(GLOBALS->prev_hier_uncompressed_name,v->name) && !disable_autocoalesce)
                                                 {
                                                 GLOBALS->pv_vcd_recoder_c_3->chain=v;
                                                 v->root=GLOBALS->rootv_vcd_recoder_c_3;
@@ -3214,6 +3236,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.40  2010/03/17 17:32:45  gtkwave
  * use calloc'd memory for SL iterator initialization
  *

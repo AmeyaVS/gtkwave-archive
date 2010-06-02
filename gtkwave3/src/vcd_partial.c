@@ -643,9 +643,30 @@ for(;;)
 	{
 	tok=get_token();
 	if((tok==T_END)||(tok==T_EOF)) break;
-	if(hdr)DEBUG(fprintf(stderr," %s",yytext));
+	if(hdr)DEBUG(fprintf(stderr," %s",GLOBALS->yytext_vcd_partial_c_2));
 	}
 if(hdr) DEBUG(fprintf(stderr,"\n"));
+}
+
+static int version_sync_end(char *hdr)
+{
+int tok;
+int rc = 0;
+
+if(hdr) DEBUG(fprintf(stderr,"%s",hdr));
+for(;;)
+	{
+	tok=get_token();
+	if((tok==T_END)||(tok==T_EOF)) break;
+	if(hdr)DEBUG(fprintf(stderr," %s",GLOBALS->yytext_vcd_partial_c_2));
+        if(strstr(GLOBALS->yytext_vcd_partial_c_2, "Icarus"))   /* turn off autocoalesce for Icarus */
+                {
+		GLOBALS->autocoalesce = 0;
+                rc = 1;
+                }
+	}
+if(hdr) DEBUG(fprintf(stderr,"\n"));
+return(rc);
 }
 
 
@@ -1003,6 +1024,7 @@ static void vcd_parse(void)
 {
 int tok;
 unsigned char ttype;
+int disable_autocoalesce = 0;
 
 for(;;)
 	{
@@ -1015,7 +1037,7 @@ for(;;)
 			sync_end("DATE:");
 			break;
 		case T_VERSION:
-			sync_end("VERSION:");
+			disable_autocoalesce = version_sync_end("VERSION:");
 			break;
 		case T_TIMESCALE:
 			{
@@ -1264,7 +1286,7 @@ for(;;)
 
                                 if(GLOBALS->pv_vcd_partial_c_2)
                                         { 
-                                        if(!strcmp(GLOBALS->pv_vcd_partial_c_2->name,v->name))
+                                        if(!strcmp(GLOBALS->pv_vcd_partial_c_2->name,v->name) && !disable_autocoalesce)
                                                 {
                                                 GLOBALS->pv_vcd_partial_c_2->chain=v;
                                                 v->root=GLOBALS->rootv_vcd_partial_c_2;
@@ -2511,6 +2533,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.33  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *
