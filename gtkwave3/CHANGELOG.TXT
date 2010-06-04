@@ -837,7 +837,7 @@
 		allows usage of strings such as "1ns" for the timescale.
 		Incorporated FST writer optimizations.
 		Incorporated some fixes suggested by cppcheck.
-3.3.7	01jun10	Made enable_fast_exit rc variable default to yes.
+3.3.7	03jun10	Made enable_fast_exit rc variable default to yes.
 		Compiler warning fix in lxt_write.c/fstapi.c for Open Solaris.
 		Added fstWriterGetDumpSizeLimitReached() to fstapi.c.
 		Fixes to Tcl string handling.
@@ -852,3 +852,4 @@
 		Added missing HAVE_INTTYPES_H in compile note for
 		transaction.c.
 		Disable autocoalesce if Icarus Verilog is detected.
+		Added units forward scan in logfile.c.

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -10,6 +10,7 @@
 #include "globals.h"
 #include <config.h>
 #include <gtk/gtk.h>
+#include <ctype.h>
 #include "debug.h"
 #include "symbol.h"
 #include "currenttime.h"
@@ -123,9 +124,51 @@ if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
 
                if(sel)
                        {
-                       if(strlen(sel)&&(sel[0]>='0')&&(sel[0]<='9'))
+			int slen = strlen(sel);
+			char *sel2 = NULL;
+
+                       	if(strlen(sel)&&(sel[0]>='0')&&(sel[0]<='9'))
                                {
-                               TimeType tm = unformat_time(sel, GLOBALS->time_dimension);
+			       TimeType tm;
+			       gunichar gch = gtk_text_iter_get_char(&end);
+			       int do_si_append = 0;
+
+			        if(gch==' ') /* in case time is of format "100 ps" with a space */
+					{
+					gtk_text_iter_forward_char(&end);
+					gch = gtk_text_iter_get_char(&end);
+					}
+
+				if((sel[slen-1]>='0')&&(sel[slen-1]<='9')) /* need to append units? */
+					{
+					int silen = strlen(WAVE_SI_UNITS);
+					int silp;
+
+					gch = tolower(gch);
+					if(gch == 's')
+						{
+						do_si_append = 1;
+						}
+					else
+						{
+						for(silp=0;silp<silen;silp++)
+							{
+							if(gch == WAVE_SI_UNITS[silp])
+								{
+								do_si_append = 1;
+								break;
+								}
+							}
+						}
+					}
+
+				if(do_si_append)
+					{
+					sel2 = malloc_2(slen + 2);
+					sprintf(sel2, "%s%c", sel, (unsigned char)gch);
+					}
+
+                               tm = unformat_time(sel2 ? sel2 : sel, GLOBALS->time_dimension);
                                if((tm >= GLOBALS->tims.first) && (tm <= GLOBALS->tims.last))
                                        {
                                        GLOBALS->tims.lmbcache = -1;
@@ -136,6 +179,8 @@ if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
                                        update_markertime(GLOBALS->tims.marker = tm); /* centering problem in GTK2 */
                                        }
                                }
+
+		       if(sel2) { free_2(sel2); }
                        g_free(sel);
                        }
                }
@@ -159,6 +204,8 @@ if(oe->has_selection)
 	
 		if(sel)
 			{
+			/* GTK1 doesn't currently do the SI fix above */
+
 			if(strlen(sel)&&(sel[0]>='0')&&(sel[0]<='9'))
 				{
 				TimeType tm = unformat_time(sel, GLOBALS->time_dimension);
@@ -557,6 +604,9 @@ while(l)
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2008/11/13 00:12:45  gtkwave
+ * made text size smaller
+ *
  * Revision 1.6  2008/02/10 18:08:28  gtkwave
  * removal of logfiles static and moved into global structure
  *
