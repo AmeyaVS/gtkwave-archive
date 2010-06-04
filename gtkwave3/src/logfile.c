@@ -127,7 +127,7 @@ if (gtk_text_buffer_get_selection_bounds (GTK_TEXT_VIEW(text)->buffer,
 			int slen = strlen(sel);
 			char *sel2 = NULL;
 
-                       	if(strlen(sel)&&(sel[0]>='0')&&(sel[0]<='9'))
+                       	if((slen)&&(sel[0]>='0')&&(sel[0]<='9'))
                                {
 			       TimeType tm;
 			       gunichar gch = gtk_text_iter_get_char(&end);
@@ -204,11 +204,54 @@ if(oe->has_selection)
 	
 		if(sel)
 			{
-			/* GTK1 doesn't currently do the SI fix above */
+			int slen = strlen(sel);
+			char *sel2 = NULL;
 
-			if(strlen(sel)&&(sel[0]>='0')&&(sel[0]<='9'))
+			if((slen)&&(sel[0]>='0')&&(sel[0]<='9'))
 				{
-				TimeType tm = unformat_time(sel, GLOBALS->time_dimension);
+				TimeType tm;
+				gint gchpos = oe->selection_end_pos;
+				gchar *extra = oec->get_chars(oe, gchpos, gchpos+2);
+				gchar gch = extra ? extra[0] : 0;
+			        int do_si_append = 0;
+
+			        if(gch==' ') /* in case time is of format "100 ps" with a space */
+					{
+					gch = gch ? extra[1] : 0;
+					}
+
+				if(extra) g_free(extra);
+
+				if((sel[slen-1]>='0')&&(sel[slen-1]<='9')) /* need to append units? */
+					{
+					int silen = strlen(WAVE_SI_UNITS);
+					int silp;
+
+					gch = tolower(gch);
+					if(gch == 's')
+						{
+						do_si_append = 1;
+						}
+					else
+						{
+						for(silp=0;silp<silen;silp++)
+							{
+							if(gch == WAVE_SI_UNITS[silp])
+								{
+								do_si_append = 1;
+								break;
+								}
+							}
+						}
+					}
+
+				if(do_si_append)
+					{
+					sel2 = malloc_2(slen + 2);
+					sprintf(sel2, "%s%c", sel, (unsigned char)gch);
+					}
+
+				tm = unformat_time(sel2 ? sel2 : sel, GLOBALS->time_dimension);
 				if((tm >= GLOBALS->tims.first) && (tm <= GLOBALS->tims.last))
 					{
 					GLOBALS->tims.lmbcache = -1;
@@ -219,6 +262,8 @@ if(oe->has_selection)
 				        update_markertime(GLOBALS->tims.marker = tm); /* centering problem in GTK2 */
 					}
 				}
+
+		        if(sel2) { free_2(sel2); }
 			g_free(sel);
 			}
 		}
@@ -604,6 +649,9 @@ while(l)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/06/04 01:21:54  gtkwave
+ * units fix for logfiles (if not explicitly dragged across manually)
+ *
  * Revision 1.7  2008/11/13 00:12:45  gtkwave
  * made text size smaller
  *
