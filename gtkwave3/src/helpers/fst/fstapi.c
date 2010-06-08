@@ -2177,8 +2177,19 @@ if(!xc->fh)
 	fflush(xc->f);
 	zhandle = gzdopen(dup(fileno(xc->f)), "rb");
 	xc->fh = fopen(fnam, "w+b");
+        if(!xc->fh)
+                {
+                xc->fh = tmpfile();  
+                free(fnam); fnam = NULL;
+                if(!xc->fh)
+			{
+			free(mem);
+			return;
+			}
+                }    
+
 #ifndef __MINGW32__
-	unlink(fnam);
+	if(fnam) unlink(fnam);
 #endif
 
         for(hl = 0; hl < uclen; hl += FST_GZIO_LEN)
