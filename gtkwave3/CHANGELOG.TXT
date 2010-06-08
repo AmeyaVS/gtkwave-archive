@@ -853,3 +853,4 @@
 		transaction.c.
 		Disable autocoalesce if Icarus Verilog is detected.
 		Added units forward scan in logfile.c.
+3.3.8	07jun10	Added failure check on tempfile create in fstReaderInit().

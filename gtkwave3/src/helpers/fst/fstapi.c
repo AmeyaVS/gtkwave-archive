@@ -2557,13 +2557,22 @@ if(sectype == FST_BL_ZWRAPPER)
 
 	sprintf(hf, "%s.upk_%d_%p", xc->filename, getpid(), (void *)xc);
 	fcomp = fopen(hf, "w+b");
+	if(!fcomp)
+		{
+		fcomp = tmpfile();
+		free(hf); hf = NULL;
+		if(!fcomp) return(0);
+		}
 
 #ifdef __MINGW32__
 	setvbuf(fcomp, (char *)NULL, _IONBF, 0);   /* keeps gzip from acting weird in tandem with fopen */
 	xc->filename_unpacked = hf;
 #else
-	unlink(hf);
-	free(hf);
+	if(hf) 
+		{
+		unlink(hf);
+		free(hf);
+		}
 #endif
 
 	fseeko(xc->f, 1+8+8, SEEK_SET);
