@@ -624,7 +624,7 @@ void tracesearchbox(const char *title, GtkSignalFunc func, gpointer data)
 /*
  * strace backward or forward..
  */
-void strace_search(int direction)
+static void strace_search_2(int direction, int is_last_iteration)
 {
 struct strace *s;
 TimeType basetime, maxbase, sttim, fintim;
@@ -1012,31 +1012,47 @@ if(totaltraces)
 basetime=maxbase;
 }
 
-update_markertime(GLOBALS->tims.marker=maxbase);
-
-width=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
-if((GLOBALS->tims.marker<GLOBALS->tims.start)||(GLOBALS->tims.marker>=GLOBALS->tims.start+width))
+GLOBALS->tims.marker=maxbase;
+if(is_last_iteration)
 	{
-	if((GLOBALS->tims.marker<0)||(GLOBALS->tims.marker<GLOBALS->tims.first)||(GLOBALS->tims.marker>GLOBALS->tims.last))
-	                {
-	                if(GLOBALS->tims.end>GLOBALS->tims.last) GLOBALS->tims.end=GLOBALS->tims.last;
-	                middle=(GLOBALS->tims.start/2)+(GLOBALS->tims.end/2);
-	                if((GLOBALS->tims.start&1)&&(GLOBALS->tims.end&1)) middle++;
-	                }
-	                else
-	                { 
-	                middle=GLOBALS->tims.marker;
-	                }
-	
-	GLOBALS->tims.start=time_trunc(middle-(width/2));
-	if(GLOBALS->tims.start+width>GLOBALS->tims.last) GLOBALS->tims.start=GLOBALS->tims.last-width;
-	if(GLOBALS->tims.start<GLOBALS->tims.first) GLOBALS->tims.start=GLOBALS->tims.first;  
-	GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache=GLOBALS->tims.start;
-	}
+	update_markertime(GLOBALS->tims.marker);
 
-MaxSignalLength();
-signalarea_configure_event(GLOBALS->signalarea, NULL);
-wavearea_configure_event(GLOBALS->wavearea, NULL);
+	width=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+	if((GLOBALS->tims.marker<GLOBALS->tims.start)||(GLOBALS->tims.marker>=GLOBALS->tims.start+width))
+		{
+		if((GLOBALS->tims.marker<0)||(GLOBALS->tims.marker<GLOBALS->tims.first)||(GLOBALS->tims.marker>GLOBALS->tims.last))
+		                {
+		                if(GLOBALS->tims.end>GLOBALS->tims.last) GLOBALS->tims.end=GLOBALS->tims.last;
+		                middle=(GLOBALS->tims.start/2)+(GLOBALS->tims.end/2);
+		                if((GLOBALS->tims.start&1)&&(GLOBALS->tims.end&1)) middle++;
+		                }
+		                else
+		                { 
+		                middle=GLOBALS->tims.marker;
+		                }
+	
+		GLOBALS->tims.start=time_trunc(middle-(width/2));
+		if(GLOBALS->tims.start+width>GLOBALS->tims.last) GLOBALS->tims.start=GLOBALS->tims.last-width;
+		if(GLOBALS->tims.start<GLOBALS->tims.first) GLOBALS->tims.start=GLOBALS->tims.first;  
+		GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache=GLOBALS->tims.start;
+		}
+
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+
+void strace_search(int direction)
+{
+int i;
+int i_high_cnt = ((GLOBALS->strace_repeat_count > 0) ? GLOBALS->strace_repeat_count : 1) - 1;
+
+for(i=0;i<=i_high_cnt;i++)
+        {
+        strace_search_2(direction, (i == i_high_cnt));
+        }
 }
 
 
@@ -1697,6 +1713,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.20  2010/03/31 20:41:03  gtkwave
  * nbits versus nnbits fix
  *

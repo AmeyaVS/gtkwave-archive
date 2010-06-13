@@ -1,4 +1,4 @@
-.TH "GTKWAVERC" "5" "3.3.4" "Anthony Bybell" "GTKWave Configuration File"
+.TH "GTKWAVERC" "5" "3.3.8" "Anthony Bybell" "GTKWave Configuration File"
 .SH "NAME"
 .LP 
 gtkwaverc \- GTKWave Configuration File
@@ -263,6 +263,9 @@ When true (default) allows the SST dialog signal filter to filter signals while 
 \fBsst_expanded\fR <\fIvalue\fP>
 When true allows the SST dialog (when not hidden) to come up already expanded.
 .TP 
+\fBstrace_repeat_count\fR <\fIvalue\fP>
+Determines how many times that edge search and pattern search will iterate on a search.  This allows, for example, skipping ahead 10 clock edges instead of 1.
+.TP
 \fBuse_big_fonts\fR <\fIvalue\fP>
 A nonzero value indicates that any text rendered into the wave window will use fonts that are four points larger in size than normal. This can enhance readability. A zero value indicates that normal font sizes should be used.
 .TP 

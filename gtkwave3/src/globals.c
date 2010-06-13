@@ -818,6 +818,7 @@ NULL, /* strace_ctx (defined in strace.h for multiple strace sessions) */
 #endif
 #endif
 0, /* strace_current_window */
+1, /* strace_repeat_count */
 
 
 /*
@@ -1697,6 +1698,7 @@ void reload_into_new_context(void)
  new_globals->zoombase = GLOBALS->zoombase;
 
  new_globals->splash_disable = 1; /* to disable splash for reload */
+ new_globals->strace_repeat_count = GLOBALS->strace_repeat_count; /* for edgebuttons and also strace */
 
  new_globals->logfiles = GLOBALS->logfiles; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
 

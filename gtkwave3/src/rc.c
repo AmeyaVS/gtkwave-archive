@@ -440,6 +440,13 @@ GLOBALS->splash_disable=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_strace_repeat_count(char *str)
+{
+DEBUG(printf("f_strace_repeat_count(\"%s\")\n",str));
+GLOBALS->strace_repeat_count=atoi_64(str);
+return(0);
+}
+
 int f_use_big_fonts(char *str)
 {
 DEBUG(printf("f_use_big_fonts(\"%s\")\n",str));
@@ -761,6 +768,7 @@ static struct rc_entry rcitems[]=
 { "splash_disable", f_splash_disable },
 { "sst_dynamic_filter", f_sst_dynamic_filter },  
 { "sst_expanded", f_sst_expanded },
+{ "strace_repeat_count", f_strace_repeat_count },
 { "use_big_fonts", f_use_big_fonts },
 { "use_frequency_display", f_use_frequency_display },
 { "use_full_precision", f_use_full_precision },
@@ -959,6 +967,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.24  2010/05/06 15:57:52  gtkwave
+ * enable_fast_exit now is enabled by default
+ *
  * Revision 1.23  2010/03/10 18:14:13  gtkwave
  * Toggle Trace Hier fix (cache old value for more usability)
  *

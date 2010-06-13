@@ -801,6 +801,7 @@ GtkTextTag *bold_tag_status_c_3; /* from status.c 429 */
 struct strace_ctx_t *strace_ctx; /* moved to strace.h */
 struct strace_ctx_t strace_windows[WAVE_NUM_STRACE_WINDOWS];
 int strace_current_window;
+int strace_repeat_count;
 
 
 /*

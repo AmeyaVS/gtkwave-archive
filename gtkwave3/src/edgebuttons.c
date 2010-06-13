@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2008-2009.
+ * Copyright (c) Tony Bybell 2008-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,7 +61,7 @@ return(t);
  * pasted from strace.c and special cased to handle
  * just a single trace.  this might be relaxed later.
  */
-void edge_search(int direction)
+static void edge_search_2(int direction, int is_last_iteration)
 {
 struct strace s_tmp;
 struct strace *s_head, *s;
@@ -452,31 +452,47 @@ if(totaltraces)
 basetime=maxbase;
 }
 
-update_markertime(GLOBALS->tims.marker=maxbase);
 
-width=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
-if((GLOBALS->tims.marker<GLOBALS->tims.start)||(GLOBALS->tims.marker>=GLOBALS->tims.start+width))
+GLOBALS->tims.marker=maxbase;
+if(is_last_iteration)
 	{
-	if((GLOBALS->tims.marker<0)||(GLOBALS->tims.marker<GLOBALS->tims.first)||(GLOBALS->tims.marker>GLOBALS->tims.last))
-	                {
-	                if(GLOBALS->tims.end>GLOBALS->tims.last) GLOBALS->tims.end=GLOBALS->tims.last;
-	                middle=(GLOBALS->tims.start/2)+(GLOBALS->tims.end/2);
-	                if((GLOBALS->tims.start&1)&&(GLOBALS->tims.end&1)) middle++;
-	                }
-	                else
-	                { 
-	                middle=GLOBALS->tims.marker;
-	                }
-	
-	GLOBALS->tims.start=time_trunc(middle-(width/2));
-	if(GLOBALS->tims.start+width>GLOBALS->tims.last) GLOBALS->tims.start=GLOBALS->tims.last-width;
-	if(GLOBALS->tims.start<GLOBALS->tims.first) GLOBALS->tims.start=GLOBALS->tims.first;  
-	GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache=GLOBALS->tims.start;
-	}
+	update_markertime(GLOBALS->tims.marker);
 
-MaxSignalLength();
-signalarea_configure_event(GLOBALS->signalarea, NULL);
-wavearea_configure_event(GLOBALS->wavearea, NULL);
+	width=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+	if((GLOBALS->tims.marker<GLOBALS->tims.start)||(GLOBALS->tims.marker>=GLOBALS->tims.start+width))
+		{
+		if((GLOBALS->tims.marker<0)||(GLOBALS->tims.marker<GLOBALS->tims.first)||(GLOBALS->tims.marker>GLOBALS->tims.last))
+		                {
+		                if(GLOBALS->tims.end>GLOBALS->tims.last) GLOBALS->tims.end=GLOBALS->tims.last;
+		                middle=(GLOBALS->tims.start/2)+(GLOBALS->tims.end/2);
+		                if((GLOBALS->tims.start&1)&&(GLOBALS->tims.end&1)) middle++;
+		                }
+		                else
+		                { 
+		                middle=GLOBALS->tims.marker;
+		                }
+	
+		GLOBALS->tims.start=time_trunc(middle-(width/2));
+		if(GLOBALS->tims.start+width>GLOBALS->tims.last) GLOBALS->tims.start=GLOBALS->tims.last-width;
+		if(GLOBALS->tims.start<GLOBALS->tims.first) GLOBALS->tims.start=GLOBALS->tims.first;  
+		GTK_ADJUSTMENT(GLOBALS->wave_hslider)->value=GLOBALS->tims.timecache=GLOBALS->tims.start;
+		}
+
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+}
+
+void edge_search(int direction)
+{
+int i;
+int i_high_cnt = ((GLOBALS->strace_repeat_count > 0) ? GLOBALS->strace_repeat_count : 1) - 1;
+
+for(i=0;i<=i_high_cnt;i++)
+	{
+	edge_search_2(direction, (i == i_high_cnt));
+	}
 }
 
 /************************************************/
@@ -580,6 +596,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/05/01 19:46:28  gtkwave
+ * cppcheck warning fixes
+ *
  * Revision 1.10  2010/04/01 03:10:58  gtkwave
  * time warp fixes
  *

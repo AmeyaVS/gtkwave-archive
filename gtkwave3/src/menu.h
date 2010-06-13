@@ -161,6 +161,8 @@ WV_MENU_ACOL,
 WV_MENU_ACOLR,
 WV_MENU_ABON,
 WV_MENU_HTGP,
+WV_MENU_SEP7C,
+WV_MENU_STRSE,
 WV_MENU_TMTT,
 WV_MENU_TZZA,
 WV_MENU_TZZB,
@@ -351,6 +353,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2010/04/12 23:07:12  gtkwave
+ * add ability to make single signals transactions
+ *
  * Revision 1.35  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

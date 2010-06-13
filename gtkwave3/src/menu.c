@@ -2837,6 +2837,8 @@ if(GLOBALS->filesel_ok)
 		/* if(GLOBALS->repscript_name) free_2(GLOBALS->repscript_name); */
 /* 		GLOBALS->repscript_name = malloc_2(strlen(g_old->repscript_name)+1); */
 /* 		strcpy(GLOBALS->repscript_name, g_old->repscript_name); */
+
+		GLOBALS->strace_repeat_count = g_old->strace_repeat_count;
 		}
                 else
                 {
@@ -4344,6 +4346,35 @@ DEBUG(printf("Insert Comment Trace\n"));
 entrybox("Insert Comment Trace",300,"",NULL,128,GTK_SIGNAL_FUNC(comment_trace_cleanup));
 }
 /**/
+static void strace_repcnt_cleanup(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->entrybox_text)
+	{
+	GLOBALS->strace_repeat_count = atoi_64(GLOBALS->entrybox_text);
+
+	free_2(GLOBALS->entrybox_text);
+	GLOBALS->entrybox_text=NULL;
+	}
+}
+
+void menu_strace_repcnt(GtkWidget *widget, gpointer data)
+{
+char gt[32];
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nSet Pattern Search Repeat Count");
+        help_text(
+                " sets the number of times that both edge and pattern searches iterate forward or backward when marker forward/backward is selected."
+		" Default value is one.  This can be used, for example, to skip forward 10 clock edges at a time rather than a single edge."
+        );
+        return;
+        }
+
+sprintf(gt, "%d", GLOBALS->strace_repeat_count);
+entrybox("Repeat Count",300,gt,NULL,20,GTK_SIGNAL_FUNC(strace_repcnt_cleanup));
+}
+/**/
 static void movetotime_cleanup(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->entrybox_text)
@@ -5630,6 +5661,9 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Search/Autoname Bundles", NULL, menu_autoname_bundles_on, WV_MENU_ABON, "<ToggleItem>"),
     WAVE_GTKIFE("/Search/Search Hierarchy Grouping", NULL, menu_hgrouping, WV_MENU_HTGP, "<ToggleItem>"),
       /* 80 */
+    WAVE_GTKIFE("/Search/<separator>", NULL, NULL, WV_MENU_SEP7C, "<Separator>"),
+    WAVE_GTKIFE("/Search/Set Pattern Search Repeat Count", NULL, menu_strace_repcnt, WV_MENU_STRSE, "<Item>"),
+
     WAVE_GTKIFE("/Time/Move To Time", "F1", menu_movetotime, WV_MENU_TMTT, "<Item>"),
     WAVE_GTKIFE("/Time/Zoom/Zoom Amount", "F2", menu_zoomsize, WV_MENU_TZZA, "<Item>"),
     WAVE_GTKIFE("/Time/Zoom/Zoom Base", "<Shift>F2", menu_zoombase, WV_MENU_TZZB, "<Item>"),
@@ -6190,6 +6224,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.105  2010/04/14 07:45:12  gtkwave
+ * P -> O to avoid accelerator conflict with psec
+ *
  * Revision 1.104  2010/04/14 03:28:39  gtkwave
  * change lock/unlock from 1/2/0 to Q/W/P
  *
