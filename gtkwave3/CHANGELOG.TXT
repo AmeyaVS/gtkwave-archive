@@ -855,7 +855,3 @@
 		Added units forward scan in logfile.c.
 3.3.8	13jun10	Added failure check on tempfile create in fstReaderInit().
 		Added strace_repeat_count and appropriate menu option.
-
-		*** TO DO ***
-		Add strace_repeat_count to documentation.
-		Add Set Pattern Search Repeat Count to documentation.
