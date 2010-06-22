@@ -853,5 +853,7 @@
 		transaction.c.
 		Disable autocoalesce if Icarus Verilog is detected.
 		Added units forward scan in logfile.c.
-3.3.8	13jun10	Added failure check on tempfile create in fstReaderInit().
+3.3.8	22jun10	Added failure check on tempfile create in fstReaderInit().
 		Added strace_repeat_count and appropriate menu option.
+		Removed the "/File/Quit/Don't Quit" menu item if fast exit is
+		enabled.

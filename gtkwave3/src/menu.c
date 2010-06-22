@@ -5897,6 +5897,11 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
     	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path);
 	}
 
+    if(GLOBALS->enable_fast_exit)
+	{
+	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_FQN].path);
+	}
+
     gtk_window_add_accel_group(GTK_WINDOW(window), global_accel);
     if(menubar)
 	{
@@ -6224,6 +6229,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.106  2010/06/13 20:37:59  gtkwave
+ * added strace repeat count
+ *
  * Revision 1.105  2010/04/14 07:45:12  gtkwave
  * P -> O to avoid accelerator conflict with psec
  *
