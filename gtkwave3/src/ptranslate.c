@@ -82,6 +82,7 @@ wavearea_configure_event(GLOBALS->wavearea, NULL);
 /*
  * this is likely obsolete
  */
+#if 0
 static void remove_proc_filter(int which, int regen)
 {
 if(GLOBALS->proc_filter[which])
@@ -95,7 +96,7 @@ if(GLOBALS->proc_filter[which])
 	        }
 	}
 }
-
+#endif
 
 static void load_proc_filter(int which, char *name)
 {
@@ -449,6 +450,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/04/15 18:39:34  gtkwave
+ * remove invocations of pipeio_destroy where unnecessary
+ *
  * Revision 1.10  2010/04/15 01:55:03  gtkwave
  * raise to front on filename select
  *

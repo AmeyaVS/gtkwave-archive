@@ -1397,7 +1397,7 @@ if(!t->t_filter_converted)
 	}
 	else
 	{
-	s = strdup_2(v->v);
+	s = strdup_2((char *)v->v);
 
 	if((*s == '?') && (!GLOBALS->color_active_in_filter))
 	        {  
@@ -1720,6 +1720,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/03/31 16:32:20  gtkwave
+ * stale marker fix for ttranslate on save file loads before GUI initialized
+ *
  * Revision 1.15  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

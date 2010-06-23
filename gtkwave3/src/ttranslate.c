@@ -71,6 +71,8 @@ int traverse_vector_nodes(Trptr t) { if(t) { t->t_filter = 0; } return(0); }
 
 #else
 
+int traverse_vector_nodes(Trptr t);
+
 static void regen_display(void)
 {
 if(GLOBALS->signalarea && GLOBALS->wavearea)
@@ -86,6 +88,7 @@ if(GLOBALS->signalarea && GLOBALS->wavearea)
 /*
  * this is likely obsolete
  */
+#if 0
 static void remove_ttrans_filter(int which, int regen)
 {
 if(GLOBALS->ttrans_filter[which])
@@ -99,7 +102,7 @@ if(GLOBALS->ttrans_filter[which])
 	        }
 	}
 }
-
+#endif
 
 static void load_ttrans_filter(int which, char *name)
 {
@@ -579,7 +582,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 						}
 						
 					vt = calloc_2(1, sizeof(struct VectorEnt) + slen);
-					if(sp) strcpy(vt->v, sp);
+					if(sp) strcpy((char *)vt->v, sp);
 	
 					if(tim > prev_tim) 
 						{ 
@@ -739,6 +742,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/04/25 16:47:06  gtkwave
+ * typo fix for mingw
+ *
  * Revision 1.16  2010/04/24 16:32:46  gtkwave
  * compile fix for MinGW
  *

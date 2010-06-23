@@ -335,7 +335,6 @@ int max_len = 1;
 char *row_data = NULL;
 struct lt_trace *lt = NULL;
 int lxt = (export_typ == WAVE_EXPORT_LXT);
-int seqn = 0;
 
 if(export_typ == WAVE_EXPORT_TIM)
 	{
@@ -1519,6 +1518,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/04/01 20:07:35  gtkwave
+ * timescale multiplier fix for transactions
+ *
  * Revision 1.15  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

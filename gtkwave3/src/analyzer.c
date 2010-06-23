@@ -33,7 +33,7 @@
 #endif
 
 void UpdateTraceSelection(Trptr t);
-
+int traverse_vector_nodes(Trptr t);
 
 /*
  * extract last n levels of hierarchy
@@ -1495,6 +1495,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2010/04/15 00:30:23  gtkwave
+ * don't propagate ttranslate filter into groups
+ *
  * Revision 1.25  2010/04/13 18:11:42  gtkwave
  * propagate trace highlighting into transactions
  *

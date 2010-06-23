@@ -2620,7 +2620,7 @@ if(GLOBALS->topmost_trace)
 			if(i>=0) draw_hptr_trace(NULL,NULL,i,0,kill_dodraw_grid);
 			}
 		t=GiveNextTrace(t);
-bot:		1;
+/* bot:		1; */
 		}
 	}
 
@@ -4294,6 +4294,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.71  2010/04/15 20:38:51  gtkwave
+ * color usage fixes for black and white mode
+ *
  * Revision 1.70  2010/04/14 18:45:38  gtkwave
  * allow data values for secondary transaction traces
  *

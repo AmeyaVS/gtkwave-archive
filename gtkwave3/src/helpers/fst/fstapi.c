@@ -2213,7 +2213,7 @@ if(!xc->fh)
                 if(!xc->fh)
 			{
 			free(mem);
-			return;
+			return(0);
 			}
                 }    
 
@@ -2396,7 +2396,7 @@ uint32_t len, alias;
 uint32_t maxvalpos=0;
 int num_signal_dyn = 65536;
 
-if(!xc) return;
+if(!xc) return(0);
 
 xc->longest_signal_value_len = 32; /* arbitrarily set at 32...this is much longer than an expanded double */
 
