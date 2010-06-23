@@ -49,10 +49,10 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_rtlbrowse_OBJECTS = definehash.$(OBJEXT) fgetdynamic.$(OBJEXT) \
-	logfile.$(OBJEXT) splay.$(OBJEXT) tree_widget.$(OBJEXT) \
-	fastlz.$(OBJEXT) fstapi.$(OBJEXT) stem_recurse.$(OBJEXT) \
-	jrb.$(OBJEXT) vzt_read.$(OBJEXT) lxt2_read.$(OBJEXT) \
-	vlex.$(OBJEXT)
+	logfile.$(OBJEXT) splay.$(OBJEXT) tcl_helper.$(OBJEXT) \
+	tree_widget.$(OBJEXT) fastlz.$(OBJEXT) fstapi.$(OBJEXT) \
+	stem_recurse.$(OBJEXT) jrb.$(OBJEXT) vzt_read.$(OBJEXT) \
+	lxt2_read.$(OBJEXT) vlex.$(OBJEXT)
 rtlbrowse_OBJECTS = $(am_rtlbrowse_OBJECTS)
 rtlbrowse_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -207,7 +207,7 @@ LIBFST_CFLAGS = -I$(srcdir)/../../src/helpers/fst
 LIBLZMA_CFLAGS = -I$(srcdir)/../../src/liblzma $(LIBXZ_CFLAGS)
 LIBLZMA_LDADD = -L../../src/liblzma -lgwlzma $(LIBXZ_LDADD)
 rtlbrowse_SOURCES = definehash.c fgetdynamic.c fgetdynamic.h \
-	logfile.c splay.c tree_widget.c \
+	logfile.c splay.c tcl_helper.c tree_widget.c \
 	$(srcdir)/../../src/helpers/fst/fastlz.c \
 	$(srcdir)/../../src/helpers/fst/fstapi.c \
 	stem_recurse.c jrb.c jrb.h $(srcdir)/../../src/helpers/vzt_read.c \
@@ -296,6 +296,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxt2_read.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/splay.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stem_recurse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcl_helper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree_widget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vlex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vzt_read.Po@am__quote@

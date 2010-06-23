@@ -16,7 +16,7 @@ LIBLZMA_LDADD  = -L../../src/liblzma -lgwlzma $(LIBXZ_LDADD)
 bin_PROGRAMS= rtlbrowse
 
 rtlbrowse_SOURCES = definehash.c fgetdynamic.c fgetdynamic.h \
-	logfile.c splay.c tree_widget.c \
+	logfile.c splay.c tcl_helper.c tree_widget.c \
 	$(srcdir)/../../src/helpers/fst/fastlz.c \
 	$(srcdir)/../../src/helpers/fst/fstapi.c \
 	stem_recurse.c jrb.c jrb.h $(srcdir)/../../src/helpers/vzt_read.c \

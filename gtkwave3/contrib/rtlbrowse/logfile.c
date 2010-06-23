@@ -1883,7 +1883,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 			}
 		}
 
-	if((anno_ctx)&&(anno_ctx->marker_set))
+	if((anno_ctx)&&(anno_ctx->marker_set)&&(!display_mode)) // xxx
 		{
 		int resolved = 0;
 
@@ -2682,6 +2682,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2010/05/23 04:11:04  gtkwave
+ * null pointer crash fixes
+ *
  * Revision 1.32  2009/12/24 21:03:32  gtkwave
  * warnings fixes
  *

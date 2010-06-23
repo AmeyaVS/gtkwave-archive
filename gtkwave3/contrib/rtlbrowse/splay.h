@@ -20,6 +20,7 @@ struct ds_tree_node {
 	struct ds_component *comp;
 
 	unsigned resolved : 1;
+        unsigned dnd_to_import : 1;
 };
 
 struct ds_component
@@ -41,6 +42,9 @@ ds_Tree * ds_delete(char *i, ds_Tree * t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1.1.1  2007/05/30 04:25:38  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *

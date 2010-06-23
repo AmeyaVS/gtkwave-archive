@@ -22,6 +22,7 @@ GtkWidget *notebook = NULL;
 
 void bwmaketree(void);
 void bwlogbox(char *title, int width, ds_Tree *t, int display_mode);
+void setup_dnd(GtkWidget *wid);
 
 static ds_Tree *selectedtree=NULL;
 
@@ -204,11 +205,15 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
     gtk_container_add (GTK_CONTAINER (window), table);
 
     gtk_widget_show(window);
+    setup_dnd(window);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2008/12/20 05:45:03  gtkwave
+ * gtk1 compatibility and -Wshadow warning fixes
+ *
  * Revision 1.8  2008/11/24 03:26:52  gtkwave
  * warnings cleanups
  *
