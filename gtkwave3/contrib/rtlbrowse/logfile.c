@@ -1883,7 +1883,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
 			}
 		}
 
-	if((anno_ctx)&&(anno_ctx->marker_set)&&(!display_mode)) // xxx
+	if((anno_ctx)&&(anno_ctx->marker_set)&&(!display_mode)) /* !display_mode somehow was removed earlier causing full view crashes */
 		{
 		int resolved = 0;
 
@@ -2682,6 +2682,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/06/23 05:40:48  gtkwave
+ * added dnd from gtkwave into rtlbrowse
+ *
  * Revision 1.33  2010/05/23 04:11:04  gtkwave
  * null pointer crash fixes
  *
