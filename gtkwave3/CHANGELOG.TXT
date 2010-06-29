@@ -861,3 +861,5 @@
 		appropriate verilog code sections automatically are
 		imported.
 		More warnings cleanups.
+3.3.9	28jun10	Changed accelerator for Quit to conform to Gnome standard
+		menus guidelines.

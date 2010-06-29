@@ -1504,8 +1504,7 @@ if(GLOBALS->helpbox_is_active)
 	{
 	help_text_bold("\n\nQuit");
 	help_text(
-		" exits GTKWave after an additional confirmation"
-		" requester is given the OK to quit."
+		" closes GTKWave and exits immediately."
 	);
 	return;
 	}
@@ -5556,8 +5555,7 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/File/Read Tcl Script File", NULL, menu_read_script_file, WV_MENU_TCLSCR, "<Item>"),
     WAVE_GTKIFE("/File/<separator>", NULL, NULL, WV_MENU_TCLSEP, "<Separator>"),
 #endif
-    WAVE_GTKIFE("/File/Quit/Yes, Quit", "<Alt>Q", menu_quit, WV_MENU_FQY, "<Item>"),
-    WAVE_GTKIFE("/File/Quit/Don't Quit", NULL, NULL, WV_MENU_FQN, "<Item>"),
+    WAVE_GTKIFE("/File/Quit", "<Control>Q", menu_quit, WV_MENU_FQY, "<Item>"),
 
     WAVE_GTKIFE("/Edit/Set Trace Max Hier", NULL, menu_set_max_hier, WV_MENU_ESTMH, "<Item>"),
     WAVE_GTKIFE("/Edit/Toggle Trace Hier", "H", menu_toggle_hier, WV_MENU_ETH, "<Item>"),
@@ -5850,7 +5848,6 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
 	    		case WV_MENU_TCLSCR:
 #endif
 			case WV_MENU_FQY:
-			case WV_MENU_FQN:
 			case WV_MENU_HWH:
 			case WV_MENU_HWV:
 				break;
@@ -5897,11 +5894,6 @@ void get_main_menu(GtkWidget *window, GtkWidget ** menubar)
     	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_LXTCC2Z].path);
 	}
 
-    if(GLOBALS->enable_fast_exit)
-	{
-	gtk_item_factory_delete_item(GLOBALS->item_factory_menu_c_1, menu_items[WV_MENU_FQN].path);
-	}
-
     gtk_window_add_accel_group(GTK_WINDOW(window), global_accel);
     if(menubar)
 	{
@@ -5935,7 +5927,6 @@ void menu_set_sensitive(void)
     		case WV_MENU_TCLSCR:
 #endif
                 case WV_MENU_FQY:
-                case WV_MENU_FQN:
                 case WV_MENU_HWH:
                 case WV_MENU_HWV:  
                         break;
@@ -6229,6 +6220,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.107  2010/06/22 19:57:12  gtkwave
+ * remove don't quit option on fast exit (via rc file)
+ *
  * Revision 1.106  2010/06/13 20:37:59  gtkwave
  * added strace repeat count
  *

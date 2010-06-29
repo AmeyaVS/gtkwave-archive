@@ -107,8 +107,7 @@ accel "/File/Read Verilog Stemsfile" (null)
 accel "/File/<separator>" (null)
 accel "/File/Read Tcl Script File" (null)
 accel "/File/<separator>" (null)
-accel "/File/Quit/Yes, Quit" <Alt>Q
-accel "/File/Quit/Don't Quit" (null)
+accel "/File/Quit" <Control>Q
 accel "/Edit/Set Trace Max Hier" (null)
 accel "/Edit/Toggle Trace Hier" H
 accel "/Edit/<separator>" (null)

@@ -71,7 +71,6 @@ WV_MENU_TCLSCR,
 WV_MENU_TCLSEP,
 #endif
 WV_MENU_FQY,
-WV_MENU_FQN,
 WV_MENU_ESTMH,
 WV_MENU_ETH,
 WV_MENU_SEP3,
@@ -353,6 +352,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2010/06/13 20:38:00  gtkwave
+ * added strace repeat count
+ *
  * Revision 1.36  2010/04/12 23:07:12  gtkwave
  * add ability to make single signals transactions
  *
