@@ -49,9 +49,9 @@ AR = ar
 ARFLAGS = cru
 libbz2_a_AR = $(AR) $(ARFLAGS)
 libbz2_a_LIBADD =
-am_libbz2_a_OBJECTS = blocksort.$(OBJEXT) huffman.$(OBJEXT) \
-	crctable.$(OBJEXT) randtable.$(OBJEXT) bzcompress.$(OBJEXT) \
-	bzdecompress.$(OBJEXT) bzlib.$(OBJEXT)
+am_libbz2_a_OBJECTS = blocksort.$(OBJEXT) compress.$(OBJEXT) \
+	decompress.$(OBJEXT) randtable.$(OBJEXT) bzlib.$(OBJEXT) \
+	crctable.$(OBJEXT) huffman.$(OBJEXT)
 libbz2_a_OBJECTS = $(am_libbz2_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -182,8 +182,8 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 noinst_LIBRARIES = libbz2.a
-libbz2_a_SOURCES = blocksort.c huffman.c crctable.c randtable.c \
-      bzcompress.c bzdecompress.c bzlib.c bzlib_private.h
+libbz2_a_SOURCES = blocksort.c  bzlib.h          compress.c  decompress.c  randtable.c \
+	bzlib.c      bzlib_private.h  crctable.c  huffman.c
 
 EXTRA_DIST = bzlib.h LICENSE
 all: all-am
@@ -234,10 +234,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blocksort.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bzcompress.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bzdecompress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bzlib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crctable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/decompress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/huffman.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randtable.Po@am__quote@
 

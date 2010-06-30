@@ -49,11 +49,12 @@ AR = ar
 ARFLAGS = cru
 libz_a_AR = $(AR) $(ARFLAGS)
 libz_a_LIBADD =
-am_libz_a_OBJECTS = adler32.$(OBJEXT) compress.$(OBJEXT) \
-	crc32.$(OBJEXT) deflate.$(OBJEXT) gzio.$(OBJEXT) \
-	infback.$(OBJEXT) inffast.$(OBJEXT) inflate.$(OBJEXT) \
-	inftrees.$(OBJEXT) trees.$(OBJEXT) uncompr.$(OBJEXT) \
-	zutil.$(OBJEXT)
+am_libz_a_OBJECTS = adler32.$(OBJEXT) gzread.$(OBJEXT) trees.$(OBJEXT) \
+	zutil.$(OBJEXT) compress.$(OBJEXT) example.$(OBJEXT) \
+	gzwrite.$(OBJEXT) inflate.$(OBJEXT) crc32.$(OBJEXT) \
+	gzclose.$(OBJEXT) infback.$(OBJEXT) uncompr.$(OBJEXT) \
+	inffast.$(OBJEXT) inftrees.$(OBJEXT) deflate.$(OBJEXT) \
+	gzlib.$(OBJEXT)
 libz_a_OBJECTS = $(am_libz_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -184,11 +185,12 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 noinst_LIBRARIES = libz.a
-libz_a_SOURCES = adler32.c compress.c crc32.c crc32.h \
-	deflate.c deflate.h  gzio.c infback.c inffast.c \
-	inffast.h inffixed.h inflate.c inflate.h \
-	inftrees.c inftrees.h trees.c trees.h uncompr.c \
-	zconf.h zlib.h zutil.c zutil.h
+AM_CFLAGS = -DNO_VIZ
+libz_a_SOURCES = adler32.c   deflate.h  gzread.c   inffixed.h  trees.c    zutil.c \
+	compress.c  example.c  gzwrite.c  inflate.c   trees.h    zutil.h \
+	crc32.c     gzclose.c  infback.c  inflate.h   uncompr.c \
+	crc32.h     gzguts.h   inffast.c  inftrees.c  zconf.h \
+	deflate.c   gzlib.c    inffast.h  inftrees.h  zlib.h
 
 EXTRA_DIST = README
 all: all-am
@@ -242,7 +244,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crc32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/deflate.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gzio.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gzclose.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gzlib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gzread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gzwrite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infback.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inffast.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inflate.Po@am__quote@
