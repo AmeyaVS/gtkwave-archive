@@ -864,3 +864,5 @@
 3.3.9	30jun10	Changed accelerator for Quit to conform to Gnome standard
 		menus guidelines.
 		Update local libz and libbz2 to current versions.
+		Moved version string out to version.h to keep from having
+		the CVS data updating in currenttime.h.

@@ -54,6 +54,7 @@
 #include "vcd_saver.h"
 #include "vlist.h" 
 #include "vzt.h"
+#include "version.h"
 #include "wavealloca.h"
 #include "jrb.h"
 #include "extload.h"

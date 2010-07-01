@@ -243,7 +243,7 @@ gtkwave_SOURCES = \
         tcl_commands.c tcl_helper.c tcl_helper.h tcl_np.c tcl_np.h tcl_support_commands.c tcl_support_commands.h \
 	timeentry.c translate.c translate.h tree.c tree.h treesearch.c \
 	ttranslate.c ttranslate.h vcd.c vcd.h vcd_keywords.c \
-	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
+	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h version.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
 	wavewindow.c zoombuttons.c ./liblzma/libgwlzma.a ./helpers/fst/libfst.a
 
 gtkwave_LDADD = $(GTK_LIBS) $(LIBLZMA_LDADD) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBFST_LDADD) $(AET2_LDADD) $(TCL_LDADD) $(TK_LDADD) $(LIBJUDY_LDADD)
