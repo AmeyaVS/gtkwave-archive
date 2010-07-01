@@ -684,7 +684,25 @@ void RemoveTrace( Trptr t, int dofree )
       }
     else
       {
-        t->t_prev->t_next = t->t_next;
+        if(t->t_prev)
+		{
+	        t->t_prev->t_next = t->t_next;
+		}
+		else
+		{
+		/* this code should likely *never* execute as if( t == GLOBALS->traces.first ) above should catch this */
+		/* there is likely a problem elsewhere in the code! */
+
+		Trptr t2 = GLOBALS->traces.first = t->t_next;
+		GLOBALS->traces.total = 0;
+		while(t2)
+			{
+			t2 = t2->t_next;
+			GLOBALS->traces.total++;
+			}
+		}
+
+
         if( t->t_next )
             t->t_next->t_prev = t->t_prev;
         else
@@ -1495,6 +1513,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2010/06/23 05:45:34  gtkwave
+ * warnings fixes
+ *
  * Revision 1.26  2010/04/15 00:30:23  gtkwave
  * don't propagate ttranslate filter into groups
  *
