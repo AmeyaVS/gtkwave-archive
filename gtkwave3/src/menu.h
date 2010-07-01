@@ -29,6 +29,7 @@
 #include "symbol.h"
 #include "main.h"
 
+void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 void get_main_menu (GtkWidget *, GtkWidget **menubar);
 void menu_set_sensitive(void);
 int file_quit_cmd_callback (GtkWidget *widget, gpointer data);
@@ -352,6 +353,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2010/06/29 02:05:14  gtkwave
+ * changed quit accelerator
+ *
  * Revision 1.37  2010/06/13 20:38:00  gtkwave
  * added strace repeat count
  *

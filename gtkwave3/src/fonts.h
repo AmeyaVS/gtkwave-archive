@@ -34,6 +34,7 @@ unsigned is_pango : 1;
 unsigned is_mono : 1;
 };
 
+void load_all_fonts(void);
 
 void font_engine_draw_string    
 			(GdkDrawable      		*drawable,
@@ -53,6 +54,9 @@ gint font_engine_string_measure
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/02/10 01:08:39  gtkwave
+ * speedup on mono font string length determination with pango
+ *
  * Revision 1.1  2008/02/08 02:26:36  gtkwave
  * anti-aliased font support add
  *

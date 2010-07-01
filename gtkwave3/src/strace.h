@@ -127,11 +127,16 @@ void edge_search(int direction); /* from edgebuttons.c */
 int mprintf(const char *fmt, ... );
 void delete_mprintf(void);
 
+void tracesearchbox(const char *title, GtkSignalFunc func, gpointer data);
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/02/24 17:35:35  gtkwave
+ * gtk1 compile fixes
+ *
  * Revision 1.7  2010/01/22 22:30:14  gtkwave
  * reordering of strace_ctx_t
  *

@@ -867,3 +867,4 @@
 		Moved version string out to version.h to keep from having
 		the CVS data updating in currenttime.h.
 		Fix crash that can occur in RemoveTrace.
+		Header file cleanups.
