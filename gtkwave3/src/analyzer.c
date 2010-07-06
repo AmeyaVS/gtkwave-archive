@@ -817,6 +817,7 @@ Trptr PasteBuffer(void)
       while(t)
 	{
           t->t_prev = prev; /* defensive re-link move */
+	  prev = t;
 	  GLOBALS->traces.last=t;
 	  GLOBALS->traces.total++;
 	  t=t->t_next;
@@ -1513,6 +1514,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2010/07/01 17:58:23  gtkwave
+ * Segmentation fault on signal reordering - ID: 3023401
+ *
  * Revision 1.27  2010/06/23 05:45:34  gtkwave
  * warnings fixes
  *
