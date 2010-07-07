@@ -15,8 +15,8 @@ AM_LIBS=	-lm
 
 vermin_SOURCES= \
 	args.c attrib.h definehash.c err.c inter.c inter.h jrb.c jrb.h \
-	keyword_tokens.h keywordhash.c mode.h preproc.c scan.c shred.c shred.h \
-	symbol.c symbol.h tokens.h verilog.c vpp_common.h
+	keyword_tokens.h keywordhash.c mode.h preproc.c scan.c \
+	symbol.c symbol.h tokens.h verilog.c vpp_common.h shred.h shred.c
 
 verilog.c parser.dlg tokens.h err.c : $(srcdir)/verilog.g
 	$(ANTLR) $(AFLAGS) $(srcdir)/verilog.g
@@ -29,6 +29,9 @@ definehash.c: vpp_keyword.gperf
 
 keywordhash.c: verilog_keyword.gperf
 	printf "$(GPERF) -o -i 1 -C -k 1-3,\044 -L C -H keyword_hash -N check_identifier -tT $(srcdir)/verilog_keyword.gperf >keywordhash.c" | sh
+
+shred.c: tokens.h
+	echo "Dummy rule for shred.c and tokens.h dependency"
 
 BUILT_SOURCES= definehash.c keywordhash.c
 

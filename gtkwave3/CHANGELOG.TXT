@@ -871,3 +871,5 @@
 		Fixed actual result of crash in RemoveTrace: defensive
 		re-linking in PasteBuffer didn't always relink the back
 		pointers properly.
+3.3.10	07jul10	Fix in vermin Makefile.am for parallel build failures involving
+		shred.c depending on tokens.h.
