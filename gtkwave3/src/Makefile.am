@@ -5,14 +5,18 @@ SUBDIRS=	$(LIBZ_DIR) $(LIBBZ2_DIR) liblzma helpers helpers/fst
 DIST_SUBDIRS=	libz libbz2 liblzma helpers helpers/fst
 
 LIBFST_CFLAGS  = -I$(srcdir)/helpers/fst
-LIBFST_LDADD   = -L./helpers/fst -lfst
+LIBFST_LDADD   = ./helpers/fst/libfst.a
 LIBLZMA_CFLAGS = -I$(srcdir)/liblzma $(LIBXZ_CFLAGS)
-LIBLZMA_LDADD  = -L./liblzma -lgwlzma $(LIBXZ_LDADD)
+LIBLZMA_LDADD  = ./liblzma/libgwlzma.a $(LIBXZ_LDADD)
 #DEBUGS = -DDEBUG_FACILITIES -DDEBUG_PRINTF -DDEBUG_MALLOC -DSTRICT_VCD_ONLY -DDEBUG_MALLOC_LINES
 
 bin_PROGRAMS=	gtkwave twinwave
 
 AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBFST_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD) $(TK_INCLUDE_SPEC) $(EXTLOAD_CFLAGS) $(LIBJUDY_CFLAGS)
+
+./liblzma/libgwlzma.a: $(srcdir)/liblzma/LzmaLib.c $(srcdir)/liblzma/LzmaLib.h
+
+./helpers/fst/libfst.a: $(srcdir)/helpers/fst/fastlz.c $(srcdir)/helpers/fst/fastlz.h $(srcdir)/helpers/fst/fstapi.c $(srcdir)/helpers/fst/fstapi.h
 
 gtkwave_SOURCES= \
 	baseconvert.h wavewindow.h zoombuttons.h fetchbuttons.h timeentry.h shiftbuttons.h pagebuttons.h edgebuttons.h \
@@ -35,7 +39,7 @@ gtkwave_SOURCES= \
 	timeentry.c translate.c translate.h tree.c tree.h treesearch.c \
 	ttranslate.c ttranslate.h vcd.c vcd.h vcd_keywords.c \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h version.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
-	wavewindow.c zoombuttons.c ./liblzma/libgwlzma.a ./helpers/fst/libfst.a
+	wavewindow.c zoombuttons.c
 
 gtkwave_LDADD= $(GTK_LIBS) $(LIBLZMA_LDADD) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBFST_LDADD) $(AET2_LDADD) $(TCL_LDADD) $(TK_LDADD) $(LIBJUDY_LDADD)
 

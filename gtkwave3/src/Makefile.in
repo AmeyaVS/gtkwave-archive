@@ -76,10 +76,11 @@ am_gtkwave_OBJECTS = globals.$(OBJEXT) ae2.$(OBJEXT) \
 	wavewindow.$(OBJEXT) zoombuttons.$(OBJEXT)
 gtkwave_OBJECTS = $(am_gtkwave_OBJECTS)
 am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_2 = ./liblzma/libgwlzma.a $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_3 = ./helpers/fst/libfst.a
 gtkwave_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_3) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_twinwave_OBJECTS = twinwave.$(OBJEXT)
@@ -222,9 +223,9 @@ target_alias = @target_alias@
 SUBDIRS = $(LIBZ_DIR) $(LIBBZ2_DIR) liblzma helpers helpers/fst
 DIST_SUBDIRS = libz libbz2 liblzma helpers helpers/fst
 LIBFST_CFLAGS = -I$(srcdir)/helpers/fst
-LIBFST_LDADD = -L./helpers/fst -lfst
+LIBFST_LDADD = ./helpers/fst/libfst.a
 LIBLZMA_CFLAGS = -I$(srcdir)/liblzma $(LIBXZ_CFLAGS)
-LIBLZMA_LDADD = -L./liblzma -lgwlzma $(LIBXZ_LDADD)
+LIBLZMA_LDADD = ./liblzma/libgwlzma.a $(LIBXZ_LDADD)
 AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/helpers $(GTK_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBFST_CFLAGS) $(AET2_CFLAGS) $(TCL_INCLUDE_SPEC) $(TCL_DEFADD) $(TK_INCLUDE_SPEC) $(EXTLOAD_CFLAGS) $(LIBJUDY_CFLAGS)
 gtkwave_SOURCES = \
 	baseconvert.h wavewindow.h zoombuttons.h fetchbuttons.h timeentry.h shiftbuttons.h pagebuttons.h edgebuttons.h \
@@ -247,7 +248,7 @@ gtkwave_SOURCES = \
 	timeentry.c translate.c translate.h tree.c tree.h treesearch.c \
 	ttranslate.c ttranslate.h vcd.c vcd.h vcd_keywords.c \
 	vcd_partial.c vcd_recoder.c vcd_saver.c vcd_saver.h version.h vlist.c vlist.h vzt.c vzt.h wavealloca.h \
-	wavewindow.c zoombuttons.c ./liblzma/libgwlzma.a ./helpers/fst/libfst.a
+	wavewindow.c zoombuttons.c
 
 gtkwave_LDADD = $(GTK_LIBS) $(LIBLZMA_LDADD) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBFST_LDADD) $(AET2_LDADD) $(TCL_LDADD) $(TK_LDADD) $(LIBJUDY_LDADD)
 twinwave_SOURCES = twinwave.c
@@ -736,6 +737,10 @@ uninstall-info: uninstall-info-recursive
 	tags tags-recursive uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-info-am
 
+
+./liblzma/libgwlzma.a: $(srcdir)/liblzma/LzmaLib.c $(srcdir)/liblzma/LzmaLib.h
+
+./helpers/fst/libfst.a: $(srcdir)/helpers/fst/fastlz.c $(srcdir)/helpers/fst/fastlz.h $(srcdir)/helpers/fst/fstapi.c $(srcdir)/helpers/fst/fstapi.h
 
 vcd_keywords.c: vcd_keywords.gperf
 	printf "$(GPERF) -o -i 1 -C -k 1,\044 -L C -H keyword_hash -N check_identifier -tT $(srcdir)/vcd_keywords.gperf >vcd_keywords.c" | sh
