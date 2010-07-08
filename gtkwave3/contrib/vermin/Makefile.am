@@ -30,10 +30,9 @@ definehash.c: vpp_keyword.gperf
 keywordhash.c: verilog_keyword.gperf
 	printf "$(GPERF) -o -i 1 -C -k 1-3,\044 -L C -H keyword_hash -N check_identifier -tT $(srcdir)/verilog_keyword.gperf >keywordhash.c" | sh
 
-shred.c: tokens.h
-	echo "Dummy rule for shred.c and tokens.h dependency"
+BUILT_SOURCES= definehash.c keywordhash.c tokens.h
 
-BUILT_SOURCES= definehash.c keywordhash.c
+shred.$(OBJEXT) : tokens.h
 
 EXTRA_DIST= \
 	parser.dlg verilog.g verilog_keyword.gperf vpp_keyword.gperf
