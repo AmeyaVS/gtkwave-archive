@@ -23,6 +23,8 @@
 #ifndef LIBLZMA_H
 #define LIBLZMA_H
 
+#include <stdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

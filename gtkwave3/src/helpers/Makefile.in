@@ -85,17 +85,18 @@ am_vcd2lxt2_OBJECTS = vcd2lxt2.$(OBJEXT) lxt2_write.$(OBJEXT) \
 vcd2lxt2_OBJECTS = $(am_vcd2lxt2_OBJECTS)
 vcd2lxt2_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_vcd2vzt_OBJECTS = vcd2vzt.$(OBJEXT) vzt_write.$(OBJEXT) \
-	v2l_debug_lxt2.$(OBJEXT)
+	v2l_debug_lxt2.$(OBJEXT) LzmaLib.$(OBJEXT)
 vcd2vzt_OBJECTS = $(am_vcd2vzt_OBJECTS)
-am__DEPENDENCIES_2 = ../liblzma/libgwlzma.a $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 vcd2vzt_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am_vzt2vcd_OBJECTS = vzt_read.$(OBJEXT) vzt2vcd.$(OBJEXT) \
-	scopenav.$(OBJEXT)
+	scopenav.$(OBJEXT) LzmaLib.$(OBJEXT)
 vzt2vcd_OBJECTS = $(am_vzt2vcd_OBJECTS)
 vzt2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
-am_vztminer_OBJECTS = vztminer.$(OBJEXT) vzt_read.$(OBJEXT)
+am_vztminer_OBJECTS = vztminer.$(OBJEXT) vzt_read.$(OBJEXT) \
+	LzmaLib.$(OBJEXT)
 vztminer_OBJECTS = $(am_vztminer_OBJECTS)
 vztminer_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
@@ -237,7 +238,7 @@ target_alias = @target_alias@
 BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 AIXFLAGS = -bmaxdata:0xd0000000/dsa
 LIBLZMA_CFLAGS = -I$(srcdir)/../liblzma $(LIBXZ_CFLAGS)
-LIBLZMA_LDADD = ../liblzma/libgwlzma.a $(LIBXZ_LDADD)
+LIBLZMA_LDADD = $(LIBXZ_LDADD)
 AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) -I$(srcdir)/fst -I$(srcdir)/../../contrib/rtlbrowse
 vcd2fst_SOURCES = vcd2fst.c $(srcdir)/fst/fastlz.c $(srcdir)/fst/fastlz.h $(srcdir)/fst/fstapi.c $(srcdir)/fst/fstapi.h $(srcdir)/../../contrib/rtlbrowse/jrb.h $(srcdir)/../../contrib/rtlbrowse/jrb.c
 vcd2fst_LDADD = $(LIBZ_LDADD)
@@ -249,11 +250,11 @@ lxt2vcd_SOURCES = lxt2_read.c lxt2_read.h lxt2vcd.c scopenav.c
 lxt2vcd_LDADD = $(LIBZ_LDADD)
 vcd2lxt2_SOURCES = vcd2lxt2.c lxt2_write.c lxt2_write.h v2l_analyzer_lxt2.h v2l_debug_lxt2.c v2l_debug_lxt2.h
 vcd2lxt2_LDADD = $(LIBZ_LDADD)
-vzt2vcd_SOURCES = vzt_read.c vzt_read.h vzt2vcd.c scopenav.c
+vzt2vcd_SOURCES = vzt_read.c vzt_read.h vzt2vcd.c scopenav.c $(srcdir)/../liblzma/LzmaLib.c $(srcdir)/../liblzma/LzmaLib.h
 vzt2vcd_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD)
-vcd2vzt_SOURCES = vcd2vzt.c vzt_write.c vzt_write.h v2l_analyzer_lxt2.h v2l_debug_lxt2.c v2l_debug_lxt2.h
+vcd2vzt_SOURCES = vcd2vzt.c vzt_write.c vzt_write.h v2l_analyzer_lxt2.h v2l_debug_lxt2.c v2l_debug_lxt2.h $(srcdir)/../liblzma/LzmaLib.c $(srcdir)/../liblzma/LzmaLib.h
 vcd2vzt_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD)
-vztminer_SOURCES = vztminer.c vzt_read.c vzt_read.h
+vztminer_SOURCES = vztminer.c vzt_read.c vzt_read.h $(srcdir)/../liblzma/LzmaLib.c $(srcdir)/../liblzma/LzmaLib.h
 vztminer_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD)
 lxt2miner_SOURCES = lxt2miner.c lxt2_read.c lxt2_read.h
 lxt2miner_LDADD = $(LIBZ_LDADD)
@@ -358,6 +359,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LzmaLib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/evcd2vcd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastlz.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fst2vcd.Po@am__quote@
@@ -452,6 +454,20 @@ ghwlib.obj: $(srcdir)/../ghwlib.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../ghwlib.c' object='ghwlib.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ghwlib.obj `if test -f '$(srcdir)/../ghwlib.c'; then $(CYGPATH_W) '$(srcdir)/../ghwlib.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../ghwlib.c'; fi`
+
+LzmaLib.o: $(srcdir)/../liblzma/LzmaLib.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT LzmaLib.o -MD -MP -MF "$(DEPDIR)/LzmaLib.Tpo" -c -o LzmaLib.o `test -f '$(srcdir)/../liblzma/LzmaLib.c' || echo '$(srcdir)/'`$(srcdir)/../liblzma/LzmaLib.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/LzmaLib.Tpo" "$(DEPDIR)/LzmaLib.Po"; else rm -f "$(DEPDIR)/LzmaLib.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../liblzma/LzmaLib.c' object='LzmaLib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o LzmaLib.o `test -f '$(srcdir)/../liblzma/LzmaLib.c' || echo '$(srcdir)/'`$(srcdir)/../liblzma/LzmaLib.c
+
+LzmaLib.obj: $(srcdir)/../liblzma/LzmaLib.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT LzmaLib.obj -MD -MP -MF "$(DEPDIR)/LzmaLib.Tpo" -c -o LzmaLib.obj `if test -f '$(srcdir)/../liblzma/LzmaLib.c'; then $(CYGPATH_W) '$(srcdir)/../liblzma/LzmaLib.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../liblzma/LzmaLib.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/LzmaLib.Tpo" "$(DEPDIR)/LzmaLib.Po"; else rm -f "$(DEPDIR)/LzmaLib.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../liblzma/LzmaLib.c' object='LzmaLib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o LzmaLib.obj `if test -f '$(srcdir)/../liblzma/LzmaLib.c'; then $(CYGPATH_W) '$(srcdir)/../liblzma/LzmaLib.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../liblzma/LzmaLib.c'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
