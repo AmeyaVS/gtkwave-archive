@@ -2095,8 +2095,8 @@ init_busy();
 
 if(scriptfile)
 	{
-	execute_script(scriptfile);
-	free_2(scriptfile); scriptfile=NULL;
+	execute_script(scriptfile, 1); /* deallocate the name in the script because context might swap out from under us! */
+	scriptfile=NULL;
 	}
 
 #if !defined _MSC_VER
@@ -2656,6 +2656,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.98  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.97  2010/03/15 15:57:28  gtkwave
  * only allocate hash when necessary
  *

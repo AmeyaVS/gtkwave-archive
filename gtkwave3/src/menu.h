@@ -34,7 +34,7 @@ void get_main_menu (GtkWidget *, GtkWidget **menubar);
 void menu_set_sensitive(void);
 int file_quit_cmd_callback (GtkWidget *widget, gpointer data);
 int set_wave_menu_accelerator(char *str);
-int execute_script(char *name);
+int execute_script(char *name, int dealloc_name);
 char *append_array_row(nptr n);
 
 struct stringchain_t
@@ -353,6 +353,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2010/07/01 23:02:41  gtkwave
+ * header file cleanup
+ *
  * Revision 1.38  2010/06/29 02:05:14  gtkwave
  * changed quit accelerator
  *

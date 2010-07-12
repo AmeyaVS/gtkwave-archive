@@ -4244,7 +4244,7 @@ if(GLOBALS->filesel_ok)
         fname=*GLOBALS->fileselbox_text;
 	if((fname)&&strlen(fname))
 		{
-		execute_script(fname);
+		execute_script(fname, 0);
 		}
 	}
 }
@@ -5964,7 +5964,7 @@ return(TRUE); /* keeps "delete_event" from happening...we'll manually destory la
 /*
  * RPC
  */
-int execute_script(char *name)
+int execute_script(char *name, int dealloc_name)
 {
 int i;
 int nlen = strlen(name);
@@ -5972,6 +5972,12 @@ int nlen = strlen(name);
 if(GLOBALS->tcl_running)
 	{
 	fprintf(stderr, "Could not run script file '%s', as one is already running.\n", name);
+
+	if(dealloc_name)
+		{
+		free_2(name);
+		}
+
 	return(0);	
 	}
 
@@ -5981,11 +5987,16 @@ if(1) /* all scripts are Tcl now */
 	{
 #if defined(HAVE_LIBTCL)
 	int tclrc;
-	char *tcl_cmd = malloc_2(7 + nlen + 1);
+	char *tcl_cmd = wave_alloca(7 + nlen + 1); /* originally a malloc, but the script can change the context! */
 	strcpy(tcl_cmd, "source ");
 	strcpy(tcl_cmd+7, name);
 
 	fprintf(stderr, "GTKWAVE | Executing Tcl script '%s'\n", name);
+
+	if(dealloc_name)
+		{
+		free_2(name);
+		}
 
 #ifdef WIN32
 	{
@@ -6000,8 +6011,6 @@ if(1) /* all scripts are Tcl now */
 
 	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
 	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
-
-	free_2(tcl_cmd);
 #else
 	fprintf(stderr, "GTKWAVE | Tcl support not compiled into gtkwave, exiting.\n");
 	gtk_exit(255);
@@ -6220,6 +6229,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.108  2010/06/29 02:05:14  gtkwave
+ * changed quit accelerator
+ *
  * Revision 1.107  2010/06/22 19:57:12  gtkwave
  * remove don't quit option on fast exit (via rc file)
  *
