@@ -31,7 +31,7 @@
 #define FST_DOUBLE_ENDTEST 		(2.7182818284590452354)
 #define FST_HDR_SIM_VERSION_SIZE 	(128)
 #define FST_HDR_DATE_SIZE 		(128)
-#define FST_GZIO_LEN			(32768)
+#define FST_GZIO_LEN			(1000)
 
 
 #if defined(__i386__) || defined(__x86_64__) || defined(_AIX)
@@ -2186,7 +2186,7 @@ if(!xc->fh)
 	off_t offs_cache = ftello(xc->f);
 	char *fnam = malloc(strlen(xc->filename) + 6 + 16 + 32 + 1);
 	unsigned char *mem = malloc(FST_GZIO_LEN);
-	uint64_t hl, uclen;
+	off_t hl, uclen;
 	gzFile zhandle;
 	int zfd;
 
@@ -2222,8 +2222,8 @@ if(!xc->fh)
 
         for(hl = 0; hl < uclen; hl += FST_GZIO_LEN)
 		{
-                unsigned len = ((uclen - hl) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - hl);
-		int gzreadlen = gzread(zhandle, mem, len); /* rc should equal len... */
+                size_t len = ((uclen - hl) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - hl);
+		size_t gzreadlen = gzread(zhandle, mem, len); /* rc should equal len... */
 		size_t fwlen;
 
 		if(gzreadlen != len)
@@ -2653,13 +2653,20 @@ if(sectype == FST_BL_ZWRAPPER)
 		for(offpnt = 0; offpnt < uclen; offpnt += FST_GZIO_LEN)
 			{
 			size_t this_len = ((uclen - offpnt) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - offpnt);
-			int gzreadlen = gzread(zhandle, gz_membuf, this_len);
+			size_t gzreadlen = gzread(zhandle, gz_membuf, this_len);
+			size_t fwlen;
+
 	                if(gzreadlen != this_len)
 	                        {
 	                        gzread_pass_status = 0;
 	                        break;
 	                        }
-			fstFwrite(gz_membuf, this_len, 1, fcomp);
+			fwlen = fstFwrite(gz_membuf, this_len, 1, fcomp);
+			if(fwlen != 1)
+				{
+				gzread_pass_status = 0;
+				break;
+				}
 			}
 		gzclose(zhandle);
 		}
