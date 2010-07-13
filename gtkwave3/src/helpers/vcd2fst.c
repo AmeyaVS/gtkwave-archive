@@ -30,18 +30,21 @@
 #include "../../contrib/rtlbrowse/jrb.h"
 #include "wave_locale.h"
 
-size_t getline_replace(char **buf, size_t *len, FILE *f)
+size_t getline_replace(char **wbuf, char **buf, size_t *len, FILE *f)
 {
 char *fgets_rc;
 
-if(!*buf)
+if(!*wbuf)
 	{
-	*buf = malloc(32768);
+	*wbuf = malloc(32768);
 	*len = 32767;
 	}
 
-(*buf)[0] = 0;
-fgets_rc = fgets(*buf, 32767, f);
+(*wbuf)[0] = 0;
+fgets_rc = fgets(*wbuf, 32767, f);
+*buf = *wbuf;
+while(*(buf)[0]==' ') { (*buf)++; } /* verilator leading spaces fix */
+
 if((!(*buf)[0])||(!fgets_rc))
 	{
 	return(-1);
@@ -79,7 +82,7 @@ int repack_all = 0; /* 0 is normal, 1 does the repack (via fstapi) at end */
 int fst_main(char *vname, char *fstname)
 {
 FILE *f;
-char *buf = NULL;
+char *buf = NULL, *wbuf = NULL;
 size_t glen;
 struct fstContext *ctx;
 int line = 0;
@@ -118,7 +121,7 @@ fstWriterSetRepackOnClose(ctx, repack_all);
 
 while(!feof(f))
 	{
-	ss = getline_replace(&buf, &glen, f);
+	ss = getline_replace(&wbuf, &buf, &glen, f);
 	if(ss == -1)
 		{
 		break;
@@ -343,7 +346,7 @@ while(!feof(f))
 
 		if(!num)
 			{
-			ss = getline_replace(&buf, &glen, f);
+			ss = getline_replace(&wbuf, &buf, &glen, f);
 			if(ss == -1)
 				{
 				break;
@@ -386,28 +389,92 @@ while(!feof(f))
 	else
 	if(!strncmp(buf, "$date", 5))
 		{
-		char *pnt;
-		ss = getline_replace(&buf, &glen, f);
-		if(ss == -1)
+		char *pnt, *rsp;
+		int found = 0;
+
+		if((pnt = strstr(buf, "$end")))
 			{
-			break;
+                        *pnt = 0;
+			pnt = buf + 5;
+			while(*pnt && (*pnt==' ')) { *(pnt++); }
+			while((rsp = strrchr(pnt, ' ')))
+				{
+				if(*(rsp+1) == 0)
+					{
+					*rsp = 0;
+					}
+					else
+					{
+					break;
+					}					
+				}
+			if(strlen(pnt)) { found = 1; }
 			}
-		line++;
-		pnt = buf;
+		else
+			{
+			pnt = buf + 5;
+			while(*pnt && (*pnt==' ')) { *(pnt++); }
+			while((rsp = strrchr(pnt, ' ')))
+				{
+				if(*(rsp+1) == 0)
+					{
+					*rsp = 0;
+					}
+					else
+					{
+					break;
+					}					
+				}
+			if(strlen(pnt) > 3) { found = 1; }
+			}
+		
+		if(!found)		
+			{
+			ss = getline_replace(&wbuf, &buf, &glen, f);
+			if(ss == -1)
+				{
+				break;
+				}
+			line++;
+			pnt = buf;
+			}
+
 		while(*pnt == '\t') pnt++;
 		fstWriterSetDate(ctx, pnt);
 		}
 	else
 	if(!strncmp(buf, "$version", 8))
 		{
-		char *pnt, *crpnt;
-		ss = getline_replace(&buf, &glen, f);
-		if(ss == -1)
+		char *pnt, *crpnt, *rsp;
+
+                if((pnt = strstr(buf, "$end")))
+                        {
+                        *pnt = 0;
+			pnt = buf+8;
+			while(*pnt && (*pnt==' ')) { *(pnt++); }
+			while((rsp = strrchr(pnt, ' ')))
+				{
+				if(*(rsp+1) == 0)
+					{
+					*rsp = 0;
+					}
+					else
+					{
+					break;
+					}					
+				}
+                        }           
+			else
 			{
-			break;
+			ss = getline_replace(&wbuf, &buf, &glen, f);
+			if(ss == -1)
+				{
+				break;
+				}
+			line++;
+			pnt = buf;
 			}
-		line++;
-		pnt = buf;
+
 		while(*pnt == '\t') pnt++;
 		crpnt = strchr(pnt, '\n');
 		if(crpnt) *crpnt = 0;
@@ -425,7 +492,7 @@ while(!feof(f))
 	char *nl, *sp;
 	double doub;
 
-	ss = getline_replace(&buf, &len, f);
+	ss = getline_replace(&wbuf, &buf, &len, f);
 	if(ss == -1)
 		{
 		break;
@@ -561,9 +628,9 @@ while(!feof(f))
 
 fstWriterClose(ctx);
 
-if(buf)
+if(wbuf)
 	{
-	free(buf);
+	free(wbuf);
 	}
 if(f != stdin) fclose(f);
 
@@ -706,6 +773,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/02/22 21:13:37  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.9  2010/02/08 17:31:19  gtkwave
  * backtracking time fix
  *

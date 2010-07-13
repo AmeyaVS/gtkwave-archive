@@ -877,3 +877,4 @@
 		Fix for free to non-malloc'd address problem in main.c and
 		menu.c due to context changing in Tcl scripts when
 		gtkwave::/File/Open_New_Tab is invoked.
+		Updated vcd2fst so it is compatible with VerilatedVcd writer.
