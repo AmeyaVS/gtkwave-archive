@@ -878,3 +878,4 @@
 		menu.c due to context changing in Tcl scripts when
 		gtkwave::/File/Open_New_Tab is invoked.
 		Updated vcd2fst so it is compatible with VerilatedVcd writer.
+		Read hierarchy reconstruction hardening for fstapi.c.

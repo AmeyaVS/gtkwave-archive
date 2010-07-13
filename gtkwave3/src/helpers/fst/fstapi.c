@@ -2225,12 +2225,20 @@ if(!xc->fh)
 		{
                 unsigned len = ((uclen - hl) > FST_GZIO_LEN) ? FST_GZIO_LEN : (uclen - hl);
 		int gzreadlen = gzread(zhandle, mem, len); /* rc should equal len... */
+		size_t fwlen;
+
 		if(gzreadlen != len)
 			{
 			pass_status = 0;
 			break;
 			}
-		fstFwrite(mem, len, 1, xc->fh);
+
+		fwlen = fstFwrite(mem, len, 1, xc->fh);
+		if(fwlen != 1)
+			{
+			pass_status = 0;
+			break;
+			}
                 }
         gzclose(zhandle);
 	free(mem);
