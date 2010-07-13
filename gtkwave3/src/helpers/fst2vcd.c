@@ -135,7 +135,11 @@ if(!xc)
 	}
 
 fv = stdout;
-fstReaderProcessHier(xc, fv); 			/* these 3 lines do all the VCD writing work */
+if(!fstReaderProcessHier(xc, fv))		/* these 3 lines do all the VCD writing work */
+	{
+	fprintf(stderr, "could not process hierarchy for '%s', exiting.\n", fstname);
+	exit(255);
+	}
 fstReaderSetFacProcessMaskAll(xc);		/* these 3 lines do all the VCD writing work */
 fstReaderIterBlocks(xc, NULL, NULL, fv);	/* these 3 lines do all the VCD writing work */
 
@@ -148,6 +152,9 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2009/08/06 20:03:31  gtkwave
+ * warnings fixes
+ *
  * Revision 1.1  2009/06/14 19:44:18  gtkwave
  * added fst2vcd to the distro
  *
