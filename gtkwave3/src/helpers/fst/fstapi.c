@@ -2186,8 +2186,7 @@ if(!xc->fh)
 	off_t offs_cache = ftello(xc->f);
 	char *fnam = malloc(strlen(xc->filename) + 6 + 16 + 32 + 1);
 	unsigned char *mem = malloc(FST_GZIO_LEN);
-	off_t hl;
-	uint64_t uclen;
+	uint64_t hl, uclen;
 	gzFile zhandle;
 	int zfd;
 
