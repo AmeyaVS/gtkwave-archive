@@ -879,3 +879,4 @@
 		gtkwave::/File/Open_New_Tab is invoked.
 		Updated vcd2fst so it is compatible with VerilatedVcd writer.
 		Read hierarchy reconstruction hardening for fstapi.c.
+		Check return code for hierarchy generation in fst2vcd.c.
