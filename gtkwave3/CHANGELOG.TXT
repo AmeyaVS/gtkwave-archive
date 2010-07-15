@@ -882,3 +882,4 @@
 		Check return code for hierarchy generation in fst2vcd.c.
 		Updated example to reflect Quit name change.
 		Updated repscript_timer so it prints stack trace.
+		Use setvbuf (as with MinGW) for fstapi.c to fix for OS X.

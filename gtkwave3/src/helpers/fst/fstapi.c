@@ -38,6 +38,10 @@
 #define FST_DO_MISALIGNED_OPS
 #endif
 
+#if defined(__APPLE__) && defined(__MACH__)
+#define FST_MACOSX 
+#endif
+
 
 /***********************/
 /***                 ***/
@@ -2632,6 +2636,10 @@ if(sectype == FST_BL_ZWRAPPER)
 		if(!fcomp) return(0);
 		}
 
+#if defined(FST_MACOSX)
+	setvbuf(fcomp, (char *)NULL, _IONBF, 0);   /* keeps gzip from acting weird in tandem with fopen */
+#endif
+
 #ifdef __MINGW32__
 	setvbuf(fcomp, (char *)NULL, _IONBF, 0);   /* keeps gzip from acting weird in tandem with fopen */
 	xc->filename_unpacked = hf;
@@ -2902,7 +2910,7 @@ if((!nam)||(!(xc->f=fopen(nam, "rb"))))
         char *hf = calloc(1, flen + 6);
 	int rc;
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(FST_MACOSX)
 	setvbuf(xc->f, (char *)NULL, _IONBF, 0);   /* keeps gzip from acting weird in tandem with fopen */
 #endif
 
