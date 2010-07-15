@@ -2621,7 +2621,26 @@ if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 	GLOBALS->tcl_running = 1;
 	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
 	GLOBALS->tcl_running = 0;
+#if WAVE_TCL_CHECK_VERSION(8,5,0)
+	if(tclrc != TCL_OK) { 
+	  Tcl_Obj *options;
+	  Tcl_Obj *key;
+	  Tcl_Obj *stackTrace;
+
+	  fprintf(stderr, "GTKWAVE | %s\n", 
+		  Tcl_GetStringResult (GLOBALS->interp)); 
+	  options = Tcl_GetReturnOptions(GLOBALS->interp, tclrc);  
+	  key = Tcl_NewStringObj("-errorinfo", -1);
+	  Tcl_IncrRefCount(key);
+	  Tcl_DictObjGet(NULL, options, key, &stackTrace);
+	  Tcl_DecrRefCount(key);
+	  fprintf(stderr, "TCL Stack Trace\n%s\n",
+		  Tcl_GetStringFromObj(stackTrace, NULL)) ;
+	  /* Do something with stackTrace */
+	}
+#else
 	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
+#endif
 
 	free_2(tcl_cmd);
 	return(TRUE);
@@ -2735,6 +2754,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.78  2010/04/07 01:50:45  gtkwave
+ * improved name handling for bvname, add $next transaction operation
+ *
  * Revision 1.77  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *

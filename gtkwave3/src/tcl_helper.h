@@ -18,6 +18,13 @@
 #include <tk.h>
 #include "debug.h"
 
+#define WAVE_TCL_CHECK_VERSION(major,minor,micro)    \
+    (TCL_MAJOR_VERSION > (major) || \
+     (TCL_MAJOR_VERSION == (major) && TCL_MINOR_VERSION > (minor)) || \
+     (TCL_MAJOR_VERSION == (major) && TCL_MINOR_VERSION == (minor) && \
+      TCL_RELEASE_SERIAL >= (micro)))
+
+
 typedef struct
         {
         const char *cmdstr;
@@ -98,6 +105,9 @@ void set_globals_interp(char *me, int install_tk);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.23  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.22  2009/11/11 16:30:58  gtkwave
  * changed tcl library ordering, no tk unless --wish
  *
