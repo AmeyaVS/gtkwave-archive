@@ -1947,7 +1947,7 @@ while (1)
 			break;
 
 		case 'b':
-			sscanf(optarg, "%lld", &opt_break_size);
+			sscanf(optarg, "%llu", &opt_break_size);
 			errno = 0;
 			break;
 
@@ -2012,6 +2012,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/02/22 21:13:37  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.8  2010/02/08 17:31:19  gtkwave
  * backtracking time fix
  *
