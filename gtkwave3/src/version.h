@@ -10,6 +10,6 @@
 #ifndef WAVE_VERSION_H
 #define WAVE_VERSION_H
 
-#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.10_pre (w)1999-2010 BSI"
+#define WAVE_VERSION_INFO "GTKWave Analyzer v3.3.10 (w)1999-2010 BSI"
 
 #endif
