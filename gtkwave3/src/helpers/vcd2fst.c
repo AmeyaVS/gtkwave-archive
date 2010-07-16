@@ -396,7 +396,7 @@ while(!feof(f))
 			{
                         *pnt = 0;
 			pnt = buf + 5;
-			while(*pnt && (*pnt==' ')) { *(pnt++); }
+			while(*pnt && ((*pnt)==' ')) { pnt++; }
 			while((rsp = strrchr(pnt, ' ')))
 				{
 				if(*(rsp+1) == 0)
@@ -413,7 +413,7 @@ while(!feof(f))
 		else
 			{
 			pnt = buf + 5;
-			while(*pnt && (*pnt==' ')) { *(pnt++); }
+			while(*pnt && ((*pnt)==' ')) { pnt++; }
 			while((rsp = strrchr(pnt, ' ')))
 				{
 				if(*(rsp+1) == 0)
@@ -451,7 +451,7 @@ while(!feof(f))
                         {
                         *pnt = 0;
 			pnt = buf+8;
-			while(*pnt && (*pnt==' ')) { *(pnt++); }
+			while(*pnt && ((*pnt)==' ')) { pnt++; }
 			while((rsp = strrchr(pnt, ' ')))
 				{
 				if(*(rsp+1) == 0)
@@ -773,6 +773,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/07/13 00:03:47  gtkwave
+ * Updated vcd2fst so it is compatible with VerilatedVcd writer
+ *
  * Revision 1.10  2010/02/22 21:13:37  gtkwave
  * added "realtime" VCD variable
  *

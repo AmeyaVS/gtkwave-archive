@@ -255,7 +255,7 @@ for(i=0;i<len;i++)
 	}
 if(i==len)
 	{
-	int shmid;
+	unsigned int shmid;
 	
 	sscanf(id, "%x", &shmid);
 #ifdef __MINGW32__
@@ -532,6 +532,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/06/13 22:02:18  gtkwave
+ * beginning to add FST support to rtlbrowse
+ *
  * Revision 1.6  2009/04/23 21:57:53  gtkwave
  * added mingw support for rtlbrowse
  *

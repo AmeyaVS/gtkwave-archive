@@ -742,7 +742,7 @@ static void DNDDataReceivedCB(
        (info == WAVE_DRAG_TAR_INFO_2))
     {
     int impcnt = 0;
-    ds_Tree *ft;
+    ds_Tree *ft = NULL;
     int argc = 0;
     char**zs = zSplitTclList((const char *)selection_data->data, &argc);
     if(zs)

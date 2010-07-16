@@ -2955,8 +2955,7 @@ pr_RenderSig (pr_context * prc, Trptr t, int i)
   {
     int maxwidth = 0;
 
-    if (buf)
-      maxwidth = strlen (buf);
+    maxwidth = strlen (buf);
     if ((t->asciivalue) && (!(t->flags & TR_EXCLUDE)))
       maxwidth += strlen (t->asciivalue);
     if (maxwidth)
@@ -3111,6 +3110,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2010/04/14 18:45:37  gtkwave
+ * allow data values for secondary transaction traces
+ *
  * Revision 1.35  2010/04/14 04:21:46  gtkwave
  * update populateBuffer() usage
  *

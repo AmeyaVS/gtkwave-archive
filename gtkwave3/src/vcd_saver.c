@@ -504,7 +504,7 @@ if(lxt)
 		}
 		else
 		{
-		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment data_start %p $end\n", trans_head); /* arbitrary hex identifier */
+		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment data_start %p $end\n", (void *)trans_head); /* arbitrary hex identifier */
 		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment name %s $end\n", trans_head->name ? trans_head->name : "UNKNOWN");
 		fprintf(GLOBALS->f_vcd_saver_c_1, "$timescale %d%c%s $end\n", (int)GLOBALS->time_scale, GLOBALS->time_dimension, (GLOBALS->time_dimension=='s') ? "" : "s");
 		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment min_time "TTFormat" $end\n", GLOBALS->min_time / GLOBALS->time_scale);
@@ -756,7 +756,7 @@ if(lxt)
 		}
 		else
 		{
-		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment data_end %p $end\n", trans_head); /* arbitrary hex identifier */
+		fprintf(GLOBALS->f_vcd_saver_c_1, "$comment data_end %p $end\n", (void *)trans_head); /* arbitrary hex identifier */
 		fflush(GLOBALS->f_vcd_saver_c_1);
 		}
 
@@ -1518,6 +1518,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/06/23 05:45:34  gtkwave
+ * warnings fixes
+ *
  * Revision 1.16  2010/04/01 20:07:35  gtkwave
  * timescale multiplier fix for transactions
  *
