@@ -30,7 +30,7 @@ struct xl_tree_node {
 
 
 #define FILE_FILTER_MAX (128)
-
+#define WAVE_TCL_INSTALLED_FILTER "\"TCL_Installed_Filter\""
 
 
 xl_Tree * xl_splay (char *i, xl_Tree * t);
@@ -41,6 +41,8 @@ xl_Tree * xl_delete(char *i, xl_Tree * t);
 void trans_searchbox(char *title);
 void init_filetrans_data(void);
 int install_file_filter(int which);
+
+void set_current_translate_enums(char *lst);
 void set_current_translate_file(char *name);
 
 #endif
@@ -48,6 +50,9 @@ void set_current_translate_file(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/07/19 21:12:19  gtkwave
+ * added file/proc/trans access functions to Tcl script interpreter
+ *
  * Revision 1.3  2010/03/30 18:33:27  gtkwave
  * fixed cut and paste errors from file to proc
  *

@@ -1904,6 +1904,23 @@ if(objc == 2)
 }
 
 
+static int gtkwavetcl_setCurrentTranslateEnums(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = get_Tcl_string(objv[1]);
+	set_current_translate_enums(s);
+
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, GLOBALS->current_translate_file));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
 static int gtkwavetcl_installProcFilter(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 if(objc == 2)
@@ -2027,6 +2044,7 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"installTransFilter",			gtkwavetcl_installTransFilter},
    	{"nop", 				gtkwavetcl_nop},
 	{"setBaselineMarker",			gtkwavetcl_setBaselineMarker},
+	{"setCurrentTranslateEnums",		gtkwavetcl_setCurrentTranslateEnums},
 	{"setCurrentTranslateFile",		gtkwavetcl_setCurrentTranslateFile},
 	{"setCurrentTranslateProc",		gtkwavetcl_setCurrentTranslateProc},
 	{"setCurrentTranslateTransProc",	gtkwavetcl_setCurrentTranslateTransProc},
@@ -2064,6 +2082,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2010/07/19 21:12:19  gtkwave
+ * added file/proc/trans access functions to Tcl script interpreter
+ *
  * Revision 1.39  2010/05/21 19:47:58  gtkwave
  * fixes to tcl string handling on { ... } string case.
  *

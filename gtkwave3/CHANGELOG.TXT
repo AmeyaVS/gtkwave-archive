@@ -887,5 +887,6 @@
 		gtkwave::installProcFilter, gtkwave::installTransFilter,
 		gtkwave::setCurrentTranslateFile,
 		gtkwave::setCurrentTranslateProc,
-		and gtkwave::setCurrentTranslateTransProc to give Tcl
-		access to these features.
+		gtkwave::setCurrentTranslateTransProc, and
+		gtkwave::setCurrentTranslateEnums to give Tcl access to these 
+		features.

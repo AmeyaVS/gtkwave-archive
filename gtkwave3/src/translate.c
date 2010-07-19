@@ -227,6 +227,32 @@ while(!feof(f))
 fclose(f);
 }
 
+
+static void load_enums_filter(int which, char *name)
+{
+int argc;
+char **spl = zSplitTclList(name, &argc);
+int i;
+
+if((!spl)||(!argc)||(argc&1))
+	{
+	status_text("Malformed enums list!\n");
+	return;
+	}
+
+remove_file_filter(which, 0); /* should never happen from GUI, but possible from save files or other weirdness */
+
+for(i=0;i<argc;i+=2)
+	{
+	char *lhs = spl[i];
+	char *xlt = spl[i+1];
+
+	GLOBALS->xl_file_filter[which] =  xl_insert(lhs, GLOBALS->xl_file_filter[which], xlt);
+	}
+free_2(spl);
+}
+
+
 int install_file_filter(int which)
 {
 int found = 0;
@@ -492,21 +518,38 @@ void trans_searchbox(char *title)
 
 
 /*
- * currently only called by parsewavline
+ * currently only called by parsewavline+tcl
  */
-void set_current_translate_file(char *name)
+static void set_current_translate_generic(char *name, int typ)
 {
 int i;
 
-for(i=1;i<GLOBALS->num_file_filters+1;i++)
+if(typ)
 	{
-	if(!strcmp(GLOBALS->filesel_filter[i], name)) { GLOBALS->current_translate_file = i; return; } 
+	for(i=1;i<GLOBALS->num_file_filters+1;i++)
+		{
+		if(!strcmp(GLOBALS->filesel_filter[i], name)) { GLOBALS->current_translate_file = i; return; } 
+		}
+
+	if(!strcmp(WAVE_TCL_INSTALLED_FILTER, name))
+		{
+		GLOBALS->current_translate_file = 0; return;
+		}
 	}
 
 if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 	{
 	GLOBALS->num_file_filters++;
-	load_file_filter(GLOBALS->num_file_filters, name);
+
+	if(typ)
+		{
+		load_file_filter(GLOBALS->num_file_filters, name);
+		}
+		else
+		{
+		load_enums_filter(GLOBALS->num_file_filters, name);
+		}
+
 	if(!GLOBALS->xl_file_filter[GLOBALS->num_file_filters])
 		{
 		GLOBALS->num_file_filters--;
@@ -515,6 +558,12 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 		else
 		{
 		if(GLOBALS->filesel_filter[GLOBALS->num_file_filters]) free_2(GLOBALS->filesel_filter[GLOBALS->num_file_filters]);
+
+		if(!typ)
+			{
+			name = WAVE_TCL_INSTALLED_FILTER;
+			}
+
 		GLOBALS->filesel_filter[GLOBALS->num_file_filters] = malloc_2(strlen(name) + 1);
 		strcpy(GLOBALS->filesel_filter[GLOBALS->num_file_filters], name);
 		GLOBALS->current_translate_file = GLOBALS->num_file_filters;
@@ -522,9 +571,24 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 	}
 }
 
+
+void set_current_translate_file(char *name)
+{
+set_current_translate_generic(name, 1); /* use file, not enums */
+}
+
+void set_current_translate_enums(char *lst)
+{
+set_current_translate_generic(lst, 0); /* use enums */
+}
+
+
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/07/19 21:12:19  gtkwave
+ * added file/proc/trans access functions to Tcl script interpreter
+ *
  * Revision 1.6  2010/04/15 01:55:03  gtkwave
  * raise to front on filename select
  *
