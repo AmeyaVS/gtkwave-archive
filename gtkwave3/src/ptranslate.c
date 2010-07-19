@@ -65,7 +65,7 @@ for(j=0;j<GLOBALS->num_notebook_pages;j++)
 #if defined __MINGW32__ || defined _MSC_VER
 
 void ptrans_searchbox(char *title) { }
-void install_proc_filter(int which) { } 
+int install_proc_filter(int which) { return(0); } 
 void set_current_translate_proc(char *name) { }
 
 #else
@@ -157,9 +157,14 @@ static void load_proc_filter(int which, char *name)
 	}
 }
 
-void install_proc_filter(int which)
+int install_proc_filter(int which)
 {
 int found = 0;
+
+if((which<0)||(which>=(PROC_FILTER_MAX+1)))
+        {
+        which = 0;
+        }
 
 if(GLOBALS->traces.first)  
         {
@@ -180,7 +185,7 @@ if(GLOBALS->traces.first)
 					{
 					t->flags |= TR_PTRANSLATED;
 					}
-                                found = 1;
+                                found++;
                                 }
                         }
                 t=t->t_next;
@@ -191,6 +196,8 @@ if(found)
 	{
 	regen_display();
 	}
+
+return(found);
 }
 
 /************************************************************************/
@@ -450,6 +457,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/06/23 05:45:34  gtkwave
+ * warnings fixes
+ *
  * Revision 1.11  2010/04/15 18:39:34  gtkwave
  * remove invocations of pipeio_destroy where unnecessary
  *

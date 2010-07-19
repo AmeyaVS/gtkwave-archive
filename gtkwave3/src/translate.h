@@ -40,7 +40,7 @@ xl_Tree * xl_delete(char *i, xl_Tree * t);
 
 void trans_searchbox(char *title);
 void init_filetrans_data(void);
-void install_file_filter(int which);
+int install_file_filter(int which);
 void set_current_translate_file(char *name);
 
 #endif
@@ -48,6 +48,9 @@ void set_current_translate_file(char *name);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2010/03/30 18:33:27  gtkwave
+ * fixed cut and paste errors from file to proc
+ *
  * Revision 1.2  2007/08/26 21:35:46  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

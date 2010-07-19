@@ -23,7 +23,7 @@
 
 void ttrans_searchbox(char *title);
 void init_ttrans_data(void);
-void install_ttrans_filter(int which);
+int install_ttrans_filter(int which);
 void set_current_translate_ttrans(char *name);
 void remove_all_ttrans_filters(void);
 
@@ -32,5 +32,8 @@ void remove_all_ttrans_filters(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  */
 

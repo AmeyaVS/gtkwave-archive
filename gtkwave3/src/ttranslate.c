@@ -65,7 +65,7 @@ for(j=0;j<GLOBALS->num_notebook_pages;j++)
 #if defined __MINGW32__ || defined _MSC_VER
 
 void ttrans_searchbox(char *title) { }
-void install_ttrans_filter(int which) { } 
+int install_ttrans_filter(int which) { return(0); } 
 void set_current_translate_ttrans(char *name) { }
 int traverse_vector_nodes(Trptr t) { if(t) { t->t_filter = 0; } return(0); }
 
@@ -163,9 +163,14 @@ static void load_ttrans_filter(int which, char *name)
 	}
 }
 
-void install_ttrans_filter(int which)
+int install_ttrans_filter(int which)
 {
 int found = 0;
+
+if((which<0)||(which>=(PROC_FILTER_MAX+1)))
+        {
+        which = 0;
+        }
 
 if(GLOBALS->traces.first)  
         {
@@ -231,7 +236,7 @@ if(GLOBALS->traces.first)
 					t->flags |= TR_TTRANSLATED;
 					traverse_vector_nodes(t);
 					}
-                                found = 1;
+                                found++;
 
 				if(t->t_match)
 					{
@@ -252,6 +257,8 @@ if(found)
 	{
 	regen_display();
 	}
+
+return(found);
 }
 
 /************************************************************************/
@@ -742,6 +749,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2010/06/23 05:45:34  gtkwave
+ * warnings fixes
+ *
  * Revision 1.17  2010/04/25 16:47:06  gtkwave
  * typo fix for mingw
  *

@@ -227,9 +227,14 @@ while(!feof(f))
 fclose(f);
 }
 
-void install_file_filter(int which)
+int install_file_filter(int which)
 {
 int found = 0;
+
+if((which<0)||(which>=(FILE_FILTER_MAX+1)))
+	{
+	which = 0;
+	}
 
 if(GLOBALS->traces.first)  
         {
@@ -250,7 +255,7 @@ if(GLOBALS->traces.first)
 					{
 					t->flags |= TR_FTRANSLATED;
 					}
-                                found = 1;
+                                found++;
                                 }
                         }
                 t=t->t_next;
@@ -261,6 +266,8 @@ if(found)
 	{
 	regen_display();
 	}
+
+return(found);
 }
 
 /************************************************************************/
@@ -518,6 +525,9 @@ if(GLOBALS->num_file_filters < FILE_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2010/04/15 01:55:03  gtkwave
+ * raise to front on filename select
+ *
  * Revision 1.5  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *

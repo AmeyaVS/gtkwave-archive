@@ -1868,6 +1868,114 @@ return(gtkwavetcl_printInteger(clientData, interp, objc, objv, value));
 }
 
 
+static int gtkwavetcl_installFileFilter(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = get_Tcl_string(objv[1]);
+        unsigned int which = atoi(s);
+	gint rc = install_file_filter(which);
+        
+        gtkwave_main_iteration();
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, rc));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
+static int gtkwavetcl_setCurrentTranslateFile(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = get_Tcl_string(objv[1]);
+	set_current_translate_file(s);
+
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, GLOBALS->current_translate_file));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
+static int gtkwavetcl_installProcFilter(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = get_Tcl_string(objv[1]);
+        unsigned int which = atoi(s);
+	gint rc = install_file_filter(which);
+        
+        gtkwave_main_iteration();
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, rc));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
+static int gtkwavetcl_setCurrentTranslateProc(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = get_Tcl_string(objv[1]);
+	set_current_translate_proc(s);
+
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, GLOBALS->current_translate_proc));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
+static int gtkwavetcl_installTransFilter(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = get_Tcl_string(objv[1]);
+        unsigned int which = atoi(s);
+	gint rc = install_ttrans_filter(which);
+        
+        gtkwave_main_iteration();
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, rc));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
+static int gtkwavetcl_setCurrentTranslateTransProc(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc == 2)
+        {       
+        char *s = get_Tcl_string(objv[1]);
+	set_current_translate_ttrans(s);
+
+	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, GLOBALS->current_translate_ttrans));
+        }
+        else
+        {
+        return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+        }
+       
+}
+
+
 tcl_cmdstruct gtkwave_commands[] =
 	{
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
@@ -1914,8 +2022,14 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"getWindowStartTime", 			gtkwavetcl_getWindowStartTime},
 	{"getZoomFactor",			gtkwavetcl_getZoomFactor},
 	{"highlightSignalsFromList",		gtkwavetcl_highlightSignalsFromList},
+	{"installFileFilter",			gtkwavetcl_installFileFilter},
+	{"installProcFilter",			gtkwavetcl_installProcFilter},
+	{"installTransFilter",			gtkwavetcl_installTransFilter},
    	{"nop", 				gtkwavetcl_nop},
 	{"setBaselineMarker",			gtkwavetcl_setBaselineMarker},
+	{"setCurrentTranslateFile",		gtkwavetcl_setCurrentTranslateFile},
+	{"setCurrentTranslateProc",		gtkwavetcl_setCurrentTranslateProc},
+	{"setCurrentTranslateTransProc",	gtkwavetcl_setCurrentTranslateTransProc},
 	{"setFromEntry",			gtkwavetcl_setFromEntry},
 	{"setLeftJustifySigs",			gtkwavetcl_setLeftJustifySigs},
 	{"setMarker",				gtkwavetcl_setMarker},
@@ -1950,6 +2064,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2010/05/21 19:47:58  gtkwave
+ * fixes to tcl string handling on { ... } string case.
+ *
  * Revision 1.38  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *
