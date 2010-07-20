@@ -890,3 +890,5 @@
 		gtkwave::setCurrentTranslateTransProc, and
 		gtkwave::setCurrentTranslateEnums to give Tcl access to these 
 		features.
+		Add write combining in fstWriterEmitValueChange to speed
+		up execution on Cygwin.
