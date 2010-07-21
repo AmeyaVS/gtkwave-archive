@@ -42,6 +42,10 @@
 #define FST_MACOSX 
 #endif
 
+#if defined(__CYGWIN__) && defined(__GNUC__)
+#define FST_USE_FWRITE_COMBINING
+#endif
+
 
 /***********************/
 /***                 ***/
@@ -391,7 +395,7 @@ fstFwrite(buf, len, 1, handle);
 return(len);
 }
 
-
+#ifndef FST_USE_FWRITE_COMBINING
 static int fstWriterUint32WithVarint(FILE *handle, uint32_t *u, uint64_t v)
 {
 uint64_t nxt;
@@ -412,7 +416,29 @@ len = pnt-buf;
 fstFwrite(buf, len, 1, handle);
 return(len);
 }
+#else
+static int fstWriterUint32WithVarint(FILE *handle, uint32_t *u, uint64_t v, const void *dbuf, size_t siz)
+{
+uint64_t nxt;
+unsigned char buf[10 + sizeof(uint32_t) + siz]; /* gcc extension ok for cygwin */
+unsigned char *pnt = buf + sizeof(uint32_t);
+int len;
 
+memcpy(buf, u, sizeof(uint32_t));
+
+while((nxt = v>>7))
+        {
+        *(pnt++) = (v&0x7f) | 0x80;
+        v = nxt;
+        }
+*(pnt++) = (v&0x7f);
+memcpy(pnt, dbuf, siz);
+
+len = pnt-buf + siz;
+fstFwrite(buf, len, 1, handle);
+return(len);
+}
+#endif
 
 /***********************/
 /***                 ***/
@@ -438,7 +464,8 @@ FILE *hier_handle;
 FILE *geom_handle;
 FILE *valpos_handle;
 FILE *curval_handle;
-FILE *vchn_handle;
+FILE *
+vchn_handle;
 FILE *tchn_handle;
 
 off_t hier_file_len;
@@ -1595,10 +1622,14 @@ if((xc) && (handle <= xc->maxhandle))
 	if(!xc->is_initial_time)
 		{
 		fpos = xc->vchn_siz;
-		/* cygwin runs faster if these writes are combined, so the new fstWriterUint32WithVarint function */
-		xc->vchn_siz += fstWriterUint32WithVarint(xc->vchn_handle, &vm4ip[2], xc->tchn_idx - vm4ip[3]); /* prev_chg is vm4ip[2] */
-		fstFwrite(buf, len, 1, xc->vchn_handle);
-		xc->vchn_siz += len;
+		/* cygwin runs faster if these writes are combined, so the new fstWriterUint32WithVarint function, but should help with regular */
+#ifndef FST_USE_FWRITE_COMBINING
+                xc->vchn_siz += fstWriterUint32WithVarint(xc->vchn_handle, &vm4ip[2], xc->tchn_idx - vm4ip[3]); /* prev_chg is vm4ip[2] */
+                fstFwrite(buf, len, 1, xc->vchn_handle);
+                xc->vchn_siz += len;
+#else
+		xc->vchn_siz += fstWriterUint32WithVarint(xc->vchn_handle, &vm4ip[2], xc->tchn_idx - vm4ip[3], buf, len); /* do one fwrite op only */
+#endif
 		vm4ip[3] = xc->tchn_idx;
 		vm4ip[2] = fpos;
 		}
