@@ -892,3 +892,4 @@
 		features.
 		Add write combining in fstWriterEmitValueChange to speed
 		up execution on Cygwin.
+		Nested `ifdef fix for Vermin.

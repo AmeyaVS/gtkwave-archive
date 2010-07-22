@@ -704,7 +704,6 @@ is->next = ifdef_stack_top;
 is->do_not_translate = do_not_translate;
 ifdef_stack_top = is;
 
-if(!is->blocked)
 	{
 	if(!(node=jrb_find_str(define_tree, s1)))
 		{
@@ -716,7 +715,6 @@ if(!is->blocked)
 		else
 		{
 		/* do */
-		do_not_translate &= ~STMODE_XLATEOFF_IFDEF;
 		is->else_branch = 0; /* do not translate in `else */
 		}
 	}
@@ -751,7 +749,6 @@ is->do_not_translate = do_not_translate;
 is->blocked = ifdef_stack_top ? ifdef_stack_top->blocked : 0;
 ifdef_stack_top = is;
 
-if(!is->blocked)
 	{
 	if((node=jrb_find_str(define_tree, s1)))
 		{
@@ -763,7 +760,6 @@ if(!is->blocked)
 		else
 		{
 		/* do */
-		do_not_translate &= ~STMODE_XLATEOFF_IFDEF;
 		is->else_branch = 0; /* do not translate in `else */
 		}
 	}
@@ -784,7 +780,7 @@ if(!ifdef_stack_top)
 	{
 	if(ifdef_stack_top->else_branch)
 		{
-		do_not_translate &= ~STMODE_XLATEOFF_IFDEF;
+		do_not_translate = ifdef_stack_top->do_not_translate; /* take from parent */
 		}
 		else
 		{
@@ -994,6 +990,9 @@ if(ics)
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2008/12/20 05:45:03  gtkwave
+ * gtk1 compatibility and -Wshadow warning fixes
+ *
  * Revision 1.2  2008/11/11 15:30:26  gtkwave
  * carriage return in defines fix
  *
