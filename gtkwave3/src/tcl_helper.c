@@ -2614,7 +2614,7 @@ if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 	{
 	int tclrc;
 	int nlen = strlen(GLOBALS->repscript_name);
-	char *tcl_cmd = malloc_2(7 + nlen + 1);
+	char *tcl_cmd = wave_alloca(7 + nlen + 1);
 	strcpy(tcl_cmd, "source ");
 	strcpy(tcl_cmd+7, GLOBALS->repscript_name);
 
@@ -2642,7 +2642,6 @@ if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 	if(tclrc != TCL_OK) { fprintf (stderr, "GTKWAVE | %s\n", Tcl_GetStringResult (GLOBALS->interp)); }
 #endif
 
-	free_2(tcl_cmd);
 	return(TRUE);
 	}
 	else
@@ -2754,6 +2753,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.79  2010/07/15 14:27:05  gtkwave
+ * repscript timer fix to print stack trace
+ *
  * Revision 1.78  2010/04/07 01:50:45  gtkwave
  * improved name handling for bvname, add $next transaction operation
  *
