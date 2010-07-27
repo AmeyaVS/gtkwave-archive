@@ -2107,10 +2107,12 @@ menu_toggle_group(GtkWidget *widget, gpointer data)
      if(IsClosed(t))
        {
 	 menu_open_group(widget, data);
+	 gtkwavetcl_setvar(WAVE_TCLCB_OPEN_TRACE_GROUP, t->name, WAVE_TCLCB_OPEN_TRACE_GROUP_FLAGS);
        }
      else
        {
 	 menu_close_group(widget, data);
+	 gtkwavetcl_setvar(WAVE_TCLCB_CLOSE_TRACE_GROUP, t->name, WAVE_TCLCB_CLOSE_TRACE_GROUP_FLAGS);
        }
      return;
    }
@@ -2119,6 +2121,7 @@ menu_toggle_group(GtkWidget *widget, gpointer data)
      ClearTraces();
      t->flags |= TR_HIGHLIGHT;
      menu_expand(widget, data);
+     gtkwavetcl_setvar(WAVE_TCLCB_OPEN_TRACE_GROUP, t->name, WAVE_TCLCB_OPEN_TRACE_GROUP_FLAGS);
      return;
    }
 
@@ -6236,6 +6239,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.110  2010/07/27 19:25:41  gtkwave
+ * initial tcl callback function adds
+ *
  * Revision 1.109  2010/07/12 20:51:42  gtkwave
  * free to non-malloc'd address fix
  *

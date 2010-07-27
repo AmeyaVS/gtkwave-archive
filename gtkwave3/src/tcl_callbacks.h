@@ -52,11 +52,12 @@
 #define WAVE_TCLCB_TREE_UNSELECT		"gtkwave::cbTreeUnselect"
 #define WAVE_TCLCB_TREE_UNSELECT_FLAGS		WAVE_TCLCB_FLAGS_NONE
 
+#define WAVE_TCLCB_OPEN_TRACE_GROUP		"gtkwave::cbOpenTraceGroup"
+#define WAVE_TCLCB_OPEN_TRACE_GROUP_FLAGS	WAVE_TCLCB_FLAGS_NONE
+
+#define WAVE_TCLCB_CLOSE_TRACE_GROUP		"gtkwave::cbCloseTraceGroup"
+#define WAVE_TCLCB_CLOSE_TRACE_GROUP_FLAGS	WAVE_TCLCB_FLAGS_NONE
+
 /* ################################################################ */
 
 #endif
-
-/* 
- * $Id$
- * $Log$
- */
