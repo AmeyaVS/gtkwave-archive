@@ -2649,9 +2649,12 @@ if(line)
 	printf("Globals old %p -> new %p (%s: %d)\n", (void *)GLOBALS, (void *)g, file, line);
 	}
 
-GLOBALS = g;
-sprintf(sstr, "%d", GLOBALS->this_context_page);
-gtkwavetcl_setvar(WAVE_TCLCB_CURRENT_ACTIVE_TAB, sstr, WAVE_TCLCB_CURRENT_ACTIVE_TAB_FLAGS);
+if(GLOBALS != g)
+	{
+	GLOBALS = g;
+	sprintf(sstr, "%d", GLOBALS->this_context_page);
+	gtkwavetcl_setvar(WAVE_TCLCB_CURRENT_ACTIVE_TAB, sstr, WAVE_TCLCB_CURRENT_ACTIVE_TAB_FLAGS);
+	}
 }
 
 
