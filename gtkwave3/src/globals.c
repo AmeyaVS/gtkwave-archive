@@ -2373,6 +2373,8 @@ void reload_into_new_context(void)
  GLOBALS->splash_disable = cached_splash_disable;
 
  printf("GTKWAVE | ...waveform reloaded\n");
+
+ gtkwavetcl_setvar(WAVE_TCLCB_RELOAD, GLOBALS->loaded_file_name, WAVE_TCLCB_RELOAD_FLAGS);
 }
 
 
@@ -2640,12 +2642,16 @@ return(rc);
 
 void set_GLOBALS_x(struct Global *g, const char *file, int line)
 {
+char sstr[32];
+
 if(line)
 	{
 	printf("Globals old %p -> new %p (%s: %d)\n", (void *)GLOBALS, (void *)g, file, line);
 	}
 
 GLOBALS = g;
+sprintf(sstr, "%d", GLOBALS->this_context_page);
+gtkwavetcl_setvar(WAVE_TCLCB_CURRENT_ACTIVE_TAB, sstr, WAVE_TCLCB_CURRENT_ACTIVE_TAB_FLAGS);
 }
 
 

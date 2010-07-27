@@ -11,6 +11,7 @@
 #define WAVE_TCLHELPER_H
 
 #include <config.h>
+#include "tcl_callbacks.h"
 
 #ifdef HAVE_LIBTCL
 
@@ -106,6 +107,9 @@ void set_globals_interp(char *me, int install_tk);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.25  2010/07/27 05:01:45  gtkwave
+ * added gtkwavetcl_setvar for Tcl callback framework
+ *
  * Revision 1.24  2010/07/15 14:27:05  gtkwave
  * repscript timer fix to print stack trace
  *

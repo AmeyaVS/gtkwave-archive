@@ -449,6 +449,7 @@ t=(struct tree *)gtk_clist_get_row_data(GTK_CLIST(GLOBALS->ctree_main), row);
 DEBUG(printf("TS: %08x %s\n",t,t->name));
  GLOBALS->sig_root_treesearch_gtk2_c_1 = t->child;
  fill_sig_store ();
+ gtkwavetcl_setvar(WAVE_TCLCB_TREE_SELECT, GLOBALS->selected_hierarchy_name, WAVE_TCLCB_TREE_SELECT_FLAGS);
 }
 
 static void unselect_row_callback(GtkWidget *widget, gint row, gint column,
@@ -458,6 +459,7 @@ struct tree *t;
 
 if(GLOBALS->selected_hierarchy_name)
 	{
+	gtkwavetcl_setvar(WAVE_TCLCB_TREE_UNSELECT, GLOBALS->selected_hierarchy_name, WAVE_TCLCB_TREE_UNSELECT_FLAGS);
 	free_2(GLOBALS->selected_hierarchy_name);
 	GLOBALS->selected_hierarchy_name = NULL;
 	}
@@ -2056,6 +2058,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2010/05/27 06:07:25  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.43  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

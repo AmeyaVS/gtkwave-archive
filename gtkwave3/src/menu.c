@@ -1489,12 +1489,17 @@ simplereqbox("Wave Version",400,WAVE_VERSION_INFO,"OK", NULL, NULL, 0);
 /**/
 void menu_quit_callback(GtkWidget *widget, gpointer data)
 {
+char sstr[32];
+
 if(data)
 	{
 #ifdef __CYGWIN__
 	kill_stems_browser();
 #endif	
 	g_print("Exiting.\n");	
+	sprintf(sstr, "%d", GLOBALS->this_context_page);
+	gtkwavetcl_setvar(WAVE_TCLCB_QUIT_PROGRAM, sstr, WAVE_TCLCB_QUIT_PROGRAM_FLAGS);
+
 	gtk_exit(0);
 	}
 }
@@ -1529,7 +1534,10 @@ unsigned np = GLOBALS->num_notebook_pages;
 unsigned int new_page = (this_page != np-1) ? this_page : (this_page-1);
 GtkWidget *n = GLOBALS->notebook;
 struct Global *old_g = NULL, *saved_g;
-char timestr[32];
+char sstr[32];
+
+sprintf(sstr, "%d", this_page);
+gtkwavetcl_setvar(WAVE_TCLCB_CLOSE_TAB_NUMBER, sstr, WAVE_TCLCB_CLOSE_TAB_NUMBER_FLAGS);
 
 kill_stems_browser_single(GLOBALS);
 dead_context_sweep();
@@ -1567,11 +1575,10 @@ free_and_destroy_page_context();
 set_GLOBALS(saved_g);
 
 /* need to do this if 2 pages -> 1 */
-reformat_time(timestr, GLOBALS->tims.first, GLOBALS->time_dimension);
-gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
-reformat_time(timestr, GLOBALS->tims.last, GLOBALS->time_dimension);
-gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),timestr);
-
+reformat_time(sstr, GLOBALS->tims.first, GLOBALS->time_dimension);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),sstr);
+reformat_time(sstr, GLOBALS->tims.last, GLOBALS->time_dimension);
+gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),sstr);
 update_maxmarker_labels();
 update_basetime(GLOBALS->tims.baseline);
 
@@ -6229,6 +6236,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.109  2010/07/12 20:51:42  gtkwave
+ * free to non-malloc'd address fix
+ *
  * Revision 1.108  2010/06/29 02:05:14  gtkwave
  * changed quit accelerator
  *
