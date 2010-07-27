@@ -2468,6 +2468,17 @@ int i;
 struct wave_script_args *old_wave_script_args = GLOBALS->wave_script_args; /* stackable args */
 char fexit = GLOBALS->enable_fast_exit;
 
+if(GLOBALS->in_tcl_callback) /* don't allow callbacks to call menu functions (yet) */
+	{
+	char reportString[1024];
+	Tcl_Obj *aobj;
+
+	sprintf(reportString, "Blocking menu function '%s' while in callback!", ife->path);
+	aobj = Tcl_NewStringObj(reportString, -1); 
+	Tcl_SetObjResult(interp, aobj);
+	return(TCL_ERROR);
+	}
+
 GLOBALS->wave_script_args = NULL;
 GLOBALS->enable_fast_exit = 1;
 
@@ -2774,6 +2785,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.82  2010/07/27 05:34:22  gtkwave
+ * add variable locking to prevent recursive tcl callbacks
+ *
  * Revision 1.81  2010/07/27 05:01:45  gtkwave
  * added gtkwavetcl_setvar for Tcl callback framework
  *
