@@ -96,6 +96,7 @@ char *make_single_tcl_list_name(char *s, char *opt_value, int promote_to_bus);
 
 void make_tcl_interpreter(char *argv[]);
 const char *gtkwavetcl_setvar(const char *name1, const char *val, int flags);
+const char *gtkwavetcl_setvar_nonblocking(const char *name1, const char *val, int flags);
 
 #ifdef HAVE_LIBTCL
 int gtkwaveInterpreterInit (Tcl_Interp *interp);
@@ -107,6 +108,9 @@ void set_globals_interp(char *me, int install_tk);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.26  2010/07/27 19:25:41  gtkwave
+ * initial tcl callback function adds
+ *
  * Revision 1.25  2010/07/27 05:01:45  gtkwave
  * added gtkwavetcl_setvar for Tcl callback framework
  *

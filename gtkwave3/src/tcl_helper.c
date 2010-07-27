@@ -2752,6 +2752,7 @@ if(GLOBALS->repscript_name)
 }
 
 
+/* blocking version which keeps recursive setvars from happening */
 const char *gtkwavetcl_setvar(const char *name1, const char *val, int flags)
 {
 const char *rc = NULL;
@@ -2760,6 +2761,18 @@ if(GLOBALS->interp && !GLOBALS->in_tcl_callback)
 	GLOBALS->in_tcl_callback = 1;
         rc = Tcl_SetVar(GLOBALS->interp, name1, val, flags);
 	GLOBALS->in_tcl_callback = 0;
+        }
+
+return(rc);
+}
+
+/* version which would be used, for example by timer interrupts */
+const char *gtkwavetcl_setvar_nonblocking(const char *name1, const char *val, int flags)
+{
+const char *rc = NULL;
+if(GLOBALS->interp)
+        {
+        rc = Tcl_SetVar(GLOBALS->interp, name1, val, flags);
         }
 
 return(rc);
@@ -2785,6 +2798,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.83  2010/07/27 07:22:46  gtkwave
+ * block tcl callbacks from calling menu functions (for now)
+ *
  * Revision 1.82  2010/07/27 05:34:22  gtkwave
  * add variable locking to prevent recursive tcl callbacks
  *
