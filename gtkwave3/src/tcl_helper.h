@@ -94,6 +94,7 @@ char** zSplitTclList(const char* list, int* argcPtr);
 char *make_single_tcl_list_name(char *s, char *opt_value, int promote_to_bus);
 
 void make_tcl_interpreter(char *argv[]);
+const char *gtkwavetcl_setvar(const char *name1, const char *val, int flags);
 
 #ifdef HAVE_LIBTCL
 int gtkwaveInterpreterInit (Tcl_Interp *interp);
@@ -105,6 +106,9 @@ void set_globals_interp(char *me, int install_tk);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.24  2010/07/15 14:27:05  gtkwave
+ * repscript timer fix to print stack trace
+ *
  * Revision 1.23  2009/12/15 23:40:59  gtkwave
  * removed old style scripts; also removed tempfiles for Tcl args
  *

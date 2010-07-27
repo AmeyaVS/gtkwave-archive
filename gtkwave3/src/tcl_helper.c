@@ -2740,11 +2740,30 @@ if(GLOBALS->repscript_name)
 	}
 }
 
+
+const char *gtkwavetcl_setvar(const char *name1, const char *val, int flags)
+{
+const char *rc = NULL;
+if(GLOBALS->interp)
+        {
+        rc = Tcl_SetVar(GLOBALS->interp, name1, val, flags);
+        }
+
+return(rc);
+}
+
+
 #else
 
 void make_tcl_interpreter(char *argv[])
 {
 /* nothing */
+}
+
+
+const char *gtkwavetcl_setvar(const char *name1, const char *val, int flags)
+{
+return(NULL);
 }
 
 #endif
@@ -2753,6 +2772,9 @@ void make_tcl_interpreter(char *argv[])
 /*
  * $Id$
  * $Log$
+ * Revision 1.80  2010/07/26 15:32:44  gtkwave
+ * free_2 fix in repscript_times (possible context swap)
+ *
  * Revision 1.79  2010/07/15 14:27:05  gtkwave
  * repscript timer fix to print stack trace
  *

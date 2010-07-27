@@ -883,7 +883,7 @@
 		Updated example to reflect Quit name change.
 		Updated repscript_timer so it prints stack trace.
 		Use setvbuf (as with MinGW) for fstapi.c to fix for OS X.
-3.3.11	26jul10	Added tcl functions gtkwave::installFileFilter,
+3.3.11	27jul10	Added tcl functions gtkwave::installFileFilter,
 		gtkwave::installProcFilter, gtkwave::installTransFilter,
 		gtkwave::setCurrentTranslateFile,
 		gtkwave::setCurrentTranslateProc,
@@ -895,3 +895,6 @@
 		Nested `ifdef fix for Vermin.
                 Fix for free to non-malloc'd address problem in repscripts
                 due to context changing in Tcl scripts when reload occurs.
+		Added gtkwavetcl_setvar() for starting to build a framework
+		to support Tcl variable change callbacks.  This can be used
+		to closely monitor how a user manipulates the gtkwave GUI.
