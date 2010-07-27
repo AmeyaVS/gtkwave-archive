@@ -847,6 +847,12 @@ NULL, /* previous_braced_tcl_string */
 
 
 /*
+ * tcl_helper.c
+ */
+0, /* in_tcl_callback */
+
+
+/*
  * timeentry.c
  */
 NULL, /* from_entry 433 */

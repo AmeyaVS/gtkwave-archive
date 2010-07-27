@@ -831,6 +831,12 @@ char *previous_braced_tcl_string;
 
 
 /*
+ * tcl_helper.c
+ */
+char in_tcl_callback;
+
+
+/*
  * timeentry.c
  */
 GtkWidget *from_entry; /* from timeentry.c 462 */
