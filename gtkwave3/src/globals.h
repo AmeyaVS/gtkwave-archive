@@ -898,6 +898,7 @@ char tree_dnd_requested; /* from treesearch_gtk2.c */
 char do_dynamic_treefilter; /* from treesearch_gtk2.c */
 GtkWidget *treesearch_gtk2_window_vbox; /* from treesearch_gtk2.c */
 char *selected_hierarchy_name; /* from treesearch_gtk2.c */
+char *selected_sig_name; /* from treesearch_gtk2.c */
 GtkWidget *gtk2_tree_frame; /* from treesearch_gtk2.c */
 GtkWidget *filter_entry; /* from treesearch_gtk2.c */
 GtkCTreeNode *any_tree_node; /* from treesearch_gtk2.c */

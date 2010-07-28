@@ -914,6 +914,7 @@ NULL, /* treeopen_chain_curr */
 1, /* do_dynamic_treefilter */
 NULL, /* treesearch_gtk2_window_vbox */
 NULL, /* selected_hierarchy_name */
+NULL, /* selected_sig_name */
 NULL, /* gtk2_tree_frame */
 NULL, /* filter_entry */
 NULL, /* any_tree_node */

@@ -83,6 +83,12 @@ fill_sig_store (void)
   struct tree *t;
   GtkTreeIter iter;
 
+  if(GLOBALS->selected_sig_name)
+	{
+	free_2(GLOBALS->selected_sig_name);
+	GLOBALS->selected_sig_name = NULL;
+	}
+
   free_afl();
   gtk_list_store_clear (GLOBALS->sig_store_treesearch_gtk2_c_1);
 
@@ -1013,9 +1019,6 @@ static void destroy_callback(GtkWidget *widget, GtkWidget *nothing)
 
 /**********************************************************************/
 
-/* view_selection_func is commented out for now... */
-
-#if 0
 static gboolean
   view_selection_func (GtkTreeSelection *selection,
                        GtkTreeModel     *model,
@@ -1031,20 +1034,45 @@ static gboolean
 
       gtk_tree_model_get(model, &iter, 0, &name, -1);
 
+      if(GLOBALS->selected_sig_name)
+	{
+	free_2(GLOBALS->selected_sig_name);
+	GLOBALS->selected_sig_name = NULL;
+	}
+
       if (!path_currently_selected)
       {
-        g_print ("%s is going to be selected.\n", name);
+	GLOBALS->selected_sig_name = strdup_2(name);
+	gtkwavetcl_setvar(WAVE_TCLCB_TREE_SIG_SELECT, name, WAVE_TCLCB_TREE_SIG_SELECT_FLAGS);
       }
       else
       {
-        g_print ("%s is going to be unselected.\n", name);
+	gtkwavetcl_setvar(WAVE_TCLCB_TREE_SIG_UNSELECT, name, WAVE_TCLCB_TREE_SIG_UNSELECT_FLAGS);
       }
 
       g_free(name);
     }
     return TRUE; /* allow selection state to change */
   }
-#endif
+
+/**********************************************************************/
+
+static gint button_press_event_std(GtkWidget *widget, GdkEventButton *event)
+{
+if(event->type == GDK_2BUTTON_PRESS)
+	{
+	if(GLOBALS->selected_hierarchy_name && GLOBALS->selected_sig_name)
+		{
+		char *sstr = wave_alloca(strlen(GLOBALS->selected_hierarchy_name) + strlen(GLOBALS->selected_sig_name) + 1);
+		strcpy(sstr, GLOBALS->selected_hierarchy_name);
+		strcat(sstr, GLOBALS->selected_sig_name);
+
+		gtkwavetcl_setvar(WAVE_TCLCB_TREE_SIG_DOUBLE_CLICK, sstr, WAVE_TCLCB_TREE_SIG_DOUBLE_CLICK_FLAGS);
+		}
+	}
+
+return(FALSE);
+}
 
 /**********************************************************************/
 
@@ -1188,8 +1216,10 @@ do_tooltips:
 	/* Setup the selection handler */
 	GLOBALS->sig_selection_treesearch_gtk2_c_1 = gtk_tree_view_get_selection (GTK_TREE_VIEW (sig_view));
 	gtk_tree_selection_set_mode (GLOBALS->sig_selection_treesearch_gtk2_c_1, GTK_SELECTION_MULTIPLE);
-        /* gtk_tree_selection_set_select_function (GLOBALS->sig_selection_treesearch_gtk2_c_1,
-                                                view_selection_func, NULL, NULL); */
+        gtk_tree_selection_set_select_function (GLOBALS->sig_selection_treesearch_gtk2_c_1,
+                                                view_selection_func, NULL, NULL);
+
+	gtkwave_signal_connect(GTK_OBJECT(sig_view), "button_press_event",GTK_SIGNAL_FUNC(button_press_event_std), NULL);
       }
 
     GLOBALS->dnd_sigview = sig_view;
@@ -1439,8 +1469,10 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
 	/* Setup the selection handler */
 	GLOBALS->sig_selection_treesearch_gtk2_c_1 = gtk_tree_view_get_selection (GTK_TREE_VIEW (sig_view));
 	gtk_tree_selection_set_mode (GLOBALS->sig_selection_treesearch_gtk2_c_1, GTK_SELECTION_MULTIPLE);
-        /* gtk_tree_selection_set_select_function (GLOBALS->sig_selection_treesearch_gtk2_c_1,
-                                                view_selection_func, NULL, NULL); */
+        gtk_tree_selection_set_select_function (GLOBALS->sig_selection_treesearch_gtk2_c_1,
+                                                view_selection_func, NULL, NULL);
+
+	gtkwave_signal_connect(GTK_OBJECT(sig_view), "button_press_event",GTK_SIGNAL_FUNC(button_press_event_std), NULL);
       }
 
     GLOBALS->dnd_sigview = sig_view;
@@ -2058,6 +2090,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2010/07/27 19:25:41  gtkwave
+ * initial tcl callback function adds
+ *
  * Revision 1.44  2010/05/27 06:07:25  gtkwave
  * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
  *
