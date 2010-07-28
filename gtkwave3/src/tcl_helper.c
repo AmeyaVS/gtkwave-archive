@@ -2471,9 +2471,23 @@ char fexit = GLOBALS->enable_fast_exit;
 if(GLOBALS->in_tcl_callback) /* don't allow callbacks to call menu functions (yet) */
 	{
 	char reportString[1024];
+	char menuItem[512];
 	Tcl_Obj *aobj;
 
-	sprintf(reportString, "Blocking menu function '%s' while in callback!", ife->path);
+	char *src = ife->path;
+	char *dst = menuItem;
+
+	while(*src)
+		{
+		*dst = (*src != ' ') ? *src : '_';
+		src++;
+		dst++;
+		}
+	*dst = 0;
+
+	sprintf(reportString, "gtkwave::%s prohibited in callback", menuItem);
+	gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_ERROR,reportString,WAVE_TCLCB_ERROR_FLAGS);
+
 	aobj = Tcl_NewStringObj(reportString, -1); 
 	Tcl_SetObjResult(interp, aobj);
 	return(TCL_ERROR);
@@ -2798,6 +2812,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.84  2010/07/27 22:52:16  gtkwave
+ * added nonblocking setvar (to be used only for well-known reasons)
+ *
  * Revision 1.83  2010/07/27 07:22:46  gtkwave
  * block tcl callbacks from calling menu functions (for now)
  *

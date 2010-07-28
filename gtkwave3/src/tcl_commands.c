@@ -1726,12 +1726,17 @@ static int gtkwavetcl_loadFile(ClientData clientData, Tcl_Interp *interp, int ob
     {
       char *s = get_Tcl_string(objv[1]);
 	
-      /*	read_save_helper(s); */
-      process_url_file(s);
-      /*	process_url_list(s); */
-      /*	gtkwave_main_iteration(); */
-
-
+      if(!GLOBALS->in_tcl_callback)                          
+        {
+        /*	read_save_helper(s); */
+        process_url_file(s);
+        /*	process_url_list(s); */
+        /*	gtkwave_main_iteration(); */
+        }
+	else
+	{
+	gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_ERROR,"gtkwave::loadFile prohibited in callback",WAVE_TCLCB_ERROR_FLAGS);
+	}
     }
   else  
     {
@@ -1746,7 +1751,14 @@ static int gtkwavetcl_reLoadFile(ClientData clientData, Tcl_Interp *interp, int 
 
   if(objc == 1)
     {
-      reload_into_new_context();
+      if(!GLOBALS->in_tcl_callback)
+	{
+      	reload_into_new_context();
+	}
+	else
+	{
+	gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_ERROR,"gtkwave::reLoadFile prohibited in callback",WAVE_TCLCB_ERROR_FLAGS);
+	}
     }
   else  
     {
@@ -1843,14 +1855,25 @@ static int gtkwavetcl_setTabActive(ClientData clientData, Tcl_Interp *interp, in
 {
 if(objc == 2)
         {       
-        char *s = get_Tcl_string(objv[1]);
-        unsigned int tabnum = atoi(s);
-	gint rc = switch_to_tab_number(tabnum);
+	gint rc;
+
+	if(!GLOBALS->in_tcl_callback)
+		{
+        	char *s = get_Tcl_string(objv[1]);
+        	unsigned int tabnum = atoi(s);
+		rc = switch_to_tab_number(tabnum);
         
-        MaxSignalLength();
-        signalarea_configure_event(GLOBALS->signalarea, NULL);
+        	MaxSignalLength();
+        	signalarea_configure_event(GLOBALS->signalarea, NULL);
         
-        gtkwave_main_iteration();
+        	gtkwave_main_iteration();
+		}
+		else
+		{
+		gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_ERROR,"setTabActive prohibited in callback",WAVE_TCLCB_ERROR_FLAGS);
+		rc = -1;
+		}
+
 	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, rc));
         }
         else
@@ -2082,6 +2105,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2010/07/19 22:32:31  gtkwave
+ * added gtkwave::setCurrentTranslateEnums
+ *
  * Revision 1.40  2010/07/19 21:12:19  gtkwave
  * added file/proc/trans access functions to Tcl script interpreter
  *

@@ -34,6 +34,9 @@
 
 /* ################################################################ */
 
+#define WAVE_TCLCB_ERROR			"gtkwave::cbError"
+#define WAVE_TCLCB_ERROR_FLAGS			WAVE_TCLCB_FLAGS_NONE
+
 #define WAVE_TCLCB_CURRENT_ACTIVE_TAB		"gtkwave::cbCurrentActiveTab"
 #define WAVE_TCLCB_CURRENT_ACTIVE_TAB_FLAGS	WAVE_TCLCB_FLAGS_NONE
 
