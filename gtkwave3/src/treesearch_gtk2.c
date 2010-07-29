@@ -283,6 +283,7 @@ int depth, i;
 int len = 1;
 char *tstring;
 char hier_suffix[2];
+int found;
 
 hier_suffix[0] = GLOBALS->hier_delimeter;
 hier_suffix[1] = 0;
@@ -311,15 +312,40 @@ for(i=0;i<depth;i++)
 	strcat(tstring, hier_suffix);
 	}
 
+
+if(GLOBALS->open_tree_nodes) /* cut down on chatter to Tcl clients */
+	{
+	GLOBALS->open_tree_nodes = xl_splay(tstring, GLOBALS->open_tree_nodes);
+	if(!strcmp(GLOBALS->open_tree_nodes->item, tstring))
+		{
+		found = 1;
+		}
+		else
+		{
+		found = 0;
+		}
+	}
+	else
+	{
+	found = 0;
+	}
+
 if(is_expand)
 	{
 	GLOBALS->open_tree_nodes = xl_insert(tstring, GLOBALS->open_tree_nodes, NULL);
+	if(!found)
+		{
+		gtkwavetcl_setvar(WAVE_TCLCB_TREE_EXPAND, tstring, WAVE_TCLCB_TREE_EXPAND_FLAGS);
+		}
 	}
 	else
 	{
 	GLOBALS->open_tree_nodes = xl_delete(tstring, GLOBALS->open_tree_nodes);
+	if(found)
+		{
+		gtkwavetcl_setvar(WAVE_TCLCB_TREE_COLLAPSE, tstring, WAVE_TCLCB_TREE_COLLAPSE_FLAGS);
+		}
 	}
-
 }
 
 static void tree_expand_callback(GtkCTree *ctree, GtkCTreeNode *node, gpointer user_data)
@@ -2090,6 +2116,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2010/07/28 19:18:26  gtkwave
+ * added double-click trapping via gtkwave::cbTreeSigDoubleClick
+ *
  * Revision 1.45  2010/07/27 19:25:41  gtkwave
  * initial tcl callback function adds
  *
