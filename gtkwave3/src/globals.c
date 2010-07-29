@@ -1372,6 +1372,7 @@ void reload_into_new_context(void)
 	}
 
  printf("GTKWAVE | Reloading waveform...\n");
+ gtkwavetcl_setvar(WAVE_TCLCB_RELOAD_BEGIN, GLOBALS->loaded_file_name, WAVE_TCLCB_RELOAD_BEGIN_FLAGS); 
 
  /* Save state to file */
  save_tmpfilename = tmpnam_2(NULL, &fd_dummy);
@@ -1381,6 +1382,7 @@ void reload_into_new_context(void)
 #if !defined _MSC_VER && !defined __MINGW32__
    free_2(save_tmpfilename);
 #endif
+   gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_ERROR,"reload failed",WAVE_TCLCB_ERROR_FLAGS);
    return;
  }
  if(fd_dummy >=0) close(fd_dummy);
@@ -2374,8 +2376,7 @@ void reload_into_new_context(void)
  GLOBALS->splash_disable = cached_splash_disable;
 
  printf("GTKWAVE | ...waveform reloaded\n");
-
- gtkwavetcl_setvar(WAVE_TCLCB_RELOAD, GLOBALS->loaded_file_name, WAVE_TCLCB_RELOAD_FLAGS);
+ gtkwavetcl_setvar(WAVE_TCLCB_RELOAD_END, GLOBALS->loaded_file_name, WAVE_TCLCB_RELOAD_END_FLAGS);
 }
 
 
