@@ -2556,7 +2556,7 @@ return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewString
 void gtkUpdate(ClientData ignore)
 {
   while (gtk_events_pending()) { gtk_main_iteration(); }
-  Tcl_CreateTimerHandler(0,gtkUpdate, (ClientData) NULL);
+  Tcl_CreateTimerHandler(50,gtkUpdate, (ClientData) NULL); /* ajb: was 0 period ...caused 100% CPU spike */
 }
 
 int  gtkwaveInterpreterInit(Tcl_Interp *interp) {
@@ -2812,6 +2812,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.85  2010/07/28 19:56:27  gtkwave
+ * locking down callbacks from calling context changing events in viewer
+ *
  * Revision 1.84  2010/07/27 22:52:16  gtkwave
  * added nonblocking setvar (to be used only for well-known reasons)
  *
