@@ -41,6 +41,8 @@
 #define strcasecmp _stricmp
 #endif
 
+#define WAVE_TCLCB_TIMER_PERIOD_VALUE 250
+
 /*----------------------------------------------------------------------
  * tclBackslash -- Figure out how to handle a backslash sequence in tcl list.
  *
@@ -2461,6 +2463,51 @@ return(is_url);
 
 #if defined(HAVE_LIBTCL)
 
+static gboolean setvar_timer(gpointer arg)
+{
+static gboolean run_once = FALSE;
+
+if(run_once == FALSE) /* avoid any race conditions with the toolkit for uninitialized data */
+        {
+        run_once = TRUE;
+        return(TRUE);
+        }
+	else
+	{
+	static gboolean in_timer = FALSE;
+
+	if(!GLOBALS->busy_busy_c_1 && !in_timer)
+		{
+		Tcl_Interp *interp = (Tcl_Interp *)arg;
+		const char *tv;
+
+		in_timer = TRUE;	
+		tv = Tcl_GetVar(interp, WAVE_TCLCB_TIMER_PERIOD, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
+		gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_TIMER_PERIOD,tv,WAVE_TCLCB_TIMER_PERIOD_FLAGS);
+		tv = Tcl_GetVar(interp, WAVE_TCLCB_TIMER_PERIOD, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
+		in_timer = FALSE;
+
+		g_timeout_add(atoi(tv), setvar_timer, arg);
+		return(FALSE);
+		}
+		else
+		{
+		return(TRUE);
+		}
+	}
+}
+
+
+static void init_setvar_timer(Tcl_Interp *interp)
+{
+char tpv[32];
+
+sprintf(tpv, "%d", WAVE_TCLCB_TIMER_PERIOD_VALUE);
+gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_TIMER_PERIOD, tpv, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
+g_timeout_add(WAVE_TCLCB_TIMER_PERIOD_VALUE, setvar_timer, (gpointer)interp);
+}
+
+
 static int menu_func(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 GtkItemFactoryEntry *ife = (GtkItemFactoryEntry *)clientData;
@@ -2616,7 +2663,7 @@ int  gtkwaveInterpreterInit(Tcl_Interp *interp) {
     }
 
   Tcl_CreateTimerHandler(50,gtkUpdate, (ClientData) NULL);
-
+  init_setvar_timer(interp);
 
   return TCL_OK;
 }
@@ -2763,6 +2810,8 @@ if(GLOBALS->repscript_name)
 		exit(255);
 		}
 	}
+
+init_setvar_timer(GLOBALS->interp);
 }
 
 
@@ -2812,6 +2861,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.86  2010/07/30 04:02:50  gtkwave
+ * fix for 0msec Tcl timer
+ *
  * Revision 1.85  2010/07/28 19:56:27  gtkwave
  * locking down callbacks from calling context changing events in viewer
  *
