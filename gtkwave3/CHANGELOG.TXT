@@ -883,7 +883,7 @@
 		Updated example to reflect Quit name change.
 		Updated repscript_timer so it prints stack trace.
 		Use setvbuf (as with MinGW) for fstapi.c to fix for OS X.
-3.3.11	27jul10	Added tcl functions gtkwave::installFileFilter,
+3.3.11	30jul10	Added tcl functions gtkwave::installFileFilter,
 		gtkwave::installProcFilter, gtkwave::installTransFilter,
 		gtkwave::setCurrentTranslateFile,
 		gtkwave::setCurrentTranslateProc,
@@ -898,3 +898,4 @@
 		Added gtkwavetcl_setvar() for starting to build a framework
 		to support Tcl variable change callbacks.  This can be used
 		to closely monitor how a user manipulates the gtkwave GUI.
+		Fix for 0 millisecond Tcl timer causing 100% CPU usage.
