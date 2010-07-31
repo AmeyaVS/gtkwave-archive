@@ -571,9 +571,31 @@ if(len)
                                                 if(lp)
                                                         {
                                                         char *ns = malloc_2(strlen(wild+i) + 32);
+                                                        char *colon = strchr(lp+1, ':');
+                                                        int msi, lsi, bval, actual;
                                                         *lp = 0;
 
-                                                        sprintf(ns, "%s[%d]", wild+i, atoi(wild+1));
+                                                        bval = atoi(wild+1);
+                                                        if(colon)
+                                                                {
+                                                                msi = atoi(lp+1);
+                                                                lsi = atoi(colon+1);
+
+                                                                if(lsi > msi)
+                                                                        {
+                                                                        actual = msi + bval;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        actual = msi - bval;
+                                                                        }
+                                                                }
+                                                                else
+                                                                {
+                                                                actual = bval; /* punt */
+                                                                }
+
+                                                        sprintf(ns, "%s[%d]", wild+i, actual); 
                                                         *lp = '[';
 
                                                         s=symfind(ns, &rows);
@@ -718,14 +740,36 @@ if(len)
 							}		
 						}
 					else
-                                            	{
+                                              	{
                                                 char *lp = strrchr(wild+i, '[');
                                                 if(lp)
                                                         {
                                                         char *ns = malloc_2(strlen(wild+i) + 32);
+                                                        char *colon = strchr(lp+1, ':');
+                                                        int msi, lsi, bval, actual;
                                                         *lp = 0;
 
-                                                        sprintf(ns, "%s[%d]", wild+i, atoi(wild+1));
+                                                        bval = atoi(wild+1);
+                                                        if(colon)
+                                                                {
+                                                                msi = atoi(lp+1);
+                                                                lsi = atoi(colon+1);
+
+                                                                if(lsi > msi)
+                                                                        {
+                                                                        actual = msi + bval;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        actual = msi - bval;
+                                                                        }
+                                                                }
+                                                                else
+                                                                {
+                                                                actual = bval; /* punt */
+                                                                }
+
+                                                        sprintf(ns, "%s[%d]", wild+i, actual); 
                                                         *lp = '[';
 
                                                         s=symfind(ns, &rows);
@@ -2322,13 +2366,36 @@ if(*w2=='+')
 		char *lp = strrchr(suffix+i, '[');
 		if(lp)
 			{
-			char *ns = wave_alloca(strlen(suffix+i) + 32);
+			char *ns = malloc_2(strlen(suffix+i) + 32);
+			char *colon = strchr(lp+1, ':');
+			int msi, lsi, bval, actual;
 			*lp = 0;
 
-			sprintf(ns, "%s[%d]", suffix+i, atoi(suffix+1));
+			bval = atoi(suffix+1);
+			if(colon)
+				{
+				msi = atoi(lp+1);
+				lsi = atoi(colon+1);
+
+				if(lsi > msi)
+					{
+					actual = msi + bval;
+					}
+					else
+					{
+					actual = msi - bval;
+					}
+				}
+				else
+				{
+				actual = bval; /* punt */
+				}
+
+			sprintf(ns, "%s[%d]", suffix+i, actual);
 			*lp = '[';			
 
 			s=symfind(ns, &rows);
+			free_2(ns);
 			if(s)
 				{
 				AddNode(&s->n[rows], prefix+1);
@@ -3029,23 +3096,45 @@ if(*w2=='+')
                 else
                         {
                         char *lp = strrchr(suffix+i, '[');
-                        if(lp)
-                                {
-                                char *ns = malloc_2(strlen(suffix+i) + 32);
-                                *lp = 0;
+			if(lp)
+				{
+				char *ns = malloc_2(strlen(suffix+i) + 32);
+				char *colon = strchr(lp+1, ':');
+				int msi, lsi, bval, actual;
+				*lp = 0;
 
-                                sprintf(ns, "%s[%d]", suffix+i, atoi(suffix+1));
-                                *lp = '[';
+				bval = atoi(suffix+1);
+				if(colon)
+					{
+					msi = atoi(lp+1);
+					lsi = atoi(colon+1);
+	
+					if(lsi > msi)
+						{
+						actual = msi + bval;
+						}
+						else
+						{
+						actual = msi - bval;
+						}
+					}
+					else
+					{
+					actual = bval; /* punt */
+					}
 
-                                s=symfind(ns, NULL);
-                                free_2(ns);
-                                if(s)
-                                        {
-                                        lx2_set_fac_process_mask(s->n);
-                                        made = ~0;
-                                        }
-                                }
-                        }
+				sprintf(ns, "%s[%d]", suffix+i, actual);
+				*lp = '[';			
+
+				s=symfind(ns, NULL);
+				free_2(ns);
+				if(s)
+					{
+	                                lx2_set_fac_process_mask(s->n);
+	                                made = ~0;
+					}
+				}
+			}
 
 		return(made);
 		}
@@ -3167,6 +3256,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2010/07/31 20:00:33  gtkwave
+ * fix for cvc versus modelsim with respect to created bluespec .sav files
+ *
  * Revision 1.25  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *
@@ -3270,4 +3362,3 @@ return(made);
  * initial release
  *
  */
-
