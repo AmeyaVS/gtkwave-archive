@@ -565,6 +565,31 @@ if(len)
 							if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
 							}		
 						}
+					else
+                                              	{
+                                                char *lp = strrchr(wild+i, '[');
+                                                if(lp)
+                                                        {
+                                                        char *ns = malloc_2(strlen(wild+i) + 32);
+                                                        *lp = 0;
+
+                                                        sprintf(ns, "%s[%d]", wild+i, atoi(wild+1));
+                                                        *lp = '[';
+
+                                                        s=symfind(ns, &rows);
+                                                        if(s)
+                                                                {
+								nexp =&s->n[rows];
+								if(nexp)
+									{
+									n[nodepnt++]=nexp;
+									if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
+									}
+                                                                }
+
+							free_2(ns);
+                                                        }
+						}
 					break;
 					}
 				}
@@ -692,6 +717,32 @@ if(len)
 							if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
 							}		
 						}
+					else
+                                            	{
+                                                char *lp = strrchr(wild+i, '[');
+                                                if(lp)
+                                                        {
+                                                        char *ns = malloc_2(strlen(wild+i) + 32);
+                                                        *lp = 0;
+
+                                                        sprintf(ns, "%s[%d]", wild+i, atoi(wild+1));
+                                                        *lp = '[';
+
+                                                        s=symfind(ns, &rows);
+                                                        if(s)
+                                                                {
+								nexp =&s->n[rows];
+								if(nexp)
+									{
+									n[nodepnt++]=nexp;
+									if(nodepnt==BITATTRIBUTES_MAX) { free_2(wild); goto ifnode; }
+									}
+                                                                }
+
+							free_2(ns);
+                                                        }
+						}
+
 					break;
 					}
 				}
@@ -2268,6 +2319,24 @@ if(*w2=='+')
 	      }	
 	      else 
 		{
+		char *lp = strrchr(suffix+i, '[');
+		if(lp)
+			{
+			char *ns = wave_alloca(strlen(suffix+i) + 32);
+			*lp = 0;
+
+			sprintf(ns, "%s[%d]", suffix+i, atoi(suffix+1));
+			*lp = '[';			
+
+			s=symfind(ns, &rows);
+			if(s)
+				{
+				AddNode(&s->n[rows], prefix+1);
+				return(~0);
+				}
+
+			}
+
 		  return(0);
 		}
 	    }
@@ -2957,6 +3026,27 @@ if(*w2=='+')
 			lx2_set_fac_process_mask(s->n);
 			made = ~0;
 			}
+                else
+                        {
+                        char *lp = strrchr(suffix+i, '[');
+                        if(lp)
+                                {
+                                char *ns = malloc_2(strlen(suffix+i) + 32);
+                                *lp = 0;
+
+                                sprintf(ns, "%s[%d]", suffix+i, atoi(suffix+1));
+                                *lp = '[';
+
+                                s=symfind(ns, NULL);
+                                free_2(ns);
+                                if(s)
+                                        {
+                                        lx2_set_fac_process_mask(s->n);
+                                        made = ~0;
+                                        }
+                                }
+                        }
+
 		return(made);
 		}
 	else
@@ -3077,6 +3167,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.24  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *
