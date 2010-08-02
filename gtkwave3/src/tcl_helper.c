@@ -41,8 +41,6 @@
 #define strcasecmp _stricmp
 #endif
 
-#define WAVE_TCLCB_TIMER_PERIOD_VALUE 250
-
 /*----------------------------------------------------------------------
  * tclBackslash -- Figure out how to handle a backslash sequence in tcl list.
  *
@@ -2463,6 +2461,30 @@ return(is_url);
 
 #if defined(HAVE_LIBTCL)
 
+/* declare variables that will be shared with the repscript */
+#undef WAVE_TCLCB_M
+#define WAVE_TCLCB_M(a,b,c) a
+static const char *tclcb_var_names[] = { WAVE_TCLCB_MACRO_EXPANSION };
+
+#undef WAVE_TCLCB_M
+#define WAVE_TCLCB_M(a,b,c) b
+static const int tclcb_var_flags[] = { WAVE_TCLCB_MACRO_EXPANSION };
+
+#undef WAVE_TCLCB_M
+#define WAVE_TCLCB_M(a,b,c) c
+static const char *tclcb_var_inits[] = { WAVE_TCLCB_MACRO_EXPANSION };
+
+static int declare_tclcb_variables(Tcl_Interp *interp) 
+{
+int i = 0 ;
+while(tclcb_var_flags[i] != -1) 
+	{
+	gtkwavetcl_setvar(tclcb_var_names[i], tclcb_var_inits[i], tclcb_var_flags[i]) ;
+	i++;
+	}
+}
+
+
 static gboolean setvar_timer(gpointer arg)
 {
 static gboolean run_once = FALSE;
@@ -2472,40 +2494,43 @@ if(run_once == FALSE) /* avoid any race conditions with the toolkit for uninitia
         run_once = TRUE;
         return(TRUE);
         }
-	else
-	{
-	static gboolean in_timer = FALSE;
+        else
+        {
+        static gboolean in_timer = FALSE;
 
-	if(!GLOBALS->busy_busy_c_1 && !in_timer)
-		{
-		Tcl_Interp *interp = (Tcl_Interp *)arg;
-		const char *tv;
+        if(!GLOBALS->busy_busy_c_1 && !in_timer)
+                {
+                Tcl_Interp *interp = (Tcl_Interp *)arg;
+                const char *tv = NULL;
 
-		in_timer = TRUE;	
-		tv = Tcl_GetVar(interp, WAVE_TCLCB_TIMER_PERIOD, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
-		gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_TIMER_PERIOD,tv,WAVE_TCLCB_TIMER_PERIOD_FLAGS);
-		tv = Tcl_GetVar(interp, WAVE_TCLCB_TIMER_PERIOD, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
-		in_timer = FALSE;
+                in_timer = TRUE;
+                tv = Tcl_GetVar(interp, WAVE_TCLCB_TIMER_PERIOD, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
+		if(tv)
+			{
+	                gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_TIMER_PERIOD,tv,WAVE_TCLCB_TIMER_PERIOD_FLAGS);
+	                tv = Tcl_GetVar(interp, WAVE_TCLCB_TIMER_PERIOD, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
+			}
+                in_timer = FALSE;
 
-		g_timeout_add(atoi(tv), setvar_timer, arg);
-		return(FALSE);
-		}
-		else
-		{
-		return(TRUE);
-		}
-	}
+		if(tv)
+			{
+	                g_timeout_add(atoi(tv), setvar_timer, arg);
+			}
+                return(FALSE);
+                }
+                else
+                {
+                return(TRUE);
+                }
+        }
 }
 
 
 static void init_setvar_timer(Tcl_Interp *interp)
 {
-char tpv[32];
-
-sprintf(tpv, "%d", WAVE_TCLCB_TIMER_PERIOD_VALUE);
-gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_TIMER_PERIOD, tpv, WAVE_TCLCB_TIMER_PERIOD_FLAGS);
-g_timeout_add(WAVE_TCLCB_TIMER_PERIOD_VALUE, setvar_timer, (gpointer)interp);
+g_timeout_add(atoi(WAVE_TCLCB_TIMER_PERIOD_INIT), setvar_timer, (gpointer)interp);
 }
+
 
 
 static int menu_func(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -2651,6 +2676,8 @@ int  gtkwaveInterpreterInit(Tcl_Interp *interp) {
 			   (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
     }
 
+  declare_tclcb_variables(interp) ;
+
   /* hide the "wish" window */
   Tcl_Eval(interp, "wm withdraw .");
 
@@ -2794,6 +2821,8 @@ for (i = 0; gtkwave_commands[i].func != NULL; i++)
                 (Tcl_ObjCmdProc *)gtkwave_commands[i].func,
                 (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
    	}
+
+declare_tclcb_variables(GLOBALS->interp);
 
 if(GLOBALS->repscript_name)
 	{
