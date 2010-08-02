@@ -2627,6 +2627,14 @@ if(GLOBALS->topmost_trace)
 
 draw_named_markers();
 draw_marker_partitions();
+
+if(GLOBALS->traces.dirty)
+	{
+	char dbuf[32];
+	sprintf(dbuf, "%d", GLOBALS->traces.total);
+	GLOBALS->traces.dirty = 0;
+	gtkwavetcl_setvar(WAVE_TCLCB_TRACES_UPDATED, dbuf, WAVE_TCLCB_TRACES_UPDATED_FLAGS);
+	}
 }
 
 
@@ -4294,6 +4302,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.72  2010/06/23 05:45:34  gtkwave
+ * warnings fixes
+ *
  * Revision 1.71  2010/04/15 20:38:51  gtkwave
  * color usage fixes for black and white mode
  *

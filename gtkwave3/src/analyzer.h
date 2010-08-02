@@ -285,6 +285,7 @@ typedef struct
 
     Trptr    scroll_top;	/* for autoscrolling */
     Trptr    scroll_bottom;
+    unsigned dirty : 1;		/* to notify Tcl that traces were added/deleted/moved */
   } Traces;
 
 
@@ -449,6 +450,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2010/04/07 01:50:45  gtkwave
+ * improved name handling for bvname, add $next transaction operation
+ *
  * Revision 1.27  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *

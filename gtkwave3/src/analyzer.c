@@ -86,7 +86,6 @@ return(pnt); /* not as many levels as max, so give the full name.. */
 
 void updateTraceGroup(Trptr t)
 {
-
   /*  t->t_match = NULL; */
 
   if (t->t_prev)
@@ -135,6 +134,7 @@ void updateTraceGroup(Trptr t)
 
 void CloseTrace(Trptr t)
 {
+GLOBALS->traces.dirty = 1;
 
   if (IsGroupBegin(t))
     {
@@ -174,6 +174,7 @@ void CloseTrace(Trptr t)
 
 void OpenTrace(Trptr t)
 {
+GLOBALS->traces.dirty = 1;
 
   if (IsGroupBegin(t) || IsGroupEnd(t))
   {
@@ -196,6 +197,7 @@ void ClearTraces()
 	  t->flags &= ~TR_HIGHLIGHT;
 	  t=t->t_next;
 	}
+  GLOBALS->traces.dirty = 1;
 }
 
 void ClearGroupTraces(Trptr t_grp)
@@ -209,6 +211,7 @@ void ClearGroupTraces(Trptr t_grp)
 	  if(t->t_match == t_grp) break;
 	  t=t->t_next;
 	}
+    GLOBALS->traces.dirty = 1;
     }
   else
     {
@@ -222,6 +225,8 @@ void ClearGroupTraces(Trptr t_grp)
  */
 static void AddTrace( Trptr t )
 {
+GLOBALS->traces.dirty = 1;
+
 if(GLOBALS->default_flags&TR_NUMMASK) t->flags=GLOBALS->default_flags;
 	else t->flags=(t->flags&TR_NUMMASK)|GLOBALS->default_flags;
 
@@ -360,6 +365,8 @@ if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
 	return( 0 );
       	}
 
+GLOBALS->traces.dirty = 1;
+
 if(!different_flags)
 	{
 	t->flags=TR_BLANK;
@@ -414,6 +421,7 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
   if(nd->mv.mvlfac) import_trace(nd);
 
   GLOBALS->signalwindow_width_dirty=1;
+  GLOBALS->traces.dirty = 1;
     
   if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
     {
@@ -553,6 +561,7 @@ int AddVector(bvptr vec, char *aliasname)
     if(!vec) return(0); /* must've passed it a null pointer by mistake */
 
     GLOBALS->signalwindow_width_dirty=1;
+    GLOBALS->traces.dirty = 1;
 
     n = vec->nbits;
     t = (Trptr) calloc_2(1, sizeof( TraceEnt ) );
@@ -589,6 +598,8 @@ int AddVector(bvptr vec, char *aliasname)
  */
 void FreeTrace(Trptr t)
 {
+GLOBALS->traces.dirty = 1;
+
 if(GLOBALS->starting_unshifted_trace == t)
 	{
 	GLOBALS->starting_unshifted_trace = NULL; /* for new "standard" clicking routines */
@@ -673,6 +684,7 @@ if(t->vector)
  */ 
 void RemoveTrace( Trptr t, int dofree )
   {
+    GLOBALS->traces.dirty = 1;
     GLOBALS->traces.total--;
     if( t == GLOBALS->traces.first )
       {
@@ -758,6 +770,7 @@ while(t)
 if(!t) return(NULL);	/* keeps a double cut from blowing out the buffer */
 
 GLOBALS->signalwindow_width_dirty=1;
+GLOBALS->traces.dirty = 1;
 
 FreeCutBuffer();
 
@@ -809,6 +822,7 @@ Trptr PasteBuffer(void)
   if(!GLOBALS->traces.buffer) return(NULL);
 
   GLOBALS->signalwindow_width_dirty=1;
+  GLOBALS->traces.dirty = 1;
 
   if(!(t=GLOBALS->traces.first))
     {
@@ -918,6 +932,7 @@ int count;
 if(!GLOBALS->traces.buffer) return(NULL);
 
 GLOBALS->signalwindow_width_dirty=1;
+GLOBALS->traces.dirty = 1;
 
 t=GLOBALS->traces.buffer;
 
@@ -1118,6 +1133,7 @@ int i;
 int (*cptr)(const void*, const void*);
    
 if(!GLOBALS->traces.total) return(0);
+GLOBALS->traces.dirty = 1;
 
 t=GLOBALS->traces.first;
 tsort=tsort_pnt=wave_alloca(sizeof(Trptr)*GLOBALS->traces.total);   
@@ -1514,6 +1530,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2010/07/06 16:06:09  gtkwave
+ * defensive re-link fix in PasteBuffer
+ *
  * Revision 1.28  2010/07/01 17:58:23  gtkwave
  * Segmentation fault on signal reordering - ID: 3023401
  *
