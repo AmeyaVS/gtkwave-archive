@@ -365,6 +365,7 @@ TimeType atoi_64(const char *str)
 {
 TimeType val=0;
 unsigned char ch, nflag=0;
+int consumed = 0;
 
 GLOBALS->atoi_cont_ptr=NULL;
 
@@ -396,14 +397,16 @@ while((ch=*(str++)))
 	if((ch>='0')&&(ch<='9'))
 		{
 		val=(val*10+(ch&15));
+		consumed = 1;
 		}
 	else
 	if((ch=='-')&&(val==0)&&(!nflag))
 		{
 		nflag=1;
+		consumed = 1;
 		}
 	else
-	if(val)
+	if(consumed)
 		{
 		GLOBALS->atoi_cont_ptr=str-1;
 		break;
@@ -490,6 +493,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/05/01 19:20:56  gtkwave
+ * cppcheck warnings fixes
+ *
  * Revision 1.13  2010/03/16 21:01:08  gtkwave
  * remove selected member of struct symbol
  *
