@@ -883,7 +883,7 @@
 		Updated example to reflect Quit name change.
 		Updated repscript_timer so it prints stack trace.
 		Use setvbuf (as with MinGW) for fstapi.c to fix for OS X.
-3.3.11	02aug10	Added tcl functions gtkwave::installFileFilter,
+3.3.11	03aug10	Added tcl functions gtkwave::installFileFilter,
 		gtkwave::installProcFilter, gtkwave::installTransFilter,
 		gtkwave::setCurrentTranslateFile,
 		gtkwave::setCurrentTranslateProc,
@@ -901,3 +901,5 @@
 		Fix for 0 millisecond Tcl timer causing 100% CPU usage.
 		Added CVS versus ModelSim compatibility fixes for Bluespec
 		savefiles.
+		Fix for atoi_64 when value is zero followed by a legitimate
+		nonzero value after some garbage non-numerics.
