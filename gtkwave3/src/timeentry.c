@@ -23,12 +23,14 @@ if(GLOBALS->from_entry)
 	{
 	reformat_time(str, GLOBALS->tims.first, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),str);
+	gtkwavetcl_setvar(WAVE_TCLCB_FROM_ENTRY_UPDATED, str, WAVE_TCLCB_FROM_ENTRY_UPDATED_FLAGS);
 	}
 
 if(GLOBALS->to_entry)
 	{
 	reformat_time(str, GLOBALS->tims.last, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(GLOBALS->to_entry),str);
+	gtkwavetcl_setvar(WAVE_TCLCB_TO_ENTRY_UPDATED, str, WAVE_TCLCB_TO_ENTRY_UPDATED_FLAGS);
 	}
 }
 
@@ -66,14 +68,15 @@ if(newlo<(GLOBALS->tims.last))
 
 	reformat_time(fromstr, GLOBALS->tims.first, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),fromstr);
-
 	time_update(); 
+	gtkwavetcl_setvar(WAVE_TCLCB_FROM_ENTRY_UPDATED, fromstr, WAVE_TCLCB_FROM_ENTRY_UPDATED_FLAGS);
 	return;
 	}
 	else
 	{
 	reformat_time(fromstr, GLOBALS->tims.first, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),fromstr);
+	gtkwavetcl_setvar(WAVE_TCLCB_FROM_ENTRY_UPDATED, fromstr, WAVE_TCLCB_FROM_ENTRY_UPDATED_FLAGS);
 	return;
 	}
 }
@@ -100,12 +103,14 @@ if(newhi>(GLOBALS->tims.first))
 	reformat_time(tostr, GLOBALS->tims.last, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),tostr);
 	time_update(); 
+	gtkwavetcl_setvar(WAVE_TCLCB_TO_ENTRY_UPDATED, tostr, WAVE_TCLCB_TO_ENTRY_UPDATED_FLAGS);
 	return;
 	}
 	else
 	{
 	reformat_time(tostr, GLOBALS->tims.last, GLOBALS->time_dimension);
 	gtk_entry_set_text(GTK_ENTRY(entry),tostr);
+	gtkwavetcl_setvar(WAVE_TCLCB_TO_ENTRY_UPDATED, tostr, WAVE_TCLCB_TO_ENTRY_UPDATED_FLAGS);
 	return;
 	}
 }
@@ -169,13 +174,16 @@ gtk_box_pack_start(GTK_BOX(mainbox), box, TRUE, FALSE, 1);
 gtk_widget_show(box);
 gtk_box_pack_start(GTK_BOX(mainbox), box2, TRUE, FALSE, 1);
 gtk_widget_show(box2);
-   
+
 return(mainbox);
 }
    
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2009/01/16 19:27:00  gtkwave
+ * added more tcl commands
+ *
  * Revision 1.5  2008/01/09 08:06:17  gtkwave
  * remove context swap signal handler as it doesn't allow ctx > 0 to update
  *

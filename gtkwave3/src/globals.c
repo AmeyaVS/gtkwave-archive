@@ -2587,7 +2587,7 @@ struct Global *watch = *w;
 if(GLOBALS->gtk_context_bridge_ptr != w)
 	{
 #ifdef GTKWAVE_SIGNAL_CONNECT_DEBUG
-	printf("GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p, session %d vs %d\n", 
+	fprintf(stderr, "GTKWAVE | WARNING: globals change caught by ctx_swap_watchdog()! %p vs %p, session %d vs %d\n", 
 		(void *)GLOBALS->gtk_context_bridge_ptr,(void *)w, (*GLOBALS->gtk_context_bridge_ptr)->this_context_page, watch->this_context_page);
 #endif
 

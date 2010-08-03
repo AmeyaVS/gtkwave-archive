@@ -22,6 +22,9 @@ a hierarchy first */
 
 void status_text(char *str)
 {
+int len = strlen(str);
+char ch = len ? str[len-1] : 0;
+
 if(GLOBALS->text_status_c_2)
 	{
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
@@ -32,10 +35,20 @@ if(GLOBALS->text_status_c_2)
 	}
 	else
 	{
-	int len = strlen(str);
-	char ch = len ? str[len-1] : 0;
 	fprintf(stderr, "GTKWAVE | %s%s", str, (ch=='\n') ? "" : "\n");
 	}
+
+{
+char *stemp = wave_alloca(len+1);
+strcpy(stemp, str);
+
+if(ch == '\n')
+	{
+	stemp[len-1] = 0;
+	}
+gtkwavetcl_setvar(WAVE_TCLCB_STATUS_TEXT, stemp, WAVE_TCLCB_STATUS_TEXT_FLAGS);
+}
+
 }
 
 void
@@ -158,6 +171,9 @@ return(table);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2008/02/12 23:35:42  gtkwave
+ * preparing for 3.1.5 revision bump
+ *
  * Revision 1.5  2008/01/04 03:23:33  gtkwave
  * have dormant key_press_event handler code.
  *
