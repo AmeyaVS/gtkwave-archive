@@ -1566,34 +1566,36 @@ int SST_open_node(char *name) ;
 static int gtkwavetcl_forceOpenTreeNode(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
   int rv = -100;		/* Tree does not exist */
-if(objc == 2)
-        {
-        char *s = get_Tcl_string(objv[1]);
-
-	if(s)
-		{
-		int len = strlen(s);
-		if(s[len-1]!=GLOBALS->hier_delimeter)
-			{
+  char *s = NULL ;
+  if(objc == 2)
+    s = get_Tcl_string(objv[1]);
+  
+  if(s && (strlen(s) > 1)) {	/* exclude empty strings */
+    int len = strlen(s);
+    if(s[len-1]!=GLOBALS->hier_delimeter)
+      {
 #ifdef WAVE_USE_GTK2
-			rv = SST_open_node(s);
+	rv = SST_open_node(s);
 #endif
-			}
-			else
-			{
+      }
+    else {
 #ifdef WAVE_USE_GTK2
-
-			rv = SST_open_node(s);
+      rv = SST_open_node(s);
 #endif
-	    }
-	}
-      gtkwave_main_iteration(); /* check if this is needed */
     }
-  else  
-    {
-      return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+  } else {
+    if (GLOBALS->selected_hierarchy_name) {
+      rv = SST_NODE_CURRENT ;
     }
-  Tcl_SetObjResult(GLOBALS->interp, Tcl_NewIntObj(rv)) ;
+    gtkwave_main_iteration(); /* check if this is needed */
+  }
+  if (rv == -100) {
+    return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+  }
+  Tcl_SetObjResult(GLOBALS->interp, (rv == SST_NODE_CURRENT) ?
+		   Tcl_NewStringObj(GLOBALS->selected_hierarchy_name,
+				    strlen(GLOBALS->selected_hierarchy_name)) :
+		   Tcl_NewIntObj(rv)) ;
   
   return(TCL_OK);
 }
@@ -2105,6 +2107,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2010/07/28 19:56:27  gtkwave
+ * locking down callbacks from calling context changing events in viewer
+ *
  * Revision 1.41  2010/07/19 22:32:31  gtkwave
  * added gtkwave::setCurrentTranslateEnums
  *

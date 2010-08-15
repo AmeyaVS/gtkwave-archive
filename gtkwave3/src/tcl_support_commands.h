@@ -26,6 +26,7 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
                        TimeType end_time, int max_elements); 
 
 #define SST_NODE_FOUND 0
+#define SST_NODE_CURRENT 2
 #define SST_NODE_NOT_EXIST 1
 #define SST_TREE_NOT_EXIST -1
 
@@ -34,6 +35,9 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/10/08 17:40:50  gtkwave
+ * removed casting on llist_new, use union instead as arg
+ *
  * Revision 1.3  2009/10/07 21:13:10  gtkwave
  * 64-bit fixes on signal list generation
  *
