@@ -1872,7 +1872,7 @@ if(objc == 2)
 		}
 		else
 		{
-		gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_ERROR,"setTabActive prohibited in callback",WAVE_TCLCB_ERROR_FLAGS);
+		gtkwavetcl_setvar_nonblocking(WAVE_TCLCB_ERROR,"gtkwave::setTabActive prohibited in callback",WAVE_TCLCB_ERROR_FLAGS);
 		rc = -1;
 		}
 
@@ -2107,6 +2107,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2010/08/15 18:54:49  gtkwave
+ * fixes to SST open node to support tcl bug workaround (?)
+ *
  * Revision 1.42  2010/07/28 19:56:27  gtkwave
  * locking down callbacks from calling context changing events in viewer
  *
