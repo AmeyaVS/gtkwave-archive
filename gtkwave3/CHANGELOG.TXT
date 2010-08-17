@@ -883,7 +883,7 @@
 		Updated example to reflect Quit name change.
 		Updated repscript_timer so it prints stack trace.
 		Use setvbuf (as with MinGW) for fstapi.c to fix for OS X.
-3.3.11	03aug10	Added tcl functions gtkwave::installFileFilter,
+3.3.11	17aug10	Added tcl functions gtkwave::installFileFilter,
 		gtkwave::installProcFilter, gtkwave::installTransFilter,
 		gtkwave::setCurrentTranslateFile,
 		gtkwave::setCurrentTranslateProc,
