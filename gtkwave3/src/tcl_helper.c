@@ -2884,12 +2884,23 @@ const char *gtkwavetcl_setvar(const char *name1, const char *val, int flags)
 return(NULL);
 }
 
+
+const char *gtkwavetcl_setvar_nonblocking(const char *name1, const char *val, int flags)
+{
+return(NULL);
+}
+
+
+
 #endif
 
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.88  2010/08/02 17:27:04  gtkwave
+ * added tclcb variable init sequence
+ *
  * Revision 1.86  2010/07/30 04:02:50  gtkwave
  * fix for 0msec Tcl timer
  *

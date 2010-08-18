@@ -903,3 +903,5 @@
 		savefiles.
 		Fix for atoi_64 when value is zero followed by a legitimate
 		nonzero value after some garbage non-numerics.
+3.3.12	18aug10	Compile fix for --disable-tcl or systems which do not have
+		Tcl installed.
