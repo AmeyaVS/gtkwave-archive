@@ -21,11 +21,28 @@
 #include <signal.h>
 #include "debug.h"
 
+#if defined _MSC_VER || defined __MINGW32__
+#include <windows.h>
+#endif
+
+
 struct pipe_ctx
 {
+#if defined _MSC_VER || defined __MINGW32__
+
+HANDLE g_hChildStd_IN_Rd;
+HANDLE g_hChildStd_IN_Wr;  /* handle for gtkwave to write to */
+HANDLE g_hChildStd_OUT_Rd; /* handle for gtkwave to read from */
+HANDLE g_hChildStd_OUT_Wr;
+PROCESS_INFORMATION piProcInfo;
+
+#else
+
 FILE *sin, *sout;
 int fd0, fd1;
 pid_t pid;
+
+#endif
 };
 
 
@@ -37,6 +54,9 @@ void pipeio_destroy(struct pipe_ctx *p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.2  2007/08/26 21:35:43  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

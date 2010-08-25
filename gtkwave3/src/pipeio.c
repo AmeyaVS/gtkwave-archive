@@ -13,15 +13,82 @@
 
 #if defined _MSC_VER || defined __MINGW32__
 
+static void ErrorExit(const char *msg)
+{
+fprintf(stderr, "%s\n", msg);
+exit(255);
+}
+
 struct pipe_ctx *pipeio_create(char *execappname, char *args)
 {
-/* nothing, not supported in win32 */
-return(NULL);
+SECURITY_ATTRIBUTES saAttr;
+STARTUPINFO siStartInfo;
+BOOL bSuccess = FALSE;
+TCHAR *szCmdline;
+
+struct pipe_ctx *p = calloc_2(1, sizeof(struct pipe_ctx));
+
+saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); /*  Set the bInheritHandle flag so pipe handles are inherited */
+saAttr.bInheritHandle = TRUE;
+saAttr.lpSecurityDescriptor = NULL;
+
+if (!CreatePipe(&p->g_hChildStd_OUT_Rd, &p->g_hChildStd_OUT_Wr, &saAttr, 0)) ErrorExit("StdoutRd CreatePipe");
+if (!SetHandleInformation(p->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) ErrorExit("Stdout SetHandleInformation");
+if (!CreatePipe(&p->g_hChildStd_IN_Rd, &p->g_hChildStd_IN_Wr, &saAttr, 0)) ErrorExit("Stdin CreatePipe");
+if (!SetHandleInformation(p->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) ErrorExit("Stdin SetHandleInformation");
+
+memset(&siStartInfo, 0, sizeof(STARTUPINFO));
+siStartInfo.cb = sizeof(STARTUPINFO);
+siStartInfo.hStdError = p->g_hChildStd_OUT_Wr;
+siStartInfo.hStdOutput = p->g_hChildStd_OUT_Wr;
+siStartInfo.hStdInput = p->g_hChildStd_IN_Rd;
+siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
+
+if (strlen(args) == 0)
+	{
+	szCmdline = strdup_2(execappname);
+	}
+	else
+	{
+	szCmdline = malloc_2(strlen(execappname) + 1 + strlen(args) + 1);
+	sprintf(szCmdline, "%s %s", execappname, args);
+	}
+
+bSuccess = CreateProcess(NULL,
+      szCmdline,     /* command line */
+      NULL,          /* process security attributes */
+      NULL,          /* primary thread security attributes */
+      TRUE,          /* handles are inherited */
+      0,             /* creation flags */
+      NULL,          /* use parent's environment */
+      NULL,          /* use parent's current directory */
+      &siStartInfo,  /* STARTUPINFO pointer */
+      &p->piProcInfo);  /* receives PROCESS_INFORMATION */
+
+free_2(szCmdline);
+
+if(!bSuccess)
+	{
+	ErrorExit("CreateProcess");
+	}
+	else
+	{
+	/* CloseHandle(p->piProcInfo.hProcess); */
+	/* CloseHandle(p->piProcInfo.hThread); */
+	}
+
+return(p);
 }
 
 void pipeio_destroy(struct pipe_ctx *p)
 {
-/* nothing */
+CloseHandle(p->g_hChildStd_IN_Rd);
+CloseHandle(p->g_hChildStd_IN_Wr);
+CloseHandle(p->g_hChildStd_OUT_Rd);
+CloseHandle(p->g_hChildStd_OUT_Wr);
+TerminateProcess(p->piProcInfo.hProcess, 0);
+
+free_2(p);
 }
 
 #else
@@ -122,6 +189,9 @@ free_2(p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/09/14 03:00:08  gtkwave
+ * bluespec code integration
+ *
  * Revision 1.3  2008/12/25 04:07:29  gtkwave
  * -Wshadow warning fixes
  *

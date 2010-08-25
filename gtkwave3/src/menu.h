@@ -106,9 +106,9 @@ WV_MENU_EDFRON,
 WV_MENU_EDFROFF,
 WV_MENU_XLF_0,
 WV_MENU_XLF_1,
-#if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_XLP_0,
 WV_MENU_XLP_1,
+#if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_TTXLP_0,
 WV_MENU_TTXLP_1,
 #endif
@@ -353,6 +353,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2010/07/12 20:51:42  gtkwave
+ * free to non-malloc'd address fix
+ *
  * Revision 1.39  2010/07/01 23:02:41  gtkwave
  * header file cleanup
  *

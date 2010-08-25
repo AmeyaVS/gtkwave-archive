@@ -62,13 +62,6 @@ for(j=0;j<GLOBALS->num_notebook_pages;j++)
 	}
 }
 
-#if defined __MINGW32__ || defined _MSC_VER
-
-void ptrans_searchbox(char *title) { }
-int install_proc_filter(int which) { return(0); } 
-void set_current_translate_proc(char *name) { }
-
-#else
 
 static void regen_display(void)
 {
@@ -134,6 +127,7 @@ static void load_proc_filter(int which, char *name)
   }
 
   /* turn the exec_name into an absolute path */
+#if !defined __MINGW32__ && !defined _MSC_VER
   cmd = (char *)malloc_2(strlen(exec_name)+6+1);
   sprintf(cmd, "which %s", exec_name);
   stream = popen(cmd, "r");
@@ -149,6 +143,10 @@ static void load_proc_filter(int which, char *name)
 
   pclose(stream);
   free_2(cmd);
+#else
+  strcpy(abs_path, exec_name);
+#endif
+
 
   /* remove_proc_filter(which, 0); ... should never happen from GUI, but perhaps possible from save files or other weirdness */
   if(!GLOBALS->ttrans_filter[which])
@@ -452,11 +450,13 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 	}
 }
 
-#endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/07/19 21:12:19  gtkwave
+ * added file/proc/trans access functions to Tcl script interpreter
+ *
  * Revision 1.12  2010/06/23 05:45:34  gtkwave
  * warnings fixes
  *

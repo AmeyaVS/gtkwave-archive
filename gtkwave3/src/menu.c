@@ -342,7 +342,6 @@ install_ttrans_filter(0); /* disable, 0 is always NULL */
 
 /********** procsel filter install ********/
 
-#if !defined __MINGW32__ && !defined _MSC_VER
 void menu_dataformat_xlate_proc_1(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
@@ -371,7 +370,6 @@ if(GLOBALS->helpbox_is_active)
 
 install_proc_filter(0); /* disable, 0 is always NULL */
 }
-#endif
 
 /********** filesel filter install ********/
 
@@ -5608,9 +5606,9 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Reverse Bits/Off", "<Shift><Alt>V", menu_dataformat_reverse_off, WV_MENU_EDFROFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter File/Disable", NULL, menu_dataformat_xlate_file_0, WV_MENU_XLF_0, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter File/Enable and Select", NULL, menu_dataformat_xlate_file_1, WV_MENU_XLF_1, "<Item>"),
-#if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter Process/Disable", NULL, menu_dataformat_xlate_proc_0, WV_MENU_XLP_0, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter Process/Enable and Select", NULL, menu_dataformat_xlate_proc_1, WV_MENU_XLP_1, "<Item>"),
+#if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Edit/Data Format/Transaction Filter Process/Disable", NULL, menu_dataformat_xlate_ttrans_0, WV_MENU_TTXLP_0, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Transaction Filter Process/Enable and Select", NULL, menu_dataformat_xlate_ttrans_1, WV_MENU_TTXLP_1, "<Item>"),
 #endif
@@ -6131,9 +6129,9 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Reverse Bits/Off", NULL, menu_dataformat_reverse_off, WV_MENU_EDFROFF, "<Item>"),
     WAVE_GTKIFE("/Data Format/Translate Filter File/Disable", NULL, menu_dataformat_xlate_file_0, WV_MENU_XLF_0, "<Item>"),
     WAVE_GTKIFE("/Data Format/Translate Filter File/Enable and Select", NULL, menu_dataformat_xlate_file_1, WV_MENU_XLF_1, "<Item>"),
-#if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Data Format/Translate Filter Process/Disable", NULL, menu_dataformat_xlate_proc_0, WV_MENU_XLP_0, "<Item>"),
     WAVE_GTKIFE("/Data Format/Translate Filter Process/Enable and Select", NULL, menu_dataformat_xlate_proc_1, WV_MENU_XLP_1, "<Item>"),
+#if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Data Format/Transaction Filter Process/Disable", NULL, menu_dataformat_xlate_ttrans_0, WV_MENU_TTXLP_0, "<Item>"),
     WAVE_GTKIFE("/Data Format/Transaction Filter Process/Enable and Select", NULL, menu_dataformat_xlate_ttrans_1, WV_MENU_TTXLP_1, "<Item>"),
 #endif
@@ -6239,6 +6237,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.111  2010/07/27 22:16:11  gtkwave
+ * added cbOpenTraceGroup and cbCloseTraceGroup
+ *
  * Revision 1.110  2010/07/27 19:25:41  gtkwave
  * initial tcl callback function adds
  *

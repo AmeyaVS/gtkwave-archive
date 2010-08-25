@@ -1303,7 +1303,6 @@ if((*s == '?') && (!GLOBALS->color_active_in_filter))
 return(s);
 }
 
-#if !defined _MSC_VER && !defined __MINGW32__
 static char *pdofilter(Trptr t, char *s)
 {
 struct pipe_ctx *p = GLOBALS->proc_filter[t->p_filter];
@@ -1312,6 +1311,7 @@ int n;
 
 if(p)
 	{
+#if !defined _MSC_VER && !defined __MINGW32__
 	fputs(s, p->sout);
 	fputc('\n', p->sout);
 	fflush(p->sout);
@@ -1320,6 +1320,29 @@ if(p)
 
 	n = fgets(buf, 1024, p->sin) ? strlen(buf) : 0;
 	buf[n] = 0;
+#else
+	{
+	BOOL bSuccess;
+	DWORD dwWritten, dwRead;
+
+	WriteFile(p->g_hChildStd_IN_Wr, s, strlen(s), &dwWritten, NULL);
+	WriteFile(p->g_hChildStd_IN_Wr, "\n", 1, &dwWritten, NULL);
+
+	for(n=0;n<1024;n++)
+		{
+		do 	{
+			bSuccess = ReadFile(p->g_hChildStd_OUT_Rd, buf+n, 1, &dwRead, NULL);
+			if((!bSuccess)||(buf[n]=='\n'))
+				{
+				goto ex;
+				}
+
+			} while(buf[n]=='\r');
+		}
+ex:	buf[n] = 0;
+	}
+
+#endif
 
 	if(n)
 		{
@@ -1349,24 +1372,11 @@ if((*s == '?') && (!GLOBALS->color_active_in_filter))
 	}
 return(s);
 }
-#endif
 
 
 char *convert_ascii_vec(Trptr t, char *vec)
 {
 char *s = convert_ascii_vec_2(t, vec);
-
-#if defined _MSC_VER || defined __MINGW32__
-
-if(!t->f_filter)
-	{
-	}
-	else
-	{
-	s = dofilter(t, s);
-	}
-
-#else
 
 if(!(t->f_filter|t->p_filter))
 	{
@@ -1382,7 +1392,6 @@ if(!(t->f_filter|t->p_filter))
 		s = pdofilter(t, s);
 		}
 	}
-#endif
 
 return(s);
 }
@@ -1414,18 +1423,6 @@ if(!t->t_filter_converted)
 	        }
 	}
 
-#if defined _MSC_VER || defined __MINGW32__
-
-if(!t->f_filter)
-	{
-	}
-	else
-	{
-	s = dofilter(t, s);
-	}
-
-#else
-
 if(!(t->f_filter|t->p_filter))
 	{
 	}
@@ -1440,7 +1437,6 @@ if(!(t->f_filter|t->p_filter))
 		s = pdofilter(t, s);
 		}
 	}
-#endif
 
 return(s);
 }
@@ -1720,6 +1716,9 @@ return(retval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/06/23 05:45:34  gtkwave
+ * warnings fixes
+ *
  * Revision 1.16  2010/03/31 16:32:20  gtkwave
  * stale marker fix for ttranslate on save file loads before GUI initialized
  *
