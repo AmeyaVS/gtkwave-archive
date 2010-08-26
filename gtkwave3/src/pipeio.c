@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2005-2009
+ * Copyright (c) Tony Bybell 2005-2010
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,10 +13,14 @@
 
 #if defined _MSC_VER || defined __MINGW32__
 
-static void ErrorExit(const char *msg)
+static void cleanup_p(struct pipe_ctx *p)
 {
-fprintf(stderr, "%s\n", msg);
-exit(255);
+if(p->g_hChildStd_IN_Rd) CloseHandle(p->g_hChildStd_IN_Rd);
+if(p->g_hChildStd_IN_Wr) CloseHandle(p->g_hChildStd_IN_Wr);
+if(p->g_hChildStd_OUT_Rd) CloseHandle(p->g_hChildStd_OUT_Rd);
+if(p->g_hChildStd_OUT_Wr) CloseHandle(p->g_hChildStd_OUT_Wr);
+
+free_2(p);
 }
 
 struct pipe_ctx *pipeio_create(char *execappname, char *args)
@@ -32,10 +36,10 @@ saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); /*  Set the bInheritHandle flag so
 saAttr.bInheritHandle = TRUE;
 saAttr.lpSecurityDescriptor = NULL;
 
-if (!CreatePipe(&p->g_hChildStd_OUT_Rd, &p->g_hChildStd_OUT_Wr, &saAttr, 0)) ErrorExit("StdoutRd CreatePipe");
-if (!SetHandleInformation(p->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) ErrorExit("Stdout SetHandleInformation");
-if (!CreatePipe(&p->g_hChildStd_IN_Rd, &p->g_hChildStd_IN_Wr, &saAttr, 0)) ErrorExit("Stdin CreatePipe");
-if (!SetHandleInformation(p->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) ErrorExit("Stdin SetHandleInformation");
+if (!CreatePipe(&p->g_hChildStd_OUT_Rd, &p->g_hChildStd_OUT_Wr, &saAttr, 0)) { cleanup_p(p); return(NULL); }
+if (!SetHandleInformation(p->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) { cleanup_p(p); return(NULL); }
+if (!CreatePipe(&p->g_hChildStd_IN_Rd, &p->g_hChildStd_IN_Wr, &saAttr, 0)) { cleanup_p(p); return(NULL); }
+if (!SetHandleInformation(p->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) { cleanup_p(p); return(NULL); }
 
 memset(&siStartInfo, 0, sizeof(STARTUPINFO));
 siStartInfo.cb = sizeof(STARTUPINFO);
@@ -69,7 +73,7 @@ free_2(szCmdline);
 
 if(!bSuccess)
 	{
-	ErrorExit("CreateProcess");
+	cleanup_p(p); return(NULL);
 	}
 	else
 	{
@@ -189,6 +193,9 @@ free_2(p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/08/25 22:58:23  gtkwave
+ * added process file support for mingw
+ *
  * Revision 1.4  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *
