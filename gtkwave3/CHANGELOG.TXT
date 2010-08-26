@@ -906,3 +906,4 @@
 3.3.12	25aug10	Compile fix for --disable-tcl or systems which do not have
 		Tcl installed.
 		Added preliminary support for process filters in MinGW.
+		Added support for Open New Window to MinGW.

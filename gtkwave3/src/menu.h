@@ -45,9 +45,7 @@ char *name;
 
 
 enum WV_MenuItems {
-#if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_FONV,
-#endif
 WV_MENU_FONVT,
 WV_MENU_FRW,
 WV_MENU_WRVCD,
@@ -353,6 +351,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2010/08/25 22:58:23  gtkwave
+ * added process file support for mingw
+ *
  * Revision 1.40  2010/07/12 20:51:42  gtkwave
  * free to non-malloc'd address fix
  *

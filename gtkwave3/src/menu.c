@@ -2735,8 +2735,6 @@ if(GLOBALS->helpbox_is_active)
 }
 
 /**/
-#if !defined __MINGW32__ && !defined _MSC_VER
-
 void
 menu_new_viewer_cleanup(GtkWidget *widget, gpointer data)
 {
@@ -2744,6 +2742,7 @@ pid_t pid;
 
 if(GLOBALS->filesel_ok)
 	{
+#if !defined __MINGW32__ && !defined _MSC_VER
 	/*
 	 * for some reason, X won't let us double-fork in order to cleanup zombies.. *shrug*
          */
@@ -2757,6 +2756,38 @@ if(GLOBALS->filesel_ok)
 
 	execlp(GLOBALS->whoami, GLOBALS->whoami, *GLOBALS->fileselbox_text, NULL);
 	exit(0);	/* control never gets here if successful */
+
+#else
+
+	BOOL bSuccess = FALSE;
+	PROCESS_INFORMATION piProcInfo;
+	TCHAR *szCmdline;
+	STARTUPINFO si;
+
+	memset(&piProcInfo, 0, sizeof(PROCESS_INFORMATION));
+	memset(&si, 0, sizeof(STARTUPINFO));
+
+        szCmdline = malloc_2(strlen(GLOBALS->whoami) + 1 + strlen(*GLOBALS->fileselbox_text) + 1);
+        sprintf(szCmdline, "%s %s", GLOBALS->whoami, *GLOBALS->fileselbox_text);
+
+	bSuccess = CreateProcess(NULL,
+	      szCmdline,     /* command line */
+	      NULL,          /* process security attributes */
+	      NULL,          /* primary thread security attributes */
+	      TRUE,          /* handles are inherited */
+	      0,             /* creation flags */
+	      NULL,          /* use parent's environment */
+	      NULL,          /* use parent's current directory */
+	      &si,           /* STARTUPINFO pointer */
+	      &piProcInfo);  /* receives PROCESS_INFORMATION */
+	
+	free_2(szCmdline);
+	
+	if(!bSuccess)
+	        {
+	        /* failed */
+	        }
+#endif
 	}
 }
 
@@ -2776,7 +2807,6 @@ if(GLOBALS->helpbox_is_active)
 
 fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_SIGNAL_FUNC(menu_new_viewer_cleanup), GTK_SIGNAL_FUNC(NULL), NULL, 0);
 }
-#endif
 
 /**/
 
@@ -5536,9 +5566,7 @@ static const char *menu_blackouts[] = { "/Edit", "/Search", "/Time", "/Markers",
 
 static GtkItemFactoryEntry menu_items[] =
 {
-#if !defined __MINGW32__ && !defined _MSC_VER 
     WAVE_GTKIFE("/File/Open New Window", "<Control>N", menu_new_viewer, WV_MENU_FONV, "<Item>"),
-#endif
     WAVE_GTKIFE("/File/Open New Tab", "<Control>T", menu_new_viewer_tab, WV_MENU_FONVT, "<Item>"),
     WAVE_GTKIFE("/File/Reload Waveform", "<Shift><Control>R", menu_reload_waveform, WV_MENU_FRW, "<Item>"),    
     WAVE_GTKIFE("/File/Export/Write VCD File As", NULL, menu_write_vcd_file, WV_MENU_WRVCD, "<Item>"),
@@ -6237,6 +6265,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.112  2010/08/25 22:58:23  gtkwave
+ * added process file support for mingw
+ *
  * Revision 1.111  2010/07/27 22:16:11  gtkwave
  * added cbOpenTraceGroup and cbCloseTraceGroup
  *
