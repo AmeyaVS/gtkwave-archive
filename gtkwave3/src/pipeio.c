@@ -43,7 +43,7 @@ if (!SetHandleInformation(p->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) { clean
 
 memset(&siStartInfo, 0, sizeof(STARTUPINFO));
 siStartInfo.cb = sizeof(STARTUPINFO);
-siStartInfo.hStdError = p->g_hChildStd_OUT_Wr;
+/* siStartInfo.hStdError = p->g_hChildStd_OUT_Wr; (not sure how to redirect, for example GetStdHandle(STD_ERROR_HANDLE) */
 siStartInfo.hStdOutput = p->g_hChildStd_OUT_Wr;
 siStartInfo.hStdInput = p->g_hChildStd_IN_Rd;
 siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
@@ -193,6 +193,9 @@ free_2(p);
 /*
  * $Id$
  * $Log$
+ * Revision 1.6  2010/08/26 00:40:29  gtkwave
+ * updated filter failure so it is non-fatal on mingw
+ *
  * Revision 1.5  2010/08/25 22:58:23  gtkwave
  * added process file support for mingw
  *

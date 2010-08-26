@@ -62,14 +62,6 @@ for(j=0;j<GLOBALS->num_notebook_pages;j++)
 	}
 }
 
-#if defined __MINGW32__ || defined _MSC_VER
-
-void ttrans_searchbox(char *title) { }
-int install_ttrans_filter(int which) { return(0); } 
-void set_current_translate_ttrans(char *name) { }
-int traverse_vector_nodes(Trptr t) { if(t) { t->t_filter = 0; } return(0); }
-
-#else
 
 int traverse_vector_nodes(Trptr t);
 
@@ -140,6 +132,7 @@ static void load_ttrans_filter(int which, char *name)
   }
 
   /* turn the exec_name into an absolute path */
+#if !defined __MINGW32__ && !defined _MSC_VER
   cmd = (char *)malloc_2(strlen(exec_name)+6+1);
   sprintf(cmd, "which %s", exec_name);
   stream = popen(cmd, "r");
@@ -155,6 +148,9 @@ static void load_ttrans_filter(int which, char *name)
 
   pclose(stream);
   free_2(cmd);
+#else
+  strcpy(abs_path, exec_name);
+#endif
 
   /* remove_ttrans_filter(which, 0); ... should never happen from GUI, but perhaps possible from save files or other weirdness */
   if(!GLOBALS->ttrans_filter[which])
@@ -521,7 +517,11 @@ int cvt_ok = 0;
 
 if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_converted))
 	{
+#if !defined _MSC_VER && !defined __MINGW32__
 	int rc = save_nodes_to_trans(GLOBALS->ttrans_filter[t->t_filter]->sout, t);
+#else
+	int rc = save_nodes_to_trans((FILE *)(GLOBALS->ttrans_filter[t->t_filter]->g_hChildStd_IN_Wr), t);
+#endif
 
 	if(rc == VCDSAV_OK)
 		{
@@ -553,6 +553,7 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 				char buf[1025];
 				char *pnt, *rtn;
 	
+#if !defined _MSC_VER && !defined __MINGW32__
 				if(feof(GLOBALS->ttrans_filter[t->t_filter]->sin)) break; /* should never happen */
 	
 				buf[0] = 0;
@@ -564,6 +565,28 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 					if((*rtn == '\n') || (*rtn == '\r')) { *rtn = 0; break; }
 					rtn++;
 					}
+#else
+			        {
+			        BOOL bSuccess;
+			        DWORD dwRead;
+				int n;
+
+			        for(n=0;n<1024;n++)
+			                {
+			                do      {
+			                        bSuccess = ReadFile(GLOBALS->ttrans_filter[t->t_filter]->g_hChildStd_OUT_Rd, buf+n, 1, &dwRead, NULL);
+			                        if((!bSuccess)||(buf[n]=='\n'))
+			                                {
+			                                goto ex;
+			                                }
+			
+			                        } while(buf[n]=='\r');
+			                }
+ex:     			buf[n] = 0;
+				pnt = buf;
+			        }
+#endif
+
 	
 				while(*pnt) { if(isspace(*pnt)) pnt++; else break;}
 	
@@ -744,11 +767,12 @@ if((t->t_filter) && (t->flags & TR_TTRANSLATED) && (t->vector) && (!t->t_filter_
 return(cvt_ok);
 }
 
-#endif
-
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2010/07/19 21:12:19  gtkwave
+ * added file/proc/trans access functions to Tcl script interpreter
+ *
  * Revision 1.18  2010/06/23 05:45:34  gtkwave
  * warnings fixes
  *

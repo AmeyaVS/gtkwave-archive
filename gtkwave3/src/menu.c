@@ -310,7 +310,6 @@ if(GLOBALS->helpbox_is_active)
 
 /********** transaction procsel filter install ********/
 
-#if !defined __MINGW32__ && !defined _MSC_VER
 void menu_dataformat_xlate_ttrans_1(GtkWidget *widget, gpointer data)
 {
 if(GLOBALS->helpbox_is_active)
@@ -338,7 +337,6 @@ if(GLOBALS->helpbox_is_active)
 
 install_ttrans_filter(0); /* disable, 0 is always NULL */
 }
-#endif
 
 /********** procsel filter install ********/
 
@@ -5636,10 +5634,8 @@ static GtkItemFactoryEntry menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter File/Enable and Select", NULL, menu_dataformat_xlate_file_1, WV_MENU_XLF_1, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter Process/Disable", NULL, menu_dataformat_xlate_proc_0, WV_MENU_XLP_0, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Translate Filter Process/Enable and Select", NULL, menu_dataformat_xlate_proc_1, WV_MENU_XLP_1, "<Item>"),
-#if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Edit/Data Format/Transaction Filter Process/Disable", NULL, menu_dataformat_xlate_ttrans_0, WV_MENU_TTXLP_0, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Transaction Filter Process/Enable and Select", NULL, menu_dataformat_xlate_ttrans_1, WV_MENU_TTXLP_1, "<Item>"),
-#endif
     WAVE_GTKIFE("/Edit/Data Format/Analog/Off", NULL, menu_dataformat_analog_off, WV_MENU_EDFAOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
@@ -6159,10 +6155,8 @@ static GtkItemFactoryEntry popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Translate Filter File/Enable and Select", NULL, menu_dataformat_xlate_file_1, WV_MENU_XLF_1, "<Item>"),
     WAVE_GTKIFE("/Data Format/Translate Filter Process/Disable", NULL, menu_dataformat_xlate_proc_0, WV_MENU_XLP_0, "<Item>"),
     WAVE_GTKIFE("/Data Format/Translate Filter Process/Enable and Select", NULL, menu_dataformat_xlate_proc_1, WV_MENU_XLP_1, "<Item>"),
-#if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Data Format/Transaction Filter Process/Disable", NULL, menu_dataformat_xlate_ttrans_0, WV_MENU_TTXLP_0, "<Item>"),
     WAVE_GTKIFE("/Data Format/Transaction Filter Process/Enable and Select", NULL, menu_dataformat_xlate_ttrans_1, WV_MENU_TTXLP_1, "<Item>"),
-#endif
     WAVE_GTKIFE("/Data Format/Analog/Off", NULL, menu_dataformat_analog_off, WV_MENU_EDFAOFF, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Step", NULL, menu_dataformat_analog_step, WV_MENU_EDFASTEP, "<Item>"),
     WAVE_GTKIFE("/Data Format/Analog/Interpolated", NULL, menu_dataformat_analog_interpol, WV_MENU_EDFAINTERPOL, "<Item>"),
@@ -6265,6 +6259,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.113  2010/08/26 01:32:01  gtkwave
+ * added mingw support for Open New Window menu option
+ *
  * Revision 1.112  2010/08/25 22:58:23  gtkwave
  * added process file support for mingw
  *

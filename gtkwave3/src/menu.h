@@ -106,10 +106,8 @@ WV_MENU_XLF_0,
 WV_MENU_XLF_1,
 WV_MENU_XLP_0,
 WV_MENU_XLP_1,
-#if !defined __MINGW32__ && !defined _MSC_VER
 WV_MENU_TTXLP_0,
 WV_MENU_TTXLP_1,
-#endif
 WV_MENU_EDFAOFF,
 WV_MENU_EDFASTEP,
 WV_MENU_EDFAINTERPOL,
@@ -351,6 +349,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2010/08/26 01:32:01  gtkwave
+ * added mingw support for Open New Window menu option
+ *
  * Revision 1.41  2010/08/25 22:58:23  gtkwave
  * added process file support for mingw
  *

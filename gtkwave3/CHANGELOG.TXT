@@ -903,7 +903,8 @@
 		savefiles.
 		Fix for atoi_64 when value is zero followed by a legitimate
 		nonzero value after some garbage non-numerics.
-3.3.12	25aug10	Compile fix for --disable-tcl or systems which do not have
+3.3.12	26aug10	Compile fix for --disable-tcl or systems which do not have
 		Tcl installed.
-		Added preliminary support for process filters in MinGW.
+		Added support for process filters in MinGW.
+		Added support for transaction filters in MinGW.
 		Added support for Open New Window to MinGW.
