@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(gtkwave, 3.3.11, bybell@nc.rr.com)
+AC_INIT(gtkwave, 3.3.12, bybell@nc.rr.com)
 AC_CONFIG_SRCDIR([src/vcd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
@@ -41,6 +41,19 @@ if test "X$ETCL" = "Xyes" ; then
 		SC_LOAD_TCLCONFIG
 		AC_SUBST(TCL_INCLUDE_SPEC)
 		AC_SUBST(TCL_LIB_SPEC)
+
+		AC_SUBST(TCL_MAJOR_VERSION)
+		AC_SUBST(TCL_MINOR_VERSION)
+
+		if test "$TCL_MAJOR_VERSION" -lt "8" ; then
+			 AC_MSG_ERROR([Upgrade to at least Tcl version 8.4.])
+		else
+			if test "$TCL_MINOR_VERSION" -lt "4" ; then
+			 AC_MSG_ERROR([Upgrade to at least Tcl version 8.4.])
+			fi
+		fi
+		
+
 	fi
 fi
 
