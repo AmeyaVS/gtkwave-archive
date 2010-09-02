@@ -48,12 +48,12 @@ if test "X$ETCL" = "Xyes" ; then
 		if test "$TCL_MAJOR_VERSION" -lt "8" ; then
 			 AC_MSG_ERROR([Upgrade to at least Tcl version 8.4.])
 		else
-			if test "$TCL_MINOR_VERSION" -lt "4" ; then
-			 AC_MSG_ERROR([Upgrade to at least Tcl version 8.4.])
+			if test "$TCL_MAJOR_VERSION" -eq "8" ; then
+				if test "$TCL_MINOR_VERSION" -lt "4" ; then
+					 AC_MSG_ERROR([Upgrade to at least Tcl version 8.4.])
+				fi
 			fi
 		fi
-		
-
 	fi
 fi
 
