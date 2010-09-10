@@ -189,7 +189,7 @@ GLOBALS->traces.dirty = 1;
   }
 }
 
-void ClearTraces()
+void ClearTraces(void)
 {
   Trptr t = GLOBALS->traces.first;
   while(t)
@@ -1530,6 +1530,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2010/08/02 20:44:35  gtkwave
+ * added gtkwave::cbTracesUpdated
+ *
  * Revision 1.29  2010/07/06 16:06:09  gtkwave
  * defensive re-link fix in PasteBuffer
  *

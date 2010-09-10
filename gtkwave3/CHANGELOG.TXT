@@ -908,3 +908,5 @@
 		Added support for process filters in MinGW.
 		Added support for transaction filters in MinGW.
 		Added support for Open New Window to MinGW.
+3.3.13	10sep10	Reduce memory footprint of VectorEnt on 32-bit architecture
+		by struct reordering.

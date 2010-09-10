@@ -110,8 +110,8 @@ enum HistEntFlagBits
 
 typedef struct VectorEnt
 {
-vptr next;
 TimeType time;
+vptr next;
 unsigned char v[1];
 } VectorEnt;
 
@@ -442,7 +442,7 @@ char*    GetFullName(Trptr t);
 
 void OpenTrace(Trptr t);
 void CloseTrace(Trptr t);
-void ClearTraces();
+void ClearTraces(void);
 void ClearGroupTraces(Trptr t);
 
 #endif
@@ -450,6 +450,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2010/08/02 20:44:35  gtkwave
+ * added gtkwave::cbTracesUpdated
+ *
  * Revision 1.28  2010/04/07 01:50:45  gtkwave
  * improved name handling for bvname, add $next transaction operation
  *
