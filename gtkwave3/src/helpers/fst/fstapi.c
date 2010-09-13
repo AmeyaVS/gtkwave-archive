@@ -464,8 +464,7 @@ FILE *hier_handle;
 FILE *geom_handle;
 FILE *valpos_handle;
 FILE *curval_handle;
-FILE *
-vchn_handle;
+FILE *vchn_handle;
 FILE *tchn_handle;
 
 off_t hier_file_len;
