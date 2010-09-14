@@ -913,3 +913,4 @@
 		Added warnings for options that are non-functional for some
 		configurations.  (They are not disabled in order to allow
 		compatibility across systems.)
+		Fixed dangling fnam malloc in fst.c.
