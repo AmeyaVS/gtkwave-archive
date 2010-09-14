@@ -839,6 +839,8 @@ while (1)
 			if(GLOBALS->stems_name) free_2(GLOBALS->stems_name);
 			GLOBALS->stems_name = malloc_2(strlen(optarg)+1);
 			strcpy(GLOBALS->stems_name, optarg);
+#else
+			fprintf(stderr, "GTKWAVE | Warning: '%c' option does not exist in this executable\n", c);
 #endif
 			break;
 
@@ -847,6 +849,8 @@ while (1)
 			GLOBALS->num_cpus = atoi(optarg);
 			if(GLOBALS->num_cpus<1) GLOBALS->num_cpus = 1;
 			if(GLOBALS->num_cpus>8) GLOBALS->num_cpus = 8;
+#else
+			fprintf(stderr, "GTKWAVE | Warning: '%c' option does not exist in this executable\n", c);
 #endif
                         break;
 
@@ -907,6 +911,7 @@ while (1)
 
                 case 'T':
 #if defined(WIN32) && defined(USE_TCL_STUBS)
+			fprintf(stderr, "GTKWAVE | Warning: '%c' option does not exist in this executable\n", c);
 #else
 		        {
 			  char* pos;
@@ -2656,6 +2661,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.99  2010/07/12 20:51:42  gtkwave
+ * free to non-malloc'd address fix
+ *
  * Revision 1.98  2010/03/31 15:42:47  gtkwave
  * added preliminary transaction filter support
  *
