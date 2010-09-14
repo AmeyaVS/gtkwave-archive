@@ -331,12 +331,11 @@ if(GLOBALS->numfacs)
 	if(was_packed)
 		{
 		f_name[0] = pnt;
+		free_2(fnam);
 		}
 		else
 		{
-		int flen = strlen(fnam);
-		f_name[0]=malloc_2(flen+1);
-		strcpy(f_name[0], fnam);
+		f_name[0]=fnam;
 		}
 	}
 
@@ -462,12 +461,11 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		if(was_packed)
 			{
 			f_name[i+1] = pnt;
+			free_2(fnam);
 			}
 			else
 			{
-			int flen = strlen(fnam);
-			f_name[i+1]=malloc_2(flen+1);
-			strcpy(f_name[i+1], fnam);
+			f_name[i+1]=fnam;
 			}
 		}
 
@@ -1268,6 +1266,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2010/06/02 03:51:30  gtkwave
+ * don't autocoalesce escape identifiers
+ *
  * Revision 1.27  2010/06/02 03:23:04  gtkwave
  * disable autocoalesce if Icarus Verilog is detected
  *
