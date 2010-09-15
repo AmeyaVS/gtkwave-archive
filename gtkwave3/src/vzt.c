@@ -58,7 +58,7 @@ exponent_to_time_scale(scale);
 
 GLOBALS->numfacs=vzt_rd_get_num_facs(GLOBALS->vzt_vzt_c_1);
 GLOBALS->mvlfacs_vzt_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
-f_name = calloc_2(GLOBALS->numfacs,sizeof(char *));
+f_name = calloc_2(F_NAME_MODULUS+1,sizeof(char *));
 GLOBALS->vzt_table_vzt_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry));
 sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
@@ -128,20 +128,20 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(was_packed)
 			{
-			f_name[i+1] = pnt;
+			f_name[(i+1)&F_NAME_MODULUS] = pnt;
 			}
 			else
 			{
 			int flen = strlen(fnam);
-			f_name[i+1]=malloc_2(flen+1);
-			strcpy(f_name[i+1], fnam);
+			f_name[(i+1)&F_NAME_MODULUS]=malloc_2(flen+1);
+			strcpy(f_name[(i+1)&F_NAME_MODULUS], fnam);
 			}
 		}
 
 	if(i>1)
 		{
-		free_2(f_name[i-2]);
-		f_name[i-2] = NULL;
+		free_2(f_name[(i-2)&F_NAME_MODULUS]);
+		f_name[(i-2)&F_NAME_MODULUS] = NULL;
 		}
 
 	if(GLOBALS->mvlfacs_vzt_c_3[i].flags&VZT_RD_SYM_F_ALIAS)
@@ -163,7 +163,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
-		int len=sprintf(buf, "%s[%d:%d]", f_name[i],GLOBALS->mvlfacs_vzt_c_3[i].msb, GLOBALS->mvlfacs_vzt_c_3[i].lsb);
+		int len=sprintf(buf, "%s[%d:%d]", f_name[(i)&F_NAME_MODULUS],GLOBALS->mvlfacs_vzt_c_3[i].msb, GLOBALS->mvlfacs_vzt_c_3[i].lsb);
 		str=malloc_2(len+1);
 
 		if(!GLOBALS->alt_hier_delimeter)
@@ -180,13 +180,13 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
-			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[i], f_name[i+1]))))
+			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i+1)&F_NAME_MODULUS]))))
 			||
-			(((i!=0)&&(!strcmp(f_name[i], f_name[i-1]))) &&
+			(((i!=0)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))) &&
 			(GLOBALS->mvlfacs_vzt_c_3[i].msb!=-1)&&(GLOBALS->mvlfacs_vzt_c_3[i].lsb!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", f_name[i],GLOBALS->mvlfacs_vzt_c_3[i].msb);
+		int len = sprintf(buf, "%s[%d]", f_name[(i)&F_NAME_MODULUS],GLOBALS->mvlfacs_vzt_c_3[i].msb);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -198,7 +198,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1]))&&(!strchr(f_name[i], '\\')))	/* allow chaining for search functions.. */
+		if((prevsym)&&(i>0)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))&&(!strchr(f_name[(i)&F_NAME_MODULUS], '\\')))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -212,14 +212,14 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 		else
 		{
-		str=malloc_2(strlen(f_name[i])+1);
+		str=malloc_2(strlen(f_name[(i)&F_NAME_MODULUS])+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
-			strcpy(str, f_name[i]);
+			strcpy(str, f_name[(i)&F_NAME_MODULUS]);
 			}
 			else
 			{
-			strcpy_vcdalt(str, f_name[i], GLOBALS->alt_hier_delimeter);
+			strcpy_vcdalt(str, f_name[(i)&F_NAME_MODULUS], GLOBALS->alt_hier_delimeter);
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
@@ -250,12 +250,12 @@ for(i=0;i<GLOBALS->numfacs;i++)
         s->n=n;
         }
 
-for(i=0;((i<2)&&(i<GLOBALS->numfacs));i++)
+for(i=0;i<=F_NAME_MODULUS;i++)
 	{
-	if(f_name[i])
+	if(f_name[(i)&F_NAME_MODULUS])
 		{
-		free_2(f_name[i]);
-		f_name[i] = NULL;
+		free_2(f_name[(i)&F_NAME_MODULUS]);
+		f_name[(i)&F_NAME_MODULUS] = NULL;
 		}
 	}
 free_2(f_name); f_name = NULL;
@@ -838,6 +838,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/06/02 03:51:30  gtkwave
+ * don't autocoalesce escape identifiers
+ *
  * Revision 1.14  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

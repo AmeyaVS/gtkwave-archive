@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2003-2004.
+ * Copyright (c) Tony Bybell 2003-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,6 +18,8 @@
 
 #include "vcd.h"
 #include "ae2.h"
+
+#define F_NAME_MODULUS (3)
 
 enum LXT2_Loader_Type_Encodings { LXT2_IS_INACTIVE, LXT2_IS_LXT2, LXT2_IS_VZT, LXT2_IS_AET2, LXT2_IS_VLIST, LXT2_IS_FST };
 
@@ -39,6 +41,9 @@ void lx2_import_masked(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.3  2009/06/07 08:40:44  gtkwave
  * adding FST support
  *

@@ -914,3 +914,5 @@
 		configurations.  (They are not disabled in order to allow
 		compatibility across systems.)
 		Fixed dangling fnam malloc in fst.c.
+		Reduced temporary memory usage during file init for lxt2,
+		vzt, and fst files by using F_NAME_MODULUS wrap on f_name.
