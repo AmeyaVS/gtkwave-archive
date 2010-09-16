@@ -21,6 +21,9 @@
 #endif
 
 #undef free_2
+#undef malloc_2
+#undef realloc_2
+#undef calloc_2
 
 #ifdef _WAVE_HAVE_JUDY
 void free_outstanding(void)
@@ -95,7 +98,11 @@ system("date");
  * wrapped malloc family...
  */
 #ifdef _WAVE_HAVE_JUDY
-void *malloc_2(size_t size)
+void *malloc_2(size_t size
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 void *ret;
 
@@ -112,12 +119,20 @@ if(ret)
         }   
         else
         {
-        fprintf(stderr, "FATAL ERROR : Out of memory, sorry.\n");
+#ifdef DEBUG_MALLOC_LINES
+        fprintf(stderr, "FATAL ERROR: malloc_2() Out of memory, sorry. ['%s', %d]\n", filename, lineno);
+#else
+        fprintf(stderr, "FATAL ERROR : malloc_2() Out of memory, sorry.\n");
+#endif
         exit(1);
         }
 }
 #else
-void *malloc_2(size_t size)
+void *malloc_2(size_t size
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 void *ret;
 
@@ -139,14 +154,22 @@ if(ret)
 	}
 	else
 	{
-	fprintf(stderr, "FATAL ERROR : Out of memory, sorry.\n");
+#ifdef DEBUG_MALLOC_LINES
+        fprintf(stderr, "FATAL ERROR: malloc_2() Out of memory, sorry. ['%s', %d]\n", filename, lineno);
+#else
+	fprintf(stderr, "FATAL ERROR : malloc_2() Out of memory, sorry.\n");
+#endif
 	exit(1);
 	}
 }
 #endif
 
 #ifdef _WAVE_HAVE_JUDY
-void *realloc_2(void *ptr, size_t size)
+void *realloc_2(void *ptr, size_t size
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 void *ret=realloc(ptr, size);
 
@@ -163,12 +186,20 @@ if(ret)
         }
         else
         {
-        fprintf(stderr, "FATAL ERROR : Out of memory, sorry.\n");
+#ifdef DEBUG_MALLOC_LINES
+        fprintf(stderr, "FATAL ERROR: realloc_2() Out of memory, sorry. ['%s', %d]\n", filename, lineno);
+#else
+        fprintf(stderr, "FATAL ERROR : realloc_2() Out of memory, sorry.\n");
+#endif
         exit(1);
         }
 }
 #else
-void *realloc_2(void *ptr, size_t size)
+void *realloc_2(void *ptr, size_t size
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 void *ret;
 
@@ -207,14 +238,22 @@ if(ret)
 	}
 	else
 	{
-	fprintf(stderr, "FATAL ERROR : Out of memory, sorry.\n");
+#ifdef DEBUG_MALLOC_LINES
+        fprintf(stderr, "FATAL ERROR: realloc_2() Out of memory, sorry. ['%s', %d]\n", filename, lineno);
+#else
+	fprintf(stderr, "FATAL ERROR : realloc_2() Out of memory, sorry.\n");
+#endif
 	exit(1);
 	}
 }
 #endif
 
 #ifdef _WAVE_HAVE_JUDY
-void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size)
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 void *ret;
 
@@ -230,12 +269,20 @@ if(ret)
 	}
 	else
 	{
-	fprintf(stderr, "FATAL ERROR: Out of memory, sorry.\n");
+#ifdef DEBUG_MALLOC_LINES
+	fprintf(stderr, "FATAL ERROR: calloc_2() Out of memory, sorry. ['%s', %d]\n", filename, lineno);
+#else
+	fprintf(stderr, "FATAL ERROR: calloc_2() Out of memory, sorry.\n");
+#endif
 	exit(1);
 	}
 }
 #else
-void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size)
+void *calloc_2_into_context(struct Global *g, size_t nmemb, size_t size
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 void *ret;
 
@@ -257,20 +304,36 @@ if(ret)
 	}
 	else
 	{
-	fprintf(stderr, "FATAL ERROR: Out of memory, sorry.\n");
+#ifdef DEBUG_MALLOC_LINES
+        fprintf(stderr, "FATAL ERROR: calloc_2() Out of memory, sorry. ['%s', %d]\n", filename, lineno);
+#else
+	fprintf(stderr, "FATAL ERROR: calloc_2() Out of memory, sorry.\n");
+#endif
 	exit(1);
 	}
 }
 #endif
 
-void *calloc_2(size_t nmemb, size_t size)
+void *calloc_2(size_t nmemb, size_t size
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
-return(calloc_2_into_context(GLOBALS, nmemb, size));
+return(calloc_2_into_context(GLOBALS, nmemb, size
+#ifdef DEBUG_MALLOC_LINES
+, filename, lineno
+#endif
+));
 }
 
 
 #ifdef _WAVE_HAVE_JUDY
-void free_2(void *ptr)
+void free_2(void *ptr
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 if(ptr)
 	{
@@ -289,11 +352,19 @@ if(ptr)
 	}
 	else
 	{
+#ifdef DEBUG_MALLOC_LINES
+        fprintf(stderr, "WARNING: Attempt to free NULL pointer caught. ['%s', %d]\n", filename, lineno);
+#else
 	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught.\n");
+#endif
 	}
 }
 #else
-void free_2(void *ptr)
+void free_2(void *ptr
+#ifdef DEBUG_MALLOC_LINES
+, char *filename, int lineno
+#endif
+)
 {
 if(ptr)
 	{
@@ -321,10 +392,20 @@ if(ptr)
 	}
 	else
 	{
+#ifdef DEBUG_MALLOC_LINES
+        fprintf(stderr, "WARNING: Attempt to free NULL pointer caught. ['%s', %d]\n", filename, lineno);
+#else
 	fprintf(stderr, "WARNING: Attempt to free NULL pointer caught.\n");
+#endif
 	}
 }
 #endif
+
+
+#ifdef DEBUG_MALLOC_LINES
+#define malloc_2(x) malloc_2((x),__FILE__,__LINE__)
+#endif
+
 
 char *strdup_2(const char *s)
 {
@@ -493,6 +574,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/08/03 17:36:51  gtkwave
+ * fixed atoi_64 parsing on zero values
+ *
  * Revision 1.14  2010/05/01 19:20:56  gtkwave
  * cppcheck warnings fixes
  *

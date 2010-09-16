@@ -94,16 +94,26 @@
 #ifdef DEBUG_MALLOC_LINES
 void free_2(void *ptr, char *filename, int lineno);
 #define free_2(x) free_2((x),__FILE__,__LINE__)
+
+void *malloc_2(size_t size, char *filename, int lineno);
+#define malloc_2(x) malloc_2((x),__FILE__,__LINE__)
+
+void *realloc_2(void *ptr, size_t size, char *filename, int lineno);
+#define realloc_2(x, y) realloc_2((x),(y),__FILE__,__LINE__)
+
+void *calloc_2(size_t nmemb, size_t size, char *filename, int lineno);
+#define calloc_2(x, y) calloc_2((x),(y),__FILE__,__LINE__)
+
 #else
 void free_2(void *ptr);
+void *malloc_2(size_t size);
+void *realloc_2(void *ptr, size_t size);
+void *calloc_2(size_t nmemb, size_t size);
 #endif
 
 
 void free_outstanding(void);
 
-void *malloc_2(size_t size);
-void *realloc_2(void *ptr, size_t size);
-void *calloc_2(size_t nmemb, size_t size);
 char *strdup_2(const char *s);
 char *strdup_2s(const char *s);
 
@@ -195,6 +205,9 @@ unsigned viewer_is_initialized : 1;
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/03/09 22:21:29  gtkwave
+ * added optional preliminary Judy array support
+ *
  * Revision 1.11  2010/01/26 23:08:01  gtkwave
  * removed unused obsolete structure definition
  *
