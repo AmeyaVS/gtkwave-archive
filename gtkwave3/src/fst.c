@@ -83,7 +83,7 @@ while((h = fstReaderIterateHier(xc)))
 				default:			ttype = TREE_UNKNOWN; break;
 				}
 
-			allocate_and_decorate_module_tree_node(ttype, h->u.scope.name);
+			if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) allocate_and_decorate_module_tree_node(ttype, h->u.scope.name);
                         break;
                 case FST_HT_UPSCOPE:
 			GLOBALS->mod_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
@@ -495,7 +495,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		prevsymroot = prevsym = NULL;
 
 		len = sprintf(buf, "%s[%d:%d]", pnam,GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
-		fst_append_graft_chain(len, buf, i, ppar);
+		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(len, buf, i, ppar);
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
@@ -530,7 +530,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 
 		len = sprintf(buf, "%s[%d]", pnam,GLOBALS->mvlfacs_fst_c_3[i].msb);
-		fst_append_graft_chain(len, buf, i, ppar);
+		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(len, buf, i, ppar);
 		}
 		else
 		{
@@ -554,7 +554,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			GLOBALS->mvlfacs_fst_c_3[i].len=32;
 			}
 
-		fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
+		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
 		}
 		
         n=&node_block[i];
@@ -1266,6 +1266,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2010/09/15 18:35:42  gtkwave
+ * added F_NAME_MODULUS to reduce temp memory usage
+ *
  * Revision 1.29  2010/09/14 21:51:39  gtkwave
  * fixed dangling fnam alloc
  *

@@ -917,3 +917,5 @@
 		Reduced temporary memory usage during file init for lxt2,
 		vzt, and fst files by using F_NAME_MODULUS wrap on f_name.
 		Sparse vs non-sparse array crash fix for ae2 loader.
+		Suppress decorated treebuild for fst when compressed facs
+		are being used: this was causing duplicate tree entries.
