@@ -1043,7 +1043,7 @@ nr = ae2_read_symbol_rows(GLOBALS->ae2, f->s);
 /* new stuff */
 len = f->length;
 
-if((1)||(f->row <= 1)) /* sorry, arrays not supported yet in the viewer */
+if((f->row <= 1)) /* sorry, arrays not supported yet in the viewer */
 	{
 	fprintf(stderr, "Import: %s\n", np->nname);
 	if(nr<1) nr=1;
@@ -1062,6 +1062,16 @@ if((1)||(f->row <= 1)) /* sorry, arrays not supported yet in the viewer */
 	}
 	else
 	{
+	if(nr<1) nr=1;
+	if(!GLOBALS->ae2_lx2_table[txidx])
+		{
+	        GLOBALS->ae2_lx2_table[txidx] = calloc_2(nr, sizeof(struct lx2_entry));
+	        for(r=0;r<nr;r++)
+	                {
+	                GLOBALS->ae2_lx2_table[txidx][r].np = &np[r];
+	                }
+		}
+
 	fprintf(stderr, AET2_RDLOAD"Skipping array: %s (%d rows)\n", np->nname, f->row);
 	}
 
@@ -1131,8 +1141,6 @@ for(r = 0; r < nr; r++)
 	np[r].head.next = htemp;
 	np[r].numhist=GLOBALS->ae2_lx2_table[txidx][r].numtrans +2 /*endcap*/ +1 /*frontcap*/;
 
-	memset(GLOBALS->ae2_lx2_table+txidx, 0, sizeof(struct lx2_entry));	/* zero it out */
-
 	np[r].curr = histent_tail;
 	np[r].mv.mvlfac = NULL;	/* it's imported and cached so we can forget it's an mvlfac now */
 	}
@@ -1152,7 +1160,7 @@ if(!(f=(FACREF *)(np->mv.mvlfac))) return;	/* already imported */
 
 txidx = f - GLOBALS->ae2_fr;
 
-if((1)||(f->row <= 1)) /* sorry, arrays not supported */
+if((f->row <= 1)) /* sorry, arrays not supported */
 	{
 	aet2_rd_set_fac_process_mask(txidx);
 	nr = f->row;
@@ -1282,6 +1290,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/05/27 06:56:39  gtkwave
+ * printf warning fixes
+ *
  * Revision 1.15  2010/03/19 17:07:22  gtkwave
  * added missing ->symbol after structure type changed
  *
