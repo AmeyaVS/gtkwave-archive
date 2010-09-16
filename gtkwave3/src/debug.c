@@ -347,7 +347,11 @@ if(ptr)
 		}
 		else
 		{
+#ifdef DEBUG_MALLOC_LINES
+		printf("JUDYMEM | free to non-malloc'd address %p blocked ['%s', %d]\n", ptr, filename, lineno);
+#else
 		printf("JUDYMEM | free to non-malloc'd address %p blocked\n", ptr);
+#endif
 		}
 	}
 	else
@@ -574,6 +578,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/09/16 04:08:55  gtkwave
+ * add back in memory debugging printfs and defines
+ *
  * Revision 1.15  2010/08/03 17:36:51  gtkwave
  * fixed atoi_64 parsing on zero values
  *

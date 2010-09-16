@@ -831,24 +831,32 @@ for(j=0;j<GLOBALS->ae2_num_sections;j++)
 				}
 				else
 				{
-				int rows = ae2_read_num_sparse_rows(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc);
-				if(rows)
+				ulong sf = ae2_read_symbol_sparse_flag(GLOBALS->ae2, GLOBALS->ae2_fr[i].s);
+				if(sf)
 					{
-		                        for(r=1;r<rows+1;r++)
-		                                {
-						nptr np; 
-		                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc, r);
-
-		                                GLOBALS->ae2_fr[i].row = row;
-
-						np = GLOBALS->ae2_lx2_table[i][row].np;
-		                                ae2_read_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, cyc, buf);
-						if(strcmp(np->mv.value, buf))
-							{
-							strcpy(np->mv.value, buf);
-							ae2_callback(&cyc, &i, &np->mv.value, row);
-							}
-		                                }
+					int rows = ae2_read_num_sparse_rows(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc);
+					if(rows)
+						{
+			                        for(r=1;r<rows+1;r++)
+			                                {
+							nptr np; 
+			                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc, r);
+	
+			                                GLOBALS->ae2_fr[i].row = row;
+	
+							np = GLOBALS->ae2_lx2_table[i][row].np;
+			                                ae2_read_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, cyc, buf);
+							if(strcmp(np->mv.value, buf))
+								{
+								strcpy(np->mv.value, buf);
+								ae2_callback(&cyc, &i, &np->mv.value, row);
+								}
+			                                }
+						}
+					}
+					else
+					{
+					/* XXX: not sparse */
 					}
 				}
 			}
@@ -872,28 +880,39 @@ for(j=0;j<GLOBALS->ae2_num_sections;j++)
 			}
 			else
 			{
-			int rows = ae2_read_num_sparse_rows(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc);
-			uint64_t mxcyc = end_cycle+1;
-
-                        for(r=1;r<rows+1;r++)
-                                {
-				/* nptr np; */
-                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc, r);
-
-                                GLOBALS->ae2_fr[i].row = row;
-				/* np = GLOBALS->ae2_lx2_table[i][row].np; */
-				ncyc =	ae2_read_next_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, cyc, buf);
-
-				if((ncyc > cyc) && (ncyc < mxcyc)) mxcyc = ncyc;
-				}
-
-			if(mxcyc != (end_cycle+1))
+			ulong sf = ae2_read_symbol_sparse_flag(GLOBALS->ae2, GLOBALS->ae2_fr[i].s);
+			if(sf)
 				{
-				ncyc = mxcyc;
+				int rows = ae2_read_num_sparse_rows(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc);
+				uint64_t mxcyc = end_cycle+1;
+
+	                        for(r=1;r<rows+1;r++)
+	                                {
+					/* nptr np; */
+	                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, cyc, r);
+
+	                                GLOBALS->ae2_fr[i].row = row;
+					/* np = GLOBALS->ae2_lx2_table[i][row].np; */
+					ncyc =	ae2_read_next_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, cyc, buf);
+	
+					if((ncyc > cyc) && (ncyc < mxcyc)) mxcyc = ncyc;
+					}
+
+				if(mxcyc != (end_cycle+1))
+					{
+					ncyc = mxcyc;
+					}
+					else
+					{
+					ncyc = cyc;
+					}
 				}
 				else
 				{
-				ncyc = cyc;
+				uint64_t mxcyc = end_cycle+1;
+
+				ncyc = mxcyc;
+				/* XXX: not sparse */
 				}
 			}
 
@@ -942,35 +961,46 @@ for(j=0;j<GLOBALS->ae2_num_sections;j++)
 					}
 					else
 					{
-					int rows = ae2_read_num_sparse_rows(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, step_cyc);
-					uint64_t mxcyc = end_cycle+1;
-
-		                        for(r=1;r<rows+1;r++)
-	        	                        {
-						nptr npr; 
-		                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, step_cyc, r);
-
-		                                GLOBALS->ae2_fr[i].row = row;
-						npr = GLOBALS->ae2_lx2_table[i][row].np;
-
-						ae2_read_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, step_cyc, buf);
-						if(strcmp(buf, npr->mv.value))
-							{
-							strcpy(npr->mv.value, buf);
-							ae2_callback(&step_cyc, &i, &npr->mv.value, row);
-							}
-
-						ncyc =	ae2_read_next_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, step_cyc, buf);
-						if((ncyc > step_cyc) && (ncyc < mxcyc)) mxcyc = ncyc;
-						}
-
-					if(mxcyc != (end_cycle+1))
+					ulong sf = ae2_read_symbol_sparse_flag(GLOBALS->ae2, GLOBALS->ae2_fr[i].s);
+					if(sf)
 						{
-						ncyc = mxcyc;
+						int rows = ae2_read_num_sparse_rows(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, step_cyc);
+						uint64_t mxcyc = end_cycle+1;
+
+			                        for(r=1;r<rows+1;r++)
+		        	                        {
+							nptr npr; 
+			                                uint64_t row = ae2_read_ith_sparse_row(GLOBALS->ae2, GLOBALS->ae2_fr[i].s, step_cyc, r);
+
+			                                GLOBALS->ae2_fr[i].row = row;
+							npr = GLOBALS->ae2_lx2_table[i][row].np;
+
+							ae2_read_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, step_cyc, buf);
+							if(strcmp(buf, npr->mv.value))
+								{
+								strcpy(npr->mv.value, buf);
+								ae2_callback(&step_cyc, &i, &npr->mv.value, row);
+								}
+
+							ncyc =	ae2_read_next_value(GLOBALS->ae2, GLOBALS->ae2_fr+i, step_cyc, buf);
+							if((ncyc > step_cyc) && (ncyc < mxcyc)) mxcyc = ncyc;
+							}
+	
+						if(mxcyc != (end_cycle+1))
+							{
+							ncyc = mxcyc;
+							}
+							else
+							{
+							ncyc = step_cyc;
+							}
 						}
 						else
 						{
-						ncyc = step_cyc;
+						uint64_t mxcyc = end_cycle+1;
+
+						ncyc = mxcyc;
+						/* XXX: not sparse */
 						}
 					}
 		
@@ -1290,6 +1320,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/09/16 04:40:25  gtkwave
+ * disable arrays for now to track down sparse vs regular array crashes
+ *
  * Revision 1.16  2010/05/27 06:56:39  gtkwave
  * printf warning fixes
  *
