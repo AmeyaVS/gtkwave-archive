@@ -83,7 +83,7 @@ while((h = fstReaderIterateHier(xc)))
 				default:			ttype = TREE_UNKNOWN; break;
 				}
 
-			if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) allocate_and_decorate_module_tree_node(ttype, h->u.scope.name);
+			allocate_and_decorate_module_tree_node(ttype, h->u.scope.name);
                         break;
                 case FST_HT_UPSCOPE:
 			GLOBALS->mod_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
@@ -1266,6 +1266,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2010/09/16 19:23:37  gtkwave
+ * duplicate tree fix for when compressed facilities are being used
+ *
  * Revision 1.30  2010/09/15 18:35:42  gtkwave
  * added F_NAME_MODULUS to reduce temp memory usage
  *
