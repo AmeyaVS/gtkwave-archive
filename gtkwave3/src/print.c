@@ -887,7 +887,7 @@ pr_renderhash (pr_context * prc, int x, TimeType tim)
   dx = x + (hashoffset = GLOBALS->hashstep);
   x = dx;
 
-  while ((hashoffset < GLOBALS->pixelsperframe) && (x <= rhs) && (iter < 10))
+  while ((hashoffset < GLOBALS->pixelsperframe) && (x <= rhs) && (iter < 9))
     {
       pr_draw_line (prc, x, GLOBALS->wavecrosspiece, x, fhminus2);
 
@@ -959,6 +959,7 @@ pr_rendertimes (pr_context * prc)
   TimeType tim, rem;
   int x, len, lenhalf;
   char timebuff[32];
+  gdouble realx;
   int s_ctx_iter;  
 
   pr_renderblackout (prc);
@@ -1027,6 +1028,7 @@ pr_rendertimes (pr_context * prc)
 	  tims.start, tims.end));
 
   x = 0;
+  realx = 0;
   if (tim)
     {
       rem = tim % GLOBALS->nsperframe;
@@ -1036,11 +1038,12 @@ pr_rendertimes (pr_context * prc)
 	  x =
 	    -GLOBALS->pixelsperframe -
 	    ((rem * GLOBALS->pixelsperframe) / GLOBALS->nsperframe);
+          realx=-GLOBALS->pixelsperframe-((rem*GLOBALS->pixelsperframe)/GLOBALS->nsperframe);
 	}
     }
   for (;;)
     {
-      pr_renderhash (prc, x, tim);
+      pr_renderhash (prc, realx, tim);
       if (tim)
 	{
 	  reformat_time (timebuff, time_trunc (tim), GLOBALS->time_dimension);
@@ -1067,6 +1070,7 @@ pr_rendertimes (pr_context * prc)
 
       tim += GLOBALS->nsperframe;
       x += GLOBALS->pixelsperframe;
+      realx+=GLOBALS->pixelsperframe;
       if ((x >= GLOBALS->wavewidth) || (tim > GLOBALS->tims.last))
 	break;
     }
@@ -3110,6 +3114,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2010/07/16 16:12:38  gtkwave
+ * pedantic warning fixes
+ *
  * Revision 1.36  2010/04/14 18:45:37  gtkwave
  * allow data values for secondary transaction traces
  *
