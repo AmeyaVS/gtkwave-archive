@@ -908,7 +908,7 @@
 		Added support for process filters in MinGW.
 		Added support for transaction filters in MinGW.
 		Added support for Open New Window to MinGW.
-3.3.13	20sep10	Reduce memory footprint of VectorEnt on 32-bit architecture
+3.3.13	22sep10	Reduce memory footprint of VectorEnt on 32-bit architecture
 		by struct reordering.
 		Added warnings for options that are non-functional for some
 		configurations.  (They are not disabled in order to allow
@@ -922,3 +922,4 @@
 		Fixed renderhash problems in print.c caused by disparity
 		in eqns used in wavewindow vs print.c (need realx, not
 		just x).
+		Upgrade local libbz2 to 1.0.6 for uncompress security fix.
