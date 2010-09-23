@@ -347,6 +347,26 @@ fi
 AC_SUBST(LIBXZ_LDADD)
 AC_SUBST(LIBXZ_CFLAGS)
 
+# ------------- Fast Tree -------------------
+
+AC_MSG_CHECKING([if Fast SST Tree should be enabled])
+
+FASTTREE=yes
+AC_ARG_ENABLE([fasttree],
+[  --disable-fasttree      Disables experimental Fast SST Tree widget code],
+[
+if test "X$enable_fasttree" = "Xno" ; then
+	FASTTREE=no
+fi
+])
+AC_MSG_RESULT([$FASTTREE])
+
+FASTTREE_CFLAGS=
+if test "X$FASTTREE" == "Xno"; then
+	FASTTREE_CFLAGS='-DWAVE_DISABLE_FAST_TREE'
+fi
+AC_SUBST(FASTTREE_CFLAGS)
+
 # ------------- Judy -------------------
 
 AC_MSG_CHECKING([if Judy array support should be enabled])
@@ -560,6 +580,8 @@ AC_CONFIG_FILES([Makefile
 AC_MSG_NOTICE([         
 --------------------------------------------
   Configuration summary:
+
+  FASTTREE_CFLAGS  : $FASTTREE_CFLAGS
 
   gtk1             : $GTK1
   gtk version      : $GTK_VER

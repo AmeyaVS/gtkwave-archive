@@ -625,10 +625,14 @@ else
 /*
  * GTK2: build the tree.
  */
-void maketree(GtkCTreeNode *subtree, struct tree *t)
+void maketree2(GtkCTreeNode *subtree, struct tree *t, int depth, GtkCTreeNode *graft)
 {
 GtkCTreeNode *sibling=NULL, *sibling_test;
 struct tree *t2;
+
+#ifndef WAVE_DISABLE_FAST_TREE
+if(depth > 1) return;
+#endif
 
 /* 
  * TG reworked treesearch widget so there is no need to 
@@ -639,18 +643,39 @@ struct tree *t2;
 t2=t;
 while(t2)
 	{
+#ifndef WAVE_DISABLE_FAST_TREE
+	if(depth < 1) 
+#endif
+		{ 
+		t2->children_in_gui = 1; 
+		}
+
 	if(t2->child)
 		{
-		sibling_test=maketree_nodes(subtree, t2, sibling, MAKETREE_NODE);
+		if(!graft)
+			{
+			sibling_test=maketree_nodes(subtree, t2, sibling, MAKETREE_NODE);
+			}
+			else
+			{
+			sibling_test = graft;
+			}
 		if(sibling_test)
 			{
 			GLOBALS->any_tree_node = sibling_test;
-			maketree(sibling=sibling_test, t2->child);
+			maketree2(sibling=sibling_test, t2->child, depth + 1, NULL);
 			}
 		}
 
+	if(graft) break;
 	t2=t2->next;
 	}
+}
+
+
+void maketree(GtkCTreeNode *subtree, struct tree *t)
+{
+maketree2(subtree, t, 0, NULL);
 }
 
 #else
@@ -712,6 +737,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/07/02 18:50:47  gtkwave
+ * decorate VCD module trees with type info, add move to front to buildname
+ *
  * Revision 1.7  2009/07/01 21:58:32  gtkwave
  * more GHW module type adds for icons in hierarchy window
  *

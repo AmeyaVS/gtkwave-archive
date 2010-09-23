@@ -348,8 +348,41 @@ if(is_expand)
 	}
 }
 
+
 static void tree_expand_callback(GtkCTree *ctree, GtkCTreeNode *node, gpointer user_data)
 {
+#ifndef WAVE_DISABLE_FAST_TREE
+GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
+struct tree *t = (struct tree *)(gctr->row.data);
+
+if(t->child)
+	{
+	GtkCTree *ctree = GLOBALS->ctree_main;
+	GtkCTreeNode *n = gctr->children;
+
+	gtk_clist_freeze(GTK_CLIST(ctree));
+
+	while(n)
+		{
+		GtkCTreeRow *g = GTK_CTREE_ROW(n);
+
+		t = (struct tree *)(g->row.data);
+		if(t->which < 0)
+			{
+			if(!t->children_in_gui)
+				{
+				t->children_in_gui = 1;
+				maketree2(n, t, 0, n);
+				}
+			}
+
+		n = GTK_CTREE_NODE_NEXT(n);
+		}
+
+	gtk_clist_thaw(GTK_CLIST(ctree));
+	}
+#endif
+
 generic_tree_expand_collapse_callback(1, node);
 }
  
@@ -2116,6 +2149,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2010/07/29 20:54:29  gtkwave
+ * add cbTreeExpand and cbTreeCollapse
+ *
  * Revision 1.46  2010/07/28 19:18:26  gtkwave
  * added double-click trapping via gtkwave::cbTreeSigDoubleClick
  *

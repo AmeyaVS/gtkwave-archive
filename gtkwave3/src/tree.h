@@ -83,7 +83,8 @@ struct tree *next;
 struct tree *child;
 int which;		/* 'i' for facs[i] table, -1 means not a full signame */
 
-unsigned char kind; 	/* Kind of the leaf.  (use a bit field ?).  */
+unsigned kind : 7; 	/* Kind of the leaf: ghwlib reads this as val & 0x7f so only 7 bits needed */
+unsigned children_in_gui : 1; /* indicates that the child notes are in the gtk2 tree */
 char name[1];
 };
 
@@ -109,6 +110,10 @@ void build_tree_from_name(const char *s, int which);
 int treegraft(struct tree **t);
 void treedebug(struct tree *t, char *s);
 void maketree(GtkCTreeNode *subtree, struct tree *t);
+#if WAVE_USE_GTK2
+void maketree2(GtkCTreeNode *subtree, struct tree *t, int depth, GtkCTreeNode *graft);
+#endif
+
 char *leastsig_hiername(char *nam);
 void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename);
 
@@ -122,6 +127,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2009/07/01 21:58:32  gtkwave
+ * more GHW module type adds for icons in hierarchy window
+ *
  * Revision 1.6  2009/07/01 18:22:35  gtkwave
  * added VHDL (GHW) instance types as icons
  *
