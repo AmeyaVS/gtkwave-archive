@@ -2688,8 +2688,8 @@ if (((flen>2)&&(!strcmp(fname+flen-3,".gz")))||
 			if(!GLOBALS->vlist_prepack)
 				{
 				fprintf(stderr, "Warning! File size is %d MB.  This might fail in recoding.\n"
-					"Consider converting it to lxt, lxt2, or vzt database formats instead.  (See\n"
-					"the vcd2lxt(1), vcd2lxt2(1), and vzt2vzt(1) manpages for more information.)\n"
+					"Consider converting it to the fst database format instead.  (See the\n"
+					"vcd2fst(1) manpage for more information.)\n"
 					"To disable this warning, set rc variable vcd_warning_filesize to zero.\n"
 					"Alternatively, use the -o, --optimize command line option to convert to LXT2\n"
 					"or the -g, --giga command line option to use dynamically compressed memory.\n\n",
@@ -3236,6 +3236,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2010/06/02 03:51:30  gtkwave
+ * don't autocoalesce escape identifiers
+ *
  * Revision 1.42  2010/06/02 03:23:04  gtkwave
  * disable autocoalesce if Icarus Verilog is detected
  *
