@@ -171,6 +171,42 @@ fill_sig_store (void)
 /*
  * tree open/close handling
  */
+static void create_sst_nodes_if_necessary(GtkCTreeNode *node)
+{
+#ifndef WAVE_DISABLE_FAST_TREE
+GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
+struct tree *t = (struct tree *)(gctr->row.data);
+
+if(t->child)
+	{
+	GtkCTree *ctree = GLOBALS->ctree_main;
+	GtkCTreeNode *n = gctr->children;
+
+	gtk_clist_freeze(GTK_CLIST(ctree));
+
+	while(n)
+		{
+		GtkCTreeRow *g = GTK_CTREE_ROW(n);
+
+		t = (struct tree *)(g->row.data);
+		if(t->which < 0)
+			{
+			if(!t->children_in_gui)
+				{
+				t->children_in_gui = 1;
+				maketree2(n, t, 0, n);
+				}
+			}
+
+		n = GTK_CTREE_NODE_NEXT(n);
+		}
+
+	gtk_clist_thaw(GTK_CLIST(ctree));
+	}
+#endif
+}
+
+
 int force_open_tree_node(char *name) {
   GtkCTree *ctree = GLOBALS->ctree_main;
   int rv = 1 ;			/* can possible open */
@@ -241,6 +277,7 @@ int force_open_tree_node(char *name) {
 	}
 	else {
 	  depth++;
+	  create_sst_nodes_if_necessary(node);
 	  node = gctr->children;
 	  if(!node) break;
 	  gctr = GTK_CTREE_ROW(node);
@@ -253,8 +290,7 @@ int force_open_tree_node(char *name) {
       if(!node) break;
       gctr = GTK_CTREE_ROW(node);
     }
-    
-    /* printf("[treeopennode] '%s' failed\n", name); */
+     /* printf("[treeopennode] '%s' failed\n", name); */
   } else {
     rv = -1 ;			/* tree does not exist */
   }
@@ -348,41 +384,9 @@ if(is_expand)
 	}
 }
 
-
 static void tree_expand_callback(GtkCTree *ctree, GtkCTreeNode *node, gpointer user_data)
 {
-#ifndef WAVE_DISABLE_FAST_TREE
-GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
-struct tree *t = (struct tree *)(gctr->row.data);
-
-if(t->child)
-	{
-	GtkCTree *ctree = GLOBALS->ctree_main;
-	GtkCTreeNode *n = gctr->children;
-
-	gtk_clist_freeze(GTK_CLIST(ctree));
-
-	while(n)
-		{
-		GtkCTreeRow *g = GTK_CTREE_ROW(n);
-
-		t = (struct tree *)(g->row.data);
-		if(t->which < 0)
-			{
-			if(!t->children_in_gui)
-				{
-				t->children_in_gui = 1;
-				maketree2(n, t, 0, n);
-				}
-			}
-
-		n = GTK_CTREE_NODE_NEXT(n);
-		}
-
-	gtk_clist_thaw(GTK_CLIST(ctree));
-	}
-#endif
-
+create_sst_nodes_if_necessary(node);
 generic_tree_expand_collapse_callback(1, node);
 }
  
@@ -2149,6 +2153,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2010/09/23 22:04:55  gtkwave
+ * added incremental SST build code
+ *
  * Revision 1.47  2010/07/29 20:54:29  gtkwave
  * add cbTreeExpand and cbTreeCollapse
  *
