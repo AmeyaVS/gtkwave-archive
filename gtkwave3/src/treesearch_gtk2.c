@@ -174,34 +174,37 @@ fill_sig_store (void)
 static void create_sst_nodes_if_necessary(GtkCTreeNode *node)
 {
 #ifndef WAVE_DISABLE_FAST_TREE
-GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
-struct tree *t = (struct tree *)(gctr->row.data);
-
-if(t->child)
+if(node)
 	{
-	GtkCTree *ctree = GLOBALS->ctree_main;
-	GtkCTreeNode *n = gctr->children;
+	GtkCTreeRow *gctr = GTK_CTREE_ROW(node);
+	struct tree *t = (struct tree *)(gctr->row.data);
 
-	gtk_clist_freeze(GTK_CLIST(ctree));
-
-	while(n)
+	if(t->child)
 		{
-		GtkCTreeRow *g = GTK_CTREE_ROW(n);
+		GtkCTree *ctree = GLOBALS->ctree_main;
+		GtkCTreeNode *n = gctr->children;
+	
+		gtk_clist_freeze(GTK_CLIST(ctree));
 
-		t = (struct tree *)(g->row.data);
-		if(t->which < 0)
+		while(n)
 			{
-			if(!t->children_in_gui)
+			GtkCTreeRow *g = GTK_CTREE_ROW(n);
+
+			t = (struct tree *)(g->row.data);
+			if(t->which < 0)
 				{
-				t->children_in_gui = 1;
-				maketree2(n, t, 0, n);
+				if(!t->children_in_gui)
+					{
+					t->children_in_gui = 1;
+					maketree2(n, t, 0, n);
+					}
 				}
+	
+			n = GTK_CTREE_NODE_NEXT(n);
 			}
-
-		n = GTK_CTREE_NODE_NEXT(n);
+	
+		gtk_clist_thaw(GTK_CLIST(ctree));
 		}
-
-	gtk_clist_thaw(GTK_CLIST(ctree));
 	}
 #endif
 }
@@ -2153,6 +2156,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2010/09/27 18:02:35  gtkwave
+ * force open tree node fix for dynamic trees
+ *
  * Revision 1.48  2010/09/23 22:04:55  gtkwave
  * added incremental SST build code
  *
