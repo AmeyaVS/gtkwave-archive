@@ -2587,7 +2587,7 @@ if(GLOBALS->vcd_is_compressed_vcd_c_1)
 GLOBALS->min_time=GLOBALS->start_time_vcd_c_1*GLOBALS->time_scale;
 GLOBALS->max_time=GLOBALS->end_time_vcd_c_1*GLOBALS->time_scale;
 
-if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
+if((GLOBALS->min_time==GLOBALS->max_time)&&(GLOBALS->max_time==LLDescriptor(-1)))
         {
         fprintf(stderr, "VCD times range is equal to zero.  Exiting.\n");
         vcd_exit(255);
@@ -2620,6 +2620,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/06/02 03:51:30  gtkwave
+ * don't autocoalesce escape identifiers
+ *
  * Revision 1.33  2010/06/02 03:23:04  gtkwave
  * disable autocoalesce if Icarus Verilog is detected
  *

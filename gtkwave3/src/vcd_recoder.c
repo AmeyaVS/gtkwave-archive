@@ -2797,7 +2797,7 @@ if(GLOBALS->vcd_is_compressed_vcd_recoder_c_2)
 GLOBALS->min_time=GLOBALS->start_time_vcd_recoder_c_3*GLOBALS->time_scale;
 GLOBALS->max_time=GLOBALS->end_time_vcd_recoder_c_3*GLOBALS->time_scale;
 
-if((GLOBALS->min_time==GLOBALS->max_time)||(GLOBALS->max_time==0))
+if((GLOBALS->min_time==GLOBALS->max_time)&&(GLOBALS->max_time==LLDescriptor(-1)))
         {
         fprintf(stderr, "VCD times range is equal to zero.  Exiting.\n");
         vcd_exit(255);
@@ -3236,6 +3236,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2010/09/24 15:44:41  gtkwave
+ * changed large file size message to redirect to fst usage
+ *
  * Revision 1.43  2010/06/02 03:51:30  gtkwave
  * don't autocoalesce escape identifiers
  *
