@@ -1383,23 +1383,23 @@ for(;;)
 				/* catchall for events when header over */
 				if(yytext[0]=='#')
 					{
-					TimeType time;
-					time=atoi_64(yytext+1);
+					TimeType t_time;
+					t_time=atoi_64(yytext+1);
 					
 					if(start_time<0)
 						{
-						start_time=time;
+						start_time=t_time;
 						}
 
-					if(time < current_time) /* avoid backtracking time counts which can happen on malformed files */
+					if(t_time < current_time) /* avoid backtracking time counts which can happen on malformed files */
 						{
-						time = current_time; 
+						t_time = current_time; 
 						}
 
-                                        current_time=time;
-                                        if(end_time<time) end_time=time;        /* in case of malformed vcd files */
+                                        current_time=t_time;
+                                        if(end_time<t_time) end_time=t_time;        /* in case of malformed vcd files */
 					lt_set_time64(lt, current_time);
-					DEBUG(fprintf(stderr,"#"TTFormat"\n",time));
+					DEBUG(fprintf(stderr,"#"TTFormat"\n",t_time));
 					}
 					else
 					{
@@ -1443,7 +1443,7 @@ for(;;)
  * this function doesn't do anything useful anymore except for to mark
  * statistics on the various nets...
  */
-void add_histent(TimeType time, struct Node *n, char ch, int regadd, char *vector)
+void add_histent(TimeType t_time, struct Node *n, char ch, int regadd, char *vector)
 {
 struct HistEnt *he;
 
@@ -1458,11 +1458,11 @@ if(!n->curr)
 	n->curr=he;
 	n->head.next=he;
 
-	add_histent(time,n,ch,regadd, vector);
+	add_histent(t_time,n,ch,regadd, vector);
 	}
 	else
 	{
-	if(regadd) { time*=(time_scale); }
+	if(regadd) { t_time*=(time_scale); }
 
 	if(toupper((int)(unsigned char)ch)!=deadchar) n->notdead=1;
 	n->numtrans++;
@@ -1481,7 +1481,7 @@ if(ch=='g')	/* real number */
 		n->curr=he;
 		n->head.next=he;
 	
-		add_histent(time,n,ch,regadd, vector);
+		add_histent(t_time,n,ch,regadd, vector);
 		}
 		else
 		{
@@ -1500,7 +1500,7 @@ if(ch=='g')	/* real number */
 		n->curr=he;
 		n->head.next=he;
 	
-		add_histent(time,n,ch,regadd, vector);
+		add_histent(t_time,n,ch,regadd, vector);
 		}
 		else
 		{
@@ -1957,6 +1957,9 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.8  2010/02/22 21:13:37  gtkwave
  * added "realtime" VCD variable
  *
