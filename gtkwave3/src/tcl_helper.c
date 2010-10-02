@@ -2474,7 +2474,7 @@ static const int tclcb_var_flags[] = { WAVE_TCLCB_MACRO_EXPANSION };
 #define WAVE_TCLCB_M(a,b,c) c
 static const char *tclcb_var_inits[] = { WAVE_TCLCB_MACRO_EXPANSION };
 
-static int declare_tclcb_variables(Tcl_Interp *interp) 
+static void declare_tclcb_variables(Tcl_Interp *interp) 
 {
 int i = 0 ;
 while(tclcb_var_flags[i] != -1) 
@@ -2898,6 +2898,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.89  2010/08/18 15:21:17  gtkwave
+ * compile fix for when Tcl is disabled
+ *
  * Revision 1.88  2010/08/02 17:27:04  gtkwave
  * added tclcb variable init sequence
  *
