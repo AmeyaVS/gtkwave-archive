@@ -198,20 +198,20 @@ while(!feof(f))
 		{
 		char *lhs = s;
 
-		while(*lhs && isspace(*lhs)) lhs++;
+		while(*lhs && isspace((int)(unsigned char)*lhs)) lhs++;
 		if(lhs)
 			{
 			char *rhs = lhs;
 
 			if(*lhs != '#')	/* ignore comments */
 				{
-				while(*rhs && !isspace(*rhs)) rhs++;
+				while(*rhs && !isspace((int)(unsigned char)*rhs)) rhs++;
 				if(*rhs)
 					{
 					char *xlt = rhs+1;
 					*rhs = 0;
 	
-					while(*xlt && isspace(*xlt)) xlt++;
+					while(*xlt && isspace((int)(unsigned char)*xlt)) xlt++;
 					if(*xlt)
 						{
 						GLOBALS->xl_file_filter[which] =  xl_insert(lhs, GLOBALS->xl_file_filter[which], xlt);
@@ -586,6 +586,9 @@ set_current_translate_generic(lst, 0); /* use enums */
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/07/19 22:32:31  gtkwave
+ * added gtkwave::setCurrentTranslateEnums
+ *
  * Revision 1.7  2010/07/19 21:12:19  gtkwave
  * added file/proc/trans access functions to Tcl script interpreter
  *

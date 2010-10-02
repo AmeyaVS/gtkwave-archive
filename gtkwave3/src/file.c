@@ -275,7 +275,7 @@ if (gtk_dialog_run(GTK_DIALOG (pFileChoose)) == GTK_RESPONSE_ACCEPT)
 			strcpy(suffix, pattn);
 			while((*suffix) && (*suffix != '.')) suffix++;
 			term = *suffix ? suffix+1 : suffix;
-			while((*term) && (isalnum(*term))) term++;
+			while((*term) && (isalnum((int)(unsigned char)*term))) term++;
 			*term = 0;
 
                         if(strlen(s) > strlen(suffix))
@@ -318,6 +318,9 @@ fix_suffix:                     s2 = malloc_2(strlen(s) + strlen(suffix) + 1);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/05/27 06:07:24  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.15  2010/02/18 23:06:04  gtkwave
  * change name of main iteration loop calls
  *

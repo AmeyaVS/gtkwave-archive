@@ -118,7 +118,7 @@ while((h = fstReaderIterateHier(xc)))
 				int sgna = 1, sgnb = 1;
 				pnt = lb_last + 1;
 				acc = 0;
-				while(isdigit(*pnt) || (*pnt == '-'))
+				while(isdigit((int)(unsigned char)*pnt) || (*pnt == '-'))
 					{
 					if(*pnt != '-')
 						{
@@ -141,7 +141,7 @@ while((h = fstReaderIterateHier(xc)))
 					{
 					pnt = col_last + 1;
 					acc = 0;
-					while(isdigit(*pnt) || (*pnt == '-'))	
+					while(isdigit((int)(unsigned char)*pnt) || (*pnt == '-'))	
 						{
 						if(*pnt != '-')
 							{
@@ -1266,6 +1266,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2010/09/16 19:40:08  gtkwave
+ * back out hierarchy removal
+ *
  * Revision 1.31  2010/09/16 19:23:37  gtkwave
  * duplicate tree fix for when compressed facilities are being used
  *

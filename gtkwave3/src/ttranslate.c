@@ -116,7 +116,7 @@ static void load_ttrans_filter(int which, char *name)
   arg = name + strlen(exec_name);
 
   /* remove leading spaces from argument */
-  while (isspace(arg[0])) {
+  while (isspace((int)(unsigned char)arg[0])) {
     arg++;
   }
 
@@ -588,7 +588,7 @@ ex:     			buf[n] = 0;
 #endif
 
 	
-				while(*pnt) { if(isspace(*pnt)) pnt++; else break;}
+				while(*pnt) { if(isspace((int)(unsigned char)*pnt)) pnt++; else break;}
 	
 				if(*pnt=='#')
 					{
@@ -596,8 +596,8 @@ ex:     			buf[n] = 0;
 					int slen;
 					char *sp;
 	
-					while(*pnt) { if(!isspace(*pnt)) pnt++; else break; }
-					while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+					while(*pnt) { if(!isspace((int)(unsigned char)*pnt)) pnt++; else break; }
+					while(*pnt) { if(isspace((int)(unsigned char)*pnt)) pnt++; else break; }
 	
 					sp = pnt;
 					slen = strlen(sp);
@@ -607,7 +607,7 @@ ex:     			buf[n] = 0;
 						pnt = sp + slen - 1;
 						do
 							{
-							if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
+							if(isspace((int)(unsigned char)*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
 							} while(pnt != (sp-1));
 						}
 						
@@ -649,8 +649,8 @@ ex:     			buf[n] = 0;
 						if(tim < LLDescriptor(0)) tim = LLDescriptor(-1);
 						GLOBALS->named_markers[which_marker] = tim;
 	
-						while(*pnt) { if(!isspace(*pnt)) pnt++; else break; }
-						while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+						while(*pnt) { if(!isspace((int)(unsigned char)*pnt)) pnt++; else break; }
+						while(*pnt) { if(isspace((int)(unsigned char)*pnt)) pnt++; else break; }
 		
 						sp = pnt;
 						slen = strlen(sp);
@@ -660,7 +660,7 @@ ex:     			buf[n] = 0;
 							pnt = sp + slen - 1;
 							do
 								{
-								if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
+								if(isspace((int)(unsigned char)*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
 								} while(pnt != (sp-1));
 							}
 	
@@ -689,7 +689,7 @@ ex:     			buf[n] = 0;
 						char *sp;
 	
 						pnt+=5;
-						while(*pnt) { if(isspace(*pnt)) pnt++; else break; }
+						while(*pnt) { if(isspace((int)(unsigned char)*pnt)) pnt++; else break; }
 		
 						sp = pnt;
 						slen = strlen(sp);
@@ -699,7 +699,7 @@ ex:     			buf[n] = 0;
 							pnt = sp + slen - 1;
 							do
 								{
-								if(isspace(*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
+								if(isspace((int)(unsigned char)*pnt)) { *pnt = 0; pnt--; slen--; } else { break; }
 								} while(pnt != (sp-1));
 							}
 	
@@ -770,6 +770,9 @@ return(cvt_ok);
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/08/26 18:42:23  gtkwave
+ * added support for transaction filters in mingw
+ *
  * Revision 1.19  2010/07/19 21:12:19  gtkwave
  * added file/proc/trans access functions to Tcl script interpreter
  *

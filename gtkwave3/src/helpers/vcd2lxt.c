@@ -1464,7 +1464,7 @@ if(!n->curr)
 	{
 	if(regadd) { time*=(time_scale); }
 
-	if(toupper(ch)!=deadchar) n->notdead=1;
+	if(toupper((int)(unsigned char)ch)!=deadchar) n->notdead=1;
 	n->numtrans++;
        }
 }
@@ -1512,7 +1512,7 @@ if(ch=='g')	/* real number */
 			n->numtrans++;
 			for(i=0;i<nlen;i++)
 				{
-				if(toupper(vector[i])!=deadchar)
+				if(toupper((int)(unsigned char)vector[i])!=deadchar)
 					{	
 					n->notdead=1;
 					return;
@@ -1957,6 +1957,9 @@ exit(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/02/22 21:13:37  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.7  2010/02/08 17:31:19  gtkwave
  * backtracking time fix
  *

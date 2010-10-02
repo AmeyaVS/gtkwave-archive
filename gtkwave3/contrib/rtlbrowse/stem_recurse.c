@@ -251,7 +251,7 @@ len = strlen(id);
 
 for(i=0;i<len;i++)
 	{
-	if(!isxdigit(id[i])) break;
+	if(!isxdigit((int)(unsigned char)id[i])) break;
 	}
 if(i==len)
 	{
@@ -532,6 +532,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/07/16 16:12:36  gtkwave
+ * pedantic warning fixes
+ *
  * Revision 1.7  2009/06/13 22:02:18  gtkwave
  * beginning to add FST support to rtlbrowse
  *

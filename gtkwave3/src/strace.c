@@ -112,7 +112,7 @@ while (*hay)
 	ht = hay; nt = needle;
 	while(*nt)
 		{
-		if(toupper(*(ht+offs)) != toupper(*nt)) break;
+		if(toupper((int)(unsigned char)*(ht+offs)) != toupper((int)(unsigned char)*nt)) break;
 		offs++;
 		nt++;
 		}
@@ -1713,6 +1713,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2010/06/13 20:38:00  gtkwave
+ * added strace repeat count
+ *
  * Revision 1.21  2010/04/01 03:10:58  gtkwave
  * time warp fixes
  *

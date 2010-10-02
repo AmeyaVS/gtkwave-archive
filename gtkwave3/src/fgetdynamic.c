@@ -63,10 +63,10 @@ int len;
 if(s) 
 	{
 	char *s2 = s + strlen(s) - 1;
-	while(isspace(*s2) && (s2 != s)) { *s2 = 0; s2--; }
+	while(isspace((int)(unsigned char)*s2) && (s2 != s)) { *s2 = 0; s2--; }
 
 	s2 = s;
-	while(*s2 && isspace(*s2)) { s2++; }
+	while(*s2 && isspace((int)(unsigned char)*s2)) { s2++; }
 
 	if((len = strlen(s2)))
 		{
@@ -122,6 +122,9 @@ return(stripspaces(s));
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.3  2007/12/06 04:16:20  gtkwave
  * removed non-growable vlists
  *

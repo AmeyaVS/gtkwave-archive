@@ -111,7 +111,7 @@ static void load_proc_filter(int which, char *name)
   arg = name + strlen(exec_name);
 
   /* remove leading spaces from argument */
-  while (isspace(arg[0])) {
+  while (isspace((int)(unsigned char)arg[0])) {
     arg++;
   }
 
@@ -454,6 +454,9 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/08/25 22:58:23  gtkwave
+ * added process file support for mingw
+ *
  * Revision 1.13  2010/07/19 21:12:19  gtkwave
  * added file/proc/trans access functions to Tcl script interpreter
  *

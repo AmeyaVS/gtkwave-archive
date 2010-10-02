@@ -554,7 +554,7 @@ while(!feof(f))
 			for(;;)
 				{
 				if((*src == '\n') || (*src == '\r')) break;
-				if(isspace(*src))
+				if(isspace((int)(unsigned char)*src))
 					{
 					if(pchar != ' ') { *(pnt++) = pchar = ' '; }
 					src++;
@@ -773,6 +773,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/07/16 16:12:38  gtkwave
+ * pedantic warning fixes
+ *
  * Revision 1.11  2010/07/13 00:03:47  gtkwave
  * Updated vcd2fst so it is compatible with VerilatedVcd writer
  *

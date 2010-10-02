@@ -207,7 +207,7 @@ if(!str) return(FALSE);
 pnt = strcaseins = strdup(str);
 while(*pnt)
 	{
-	*pnt = toupper(*pnt);
+	*pnt = toupper((int)(unsigned char)*pnt);
 	pnt++;
 	}
 
@@ -226,7 +226,7 @@ for(;;)
 	pnt = line_text = gtk_text_iter_get_visible_text (&start, &next);
 	while(*pnt)
 		{
-		*pnt = toupper(*pnt);
+		*pnt = toupper((int)(unsigned char)*pnt);
 		pnt++;
 		}
 	found = strstr(line_text, strcaseins);
@@ -633,7 +633,7 @@ if(len < 4)
 	s2[0]='b';
 	for(idx = 0; idx < len; idx++)
 		{
-		s2[idx+1] = toupper(s[idx]);
+		s2[idx+1] = toupper((int)(unsigned char)s[idx]);
 		}
 	s2[idx+1] = 0;
 
@@ -657,17 +657,17 @@ if(len < 4)
 
 		if(!skip)
 			{
-			arr[0] = toupper(*(s++));
-			arr[1] = toupper(*(s++));
-			arr[2] = toupper(*(s++));
-			arr[3] = toupper(*(s++));
+			arr[0] = toupper((int)(unsigned char)*(s++));
+			arr[1] = toupper((int)(unsigned char)*(s++));
+			arr[2] = toupper((int)(unsigned char)*(s++));
+			arr[3] = toupper((int)(unsigned char)*(s++));
 			}
 			else
 			{
 			int j = 3;
 			for(idx = skip-1; idx>=0; idx--)
 				{
-				arr[j] = toupper(s[idx]);
+				arr[j] = toupper((int)(unsigned char)s[idx]);
 				j--;
 				}
 			for(idx = j; idx >= 0; idx--)
@@ -2682,6 +2682,9 @@ free_vars:
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/06/25 12:01:56  gtkwave
+ * removed c++ style comment
+ *
  * Revision 1.34  2010/06/23 05:40:48  gtkwave
  * added dnd from gtkwave into rtlbrowse
  *

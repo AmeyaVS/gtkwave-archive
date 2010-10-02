@@ -200,7 +200,7 @@ for(i=0;i<compar_len;i++)
 	{
 	if((pnt = strchr(s, (int)compar[i])))
 		{
-		if((tolower(pnt[0]) != 'e') && (tolower(pnt[1]) != 'c'))
+		if((tolower((int)(unsigned char)pnt[0]) != 'e') && (tolower((int)(unsigned char)pnt[1]) != 'c'))
 			{
 			return(unformat_time_complex(s, dim));
 			}
@@ -749,6 +749,9 @@ switch(scale)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/01/18 20:47:02  gtkwave
+ * added named locker marking
+ *
  * Revision 1.14  2009/09/08 15:31:48  gtkwave
  * handle floating-point numbers in unformat_time()
  *

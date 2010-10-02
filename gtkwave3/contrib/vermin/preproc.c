@@ -641,7 +641,7 @@ if(s2)
 	while(pnt != s2)
 		{
 		pnt--;
-		if(isspace(*pnt)) { *pnt = 0; } else { break; }
+		if(isspace((int)(unsigned char)*pnt)) { *pnt = 0; } else { break; }
 		}
 	}
 
@@ -990,6 +990,9 @@ if(ics)
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/07/22 21:03:08  gtkwave
+ * update preprocessor handling for ifdef stack
+ *
  * Revision 1.3  2008/12/20 05:45:03  gtkwave
  * gtk1 compatibility and -Wshadow warning fixes
  *

@@ -93,7 +93,7 @@ entry=GLOBALS->entries_markerbox_c_1[ent_idx];
 
 entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
 if(!(len=strlen(entry_text))) goto failure;
-if(!isdigit(entry_text[0])) goto failure;
+if(!isdigit((int)(unsigned char)entry_text[0])) goto failure;
 
 temp=unformat_time(entry_text, GLOBALS->time_dimension);
 if((temp<GLOBALS->tims.start)||(temp>GLOBALS->tims.last)) goto failure;
@@ -337,6 +337,9 @@ void markerbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/05/27 06:07:24  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.8  2008/12/28 03:03:33  gtkwave
  * Added scale_to_time_dimension rc variable and menu options.
  *

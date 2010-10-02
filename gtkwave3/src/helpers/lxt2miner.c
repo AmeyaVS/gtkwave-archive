@@ -237,7 +237,7 @@ while (1)
 			match = malloc((matchlen = 4*strlen(optarg))+1);
 			for(i=0,k=0;i<matchlen;i+=4,k++)
 				{
-				int ch = tolower(optarg[k]);
+				int ch = tolower((int)(unsigned char)optarg[k]);
 
 				if(ch=='z')
 					{
@@ -325,6 +325,9 @@ return(rc);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.4  2009/03/31 18:49:49  gtkwave
  * removal of warnings under cygwin compile
  *

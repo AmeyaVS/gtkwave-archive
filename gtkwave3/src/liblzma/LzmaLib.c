@@ -164,13 +164,13 @@ if(mode[0] == 'w')
 
 	if(mode[1])
 		{
-		if(isdigit(mode[1]))
+		if(isdigit((int)(unsigned char)mode[1]))
 			{
 			h->depth = mode[1] - '0';
 			}
 		else if(mode[2])
 			{
-			if(isdigit(mode[2]))
+			if(isdigit((int)(unsigned char)mode[2]))
 				{
 				h->depth = mode[2] - '0';
 				}

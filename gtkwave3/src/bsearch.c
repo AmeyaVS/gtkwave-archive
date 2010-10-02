@@ -243,7 +243,7 @@ if(ascii[len-1]=='}')
 
 	for(i=len-2;i>=2;i--)
 		{	
-		if(isdigit(ascii[i])) continue;
+		if(isdigit((int)(unsigned char)ascii[i])) continue;
 		if(ascii[i]=='{')
 			{
 			char *tsc = wave_alloca(i+1);
@@ -275,6 +275,9 @@ if(rc) return(*rc); else return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/04/01 19:52:20  gtkwave
+ * time warp fixes
+ *
  * Revision 1.8  2010/04/01 03:10:58  gtkwave
  * time warp fixes
  *

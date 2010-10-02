@@ -314,7 +314,7 @@ while(!feof(f))
 			for(;;)
 				{
 				if((*src == '\n') || (*src == '\r')) break;
-				if(isspace(*src))
+				if(isspace((int)(unsigned char)*src))
 					{
 					if(pchar != ' ') { *(pnt++) = pchar = ' '; }
 					src++;
@@ -503,6 +503,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.2  2009/08/06 20:03:31  gtkwave
  * warnings fixes
  *

@@ -68,12 +68,12 @@ while(*p1 && *p2)
 
 		if(!pfx) return(NULL);
 
-		if(isdigit(*p1)&&isdigit(*p2))
+		if(isdigit((int)(unsigned char)*p1)&&isdigit((int)(unsigned char)*p2))
 			{
 			n1 = p1; n2 = p2;
 			while(*p1)
 				{
-				if(isdigit(*p1))
+				if(isdigit((int)(unsigned char)*p1))
 					{
 					n1len++;
 					}
@@ -86,7 +86,7 @@ while(*p1 && *p2)
 
 			while(*p2)
 				{
-				if(isdigit(*p2))
+				if(isdigit((int)(unsigned char)*p2))
 					{
 					n2len++;
 					}
@@ -132,7 +132,7 @@ if((*p1)||(*p2)) return(NULL);
 
 while(pfxlen>1)	/* backup if matching a sequence like 20..24 where the 2 matches outside of the left bracket */
 	{
-	if(isdigit(s1[pfxlen-1]))
+	if(isdigit((int)(unsigned char)s1[pfxlen-1]))
 		{
 		pfxlen--;
 		n1--; n1len++;
@@ -468,7 +468,7 @@ len=0;
 while(1)
 	{
 	ch=*pnt++;
-	if(isspace(ch)||(!ch)) break;
+	if(isspace((int)(unsigned char)ch)||(!ch)) break;
 	len++;
 	}
 
@@ -519,7 +519,7 @@ len=0;
 while(1)
 	{
 	ch=*pnt++;
-	if(isspace(ch)||(!ch)) break;
+	if(isspace((int)(unsigned char)ch)||(!ch)) break;
 	len++;
 	}
 
@@ -686,7 +686,7 @@ len=0;
 while(1)
 	{
 	ch=*pnt++;
-	if(isspace(ch)||(!ch)) break;
+	if(isspace((int)(unsigned char)ch)||(!ch)) break;
 	len++;
 	}
 
@@ -2215,7 +2215,7 @@ int parsewavline(char *w, char *alias, int depth)
 
   while(1)
     {
-      if(isspace(*w)) { w++; continue; }
+      if(isspace((int)(unsigned char)*w)) { w++; continue; }
       if(!(*w)) return(0);	/* no args */
       break;			/* start grabbing chars from here */
     }
@@ -2443,7 +2443,7 @@ if((*w2=='#')||(*w2==':'))
 	w2=w2+strlen(prefix);
 	while(1)
 		{
-		if(isspace(*w2)) { w2++; continue; }
+		if(isspace((int)(unsigned char)*w2)) { w2++; continue; }
 		if(!(*w2)) return(0);	/* no more args */	
 		break;			/* start grabbing chars from here */
 		}
@@ -2551,13 +2551,13 @@ if(*w2=='!')
 		ch = *(w2+7);
 		if(ch != 0)
 			{
-			if (isupper(ch) || ch=='@')
+			if (isupper((int)(unsigned char)ch) || ch=='@')
 				GLOBALS->strace_ctx->shadow_mark_idx_start = ch - '@';
 		
 			ch = *(w2+8);
 			if(ch != 0)
 				{
-				if (isupper(ch) || ch=='@')
+				if (isupper((int)(unsigned char)ch) || ch=='@')
 					GLOBALS->strace_ctx->shadow_mark_idx_end = ch - '@';
 				}
 			}
@@ -2605,8 +2605,8 @@ else if(*w2=='^')
 			char *fn = w2+3;
 			if(fn)
 				{
-				while(*fn && isspace(*fn)) fn++;
-				if(*fn && !isspace(*fn)) 
+				while(*fn && isspace((int)(unsigned char)*fn)) fn++;
+				if(*fn && !isspace((int)(unsigned char)*fn)) 
 					{
 					set_current_translate_proc(fn);
 					}
@@ -2624,8 +2624,8 @@ else if(*w2=='^')
 			char *fn = w2+3;
 			if(fn)
 				{
-				while(*fn && isspace(*fn)) fn++;
-				if(*fn && !isspace(*fn)) 
+				while(*fn && isspace((int)(unsigned char)*fn)) fn++;
+				if(*fn && !isspace((int)(unsigned char)*fn)) 
 					{
 					set_current_translate_ttrans(fn);
 					}
@@ -2641,8 +2641,8 @@ else if(*w2=='^')
 			char *fn = strstr(w2+2, " ");
 			if(fn)
 				{
-				while(*fn && isspace(*fn)) fn++;
-				if(*fn && !isspace(*fn)) 
+				while(*fn && isspace((int)(unsigned char)*fn)) fn++;
+				if(*fn && !isspace((int)(unsigned char)*fn)) 
 					{
 					set_current_translate_file(fn);
 					}
@@ -2700,7 +2700,7 @@ else if (*w2 == '[')
 	{
 	while(*w)
 		{
-		if(!isspace(*w))
+		if(!isspace((int)(unsigned char)*w))
 			{
 			break;
 			}
@@ -2734,7 +2734,7 @@ else if (*w2 == '[')
 	char *pnt = w;
 	int which;
 
-	if((*pnt) && (isspace(*pnt))) pnt++;
+	if((*pnt) && (isspace((int)(unsigned char)*pnt))) pnt++;
 
 	if(*pnt)
 		{
@@ -2846,7 +2846,7 @@ len=0;
 while(1)
 	{
 	ch=*pnt++;
-	if(isspace(ch)||(!ch)) break;
+	if(isspace((int)(unsigned char)ch)||(!ch)) break;
 	len++;
 	}
 
@@ -2895,7 +2895,7 @@ len=0;
 while(1)
 	{
 	ch=*pnt++;
-	if(isspace(ch)||(!ch)) break;
+	if(isspace((int)(unsigned char)ch)||(!ch)) break;
 	len++;
 	}
 
@@ -2996,7 +2996,7 @@ int parsewavline_lx2(char *w, char *alias, int depth)
 
   while(1)
     {
-      if(isspace(*w)) { w++; continue; }
+      if(isspace((int)(unsigned char)*w)) { w++; continue; }
       if(!(*w)) return(0);	/* no args */
       break;			/* start grabbing chars from here */
     }
@@ -3169,7 +3169,7 @@ if((*w2=='#')||(*w2==':'))
 	w2=w2+strlen(prefix);
 	while(1)
 		{
-		if(isspace(*w2)) { w2++; continue; }
+		if(isspace((int)(unsigned char)*w2)) { w2++; continue; }
 		if(!(*w2)) return(0);	/* no more args */	
 		break;			/* start grabbing chars from here */
 		}
@@ -3256,6 +3256,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.27  2010/07/31 20:38:38  gtkwave
+ * fix for canonical bit ordering with previous patch
+ *
  * Revision 1.26  2010/07/31 20:00:33  gtkwave
  * fix for cvc versus modelsim with respect to created bluespec .sav files
  *

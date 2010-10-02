@@ -929,3 +929,4 @@
 3.3.14	28sep10	Fixed force_open_tree_node() for dynamic SST trees when
 		unbuilt nodes are encountered during traversal.
 		Allow VCD files where start = end time.
+		Compiler warning fixes.

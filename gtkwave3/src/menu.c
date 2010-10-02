@@ -4422,7 +4422,7 @@ if(GLOBALS->entrybox_text)
 
         if((GLOBALS->entrybox_text[0] >= 'A' && GLOBALS->entrybox_text[0] <= 'Z')||(GLOBALS->entrybox_text[0] >= 'a' && GLOBALS->entrybox_text[0] <= 'z'))
                 {
-                int uch = toupper(GLOBALS->entrybox_text[0]);
+                int uch = toupper((int)(unsigned char)GLOBALS->entrybox_text[0]);
                 gt=GLOBALS->named_markers[uch - 'A'];
                 }
                 else
@@ -6089,7 +6089,7 @@ if(!path) return(1);
 accel = pathend + 1;
 while(*accel)
 	{
-	if(!isspace(*accel)) break;
+	if(!isspace((int)(unsigned char)*accel)) break;
 	accel++;
 	}
 
@@ -6259,6 +6259,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.114  2010/08/26 18:42:23  gtkwave
+ * added support for transaction filters in mingw
+ *
  * Revision 1.113  2010/08/26 01:32:01  gtkwave
  * added mingw support for Open New Window menu option
  *

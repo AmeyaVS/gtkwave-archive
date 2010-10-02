@@ -36,7 +36,7 @@ while(!feof(f))
 
 	for(i=len-2;i>=0;i--)
 		{
-		if(isspace(buf[i]))
+		if(isspace((int)(unsigned char)buf[i]))
 			{
 			buf[i] = 0;
 			continue;
@@ -47,7 +47,7 @@ while(!feof(f))
 	srt = NULL;
 	for(i=0;i<len;i++)
 		{
-		if(buf[i] && !isspace(buf[i]))
+		if(buf[i] && !isspace((int)(unsigned char)buf[i]))
 			{
 			srt = buf+i;
 			break;
@@ -185,6 +185,9 @@ for(i=0;i<argc;i++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/11/08 15:39:11  gtkwave
+ * updated -f argument file handling in vermin
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:41  gtkwave
  * Imported sources
  *

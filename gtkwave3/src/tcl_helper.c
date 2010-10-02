@@ -72,7 +72,7 @@ static char tclBackslash(const char* src, int* readPtr) {
 	case 't': result = 0x9; break;
 	case 'v': result = 0xb; break;
 	case 'x':
-	    if (isxdigit(p[1])) {
+	    if (isxdigit((int)(unsigned char)p[1])) {
 		char* end;
 
 		result = (char)strtoul(p+1, &end, 16);
@@ -95,15 +95,15 @@ static char tclBackslash(const char* src, int* readPtr) {
 	    break;
 	default:
 	    /* Check for an octal number \oo?o? */
-	    if (isdigit(*p)) {
+	    if (isdigit((int)(unsigned char)*p)) {
 		result = *p - '0';
 		p++;
-		if (!isdigit(*p)) break;
+		if (!isdigit((int)(unsigned char)*p)) break;
 
 		count = 3;
 		result = (result << 3) + (*p - '0');
 		p++;
-		if (!isdigit(*p)) break;
+		if (!isdigit((int)(unsigned char)*p)) break;
 
 		count = 4;
 		result = (result << 3) + (*p - '0');
@@ -153,7 +153,7 @@ static int tclFindElement(const char* list, const char** elementPtr,
      * Skim off leading white space and check for an opening brace or
      * quote.
      */
-    while (isspace(*list)) list++;
+    while (isspace((int)(unsigned char)*list)) list++;
 
     if (*list == '{') {			/* } */
 	openBraces = 1;
@@ -187,7 +187,7 @@ static int tclFindElement(const char* list, const char** elementPtr,
 		if (openBraces == 1) {
 		    size = p - list;
 		    p++;
-		    if (isspace(*p) || (*p == 0)) goto done;
+		    if (isspace((int)(unsigned char)*p) || (*p == 0)) goto done;
 
 		    /* list element in braces followed by garbage instead of
 		     * space
@@ -233,7 +233,7 @@ static int tclFindElement(const char* list, const char** elementPtr,
 		if (inQuotes) {
 		    size = p-list;
 		    p++;
-		    if (isspace(*p) || (*p == 0)) goto done;
+		    if (isspace((int)(unsigned char)*p) || (*p == 0)) goto done;
 
 		    /* list element in quotes followed by garbage instead of
 		     * space
@@ -256,7 +256,7 @@ static int tclFindElement(const char* list, const char** elementPtr,
     }
 
   done:
-    while (isspace(*p)) p++;
+    while (isspace((int)(unsigned char)*p)) p++;
 
     *elementPtr = list;
     *nextPtr = p;
@@ -329,7 +329,7 @@ char** zSplitTclList(const char* list, int* argcPtr) {
      * the number of space characters in the list.
      */
     for (size = 1, l = list; *l != 0; l++) {
-	if (isspace(*l)) size++;
+	if (isspace((int)(unsigned char)*l)) size++;
     }
     size++;				/* Leave space for final NULL */
 
@@ -811,7 +811,7 @@ if(elem)
 	pnt = s_new;
 	while(*pnt)
 		{
-		if( (!isalnum(*pnt)) && (!isspace(*pnt)) && (*pnt != GLOBALS->hier_delimeter) )
+		if( (!isalnum((int)(unsigned char)*pnt)) && (!isspace((int)(unsigned char)*pnt)) && (*pnt != GLOBALS->hier_delimeter) )
 			{
 			esc++;
 			}
@@ -825,7 +825,7 @@ if(elem)
 		pnt2 = s_new2;
 		while(*pnt)
 			{
-			if( (!isalnum(*pnt)) && (!isspace(*pnt)) && (*pnt != GLOBALS->hier_delimeter) )
+			if( (!isalnum((int)(unsigned char)*pnt)) && (!isspace((int)(unsigned char)*pnt)) && (*pnt != GLOBALS->hier_delimeter) )
 				{
 				*(pnt2++) = '\\';
 				}
@@ -2898,6 +2898,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.90  2010/10/02 18:24:38  gtkwave
+ * warning fixes
+ *
  * Revision 1.89  2010/08/18 15:21:17  gtkwave
  * compile fix for when Tcl is disabled
  *
