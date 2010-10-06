@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2010.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,6 +15,7 @@
 #include "pixmaps.h"
 #include "symbol.h"
 #include "debug.h"
+#include "rpc.h"
 
 #undef FOCUS_DEBUG_MSGS
 
@@ -618,6 +619,8 @@ gint xi, yi;
 GdkEventMotion event[1];
 event[0].deviceid = GDK_CORE_POINTER;  
 #endif
+
+execute_rpc();
 
 if(GLOBALS->loaded_file_type == MISSING_FILE)
 	{
@@ -1391,6 +1394,9 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2010/04/14 07:49:02  gtkwave
+ * updated mouseover handling
+ *
  * Revision 1.49  2010/02/28 19:05:15  gtkwave
  * missing null pointer guard added
  *

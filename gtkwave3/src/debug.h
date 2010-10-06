@@ -198,13 +198,14 @@ unsigned use_new_times : 1;
 unsigned viewer_is_initialized : 1;
 };
 
-
-
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/09/16 04:08:55  gtkwave
+ * add back in memory debugging printfs and defines
+ *
  * Revision 1.12  2010/03/09 22:21:29  gtkwave
  * added optional preliminary Judy array support
  *

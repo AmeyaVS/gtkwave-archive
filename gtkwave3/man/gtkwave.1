@@ -1,4 +1,4 @@
-.TH "GTKWAVE" "1" "3.3.4" "Anthony Bybell" "Simulation Wave Viewer"
+.TH "GTKWAVE" "1" "3.3.14" "Anthony Bybell" "Simulation Wave Viewer"
 .SH "NAME"
 .LP 
 gtkwave \- Visualization tool for VCD, LXT, LXT2, VZT, FST, and GHW files
@@ -98,6 +98,10 @@ Specify XID of window for a GtkPlug to connect to.  GTKWave does not directly re
 GtkPlug expecting a GtkSocket at the other end.  Note that there are issues with accelerators working properly so menus are
 disabled in the componentized version of GTKWave when it functions as a plug-in.
 .TP 
+\fB\-1\fR,\fB\-\-rpcid\fR <\fIRPCID\fP>
+Specify RPCID of a gtkwave_server to connect to.  This is of interest only if it is intended to send remote commands to GTKWave, for example
+for simulators to signal to GTKWave that a sim job has completed and is ready to be viewed.
+.TP
 \fB\-I\fR,\fB\-\-interactive\fR
 Specifies that "interactive" VCD mode is to be used which allows a viewer to navigate a VCD trace while GTKWave is processing the VCD file.
 When this option is used, the filename is overloaded such that it is the hexadecimal value for the shared memory ID of a writer.

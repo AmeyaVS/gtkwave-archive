@@ -2808,17 +2808,16 @@ fileselbox("Select a trace to view...",&GLOBALS->filesel_newviewer_menu_c_1,GTK_
 
 /**/
 
-void
-menu_new_viewer_tab_cleanup(GtkWidget *widget, gpointer data)
+int
+menu_new_viewer_tab_cleanup_2(char *fname)
 {
-if(GLOBALS->filesel_ok)
-        { 
+	int rc = 0;
 	char *argv[2];
 	struct Global *g_old = GLOBALS;
 	struct Global *g_now;
 
 	argv[0] = "gtkwave";
-	argv[1] = *GLOBALS->fileselbox_text;
+	argv[1] = fname;
 
 	GLOBALS->vcd_jmp_buf = calloc(1, sizeof(jmp_buf));
 
@@ -2874,6 +2873,9 @@ if(GLOBALS->filesel_ok)
 /* 		strcpy(GLOBALS->repscript_name, g_old->repscript_name); */
 
 		GLOBALS->strace_repeat_count = g_old->strace_repeat_count;
+
+		GLOBALS->rpc_ctx = g_old->rpc_ctx;
+		rc = 1;
 		}
                 else
                 {
@@ -2893,11 +2895,22 @@ if(GLOBALS->filesel_ok)
 
 		/* load failed */
 		printf("GTKWAVE | File load failure, new tab not created.\n");
+		rc = 0;
                 }
 
-	return;
+return(rc);
+}
+
+
+void
+menu_new_viewer_tab_cleanup(GtkWidget *widget, gpointer data)
+{
+if(GLOBALS->filesel_ok)
+        { 
+	menu_new_viewer_tab_cleanup_2(*GLOBALS->fileselbox_text);
 	}
 }
+
 
 void
 menu_new_viewer_tab(GtkWidget *widget, gpointer data)
@@ -4009,11 +4022,12 @@ if(!GLOBALS->filesel_writesave)
 /**/
 
 
-void read_save_helper(char *wname) { 
+int read_save_helper(char *wname) { 
         FILE *wave;
         char *str = NULL;
         int wave_is_compressed;
 	char traces_already_exist = (GLOBALS->traces.first != NULL);
+	int rc = -1;
 
         if(((strlen(wname)>2)&&(!strcmp(wname+strlen(wname)-3,".gz")))||
           ((strlen(wname)>3)&&(!strcmp(wname+strlen(wname)-4,".zip"))))
@@ -4080,7 +4094,7 @@ void read_save_helper(char *wname) {
 		                fprintf(stderr, "Error opening save file '%s' for reading.\n",*GLOBALS->fileselbox_text);
 				perror("Why");
 				errno=0;
-				return;
+				return(rc);
 		                }
 			}
 
@@ -4088,11 +4102,13 @@ void read_save_helper(char *wname) {
 		GLOBALS->shift_timebase_default_for_add=LLDescriptor(0);
 		GLOBALS->strace_current_window = 0; /* in case there are shadow traces */
 
+		rc = 0;
                 while((iline=fgetmalloc(wave)))
                         {
                         parsewavline(iline, NULL, 0);
 			GLOBALS->strace_ctx->shadow_encountered_parsewavline |= GLOBALS->strace_ctx->shadow_active;
                         free_2(iline);
+			rc++;
                         }
 
 		WAVE_STRACE_ITERATOR(s_ctx_iter)
@@ -4140,6 +4156,8 @@ void read_save_helper(char *wname) {
                 }
 
 	GLOBALS->current_translate_file = 0;
+
+return(rc);
 }
 
 
@@ -6259,6 +6277,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.115  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.114  2010/08/26 18:42:23  gtkwave
  * added support for transaction filters in mingw
  *

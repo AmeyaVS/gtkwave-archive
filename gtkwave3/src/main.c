@@ -75,6 +75,7 @@
 #include <tk.h>
 #endif
 
+#include "rpc.h"
 
 static int suffix_check(const char *s, const char *sfx)
 {
@@ -248,8 +249,10 @@ static void print_help(char *nam)
 
 #if !defined _MSC_VER && !defined __MINGW32__
 #define OUTPUT_GETOPT "  -O, --output=FILE          specify filename for stdout/stderr redirect\n"
+#define RPC_GETOPT "  -1, --rpcid=RPCID          specify RPCID of gtkwave_server to connect to\n"
 #else
 #define OUTPUT_GETOPT
+#define RPC_GETOPT
 #endif
 
 printf(
@@ -274,6 +277,7 @@ WAVE_GETOPT_CPUS
 "  -S, --script=FILE          specify Tcl command script file for execution\n"
 REPSCRIPT_GETOPT
 XID_GETOPT
+RPC_GETOPT
 INTR_GETOPT
 "  -C, --comphier             use compressed hierarchy names (slower)\n"
 "  -g, --giga                 use gigabyte mempacking when recoding (slower)\n"
@@ -665,10 +669,11 @@ while (1)
                 {"repscript", 1, 0, 'R'},   
                 {"repperiod", 1, 0, 'P'},
 		{"output", 1, 0, 'O' },
+		{"rpc", 1, 0, '1' },
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "f:Fon:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:", long_options, 
+        c = getopt_long (argc, argv, "f:Fon:a:Ar:di:l:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:1:", long_options, 
 &option_index);
 
         if (c == -1) break;     /* no more args */
@@ -778,6 +783,10 @@ while (1)
 			splash_disable_rc_override = 1;
                         break;
 #endif
+
+		case '1':
+			sscanf(optarg, "%x", &GLOBALS->rpc_id);
+			break;
 
 		case 'M':
 			GLOBALS->disable_menus = 1;
@@ -2104,6 +2113,27 @@ if(scriptfile)
 	scriptfile=NULL;
 	}
 
+#if !defined(_MSC_VER) && !defined(__MINGW32__)
+if(GLOBALS->rpc_id)
+	{
+	GLOBALS->rpc_ctx = shmat(GLOBALS->rpc_id, NULL, 0);
+	if(GLOBALS->rpc_ctx)
+		{
+                if(memcmp(&GLOBALS->rpc_ctx->matchword, RPC_MATCHWORD, 4))
+                        {
+                        fprintf(stderr, "RPC shared memory ID matchword mismatch, exiting.\n");
+                        exit(255);
+                        }
+		}
+		else
+		{
+                fprintf(stderr, "Not a valid RPC shared memory ID for remote operation, exiting.\n");
+                exit(255);
+		}
+	}
+
+#endif
+
 #if !defined _MSC_VER
 if(GLOBALS->dual_attach_id_main_c_1)
 	{
@@ -2661,6 +2691,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.100  2010/09/14 17:11:56  gtkwave
+ * added warning for unimplemented flags (for some systems)
+ *
  * Revision 1.99  2010/07/12 20:51:42  gtkwave
  * free to non-malloc'd address fix
  *

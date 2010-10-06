@@ -98,6 +98,8 @@ void make_tcl_interpreter(char *argv[]);
 const char *gtkwavetcl_setvar(const char *name1, const char *val, int flags);
 const char *gtkwavetcl_setvar_nonblocking(const char *name1, const char *val, int flags);
 
+char *rpc_script_execute(const char *nam);
+
 #ifdef HAVE_LIBTCL
 int gtkwaveInterpreterInit (Tcl_Interp *interp);
 void set_globals_interp(char *me, int install_tk);
@@ -108,6 +110,9 @@ void set_globals_interp(char *me, int install_tk);
 /* 
  * $Id$
  * $Log$
+ * Revision 1.27  2010/07/27 22:52:16  gtkwave
+ * added nonblocking setvar (to be used only for well-known reasons)
+ *
  * Revision 1.26  2010/07/27 19:25:41  gtkwave
  * initial tcl callback function adds
  *

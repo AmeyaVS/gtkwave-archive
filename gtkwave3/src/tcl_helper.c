@@ -2621,6 +2621,47 @@ GLOBALS->wave_script_args = old_wave_script_args;
 return(TCL_OK); /* signal error with rc=TCL_ERROR, Tcl_Obj *aobj = Tcl_NewStringObj(reportString, -1); Tcl_SetObjResult(interp, aobj); */
 }
 
+/* XXXXXXXXXXXXXXXXXXXXXXXXX */
+/* XXX  RPC Tcl Variant  XXX */
+/* XXXXXXXXXXXXXXXXXXXXXXXXX */
+
+char *rpc_script_execute(const char *nam)
+{
+char *tpnt = NULL;
+char *s;
+
+if((nam) && (strlen(nam)) && (!GLOBALS->tcl_running))
+	{
+	int tclrc;
+	int nlen = strlen(nam);
+	char *tcl_cmd = wave_alloca(7 + nlen + 1);
+	strcpy(tcl_cmd, "source ");
+	strcpy(tcl_cmd+7, nam);
+
+	GLOBALS->tcl_running = 1;
+	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
+	GLOBALS->tcl_running = 0;
+
+	if(tclrc != TCL_OK) 
+		{ 
+		tpnt = strdup_2(Tcl_GetStringResult (GLOBALS->interp)); 
+		}
+		else
+		{
+		tpnt = strdup_2("TCL_OK");
+		}
+	}
+
+if(!tpnt) tpnt = strdup_2("TCL_ERROR : no filename specified");
+
+s = malloc_2(strlen("--script ") + strlen(tpnt) + 1 + 1);
+sprintf(s, "%s%s\n", "--script ", tpnt);
+free_2(tpnt);
+
+return(s);
+}
+
+
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 /* XXX  Bluespec Tcl Variant  XXX */
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
@@ -2891,6 +2932,11 @@ return(NULL);
 }
 
 
+char *rpc_script_execute(const char *nam)
+{
+return(strdup_2("--script TCL_ERROR : Tcl support not compiled into gtkwave\n");
+}
+
 
 #endif
 
@@ -2898,6 +2944,9 @@ return(NULL);
 /*
  * $Id$
  * $Log$
+ * Revision 1.91  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.90  2010/10/02 18:24:38  gtkwave
  * warning fixes
  *

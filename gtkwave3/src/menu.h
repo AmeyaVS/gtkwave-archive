@@ -333,12 +333,14 @@ GtkItemFactoryEntry *retrieve_menu_items_array(int *num_items);
 
 void menu_read_stems_cleanup(GtkWidget *widget, gpointer data);
 void menu_new_viewer_tab_cleanup(GtkWidget *widget, gpointer data);
+int menu_new_viewer_tab_cleanup_2(char *fname);
+
 
 void set_scale_to_time_dimension_toggles(void);
 
 /* These should eventually have error values */
 void write_save_helper(FILE *file);
-void read_save_helper(char *wname);
+int read_save_helper(char *wname); /* -1 = error, 0+ = number of lines read */
 
 void SetTraceScrollbarRowValue(int row, unsigned center);
 
@@ -349,6 +351,9 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2010/08/26 18:42:23  gtkwave
+ * added support for transaction filters in mingw
+ *
  * Revision 1.42  2010/08/26 01:32:01  gtkwave
  * added mingw support for Open New Window menu option
  *
