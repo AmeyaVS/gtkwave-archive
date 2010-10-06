@@ -2934,7 +2934,7 @@ return(NULL);
 
 char *rpc_script_execute(const char *nam)
 {
-return(strdup_2("--script TCL_ERROR : Tcl support not compiled into gtkwave\n");
+return(strdup_2("--script TCL_ERROR : Tcl support not compiled into gtkwave\n"));
 }
 
 
@@ -2944,6 +2944,9 @@ return(strdup_2("--script TCL_ERROR : Tcl support not compiled into gtkwave\n");
 /*
  * $Id$
  * $Log$
+ * Revision 1.92  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  * Revision 1.91  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *
