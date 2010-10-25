@@ -63,10 +63,10 @@ _LXT2_RD_INLINE static unsigned int lxt2_rd_get_16(void *mm, int offset)
 {
 unsigned short x = *((unsigned short *)((unsigned char *)mm+offset));
 
-#if defined(__i386__)
-    __asm("xchgb %b0,%h0" : "=q" (x) : "0" (x));
-#else
+#if defined(__x86_64__)
     __asm("xchgb %b0,%h0" : "=Q" (x) : "0" (x));
+#else
+    __asm("xchgb %b0,%h0" : "=q" (x) : "0" (x));
 #endif
 
     return (unsigned int) x;
@@ -1737,6 +1737,9 @@ return(blk);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/10/25 17:50:42  gtkwave
+ * add conditional compiles for inline assembly code (can disable)
+ *
  * Revision 1.4  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *
