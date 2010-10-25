@@ -670,6 +670,7 @@ TCL_SRC_DIR
 TCL_BIN_DIR
 TCL_PATCH_LEVEL
 TCL_VERSION
+INLINE_ASM
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
@@ -736,6 +737,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
+enable_inline_asm
 enable_tcl
 with_tcl
 with_tk
@@ -1382,6 +1384,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
+  --disable-inline-asm    Disables usage of inline x86 assembly
   --disable-tcl           Disables Tcl if found
   --enable-stubify        Causes the Tcl/Tk libraries to be dynamically loaded.
   --enable-gtk1           Causes the GTK+ frontend to be built with gtk1
@@ -2751,6 +2754,30 @@ fi
 
 
 # Checks for build options
+# ------------- LZMA / XZ -------------------
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if inline assembly should be enabled" >&5
+$as_echo_n "checking if inline assembly should be enabled... " >&6; }
+
+INL=yes
+INLINE_ASM=-DUSE_INLINE_ASM
+# Check whether --enable-inline_asm was given.
+if test "${enable_inline_asm+set}" = set; then :
+  enableval=$enable_inline_asm;
+if test "X$enable_inline_asm" = "Xno" ; then
+	INL=no
+        INLINE_ASM=
+fi
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $INL" >&5
+$as_echo "$INL" >&6; }
+
+
+
+
+# ------------- Tcl -------------------
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if Tcl usage should be disabled" >&5
 $as_echo_n "checking if Tcl usage should be disabled... " >&6; }
@@ -8248,6 +8275,7 @@ ac_config_files="$ac_config_files Makefile doc/Makefile contrib/Makefile contrib
   CFLAGS           : $CFLAGS
   LDFLAGS          : $LDFLAGS
   LIBS             : $LIBS
+  INLINE_ASM       : $INLINE_ASM
 --------------------------------------------
 " >&5
 $as_echo "$as_me:
@@ -8291,6 +8319,7 @@ $as_echo "$as_me:
   CFLAGS           : $CFLAGS
   LDFLAGS          : $LDFLAGS
   LIBS             : $LIBS
+  INLINE_ASM       : $INLINE_ASM
 --------------------------------------------
 " >&6;}
 

@@ -23,6 +23,12 @@
 #include <config.h>
 #include "lxt2_read.h"
 
+#if defined(USE_INLINE_ASM)
+#if defined(__i386__) || defined(__x86_64__)
+#define USE_X86_INLINE_ASM
+#endif
+#endif
+
 /****************************************************************************/
 
 #ifdef _WAVE_BE32
@@ -49,7 +55,7 @@
  * of a big-endian integer.  x86 specific version...
  */
 
-#if defined(__i386__) || defined(__x86_64__)
+#ifdef USE_X86_INLINE_ASM
 
 #define lxt2_rd_get_byte(mm,offset)		((unsigned int)(*((unsigned char *)(mm)+(offset))))
 
@@ -1731,6 +1737,9 @@ return(blk);
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2009/04/27 21:26:34  gtkwave
+ * printf format string warning fixes
+ *
  * Revision 1.3  2008/12/20 05:08:26  gtkwave
  * -Wshadow warning cleanups
  *

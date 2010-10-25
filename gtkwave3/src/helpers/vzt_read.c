@@ -36,6 +36,12 @@
 #include <fcntl.h>
 #endif
 
+#if defined(USE_INLINE_ASM)
+#if defined(__i386__) || defined(__x86_64__)
+#define USE_X86_INLINE_ASM
+#endif
+#endif
+
 /****************************************************************************/
 
 struct vzt_ncycle_autosort
@@ -117,7 +123,7 @@ if(lt->pthreads)
  * of a big-endian integer.  x86 specific version...
  */
 
-#if defined(__i386__) || defined(__x86_64__)
+#ifdef USE_X86_INLINE_ASM
 
 #define vzt_rd_get_byte(mm,offset)		((unsigned int)(*((unsigned char *)(mm)+(offset))))
 
@@ -2380,6 +2386,9 @@ return(rcval);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/12/26 19:44:15  gtkwave
+ * warnings fixes
+ *
  * Revision 1.7  2009/12/24 20:08:15  gtkwave
  * warnings fixes
  *

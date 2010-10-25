@@ -926,8 +926,9 @@
 		Added experimental dynamic SST building code which speeds
 		up initialization time for trees with extremely large number
 		of scopes.
-3.3.14	06oct10	Fixed force_open_tree_node() for dynamic SST trees when
+3.3.14	25oct10	Fixed force_open_tree_node() for dynamic SST trees when
 		unbuilt nodes are encountered during traversal.
 		Allow VCD files where start = end time.
 		Compiler warning fixes.
 		Added preliminary RPC mechanism to gtkwave.
+		Added --disable-inline-asm ./configure flag.
