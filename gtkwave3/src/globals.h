@@ -1133,6 +1133,7 @@ char enable_vert_grid; /* from wavewindow.c 647 */
 char use_big_fonts; /* from wavewindow.c 648 */
 char use_nonprop_fonts; /* from wavewindow.c 649 */
 char do_resize_signals; /* from wavewindow.c 650 */
+int initial_signal_window_width;
 char constant_marker_update; /* from wavewindow.c 651 */
 char use_roundcaps; /* from wavewindow.c 652 */
 char show_base; /* from wavewindow.c 653 */

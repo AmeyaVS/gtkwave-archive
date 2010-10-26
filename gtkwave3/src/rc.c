@@ -315,6 +315,15 @@ GLOBALS->ignore_savefile_size=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_initial_signal_window_width(char *str)
+{
+int val;
+DEBUG(printf("f_initial_signal_window_width(\"%s\")\n",str));
+val=atoi_64(str);
+GLOBALS->initial_signal_window_width=(val<0)?0:val;
+return(0);
+}
+
 int f_initial_window_x(char *str)
 {
 int val;
@@ -754,6 +763,7 @@ static struct rc_entry rcitems[]=
 { "hpane_pack", f_hpane_pack },
 { "ignore_savefile_pos", f_ignore_savefile_pos },
 { "ignore_savefile_size", f_ignore_savefile_size },
+{ "initial_signal_window_width", f_initial_signal_window_width },
 { "initial_window_x", f_initial_window_x },
 { "initial_window_xpos", f_initial_window_xpos },
 { "initial_window_y", f_initial_window_y },
@@ -967,6 +977,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.25  2010/06/13 20:38:00  gtkwave
+ * added strace repeat count
+ *
  * Revision 1.24  2010/05/06 15:57:52  gtkwave
  * enable_fast_exit now is enabled by default
  *

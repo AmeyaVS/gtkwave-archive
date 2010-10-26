@@ -2059,6 +2059,10 @@ if(!GLOBALS->in_button_press_wavewindow_c_1)
 		{
 		int os;
 		os=48;
+		if(GLOBALS->initial_signal_window_width > os)
+			{
+			os = GLOBALS->initial_signal_window_width;
+			}
 
 		if(GLOBALS->signalwindow)
 			{
@@ -2069,21 +2073,32 @@ if(!GLOBALS->in_button_press_wavewindow_c_1)
 	if((GLOBALS->do_resize_signals)&&(GLOBALS->signalwindow))
 		{
 		int oldusize;
-	
+		int rs;
+
+                if(GLOBALS->initial_signal_window_width > GLOBALS->max_signal_name_pixel_width)
+                        {
+                        rs=GLOBALS->initial_signal_window_width;
+                        }
+                        else
+                        {
+                        rs=GLOBALS->max_signal_name_pixel_width;
+                        }
+
+
 		oldusize=GLOBALS->signalwindow->allocation.width;
-		if((oldusize!=GLOBALS->max_signal_name_pixel_width)||(dirty_kick))
+		if((oldusize!=rs)||(dirty_kick))
 			{ /* keep signalwindow from expanding arbitrarily large */
 #ifdef WAVE_USE_GTK2
 			int wx, wy;
 			get_window_size(&wx, &wy);
 
-			if((3*GLOBALS->max_signal_name_pixel_width) < (2*wx))	/* 2/3 width max */
+			if((3*rs) < (2*wx))	/* 2/3 width max */
 #else
-			if((3*GLOBALS->max_signal_name_pixel_width) < (2*(GLOBALS->wavewidth + GLOBALS->signalwindow->allocation.width)))
+			if((3*rs) < (2*(GLOBALS->wavewidth + GLOBALS->signalwindow->allocation.width)))
 #endif
 				{
 				int os;
-				os=GLOBALS->max_signal_name_pixel_width;
+				os=rs;
 				os=(os<48)?48:os;
 				gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow), 
 						os+30, -1);
@@ -2092,6 +2107,11 @@ if(!GLOBALS->in_button_press_wavewindow_c_1)
 				{
 				int os;
 				os=48;
+		                if(GLOBALS->initial_signal_window_width > os)
+                		        {
+		                        os = GLOBALS->initial_signal_window_width;
+		                        }
+
 				gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow), 
 						os+30, -1);
 				}
@@ -4302,6 +4322,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.73  2010/08/02 20:44:35  gtkwave
+ * added gtkwave::cbTracesUpdated
+ *
  * Revision 1.72  2010/06/23 05:45:34  gtkwave
  * warnings fixes
  *

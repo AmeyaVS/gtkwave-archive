@@ -1835,6 +1835,7 @@ if(i < GLOBALS->num_notebook_pages)
         GLOBALS->do_zoom_center = g_old->do_zoom_center;
         GLOBALS->use_roundcaps = g_old->use_roundcaps;
         GLOBALS->do_resize_signals = g_old->do_resize_signals;
+	GLOBALS->initial_signal_window_width = g_old->initial_signal_window_width;
         GLOBALS->use_full_precision = g_old->use_full_precision;
         GLOBALS->show_base = g_old->show_base;
         GLOBALS->display_grid = g_old->display_grid;
@@ -2107,6 +2108,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2010/08/17 01:51:35  gtkwave
+ * added missing global in error message
+ *
  * Revision 1.43  2010/08/15 18:54:49  gtkwave
  * fixes to SST open node to support tcl bug workaround (?)
  *

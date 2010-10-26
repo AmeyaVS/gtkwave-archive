@@ -104,6 +104,7 @@ GLOBALS->constant_marker_update = g_old->constant_marker_update;
 GLOBALS->do_zoom_center = g_old->do_zoom_center;
 GLOBALS->use_roundcaps = g_old->use_roundcaps;
 GLOBALS->do_resize_signals = g_old->do_resize_signals;
+GLOBALS->initial_signal_window_width = g_old->initial_signal_window_width;
 GLOBALS->scale_to_time_dimension = g_old->scale_to_time_dimension;
 GLOBALS->use_full_precision = g_old->use_full_precision;
 GLOBALS->show_base = g_old->show_base;
@@ -520,6 +521,7 @@ if(!GLOBALS)
 	GLOBALS->disable_tooltips = old_g->disable_tooltips;
 	GLOBALS->do_initial_zoom_fit = old_g->do_initial_zoom_fit;
 	GLOBALS->do_resize_signals = old_g->do_resize_signals;
+	GLOBALS->initial_signal_window_width = old_g->initial_signal_window_width;
 	GLOBALS->scale_to_time_dimension = old_g->scale_to_time_dimension;
 	GLOBALS->enable_fast_exit = old_g->enable_fast_exit;
 	GLOBALS->enable_ghost_marker = old_g->enable_ghost_marker;
@@ -1913,11 +1915,31 @@ GLOBALS->signalwindow = create_signalwindow();
 if(GLOBALS->do_resize_signals) 
                 {
                 int os;
-                os=GLOBALS->max_signal_name_pixel_width;
+
+		if(GLOBALS->initial_signal_window_width > GLOBALS->max_signal_name_pixel_width)
+			{
+			os=GLOBALS->initial_signal_window_width;
+			}
+			else
+			{
+	                os=GLOBALS->max_signal_name_pixel_width;
+			}
+
                 os=(os<48)?48:os;
                 gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow),
                                 os+30, -1);
                 }
+else
+	{
+	if(GLOBALS->initial_signal_window_width)
+		{
+		int os;
+
+		os=GLOBALS->initial_signal_window_width;
+		os=(os<48)?48:os;
+		gtk_widget_set_usize(GTK_WIDGET(GLOBALS->signalwindow), os+30, -1);
+		}
+	}
 
 gtk_widget_show(GLOBALS->signalwindow);
 
@@ -2691,6 +2713,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.101  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  * Revision 1.100  2010/09/14 17:11:56  gtkwave
  * added warning for unimplemented flags (for some systems)
  *

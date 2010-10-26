@@ -1,4 +1,4 @@
-.TH "GTKWAVERC" "5" "3.3.8" "Anthony Bybell" "GTKWave Configuration File"
+.TH "GTKWAVERC" "5" "3.3.14" "Anthony Bybell" "GTKWave Configuration File"
 .SH "NAME"
 .LP 
 gtkwaverc \- GTKWave Configuration File
@@ -220,6 +220,9 @@ If nonzero, specifies that the window position attribute is to be ignored during
 .TP
 \fBignore_savefile_size\fR <\fIvalue\fP>
 If nonzero, specifies that the window size attribute is to be ignored during savefile loading and is to be skipped during saving.  Default is that the size attribute is used.
+.TP
+\fBinitial_signal_window_width\fR <\fIvalue\fP>
+Sets the creation width for the signal pane on GUI initialization.  Also sets another potential minimum value for dynamic resizing.
 .TP
 \fBinitial_window_x\fR <\fIvalue\fP>
 Sets the size of the initial width of the wave viewer window. Values less than or equal to zero will set the initial width equal to \-1 which will let GTK determine the minimum size.

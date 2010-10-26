@@ -1149,6 +1149,7 @@ NULL, /* mvlfacs_vzt_c_3 587 */
 0, /* use_big_fonts 594 */
 0, /* use_nonprop_fonts */
 ~0, /* do_resize_signals 595 */
+0, /* initial_signal_window_width */
 0, /* constant_marker_update 596 */
 0, /* use_roundcaps 597 */
 ~0, /* show_base 598 */
@@ -1665,6 +1666,7 @@ void reload_into_new_context(void)
  new_globals->do_hier_compress = GLOBALS->do_hier_compress;
  new_globals->do_initial_zoom_fit = GLOBALS->do_initial_zoom_fit;
  new_globals->do_resize_signals = GLOBALS->do_resize_signals;
+ new_globals->initial_signal_window_width = GLOBALS->initial_signal_window_width;
  new_globals->enable_fast_exit = GLOBALS->enable_fast_exit;
  new_globals->enable_ghost_marker = GLOBALS->enable_ghost_marker;
  new_globals->enable_horiz_grid = GLOBALS->enable_horiz_grid;
@@ -2546,6 +2548,7 @@ switch(type)
 							GLOBALS->do_zoom_center = g_old->do_zoom_center;
 							GLOBALS->use_roundcaps = g_old->use_roundcaps;
 							GLOBALS->do_resize_signals = g_old->do_resize_signals;
+							GLOBALS->initial_signal_window_width = g_old->initial_signal_window_width;
 							GLOBALS->use_full_precision = g_old->use_full_precision;
 							GLOBALS->show_base = g_old->show_base;
 							GLOBALS->display_grid = g_old->display_grid;
