@@ -1603,10 +1603,10 @@ if(xc)
 /*
  * value and time change emission
  */
-void fstWriterEmitValueChange(void *ctx, fstHandle handle, void *val)
+void fstWriterEmitValueChange(void *ctx, fstHandle handle, const void *val)
 {
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
-unsigned char *buf = (unsigned char *)val;
+const unsigned char *buf = (const unsigned char *)val;
 uint32_t offs;
 size_t len;
 
