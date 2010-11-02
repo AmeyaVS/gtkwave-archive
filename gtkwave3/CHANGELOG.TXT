@@ -933,6 +933,8 @@
 		Added preliminary RPC mechanism to gtkwave.
 		Added --disable-inline-asm ./configure flag.
 		Added initial_signal_window_width rc var.
-3.3.15	01nov10	Added check in fstapi.c for corner case where
+3.3.15	02nov10	Added check in fstapi.c for corner case where
 		fstWriterEmitSectionHeader could make a file unusable if
 		.hier is not present.
+		Added more checks in reader to prevent crashes on malformed
+		files.

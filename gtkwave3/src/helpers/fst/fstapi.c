@@ -3412,6 +3412,7 @@ for(;;)
 	printf("\tindx_pos: %d (%d bytes)\n", (int)indx_pos, (int)chain_clen);
 #endif
 	chain_cmem = malloc(chain_clen);
+	if(!chain_cmem) goto block_err;
 	fseeko(xc->f, indx_pos, SEEK_SET);
 	fstFread(chain_cmem, chain_clen, 1, xc->f);
 	
@@ -3424,6 +3425,8 @@ for(;;)
 		chain_table = malloc((vc_maxhandle+1) * sizeof(off_t));
 		chain_table_lengths = malloc((vc_maxhandle+1) * sizeof(uint32_t));
 		}
+
+	if(!chain_table || !chain_table_lengths) goto block_err;
 
 	pnt = chain_cmem;
 	idx = 0;
@@ -3792,6 +3795,7 @@ for(;;)
 			}
 		}
 
+block_err:
 	free(tc_head);
 	free(chain_cmem);
 	free(mem_for_traversal);
