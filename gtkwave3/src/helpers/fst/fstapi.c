@@ -704,27 +704,29 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
 
 	xc->already_in_close = 1; /* never need to zero this out as it is freed at bottom */
 
-	if(xc->section_header_only && xc->section_header_truncpos)
+	if(xc->section_header_only && xc->section_header_truncpos && (xc->vchn_siz <= 1) && (!xc->is_initial_time))
 		{
 		fstFtruncate(fileno(xc->handle), xc->section_header_truncpos);
 		fseeko(xc->handle, xc->section_header_truncpos, SEEK_SET);
 		xc->section_header_only = 0;
 		}
-
-	xc->skip_writing_section_hdr = 1;
-	if(!xc->size_limit_locked)
+		else
 		{
-		if(xc->is_initial_time) /* simulation time never advanced so mock up the changes as time zero ones */
+		xc->skip_writing_section_hdr = 1;
+		if(!xc->size_limit_locked)
 			{
-			fstHandle dupe_idx;
-
-			fstWriterEmitTimeChange(xc, 0); /* emit some time change just to have one */
-			for(dupe_idx = 0; dupe_idx < xc->maxhandle; dupe_idx++) /* now clone the values */
+			if(xc->is_initial_time) /* simulation time never advanced so mock up the changes as time zero ones */
 				{
-				fstWriterEmitValueChange(xc, dupe_idx+1, xc->curval_mem + xc->valpos_mem[4*dupe_idx]);
+				fstHandle dupe_idx;
+	
+				fstWriterEmitTimeChange(xc, 0); /* emit some time change just to have one */
+				for(dupe_idx = 0; dupe_idx < xc->maxhandle; dupe_idx++) /* now clone the values */
+					{
+					fstWriterEmitValueChange(xc, dupe_idx+1, xc->curval_mem + xc->valpos_mem[4*dupe_idx]);
+					}
 				}
+			fstWriterFlushContext(xc);
 			}
-		fstWriterFlushContext(xc);
 		}
 	fstDestroyMmaps(xc, 1);
 
