@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(gtkwave, 3.3.14, bybell@nc.rr.com)
+AC_INIT(gtkwave, 3.3.15, bybell@nc.rr.com)
 AC_CONFIG_SRCDIR([src/vcd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
@@ -128,9 +128,10 @@ GTK1=no
 
 if test "X$GTK1" = "Xyes" ; then
 	AC_MSG_RESULT([gtk1])
+	CPPFLAGS="-D_WAVE_USE_CONFIG_HDR $CPPFLAGS"
 else
 	AC_MSG_RESULT([gtk2])
-	CPPFLAGS="-DWAVE_USE_GTK2 $CPPFLAGS"
+	CPPFLAGS="-D_WAVE_USE_CONFIG_HDR -DWAVE_USE_GTK2 $CPPFLAGS"
 fi
 
 

@@ -27,6 +27,10 @@
 extern "C" {
 #endif
 
+#ifdef _WAVE_USE_CONFIG_HDR
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
