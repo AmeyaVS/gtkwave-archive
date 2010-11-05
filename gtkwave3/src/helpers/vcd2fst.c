@@ -91,6 +91,9 @@ fstHandle returnedhandle;
 JRB node;
 uint64_t prev_tim = 0;
 char bin_fixbuff[32769];
+int hash_kill = 0;
+unsigned int hash_max = 0;
+int *node_len_array = NULL;
 
 if(!strcmp("-", vname))
 	{
@@ -259,6 +262,20 @@ while(!feof(f))
 
 		st = strtok(NULL, " \t"); /* vcdid */
 		hash = vcdid_hash(st);
+
+		if(hash == (hash_max+1))
+			{
+			hash_max = hash;
+			}
+		else
+		if((hash>0)&&(hash<=hash_max))
+			{
+			/* general case with aliases */
+			}
+		else
+			{
+			hash_kill = 1;
+			}
 
 		nam = strtok(NULL, " \t"); /* name */
 		st = strtok(NULL, " \t"); /* $end */
@@ -484,6 +501,29 @@ while(!feof(f))
 		}
 	}
 
+if((!hash_kill) && (vcd_ids))
+	{
+	unsigned int hash;
+
+	node_len_array = calloc(hash_max + 1, sizeof(int));
+
+	for(hash=1;hash<=hash_max;hash++)
+		{
+		node = jrb_find_int(vcd_ids, hash);
+		if(node)
+			{
+			node_len_array[hash] = node->val2.i;
+			}
+			else
+			{
+			node_len_array[hash] = 1; /* should never happen */
+			}
+		}
+
+	jrb_free_tree(vcd_ids);
+	vcd_ids = NULL;
+	}
+
 while(!feof(f))
 	{
 	unsigned int hash;
@@ -509,13 +549,20 @@ while(!feof(f))
 		case 'x':
 		case 'z':
 			hash = vcdid_hash(buf+1);
-			node = jrb_find_int(vcd_ids, hash);
-			if(node)
+			if(!hash_kill)
 				{
-				fstWriterEmitValueChange(ctx, node->val.i, buf);
+				fstWriterEmitValueChange(ctx, hash, buf);
 				}
 				else
 				{
+				node = jrb_find_int(vcd_ids, hash);
+				if(node)
+					{
+					fstWriterEmitValueChange(ctx, node->val.i, buf);
+					}
+					else
+					{
+					}
 				}
 			break;
 
@@ -523,25 +570,44 @@ while(!feof(f))
 			sp = strchr(buf, ' ');
 			*sp = 0;
 			hash = vcdid_hash(sp+1);
-			node = jrb_find_int(vcd_ids, hash);
-			if(node)
+			if(!hash_kill)
 				{
 				int bin_len = strlen(buf+1);
-				int node_len = node->val2.i;
+				int node_len = node_len_array[hash];
 				if(bin_len == node_len)
 					{
-					fstWriterEmitValueChange(ctx, node->val.i, buf+1);
+					fstWriterEmitValueChange(ctx, hash, buf+1);
 					}
 					else
 					{
 					int delta = node_len - bin_len;
 					memset(bin_fixbuff, buf[1] != '1' ? buf[1] : '0', delta);
 					memcpy(bin_fixbuff + delta, buf+1, bin_len);
-					fstWriterEmitValueChange(ctx, node->val.i, bin_fixbuff);
+					fstWriterEmitValueChange(ctx, hash, bin_fixbuff);
 					}
 				}
 				else
 				{
+				node = jrb_find_int(vcd_ids, hash);
+				if(node)
+					{
+					int bin_len = strlen(buf+1);
+					int node_len = node->val2.i;
+					if(bin_len == node_len)
+						{
+						fstWriterEmitValueChange(ctx, node->val.i, buf+1);
+						}
+						else
+						{
+						int delta = node_len - bin_len;
+						memset(bin_fixbuff, buf[1] != '1' ? buf[1] : '0', delta);
+						memcpy(bin_fixbuff + delta, buf+1, bin_len);
+						fstWriterEmitValueChange(ctx, node->val.i, bin_fixbuff);
+						}
+					}
+					else
+					{
+					}
 				}
 			break;
 
@@ -569,13 +635,20 @@ while(!feof(f))
 			sp = strchr(sp+1, ' ');
 			*sp = 0;
 			hash = vcdid_hash(sp+1);
-			node = jrb_find_int(vcd_ids, hash);
-			if(node)
+			if(!hash_kill)
 				{
-				fstWriterEmitValueChange(ctx, node->val.i, bin_fixbuff);
+				fstWriterEmitValueChange(ctx, hash, bin_fixbuff);
 				}
 				else
 				{
+				node = jrb_find_int(vcd_ids, hash);
+				if(node)
+					{
+					fstWriterEmitValueChange(ctx, node->val.i, bin_fixbuff);
+					}
+					else
+					{
+					}
 				}
 			}
 			break;
@@ -583,14 +656,22 @@ while(!feof(f))
 		case 'r':
 			sp = strchr(buf, ' ');
 			hash = vcdid_hash(sp+1);
-			node = jrb_find_int(vcd_ids, hash);
-			if(node)
+			if(!hash_kill)
 				{
 		                sscanf(buf+1,"%lg",&doub); 
-				fstWriterEmitValueChange(ctx, node->val.i, &doub);
+				fstWriterEmitValueChange(ctx, hash, &doub);
 				}
 				else
 				{
+				node = jrb_find_int(vcd_ids, hash);
+				if(node)
+					{
+			                sscanf(buf+1,"%lg",&doub); 
+					fstWriterEmitValueChange(ctx, node->val.i, &doub);
+					}
+					else
+					{
+					}
 				}
 			break;
 
@@ -628,10 +709,15 @@ while(!feof(f))
 
 fstWriterClose(ctx);
 
-if(wbuf)
+if(vcd_ids)
 	{
-	free(wbuf);
+	jrb_free_tree(vcd_ids);
+	vcd_ids = NULL;
 	}
+
+free(wbuf); wbuf = NULL;
+free(node_len_array); node_len_array = NULL;
+
 if(f != stdin) fclose(f);
 
 exit(0);
@@ -773,6 +859,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.12  2010/07/16 16:12:38  gtkwave
  * pedantic warning fixes
  *
