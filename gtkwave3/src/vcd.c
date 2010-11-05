@@ -2522,8 +2522,8 @@ if (((flen>2)&&(!strcmp(fname+flen-3,".gz")))||
 		if(GLOBALS->vcd_fsiz_vcd_c_1 > (GLOBALS->vcd_warning_filesize * (1024 * 1024)))
 			{
 			fprintf(stderr, "Warning! File size is %d MB.  This might fail to load.\n"
-					"Consider converting it to lxt, lxt2, or vzt database formats instead.  (See\n"
-					"the vcd2lxt(1), vcd2lxt2(1), and vzt2vzt(1) manpages for more information.)\n"
+                                        "Consider converting it to the fst database format instead.  (See the\n"
+                                        "vcd2fst(1) manpage for more information.)\n"
 					"To disable this warning, set rc variable vcd_warning_filesize to zero.\n"
 					"Alternatively, use the -o, --optimize command line option to convert to LXT2.\n\n",
 						(int)(GLOBALS->vcd_fsiz_vcd_c_1/(1024*1024)));
@@ -2620,6 +2620,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/09/29 00:24:41  gtkwave
+ * allow range = 0 in VCD files for min and max times
+ *
  * Revision 1.34  2010/06/02 03:51:30  gtkwave
  * don't autocoalesce escape identifiers
  *
