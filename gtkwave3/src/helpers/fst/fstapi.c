@@ -20,6 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef _WAVE_USE_CONFIG_HDR
+#include <config.h>
+#endif
+
 #include "fstapi.h"
 #include "fastlz.h"
 

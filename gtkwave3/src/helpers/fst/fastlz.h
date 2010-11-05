@@ -27,10 +27,6 @@
 #ifndef FASTLZ_H
 #define FASTLZ_H
 
-#ifdef _WAVE_USE_CONFIG_HDR
-#include <config.h>
-#endif
-
 #include <inttypes.h>
 
 #define flzuint8 uint8_t
