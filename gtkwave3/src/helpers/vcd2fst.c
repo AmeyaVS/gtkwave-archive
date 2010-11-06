@@ -59,18 +59,23 @@ JRB vcd_ids = NULL;
 
 static unsigned int vcdid_hash(char *s)
 {
+char *s2 = s;
 unsigned int val=0;
 int i;
-int len = strlen(s);
+int len;
 
-s+=(len-1);
+while(*s2)
+	{
+	*s2 -=32;
+	s2++;
+	}
+
+len = s2 - s;
 
 for(i=0;i<len;i++)
         {
-        val *= 94;                              /* was 94 but XL uses '!' as right hand side chars which act as leading zeros */
-        val += (((unsigned char)*s) - 32);
-
-        s--;
+	val *= 94;
+        val += (unsigned char)*(--s2);
         }
 
 return(val);
@@ -537,10 +542,17 @@ while(!feof(f))
 		{
 		break;
 		}
-	nl = strchr(buf, '\n');
-	if(nl) *nl = 0;
-	nl = strchr(buf, '\r');
-	if(nl) *nl = 0;
+
+	nl = buf;
+	while(*nl)
+		{
+		if((*nl == '\n') || (*nl == '\r'))
+			{
+			*nl = 0;
+			break;
+			}
+		nl++;
+		}
 
 	switch(buf[0])
 		{
@@ -859,6 +871,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/11/05 20:46:23  gtkwave
+ * detect and use direct mapped NC-style VCD IDs
+ *
  * Revision 1.13  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *
