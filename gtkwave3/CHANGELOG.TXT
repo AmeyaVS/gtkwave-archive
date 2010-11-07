@@ -933,7 +933,7 @@
 		Added preliminary RPC mechanism to gtkwave.
 		Added --disable-inline-asm ./configure flag.
 		Added initial_signal_window_width rc var.
-3.3.15	05nov10	Added check in fstapi.c for corner case where
+3.3.15	06nov10	Added check in fstapi.c for corner case where
 		fstWriterEmitSectionHeader could make a file unusable if.hier
 		is not present.
 		Added more checks in fstapi reader to prevent crashes on 
@@ -941,4 +941,5 @@
 		Add config.h #include to the fstapi.c code.
 		Add detection in vcd2fst for Verilog XL-style VCD identifiers
 		to speed up reading VCD files from those simulators.
-
+		Minor speedup in fst writer by ensuring checkpoint is not 
+		written to for every fstWriterEmitValueChange call.

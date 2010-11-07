@@ -1061,6 +1061,7 @@ for(i=0;i<xc->maxhandle;i++)
 		{
 		uint32_t offs = vm4ip[2];
 		uint32_t next_offs;
+		uint32_t chkpt_offs = vm4ip[0] + 1;
 		int wrlen;
 
 		vm4ip[2] = fpos;
@@ -1078,6 +1079,12 @@ for(i=0;i<xc->maxhandle;i++)
                                 time_delta = fstGetVarint32(vchg_mem + offs, &wrlen);
                                 val = vchg_mem[offs+wrlen];
 				offs = next_offs;
+
+				if(chkpt_offs)
+					{
+					xc->curval_mem[chkpt_offs - 1] = val;
+					chkpt_offs = 0;
+					}
 
                                 switch(val)
                                         {
@@ -1113,6 +1120,12 @@ for(i=0;i<xc->maxhandle;i++)
 
 				pnt = vchg_mem+offs+wrlen;
 				offs = next_offs;
+
+				if(chkpt_offs)
+					{
+					memcpy(xc->curval_mem + chkpt_offs - 1, pnt, vm4ip[1]);
+					chkpt_offs = 0;
+					}
 
 				for(idx=0;idx<vm4ip[1];idx++)
 					{
@@ -1629,9 +1642,8 @@ if((xc) && (handle <= xc->maxhandle))
 
 	handle--; /* move starting at 1 index to starting at 0 */
 	vm4ip = &(xc->valpos_mem[4*handle]);
-	offs = vm4ip[0];
+
 	len  = vm4ip[1];
-	memcpy(xc->curval_mem + offs, buf, len);
 
 	if(!xc->is_initial_time)
 		{
@@ -1646,6 +1658,11 @@ if((xc) && (handle <= xc->maxhandle))
 #endif
 		vm4ip[3] = xc->tchn_idx;
 		vm4ip[2] = fpos;
+		}
+		else
+		{
+		offs = vm4ip[0];
+		memcpy(xc->curval_mem + offs, buf, len);
 		}
 	}
 }
