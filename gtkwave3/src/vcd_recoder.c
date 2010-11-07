@@ -2691,7 +2691,7 @@ if (((flen>2)&&(!strcmp(fname+flen-3,".gz")))||
 					"Consider converting it to the fst database format instead.  (See the\n"
 					"vcd2fst(1) manpage for more information.)\n"
 					"To disable this warning, set rc variable vcd_warning_filesize to zero.\n"
-					"Alternatively, use the -o, --optimize command line option to convert to LXT2\n"
+					"Alternatively, use the -o, --optimize command line option to convert to FST\n"
 					"or the -g, --giga command line option to use dynamically compressed memory.\n\n",
 						(int)(GLOBALS->vcd_fsiz_vcd_recoder_c_2/(1024*1024)));
 				}
@@ -3236,6 +3236,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2010/09/29 00:24:41  gtkwave
+ * allow range = 0 in VCD files for min and max times
+ *
  * Revision 1.44  2010/09/24 15:44:41  gtkwave
  * changed large file size message to redirect to fst usage
  *

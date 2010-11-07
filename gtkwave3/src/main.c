@@ -212,7 +212,7 @@ static void print_help(char *nam)
 #endif
 
 #if !defined _MSC_VER && !defined __MINGW32__
-#define VCD_GETOPT       "  -o, --optimize             optimize VCD to LXT2\n"
+#define VCD_GETOPT       "  -o, --optimize             optimize VCD to FST\n"
 #else
 #define VCD_GETOPT
 #endif
@@ -2644,15 +2644,15 @@ if(GLOBALS->stems_type != WAVE_ANNO_NONE)
 void optimize_vcd_file(void) {
   if(!strcmp("-vcd", GLOBALS->unoptimized_vcd_file_name)) {        
 #ifdef __CYGWIN__
-    char *buf = strdup_2("vcd2lxt2 -- - vcd.lx2");
+    char *buf = strdup_2("vcd2fst -- - vcd.fst");
     system(buf);
     free_2(buf);
-    GLOBALS->loaded_file_name = strdup_2("vcd.lx2");
+    GLOBALS->loaded_file_name = strdup_2("vcd.fst");
     GLOBALS->is_optimized_stdin_vcd = 1;
 #else
     pid_t pid;
     char *buf = malloc_2(strlen("vcd") + 4 + 1);
-    sprintf(buf, "%s.lx2", "vcd");
+    sprintf(buf, "%s.fst", "vcd");
     pid = fork();
     if(((int)pid) < 0) {
       /* can't do anything about this */
@@ -2668,7 +2668,7 @@ void optimize_vcd_file(void) {
 	}					
       }
       else {
-        execlp("vcd2lxt2", "vcd2lxt2", "--", "-", buf, NULL);
+        execlp("vcd2fst", "vcd2fst", "--", "-", buf, NULL);
 	exit(255);
       }
     }
@@ -2677,16 +2677,16 @@ void optimize_vcd_file(void) {
   else {
 #ifdef __CYGWIN__
     char *buf = malloc_2(9 + (strlen(GLOBALS->unoptimized_vcd_file_name) + 1) + (strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1));
-    sprintf(buf, "vcd2lxt2 %s %s.lx2", GLOBALS->unoptimized_vcd_file_name, GLOBALS->unoptimized_vcd_file_name);
+    sprintf(buf, "vcd2fst %s %s.fst", GLOBALS->unoptimized_vcd_file_name, GLOBALS->unoptimized_vcd_file_name);
     system(buf);
     free_2(buf);
     buf = malloc_2(strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1);
-    sprintf(buf, "%s.lx2", GLOBALS->unoptimized_vcd_file_name);
+    sprintf(buf, "%s.fst", GLOBALS->unoptimized_vcd_file_name);
     GLOBALS->loaded_file_name = buf;
 #else
     pid_t pid;
     char *buf = malloc_2(strlen(GLOBALS->unoptimized_vcd_file_name) + 4 + 1);
-    sprintf(buf, "%s.lx2", GLOBALS->unoptimized_vcd_file_name);
+    sprintf(buf, "%s.fst", GLOBALS->unoptimized_vcd_file_name);
     pid = fork(); 
     if(((int)pid) < 0) {
       /* can't do anything about this */
@@ -2701,7 +2701,7 @@ void optimize_vcd_file(void) {
         }					
       }
       else {
-        execlp("vcd2lxt2", "vcd2lxt2", GLOBALS->unoptimized_vcd_file_name, buf, NULL);
+        execlp("vcd2fst", "vcd2fst", GLOBALS->unoptimized_vcd_file_name, buf, NULL);
 	exit(255);
       }
     }
@@ -2713,6 +2713,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.102  2010/10/26 17:37:35  gtkwave
+ * added initial_signal_window_width rc variable
+ *
  * Revision 1.101  2010/10/06 20:15:51  gtkwave
  * preliminary version of RPC mechanism
  *
