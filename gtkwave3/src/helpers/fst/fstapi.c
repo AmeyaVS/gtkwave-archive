@@ -37,7 +37,6 @@
 #define FST_HDR_DATE_SIZE 		(128)
 #define FST_GZIO_LEN			(32768)
 
-
 #if defined(__i386__) || defined(__x86_64__) || defined(_AIX)
 #define FST_DO_MISALIGNED_OPS
 #endif
@@ -219,6 +218,19 @@ for(;;)
 	} 
 
 return(rc);
+}
+
+
+static uint32_t fstGetVarint32Length(unsigned char *mem)
+{
+unsigned char *mem_orig = mem;
+
+while(*mem & 0x80)
+	{
+	mem++;
+	}
+
+return(mem - mem_orig + 1);
 }
 
 
@@ -1061,7 +1073,6 @@ for(i=0;i<xc->maxhandle;i++)
 		{
 		uint32_t offs = vm4ip[2];
 		uint32_t next_offs;
-		uint32_t chkpt_offs = vm4ip[0] + 1;
 		int wrlen;
 
 		vm4ip[2] = fpos;
@@ -1069,6 +1080,9 @@ for(i=0;i<xc->maxhandle;i++)
 		scratchpnt = scratchpad + xc->vchn_siz;		/* build this buffer backwards */
 		if(vm4ip[1] == 1)
 			{
+			wrlen = fstGetVarint32Length(vchg_mem + offs + 4); /* used to advance and determine wrlen */
+			xc->curval_mem[vm4ip[0]] = vchg_mem[offs + 4 + wrlen]; /* checkpoint variable */
+
                         while(offs)
                                 {
                                 unsigned char val;
@@ -1079,12 +1093,6 @@ for(i=0;i<xc->maxhandle;i++)
                                 time_delta = fstGetVarint32(vchg_mem + offs, &wrlen);
                                 val = vchg_mem[offs+wrlen];
 				offs = next_offs;
-
-				if(chkpt_offs)
-					{
-					xc->curval_mem[chkpt_offs - 1] = val;
-					chkpt_offs = 0;
-					}
 
                                 switch(val)
                                         {
@@ -1106,6 +1114,9 @@ for(i=0;i<xc->maxhandle;i++)
 			}
 			else
 			{
+			wrlen = fstGetVarint32Length(vchg_mem + offs + 4); /* used to advance and determine wrlen */
+			memcpy(xc->curval_mem + vm4ip[0], vchg_mem + offs + 4 + wrlen, vm4ip[1]); /* checkpoint variable */
+
 			while(offs)
 				{
 				int idx;
@@ -1120,12 +1131,6 @@ for(i=0;i<xc->maxhandle;i++)
 
 				pnt = vchg_mem+offs+wrlen;
 				offs = next_offs;
-
-				if(chkpt_offs)
-					{
-					memcpy(xc->curval_mem + chkpt_offs - 1, pnt, vm4ip[1]);
-					chkpt_offs = 0;
-					}
 
 				for(idx=0;idx<vm4ip[1];idx++)
 					{
