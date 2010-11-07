@@ -29,7 +29,7 @@
 
 #undef  FST_DEBUG
 
-#define FST_BREAK_SIZE 			(32 * 1024 * 1024)
+#define FST_BREAK_SIZE 			(128 * 1024 * 1024)
 #define FST_WRITER_STR 			"fstWriter"
 #define FST_ID_NAM_SIZ 			(512)
 #define FST_DOUBLE_ENDTEST 		(2.7182818284590452354)
