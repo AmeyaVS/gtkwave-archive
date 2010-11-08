@@ -584,8 +584,9 @@ while(!feof(f))
 			hash = vcdid_hash(sp+1);
 			if(!hash_kill)
 				{
-				int bin_len = strlen(buf+1);
+				int bin_len = sp - (buf + 1); /* strlen(buf+1) */
 				int node_len = node_len_array[hash];
+
 				if(bin_len == node_len)
 					{
 					fstWriterEmitValueChange(ctx, hash, buf+1);
@@ -603,7 +604,7 @@ while(!feof(f))
 				node = jrb_find_int(vcd_ids, hash);
 				if(node)
 					{
-					int bin_len = strlen(buf+1);
+					int bin_len = sp - (buf + 1); /* strlen(buf+1) */
 					int node_len = node->val2.i;
 					if(bin_len == node_len)
 						{
@@ -871,6 +872,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/11/06 03:24:07  gtkwave
+ * applied calculation optimizations
+ *
  * Revision 1.14  2010/11/05 20:46:23  gtkwave
  * detect and use direct mapped NC-style VCD IDs
  *
