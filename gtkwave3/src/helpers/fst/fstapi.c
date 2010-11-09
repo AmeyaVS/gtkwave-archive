@@ -412,14 +412,18 @@ return(len);
 }
 
 #ifndef FST_USE_FWRITE_COMBINING
-static int fstWriterUint32WithVarint(FILE *handle, uint32_t *u, uint64_t v)
+static int fstWriterUint32WithVarint32(FILE *handle, uint32_t *u, uint32_t v)
 {
-uint64_t nxt;
-unsigned char buf[10 + sizeof(uint32_t)];
+uint32_t nxt;
+unsigned char buf[5 + sizeof(uint32_t)];
 unsigned char *pnt = buf + sizeof(uint32_t);
 int len;
 
+#ifdef FST_DO_MISALIGNED_OPS
+(*(uint32_t *)(buf)) = (*(uint32_t *)(u));
+#else
 memcpy(buf, u, sizeof(uint32_t));
+#endif
 
 while((nxt = v>>7))
         {
@@ -433,14 +437,18 @@ fstFwrite(buf, len, 1, handle);
 return(len);
 }
 #else
-static int fstWriterUint32WithVarint(FILE *handle, uint32_t *u, uint64_t v, const void *dbuf, size_t siz)
+static int fstWriterUint32WithVarint32(FILE *handle, uint32_t *u, uint32_t v, const void *dbuf, int siz)
 {
-uint64_t nxt;
-unsigned char buf[10 + sizeof(uint32_t) + siz]; /* gcc extension ok for cygwin */
+uint32_t nxt;
+unsigned char buf[5 + sizeof(uint32_t) + siz]; /* gcc extension ok for cygwin */
 unsigned char *pnt = buf + sizeof(uint32_t);
 int len;
 
+#ifdef FST_DO_MISALIGNED_OPS
+(*(uint32_t *)(buf)) = (*(uint32_t *)(u));
+#else
 memcpy(buf, u, sizeof(uint32_t));
+#endif
 
 while((nxt = v>>7))
         {
@@ -1632,7 +1640,7 @@ void fstWriterEmitValueChange(void *ctx, fstHandle handle, const void *val)
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 const unsigned char *buf = (const unsigned char *)val;
 uint32_t offs;
-size_t len;
+int len;
 
 if((xc) && (handle <= xc->maxhandle))
 	{
@@ -1653,13 +1661,13 @@ if((xc) && (handle <= xc->maxhandle))
 	if(!xc->is_initial_time)
 		{
 		fpos = xc->vchn_siz;
-		/* cygwin runs faster if these writes are combined, so the new fstWriterUint32WithVarint function, but should help with regular */
+		/* cygwin runs faster if these writes are combined, so the new fstWriterUint32WithVarint32 function, but should help with regular */
 #ifndef FST_USE_FWRITE_COMBINING
-                xc->vchn_siz += fstWriterUint32WithVarint(xc->vchn_handle, &vm4ip[2], xc->tchn_idx - vm4ip[3]); /* prev_chg is vm4ip[2] */
+                xc->vchn_siz += fstWriterUint32WithVarint32(xc->vchn_handle, &vm4ip[2], xc->tchn_idx - vm4ip[3]); /* prev_chg is vm4ip[2] */
                 fstFwrite(buf, len, 1, xc->vchn_handle);
                 xc->vchn_siz += len;
 #else
-		xc->vchn_siz += fstWriterUint32WithVarint(xc->vchn_handle, &vm4ip[2], xc->tchn_idx - vm4ip[3], buf, len); /* do one fwrite op only */
+		xc->vchn_siz += fstWriterUint32WithVarint32(xc->vchn_handle, &vm4ip[2], xc->tchn_idx - vm4ip[3], buf, len); /* do one fwrite op only */
 #endif
 		vm4ip[3] = xc->tchn_idx;
 		vm4ip[2] = fpos;
