@@ -2342,11 +2342,11 @@ fi;
 if test "X$GTK1" = "Xyes" ; then
 	echo "$as_me:$LINENO: result: gtk1" >&5
 echo "${ECHO_T}gtk1" >&6
-	CPPFLAGS="-D_WAVE_USE_CONFIG_HDR $CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS"
 else
 	echo "$as_me:$LINENO: result: gtk2" >&5
 echo "${ECHO_T}gtk2" >&6
-	CPPFLAGS="-D_WAVE_USE_CONFIG_HDR -DWAVE_USE_GTK2 $CPPFLAGS"
+	CPPFLAGS="-DWAVE_USE_GTK2 $CPPFLAGS"
 fi
 
 
