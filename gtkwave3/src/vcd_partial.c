@@ -2159,11 +2159,10 @@ while(v)
 Pvoid_t  PJArray = GLOBALS->sym_judy;
 PPvoid_t PPValue;
 char *Index = calloc_2(1, longest);
-JError_t JError;
                                         
-for (PPValue  = JudySLFirst (PJArray, (uint8_t *)Index, &JError);
+for (PPValue  = JudySLFirst (PJArray, (uint8_t *)Index, PJE0);
          PPValue != (PPvoid_t) NULL;
-         PPValue  = JudySLNext  (PJArray, (uint8_t *)Index, &JError))
+         PPValue  = JudySLNext  (PJArray, (uint8_t *)Index, PJE0))
     {                   
         struct symbol *s = *(struct symbol **)PPValue;  
         s->name = strdup_2(Index);
@@ -2533,6 +2532,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2010/06/02 03:51:30  gtkwave
+ * don't autocoalesce escape identifiers
+ *
  * Revision 1.35  2010/06/02 03:23:04  gtkwave
  * disable autocoalesce if Icarus Verilog is detected
  *

@@ -2049,16 +2049,15 @@ void reload_into_new_context(void)
 				Pvoid_t  PJArray = (Pvoid_t)setjmp_globals->alloc2_chain;
 				int rcValue;
 				Word_t Index;
-				JError_t JError;
 
 				Index = 0;
-				for (rcValue = Judy1First(PJArray, &Index, &JError); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, &JError))
+				for (rcValue = Judy1First(PJArray, &Index, PJE0); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, PJE0))
 					{
-				        Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, Index, &JError);
+				        Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, Index, PJE0);
 					}
 
 				GLOBALS->outstanding += setjmp_globals->outstanding;
-				Judy1FreeArray(&PJArray, &JError);
+				Judy1FreeArray(&PJArray, PJE0);
 				}
 #else
 				{

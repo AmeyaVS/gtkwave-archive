@@ -42,23 +42,20 @@
 
 char get_s_selected(struct symbol *s)
 {
-JError_t JError;
-int rc = Judy1Test(GLOBALS->s_selected, (Word_t)s, &JError);
+int rc = Judy1Test(GLOBALS->s_selected, (Word_t)s, PJE0);
 
 return(rc);
 }
 
 char set_s_selected(struct symbol *s, char value)
 {
-JError_t JError;
-
 if(value)
 	{
-	Judy1Set ((Pvoid_t)&GLOBALS->s_selected, (Word_t)s, &JError);
+	Judy1Set ((Pvoid_t)&GLOBALS->s_selected, (Word_t)s, PJE0);
 	}
 	else
 	{
-	Judy1Unset ((Pvoid_t)&GLOBALS->s_selected, (Word_t)s, &JError);
+	Judy1Unset ((Pvoid_t)&GLOBALS->s_selected, (Word_t)s, PJE0);
 	}
 
 return(value);
@@ -66,8 +63,7 @@ return(value);
 
 void destroy_s_selected(void)
 {
-JError_t JError;
-Judy1FreeArray(&GLOBALS->s_selected, &JError);
+Judy1FreeArray(&GLOBALS->s_selected, PJE0);
 
 GLOBALS->s_selected = NULL;
 }
@@ -110,9 +106,8 @@ void sym_hash_destroy(void *g)
 struct Global *gg = (struct Global *)g;
 
 #ifdef _WAVE_HAVE_JUDY
-JError_t JError;
 
-JudySLFreeArray(&gg->sym_judy, &JError);
+JudySLFreeArray(&gg->sym_judy, PJE0);
 gg->sym_judy = NULL;
 
 #else
@@ -166,8 +161,7 @@ struct symbol *s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 
 #ifdef _WAVE_HAVE_JUDY
 
-JError_t JError;
-PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, (uint8_t *)name, &JError);
+PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, (uint8_t *)name, PJE0);
 *((struct symbol **)PPValue) = s;
 
 #else
@@ -186,8 +180,7 @@ struct symbol *s=(struct symbol *)calloc_2(1,sizeof(struct symbol));
 
 #ifdef _WAVE_HAVE_JUDY
 
-JError_t JError;
-PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, (uint8_t *)name, &JError);
+PPvoid_t PPValue = JudySLIns(&GLOBALS->sym_judy, (uint8_t *)name, PJE0);
 *((struct symbol **)PPValue) = s;
 
 s->name = name; /* redundant for now */
@@ -216,8 +209,7 @@ struct symbol *temp;
 if(!GLOBALS->facs_are_sorted)
 	{
 #ifdef _WAVE_HAVE_JUDY
-	JError_t JError;
-	PPvoid_t PPValue = JudySLGet(GLOBALS->sym_judy, (uint8_t *)s, &JError);
+	PPvoid_t PPValue = JudySLGet(GLOBALS->sym_judy, (uint8_t *)s, PJE0);
 
 	if(PPValue)
 		{
@@ -332,6 +324,9 @@ if(!GLOBALS->facs_are_sorted)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2010/03/18 17:12:37  gtkwave
+ * pedantic warning cleanups
+ *
  * Revision 1.11  2010/03/17 13:46:56  gtkwave
  * cast long to pointer to avoid warnings in Judy1Set
  *

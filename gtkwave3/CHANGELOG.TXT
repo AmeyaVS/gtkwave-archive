@@ -947,3 +947,4 @@
 		default file format use vcd2lxt2 directly if old behavior
 		(e.g., converting flat signal names to hierarchies) is
 		desired.
+3.3.16	19nov10	Remove unused JError variables and replace with PJE0 macro.

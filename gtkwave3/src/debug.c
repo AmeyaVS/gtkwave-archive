@@ -31,7 +31,6 @@ void free_outstanding(void)
 Pvoid_t  PJArray = (Pvoid_t)GLOBALS->alloc2_chain;
 int rcValue;
 Word_t Index;
-JError_t JError;
 #ifdef DEBUG_PRINTF
 int ctr = 0;
 
@@ -46,14 +45,14 @@ if(GLOBALS->s_selected)
 	}
 
 Index = 0;
-for (rcValue = Judy1First(PJArray, &Index, &JError); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, &JError))
+for (rcValue = Judy1First(PJArray, &Index, PJE0); rcValue != 0; rcValue = Judy1Next(PJArray, &Index, PJE0))
 	{
 	free((void *)Index);
 #ifdef DEBUG_PRINTF
 	ctr++;
 #endif
 	}
-Judy1FreeArray(&PJArray, &JError);
+Judy1FreeArray(&PJArray, PJE0);
 
 GLOBALS->alloc2_chain = NULL;
 GLOBALS->outstanding = 0;
@@ -109,9 +108,7 @@ void *ret;
 ret=malloc(size);
 if(ret)  
         {
-	JError_t JError;
-
-	Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError);
+	Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, PJE0);
 
         GLOBALS->outstanding++;
         
@@ -177,9 +174,8 @@ if(ret)
         {
 	if(ptr != ret)
 		{
-		JError_t JError1, JError2;
-		Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError1);
-		Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, &JError2);
+		Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, PJE0);
+		Judy1Set ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ret, PJE0);
 		}
 
         return(ret);
@@ -260,8 +256,7 @@ void *ret;
 ret=calloc(nmemb, size);
 if(ret)
 	{
-	JError_t JError;
-	Judy1Set ((Pvoid_t)&g->alloc2_chain, (Word_t)ret, &JError);
+	Judy1Set ((Pvoid_t)&g->alloc2_chain, (Word_t)ret, PJE0);
 
 	g->outstanding++;
 
@@ -337,8 +332,7 @@ void free_2(void *ptr
 {
 if(ptr)
 	{
-	JError_t JError;
-	int delstat = Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, &JError);
+	int delstat = Judy1Unset ((Pvoid_t)&GLOBALS->alloc2_chain, (Word_t)ptr, PJE0);
 
 	if(delstat)
 		{
@@ -578,6 +572,9 @@ return(tmpspace);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/09/16 05:05:16  gtkwave
+ * dummy up sparse vs regular array handling
+ *
  * Revision 1.16  2010/09/16 04:08:55  gtkwave
  * add back in memory debugging printfs and defines
  *
