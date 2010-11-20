@@ -948,3 +948,5 @@
 		(e.g., converting flat signal names to hierarchies) is
 		desired.
 3.3.16	19nov10	Remove unused JError variables and replace with PJE0 macro.
+		Added experimental dynamic alias detection in fst writer if
+		Judy arrays are detected.  (Judy not required for reading.)

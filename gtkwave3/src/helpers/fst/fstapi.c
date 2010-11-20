@@ -25,6 +25,10 @@
 #include "fstapi.h"
 #include "fastlz.h"
 
+#ifdef _WAVE_HAVE_JUDY
+#include <Judy.h>
+#endif
+
 #undef  FST_DEBUG
 
 #define FST_BREAK_SIZE 			(128 * 1024 * 1024)
@@ -1028,6 +1032,10 @@ unsigned char *packmem;
 unsigned int packmemlen;
 uint32_t *vm4ip;
 
+#ifdef _WAVE_HAVE_JUDY
+Pvoid_t PJHSArray = (Pvoid_t) NULL;
+#endif
+
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 
 if((!xc)||(xc->vchg_siz <= 1)||(xc->already_in_flush)) return;
@@ -1177,15 +1185,43 @@ for(i=0;i<xc->maxhandle;i++)
 		        	rc = compress2(dmem, &destlen, scratchpnt, wrlen, 4);
 				if(rc == Z_OK)
 					{
-					fpos += fstWriterVarint(f, wrlen);
-					fpos += destlen;
-					fstFwrite(dmem, destlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+					PPvoid_t pv = JudyHSIns(&PJHSArray, dmem, destlen, NULL);
+					if(*pv)
+						{
+						uint32_t pvi = (long)(*pv);
+						vm4ip[2] = -pvi;
+						}
+						else
+						{
+						*pv = (void *)(long)(i+1);
+#endif
+						fpos += fstWriterVarint(f, wrlen);
+						fpos += destlen;
+						fstFwrite(dmem, destlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+						}
+#endif
 					}
 					else
 					{
-					fpos += fstWriterVarint(f, 0);
-					fpos += wrlen;
-					fstFwrite(scratchpnt, wrlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+					PPvoid_t pv = JudyHSIns(&PJHSArray, scratchpnt, wrlen, NULL);
+					if(*pv)
+						{
+						uint32_t pvi = (long)(*pv);
+						vm4ip[2] = -pvi;
+						}
+						else
+						{
+						*pv = (void *)(long)(i+1);
+#endif
+						fpos += fstWriterVarint(f, 0);
+						fpos += wrlen;
+						fstFwrite(scratchpnt, wrlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+						}
+#endif
 					}
 				}
 				else
@@ -1203,23 +1239,65 @@ for(i=0;i<xc->maxhandle;i++)
 				rc = fastlz_compress(scratchpnt, wrlen, dmem);
 				if(rc < destlen)
         				{
-					fpos += fstWriterVarint(f, wrlen);
-					fpos += rc;
-					fstFwrite(dmem, rc, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+					PPvoid_t pv = JudyHSIns(&PJHSArray, dmem, rc, NULL);
+					if(*pv)
+						{
+						uint32_t pvi = (long)(*pv);
+						vm4ip[2] = -pvi;
+						}
+						else
+						{
+						*pv = (void *)(long)(i+1);
+#endif
+						fpos += fstWriterVarint(f, wrlen);
+						fpos += rc;
+						fstFwrite(dmem, rc, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+						}
+#endif
         				}
         				else
         				{
-					fpos += fstWriterVarint(f, 0);
-					fpos += wrlen;
-					fstFwrite(scratchpnt, wrlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+					PPvoid_t pv = JudyHSIns(&PJHSArray, scratchpnt, wrlen, NULL);
+					if(*pv)
+						{
+						uint32_t pvi = (long)(*pv);
+						vm4ip[2] = -pvi;
+						}
+						else
+						{
+						*pv = (void *)(long)(i+1);
+#endif
+						fpos += fstWriterVarint(f, 0);
+						fpos += wrlen;
+						fstFwrite(scratchpnt, wrlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+						}
+#endif
         				}
 				}
 			}
 			else
 			{
-			fpos += fstWriterVarint(f, 0);
-			fpos += wrlen;
-			fstFwrite(scratchpnt, wrlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+			PPvoid_t pv = JudyHSIns(&PJHSArray, scratchpnt, wrlen, NULL);
+			if(*pv)
+				{
+				uint32_t pvi = (long)(*pv);
+				vm4ip[2] = -pvi;
+				}
+				else
+				{
+				*pv = (void *)(long)(i+1);
+#endif
+				fpos += fstWriterVarint(f, 0);
+				fpos += wrlen;
+				fstFwrite(scratchpnt, wrlen, 1, f);
+#ifdef _WAVE_HAVE_JUDY
+				}
+#endif
 			}
 
 		vm4ip[3] = 0;
@@ -1229,6 +1307,9 @@ for(i=0;i<xc->maxhandle;i++)
 		}
 	}
 
+#ifdef _WAVE_HAVE_JUDY
+JudyHSFreeArray(&PJHSArray, NULL);
+#endif
 free(packmem); packmem = NULL; packmemlen = 0;
 
 prevpos = 0; zerocnt = 0;
@@ -1249,8 +1330,16 @@ for(i=0;i<xc->maxhandle;i++)
 			zerocnt = 0;
 			}
 
-		fpos += fstWriterVarint(f, ((vm4ip[2] - prevpos) << 1) | 1);
-		prevpos = vm4ip[2];
+		if(vm4ip[2] & 0x80000000)
+			{
+			fpos += fstWriterVarint(f, 0); /* signal */
+			fpos += fstWriterVarint(f, (-(int32_t)vm4ip[2]));
+			}
+			else
+			{
+			fpos += fstWriterVarint(f, ((vm4ip[2] - prevpos) << 1) | 1);
+			prevpos = vm4ip[2];
+			}
 		vm4ip[2] = 0;
 		vm4ip[3] = 0; /* clear out tchn idx */
 		}
@@ -3430,8 +3519,8 @@ for(;;)
 		free(chain_table_lengths);
 
 		vc_maxhandle_largest = vc_maxhandle;
-		chain_table = malloc((vc_maxhandle+1) * sizeof(off_t));
-		chain_table_lengths = malloc((vc_maxhandle+1) * sizeof(uint32_t));
+		chain_table = calloc((vc_maxhandle+1), sizeof(off_t));
+		chain_table_lengths = calloc((vc_maxhandle+1), sizeof(uint32_t));
 		}
 
 	if(!chain_table || !chain_table_lengths) goto block_err;
@@ -3439,18 +3528,27 @@ for(;;)
 	pnt = chain_cmem;
 	idx = 0;
 	pval = 0;
+
 	do
 		{
 		int skiplen;
 		uint64_t val = fstGetVarint32(pnt, &skiplen);
 		
+		if(!val)
+			{
+			pnt += skiplen;
+			val = fstGetVarint32(pnt, &skiplen);
+			chain_table_lengths[idx] = -val;
+			idx++;
+			}
+		else 
 		if(val&1)
 			{
 			pval = chain_table[idx] = pval + (val >> 1);
 			if(idx) { chain_table_lengths[pidx] = pval - chain_table[pidx]; }
 			pidx = idx++;
 			}
-			else
+		else
 			{
 			int loopcnt = val >> 1;
 			for(i=0;i<loopcnt;i++)
@@ -3463,6 +3561,19 @@ for(;;)
 		} while (pnt != (chain_cmem + chain_clen));
 	chain_table[idx] = indx_pos - vc_start;
 	chain_table_lengths[pidx] = chain_table[idx] - chain_table[pidx];
+
+	for(i=0;i<idx;i++)
+		{
+		int32_t v32 = chain_table_lengths[i];
+		if(v32 < 0)
+			{
+			v32 = -v32;
+			v32--;
+			chain_table[i] = chain_table[v32];
+			chain_table_lengths[i] = chain_table_lengths[v32];	
+			}
+		}
+
 #ifdef FST_DEBUG
 	printf("\tdecompressed chain idx len: %"PRIu32"\n", idx);
 #endif
@@ -3519,7 +3630,7 @@ for(;;)
 	
 				if(rc != Z_OK)
 					{
-					printf("\tclen: %d (rc=%d)\n", (int)val, rc);
+					printf("\tfac: %d clen: %d (rc=%d)\n", (int)i, (int)val, rc);
 					exit(255);
 					}
 	
@@ -4104,7 +4215,15 @@ do
 	{
 	int skiplen;
 	uint64_t val = fstGetVarint32(pnt, &skiplen);
-		
+
+        if(!val)
+		{
+		pnt += skiplen;
+		val = fstGetVarint32(pnt, &skiplen);
+                xc->rvat_chain_table_lengths[idx] = -val;
+                idx++;
+                }
+	else		
 	if(val&1)
 		{
 		pval = xc->rvat_chain_table[idx] = pval + (val >> 1);
@@ -4126,6 +4245,18 @@ do
 free(chain_cmem); 
 xc->rvat_chain_table[idx] = indx_pos - xc->rvat_vc_start;
 xc->rvat_chain_table_lengths[pidx] = xc->rvat_chain_table[idx] - xc->rvat_chain_table[pidx];
+
+for(i=0;i<idx;i++)
+	{
+        int32_t v32 = xc->rvat_chain_table[i];
+        if(v32 < 0)
+        	{
+                v32 = -v32;
+		v32--;
+                xc->rvat_chain_table[i] = xc->rvat_chain_table[v32];
+                xc->rvat_chain_table_lengths[i] = xc->rvat_chain_table_lengths[v32];
+                }
+	}
 
 #ifdef FST_DEBUG
 printf("\tdecompressed chain idx len: %"PRIu32"\n", idx);

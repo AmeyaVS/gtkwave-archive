@@ -95,6 +95,7 @@ varint		chain n compressed data length (0 = uncompressed)
 
 varint		if &1 == 1, this is <<1 literal delta
 		if &1 == 0, this is <<1 RLE count of zeros
+		if == 0, next varint is handle of prev chain to use
 
 ---
 

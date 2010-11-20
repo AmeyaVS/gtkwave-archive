@@ -57,7 +57,7 @@ am_fst2vcd_OBJECTS = fst2vcd.$(OBJEXT) fastlz.$(OBJEXT) \
 	fstapi.$(OBJEXT)
 fst2vcd_OBJECTS = $(am_fst2vcd_OBJECTS)
 am__DEPENDENCIES_1 =
-fst2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1)
+fst2vcd_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_ghwdump_OBJECTS = ghwdump.$(OBJEXT) ghwlib.$(OBJEXT)
 ghwdump_OBJECTS = $(am_ghwdump_OBJECTS)
 ghwdump_LDADD = $(LDADD)
@@ -74,7 +74,7 @@ shmidcat_LDADD = $(LDADD)
 am_vcd2fst_OBJECTS = vcd2fst.$(OBJEXT) fastlz.$(OBJEXT) \
 	fstapi.$(OBJEXT) jrb.$(OBJEXT)
 vcd2fst_OBJECTS = $(am_vcd2fst_OBJECTS)
-vcd2fst_DEPENDENCIES = $(am__DEPENDENCIES_1)
+vcd2fst_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_vcd2lxt_OBJECTS = vcd2lxt.$(OBJEXT) lxt_write.$(OBJEXT) \
 	v2l_debug.$(OBJEXT)
 vcd2lxt_OBJECTS = $(am_vcd2lxt_OBJECTS)
@@ -234,11 +234,11 @@ BIGFILES = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 AIXFLAGS = -bmaxdata:0xd0000000/dsa
 LIBLZMA_CFLAGS = -I$(srcdir)/../liblzma $(LIBXZ_CFLAGS)
 LIBLZMA_LDADD = $(LIBXZ_LDADD)
-AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) $(INLINE_ASM) -I$(srcdir)/fst -I$(srcdir)/../../contrib/rtlbrowse
+AM_CFLAGS = -I$(srcdir)/.. -I$(srcdir)/../.. $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) $(LIBJUDY_CFLAGS) $(INLINE_ASM) -I$(srcdir)/fst -I$(srcdir)/../../contrib/rtlbrowse
 vcd2fst_SOURCES = vcd2fst.c $(srcdir)/fst/fastlz.c $(srcdir)/fst/fastlz.h $(srcdir)/fst/fstapi.c $(srcdir)/fst/fstapi.h $(srcdir)/../../contrib/rtlbrowse/jrb.h $(srcdir)/../../contrib/rtlbrowse/jrb.c
-vcd2fst_LDADD = $(LIBZ_LDADD)
+vcd2fst_LDADD = $(LIBZ_LDADD) $(LIBJUDY_LDADD)
 fst2vcd_SOURCES = fst2vcd.c $(srcdir)/fst/fastlz.c $(srcdir)/fst/fastlz.h $(srcdir)/fst/fstapi.c $(srcdir)/fst/fstapi.h
-fst2vcd_LDADD = $(LIBZ_LDADD)
+fst2vcd_LDADD = $(LIBZ_LDADD) $(LIBJUDY_LDADD)
 vcd2lxt_SOURCES = vcd2lxt.c lxt_write.c lxt_write.h v2l_analyzer.h v2l_debug.c v2l_debug.h
 vcd2lxt_LDADD = $(LIBZ_LDADD) $(LIBBZ2_LDADD)
 lxt2vcd_SOURCES = lxt2_read.c lxt2_read.h lxt2vcd.c scopenav.c
