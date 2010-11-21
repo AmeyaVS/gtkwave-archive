@@ -4629,6 +4629,12 @@ static uint32_t j_hash(uint8_t *k, uint32_t length, uint32_t initval)
 
 /********************************************************************/
 
+/***************************/
+/***                     ***/
+/***  judy HS emulation  ***/
+/***                     ***/
+/***************************/
+
 struct collchain_t
 {
 struct collchain_t *next;
