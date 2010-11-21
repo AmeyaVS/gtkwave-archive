@@ -1,7 +1,7 @@
 ## -*- makefile -*-
 ##
 
-AM_CFLAGS=      $(LIBZ_CFLAGS)
+AM_CFLAGS=      $(LIBZ_CFLAGS) $(LIBJUDY_CFLAGS)
 
 noinst_LIBRARIES=       libfst.a
 
