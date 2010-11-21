@@ -4585,10 +4585,7 @@ acceptable.  Do NOT use for cryptographic purposes.
 --------------------------------------------------------------------
 */
 
-static uint32_t j_hash( k, length, initval)
-uint8_t *k;        /* the key */
-uint32_t  length;   /* the length of the key */
-uint32_t  initval;  /* the previous hash, or an arbitrary value */
+static uint32_t j_hash(uint8_t *k, uint32_t length, uint32_t initval)
 {
    uint32_t a,b,c,len;
 
