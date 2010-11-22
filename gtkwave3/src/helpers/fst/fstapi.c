@@ -31,10 +31,10 @@
 typedef const void *Pcvoid_t;
 typedef void *Pvoid_t;
 typedef void **PPvoid_t;
-#define JudyHSIns(a,b,c,d) JenkinsIns((a),(b),(c))
-#define JudyHSFreeArray(a,b) JenkinsFree((a))
-void JenkinsFree(void *base_i);
-void **JenkinsIns(void *base_i, unsigned char *mem, uint32_t length);
+#define JudyHSIns(a,b,c,d) JenkinsIns((a),(b),(c),(hashmask))
+#define JudyHSFreeArray(a,b) JenkinsFree((a),(hashmask))
+void JenkinsFree(void *base_i, uint32_t hashmask);
+void **JenkinsIns(void *base_i, unsigned char *mem, uint32_t length, uint32_t hashmask);
 #endif
 
 #undef  FST_DEBUG
@@ -1040,8 +1040,16 @@ unsigned char *packmem;
 unsigned int packmemlen;
 uint32_t *vm4ip;
 Pvoid_t PJHSArray = (Pvoid_t) NULL;
-
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
+
+#ifndef _WAVE_HAVE_JUDY
+uint32_t hashmask =  xc->maxhandle;
+hashmask |= hashmask >> 1;
+hashmask |= hashmask >> 2;
+hashmask |= hashmask >> 4;
+hashmask |= hashmask >> 8;
+hashmask |= hashmask >> 16;
+#endif
 
 if((!xc)||(xc->vchg_siz <= 1)||(xc->already_in_flush)) return;
 xc->already_in_flush = 1; /* should really do this with a semaphore */
@@ -4513,11 +4521,6 @@ if(xc->signal_lens[facidx] == 1)
 /***                 ***/
 /***********************/
 
-#define J_HASHSIZE (20)
-
-#define hashsize(n) ((uint32_t)1<<(n))
-#define hashmask(n) (hashsize(n)-1)
-
 /*
 --------------------------------------------------------------------
 mix -- mix 3 32-bit values reversibly.
@@ -4644,7 +4647,7 @@ unsigned char mem[1];
 };
 
 
-void **JenkinsIns(void *base_i, unsigned char *mem, uint32_t length)
+void **JenkinsIns(void *base_i, unsigned char *mem, uint32_t length, uint32_t hashmask)
 {
 struct collchain_t ***base = (struct collchain_t ***)base_i;
 uint32_t hf, h;
@@ -4653,11 +4656,11 @@ struct collchain_t *chain, *pchain;
 
 if(!*base)
 	{
-	*base = calloc(1, hashsize(J_HASHSIZE) * sizeof(void *));
+	*base = calloc(1, (hashmask + 1) * sizeof(void *));
 	}
 ar = *base;
 
-h = (hf = j_hash(mem, length, hashsize(J_HASHSIZE))) & hashmask(J_HASHSIZE);
+h = (hf = j_hash(mem, length, length)) & hashmask;
 pchain = chain = ar[h];
 while(chain)
 	{
@@ -4671,6 +4674,7 @@ while(chain)
 			}
 		return(&(chain->payload));
 		}
+
 	pchain = chain;
 	chain = chain->next;
 	}
@@ -4685,7 +4689,7 @@ return(&(chain->payload));
 }
 
 
-void JenkinsFree(void *base_i)
+void JenkinsFree(void *base_i, uint32_t hashmask)
 {
 struct collchain_t ***base = (struct collchain_t ***)base_i;
 uint32_t h;
@@ -4695,7 +4699,7 @@ struct collchain_t *chain, *chain_next;
 if(base && *base)
 	{
 	ar = *base;
-	for(h=0;h<hashsize(J_HASHSIZE);h++)
+	for(h=0;h<=hashmask;h++)
 		{
 		chain = ar[h];
 		while(chain)
