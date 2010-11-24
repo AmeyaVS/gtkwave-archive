@@ -25,6 +25,12 @@
 #include "fstapi.h"
 #include "fastlz.h"
 
+
+/* this define is to force writer backward compatibility with old readers */
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
+/* note that Judy versus Jenkins requires more experimentation: they are  */
+/* functionally equivalent though it appears Jenkins is slightly faster.  */
+/* in addition, Jenkins is not bound by the LGPL.                         */
 #ifdef _WAVE_HAVE_JUDY
 #include <Judy.h>
 #else
@@ -36,6 +42,8 @@ typedef void **PPvoid_t;
 void JenkinsFree(void *base_i, uint32_t hashmask);
 void **JenkinsIns(void *base_i, unsigned char *mem, uint32_t length, uint32_t hashmask);
 #endif
+#endif
+
 
 #undef  FST_DEBUG
 
@@ -1039,9 +1047,10 @@ off_t unc_memreq = 0; /* for reader */
 unsigned char *packmem;
 unsigned int packmemlen;
 uint32_t *vm4ip;
-Pvoid_t PJHSArray = (Pvoid_t) NULL;
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
+Pvoid_t PJHSArray = (Pvoid_t) NULL;
 #ifndef _WAVE_HAVE_JUDY
 uint32_t hashmask =  xc->maxhandle;
 hashmask |= hashmask >> 1;
@@ -1049,6 +1058,7 @@ hashmask |= hashmask >> 2;
 hashmask |= hashmask >> 4;
 hashmask |= hashmask >> 8;
 hashmask |= hashmask >> 16;
+#endif
 #endif
 
 if((!xc)||(xc->vchg_siz <= 1)||(xc->already_in_flush)) return;
@@ -1198,6 +1208,7 @@ for(i=0;i<xc->maxhandle;i++)
 		        	rc = compress2(dmem, &destlen, scratchpnt, wrlen, 4);
 				if(rc == Z_OK)
 					{
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 					PPvoid_t pv = JudyHSIns(&PJHSArray, dmem, destlen, NULL);
 					if(*pv)
 						{
@@ -1207,13 +1218,17 @@ for(i=0;i<xc->maxhandle;i++)
 						else
 						{
 						*pv = (void *)(long)(i+1);
+#endif
 						fpos += fstWriterVarint(f, wrlen);
 						fpos += destlen;
 						fstFwrite(dmem, destlen, 1, f);
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 						}
+#endif
 					}
 					else
 					{
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 					PPvoid_t pv = JudyHSIns(&PJHSArray, scratchpnt, wrlen, NULL);
 					if(*pv)
 						{
@@ -1223,10 +1238,13 @@ for(i=0;i<xc->maxhandle;i++)
 						else
 						{
 						*pv = (void *)(long)(i+1);
+#endif
 						fpos += fstWriterVarint(f, 0);
 						fpos += wrlen;
 						fstFwrite(scratchpnt, wrlen, 1, f);
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 						}
+#endif
 					}
 				}
 				else
@@ -1244,6 +1262,7 @@ for(i=0;i<xc->maxhandle;i++)
 				rc = fastlz_compress(scratchpnt, wrlen, dmem);
 				if(rc < destlen)
         				{
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 					PPvoid_t pv = JudyHSIns(&PJHSArray, dmem, rc, NULL);
 					if(*pv)
 						{
@@ -1253,13 +1272,17 @@ for(i=0;i<xc->maxhandle;i++)
 						else
 						{
 						*pv = (void *)(long)(i+1);
+#endif
 						fpos += fstWriterVarint(f, wrlen);
 						fpos += rc;
 						fstFwrite(dmem, rc, 1, f);
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 						}
+#endif
         				}
         				else
         				{
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 					PPvoid_t pv = JudyHSIns(&PJHSArray, scratchpnt, wrlen, NULL);
 					if(*pv)
 						{
@@ -1269,15 +1292,19 @@ for(i=0;i<xc->maxhandle;i++)
 						else
 						{
 						*pv = (void *)(long)(i+1);
+#endif
 						fpos += fstWriterVarint(f, 0);
 						fpos += wrlen;
 						fstFwrite(scratchpnt, wrlen, 1, f);
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 						}
+#endif
         				}
 				}
 			}
 			else
 			{
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 			PPvoid_t pv = JudyHSIns(&PJHSArray, scratchpnt, wrlen, NULL);
 			if(*pv)
 				{
@@ -1287,10 +1314,13 @@ for(i=0;i<xc->maxhandle;i++)
 				else
 				{
 				*pv = (void *)(long)(i+1);
+#endif
 				fpos += fstWriterVarint(f, 0);
 				fpos += wrlen;
 				fstFwrite(scratchpnt, wrlen, 1, f);
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 				}
+#endif
 			}
 
 		vm4ip[3] = 0;
@@ -1300,7 +1330,10 @@ for(i=0;i<xc->maxhandle;i++)
 		}
 	}
 
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 JudyHSFreeArray(&PJHSArray, NULL);
+#endif
+
 free(packmem); packmem = NULL; packmemlen = 0;
 
 prevpos = 0; zerocnt = 0;
@@ -4513,6 +4546,7 @@ if(xc->signal_lens[facidx] == 1)
 
 
 /**********************************************************************/
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
 #ifndef _WAVE_HAVE_JUDY
 
 /***********************/
@@ -4715,4 +4749,5 @@ if(base && *base)
 	}
 }
 
+#endif
 #endif
