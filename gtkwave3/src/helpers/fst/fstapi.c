@@ -4278,7 +4278,7 @@ xc->rvat_chain_table_lengths[pidx] = xc->rvat_chain_table[idx] - xc->rvat_chain_
 
 for(i=0;i<idx;i++)
 	{
-        int32_t v32 = xc->rvat_chain_table[i];
+        int32_t v32 = xc->rvat_chain_table_lengths[i];
         if(v32 < 0)
         	{
                 v32 = -v32;
