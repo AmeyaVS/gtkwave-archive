@@ -4235,8 +4235,8 @@ chain_cmem = malloc(chain_clen);
 fseeko(xc->f, indx_pos, SEEK_SET);
 fstFread(chain_cmem, chain_clen, 1, xc->f);
 	
-xc->rvat_chain_table = malloc((xc->rvat_vc_maxhandle+1) * sizeof(off_t));
-xc->rvat_chain_table_lengths = malloc((xc->rvat_vc_maxhandle+1) * sizeof(uint32_t));
+xc->rvat_chain_table = calloc((xc->rvat_vc_maxhandle+1), sizeof(off_t));
+xc->rvat_chain_table_lengths = calloc((xc->rvat_vc_maxhandle+1), sizeof(uint32_t));
 
 pnt = chain_cmem;
 idx = 0;
