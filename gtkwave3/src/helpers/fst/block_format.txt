@@ -66,7 +66,7 @@ varint		delta time
 
 // header
 
-uint8_t		FST_BL_VCDATA
+uint8_t		FST_BL_VCDATA (or FST_BL_VCDATA_DYN_ALIAS)
 uint64_t	section length
 uint64_t	begin time of section
 uint64_t	end time of section
@@ -95,7 +95,9 @@ varint		chain n compressed data length (0 = uncompressed)
 
 varint		if &1 == 1, this is <<1 literal delta
 		if &1 == 0, this is <<1 RLE count of zeros
-		if == 0, next varint is handle of prev chain to use
+		if == 0, next varint is handle of prev chain to use,
+			bit only if FST_BL_VCDATA_DYN_ALIAS or
+			later VCDATA format
 
 ---
 

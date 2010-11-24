@@ -1428,7 +1428,13 @@ fstWriterUint64(xc->handle, unc_memreq);			/* amount of buffer memory required i
 fflush(xc->handle);
 
 fseeko(xc->handle, xc->section_start-1, SEEK_SET);		/* write out FST_BL_VCDATA over FST_BL_SKIP */
+
+#ifndef FST_DYNAMIC_ALIAS_DISABLE
+fputc(FST_BL_VCDATA_DYN_ALIAS, xc->handle);
+#else
 fputc(FST_BL_VCDATA, xc->handle);
+#endif
+
 fflush(xc->handle);
 
 fseeko(xc->handle, endpos, SEEK_SET);				/* seek to end of file */
@@ -2938,7 +2944,7 @@ if(gzread_pass_status)
 				xc->date[FST_HDR_DATE_SIZE] = 0;
 				}
 			}
-		else if(sectype == FST_BL_VCDATA)
+		else if((sectype == FST_BL_VCDATA) || (sectype == FST_BL_VCDATA_DYN_ALIAS))
 			{
 			if(hdr_incomplete)
 				{
@@ -3239,7 +3245,7 @@ for(;;)
 		}
 
 	blkpos++;
-	if(sectype != FST_BL_VCDATA)
+	if((sectype != FST_BL_VCDATA) && (sectype != FST_BL_VCDATA_DYN_ALIAS))
 		{
 		blkpos += seclen;
 		continue;
@@ -4074,7 +4080,7 @@ for(;;)
 		}
 
 	blkpos++;
-	if(sectype != FST_BL_VCDATA)
+	if((sectype != FST_BL_VCDATA) && (sectype != FST_BL_VCDATA_DYN_ALIAS))
 		{
 		blkpos += seclen;
 		continue;
@@ -4096,7 +4102,7 @@ for(;;)
 			beg_tim2 = fstReaderUint64(xc->f);
 			end_tim2 = fstReaderUint64(xc->f);
 
-			if((sectype != FST_BL_VCDATA) || (!seclen) || (beg_tim2 != tim))
+			if(((sectype != FST_BL_VCDATA)&&(sectype != FST_BL_VCDATA_DYN_ALIAS)) || (!seclen) || (beg_tim2 != tim))
 				{
 				blkpos = prev_blkpos;
 				break;
