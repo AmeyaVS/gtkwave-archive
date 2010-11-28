@@ -3599,8 +3599,11 @@ for(;;)
 			{
 			v32 = -v32;
 			v32--;
-			chain_table[i] = chain_table[v32];
-			chain_table_lengths[i] = chain_table_lengths[v32];	
+			if(((uint32_t)v32) < i) /* sanity check */
+				{
+				chain_table[i] = chain_table[v32];
+				chain_table_lengths[i] = chain_table_lengths[v32];	
+				}
 			}
 		}
 
@@ -4283,8 +4286,11 @@ for(i=0;i<idx;i++)
         	{
                 v32 = -v32;
 		v32--;
-                xc->rvat_chain_table[i] = xc->rvat_chain_table[v32];
-                xc->rvat_chain_table_lengths[i] = xc->rvat_chain_table_lengths[v32];
+		if(((uint32_t)v32) < i) /* sanity check */
+			{
+	                xc->rvat_chain_table[i] = xc->rvat_chain_table[v32];
+	                xc->rvat_chain_table_lengths[i] = xc->rvat_chain_table_lengths[v32];
+			}
                 }
 	}
 

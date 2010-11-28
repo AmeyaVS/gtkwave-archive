@@ -952,3 +952,5 @@
 		Judy arrays are detected.  (Judy not required for reading.)
 		Added Jenkins hash routine to enable dynamic alias detection
 		for when Judy not available.
+3.3.17	28nov10	Added sanity check in dynamic alias reconstruct routine in
+		FST reader.
