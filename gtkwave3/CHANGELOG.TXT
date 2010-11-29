@@ -953,4 +953,5 @@
 		Added Jenkins hash routine to enable dynamic alias detection
 		for when Judy not available.
 3.3.17	28nov10	Added sanity check in dynamic alias reconstruct routine in
-		FST reader.
+		FST reader and also fixed bug where alias reconstruction in 
+		current blocks doesn't overwrite previous, old block data.

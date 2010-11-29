@@ -3568,7 +3568,8 @@ for(;;)
 			{
 			pnt += skiplen;
 			val = fstGetVarint32(pnt, &skiplen);
-			chain_table_lengths[idx] = -val;
+			chain_table[idx] = 0;			/* need to explicitly zero as calloc above might not run */
+			chain_table_lengths[idx] = -val;	/* because during this loop iter would give stale data! */
 			idx++;
 			}
 		else 
@@ -4253,6 +4254,7 @@ do
 		{
 		pnt += skiplen;
 		val = fstGetVarint32(pnt, &skiplen);
+		xc->rvat_chain_table[idx] = 0;
                 xc->rvat_chain_table_lengths[idx] = -val;
                 idx++;
                 }
