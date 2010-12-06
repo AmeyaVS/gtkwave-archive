@@ -1752,7 +1752,7 @@ if((xc) && (handle <= xc->maxhandle))
 
 		if((fpos + len + 10) > xc->vchg_alloc_siz)
 			{
-			xc->vchg_alloc_siz += FST_BREAK_ADD_SIZE;
+			xc->vchg_alloc_siz += (FST_BREAK_ADD_SIZE + len); /* +len added in the case of extremely long vectors and small break add sizes */
 			xc->vchg_mem = realloc(xc->vchg_mem, xc->vchg_alloc_siz);
 			if(!xc->vchg_mem)
 				{
