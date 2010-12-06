@@ -33,6 +33,13 @@
 #include "debug.h"
 #include "hierpack.h"
 
+#if defined(USE_INLINE_ASM)
+#if defined(__i386__) || defined(__x86_64__)
+#define USE_X86_INLINE_ASM
+#endif
+#endif
+
+
 /****************************************************************************/
 
 /*
@@ -174,7 +181,7 @@ inline static unsigned int get_64(offset) {
  * of a big-endian integer.  x86 specific version...
  */
 
-#if defined(__i386__) || defined(__x86_64__)
+#ifdef USE_X86_INLINE_ASM
 
 inline static unsigned int get_byte(offset) {
   return ((unsigned int)(*((unsigned char *) GLOBALS->mm_lxt_c_1+offset)));
@@ -184,9 +191,11 @@ inline static unsigned int get_16(off_t offset)
 {
 unsigned short x = *((unsigned short *)((unsigned char *)GLOBALS->mm_lxt_c_1+offset));
 
-  __asm("xchgb %b0,%h0" :
-        "=q" (x)        :
-        "0" (x));
+#if defined(__x86_64__)
+    __asm("xchgb %b0,%h0" : "=Q" (x) : "0" (x));
+#else
+    __asm("xchgb %b0,%h0" : "=q" (x) : "0" (x));
+#endif
 
     return (unsigned int) x;
 }
@@ -2408,6 +2417,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/06/02 03:51:30  gtkwave
+ * don't autocoalesce escape identifiers
+ *
  * Revision 1.19  2010/03/14 07:09:49  gtkwave
  * removed ExtNode and merged with Node
  *

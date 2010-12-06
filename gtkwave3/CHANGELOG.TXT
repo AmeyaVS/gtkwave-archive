@@ -957,3 +957,6 @@
 		current blocks doesn't overwrite previous, old block data.
 3.3.18	06dec10	Added extra allocation in fstWriterEmitValueChange in case
 		users modify the FST_BREAK_ADD_SIZE to a very small value.
+		Fixed in lxt.c that --disable-inline-asm did not propagate
+		into its compile.
+		Fixed x86_64 assembler =q vs =Q problem in lxt.c.
