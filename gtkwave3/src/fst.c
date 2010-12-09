@@ -1277,7 +1277,6 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 		        else
 		        {
 		        np->head.flags = HIST_REAL;
-if(0)
 		        if(f->flags&VZT_RD_SYM_F_STRING) 
 				{
 				np->head.flags |= HIST_STRING;
@@ -1317,6 +1316,9 @@ if(0)
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/12/09 15:19:16  gtkwave
+ * preliminary support for variable-length string datatype in FST
+ *
  * Revision 1.33  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *
