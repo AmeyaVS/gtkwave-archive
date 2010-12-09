@@ -185,8 +185,7 @@ static const char *vartype_strings[] = { \
     "array", \
     "realtime", \
     "port", \
-    "string", \
-    "memblock" \
+    "string"
 };
 
 
@@ -216,9 +215,8 @@ enum nodeVarType {
 
     ND_VCD_PORT		   = 21,
     ND_GEN_STRING          = 22,   /* generic string type */
-    ND_GEN_MEMBLOCK        = 23,    /* generic memblock type */
 
-    ND_VARTYPE_MAX	   = 23
+    ND_VARTYPE_MAX	   = 22
 };
 
 enum nodeVarDir {
@@ -452,6 +450,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2010/12/09 15:19:16  gtkwave
+ * preliminary support for variable-length string datatype in FST
+ *
  * Revision 1.30  2010/09/10 05:58:40  gtkwave
  * structor reordering of VectorEnt to benefit 32-bit architectures
  *
