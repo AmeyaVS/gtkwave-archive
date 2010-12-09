@@ -90,10 +90,10 @@ enum fstVarType {
     FST_VT_VCD_PORT            = 18,
     FST_VT_VCD_ARRAY           = 19,	/* used to define the rownum (index) port on the array */
     FST_VT_VCD_REALTIME        = 20,
-    FST_VT_VCD_MAX             = 20,	/* end of VCD datatypes */
+    FST_VT_GEN_STRING	       = 21,	/* generic string type   (max len is defined dynamically via fstWriterEmitVariableLengthValueChange) */
 
-    FST_VT_GEN_STRING	       = 254,	/* generic string type   (max len is defined as the len in fstWriterCreateVar() */
-    FST_VT_GEN_MEMBLOCK	       = 255	/* generic memblock type (max len is defined as the len in fstWriterCreateVar() */
+    FST_VT_VCD_MAX             = 21,	/* end of VCD datatypes */
+
 };
 
 enum fstVarDir {
@@ -159,6 +159,7 @@ void fstWriterSetScope(void *ctx, enum fstScopeType scopetype,
                 const char *scopename, const char *scopecomp);
 void fstWriterSetUpscope(void *ctx);
 void fstWriterEmitValueChange(void *ctx, fstHandle handle, const void *val);
+void fstWriterEmitVariableLengthValueChange(void *ctx, fstHandle handle, const void *val, uint32_t len);
 void fstWriterEmitDumpActive(void *ctx, int enable);
 void fstWriterEmitTimeChange(void *ctx, uint64_t tim);
 void fstWriterFlushContext(void *ctx);
@@ -209,6 +210,11 @@ void fstReaderIterBlocksSetNativeDoublesOnCallback(void *ctx, int enable);
 
 int fstReaderIterBlocks(void *ctx,
         void (*value_change_callback)(void *user_callback_data_pointer, uint64_t time, fstHandle facidx, const unsigned char *value),
+        void *user_callback_data_pointer, FILE *vcdhandle);
+
+int fstReaderIterBlocks2(void *ctx,
+        void (*value_change_callback)(void *user_callback_data_pointer, uint64_t time, fstHandle facidx, const unsigned char *value),
+        void (*value_change_callback_varlen)(void *user_callback_data_pointer, uint64_t time, fstHandle facidx, const unsigned char *value, uint32_t len),
         void *user_callback_data_pointer, FILE *vcdhandle);
 
 char *fstReaderGetValueFromHandleAtTime(void *ctx, uint64_t tim, fstHandle facidx, char *buf);

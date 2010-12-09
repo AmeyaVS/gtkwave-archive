@@ -184,7 +184,9 @@ static const char *vartype_strings[] = { \
     "wor", \
     "array", \
     "realtime", \
-    "port" \
+    "port", \
+    "string", \
+    "memblock" \
 };
 
 
@@ -213,10 +215,10 @@ enum nodeVarType {
     ND_VCD_REALTIME        = 20,
 
     ND_VCD_PORT		   = 21,
-    ND_VARTYPE_MAX	   = 21,
-                
-    ND_GEN_STRING          = 254,   /* generic string type */
-    ND_GEN_MEMBLOCK        = 255    /* generic memblock type */
+    ND_GEN_STRING          = 22,   /* generic string type */
+    ND_GEN_MEMBLOCK        = 23,    /* generic memblock type */
+
+    ND_VARTYPE_MAX	   = 23
 };
 
 enum nodeVarDir {
@@ -450,6 +452,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.30  2010/09/10 05:58:40  gtkwave
+ * structor reordering of VectorEnt to benefit 32-bit architectures
+ *
  * Revision 1.29  2010/08/02 20:44:35  gtkwave
  * added gtkwave::cbTracesUpdated
  *

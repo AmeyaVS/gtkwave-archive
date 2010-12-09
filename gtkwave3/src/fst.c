@@ -361,47 +361,62 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 	GLOBALS->mvlfacs_fst_c_3[i].len = h->u.var.length; 
 
-	switch(h->u.var.typ)
+	if(h->u.var.length)
 		{
-                case FST_VT_VCD_EVENT: 		nvt = ND_VCD_EVENT; break;
-                case FST_VT_VCD_INTEGER: 	nvt = ND_VCD_INTEGER; break;
-                case FST_VT_VCD_PARAMETER: 	nvt = ND_VCD_PARAMETER; break;
-                case FST_VT_VCD_REAL: 		nvt = ND_VCD_REAL; break;
-                case FST_VT_VCD_REAL_PARAMETER: nvt = ND_VCD_REAL_PARAMETER; break;
-                case FST_VT_VCD_REALTIME:       nvt = ND_VCD_REALTIME; break;
-                case FST_VT_VCD_REG: 		nvt = ND_VCD_REG; break;
-                case FST_VT_VCD_SUPPLY0: 	nvt = ND_VCD_SUPPLY0; break;
-                case FST_VT_VCD_SUPPLY1: 	nvt = ND_VCD_SUPPLY1; break;
-                case FST_VT_VCD_TIME: 		nvt = ND_VCD_TIME; break;
-                case FST_VT_VCD_TRI: 		nvt = ND_VCD_TRI; break;
-                case FST_VT_VCD_TRIAND: 	nvt = ND_VCD_TRIAND; break;
-                case FST_VT_VCD_TRIOR: 		nvt = ND_VCD_TRIOR; break;
-                case FST_VT_VCD_TRIREG: 	nvt = ND_VCD_TRIREG; break;
-                case FST_VT_VCD_TRI0: 		nvt = ND_VCD_TRI0; break;
-                case FST_VT_VCD_TRI1: 		nvt = ND_VCD_TRI1; break;
-                case FST_VT_VCD_WAND: 		nvt = ND_VCD_WAND; break;
-                case FST_VT_VCD_WIRE: 		nvt = ND_VCD_WIRE; break;
-                case FST_VT_VCD_WOR: 		nvt = ND_VCD_WOR; break;
-                case FST_VT_VCD_PORT: 		nvt = ND_VCD_PORT; break;
-		default: 			nvt = ND_UNSPECIFIED_DEFAULT; break;
+		switch(h->u.var.typ)
+			{
+	                case FST_VT_VCD_EVENT: 		nvt = ND_VCD_EVENT; break;
+	                case FST_VT_VCD_INTEGER: 	nvt = ND_VCD_INTEGER; break;
+	                case FST_VT_VCD_PARAMETER: 	nvt = ND_VCD_PARAMETER; break;
+	                case FST_VT_VCD_REAL: 		nvt = ND_VCD_REAL; break;
+	                case FST_VT_VCD_REAL_PARAMETER: nvt = ND_VCD_REAL_PARAMETER; break;
+	                case FST_VT_VCD_REALTIME:       nvt = ND_VCD_REALTIME; break;
+	                case FST_VT_VCD_REG: 		nvt = ND_VCD_REG; break;
+	                case FST_VT_VCD_SUPPLY0: 	nvt = ND_VCD_SUPPLY0; break;
+	                case FST_VT_VCD_SUPPLY1: 	nvt = ND_VCD_SUPPLY1; break;
+	                case FST_VT_VCD_TIME: 		nvt = ND_VCD_TIME; break;
+	                case FST_VT_VCD_TRI: 		nvt = ND_VCD_TRI; break;
+	                case FST_VT_VCD_TRIAND: 	nvt = ND_VCD_TRIAND; break;
+	                case FST_VT_VCD_TRIOR: 		nvt = ND_VCD_TRIOR; break;
+	                case FST_VT_VCD_TRIREG: 	nvt = ND_VCD_TRIREG; break;
+	                case FST_VT_VCD_TRI0: 		nvt = ND_VCD_TRI0; break;
+	                case FST_VT_VCD_TRI1: 		nvt = ND_VCD_TRI1; break;
+	                case FST_VT_VCD_WAND: 		nvt = ND_VCD_WAND; break;
+	                case FST_VT_VCD_WIRE: 		nvt = ND_VCD_WIRE; break;
+	                case FST_VT_VCD_WOR: 		nvt = ND_VCD_WOR; break;
+	                case FST_VT_VCD_PORT: 		nvt = ND_VCD_PORT; break;
+	                case FST_VT_GEN_STRING:		nvt = ND_GEN_STRING; break;
+			default: 			nvt = ND_UNSPECIFIED_DEFAULT; break;
+			}
+
+		switch(h->u.var.typ)
+			{
+			case FST_VT_VCD_PARAMETER:
+			case FST_VT_VCD_INTEGER:
+				GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_INTEGER;
+				break;	
+
+			case FST_VT_VCD_REAL:
+			case FST_VT_VCD_REAL_PARAMETER:
+			case FST_VT_VCD_REALTIME:
+				GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
+				break;
+
+			case FST_VT_GEN_STRING:
+				GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_STRING;
+				GLOBALS->mvlfacs_fst_c_3[i].len = 2;
+				break;
+
+			default:
+				GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_BITS;
+				break;	
+			}
 		}
-
-	switch(h->u.var.typ)
+		else /* convert any variable length records into strings */
 		{
-		case FST_VT_VCD_PARAMETER:
-		case FST_VT_VCD_INTEGER:
-			GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_INTEGER;
-			break;	
-
-		case FST_VT_VCD_REAL:
-		case FST_VT_VCD_REAL_PARAMETER:
-		case FST_VT_VCD_REALTIME:
-			GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
-			break;
-
-		default:
-			GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_BITS;
-			break;	
+		nvt = ND_GEN_STRING;
+		GLOBALS->mvlfacs_fst_c_3[i].flags = VZT_RD_SYM_F_STRING;
+		GLOBALS->mvlfacs_fst_c_3[i].len = 2;
 		}
 	
 	if(h->u.var.is_alias)
@@ -799,7 +814,7 @@ for(j=0;j<len;j++)
 /*
  * fst callback (only does bits for now)
  */
-static void fst_callback(void *user_callback_data_pointer, uint64_t tim, fstHandle txidx, const unsigned char *value)
+static void fst_callback2(void *user_callback_data_pointer, uint64_t tim, fstHandle txidx, const unsigned char *value, uint32_t plen)
 {
 fstHandle facidx = GLOBALS->mvlfacs_fst_rvs_alias[--txidx];
 struct HistEnt *htemp;
@@ -915,18 +930,31 @@ else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	}
 else	/* string */
 	{
-	char *s;
+	unsigned char *s = malloc_2(plen + 1);
+	uint32_t pidx;
+
+	for(pidx=0;pidx<plen;pidx++)
+		{
+		unsigned char ch = value[pidx];
+
+		if((ch < ' ') || (ch > 0x7f))
+			{
+			ch = '.';
+			}
+
+		s[pidx] = ch;
+		}
+	s[pidx] = 0;
 
 	if((l2e->histent_curr)&&(l2e->histent_curr->v.h_vector)) /* remove duplicate values */
 		{
 		if(!strcmp(l2e->histent_curr->v.h_vector, (const char *)value))
 			{
+			free(s);
 			return;
 			}
 		}
 
-	s = malloc_2(strlen((const char *)value)+1);
-	strcpy(s, (const char *)value);
 	htemp = histent_calloc();
 	htemp->v.h_vector = s;
 	htemp->flags = HIST_REAL|HIST_STRING;
@@ -946,6 +974,12 @@ if(l2e->histent_head)
 	}
 
 l2e->numtrans++;
+}
+
+
+static void fst_callback(void *user_callback_data_pointer, uint64_t tim, fstHandle txidx, const unsigned char *value)
+{
+fst_callback2(user_callback_data_pointer, tim, txidx, value, 0);
 }
 
 
@@ -1001,7 +1035,7 @@ len = np->mv.mvlfac->len;
 if(f->array_height <= 1) /* sorry, arrays not supported, but fst doesn't support them yet either */
 	{
 	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
-	fstReaderIterBlocks(GLOBALS->fst_fst_c_1, fst_callback, NULL, NULL);
+	fstReaderIterBlocks2(GLOBALS->fst_fst_c_1, fst_callback, fst_callback2, NULL, NULL);
 	fstReaderClrFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
 	}
 
@@ -1022,8 +1056,16 @@ if(len>1)
 	{
 	if(!(f->flags&VZT_RD_SYM_F_DOUBLE))
 		{
-		htemp->v.h_vector = (char *)malloc_2(len);
-		for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+		if(!(f->flags&VZT_RD_SYM_F_STRING))
+			{
+			htemp->v.h_vector = (char *)malloc_2(len);
+			for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+			}
+			else
+			{
+			htemp->v.h_vector = strdup_2("UNDEF");
+			htemp->flags = HIST_REAL|HIST_STRING;
+			}
 		}
 		else
 		{
@@ -1080,7 +1122,7 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
                 else
                 {
                 htemp2->v.h_val = htemp->v.h_val;
-                }
+		}
 	htemp2->next = htemp;
         htemp = htemp2;
         GLOBALS->fst_table_fst_c_1[txidx].numtrans++;
@@ -1155,7 +1197,7 @@ if(cnt>100)
 	}
 
 set_window_busy(NULL);
-fstReaderIterBlocks(GLOBALS->fst_fst_c_1, fst_callback, NULL, NULL);
+fstReaderIterBlocks2(GLOBALS->fst_fst_c_1, fst_callback, fst_callback2, NULL, NULL);
 set_window_idle(NULL);
 
 for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
@@ -1185,8 +1227,16 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 			{
 			if(!(f->flags&VZT_RD_SYM_F_DOUBLE))
 				{
-				htemp->v.h_vector = (char *)malloc_2(len);
-				for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+				if(!(f->flags&VZT_RD_SYM_F_STRING))
+					{
+					htemp->v.h_vector = (char *)malloc_2(len);
+					for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+					}
+					else
+					{
+					htemp->v.h_vector = strdup_2("UNDEF"); 	
+					htemp->flags = HIST_REAL|HIST_STRING;
+					}
 				htempx = htemp;
 				}
 				else
@@ -1227,6 +1277,7 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 		        else
 		        {
 		        np->head.flags = HIST_REAL;
+if(0)
 		        if(f->flags&VZT_RD_SYM_F_STRING) 
 				{
 				np->head.flags |= HIST_STRING;
@@ -1244,7 +1295,7 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
                                 else
                                 {
                                 htemp2->v.h_val = htemp->v.h_val;
-                                }
+				}
                         htemp2->next = htemp;
                         htemp = htemp2;
                         GLOBALS->fst_table_fst_c_1[txidx].numtrans++;
@@ -1266,6 +1317,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.32  2010/09/16 19:40:08  gtkwave
  * back out hierarchy removal
  *

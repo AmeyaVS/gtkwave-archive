@@ -215,6 +215,11 @@ while(!feof(f))
 					{
 					vartype = FST_VT_VCD_SUPPLY0;
 					}
+				else
+				if(!strcmp(st, "string"))		
+					{
+					vartype = FST_VT_GEN_STRING;
+					}
 				break;
 
 			case 't':
@@ -260,9 +265,11 @@ while(!feof(f))
 
 		st = strtok(NULL, " \t");
 		len = atoi(st);
-		if(vartype == FST_VT_VCD_PORT)
+		switch(vartype)
 			{
-			len = (len * 3) + 2;
+			case FST_VT_VCD_PORT: len = (len * 3) + 2; break;
+			case FST_VT_GEN_STRING: len = 0; break;
+			default: break;
 			}
 
 		st = strtok(NULL, " \t"); /* vcdid */
@@ -624,6 +631,31 @@ while(!feof(f))
 				}
 			break;
 
+		case 's':
+			sp = strrchr(buf, ' ');
+			*sp = 0;
+			hash = vcdid_hash(sp+1);
+			if(!hash_kill)
+				{
+				int bin_len = sp - (buf + 1); /* strlen(buf+1) */
+
+				fstWriterEmitVariableLengthValueChange(ctx, hash, buf+1, bin_len);
+				}
+				else
+				{
+				node = jrb_find_int(vcd_ids, hash);
+				if(node)
+					{
+					int bin_len = sp - (buf + 1); /* strlen(buf+1) */
+
+					fstWriterEmitVariableLengthValueChange(ctx, node->val.i, buf+1, bin_len);
+					}
+					else
+					{
+					}
+				}
+			break;
+
 		case 'p':
 			{
 			char *src = buf+1;
@@ -872,6 +904,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/11/08 21:04:52  gtkwave
+ * optimize out strlen with direct calculation on "b" lines
+ *
  * Revision 1.15  2010/11/06 03:24:07  gtkwave
  * applied calculation optimizations
  *
