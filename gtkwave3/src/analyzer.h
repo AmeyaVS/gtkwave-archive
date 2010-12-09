@@ -185,7 +185,7 @@ static const char *vartype_strings[] = { \
     "array", \
     "realtime", \
     "port", \
-    "string"
+    "string" \
 };
 
 
@@ -450,6 +450,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.32  2010/12/09 15:22:37  gtkwave
+ * remove unused memblock node type
+ *
  * Revision 1.31  2010/12/09 15:19:16  gtkwave
  * preliminary support for variable-length string datatype in FST
  *
