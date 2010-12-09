@@ -4235,7 +4235,7 @@ unsigned char *pnt;
 fstHandle idx, pidx=0, i;
 uint64_t pval;
 
-if((!xc) || (!facidx) || (facidx > xc->maxhandle) || (!buf) || (!xc->signal_lens[facidx-1])) //
+if((!xc) || (!facidx) || (facidx > xc->maxhandle) || (!buf) || (!xc->signal_lens[facidx-1]))
 	{
 	return(NULL);
 	}
