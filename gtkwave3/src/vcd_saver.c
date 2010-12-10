@@ -673,7 +673,13 @@ for(;;)
 					}
 					else
 					{
-					w32redirect_fprintf(GLOBALS->f_vcd_saver_c_1, "s%s %s\n", vec, vcdid(GLOBALS->hp_vcd_saver_c_1[0]->val, export_typ));
+					int vec_slen = strlen(vec);
+					char *vec_escaped = malloc_2(vec_slen*4 + 1); /* worst case */
+					int vlen = fstUtilityBinToEsc(vec_escaped, vec, vec_slen);
+
+					vec_escaped[vlen] = 0;
+					w32redirect_fprintf(GLOBALS->f_vcd_saver_c_1, "s%s %s\n", vec_escaped, vcdid(GLOBALS->hp_vcd_saver_c_1[0]->val, export_typ));
+					free_2(vec_escaped);
 					}
 				}
 				else
@@ -1544,6 +1550,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2010/08/26 18:42:23  gtkwave
+ * added support for transaction filters in mingw
+ *
  * Revision 1.18  2010/07/16 16:12:38  gtkwave
  * pedantic warning fixes
  *

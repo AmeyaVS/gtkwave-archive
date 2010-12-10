@@ -219,6 +219,12 @@ int fstReaderIterBlocks2(void *ctx,
 
 char *fstReaderGetValueFromHandleAtTime(void *ctx, uint64_t tim, fstHandle facidx, char *buf);
 
+/*
+ * utility functions
+ */
+int fstUtilityBinToEsc(unsigned char *d, unsigned char *s, int len);
+int fstUtilityEscToBin(unsigned char *d, unsigned char *s, int len);
+
 #ifdef __cplusplus
 }
 #endif

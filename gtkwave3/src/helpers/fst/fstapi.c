@@ -3937,7 +3937,14 @@ for(;;)
 								const char *vcd_id = fstVcdIDForFwrite(idx+1, &vcdid_len);
 	
 								fputc('s', fv);
-								fstFwrite(vdata, len, 1, fv);
+								{
+								char *vesc = malloc(len*4 + 1);
+								int vlen = fstUtilityBinToEsc(vesc, vdata, len);
+
+								vesc[vlen] = 0;
+								fstFwrite(vesc, vlen, 1, fv);
+								free(vesc);
+								}
 								fputc(' ', fv);
 								fstFwrite(vcd_id, vcdid_len, 1, fv);
 								fputc('\n', fv);
@@ -4958,3 +4965,111 @@ if(base && *base)
 
 #endif
 #endif
+
+/**********************************************************************/
+
+/************************/
+/***                  ***/
+/*** utility function ***/
+/***                  ***/
+/************************/
+
+int fstUtilityBinToEsc(unsigned char *d, unsigned char *s, int len)
+{
+unsigned char *src = s;
+unsigned char *dst = d;
+int i;
+
+for(i=0;i<len;i++)
+	{
+	switch(src[i])
+		{
+		case '\a':	*(dst++) = '\\'; *(dst++) = 'a'; break;
+		case '\b':	*(dst++) = '\\'; *(dst++) = 'b'; break;
+		case '\f':	*(dst++) = '\\'; *(dst++) = 'f'; break;
+		case '\n':	*(dst++) = '\\'; *(dst++) = 'n'; break;
+		case '\r':	*(dst++) = '\\'; *(dst++) = 'r'; break;
+		case '\t':	*(dst++) = '\\'; *(dst++) = 't'; break;
+		case '\v':	*(dst++) = '\\'; *(dst++) = 'v'; break;
+		case '\'':	*(dst++) = '\\'; *(dst++) = '\''; break;
+		case '\"':	*(dst++) = '\\'; *(dst++) = '\"'; break;
+		case '\\':	*(dst++) = '\\'; *(dst++) = '\\'; break;
+		case '\?':	*(dst++) = '\\'; *(dst++) = '\?'; break;
+		default:	if((src[i] > ' ') && (src[i] <= '~')) /* no white spaces in output */
+					{
+					*(dst++) = src[i];
+					}
+					else
+					{
+					*(dst++) = '\\';
+					*(dst++) = (src[i]/64) + '0';	src[i] = src[i] & 63;
+					*(dst++) = (src[i]/8)  + '0';   src[i] = src[i] & 7;
+					*(dst++) = (src[i]) + '0';
+					}
+				break;
+		}
+	}
+
+return(dst - d);
+}
+
+
+/*
+ * this overwrites the original string if the destination pointer is NULL
+ */
+int fstUtilityEscToBin(unsigned char *d, unsigned char *s, int len)
+{
+unsigned char *src = s;
+unsigned char *dst = (!d) ? s : (s = d);
+unsigned char val[3];
+int i;
+
+for(i=0;i<len;i++)
+	{
+	if(src[i] != '\\')
+		{
+		*(dst++) = src[i];
+		}
+		else
+		{
+		switch(src[++i])
+			{
+			case 'a':	*(dst++) = '\a'; break;
+			case 'b':	*(dst++) = '\b'; break;
+			case 'f':	*(dst++) = '\f'; break;
+			case 'n':	*(dst++) = '\n'; break;
+			case 'r':	*(dst++) = '\r'; break;
+			case 't':	*(dst++) = '\t'; break;
+			case 'v':	*(dst++) = '\v'; break;
+			case '\'':	*(dst++) = '\''; break;
+			case '\"':	*(dst++) = '\"'; break;
+			case '\\':	*(dst++) = '\\'; break;
+			case '\?':	*(dst++) = '\?'; break;
+
+			case 'x':	val[0] = toupper(src[++i]);
+					val[1] = toupper(src[++i]);
+					val[0] = ((val[0]>='A')&&(val[0]<='F')) ? (val[0] - 'A' + 10) : (val[0] - '0');
+					val[1] = ((val[1]>='A')&&(val[1]<='F')) ? (val[1] - 'A' + 10) : (val[1] - '0');
+					*(dst++) = val[0] * 16 + val[1];
+					break;
+
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':	val[0] = src[  i] - '0';
+					val[1] = src[++i] - '0';
+					val[2] = src[++i] - '0';
+					*(dst++) = val[0] * 64 + val[1] * 8 + val[2];
+					break;
+
+			default:	*(dst++) = src[i]; break;
+			}
+		}
+	}
+
+return(dst - s);
+}

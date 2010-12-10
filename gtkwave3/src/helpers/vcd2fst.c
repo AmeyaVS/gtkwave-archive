@@ -632,13 +632,14 @@ while(!feof(f))
 			break;
 
 		case 's':
-			sp = strrchr(buf, ' ');
+			sp = strchr(buf, ' ');
 			*sp = 0;
 			hash = vcdid_hash(sp+1);
 			if(!hash_kill)
 				{
 				int bin_len = sp - (buf + 1); /* strlen(buf+1) */
 
+				bin_len = fstUtilityEscToBin(NULL, buf+1, bin_len);
 				fstWriterEmitVariableLengthValueChange(ctx, hash, buf+1, bin_len);
 				}
 				else
@@ -648,6 +649,7 @@ while(!feof(f))
 					{
 					int bin_len = sp - (buf + 1); /* strlen(buf+1) */
 
+					bin_len = fstUtilityEscToBin(NULL, buf+1, bin_len);
 					fstWriterEmitVariableLengthValueChange(ctx, node->val.i, buf+1, bin_len);
 					}
 					else
@@ -904,6 +906,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2010/12/09 15:19:16  gtkwave
+ * preliminary support for variable-length string datatype in FST
+ *
  * Revision 1.16  2010/11/08 21:04:52  gtkwave
  * optimize out strlen with direct calculation on "b" lines
  *

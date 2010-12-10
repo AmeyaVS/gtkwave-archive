@@ -937,10 +937,13 @@ else	/* string */
 		{
 		unsigned char ch = value[pidx];
 
-		if((ch < ' ') || (ch > 0x7f))
+#if 0
+		/* for now do not convert to printable unless done in vcd + lxt loaders also */
+		if((ch < ' ') || (ch > '~'))
 			{
 			ch = '.';
 			}
+#endif
 
 		s[pidx] = ch;
 		}
@@ -1316,6 +1319,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/12/09 19:02:29  gtkwave
+ * back out commented out string flag setting
+ *
  * Revision 1.34  2010/12/09 15:19:16  gtkwave
  * preliminary support for variable-length string datatype in FST
  *

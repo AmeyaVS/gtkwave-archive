@@ -961,3 +961,7 @@
 		into its compile.
 		Fixed x86_64 assembler =q vs =Q problem in lxt.c.
 		Preliminary support for variable length records in FST files.
+		Added fstUtilityBinToEsc and fstUtilityEscToBin for 
+		conversion of binary data to C-style strings.
+		Now allow escaped strings in VCD files to encode a richer
+		set of data for non-standard "s" VCD records.

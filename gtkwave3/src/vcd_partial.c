@@ -963,9 +963,14 @@ switch(GLOBALS->yytext_vcd_partial_c_2[0])
 	case 'S':
 		{
 		char *d;
+		int vlen;
 
-		d=(char *)malloc_2(GLOBALS->yylen_vcd_partial_c_2);
-		strcpy(d, GLOBALS->yytext_vcd_partial_c_2+1);
+                d=(char *)malloc_2(GLOBALS->yylen_vcd_partial_c_2);
+                vlen = fstUtilityEscToBin(d, GLOBALS->yytext_vcd_partial_c_2+1, GLOBALS->yylen_vcd_partial_c_2); /* includes 0 term */
+                if(vlen != GLOBALS->yylen_vcd_partial_c_2)
+                        {
+                        d = realloc_2(d, vlen);
+                        }
 		
 		get_strtoken();
 		v=bsearch_vcd(GLOBALS->yytext_vcd_partial_c_2, GLOBALS->yylen_vcd_partial_c_2);	
@@ -2532,6 +2537,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2010/11/19 06:47:16  gtkwave
+ * use PJE0 macro for unuser error return on judy function calls
+ *
  * Revision 1.36  2010/06/02 03:51:30  gtkwave
  * don't autocoalesce escape identifiers
  *

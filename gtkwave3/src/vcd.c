@@ -1001,8 +1001,12 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 		char *d;
 
 		d=(char *)malloc_2(GLOBALS->yylen_vcd_c_1);
-		strcpy(d, GLOBALS->yytext_vcd_c_1+1);
-		
+		vlen = fstUtilityEscToBin(d, GLOBALS->yytext_vcd_c_1+1, GLOBALS->yylen_vcd_c_1); /* includes 0 term */
+		if(vlen != GLOBALS->yylen_vcd_c_1)
+			{
+			d = realloc_2(d, vlen);
+			}
+
 		get_strtoken();
 		v=bsearch_vcd(GLOBALS->yytext_vcd_c_1, GLOBALS->yylen_vcd_c_1);	
 		if(!v)
@@ -2619,6 +2623,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2010/11/19 06:47:16  gtkwave
+ * use PJE0 macro for unuser error return on judy function calls
+ *
  * Revision 1.36  2010/11/05 18:36:20  gtkwave
  * update large file size warning to refer to fst instead
  *

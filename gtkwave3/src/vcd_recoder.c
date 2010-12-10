@@ -1233,14 +1233,20 @@ switch((typ = GLOBALS->yytext_vcd_recoder_c_3[0]))
                 break;
 
 	/* encode everything else literally as a time delta + a string */
+#ifndef STRICT_VCD_ONLY         
+        case 's':
+        case 'S':
+                vector=wave_alloca(GLOBALS->yylen_cache_vcd_recoder_c_3=GLOBALS->yylen_vcd_recoder_c_3);
+		vlen = fstUtilityEscToBin(vector, GLOBALS->yytext_vcd_recoder_c_3+1, GLOBALS->yylen_vcd_recoder_c_3-1); 
+		vector[vlen] = 0;                                        
+
+                get_strtoken();
+		goto process_binary;
+#endif                          
         case 'b':
         case 'B':
         case 'r':
         case 'R':
-#ifndef STRICT_VCD_ONLY         
-        case 's':
-        case 'S':
-#endif                          
                 vector=wave_alloca(GLOBALS->yylen_cache_vcd_recoder_c_3=GLOBALS->yylen_vcd_recoder_c_3);
                 strcpy(vector,GLOBALS->yytext_vcd_recoder_c_3+1); 
                 vlen=GLOBALS->yylen_vcd_recoder_c_3-1;
@@ -3235,6 +3241,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2010/11/19 06:47:16  gtkwave
+ * use PJE0 macro for unuser error return on judy function calls
+ *
  * Revision 1.46  2010/11/07 16:20:33  gtkwave
  * make fst the default file format for --optimize action in gtkwave
  *
