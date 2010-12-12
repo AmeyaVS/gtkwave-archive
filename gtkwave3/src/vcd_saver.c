@@ -564,7 +564,9 @@ for(i=0;i<nodecnt;i++)
 			}
 			else
 			{
-			w32redirect_fprintf(GLOBALS->f_vcd_saver_c_1, "$var real 1 %s %s $end\n", vcdid(GLOBALS->hp_vcd_saver_c_1[i]->val, export_typ), netname);
+			const char *typ = (GLOBALS->hp_vcd_saver_c_1[i]->flags & HIST_STRING) ? "string" : "real";
+			int tlen = (GLOBALS->hp_vcd_saver_c_1[i]->flags & HIST_STRING) ? 0 : 1;
+			w32redirect_fprintf(GLOBALS->f_vcd_saver_c_1, "$var %s %d %s %s $end\n", typ, tlen, vcdid(GLOBALS->hp_vcd_saver_c_1[i]->val, export_typ), netname);
 			}
 		}
 		else
@@ -1550,6 +1552,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/12/10 20:13:13  gtkwave
+ * added escape codes to string record parsing
+ *
  * Revision 1.19  2010/08/26 18:42:23  gtkwave
  * added support for transaction filters in mingw
  *

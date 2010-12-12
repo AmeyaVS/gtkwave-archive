@@ -37,6 +37,7 @@ port, V_PORT
 in, V_IN
 out, V_OUT
 inout, V_INOUT
+string, V_STRINGTYPE
 $end, V_END
 %%
 
@@ -49,6 +50,9 @@ return(rc ? rc->token : V_STRING);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2010/02/22 21:13:36  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:35  gtkwave
  * Imported sources
  *

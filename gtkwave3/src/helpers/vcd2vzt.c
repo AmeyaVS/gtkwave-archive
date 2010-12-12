@@ -119,24 +119,24 @@ static struct vcdsymbol **sorted=NULL;
 static struct vcdsymbol **indexed=NULL;
 
 enum VarTypes { V_EVENT, V_PARAMETER,
-                V_INTEGER, V_REAL, V_REAL_PARAMETER=V_REAL, V_REALTIME=V_REAL, V_REG, V_SUPPLY0,
+                V_INTEGER, V_REAL, V_REAL_PARAMETER=V_REAL, V_REALTIME=V_REAL, V_STRINGTYPE=V_REAL, V_REG, V_SUPPLY0,
                 V_SUPPLY1, V_TIME, V_TRI, V_TRIAND, V_TRIOR,
                 V_TRIREG, V_TRI0, V_TRI1, V_WAND, V_WIRE, V_WOR, V_PORT, V_IN=V_PORT, V_OUT=V_PORT, V_INOUT=V_PORT,
                 V_END, V_LB, V_COLON, V_RB, V_STRING };
 
 static char *vartypes[]={ "event", "parameter",
-                "integer", "real", "real_parameter", "realtime", "reg", "supply0",
+                "integer", "real", "real_parameter", "realtime", "string", "reg", "supply0",
                 "supply1", "time", "tri", "triand", "trior",
                 "trireg", "tri0", "tri1", "wand", "wire", "wor", "port", "in", "out", "inout",
                 "$end", "", "", "", ""};
 
 static const unsigned char varenums[] = {  V_EVENT, V_PARAMETER,
-                V_INTEGER, V_REAL, V_REAL_PARAMETER, V_REALTIME, V_REG, V_SUPPLY0,
+                V_INTEGER, V_REAL, V_REAL_PARAMETER, V_REALTIME, V_STRINGTYPE, V_REG, V_SUPPLY0,
                 V_SUPPLY1, V_TIME, V_TRI, V_TRIAND, V_TRIOR,
                 V_TRIREG, V_TRI0, V_TRI1, V_WAND, V_WIRE, V_WOR, V_PORT, V_IN, V_OUT, V_INOUT,
                 V_END, V_LB, V_COLON, V_RB, V_STRING };
 
-#define NUM_VTOKENS 24  
+#define NUM_VTOKENS 25
 
 static int numsyms=0;
 
@@ -2019,6 +2019,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/10/02 19:05:51  gtkwave
+ * fix shadowed time variable
+ *
  * Revision 1.13  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *

@@ -59,7 +59,7 @@ VCDNAM_ESCAPE };
 enum VarTypes { V_EVENT, V_PARAMETER,
                 V_INTEGER, V_REAL, V_REAL_PARAMETER=V_REAL, V_REALTIME=V_REAL, V_REG, V_SUPPLY0,
                 V_SUPPLY1, V_TIME, V_TRI, V_TRIAND, V_TRIOR,
-                V_TRIREG, V_TRI0, V_TRI1, V_WAND, V_WIRE, V_WOR, V_PORT, V_IN=V_PORT, V_OUT=V_PORT, V_INOUT=V_PORT,
+                V_TRIREG, V_TRI0, V_TRI1, V_WAND, V_WIRE, V_WOR, V_PORT, V_IN=V_PORT, V_OUT=V_PORT, V_INOUT=V_PORT, V_STRINGTYPE,
                 V_END, V_LB, V_COLON, V_RB, V_STRING };
 #endif
 
@@ -128,6 +128,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/03/01 19:19:50  gtkwave
+ * more hier_pfx code movement into hierpack.c
+ *
  * Revision 1.8  2010/02/22 21:13:36  gtkwave
  * added "realtime" VCD variable
  *

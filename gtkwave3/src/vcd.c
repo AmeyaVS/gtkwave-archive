@@ -797,7 +797,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			}
 			else
 			{
-			if ((v->vartype==V_REAL)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
+			if ((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
 				{
 				double *d;
 				char *pnt;
@@ -893,7 +893,7 @@ switch(GLOBALS->yytext_vcd_c_1[0])
 			}
 			else
 			{
-			if ((v->vartype==V_REAL)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
+			if ((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
 				{
 				double *d;
 				char *pnt;
@@ -1220,7 +1220,7 @@ for(;;)
 				GLOBALS->varsplit_vcd_c_1=NULL;
 				}
 			vtok=get_vartoken(1);
-			if(vtok>V_PORT) goto bail;
+			if(vtok>V_STRINGTYPE) goto bail;
 
 			v=(struct vcdsymbol *)calloc_2(1,sizeof(struct vcdsymbol));
 			v->vartype=vtok;
@@ -1444,7 +1444,10 @@ for(;;)
                                 {
                                 if(v->vartype != V_EVENT)
                                         {
-                                        v->vartype = V_REAL;
+					if(v->vartype != V_STRINGTYPE)
+						{
+	                                        v->vartype = V_REAL;
+						}
                                         }
                                         else
                                         {
@@ -1453,9 +1456,12 @@ for(;;)
 
                                 } /* MTI fix */
 
-			if((v->vartype==V_REAL)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
+			if((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE)||((GLOBALS->convert_to_reals)&&((v->vartype==V_INTEGER)||(v->vartype==V_PARAMETER))))
 				{
-				v->vartype=V_REAL;
+				if(v->vartype!=V_STRINGTYPE)
+					{
+					v->vartype=V_REAL;
+					}
 				v->size=1;		/* override any data we parsed in */
 				v->msi=v->lsi=0;
 				}
@@ -1553,7 +1559,7 @@ for(;;)
 				{
 				if(v->msi==v->lsi)
 					{
-					if(v->vartype==V_REAL)
+					if((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE))
 						{
 						fprintf(GLOBALS->vcd_save_handle,"%s\n",v->name);
 						}
@@ -1993,6 +1999,7 @@ switch(v->vartype)
         case V_WIRE:            nvt = ND_VCD_WIRE; break;
         case V_WOR:             nvt = ND_VCD_WOR; break;
         case V_PORT:            nvt = ND_VCD_PORT; break;
+	case V_STRINGTYPE:	nvt = ND_GEN_STRING; break;
         default:                nvt = ND_UNSPECIFIED_DEFAULT; break;
 	}
 n->vartype = nvt;
@@ -2010,7 +2017,7 @@ struct vcdsymbol *v;
 v=GLOBALS->vcdsymroot_vcd_c_1;
 while(v)
 	{
-	if(v->vartype==V_REAL)
+	if((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE))
 		{
 		double *d;
 
@@ -2035,7 +2042,7 @@ while(v)
 v=GLOBALS->vcdsymroot_vcd_c_1;
 while(v)
 	{
-	if(v->vartype==V_REAL)
+	if((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE))
 		{
 		double *d;
 
@@ -2109,7 +2116,7 @@ while(v)
 				}
 			}
 
-		if(((v->size==1)||(!GLOBALS->atomic_vectors))&&(v->vartype!=V_REAL))
+		if(((v->size==1)||(!GLOBALS->atomic_vectors))&&(v->vartype!=V_REAL)&&(v->vartype!=V_STRINGTYPE))
 			{
 			struct symbol *s = NULL;
 	
@@ -2201,7 +2208,7 @@ while(v)
 			}
 			else	/* atomic vector */
 			{
-			if(v->vartype!=V_REAL)
+			if((v->vartype!=V_REAL)&&(v->vartype!=V_STRINGTYPE))
 				{
 				sprintf(str+slen-1,"[%d:%d]",v->msi,v->lsi);
 				}
@@ -2623,6 +2630,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2010/12/10 20:13:13  gtkwave
+ * added escape codes to string record parsing
+ *
  * Revision 1.37  2010/11/19 06:47:16  gtkwave
  * use PJE0 macro for unuser error return on judy function calls
  *

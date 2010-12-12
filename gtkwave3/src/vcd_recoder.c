@@ -754,7 +754,7 @@ while(v)
 						vlist_emit_string(&n->mv.mvlfac_vlist, "NaN");
 						break;
 
-				case V_STRING:
+				case V_STRINGTYPE:
 						vlist_emit_uv32(&n->mv.mvlfac_vlist, 'S');
 		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->vartype);
 		                                vlist_emit_uv32(&n->mv.mvlfac_vlist, (unsigned int)v->size);
@@ -1269,7 +1269,7 @@ process_binary:
 				unsigned char typ2 = toupper(typ);
 				n->mv.mvlfac_vlist = (GLOBALS->vlist_prepack) ? ((struct vlist_t *)vlist_packer_create()) : vlist_create(sizeof(char));
 
-				if(v->vartype!=V_REAL) 
+				if((v->vartype!=V_REAL) && (v->vartype!=V_STRINGTYPE))
 					{
 					/* ok, typical case */
 					}
@@ -1294,7 +1294,7 @@ process_binary:
 
 			if((typ=='b')||(typ=='B'))
 				{
-				if(v->vartype!=V_REAL)
+				if((v->vartype!=V_REAL)&&(v->vartype!=V_STRINGTYPE))
 					{
 					vlist_emit_mvl9_string(&n->mv.mvlfac_vlist, vector);
 					}
@@ -1305,7 +1305,7 @@ process_binary:
 				}
 				else
 				{
-				if((v->vartype == V_REAL)||(typ=='s')||(typ=='S'))
+				if((v->vartype == V_REAL)||(v->vartype == V_STRINGTYPE)||(typ=='s')||(typ=='S'))
 					{
 					vlist_emit_string(&n->mv.mvlfac_vlist, vector);
 					}
@@ -1542,7 +1542,7 @@ for(;;)
                                 GLOBALS->varsplit_vcd_recoder_c_3=NULL;
                                 }
 			vtok=get_vartoken(1);
-			if(vtok>V_PORT) goto bail;
+			if(vtok>V_STRINGTYPE) goto bail;
 
 			v=(struct vcdsymbol *)calloc_2(1,sizeof(struct vcdsymbol));
 			v->vartype=vtok;
@@ -1774,7 +1774,10 @@ for(;;)
 				{ 
 				if(v->vartype != V_EVENT)
 					{
-					v->vartype = V_REAL; 
+					if(v->vartype != V_STRINGTYPE)
+						{
+						v->vartype = V_REAL; 
+						}
 					}
 					else
 					{
@@ -1783,9 +1786,9 @@ for(;;)
 
 				} /* MTI fix */
 
-			if(v->vartype==V_REAL)
+
+			if((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE))
 				{
-				v->vartype=V_REAL;
 				v->size=1;		/* override any data we parsed in */
 				v->msi=v->lsi=0;
 				}
@@ -1851,7 +1854,7 @@ for(;;)
 				{
 				if(v->msi==v->lsi)
 					{
-					if(v->vartype==V_REAL)
+					if((v->vartype==V_REAL)||(v->vartype==V_STRINGTYPE))
 						{
 						fprintf(GLOBALS->vcd_save_handle,"%s\n",v->name);
 						}
@@ -2339,7 +2342,7 @@ while(v)
 				}
 			}
 
-		if((v->size==1)&&(v->vartype!=V_REAL))
+		if((v->size==1)&&(v->vartype!=V_REAL)&&(v->vartype!=V_STRINGTYPE))
 			{
 			struct symbol *s = NULL;
 	
@@ -2432,7 +2435,7 @@ while(v)
 			}
 			else	/* atomic vector */
 			{
-			if(v->vartype!=V_REAL)
+			if((v->vartype!=V_REAL)&&(v->vartype!=V_STRINGTYPE))
 				{
 				sprintf(str+slen-1,"[%d:%d]",v->msi,v->lsi);
 				}
@@ -3241,6 +3244,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2010/12/10 20:13:13  gtkwave
+ * added escape codes to string record parsing
+ *
  * Revision 1.47  2010/11/19 06:47:16  gtkwave
  * use PJE0 macro for unuser error return on judy function calls
  *

@@ -43,7 +43,7 @@ error "gperf generated tables don't work with this execution character set. Plea
 struct vcd_keyword { const char *name; int token; };
 
 
-#define TOTAL_KEYWORDS 24
+#define TOTAL_KEYWORDS 25
 #define MIN_WORD_LENGTH 2
 #define MAX_WORD_LENGTH 14
 #define MIN_HASH_VALUE 5
@@ -68,14 +68,14 @@ keyword_hash (str, len)
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 26, 42, 42, 42,
-      42, 42, 42, 42, 42, 42, 42, 42,  9,  1,
+      42, 42, 42, 42, 42, 42, 42, 42,  4,  1,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       11,  6, 42,  1, 42, 16, 42, 42, 24, 42,
-       1,  6, 16, 42,  1,  1,  1, 42, 42, 21,
+       1,  6, 16, 42,  1,  6,  1, 42, 42, 21,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
@@ -116,17 +116,18 @@ check_identifier (str, len)
       {"trior", V_TRIOR},
 #line 30 "./vcd_keywords.gperf"
       {"trireg", V_TRIREG},
-#line 25 "./vcd_keywords.gperf"
-      {"supply1", V_SUPPLY1},
+#line 31 "./vcd_keywords.gperf"
+      {"tri0", V_TRI0},
 #line 38 "./vcd_keywords.gperf"
       {"out", V_OUT},
 #line 26 "./vcd_keywords.gperf"
       {"time", V_TIME},
 #line 17 "./vcd_keywords.gperf"
       {"event", V_EVENT},
-      {""},
-#line 31 "./vcd_keywords.gperf"
-      {"tri0", V_TRI0},
+#line 40 "./vcd_keywords.gperf"
+      {"string", V_STRINGTYPE},
+#line 25 "./vcd_keywords.gperf"
+      {"supply1", V_SUPPLY1},
 #line 22 "./vcd_keywords.gperf"
       {"realtime", V_REALTIME},
 #line 21 "./vcd_keywords.gperf"
@@ -160,7 +161,7 @@ check_identifier (str, len)
 #line 33 "./vcd_keywords.gperf"
       {"wand", V_WAND},
       {""}, {""}, {""}, {""},
-#line 40 "./vcd_keywords.gperf"
+#line 41 "./vcd_keywords.gperf"
       {"$end", V_END}
     };
 
@@ -178,7 +179,7 @@ check_identifier (str, len)
     }
   return 0;
 }
-#line 41 "./vcd_keywords.gperf"
+#line 42 "./vcd_keywords.gperf"
 
 
 int vcd_keyword_code(const char *s, unsigned int len)
@@ -190,6 +191,9 @@ return(rc ? rc->token : V_STRING);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2010/02/22 21:13:36  gtkwave
+ * added "realtime" VCD variable
+ *
  * Revision 1.1.1.1  2007/05/30 04:27:35  gtkwave
  * Imported sources
  *
