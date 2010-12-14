@@ -57,25 +57,17 @@ if((!(*buf)[0])||(!fgets_rc))
 
 JRB vcd_ids = NULL;
 
-static unsigned int vcdid_hash(char *s)
+static unsigned int vcdid_hash(char *s, int len)
 {
-char *s2 = s;
 unsigned int val=0;
 int i;
-int len;
 
-while(*s2)
-	{
-	*s2 -=32;
-	s2++;
-	}
-
-len = s2 - s;
+s += len;
 
 for(i=0;i<len;i++)
         {
 	val *= 94;
-        val += (unsigned char)*(--s2);
+        val += ((unsigned char)*(--s)) - 32;
         }
 
 return(val);
@@ -273,7 +265,7 @@ while(!feof(f))
 			}
 
 		st = strtok(NULL, " \t"); /* vcdid */
-		hash = vcdid_hash(st);
+		hash = vcdid_hash(st, strlen(st));
 
 		if(hash == (hash_max+1))
 			{
@@ -567,7 +559,7 @@ while(!feof(f))
 		case '1':
 		case 'x':
 		case 'z':
-			hash = vcdid_hash(buf+1);
+			hash = vcdid_hash(buf+1, nl - (buf+1));
 			if(!hash_kill)
 				{
 				fstWriterEmitValueChange(ctx, hash, buf);
@@ -588,7 +580,7 @@ while(!feof(f))
 		case 'b':
 			sp = strchr(buf, ' ');
 			*sp = 0;
-			hash = vcdid_hash(sp+1);
+			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
 				{
 				int bin_len = sp - (buf + 1); /* strlen(buf+1) */
@@ -634,7 +626,7 @@ while(!feof(f))
 		case 's':
 			sp = strchr(buf, ' ');
 			*sp = 0;
-			hash = vcdid_hash(sp+1);
+			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
 				{
 				int bin_len = sp - (buf + 1); /* strlen(buf+1) */
@@ -681,7 +673,7 @@ while(!feof(f))
 			sp = strchr(sp+1, ' ');
 			sp = strchr(sp+1, ' ');
 			*sp = 0;
-			hash = vcdid_hash(sp+1);
+			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
 				{
 				fstWriterEmitValueChange(ctx, hash, bin_fixbuff);
@@ -702,7 +694,7 @@ while(!feof(f))
 
 		case 'r':
 			sp = strchr(buf, ' ');
-			hash = vcdid_hash(sp+1);
+			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
 				{
 		                sscanf(buf+1,"%lg",&doub); 
@@ -906,6 +898,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2010/12/10 20:13:13  gtkwave
+ * added escape codes to string record parsing
+ *
  * Revision 1.17  2010/12/09 15:19:16  gtkwave
  * preliminary support for variable-length string datatype in FST
  *
