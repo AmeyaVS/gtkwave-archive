@@ -281,11 +281,11 @@ if(GLOBALS->numsyms_vcd_c_1)
 	{
         vcd_distance = GLOBALS->vcd_maxid_vcd_c_1 - GLOBALS->vcd_minid_vcd_c_1 + 1;
 
-        if(vcd_distance <= VCD_INDEXSIZ)
+        if((vcd_distance <= VCD_INDEXSIZ)||(!GLOBALS->vcd_hash_kill))
                 {
                 GLOBALS->indexed_vcd_c_1 = (struct vcdsymbol **)calloc_2(vcd_distance, sizeof(struct vcdsymbol *));
          
-		/* printf("%d symbols span ID range of %d, using indexing...\n", numsyms, vcd_distance); */
+		/* printf("%d symbols span ID range of %d, using indexing...\n", GLOBALS->numsyms_vcd_c_1, vcd_distance); */
 
                 v=GLOBALS->vcdsymroot_vcd_c_1;
                 while(v)
@@ -1274,6 +1274,20 @@ for(;;)
 				strcpy(v->id, GLOBALS->yytext_vcd_c_1);
                                 v->nid=vcdid_hash(GLOBALS->yytext_vcd_c_1,GLOBALS->yylen_vcd_c_1);
 
+                                if(v->nid == (GLOBALS->vcd_hash_max+1))
+                                        {
+                                        GLOBALS->vcd_hash_max = v->nid;
+                                        }
+                                else
+                                if((v->nid>0)&&(v->nid<=GLOBALS->vcd_hash_max))
+                                        {
+                                        /* general case with aliases */
+                                        }
+                                else
+                                        {
+                                        GLOBALS->vcd_hash_kill = 1;
+                                        }
+
                                 if(v->nid < GLOBALS->vcd_minid_vcd_c_1) GLOBALS->vcd_minid_vcd_c_1 = v->nid;
                                 if(v->nid > GLOBALS->vcd_maxid_vcd_c_1) GLOBALS->vcd_maxid_vcd_c_1 = v->nid;
 
@@ -1351,6 +1365,20 @@ for(;;)
 				v->id=(char *)malloc_2(GLOBALS->yylen_vcd_c_1+1);
 				strcpy(v->id, GLOBALS->yytext_vcd_c_1);
                                 v->nid=vcdid_hash(GLOBALS->yytext_vcd_c_1,GLOBALS->yylen_vcd_c_1);
+
+                                if(v->nid == (GLOBALS->vcd_hash_max+1))
+                                        {
+                                        GLOBALS->vcd_hash_max = v->nid;
+                                        }
+                                else
+                                if((v->nid>0)&&(v->nid<=GLOBALS->vcd_hash_max))
+                                        {
+                                        /* general case with aliases */
+                                        }
+                                else
+                                        {
+                                        GLOBALS->vcd_hash_kill = 1;
+                                        }
                                 
                                 if(v->nid < GLOBALS->vcd_minid_vcd_c_1) GLOBALS->vcd_minid_vcd_c_1 = v->nid;
                                 if(v->nid > GLOBALS->vcd_maxid_vcd_c_1) GLOBALS->vcd_maxid_vcd_c_1 = v->nid;
@@ -2630,6 +2658,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2010/12/14 19:53:14  gtkwave
+ * scaled back id multiplier from 95 to 94
+ *
  * Revision 1.39  2010/12/12 18:32:45  gtkwave
  * add "string" variable type to parsing of vcd variable declarations
  *

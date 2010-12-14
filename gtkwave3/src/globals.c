@@ -1102,6 +1102,8 @@ NULL, /* indexed_vcd_recoder_c_3 569 */
 NULL, /* varsplit_vcd_recoder_c_3 575 */
 NULL, /* vsplitcurr */
 0, /* var_prevch_vcd_recoder_c_3 576 */
+0, /* vcd_hash_max */
+0, /* vcd_hash_kill */
 
 
 /*

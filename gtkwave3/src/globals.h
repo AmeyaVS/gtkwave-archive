@@ -1086,6 +1086,8 @@ off_t vcd_fsiz_vcd_recoder_c_2; /* from vcd_recoder.c 624 */
 char *varsplit_vcd_recoder_c_3; /* from vcd_recoder.c 625 */
 char *vsplitcurr_vcd_recoder_c_3; /* from vcd_recoder.c 626 */
 int var_prevch_vcd_recoder_c_3; /* from vcd_recoder.c 627 */
+unsigned int vcd_hash_max; /* from vcd_recoder.c */
+int vcd_hash_kill; /* from vcd_recoder.c */
 
 
 /*
