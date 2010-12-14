@@ -967,3 +967,5 @@
 		set of data for non-standard "s" VCD records.
 		To comply with fst2vcd, vcd readers now handle "string"
 		variable type keyword.
+		Scaled back multipler from 95 to 94 for VCD ID processing
+		as !..~ is a distance of 94.

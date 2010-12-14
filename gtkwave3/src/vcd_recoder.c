@@ -558,8 +558,8 @@ s+=(len-1);
                  
 for(i=0;i<len;i++)
         {
-        val *= 95;				/* was 94 but XL uses '!' as right hand side chars which act as leading zeros */
-        val += (((unsigned char)*s) - 32);	/* was 33 but XL ... */
+        val *= 94;
+        val += (((unsigned char)*s) - 32);
         s--;
         }
 
@@ -3244,6 +3244,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2010/12/12 18:32:45  gtkwave
+ * add "string" variable type to parsing of vcd variable declarations
+ *
  * Revision 1.48  2010/12/10 20:13:13  gtkwave
  * added escape codes to string record parsing
  *
