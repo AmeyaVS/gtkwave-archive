@@ -3137,9 +3137,9 @@ if(gzread_pass_status)
 						{
 						xc->signal_lens[i] = (val != 0xFFFFFFFF) ? val : 0;
 						xc->signal_typs[i] = FST_VT_VCD_WIRE;
-						if(val > xc->longest_signal_value_len)
+						if(xc->signal_lens[i] > xc->longest_signal_value_len)
 	                                        	{
-	                                        	xc->longest_signal_value_len = val;
+	                                        	xc->longest_signal_value_len = xc->signal_lens[i];
 	                                        	}
 						}
 						else
