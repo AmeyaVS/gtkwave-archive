@@ -81,6 +81,11 @@ enum AnalyzerBits  { AN_0, AN_X, AN_Z, AN_1, AN_H, AN_U, AN_W, AN_L, AN_DASH, AN
 /* ^^^   Bit representation   ^^^ */
 
 
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(push)
+#pragma pack(1)
+#endif
+
 typedef struct HistEnt
 {
 hptr next;	      /* next transition in history */
@@ -95,6 +100,11 @@ TimeType time;        /* time of transition */
 unsigned char flags;  /* so far only set on glitch/real condition */
 } HistEnt;
 
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(pop)
+#endif
+
+
 enum HistEntFlagBits
 { HIST_GLITCH_B, HIST_REAL_B, HIST_STRING_B 
 };
@@ -108,12 +118,21 @@ enum HistEntFlagBits
 	#define HIST_STRING 0	/* for gcc -O2 optimization */
 #endif
 
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(push)
+#pragma pack(1)
+#endif
+
 typedef struct VectorEnt
 {
 TimeType time;
 vptr next;
 unsigned char v[1];
 } VectorEnt;
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(pop)
+#endif
 
 
 #define MAX_HISTENT_TIME (~( (ULLDescriptor(-1)) << (sizeof(TimeType) * 8 - 1)))
@@ -133,6 +152,11 @@ int    parentbit;		/* which bit from that atomic vec */
 int    actual;			/* bit number to be used in [] */
 int    refcnt;
 } ExpandReferences;
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(push)
+#pragma pack(1)
+#endif
 
 struct Node
   {
@@ -159,6 +183,10 @@ struct Node
 
     unsigned extvals : 1; /* was formerly a pointer to ExtNode "ext", now simply a flag */
   };
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(pop)
+#endif
 
 
 #define WAVE_NODEVARTYPE_STR \
@@ -450,6 +478,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.33  2010/12/09 15:28:59  gtkwave
+ * syntax typo fix
+ *
  * Revision 1.32  2010/12/09 15:22:37  gtkwave
  * remove unused memblock node type
  *

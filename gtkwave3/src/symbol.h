@@ -36,6 +36,11 @@ typedef long off_t;
 #include <io.h>
 #endif
 
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(push)
+#pragma pack(1)
+#endif
+
 struct fac
 {
 struct Node *working_node;
@@ -43,6 +48,10 @@ int array_height;
 int msb, lsb, len;
 unsigned int flags;
 };
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(pop)
+#endif
 
 
 struct symbol
@@ -127,6 +136,9 @@ void destroy_s_selected(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.13  2010/03/16 21:01:10  gtkwave
  * remove selected member of struct symbol
  *

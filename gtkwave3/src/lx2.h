@@ -23,12 +23,22 @@
 
 enum LXT2_Loader_Type_Encodings { LXT2_IS_INACTIVE, LXT2_IS_LXT2, LXT2_IS_VZT, LXT2_IS_AET2, LXT2_IS_VLIST, LXT2_IS_FST };
 
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(push)
+#pragma pack(1)
+#endif
+
 struct lx2_entry
 {
 struct HistEnt *histent_head, *histent_curr;
 int numtrans;
 nptr np;
 };
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(pop)
+#endif
+
 
 TimeType lx2_main(char *fname, char *skip_start, char *skip_end);
 void import_lx2_trace(nptr np);
@@ -41,6 +51,9 @@ void lx2_import_masked(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.5  2010/09/15 18:35:42  gtkwave
+ * added F_NAME_MODULUS to reduce temp memory usage
+ *
  * Revision 1.4  2010/04/27 23:10:56  gtkwave
  * made inttype.h inclusion conditional
  *

@@ -955,7 +955,7 @@
 3.3.17	28nov10	Added sanity check in dynamic alias reconstruct routine in
 		FST reader and also fixed bug where alias reconstruction in 
 		current blocks doesn't overwrite previous, old block data.
-3.3.18	14dec10	Added extra allocation in fstWriterEmitValueChange in case
+3.3.18	17dec10	Added extra allocation in fstWriterEmitValueChange in case
 		users modify the FST_BREAK_ADD_SIZE to a very small value.
 		Fixed in lxt.c that --disable-inline-asm did not propagate
 		into its compile.
@@ -971,3 +971,4 @@
 		as !..~ is a distance of 94.
 		Add detection for Verilog XL-style VCD identifiers in all
 		vcd loaders in gtkwave in order to aid in indexing.
+		Added --enable-struct-pack configure flag.

@@ -77,6 +77,11 @@ enum tree_kind
 
  };
 
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(push)
+#pragma pack(1)
+#endif
+
 struct tree
 {
 struct tree *next;
@@ -87,6 +92,12 @@ unsigned kind : 7; 	/* Kind of the leaf: ghwlib reads this as val & 0x7f so only
 unsigned children_in_gui : 1; /* indicates that the child notes are in the gtk2 tree */
 char name[1];
 };
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(pop)
+#endif
+
+/* names at the end of the main hierarchy 010104ajb    */
 
 struct treechain
 {
@@ -103,7 +114,6 @@ char *name;				/* free up next time filtering is performed */
 };
 
 
-			   /* names at the end of the main hierarchy 010104ajb    */
 
 void init_tree(void);
 void build_tree_from_name(const char *s, int which);
@@ -127,6 +137,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2010/09/23 22:04:55  gtkwave
+ * added incremental SST build code
+ *
  * Revision 1.7  2009/07/01 21:58:32  gtkwave
  * more GHW module type adds for icons in hierarchy window
  *

@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT INLINE_ASM TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_INCLUDE_SPEC TCL_MAJOR_VERSION TCL_MINOR_VERSION TK_VERSION TK_BIN_DIR TK_SRC_DIR TK_LIB_FILE TK_LIB_FLAG TK_LIB_SPEC TK_STUB_LIB_FILE TK_STUB_LIB_FLAG TK_STUB_LIB_SPEC TK_INCLUDE_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB EXTDEBUG EXTLOAD_CFLAGS GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR LIBXZ_LDADD LIBXZ_CFLAGS FASTTREE_CFLAGS LIBJUDY_LDADD LIBJUDY_CFLAGS GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB TCL_LDADD TCL_DEFADD TK_LDADD LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT INLINE_ASM STRUCT_PACK TCL_VERSION TCL_PATCH_LEVEL TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_INCLUDE_SPEC TCL_MAJOR_VERSION TCL_MINOR_VERSION TK_VERSION TK_BIN_DIR TK_SRC_DIR TK_LIB_FILE TK_LIB_FLAG TK_LIB_SPEC TK_STUB_LIB_FILE TK_STUB_LIB_FLAG TK_STUB_LIB_SPEC TK_INCLUDE_SPEC AET2_CFLAGS AET2_LDADD CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE LEX LEXLIB LEX_OUTPUT_ROOT RANLIB ac_ct_RANLIB EXTDEBUG EXTLOAD_CFLAGS GPERF LIBZ_CFLAGS LIBZ_LDADD LIBZ_DIR LIBBZ2_CFLAGS LIBBZ2_LDADD LIBBZ2_DIR LIBXZ_LDADD LIBXZ_CFLAGS FASTTREE_CFLAGS LIBJUDY_LDADD LIBJUDY_CFLAGS GTK_CONFIG PKG_CONFIG ac_pt_PKG_CONFIG GTK_CFLAGS GTK_LIBS ALLOCA CPP EGREP LIBOBJS POW_LIB TCL_LDADD TCL_DEFADD TK_LDADD LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -864,6 +864,10 @@ Optional Features:
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
   --disable-inline-asm    Disables usage of inline x86 assembly
+  --enable-struct-pack    Enables C language structure packing pragmas
+                          intended for use on architectures which support
+                          misaligned loads and stores (x64/AMD64).  This can
+                          reduce memory on traces with very many signals.
   --disable-tcl           Disables Tcl if found
   --enable-stubify        Causes the Tcl/Tk libraries to be dynamically loaded.
   --enable-gtk1           Causes the GTK+ frontend to be built with gtk1
@@ -1819,7 +1823,7 @@ fi
 
 
 # Checks for build options
-# ------------- LZMA / XZ -------------------
+# ------------- Inline -------------------
 
 echo "$as_me:$LINENO: checking if inline assembly should be enabled" >&5
 echo $ECHO_N "checking if inline assembly should be enabled... $ECHO_C" >&6
@@ -1839,6 +1843,27 @@ fi;
 echo "$as_me:$LINENO: result: $INL" >&5
 echo "${ECHO_T}$INL" >&6
 
+
+
+# ------------- Structure Packing -------------------
+
+echo "$as_me:$LINENO: checking if structure packing should be enabled" >&5
+echo $ECHO_N "checking if structure packing should be enabled... $ECHO_C" >&6
+
+ESTP=no
+STRUCT_PACK=
+# Check whether --enable-struct_pack or --disable-struct_pack was given.
+if test "${enable_struct_pack+set}" = set; then
+  enableval="$enable_struct_pack"
+
+if test "X$enable_struct_pack" = "Xyes" ; then
+	ESTP=no
+	STRUCT_PACK=-DWAVE_USE_STRUCT_PACKING
+fi
+
+fi;
+echo "$as_me:$LINENO: result: $ESTP" >&5
+echo "${ECHO_T}$ESTP" >&6
 
 
 
@@ -10404,6 +10429,9 @@ if test "X$MACHTYPE" = "Xrs6000" ; then
 fi
 fi
 
+CFLAGS="${CFLAGS} ${STRUCT_PACK}"
+
+
 if test "X$ETCL" = "Xyes" ; then
 if test "X$OSTYPE" = "Xcygwin" ; then
 # skip Tcl_CreateInterp check on cygwin...
@@ -11327,6 +11355,7 @@ s,@MAINTAINER_MODE_TRUE@,$MAINTAINER_MODE_TRUE,;t t
 s,@MAINTAINER_MODE_FALSE@,$MAINTAINER_MODE_FALSE,;t t
 s,@MAINT@,$MAINT,;t t
 s,@INLINE_ASM@,$INLINE_ASM,;t t
+s,@STRUCT_PACK@,$STRUCT_PACK,;t t
 s,@TCL_VERSION@,$TCL_VERSION,;t t
 s,@TCL_PATCH_LEVEL@,$TCL_PATCH_LEVEL,;t t
 s,@TCL_BIN_DIR@,$TCL_BIN_DIR,;t t

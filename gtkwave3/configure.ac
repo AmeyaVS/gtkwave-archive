@@ -9,7 +9,7 @@ AC_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 
 # Checks for build options
-# ------------- LZMA / XZ -------------------
+# ------------- Inline -------------------
 
 AC_MSG_CHECKING([if inline assembly should be enabled])
 
@@ -26,6 +26,26 @@ fi
 AC_MSG_RESULT([$INL])
 AC_SUBST(INLINE_ASM)
 
+
+# ------------- Structure Packing -------------------
+
+AC_MSG_CHECKING([if structure packing should be enabled])
+
+ESTP=no
+STRUCT_PACK=
+AC_ARG_ENABLE([struct_pack],
+[  --enable-struct-pack    Enables C language structure packing pragmas
+                          intended for use on architectures which support
+                          misaligned loads and stores (x64/AMD64).  This can
+                          reduce memory on traces with very many signals.],
+[
+if test "X$enable_struct_pack" = "Xyes" ; then
+	ESTP=no
+	STRUCT_PACK=-DWAVE_USE_STRUCT_PACKING
+fi
+])
+AC_MSG_RESULT([$ESTP])
+AC_SUBST(STRUCT_PACK)
 
 
 # ------------- Tcl -------------------
@@ -505,6 +525,9 @@ if test "X$MACHTYPE" = "Xrs6000" ; then
 	fi
 fi
 fi
+
+CFLAGS="${CFLAGS} ${STRUCT_PACK}"
+
 
 if test "X$ETCL" = "Xyes" ; then
 if test "X$OSTYPE" = "Xcygwin" ; then

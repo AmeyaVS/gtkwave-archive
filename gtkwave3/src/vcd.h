@@ -83,11 +83,15 @@ struct slist
 {  
 struct slist *next;
 char *str;
-int len;
-
 struct tree *mod_tree_parent;
+int len;
 };
 
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(push)
+#pragma pack(1)
+#endif
 
 struct vcdsymbol
 {
@@ -97,15 +101,21 @@ struct symbol *sym_chain;
 struct vcdsymbol *next;
 char *name;
 char *id;
-unsigned int nid;
-unsigned char vartype;
-int msi, lsi;
-int size;
 char *value;
 struct Node **narray;
-hptr         *tr_array;   /* points to synthesized trailers (which can move) */
-hptr         *app_array;   /* points to hptr to append to (which can move) */
+hptr *tr_array;   /* points to synthesized trailers (which can move) */
+hptr *app_array;   /* points to hptr to append to (which can move) */
+
+unsigned int nid;
+int msi, lsi;
+int size;
+
+unsigned char vartype;
 };
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#pragma pack(pop)
+#endif
 
 
 char *build_slisthier(void);
@@ -128,6 +138,9 @@ int vcd_keyword_code(const char *s, unsigned int len);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/12/12 18:32:45  gtkwave
+ * add "string" variable type to parsing of vcd variable declarations
+ *
  * Revision 1.9  2010/03/01 19:19:50  gtkwave
  * more hier_pfx code movement into hierpack.c
  *
