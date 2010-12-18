@@ -178,8 +178,8 @@ struct Node
 
     int      numhist;	/* number of elements in the harray */
     unsigned int array_height, this_row;
-    unsigned char vartype; /* see nodeVarType, this is an internal value */
-    unsigned char vardir; /* see nodeVarDir, this is an internal value */
+    unsigned vardir : 2;  /* see nodeVarDir, this is an internal value (currently unused) */
+    unsigned vartype : 5; /* see nodeVarType, this is an internal value */
 
     unsigned extvals : 1; /* was formerly a pointer to ExtNode "ext", now simply a flag */
   };
@@ -478,6 +478,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.34  2010/12/17 06:29:20  gtkwave
+ * Added --enable-struct-pack configure flag
+ *
  * Revision 1.33  2010/12/09 15:28:59  gtkwave
  * syntax typo fix
  *
