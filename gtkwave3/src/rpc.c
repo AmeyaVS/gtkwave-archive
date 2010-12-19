@@ -74,7 +74,6 @@ if(GLOBALS->rpc_ctx && !GLOBALS->tcl_running && !GLOBALS->busy_busy_c_1)
 			else
 			if(!strcmp(s2, "--script"))
 				{
-				int rsh_rc;
 				char *srtn;
 
 				WAVE_S2_S_MACRO
@@ -104,5 +103,8 @@ return(FALSE);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  */
 

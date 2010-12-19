@@ -963,10 +963,9 @@ switch(GLOBALS->yytext_vcd_partial_c_2[0])
 	case 'S':
 		{
 		char *d;
-		int vlen;
 
                 d=(char *)malloc_2(GLOBALS->yylen_vcd_partial_c_2);
-                vlen = fstUtilityEscToBin(d, GLOBALS->yytext_vcd_partial_c_2+1, GLOBALS->yylen_vcd_partial_c_2); /* includes 0 term */
+                vlen = fstUtilityEscToBin((unsigned char *)d, (unsigned char *)(GLOBALS->yytext_vcd_partial_c_2+1), GLOBALS->yylen_vcd_partial_c_2); /* includes 0 term */
                 if(vlen != GLOBALS->yylen_vcd_partial_c_2)
                         {
                         d = realloc_2(d, vlen);
@@ -2571,6 +2570,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2010/12/14 21:26:06  gtkwave
+ * support XL-style identifiers for optimization detection in sym build
+ *
  * Revision 1.40  2010/12/14 19:53:14  gtkwave
  * scaled back id multiplier from 95 to 94
  *

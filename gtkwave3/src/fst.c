@@ -959,7 +959,7 @@ else	/* string */
 		}
 
 	htemp = histent_calloc();
-	htemp->v.h_vector = s;
+	htemp->v.h_vector = (char *)s;
 	htemp->flags = HIST_REAL|HIST_STRING;
 	}
 
@@ -1319,6 +1319,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2010/12/10 20:13:13  gtkwave
+ * added escape codes to string record parsing
+ *
  * Revision 1.35  2010/12/09 19:02:29  gtkwave
  * back out commented out string flag setting
  *

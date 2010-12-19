@@ -1237,7 +1237,7 @@ switch((typ = GLOBALS->yytext_vcd_recoder_c_3[0]))
         case 's':
         case 'S':
                 vector=wave_alloca(GLOBALS->yylen_cache_vcd_recoder_c_3=GLOBALS->yylen_vcd_recoder_c_3);
-		vlen = fstUtilityEscToBin(vector, GLOBALS->yytext_vcd_recoder_c_3+1, GLOBALS->yylen_vcd_recoder_c_3-1); 
+		vlen = fstUtilityEscToBin((unsigned char *)vector, (unsigned char *)(GLOBALS->yytext_vcd_recoder_c_3+1), GLOBALS->yylen_vcd_recoder_c_3-1); 
 		vector[vlen] = 0;                                        
 
                 get_strtoken();
@@ -3272,6 +3272,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.51  2010/12/14 21:26:06  gtkwave
+ * support XL-style identifiers for optimization detection in sym build
+ *
  * Revision 1.50  2010/12/14 19:53:14  gtkwave
  * scaled back id multiplier from 95 to 94
  *

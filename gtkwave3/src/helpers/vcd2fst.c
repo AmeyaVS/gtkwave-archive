@@ -631,7 +631,7 @@ while(!feof(f))
 				{
 				int bin_len = sp - (buf + 1); /* strlen(buf+1) */
 
-				bin_len = fstUtilityEscToBin(NULL, buf+1, bin_len);
+				bin_len = fstUtilityEscToBin(NULL, (unsigned char *)(buf+1), bin_len);
 				fstWriterEmitVariableLengthValueChange(ctx, hash, buf+1, bin_len);
 				}
 				else
@@ -641,7 +641,7 @@ while(!feof(f))
 					{
 					int bin_len = sp - (buf + 1); /* strlen(buf+1) */
 
-					bin_len = fstUtilityEscToBin(NULL, buf+1, bin_len);
+					bin_len = fstUtilityEscToBin(NULL, (unsigned char *)(buf+1), bin_len);
 					fstWriterEmitVariableLengthValueChange(ctx, node->val.i, buf+1, bin_len);
 					}
 					else
@@ -898,6 +898,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2010/12/14 19:30:21  gtkwave
+ * remove unnecessary string length check in hash algorithm
+ *
  * Revision 1.18  2010/12/10 20:13:13  gtkwave
  * added escape codes to string record parsing
  *

@@ -677,7 +677,7 @@ for(;;)
 					{
 					int vec_slen = strlen(vec);
 					char *vec_escaped = malloc_2(vec_slen*4 + 1); /* worst case */
-					int vlen = fstUtilityBinToEsc(vec_escaped, vec, vec_slen);
+					int vlen = fstUtilityBinToEsc((unsigned char *)vec_escaped, (unsigned char *)vec, vec_slen);
 
 					vec_escaped[vlen] = 0;
 					w32redirect_fprintf(GLOBALS->f_vcd_saver_c_1, "s%s %s\n", vec_escaped, vcdid(GLOBALS->hp_vcd_saver_c_1[0]->val, export_typ));
@@ -1552,6 +1552,9 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2010/12/12 18:32:45  gtkwave
+ * add "string" variable type to parsing of vcd variable declarations
+ *
  * Revision 1.20  2010/12/10 20:13:13  gtkwave
  * added escape codes to string record parsing
  *
