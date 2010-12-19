@@ -92,8 +92,7 @@ enum fstVarType {
     FST_VT_VCD_REALTIME        = 20,
     FST_VT_GEN_STRING	       = 21,	/* generic string type   (max len is defined dynamically via fstWriterEmitVariableLengthValueChange) */
 
-    FST_VT_VCD_MAX             = 21,	/* end of VCD datatypes */
-
+    FST_VT_VCD_MAX             = 21	/* end of VCD datatypes */
 };
 
 enum fstVarDir {

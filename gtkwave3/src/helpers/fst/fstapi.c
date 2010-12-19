@@ -1856,7 +1856,6 @@ void fstWriterEmitVariableLengthValueChange(void *ctx, fstHandle handle, const v
 {
 struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 const unsigned char *buf = (const unsigned char *)val;
-uint32_t offs;
 
 if((xc) && (handle <= xc->maxhandle))
 	{
@@ -3938,7 +3937,7 @@ for(;;)
 	
 								fputc('s', fv);
 								{
-								char *vesc = malloc(len*4 + 1);
+								unsigned char *vesc = malloc(len*4 + 1);
 								int vlen = fstUtilityBinToEsc(vesc, vdata, len);
 
 								vesc[vlen] = 0;
