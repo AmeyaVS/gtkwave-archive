@@ -472,6 +472,8 @@ mif_draw_string (pr_context * prc, int x, int y, char *str, int xsize,
   int len;
   gdouble tx, ty;
   gdouble stretchx, stretchy;
+  char *strfix;
+  int i;
 
   if (x < -1.0)
     x = -1.0;
@@ -490,6 +492,12 @@ mif_draw_string (pr_context * prc, int x, int y, char *str, int xsize,
     (xsize / (len * stretchy)) * prc->xscale * WAVE_COURIER_SCALE_FAC *
     100.00;
 
+  strfix = strdup_2(str);
+  for(i=0;i<len;i++)
+	{
+	if((strfix[i]<32)||(strfix[i]>126)||(strfix[i]=='\'')) { strfix[i] = ' '; }
+	}
+
   fprintf (prc->handle,
 	   " <TextLine\n"
 	   "  <Angle 90.0>\n"
@@ -507,7 +515,9 @@ mif_draw_string (pr_context * prc, int x, int y, char *str, int xsize,
 	   "  <String `%s'>\n"
 	   " > # end of TextLine\n", (int) (ty),
 	   (int) (prc->PageX * GLOBALS->inch_print_c_1 - tx), stretchy,
-	   stretchx, str);
+	   stretchx, strfix);
+
+  free_2(strfix);
 }
 
 
@@ -3114,6 +3124,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2010/09/20 22:36:31  gtkwave
+ * fix renderhash aliasing errors due to lack of realx
+ *
  * Revision 1.37  2010/07/16 16:12:38  gtkwave
  * pedantic warning fixes
  *
