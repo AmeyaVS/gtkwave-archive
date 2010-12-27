@@ -977,3 +977,5 @@
 		codes.
 		Added gtkwave_server to distro but it is not currently in
 		automake as it is not ready for use.
+3.3.19	27dec10	Added more NULL pointer checking to vcd2fst to prevent
+		crashes on malformed files.

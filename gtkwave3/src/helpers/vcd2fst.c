@@ -579,6 +579,7 @@ while(!feof(f))
 
 		case 'b':
 			sp = strchr(buf, ' ');
+			if(!sp) break;
 			*sp = 0;
 			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
@@ -625,6 +626,7 @@ while(!feof(f))
 
 		case 's':
 			sp = strchr(buf, ' ');
+			if(!sp) break;
 			*sp = 0;
 			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
@@ -670,8 +672,11 @@ while(!feof(f))
 			*pnt = 0;
 			
 			sp = strchr(bin_fixbuff, ' ');
+			if(!sp) break;
 			sp = strchr(sp+1, ' ');
+			if(!sp) break;
 			sp = strchr(sp+1, ' ');
+			if(!sp) break;
 			*sp = 0;
 			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
@@ -694,6 +699,7 @@ while(!feof(f))
 
 		case 'r':
 			sp = strchr(buf, ' ');
+			if(!sp) break;
 			hash = vcdid_hash(sp+1, nl - (sp+1));
 			if(!hash_kill)
 				{
@@ -898,6 +904,9 @@ return(0);
 /*
  * $Id$
  * $Log$
+ * Revision 1.20  2010/12/19 07:59:10  gtkwave
+ * warnings fixes
+ *
  * Revision 1.19  2010/12/14 19:30:21  gtkwave
  * remove unnecessary string length check in hash algorithm
  *
