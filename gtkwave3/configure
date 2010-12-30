@@ -1860,7 +1860,7 @@ if test "${enable_struct_pack+set}" = set; then
   enableval="$enable_struct_pack"
 
 if test "X$enable_struct_pack" = "Xyes" ; then
-	ESTP=no
+	ESTP=yes
 	STRUCT_PACK=-DWAVE_USE_STRUCT_PACKING
 fi
 

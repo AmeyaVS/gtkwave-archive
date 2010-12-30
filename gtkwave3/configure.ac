@@ -43,7 +43,7 @@ AC_ARG_ENABLE([struct_pack],
                           traces with very many signals.],
 [
 if test "X$enable_struct_pack" = "Xyes" ; then
-	ESTP=no
+	ESTP=yes
 	STRUCT_PACK=-DWAVE_USE_STRUCT_PACKING
 fi
 ])
