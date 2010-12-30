@@ -2,11 +2,13 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(gtkwave, 3.3.18, bybell@nc.rr.com)
+AC_INIT(gtkwave, 3.3.19, bybell@nc.rr.com)
 AC_CONFIG_SRCDIR([src/vcd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
+
+# AC_CHECK_SIZEOF(void *)
 
 # Checks for build options
 # ------------- Inline -------------------
@@ -36,8 +38,9 @@ STRUCT_PACK=
 AC_ARG_ENABLE([struct_pack],
 [  --enable-struct-pack    Enables C language structure packing pragmas
                           intended for use on architectures which support
-                          misaligned loads and stores (x64/AMD64).  This can
-                          reduce memory on traces with very many signals.],
+                          misaligned loads and stores (x86/x86_64/AVR32/
+                          M68K/PowerPC/S390).  This can reduce memory on 
+                          traces with very many signals.],
 [
 if test "X$enable_struct_pack" = "Xyes" ; then
 	ESTP=no
