@@ -902,9 +902,25 @@ if(!(handle=fopen(rcname,"rb")))
 #else
 if(!(handle=fopen(rcname,"rb")))		/* no concept of ~ in win32 */
 	{
-	errno=0;
-	if(GLOBALS->possibly_use_rc_defaults) vanilla_rc();
-	return; /* no .rc file */
+        /* Try to find rcname in USERPROFILE */
+        char *home;
+        char *rcpath;
+
+        home=getenv("USERPROFILE");
+        if (home != NULL) {
+            /* printf("USERPROFILE = %s\n", home); */
+            rcpath=(char *)alloca(strlen(home)+1+strlen(rcname)+1);
+            strcpy(rcpath,home);
+            strcat(rcpath,"\\");
+            strcat(rcpath,rcname);
+            /* printf("rcpath = %s\n", rcpath); */
+        }
+        if ((home == NULL) || (!(handle=fopen(rcpath,"rb")))) {
+            /* printf("No rc file\n"); */
+  	    errno=0;
+	    if(GLOBALS->possibly_use_rc_defaults) vanilla_rc();
+	    return; /* no .rc file */
+	    }
 	} 
 #endif
 
@@ -977,6 +993,9 @@ return;
 /*
  * $Id$
  * $Log$
+ * Revision 1.26  2010/10/26 17:37:35  gtkwave
+ * added initial_signal_window_width rc variable
+ *
  * Revision 1.25  2010/06/13 20:38:00  gtkwave
  * added strace repeat count
  *
