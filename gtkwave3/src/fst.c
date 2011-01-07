@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2009.
+ * Copyright (c) Tony Bybell 2009-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -351,13 +351,13 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
         if((h->u.var.length > 1) && (msb == -1) && (lsb == -1))
 		{
-		GLOBALS->mvlfacs_fst_c_3[i].msb = h->u.var.length - 1;
-		GLOBALS->mvlfacs_fst_c_3[i].lsb = 0;
+		node_block[i].msi = h->u.var.length - 1;
+		node_block[i].lsi = 0;
 		}
 		else
 		{	
-		GLOBALS->mvlfacs_fst_c_3[i].msb = msb;
-		GLOBALS->mvlfacs_fst_c_3[i].lsb = lsb;
+		node_block[i].msi = msb;
+		node_block[i].lsi = lsb;
 		}
 	GLOBALS->mvlfacs_fst_c_3[i].len = h->u.var.length; 
 
@@ -494,7 +494,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
-		int len=sprintf(buf, "%s[%d:%d]", f_name[(i)&F_NAME_MODULUS],GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
+		int len=sprintf(buf, "%s[%d:%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi, node_block[i].lsi);
 		str=malloc_2(len+1);
 
 		if(!GLOBALS->alt_hier_delimeter)
@@ -509,7 +509,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	        symadd_name_exists_sym_exists(s,str,0);
 		prevsymroot = prevsym = NULL;
 
-		len = sprintf(buf, "%s[%d:%d]", pnam,GLOBALS->mvlfacs_fst_c_3[i].msb, GLOBALS->mvlfacs_fst_c_3[i].lsb);
+		len = sprintf(buf, "%s[%d:%d]", pnam,node_block[i].msi, node_block[i].lsi);
 		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(len, buf, i, ppar);
 		}
 	else if ( 
@@ -517,10 +517,10 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i+1)&F_NAME_MODULUS]))))
 			||
 			(((i!=0)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))) &&
-			(GLOBALS->mvlfacs_fst_c_3[i].msb!=-1)&&(GLOBALS->mvlfacs_fst_c_3[i].lsb!=-1))
+			(node_block[i].msi!=-1)&&(node_block[i].lsi!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", f_name[(i)&F_NAME_MODULUS],GLOBALS->mvlfacs_fst_c_3[i].msb);
+		int len = sprintf(buf, "%s[%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -544,7 +544,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			prevsymroot = prevsym = s;
 			}
 
-		len = sprintf(buf, "%s[%d]", pnam,GLOBALS->mvlfacs_fst_c_3[i].msb);
+		len = sprintf(buf, "%s[%d]", pnam,node_block[i].msi);
 		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(len, buf, i, ppar);
 		}
 		else
@@ -564,8 +564,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(f->flags&VZT_RD_SYM_F_INTEGER)
 			{
-			GLOBALS->mvlfacs_fst_c_3[i].msb=31;
-			GLOBALS->mvlfacs_fst_c_3[i].lsb=0;
+			node_block[i].msi=31;
+			node_block[i].lsi=0;
 			GLOBALS->mvlfacs_fst_c_3[i].len=32;
 			}
 
@@ -580,8 +580,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)||(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 		{
-		n->msi = GLOBALS->mvlfacs_fst_c_3[i].msb;
-		n->lsi = GLOBALS->mvlfacs_fst_c_3[i].lsb;
 		n->extvals = 1;
 		}
                  
@@ -1319,6 +1317,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.37  2010/12/19 07:59:10  gtkwave
+ * warnings fixes
+ *
  * Revision 1.36  2010/12/10 20:13:13  gtkwave
  * added escape codes to string record parsing
  *

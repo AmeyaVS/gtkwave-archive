@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2009-2010.
+ * Copyright (c) Tony Bybell 2009-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -358,16 +358,16 @@ for(;;)
 				if(!strcmp("vcd_real", typ))
 					{
 					GLOBALS->mvlfacs_vzt_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
-					GLOBALS->mvlfacs_vzt_c_3[i].msb=0;				
-					GLOBALS->mvlfacs_vzt_c_3[i].lsb=0;				
+					node_block[i].msi=0;				
+					node_block[i].lsi=0;				
 					GLOBALS->mvlfacs_vzt_c_3[i].len=64;
 					}
 				else
 				if(!strcmp("vcd_integer", typ))
 					{
 					GLOBALS->mvlfacs_vzt_c_3[i].flags = VZT_RD_SYM_F_INTEGER;
-					GLOBALS->mvlfacs_vzt_c_3[i].msb=0;				
-					GLOBALS->mvlfacs_vzt_c_3[i].lsb=0;				
+					node_block[i].msi=0;				
+					node_block[i].lsi=0;				
 					GLOBALS->mvlfacs_vzt_c_3[i].len=32;
 					}
 				else
@@ -378,30 +378,30 @@ for(;;)
 
 					if(esc && lb && rb)
 						{
-						GLOBALS->mvlfacs_vzt_c_3[i].msb = atoi(lb+1);
+						node_block[i].msi = atoi(lb+1);
 						if(colon)
 							{
-							GLOBALS->mvlfacs_vzt_c_3[i].lsb = atoi(colon+1);
+							node_block[i].lsi = atoi(colon+1);
 							}
 							else
 							{
-							GLOBALS->mvlfacs_vzt_c_3[i].lsb = GLOBALS->mvlfacs_vzt_c_3[i].msb;
+							node_block[i].lsi = node_block[i].msi;
 							}						
 
-						len_parse = (GLOBALS->mvlfacs_vzt_c_3[i].msb > GLOBALS->mvlfacs_vzt_c_3[i].lsb)
-								? (GLOBALS->mvlfacs_vzt_c_3[i].msb - GLOBALS->mvlfacs_vzt_c_3[i].lsb + 1)
-								: (GLOBALS->mvlfacs_vzt_c_3[i].lsb - GLOBALS->mvlfacs_vzt_c_3[i].msb + 1);
+						len_parse = (node_block[i].msi > node_block[i].lsi)
+								? (node_block[i].msi - node_block[i].lsi + 1)
+								: (node_block[i].lsi - node_block[i].msi + 1);
 
 						if(len_parse != GLOBALS->mvlfacs_vzt_c_3[i].len)
 							{
-							GLOBALS->mvlfacs_vzt_c_3[i].msb=l;				
-							GLOBALS->mvlfacs_vzt_c_3[i].lsb=r;				
+							node_block[i].msi=l;				
+							node_block[i].lsi=r;				
 							}
 						}
 						else
 						{
-						GLOBALS->mvlfacs_vzt_c_3[i].msb=l;				
-						GLOBALS->mvlfacs_vzt_c_3[i].lsb=r;				
+						node_block[i].msi=l;				
+						node_block[i].lsi=r;				
 						}
 
 					GLOBALS->mvlfacs_vzt_c_3[i].flags = VZT_RD_SYM_F_BITS; 
@@ -501,7 +501,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
-		int len=sprintf(buf, "%s[%d:%d]", namecache[i],GLOBALS->mvlfacs_vzt_c_3[i].msb, GLOBALS->mvlfacs_vzt_c_3[i].lsb);
+		int len=sprintf(buf, "%s[%d:%d]", namecache[i],node_block[i].msi, node_block[i].lsi);
 		str=malloc_2(len+1);
 
 		if(!GLOBALS->alt_hier_delimeter)
@@ -521,10 +521,10 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			((i!=GLOBALS->numfacs-1)&&(!strcmp(namecache[i], namecache[i+1]))))
 			||
 			(((i!=0)&&(!strcmp(namecache[i], namecache[i-1]))) &&
-			(GLOBALS->mvlfacs_vzt_c_3[i].msb!=-1)&&(GLOBALS->mvlfacs_vzt_c_3[i].lsb!=-1))
+			(node_block[i].msi!=-1)&&(node_block[i].lsi!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", namecache[i],GLOBALS->mvlfacs_vzt_c_3[i].msb);
+		int len = sprintf(buf, "%s[%d]", namecache[i],node_block[i].msi);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -565,8 +565,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(f->flags&VZT_RD_SYM_F_INTEGER)
 			{
-			GLOBALS->mvlfacs_vzt_c_3[i].msb=31;
-			GLOBALS->mvlfacs_vzt_c_3[i].lsb=0;
+			node_block[i].msi=31;
+			node_block[i].lsi=0;
 			GLOBALS->mvlfacs_vzt_c_3[i].len=32;
 			}
 		}
@@ -579,8 +579,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if((f->len>1)||(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 		{
 		n->extvals = 1;
-		n->msi = GLOBALS->mvlfacs_vzt_c_3[i].msb;
-		n->lsi = GLOBALS->mvlfacs_vzt_c_3[i].lsb;
 		}
                  
         n->head.time=-1;        /* mark 1st node as negative time */
@@ -1007,6 +1005,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2010/05/27 06:56:39  gtkwave
+ * printf warning fixes
+ *
  * Revision 1.10  2010/03/19 17:50:57  gtkwave
  * compatibility fixes from fac struct changes
  *

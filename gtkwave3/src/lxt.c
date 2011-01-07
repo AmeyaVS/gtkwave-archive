@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2001-2010.
+ * Copyright (c) Tony Bybell 2001-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -434,7 +434,7 @@ fprintf(stderr, LXTHDR"...expanded %d entries from %08x into %08x bytes.\n", GLO
 /*
  * decompress facility names and build up fac geometry
  */
-static void build_facs(char *fname, char **f_name)
+static void build_facs(char *fname, char **f_name, struct Node *node_block)
 {
 char *buf, *bufprev = NULL, *bufcurr;
 off_t offs=GLOBALS->facname_offset_lxt_c_1+8;
@@ -571,13 +571,13 @@ if(GLOBALS->zfacgeometry_size_lxt_c_1)
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
 	GLOBALS->mvlfacs_lxt_c_2[i].array_height=get_32(offs);
-	GLOBALS->mvlfacs_lxt_c_2[i].msb=get_32(offs+4);
-	GLOBALS->mvlfacs_lxt_c_2[i].lsb=get_32(offs+8);
+	node_block[i].msi=get_32(offs+4);
+	node_block[i].lsi=get_32(offs+8);
 	GLOBALS->mvlfacs_lxt_c_2[i].flags=get_32(offs+12);
-	GLOBALS->mvlfacs_lxt_c_2[i].len=(GLOBALS->mvlfacs_lxt_c_2[i].lsb>GLOBALS->mvlfacs_lxt_c_2[i].msb)?(GLOBALS->mvlfacs_lxt_c_2[i].lsb-GLOBALS->mvlfacs_lxt_c_2[i].msb+1):(GLOBALS->mvlfacs_lxt_c_2[i].msb-GLOBALS->mvlfacs_lxt_c_2[i].lsb+1);
+	GLOBALS->mvlfacs_lxt_c_2[i].len=(node_block[i].lsi>node_block[i].msi)?(node_block[i].lsi-node_block[i].msi+1):(node_block[i].msi-node_block[i].lsi+1);
 
 	if(GLOBALS->mvlfacs_lxt_c_2[i].len>GLOBALS->lt_len_lxt_c_1) GLOBALS->lt_len_lxt_c_1 = GLOBALS->mvlfacs_lxt_c_2[i].len;
-	DEBUG(printf(LXTHDR"%s[%d:%d]\n", mvlfacs[i].f_name, mvlfacs[i].msb, mvlfacs[i].lsb));
+	DEBUG(printf(LXTHDR"%s[%d:%d]\n", mvlfacs[i].f_name, node_block[i].msi, node_block[i].lsi));
 
 	offs+=0x10;
 	}
@@ -1607,7 +1607,10 @@ if(GLOBALS->zdictionary_offset_lxt_c_1)
 		}
 	}
 
-build_facs(fname, f_name);
+sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
+node_block = (struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
+
+build_facs(fname, f_name, node_block);
 /* SPLASH */                            splash_sync(1, 5);
 build_facs2(fname);
 /* SPLASH */                            splash_sync(2, 5);
@@ -1618,9 +1621,6 @@ if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
         {
         GLOBALS->hier_delimeter='.';
         }
-
-sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
-node_block = (struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 
 for(i=0;i<GLOBALS->numfacs;i++)
         {
@@ -1645,7 +1645,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)&& (!(f->flags&(LT_SYM_F_INTEGER|LT_SYM_F_DOUBLE|LT_SYM_F_STRING))) )
 		{
-		int len = sprintf(buf, "%s[%d:%d]", f_name[i],GLOBALS->mvlfacs_lxt_c_2[i].msb, GLOBALS->mvlfacs_lxt_c_2[i].lsb);
+		int len = sprintf(buf, "%s[%d:%d]", f_name[i],node_block[i].msi, node_block[i].lsi);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -1664,10 +1664,10 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[i], f_name[i+1]))))
 			||
 			(((i!=0)&&(!strcmp(f_name[i], f_name[i-1]))) &&
-			(GLOBALS->mvlfacs_lxt_c_2[i].msb!=-1)&&(GLOBALS->mvlfacs_lxt_c_2[i].lsb!=-1))
+			(node_block[i].msi!=-1)&&(node_block[i].lsi!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", f_name[i],GLOBALS->mvlfacs_lxt_c_2[i].msb);
+		int len = sprintf(buf, "%s[%d]", f_name[i],node_block[i].msi);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -1708,8 +1708,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(f->flags&LT_SYM_F_INTEGER)
 			{
-			GLOBALS->mvlfacs_lxt_c_2[i].msb=31;
-			GLOBALS->mvlfacs_lxt_c_2[i].lsb=0;
+			node_block[i].msi=31;
+			node_block[i].lsi=0;
 			GLOBALS->mvlfacs_lxt_c_2[i].len=32;
 			}
 		}
@@ -1720,8 +1720,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)||(f->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))
 		{
-		n->msi = GLOBALS->mvlfacs_lxt_c_2[i].msb;
-		n->lsi = GLOBALS->mvlfacs_lxt_c_2[i].lsb;
 		n->extvals = 1;
 		}
 
@@ -2417,6 +2415,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2010/12/06 18:53:55  gtkwave
+ * __asm directive error fix for AMD64
+ *
  * Revision 1.20  2010/06/02 03:51:30  gtkwave
  * don't autocoalesce escape identifiers
  *

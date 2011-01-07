@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 2003-2010.
+ * Copyright (c) Tony Bybell 2003-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,8 +66,8 @@ node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
 	GLOBALS->mvlfacs_lx2_c_1[i].array_height=lxt2_rd_get_fac_rows(GLOBALS->lx2_lx2_c_1, i);
-	GLOBALS->mvlfacs_lx2_c_1[i].msb=lxt2_rd_get_fac_msb(GLOBALS->lx2_lx2_c_1, i);
-	GLOBALS->mvlfacs_lx2_c_1[i].lsb=lxt2_rd_get_fac_lsb(GLOBALS->lx2_lx2_c_1, i);
+	node_block[i].msi=lxt2_rd_get_fac_msb(GLOBALS->lx2_lx2_c_1, i);
+	node_block[i].lsi=lxt2_rd_get_fac_lsb(GLOBALS->lx2_lx2_c_1, i);
 	GLOBALS->mvlfacs_lx2_c_1[i].flags=lxt2_rd_get_fac_flags(GLOBALS->lx2_lx2_c_1, i);
 	GLOBALS->mvlfacs_lx2_c_1[i].len=lxt2_rd_get_fac_len(GLOBALS->lx2_lx2_c_1, i);
 	}
@@ -163,7 +163,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)&& (!(f->flags&(LXT2_RD_SYM_F_INTEGER|LXT2_RD_SYM_F_DOUBLE|LXT2_RD_SYM_F_STRING))) )
 		{
-		int len = sprintf(buf, "%s[%d:%d]", f_name[(i)&F_NAME_MODULUS],GLOBALS->mvlfacs_lx2_c_1[i].msb, GLOBALS->mvlfacs_lx2_c_1[i].lsb);
+		int len = sprintf(buf, "%s[%d:%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi, node_block[i].lsi);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -182,10 +182,10 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i+1)&F_NAME_MODULUS]))))
 			||
 			(((i!=0)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))) &&
-			(GLOBALS->mvlfacs_lx2_c_1[i].msb!=-1)&&(GLOBALS->mvlfacs_lx2_c_1[i].lsb!=-1))
+			(node_block[i].msi!=-1)&&(node_block[i].lsi!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", f_name[(i)&F_NAME_MODULUS],GLOBALS->mvlfacs_lx2_c_1[i].msb);
+		int len = sprintf(buf, "%s[%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
 		str=malloc_2(len+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -226,8 +226,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(f->flags&LXT2_RD_SYM_F_INTEGER)
 			{
-			GLOBALS->mvlfacs_lx2_c_1[i].msb=31;
-			GLOBALS->mvlfacs_lx2_c_1[i].lsb=0;
+			node_block[i].msi=31;
+			node_block[i].lsi=0;
 			GLOBALS->mvlfacs_lx2_c_1[i].len=32;
 			}
 		}
@@ -239,8 +239,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)||(f->flags&(LXT2_RD_SYM_F_DOUBLE|LXT2_RD_SYM_F_STRING)))
 		{
-		n->msi = GLOBALS->mvlfacs_lx2_c_1[i].msb;
-		n->lsi = GLOBALS->mvlfacs_lx2_c_1[i].lsb;
 		n->extvals = 1;
 		}
                  
@@ -871,6 +869,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.18  2010/09/15 18:35:42  gtkwave
+ * added F_NAME_MODULUS to reduce temp memory usage
+ *
  * Revision 1.17  2010/06/02 03:51:30  gtkwave
  * don't autocoalesce escape identifiers
  *

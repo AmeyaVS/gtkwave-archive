@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ struct fac
 {
 struct Node *working_node;
 int array_height;
-int msb, lsb, len;
+int len;
 unsigned int flags;
 };
 
@@ -136,6 +136,9 @@ void destroy_s_selected(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2010/12/17 06:29:20  gtkwave
+ * Added --enable-struct-pack configure flag
+ *
  * Revision 1.14  2010/04/27 23:10:56  gtkwave
  * made inttype.h inclusion conditional
  *
