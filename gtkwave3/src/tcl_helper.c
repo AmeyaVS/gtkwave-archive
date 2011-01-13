@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell and Concept Engineering GmbH 2008-2010.
+ * Copyright (c) Tony Bybell and Concept Engineering GmbH 2008-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1020,7 +1020,7 @@ for(ii=0;ii<c;ii++)
 	unesc_len = strlen(unescaped_str);
 	for(i=0;i<GLOBALS->numfacs;i++)
 	        {
-	        int was_packed;
+	        int was_packed = 0;
 	        char *hfacname = NULL;
 	                                 
        		hfacname = hier_decompress_flagged(GLOBALS->facs[curr_srch_idx]->name, &was_packed);
@@ -1056,7 +1056,7 @@ for(ii=0;ii<c;ii++)
 	wave_regex_compile(entry_suffixed, WAVE_REGEX_DND); 
 	for(i=0;i<GLOBALS->numfacs;i++)
 	        {
-	        int was_packed;
+	        int was_packed = 0;
 	        char *hfacname = NULL;
 	                                 
        		hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
@@ -1086,7 +1086,7 @@ for(ii=0;ii<c;ii++)
 		wave_regex_compile(entry_suffixed, WAVE_REGEX_DND); 
 		for(i=0;i<GLOBALS->numfacs;i++)
 		        {
-		        int was_packed;
+		        int was_packed = 0;
 		        char *hfacname = NULL;
 		                                 
         		hfacname = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
@@ -1313,10 +1313,21 @@ char is_bus = 0;
 
 if(s)
 	{
-	int len = strlen(s);
-	char *s2 = wave_alloca(len+1);
+	int len;
+	int was_packed = 0;
+	char *s2;
+
+	s = hier_decompress_flagged(s, &was_packed);	
+	len = strlen(s);
+	s2 = wave_alloca(len+1);
 	
 	strcpy(s2, s);
+	if(was_packed)
+		{
+		free_2(s);
+		s = NULL; 
+		}
+
 	pnt = s2;
 	while(*pnt)
 		{
@@ -2944,6 +2955,9 @@ return(strdup_2("--script TCL_ERROR : Tcl support not compiled into gtkwave\n"))
 /*
  * $Id$
  * $Log$
+ * Revision 1.93  2010/10/06 21:12:29  gtkwave
+ * fix for rpc_script_execute when tcl disabled
+ *
  * Revision 1.92  2010/10/06 20:15:51  gtkwave
  * preliminary version of RPC mechanism
  *

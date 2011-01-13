@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2010. 
+ * Copyright (c) Tony Bybell 1999-2011. 
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free
@@ -2813,8 +2813,6 @@ pr_rendertraces (pr_context * prc)
 		{
 		  h = bsearch_node (t->n.nd, GLOBALS->tims.start - t->shift);
 		  DEBUG (printf
-			 ("Bit Trace: %s, %s\n", t->name, t->n.nd->nname));
-		  DEBUG (printf
 			 ("Start time: " TTFormat ", Histent time: " TTFormat
 			  "\n", tims.start, (h->time + shift_timebase)));
 
@@ -3124,6 +3122,9 @@ print_mif_image (FILE * wave, gdouble px, gdouble py)
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2010/12/21 22:42:05  gtkwave
+ * fix to mif_draw_string with respect to out of range character codes
+ *
  * Revision 1.38  2010/09/20 22:36:31  gtkwave
  * fix renderhash aliasing errors due to lack of realx
  *

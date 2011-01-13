@@ -89,24 +89,9 @@ if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
 if(GLOBALS->numfacs)
 	{
 	char *fnam = lxt2_rd_get_facname(GLOBALS->lx2_lx2_c_1, 0);
-        char *pnt = NULL;
-        int was_packed = 0;
-
-        if(GLOBALS->do_hier_compress)
-                {
-                pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
-                }
-
-        if(was_packed)
-                {
-                f_name[0] = pnt;
-                }
-                else
-                {
-		int flen = strlen(fnam);
-		f_name[0]=malloc_2(flen+1);
-		strcpy(f_name[0], fnam);
-                }
+	int flen = strlen(fnam);
+	f_name[0]=malloc_2(flen+1);
+	strcpy(f_name[0], fnam);
 	}
 
 for(i=0;i<GLOBALS->numfacs;i++)
@@ -119,23 +104,9 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *fnam = lxt2_rd_get_facname(GLOBALS->lx2_lx2_c_1, i+1);
 	        char *pnt = NULL;
-	        int was_packed = 0;
-
-	        if(GLOBALS->do_hier_compress)
-	                {
-	                pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
-	                }
-
-	        if(was_packed)
-	                {
-			f_name[(i+1)&F_NAME_MODULUS] = pnt;
-			}
-			else
-			{
-			int flen = strlen(fnam);
-			f_name[(i+1)&F_NAME_MODULUS]=malloc_2(flen+1);
-			strcpy(f_name[(i+1)&F_NAME_MODULUS], fnam);
-			}
+		int flen = strlen(fnam);
+		f_name[(i+1)&F_NAME_MODULUS]=malloc_2(flen+1);
+		strcpy(f_name[(i+1)&F_NAME_MODULUS], fnam);
 		}
 
 	if(i>1)
@@ -257,12 +228,10 @@ for(i=0;i<=F_NAME_MODULUS;i++)
 	}
 free_2(f_name); f_name = NULL;
 
-create_hier_array();
-
 /* SPLASH */                            splash_sync(2, 5);
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
-if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
+if(GLOBALS->fast_tree_sort)
         {
         for(i=0;i<GLOBALS->numfacs;i++)
                 {
@@ -407,18 +376,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
 		char *nf = GLOBALS->facs[i]->name;
-		int was_packed;
-		char *recon = hier_decompress_flagged(nf, &was_packed);
-                
-		if(was_packed)   
-		        {
-		        build_tree_from_name(recon, i);
-		        free_2(recon);
-		        }
-		        else
-		        {
-		        build_tree_from_name(nf, i);
-		        }
+	        build_tree_from_name(nf, i);
 		}
 /* SPLASH */                            splash_sync(5, 5);
 	if(GLOBALS->escaped_names_found_vcd_c_1)
@@ -440,12 +398,6 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 	        {
 	        treenamefix(GLOBALS->treeroot);   
 	        }
-	}
-
-if(GLOBALS->prev_hier_uncompressed_name) 
-	{
-	free_2(GLOBALS->prev_hier_uncompressed_name);
-	GLOBALS->prev_hier_uncompressed_name = NULL; 
 	}
 
 GLOBALS->min_time = GLOBALS->first_cycle_lx2_c_1; GLOBALS->max_time=GLOBALS->last_cycle_lx2_c_1;
@@ -869,6 +821,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.19  2011/01/07 20:17:10  gtkwave
+ * remove redundant fields from struct fac
+ *
  * Revision 1.18  2010/09/15 18:35:42  gtkwave
  * added F_NAME_MODULUS to reduce temp memory usage
  *

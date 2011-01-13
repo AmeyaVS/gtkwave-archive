@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2573,7 +2573,6 @@ if(GLOBALS->topmost_trace)
 			if(!t->vector)
 				{
 				h=bsearch_node(t->n.nd, GLOBALS->tims.start - t->shift);
-				DEBUG(printf("Bit Trace: %s, %s\n", t->name, t->n.nd->nname));
 				DEBUG(printf("Start time: "TTFormat", Histent time: "TTFormat"\n", tims.start,(h->time+shift_timebase)));
 
 				if(!t->n.nd->extvals)
@@ -4322,6 +4321,9 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 /*
  * $Id$
  * $Log$
+ * Revision 1.74  2010/10/26 17:37:35  gtkwave
+ * added initial_signal_window_width rc variable
+ *
  * Revision 1.73  2010/08/02 20:44:35  gtkwave
  * added gtkwave::cbTracesUpdated
  *

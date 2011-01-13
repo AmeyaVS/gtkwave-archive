@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -425,8 +425,7 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
     
   if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
     {
-      fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	       nd->nname );
+      fprintf( stderr, "Out of memory, can't add to analyzer\n" );
       return( 0 );
     }
 
@@ -445,8 +444,7 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
 	
       if(!(nd->harray=harray=(hptr *)malloc_2(histcount*sizeof(hptr))))
 	{
-	  fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-		   nd->nname );
+	  fprintf( stderr, "Out of memory, can't add to analyzer\n" );
 	  free_2(t);
 	  return(0);
 	}
@@ -455,10 +453,6 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
       for(i=0;i<histcount;i++)
 	{
 	  *harray=histpnt;
-
-	  /* printf("%s, time: %d, val: %d\n", nd->nname, 
-	     (*harray)->time, (*harray)->val); */
-
 	  harray++;
 	  histpnt=histpnt->next;
 	}
@@ -478,14 +472,14 @@ int AddNodeTraceReturn(nptr nd, char *aliasname, Trptr *tret)
     {
       if(!GLOBALS->hier_max_level) 
 	{
-	  int flagged;
+	  int flagged = 0;
 
 	  t->name = hier_decompress_flagged(nd->nname, &flagged);
 	  t->is_depacked = (flagged != 0);
 	}
       else
 	{
-	  int flagged;
+	  int flagged = 0;
 	  char *tbuff = hier_decompress_flagged(nd->nname, &flagged);
 	  if(!flagged)
 	    {
@@ -1444,7 +1438,7 @@ unsigned IsShadowed( Trptr t )
   return 0;
 }
 
-char* GetFullName( Trptr t )
+char* GetFullName( Trptr t, int *was_packed )
 {
   if (HasAlias(t) || !HasWave(t))
     {
@@ -1457,7 +1451,7 @@ char* GetFullName( Trptr t )
     }
   else
     {
-      return (t->n.nd->nname);
+      return (hier_decompress_flagged(t->n.nd->nname, was_packed));
     }
 }
 
@@ -1530,6 +1524,9 @@ if((underflow_sticky) || (oc_cnt > 0))
 /*
  * $Id$
  * $Log$
+ * Revision 1.31  2010/09/10 05:58:40  gtkwave
+ * structor reordering of VectorEnt to benefit 32-bit architectures
+ *
  * Revision 1.30  2010/08/02 20:44:35  gtkwave
  * added gtkwave::cbTracesUpdated
  *

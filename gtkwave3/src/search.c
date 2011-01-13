@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2005.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,13 +71,8 @@ clist_sigcmp (GtkCList      *clist,
   if (!text1)
     return -1;
 
-  nd1 = hier_decompress_flagged(text1, &was_packed1);
-  nd2 = hier_decompress_flagged(text2, &was_packed2);
-  rc = sigcmp(nd1, nd2);
+  rc = sigcmp(text1, text2);
 
-  if(was_packed1) free_2(nd1);
-  if(was_packed2) free_2(nd2);
-    
   return (rc);
 }
 
@@ -1111,6 +1106,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.16  2010/05/27 06:07:24  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.15  2010/03/16 21:01:10  gtkwave
  * remove selected member of struct symbol
  *

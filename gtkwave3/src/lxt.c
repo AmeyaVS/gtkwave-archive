@@ -448,11 +448,8 @@ char *decmem=NULL;
 FILE *tmp;
 #endif
 
-if(!GLOBALS->do_hier_compress)
-	{
-	buf=malloc_2(total_mem);
-	pnt=bufprev=buf;
-	}
+buf=malloc_2(total_mem);
+pnt=bufprev=buf;
 
 if(GLOBALS->zfacname_size_lxt_c_1)
 	{
@@ -478,52 +475,20 @@ if(GLOBALS->zfacname_size_lxt_c_1)
 	offs=0;	/* we're in our new memory region now.. */
 	}
 
-if(GLOBALS->do_hier_compress)
+fprintf(stderr, LXTHDR"Building %d facilities.\n", GLOBALS->numfacs);
+for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	char workspace[4097];
-	int was_packed;
-	char *string_ret;
-
-	workspace[0] = 0;
-
-	fprintf(stderr, LXTHDR"Building %d compressed facilities.\n", GLOBALS->numfacs);
-	for(i=0;i<GLOBALS->numfacs;i++)
+        clone=get_16(offs);  offs+=2;
+	bufcurr=pnt;
+	for(j=0;j<clone;j++)
 		{
-	        clone=get_16(offs);  offs+=2;
-		pnt=workspace+clone;
-	        while((*(pnt++)=get_byte(offs++)));
-		string_ret =  hier_compress(workspace, HIERPACK_ADD, &was_packed);
-		if(was_packed)
-			{
-			f_name[i]=string_ret;
-			}
-			else
-			{
-		        f_name[i]=strdup_2(workspace);
-			}
-	        }
-	}
-	else
-	{
-	fprintf(stderr, LXTHDR"Building %d facilities.\n", GLOBALS->numfacs);
-	for(i=0;i<GLOBALS->numfacs;i++)
-		{
-	        clone=get_16(offs);  offs+=2;
-		bufcurr=pnt;
-		for(j=0;j<clone;j++)
-			{
-			*(pnt++) = *(bufprev++);
-			}
-	        while((*(pnt++)=get_byte(offs++)));
-	        f_name[i]=bufcurr;
-		DEBUG(printf(LXTHDR"Encountered facility %d: '%s'\n", i, bufcurr));
-		bufprev=bufcurr;
-	        }
-	}
-
-create_hier_array();
-
-if(GLOBALS->prev_hier_uncompressed_name) { free_2(GLOBALS->prev_hier_uncompressed_name); GLOBALS->prev_hier_uncompressed_name = NULL; }
+		*(pnt++) = *(bufprev++);
+		}
+        while((*(pnt++)=get_byte(offs++)));
+        f_name[i]=bufcurr;
+	DEBUG(printf(LXTHDR"Encountered facility %d: '%s'\n", i, bufcurr));
+	bufprev=bufcurr;
+        }
 
 if(GLOBALS->zfacname_size_lxt_c_1)
 	{
@@ -1787,18 +1752,7 @@ init_tree();
 for(i=0;i<GLOBALS->numfacs;i++)	
 {
 char *nf = GLOBALS->facs[i]->name;
-int was_packed;
-char *recon = hier_decompress_flagged(nf, &was_packed);
-
-if(was_packed)
-        {
-        build_tree_from_name(recon, i);   
-        free_2(recon);
-        }
-        else
-        {
-        build_tree_from_name(nf, i);
-        }
+build_tree_from_name(nf, i);
 }
 /* SPLASH */                            splash_sync(5, 5);
 
@@ -2415,6 +2369,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.22  2011/01/07 20:17:10  gtkwave
+ * remove redundant fields from struct fac
+ *
  * Revision 1.21  2010/12/06 18:53:55  gtkwave
  * __asm directive error fix for AMD64
  *

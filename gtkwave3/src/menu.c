@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -954,7 +954,7 @@ void set_hier_cleanup(GtkWidget *widget, gpointer data, int level)
 		{
 		  if(!GLOBALS->hier_max_level)
 		      {
-			int flagged;
+			int flagged = 0;
 
 			if(t->name&&t->is_depacked) { free_2(t->name); }
 			t->name = hier_decompress_flagged(t->n.nd->nname, &flagged);
@@ -962,7 +962,7 @@ void set_hier_cleanup(GtkWidget *widget, gpointer data, int level)
 		      }
 		    else
 		      {
-			int flagged;
+			int flagged = 0;
 			char *tbuff;
 
 			if(t->name&&t->is_depacked) { free_2(t->name); }
@@ -1921,10 +1921,13 @@ static unsigned expand_trace(Trptr t_top)
 	    }
 	  else
 	    {
+	      int dhc_sav = GLOBALS->do_hier_compress;
+	      GLOBALS->do_hier_compress = 0;
 	      for(i=0;i<e->width;i++)
 		{
 		  AddNode(e->narray[i], NULL);	
 		}
+	      GLOBALS->do_hier_compress = dhc_sav;
 	      free_2(e->narray);
 	      free_2(e);
 	    }
@@ -2202,10 +2205,12 @@ static void menu_rename(GtkWidget *widget, gpointer data)
 
   if(GLOBALS->trace_to_alias_menu_c_1)
     {
-      char* current = GetFullName(GLOBALS->trace_to_alias_menu_c_1);
+      int was_packed = 0;
+      char* current = GetFullName(GLOBALS->trace_to_alias_menu_c_1, &was_packed);
       ClearTraces();
       GLOBALS->trace_to_alias_menu_c_1->flags |= TR_HIGHLIGHT;
       entrybox("Trace Name",300,current,NULL,128,GTK_SIGNAL_FUNC(rename_cleanup));
+      if(was_packed) { free_2(current); }
     }
   else
     {
@@ -2523,16 +2528,22 @@ bvptr combine_traces(int direction, Trptr single_trace_only)
 	{
 	  int ix, offset;
 	  char *nam;
+	  char *namex;
+	  int was_packed = 0;
 
-	  offset = strlen(n[0]->nname);
+	  namex = hier_decompress_flagged(n[0]->nname, &was_packed);
+
+	  offset = strlen(namex);
 	  for(ix=offset-1;ix>=0;ix--)
 	    {
-	      if(n[0]->nname[ix]=='[') break;
+	      if(namex[ix]=='[') break;
 	    }
 	  if(ix>-1) offset=ix;
 	
 	  nam=(char *)wave_alloca(offset+40);
-	  memcpy(nam, n[0]->nname, offset);
+	  memcpy(nam, namex, offset);
+	  if(was_packed) { free_2(namex); }
+
 	  if(direction)
 	    {
 	      sprintf(nam+offset, "[%d%s%d]", n[0]->expansion->actual, (bitblast_delta!=0) ? ":" : "|", n[nodepnt-1]->expansion->actual);
@@ -3307,14 +3318,36 @@ void menu_remove_aliases(GtkWidget *widget, gpointer data)
       if(HasAlias(t) && IsSelected(t))
 	{
           char *name_full;
+          int was_packed = 0;
 
 	  free_2(t->name_full);
 	  t->name_full = NULL;
 
-	  name_full = (t->vector) ? t->n.vec->bvname : t->n.nd->nname;
+	  if(t->vector)
+		{
+		name_full = t->n.vec->bvname;
+		}
+		else
+		{
+		name_full = hier_decompress_flagged(t->n.nd->nname, &was_packed);
+		}
+
 	  t->name = name_full;
 	  if (GLOBALS->hier_max_level) 
-	    t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+		{
+		if(!was_packed)
+			{
+		    	t->name = hier_extract(t->name, GLOBALS->hier_max_level);
+			}
+			else
+			{
+		    	t->name = strdup_2(hier_extract(name_full, GLOBALS->hier_max_level));
+			free_2(name_full);
+			}
+		}
+
+	  if(was_packed) t->is_depacked = 1;
+
 	  dirty = 1;
 	}
       if (IsSelected(t)) none_selected = 0;
@@ -3418,10 +3451,12 @@ void menu_alias(GtkWidget *widget, gpointer data)
 
   if(GLOBALS->trace_to_alias_menu_c_1)
     {
-      char* current = GetFullName(GLOBALS->trace_to_alias_menu_c_1);
+      int was_packed = 0;
+      char* current = GetFullName(GLOBALS->trace_to_alias_menu_c_1, &was_packed);
       ClearTraces();
       GLOBALS->trace_to_alias_menu_c_1->flags |= TR_HIGHLIGHT;
       entrybox("Alias Highlighted Trace",300,current,NULL,128,GTK_SIGNAL_FUNC(alias_cleanup));
+      if(was_packed) { free_2(current); }
     }
   else
     {
@@ -3584,9 +3619,8 @@ entrybox("Regexp Highlight",300,GLOBALS->regexp_string_menu_c_1,NULL,128,GTK_SIG
 
 char *append_array_row(nptr n)
 {
-int was_packed;
+int was_packed = 0;
 char *hname = hier_decompress_flagged(n->nname, &was_packed);
-
 
 if(!n->array_height)
 	{
@@ -6277,6 +6311,9 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 /*
  * $Id$
  * $Log$
+ * Revision 1.116  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  * Revision 1.115  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *

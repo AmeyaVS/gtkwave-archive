@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -174,20 +174,23 @@ return(s);
 
 char *attempt_vecmatch(char *s1, char *s2)
 {
-char *pnt;
+char *pnt = NULL;
 
-if((!s1)||(!*s1)||(!s2)||(!*s2)) 
+if(!s1 || !s2)
 	{
-	return(NULL);
+	return(pnt);
 	}
 	else
 	{
-	int ns1_was_decompressed;
+	int ns1_was_decompressed = 0;
 	char *ns1 = hier_decompress_flagged(s1, &ns1_was_decompressed);
-	int ns2_was_decompressed;
+	int ns2_was_decompressed = 0;
 	char *ns2 = hier_decompress_flagged(s2, &ns2_was_decompressed);
 
-	pnt = attempt_vecmatch_2(ns1, ns2);
+	if(*ns1 && *ns2)
+		{
+		pnt = attempt_vecmatch_2(ns1, ns2);
+		}
 
 	if(ns1_was_decompressed) free_2(ns1);
 	if(ns2_was_decompressed) free_2(ns2);
@@ -977,11 +980,18 @@ if(nodepnt)
 		else
 		{
 		char *s1, *s2;
+		int s1_was_packed = 0, s2_was_packed = 0;
 		int root1len=0, root2len=0;
 		int l1, l2;
 
 		s1=symhi->n->nname;
 		s2=symlo->n->nname;
+
+		if(GLOBALS->do_hier_compress)
+			{
+			s1 = hier_decompress_flagged(s1, &s1_was_packed);
+			s2 = hier_decompress_flagged(s2, &s2_was_packed);
+			}
 		
 		l1=strlen(s1); 
 
@@ -1087,6 +1097,12 @@ if(nodepnt)
 					}
 				}
 			}
+
+		if(GLOBALS->do_hier_compress)
+			{
+			if(s2_was_packed) free_2(s2);
+			if(s1_was_packed) free_2(s1);
+			}
 		}
 	}
 
@@ -1175,6 +1191,7 @@ if(nodepnt)
 		else
 		{
 		char *s1, *s2;
+		int s1_was_packed = 0, s2_was_packed = 0;
 		int root1len=0, root2len=0;
 		int l1, l2;
 
@@ -1187,6 +1204,13 @@ if(nodepnt)
 			{
 			s1=GLOBALS->facs[lo]->n->nname;
 			s2=GLOBALS->facs[hi]->n->nname;
+			}
+
+		if(GLOBALS->do_hier_compress)
+			{
+			int was_packed;
+			s1 = hier_decompress_flagged(s1, &s1_was_packed);
+			s2 = hier_decompress_flagged(s2, &s2_was_packed);
 			}
 		
 		l1=strlen(s1); 
@@ -1261,6 +1285,11 @@ if(nodepnt)
 				strncpy(b->name,s1,root1len-1);
 				sprintf(b->name+root1len-1,"[%s]",s1+root1len);
 				}
+			}
+		if(GLOBALS->do_hier_compress)
+			{
+			if(s2_was_packed) free_2(s2);
+			if(s1_was_packed) free_2(s1);
 			}
 		}
 	}
@@ -1570,7 +1599,7 @@ struct symbol *symhi = NULL, *symlo = NULL;
 char hier_delimeter2;
 char *name=NULL;
 char *s1, *s2;
-int s1_was_packed, s2_was_packed;
+int s1_was_packed = 0, s2_was_packed = 0;
 int root1len=0, root2len=0;
 int l1, l2;
 
@@ -1726,13 +1755,15 @@ exptr exp1;
 
 if(n->mv.mvlfac) import_trace(n);
 
-DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
 if(!n->extvals)
 	{
 	DEBUG(fprintf(stderr, "Nothing to expand\n"));
 	}
 	else
 	{
+	char *namex;
+	int was_packed = 0;
+
 	msb = n->msi;
 	lsb = n->lsi;
 	if(msb>lsb)
@@ -1754,15 +1785,29 @@ if(!n->extvals)
 	rc->lsb = lsb;
 	rc->width = width;
 
-	offset = strlen(n->nname);
+	if(GLOBALS->do_hier_compress)
+		{
+		namex = hier_decompress_flagged(n->nname, &was_packed);
+		}
+		else
+		{
+		namex = n->nname;
+		}
+
+	offset = strlen(namex);
 	for(i=offset-1;i>=0;i--)
 		{
-		if(n->nname[i]=='[') break;
+		if(namex[i]=='[') break;
 		}
 	if(i>-1) offset=i;
 
 	nam=(char *)wave_alloca(offset+20+30);
-	memcpy(nam, n->nname, offset);
+	memcpy(nam, namex, offset);
+
+	if(was_packed)
+		{
+		free_2(namex);
+		}
 
 	if(!n->harray)         /* make quick array lookup for aet display--normally this is done in addnode */
 	        {
@@ -1783,8 +1828,7 @@ if(!n->extvals)
 	 
 	        if(!(n->harray=harray=(hptr *)malloc_2(histcount*sizeof(hptr))))
 	                {
-	                fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	                        n->nname );
+	                fprintf( stderr, "Out of memory, can't add to analyzer\n");
 	                return(NULL);
 	                }
 	
@@ -1916,7 +1960,6 @@ exptr exp1;
 
 if(n->mv.mvlfac) import_trace(n);
 
-DEBUG(fprintf(stderr, "expanding '%s'\n", n->nname));
 if(!n->extvals)
 	{
 	DEBUG(fprintf(stderr, "Nothing to expand\n"));
@@ -1924,6 +1967,9 @@ if(!n->extvals)
 	}
 	else
 	{
+	char *namex;
+	int was_packed = 0;
+
 	if(n->lsi > n->msi)
 		{
 		rgh = n->lsi; lft = n->msi;
@@ -1941,15 +1987,28 @@ if(!n->extvals)
 		return(NULL);
 		}
 
-	offset = strlen(n->nname);
+	if(GLOBALS->do_hier_compress)
+		{
+		namex = hier_decompress_flagged(n->nname, &was_packed);
+		}
+		else
+		{
+		namex = n->nname;
+		}
+	offset = strlen(namex);
 	for(i=offset-1;i>=0;i--)
 		{
-		if(n->nname[i]=='[') break;
+		if(namex[i]=='[') break;
 		}
 	if(i>-1) offset=i;
 
 	nam=(char *)wave_alloca(offset+20);
-	memcpy(nam, n->nname, offset);
+	memcpy(nam, namex, offset);
+
+	if(was_packed)
+		{
+		free_2(namex);
+		}
 
 	if(!n->harray)         /* make quick array lookup for aet display--normally this is done in addnode */
 	        {
@@ -1970,8 +2029,7 @@ if(!n->extvals)
 	 
 	        if(!(n->harray=harray=(hptr *)malloc_2(histcount*sizeof(hptr))))
 	                {
-	                DEBUG(fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	                        n->nname ));
+	                DEBUG(fprintf( stderr, "Out of memory, can't add to analyzer\n"));
 	                return(NULL);
 	                }
 	
@@ -2086,7 +2144,6 @@ int i;
 
 if(n->expansion)
 	{
-	DEBUG(fprintf(stderr, "DeleteNode: '%s', refcnt = %d\n", n->nname, n->expansion->refcnt));
 	if(n->expansion->refcnt==0)
 		{
 		for(i=1;i<n->numhist;i++)	/* 1st is actually part of the Node! */
@@ -3256,6 +3313,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.28  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.27  2010/07/31 20:38:38  gtkwave
  * fix for canonical bit ordering with previous patch
  *

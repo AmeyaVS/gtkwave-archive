@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Kermin Elliott Fleming 2007-2010.
+ * Copyright (c) Kermin Elliott Fleming 2007-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -319,6 +319,19 @@ GtkTextIter iter_help_c_1; /* from help.c 117 */
 GtkTextTag *bold_tag_help_c_1; /* from help.c 118 */
 #endif
 GtkWidget *window_help_c_2; /* from help.c 119 */
+
+
+/*
+ * hierpack.c
+ */
+unsigned char *hp_buf;
+size_t *hp_offs;
+size_t hp_prev;
+size_t hp_buf_siz;
+unsigned char *fmem_buf;
+size_t fmem_buf_siz;
+size_t fmem_buf_offs;
+size_t fmem_uncompressed_siz;
 
 
 /*
@@ -948,12 +961,6 @@ GtkWidget *clist_ttranslate_c_2;
  * vcd.c
  */
 unsigned char do_hier_compress; /* from vcd.c */
-JRB hier_pfx; /* from vcd.c */
-unsigned int hier_pfx_cnt; /* from vcd.c */
-char *prev_hier_pfx; /* from vcd.c */
-int prev_hier_pfx_len; /* from vcd.c */
-unsigned int prev_hier_pfx_cnt; /* from vcd.c */
-char **pfx_hier_array; /* from vcd.c */
 char *prev_hier_uncompressed_name; /* from vcd.c */
 jmp_buf *vcd_jmp_buf; /* from vcd.c */
 int vcd_warning_filesize; /* from vcd.c 502 */

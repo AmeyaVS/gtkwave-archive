@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Kermin Elliott Fleming 2007-2010.
+ * Copyright (c) Kermin Elliott Fleming 2007-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -317,6 +317,19 @@ NULL, /* gtk_context_bridge_ptr */
 0, /* bold_tag_help_c_1 114 */
 #endif
 0, /* window_help_c_2 115 */
+
+
+/*
+ * hierpack.c
+ */
+NULL, /* hp_buf */
+NULL, /* hp_offs */
+0, /* hp_prev */
+0, /* hp_buf_siz */
+NULL, /* fmem_buf */
+0, /* fmem_buf_siz */
+0, /* fmem_buf_offs */
+0, /* fmem_uncompressed_siz */
 
 
 /*
@@ -964,12 +977,6 @@ NULL, /* clist_ttranslate_c_2 */
  * vcd.c
  */
 0, /* do_hier_compress */
-NULL, /* hier_pfx */
-0, /* hier_pfx_cnt */
-NULL, /* prev_hier_pfx */
-0, /* prev_hier_pfx_len */
-0, /* prev_hier_pfx_cnt */
-NULL, /* pfx_hier_array */
 NULL, /* prev_hier_uncompressed_name */
 NULL, /* vcd_jmp_buf */
 -1, /* vcd_warning_filesize 472 */
@@ -1725,9 +1732,6 @@ void reload_into_new_context(void)
  strcpy2_into_new_context(new_globals, &new_globals->tcl_init_cmd, &GLOBALS->tcl_init_cmd);
  strcpy2_into_new_context(new_globals, &new_globals->repscript_name, &GLOBALS->repscript_name);
  new_globals->repscript_period = GLOBALS->repscript_period;
-
- /* hierarchy handling from vcd.c */
- free_hier_tree();
 
  /* vlist.c */
  if(GLOBALS->vlist_handle)

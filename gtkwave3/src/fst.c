@@ -31,6 +31,7 @@
 #include "hierpack.h"
 #include "fst.h"
 
+
 #define FST_RDLOAD "FSTLOAD | "
 
 /******************************************************************/
@@ -226,8 +227,11 @@ f_name = calloc_2(F_NAME_MODULUS+1,sizeof(char *));
 GLOBALS->fst_table_fst_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry));
 sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
+GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 GLOBALS->mvlfacs_fst_alias = calloc_2(GLOBALS->numfacs,sizeof(fstHandle));
 GLOBALS->mvlfacs_fst_rvs_alias = calloc_2(GLOBALS->numfacs,sizeof(fstHandle));
+
+init_facility_pack();
 
 fprintf(stderr, FST_RDLOAD"Processing %d facs.\n", GLOBALS->numfacs);
 /* SPLASH */                            splash_sync(1, 5);
@@ -296,7 +300,6 @@ if(GLOBALS->numfacs)
 	{
 	char *fnam;
 	char *pnt = NULL;
-	int was_packed = 0;
 	int hier_len, name_len;
 
 	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
@@ -323,20 +326,7 @@ if(GLOBALS->numfacs)
 		}
 	/* free_2(nnam); ...deallocated through pnam */
 	
-	if(GLOBALS->do_hier_compress)
-		{
-		pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
-		}
-
-	if(was_packed)
-		{
-		f_name[0] = pnt;
-		free_2(fnam);
-		}
-		else
-		{
-		f_name[0]=fnam;
-		}
+	f_name[0]=fnam;
 	}
 
 
@@ -347,6 +337,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	struct fac *f;
 	int hier_len, name_len;
 	unsigned char nvt;
+	int longest_nam_candidate = 0;
 
 	GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
         if((h->u.var.length > 1) && (msb == -1) && (lsb == -1))
@@ -442,7 +433,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *fnam;
 		char *pnt = NULL;
-		int was_packed = 0;
 
 		h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
 		if(!h)
@@ -468,20 +458,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		/* free_2(nnam); ...deallocated through pnam */
 
-		if(GLOBALS->do_hier_compress)
-			{
-			pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
-			}
-
-		if(was_packed)
-			{
-			f_name[(i+1)&F_NAME_MODULUS] = pnt;
-			free_2(fnam);
-			}
-			else
-			{
-			f_name[(i+1)&F_NAME_MODULUS]=fnam;
-			}
+		f_name[(i+1)&F_NAME_MODULUS]=fnam;
 		}
 
 	if(i>1)
@@ -495,7 +472,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
 		int len=sprintf(buf, "%s[%d:%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi, node_block[i].lsi);
-		str=malloc_2(len+1);
+		str=malloc_2((longest_nam_candidate = len)+1);
 
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -510,7 +487,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		prevsymroot = prevsym = NULL;
 
 		len = sprintf(buf, "%s[%d:%d]", pnam,node_block[i].msi, node_block[i].lsi);
-		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(len, buf, i, ppar);
+		if(GLOBALS->fast_tree_sort) fst_append_graft_chain(len, buf, i, ppar);
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
@@ -521,7 +498,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		)
 		{
 		int len = sprintf(buf, "%s[%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
-		str=malloc_2(len+1);
+		str=malloc_2((longest_nam_candidate = len)+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
 			strcpy(str, buf);
@@ -545,11 +522,11 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 
 		len = sprintf(buf, "%s[%d]", pnam,node_block[i].msi);
-		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(len, buf, i, ppar);
+		if(GLOBALS->fast_tree_sort) fst_append_graft_chain(len, buf, i, ppar);
 		}
 		else
 		{
-		str=malloc_2(strlen(f_name[(i)&F_NAME_MODULUS])+1);
+		str=malloc_2((longest_nam_candidate = strlen(f_name[(i)&F_NAME_MODULUS]))+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
 			strcpy(str, f_name[(i)&F_NAME_MODULUS]);
@@ -569,11 +546,26 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			GLOBALS->mvlfacs_fst_c_3[i].len=32;
 			}
 
-		if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress)) fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
+		if(GLOBALS->fast_tree_sort) fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
 		}
 		
+        if(longest_nam_candidate > GLOBALS->longestname) GLOBALS->longestname = longest_nam_candidate;
+
+        GLOBALS->facs[i]=&sym_block[i];
+
         n=&node_block[i];
-        n->nname=s->name;
+
+	if(GLOBALS->do_hier_compress)
+		{
+		n->nname = compress_facility(s->name, longest_nam_candidate);
+		free_2(s->name);
+		s->name = n->nname;	
+		}
+		else
+		{
+		n->nname=s->name;
+		}
+
         n->mv.mvlfac = GLOBALS->mvlfacs_fst_c_3+i;
 	GLOBALS->mvlfacs_fst_c_3[i].working_node = n;
 	n->vartype = nvt;
@@ -601,50 +593,41 @@ for(i=0;i<=F_NAME_MODULUS;i++)
 	}
 free_2(f_name); f_name = NULL;
 
+freeze_facility_pack();
+
 fprintf(stderr, FST_RDLOAD"Built %d signal%s and %d alias%s.\n", 
 	numvars, (numvars == 1) ? "" : "s", 
 	numalias, (numalias == 1) ? "" : "es");
 
 GLOBALS->fst_maxhandle = numvars;
 
-/* SPLASH */                            splash_sync(2, 5);  
-GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
-
-create_hier_array();
-
-if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
+if(GLOBALS->fast_tree_sort)
         {
-        for(i=0;i<GLOBALS->numfacs;i++)
-                {
-                int len;
-                GLOBALS->facs[i]=&sym_block[i]; 
-                if((len=strlen(GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
-                }
-                                
-/* SPLASH */                            splash_sync(3, 5);  
+/* SPLASH */                            splash_sync(2, 5);  
         fprintf(stderr, FST_RDLOAD"Building facility hierarchy tree.\n");
-                                         
+
         init_tree();
         treegraft(&GLOBALS->treeroot);
 
-/* SPLASH */                            splash_sync(4, 5);  
+/* SPLASH */                            splash_sync(3, 5);  
                                 
         fprintf(stderr, FST_RDLOAD"Sorting facility hierarchy tree.\n");
         treesort(GLOBALS->treeroot, NULL);
-/* SPLASH */                            splash_sync(5, 5);  
+/* SPLASH */                            splash_sync(4, 5);  
         order_facs_from_treesort(GLOBALS->treeroot, &GLOBALS->facs);
+
+/* SPLASH */                            splash_sync(5, 5);  
         GLOBALS->facs_are_sorted=1;
         }
         else
 	{
+/* SPLASH */                            splash_sync(2, 5);  
 	for(i=0;i<GLOBALS->numfacs;i++)
 		{
 		char *subst, ch;
-		int len;
 		int esc = 0;
 
-		GLOBALS->facs[i]=&sym_block[i];
-	        if((len=strlen(subst=GLOBALS->facs[i]->name))>GLOBALS->longestname) GLOBALS->longestname=len;
+	        subst=GLOBALS->facs[i]->name;
 		while((ch=(*subst)))
 			{	
 #ifdef WAVE_HIERFIX
@@ -684,18 +667,7 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
 		char *nf = GLOBALS->facs[i]->name;
-		int was_packed;
-		char *recon = hier_decompress_flagged(nf, &was_packed);
-                
-		if(was_packed)   
-		        {
-		        build_tree_from_name(recon, i);
-		        free_2(recon);
-		        }
-		        else
-		        {
-		        build_tree_from_name(nf, i);
-		        }
+	        build_tree_from_name(nf, i);
 		}
 /* SPLASH */                            splash_sync(5, 5);
 	if(GLOBALS->escaped_names_found_vcd_c_1)
@@ -717,12 +689,6 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 	        {
 	        treenamefix(GLOBALS->treeroot);   
 	        }
-	}
-
-if(GLOBALS->prev_hier_uncompressed_name) 
-	{
-	free_2(GLOBALS->prev_hier_uncompressed_name);
-	GLOBALS->prev_hier_uncompressed_name = NULL; 
 	}
 
 #if 0
@@ -1317,6 +1283,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.38  2011/01/07 20:17:10  gtkwave
+ * remove redundant fields from struct fac
+ *
  * Revision 1.37  2010/12/19 07:59:10  gtkwave
  * warnings fixes
  *

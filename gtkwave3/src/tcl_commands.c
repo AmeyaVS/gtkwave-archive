@@ -192,7 +192,7 @@ if(objc == 2)
 
 	if((which >= 0) && (which < GLOBALS->numfacs))
 		{
-		int was_packed;
+		int was_packed = 0;
         	char *hfacname = NULL;
 
         	hfacname = hier_decompress_flagged(GLOBALS->facs[which]->name, &was_packed);
@@ -2108,6 +2108,9 @@ static void dummy_function(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2010/10/26 17:37:35  gtkwave
+ * added initial_signal_window_width rc variable
+ *
  * Revision 1.44  2010/08/17 01:51:35  gtkwave
  * added missing global in error message
  *

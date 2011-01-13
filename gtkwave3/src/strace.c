@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,6 +12,7 @@
 #include "gtk12compat.h"
 #include "strace.h"
 #include "currenttime.h"
+#include "hierpack.h"
 
 #define WV_STRACE_CTX "strace_ctx"
 
@@ -1665,39 +1666,56 @@ if(GLOBALS->strace_ctx->timearray)
 				nodes=t->n.vec->bits->nodes;
 				for(i=0;i<t->n.vec->bits->nnbits;i++)
 					{
+					int was_packed = 0;
+					char *namex;
 					if(nodes[i]->expansion)
 						{
-						mprintf(" (%d)%s",nodes[i]->expansion->parentbit, nodes[i]->expansion->parent->nname);
+						namex = hier_decompress_flagged(nodes[i]->expansion->parent->nname, &was_packed);
+						mprintf(" (%d)%s",nodes[i]->expansion->parentbit, namex);
+						if(was_packed) free_2(namex);
 						}
 						else
 						{
+						namex = hier_decompress_flagged(nodes[i]->nname, &was_packed);
 						mprintf(" %s",nodes[i]->nname);
+						if(was_packed) free_2(namex);
 						}
 					}
 				mprintf("\n");
 				}
 				else
 				{
+				int was_packed = 0;
+				char *namex;
+
 				if(HasAlias(t))
 					{
 					if(t->n.nd->expansion)
 						{
-						mprintf("+{%s} (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
+						namex = hier_decompress_flagged(t->n.nd->expansion->parent->nname, &was_packed);
+						mprintf("+{%s} (%d)%s\n",t->name+2,t->n.nd->expansion->parentbit, namex);
+						if(was_packed) free_2(namex);
 						}
 						else
 						{
-						mprintf("+{%s} %s\n",t->name+2,t->n.nd->nname);
+						namex = hier_decompress_flagged(t->n.nd->nname, &was_packed);
+						mprintf("+{%s} %s\n",t->name+2,namex);
+						if(was_packed) free_2(namex);
 						}
 					}
 					else
 					{
 					if(t->n.nd->expansion)
 						{
-						mprintf("(%d)%s\n",t->n.nd->expansion->parentbit, t->n.nd->expansion->parent->nname);
+						namex = hier_decompress_flagged(t->n.nd->expansion->parent->nname, &was_packed);
+						mprintf("(%d)%s\n",t->n.nd->expansion->parentbit, namex);
+						if(was_packed) free_2(namex);
 						}
 						else
 						{
-						mprintf("%s\n",t->n.nd->nname);
+						namex = hier_decompress_flagged(t->n.nd->nname, &was_packed);
+						mprintf("%s\n",namex);
+						if(was_packed) free_2(namex);
 						}
 					}
 				}
@@ -1713,6 +1731,9 @@ if(GLOBALS->strace_ctx->timearray)
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.22  2010/06/13 20:38:00  gtkwave
  * added strace repeat count
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1304,6 +1304,11 @@ load_vcd:
 		}
 	}
 
+
+if((GLOBALS->loaded_file_type != FST_FILE) || (!GLOBALS->fast_tree_sort))
+	{
+	GLOBALS->do_hier_compress = 0; /* for now, add more file formats in the future */
+	}
 
 /* deallocate the symbol hash table */
 sym_hash_destroy(GLOBALS);
@@ -2713,6 +2718,9 @@ void optimize_vcd_file(void) {
 /*
  * $Id$
  * $Log$
+ * Revision 1.103  2010/11/07 16:20:33  gtkwave
+ * make fst the default file format for --optimize action in gtkwave
+ *
  * Revision 1.102  2010/10/26 17:37:35  gtkwave
  * added initial_signal_window_width rc variable
  *

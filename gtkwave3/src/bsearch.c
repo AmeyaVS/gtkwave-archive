@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -212,9 +212,14 @@ static int compar_facs(const void *key, const void *v2)
 {
 struct symbol *s2;
 int rc;
+int was_packed = 0;
+char *s3;
 
 s2=*((struct symbol **)v2);
-rc=sigcmp((char *)key,s2->name);
+s3 = hier_decompress_flagged(s2->name, &was_packed);
+rc=sigcmp((char *)key,s3);
+
+if(was_packed) free_2(s3);
 
 return(rc);
 }
@@ -223,18 +228,11 @@ struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return)
 {
 struct symbol **rc;
 int len;
-int was_packed = 0;
 
 if ((!ascii)||(!(len=strlen(ascii)))) return(NULL);
 if(rows_return)
 	{
 	*rows_return = 0;
-	}
-
-if(GLOBALS->hier_pfx)
-	{
-	ascii = hier_compress(ascii, HIERPACK_DO_NOT_ADD, &was_packed);
-	len = strlen(ascii);  
 	}
 
 if(ascii[len-1]=='}')
@@ -257,7 +255,6 @@ if(ascii[len-1]=='}')
 
 				if(whichrow <= (*rc)->n->array_height) 
 					{	
-					if(was_packed) { free_2(ascii); }
 					return(*rc);
 					}
 				}
@@ -268,13 +265,15 @@ if(ascii[len-1]=='}')
 	}
 
 rc=(struct symbol **)bsearch(ascii, GLOBALS->facs, GLOBALS->numfacs, sizeof(struct symbol *), compar_facs);
-if(was_packed) { free_2(ascii); }
 if(rc) return(*rc); else return(NULL);
 }
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.9  2010/04/01 19:52:20  gtkwave
  * time warp fixes
  *

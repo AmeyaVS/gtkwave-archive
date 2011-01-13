@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Yiftach Tzori 2009.
+ * Copyright (c) Yiftach Tzori 2009-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -295,11 +295,30 @@ Trptr is_signal_displayed(char *name) {
     *p = '\0' ;
   len = strlen(name) ;
   while(t) {
-    if((p = (t->vector) ?  t->n.vec->bvname :
-	(t->n.vec ? t->n.nd->nname : NULL))) {
+    int was_packed = 0;
+    int cc;
+    if(t->vector)
+	{
+	p = t->n.vec->bvname;
+	}
+	else
+	{
+	if(t->n.vec)
+		{
+		p = hier_decompress_flagged(t->n.nd->nname, &was_packed);
+		}
+		else
+		{
+		p = NULL;
+		}
+	}
+
+    if(p) {
       p1 = strchr(p,'[') ;
       len1 = (p1) ? p1 - p : strlen(p) ;
-      if((len == len1) && !strncmp(name, p, len))
+      cc = ((len == len1) && !strncmp(name, p, len));
+      if(was_packed) free_2(p);
+      if(cc)
 	break ;
     }
     t = t->t_next ;
@@ -323,8 +342,7 @@ Trptr Node_to_Trptr(nptr nd)
   GLOBALS->signalwindow_width_dirty=1;
     
   if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL ) {
-    fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	     nd->nname );
+    fprintf( stderr, "Out of memory, can't add to analyzer\n" );
     return( 0 );
   }
 
@@ -340,8 +358,7 @@ Trptr Node_to_Trptr(nptr nd)
     nd->numhist=histcount;
 	
     if(!(nd->harray=harray=(hptr *)malloc_2(histcount*sizeof(hptr)))) {
-      fprintf( stderr, "Out of memory, can't add %s to analyzer\n",
-	       nd->nname );
+      fprintf( stderr, "Out of memory, can't add to analyzer\n" );
       free_2(t);
       return(0);
     }

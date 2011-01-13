@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1931,14 +1931,6 @@ for(;;)
 				}
 
 			bail:
-			if((v) && (GLOBALS->do_hier_compress))
-				{
-				char *old_name = v->name;
-				int was_packed;
-				v->name = hier_compress(v->name, HIERPACK_ADD, &was_packed);
-				if(was_packed) free_2(old_name);
-				}
-
 			if(vtok!=V_END) sync_end(NULL);
 			break;
 			}
@@ -3272,6 +3264,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.52  2010/12/19 07:59:10  gtkwave
+ * warnings fixes
+ *
  * Revision 1.51  2010/12/14 21:26:06  gtkwave
  * support XL-style identifiers for optimization detection in sym build
  *

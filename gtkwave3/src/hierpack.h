@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2008.     
+ * Copyright (c) Tony Bybell 2008-2011.     
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,21 +12,20 @@
 
 #include "globals.h"
 
-void create_hier_array(void);
-void free_hier_tree(void);
+void init_facility_pack(void);
+char *compress_facility(unsigned char *key, int len);
+void freeze_facility_pack(void);
 
-char *hier_decompress(char *n);
 char *hier_decompress_flagged(char *n, int *was_packed);
-
-char *hier_compress(char *name, int add_missing_pfx_to_tree, int *was_packed);
-
-enum { HIERPACK_DO_NOT_ADD = 0, HIERPACK_ADD };
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.4  2010/03/01 19:19:50  gtkwave
+ * more hier_pfx code movement into hierpack.c
+ *
  * Revision 1.3  2010/03/01 05:16:26  gtkwave
  * move compressed hier tree traversal to hierpack
  *

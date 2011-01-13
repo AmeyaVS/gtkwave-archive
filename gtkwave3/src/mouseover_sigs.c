@@ -41,7 +41,7 @@ if(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 		{
 		if(!HasAlias(t))
 			{
-			int flagged;
+			int flagged = 0;
 	                s = hier_decompress_flagged(t->n.nd->nname, &flagged);
 			if(!flagged) s = strdup_2(s);
 			}
@@ -448,6 +448,9 @@ if(tname) { free_2(tname); }
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2010/04/04 19:09:57  gtkwave
+ * rename name->bvname in struct BitVector for easier grep tracking
+ *
  * Revision 1.9  2010/04/01 03:10:58  gtkwave
  * time warp fixes
  *

@@ -442,24 +442,9 @@ if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
 if(GLOBALS->numfacs)
 	{
 	char *fnam = get_varname();
-	char *pnt;
-	int was_packed = 0;
-	
-	if(GLOBALS->do_hier_compress)
-		{
-		pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
-		}
-
-	if(was_packed)
-		{
-		namecache[0] = pnt;
-		}
-		else
-		{
-		int flen = strlen(fnam);
-		namecache[0]=malloc_2(flen+1);
-		strcpy(namecache[0], fnam);
-		}
+	int flen = strlen(fnam);
+	namecache[0]=malloc_2(flen+1);
+	strcpy(namecache[0], fnam);
 	}
 
 for(i=0;i<GLOBALS->numfacs;i++)
@@ -471,24 +456,9 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if(i!=(GLOBALS->numfacs-1))
 		{
 		char *fnam = get_varname();
-		char *pnt;
-		int was_packed = 0;
-
-		if(GLOBALS->do_hier_compress)
-			{
-			pnt = hier_compress(fnam, HIERPACK_ADD, &was_packed);
-			}
-
-		if(was_packed)
-			{
-			namecache[i+1] = pnt;
-			}
-			else
-			{
-			int flen = strlen(fnam);
-			namecache[i+1]=malloc_2(flen+1);
-			strcpy(namecache[i+1], fnam);
-			}
+		int flen = strlen(fnam);
+		namecache[i+1]=malloc_2(flen+1);
+		strcpy(namecache[i+1], fnam);
 		}
 
 	if(i>1)
@@ -600,9 +570,7 @@ pclose(GLOBALS->extload);
 /* SPLASH */                            splash_sync(2, 5);  
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 
-create_hier_array();
-
-if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
+if(GLOBALS->fast_tree_sort)
         {
         for(i=0;i<GLOBALS->numfacs;i++)
                 {
@@ -677,30 +645,12 @@ if((GLOBALS->fast_tree_sort) && (!GLOBALS->do_hier_compress))
 	for(i=0;i<GLOBALS->numfacs;i++)	
 		{
 		char *nf = GLOBALS->facs[i]->name;
-		int was_packed;
-		char *recon = hier_decompress_flagged(nf, &was_packed);
-
-		if(was_packed)
-		        {
-		        build_tree_from_name(recon, i);
-		        free_2(recon);
-		        }
-		        else
-		        {
-		        build_tree_from_name(nf, i);
-		        }        
+	        build_tree_from_name(nf, i);
 		}
 /* SPLASH */                            splash_sync(5, 5);  
 	treegraft(&GLOBALS->treeroot);
 	treesort(GLOBALS->treeroot, NULL);
 	}
-
-if(GLOBALS->prev_hier_uncompressed_name) 
-	{
-	free_2(GLOBALS->prev_hier_uncompressed_name);
-	GLOBALS->prev_hier_uncompressed_name = NULL; 
-	}
-
 
 if(skip_start || skip_end)
 	{
@@ -1005,6 +955,9 @@ if(nold!=np)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2011/01/07 20:17:10  gtkwave
+ * remove redundant fields from struct fac
+ *
  * Revision 1.11  2010/05/27 06:56:39  gtkwave
  * printf warning fixes
  *

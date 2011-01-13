@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2010.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2362,8 +2362,6 @@ void vcd_sortfacs(void)
 {
 int i;
 
-create_hier_array();
-
 GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *));
 GLOBALS->curnode=GLOBALS->firstnode;
 for(i=0;i<GLOBALS->numfacs;i++)
@@ -2417,18 +2415,7 @@ init_tree();
 for(i=0;i<GLOBALS->numfacs;i++)
 {                       
 char *n = GLOBALS->facs[i]->name;
-int was_packed;
-char *recon = hier_decompress_flagged(n, &was_packed);
-
-if(was_packed)
-	{
-	build_tree_from_name(recon, i);
-	free_2(recon);
-	}
-	else
-	{
-	build_tree_from_name(n, i);
-	}
+build_tree_from_name(n, i);
 
 if(GLOBALS->escaped_names_found_vcd_c_1)
 	{
@@ -2658,6 +2645,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2010/12/19 07:59:10  gtkwave
+ * warnings fixes
+ *
  * Revision 1.41  2010/12/14 21:26:06  gtkwave
  * support XL-style identifiers for optimization detection in sym build
  *

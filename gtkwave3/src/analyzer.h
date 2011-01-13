@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -466,7 +466,7 @@ void EnsureGroupsMatch(void);
 #define IsCollapsed(t)  (t->flags&TR_COLLAPSED)
 
 unsigned IsShadowed(Trptr t);
-char*    GetFullName(Trptr t);
+char*    GetFullName(Trptr t, int *was_packed);
 
 void OpenTrace(Trptr t);
 void CloseTrace(Trptr t);
@@ -478,6 +478,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.35  2010/12/18 23:56:50  gtkwave
+ * more structure rearrangement and packing
+ *
  * Revision 1.34  2010/12/17 06:29:20  gtkwave
  * Added --enable-struct-pack configure flag
  *
