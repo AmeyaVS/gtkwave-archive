@@ -258,8 +258,7 @@ if(shmid >= 0)
 
 	consume_ptr = buf;
 
-	/* this loop never exits */
-	for(;;)
+	while(!feof(f))
 		{
 		char *s = fgets(l_buf+buf_strlen, 32768-buf_strlen, f);
 		
@@ -321,6 +320,9 @@ return(255);
 /*
  * $Id$
  * $Log$
+ * Revision 1.8  2009/12/22 19:57:26  gtkwave
+ * warnings fixes on postincrement p++
+ *
  * Revision 1.7  2009/04/23 04:57:38  gtkwave
  * ported shmidcat and partial vcd loader function to mingw
  *
