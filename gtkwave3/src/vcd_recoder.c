@@ -840,13 +840,13 @@ if(GLOBALS->vcd_fsiz_vcd_recoder_c_2)
 return((int)(*GLOBALS->vst_vcd_recoder_c_3));
 }
         
-static signed char getch(void) {
+static inline signed char getch(void) {
   signed char ch = (GLOBALS->vst_vcd_recoder_c_3!=GLOBALS->vend_vcd_recoder_c_3)?((int)(*GLOBALS->vst_vcd_recoder_c_3)):(getch_fetch());
   GLOBALS->vst_vcd_recoder_c_3++;
   return(ch);
 }
 
-static signed char getch_peek(void) {
+static inline signed char getch_peek(void) {
   signed char ch = (GLOBALS->vst_vcd_recoder_c_3!=GLOBALS->vend_vcd_recoder_c_3)?((int)(*GLOBALS->vst_vcd_recoder_c_3)):(getch_fetch());
   /* no increment */
   return(ch);
@@ -3264,6 +3264,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.53  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.52  2010/12/19 07:59:10  gtkwave
  * warnings fixes
  *

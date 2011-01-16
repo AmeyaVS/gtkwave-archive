@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -345,13 +345,13 @@ if(!rd) return(-1);
 return((int)(*GLOBALS->vst_vcd_partial_c_2));
 }
 
-static signed char getch(void) {
+static inline signed char getch(void) {
   signed char ch = ((GLOBALS->vst_vcd_partial_c_2!=GLOBALS->vend_vcd_partial_c_2)?((int)(*GLOBALS->vst_vcd_partial_c_2)):(getch_fetch()));
   if(ch>=0) { GLOBALS->vst_vcd_partial_c_2++; };
   return(ch);
 }
 
-static signed char getch_peek(void) {
+static inline signed char getch_peek(void) {
   signed char ch = ((GLOBALS->vst_vcd_partial_c_2!=GLOBALS->vend_vcd_partial_c_2)?((int)(*GLOBALS->vst_vcd_partial_c_2)):(getch_fetch()));
   /* no increment */
   return(ch);
@@ -2570,6 +2570,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2010/12/19 07:59:10  gtkwave
+ * warnings fixes
+ *
  * Revision 1.41  2010/12/14 21:26:06  gtkwave
  * support XL-style identifiers for optimization detection in sym build
  *

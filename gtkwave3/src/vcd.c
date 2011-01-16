@@ -349,13 +349,13 @@ return((int)(*GLOBALS->vst_vcd_c_1));
 }
 
 
-static signed char getch(void) {
+static inline signed char getch(void) {
   signed char ch = ((GLOBALS->vst_vcd_c_1!=GLOBALS->vend_vcd_c_1)?((int)(*GLOBALS->vst_vcd_c_1)):(getch_fetch()));
   GLOBALS->vst_vcd_c_1++;
   return(ch);
 }
 
-static signed char getch_peek(void) {
+static inline signed char getch_peek(void) {
   signed char ch = ((GLOBALS->vst_vcd_c_1!=GLOBALS->vend_vcd_c_1)?((int)(*GLOBALS->vst_vcd_c_1)):(getch_fetch()));
   /* no increment */
   return(ch);
@@ -2645,6 +2645,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.42  2010/12/19 07:59:10  gtkwave
  * warnings fixes
  *

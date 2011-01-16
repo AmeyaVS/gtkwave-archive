@@ -984,3 +984,4 @@
 		Changed hierarchy packing code using a unified string
 		buffer with no red-black tree searching.
 		Modified shmidcat to exit on EOF.
+		Inlined getch() in vcd readers.
