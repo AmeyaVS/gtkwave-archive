@@ -35,7 +35,7 @@ static int variable_cb(p_cb_data cause);
 
 /*************************************************/
 
-struct fstContext *ctx = NULL;
+static struct fstContext *ctx = NULL;
 
 static char    *dump_path = NULL;
 
