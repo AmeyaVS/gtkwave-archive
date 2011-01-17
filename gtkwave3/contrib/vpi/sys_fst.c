@@ -500,6 +500,7 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 	}
 
 	fstscopnam = vpi_get_str(vpiName, item);
+	if(defname && !strcmp(defname, fstscopnam)) { defname = NULL; } /* no sense in storing a duplicate name */
 	fstWriterSetScope(ctx, fsttype, fstscopnam, defname);
 
 	draw_module(item, vpitype);
@@ -539,6 +540,7 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 
 
 		fstscopnam = vpi_get_str(vpiName, item);
+		if(defname && !strcmp(defname, fstscopnam)) { defname = NULL; } /* no sense in storing a duplicate name */
 		fstWriterSetScope(ctx, fsttype, fstscopnam, defname);
 
 		draw_module(item, vpitype);
