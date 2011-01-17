@@ -977,7 +977,7 @@
 		codes.
 		Added gtkwave_server to distro but it is not currently in
 		automake as it is not ready for use.
-3.3.19	14jan11	Added more NULL pointer checking to vcd2fst to prevent
+3.3.19	17jan11	Added more NULL pointer checking to vcd2fst to prevent
 		crashes on malformed files.
 		Removed redundant fields from struct fac and use the ones
 		in struct Node instead.
@@ -985,3 +985,4 @@
 		buffer with no red-black tree searching.
 		Modified shmidcat to exit on EOF.
 		Inlined getch() in vcd readers.
+		Added sys_fst.c VPI source for NC Verilog.
