@@ -5,7 +5,7 @@ FST dumper for NC Verilog
 to compile/run under AIX: 
 
 ar -xv /lib/libz.a   # to get libz.so.1
-xlc -c sys_fst.c fstapi.c fastlz.c -I/afs/rtp/cadtools/cadence/ldv/ius6.2p003a/tools/verilog/include/
+xlc -O3 -c sys_fst.c fstapi.c fastlz.c
 ld -G -o sys_fst.so sys_fst.o fstapi.o fastlz.o libz.so.1 -bnoentry -bexpall -lld -lc
 
 ncverilog r.v +loadvpi=sys_fst.so:sys_fst_register +access+r
