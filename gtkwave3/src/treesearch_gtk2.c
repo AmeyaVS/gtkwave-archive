@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tristan Gingold and Tony Bybell 2006-2009.
+ * Copyright (c) Tristan Gingold and Tony Bybell 2006-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,7 +94,7 @@ fill_sig_store (void)
 
   for (t = GLOBALS->sig_root_treesearch_gtk2_c_1; t != NULL; t = t->next)
 	{
-	int i = t->which;
+	int i = t->t_which;
 	char *s, *tmp2;
 	int vartype;
 
@@ -191,7 +191,7 @@ if(node)
 			GtkCTreeRow *g = GTK_CTREE_ROW(n);
 
 			t = (struct tree *)(g->row.data);
-			if(t->which < 0)
+			if(t->t_which < 0)
 				{
 				if(!t->children_in_gui)
 					{
@@ -721,8 +721,8 @@ while(t)
 			}
 			else
 			{
-			add_vector_range(NULL, fetchlow(t)->which,
-				fetchhigh(t)->which, direction);
+			add_vector_range(NULL, fetchlow(t)->t_which,
+				fetchhigh(t)->t_which, direction);
 			}
 		}
 	if(level) { t=t->next; } else { break; }
@@ -739,8 +739,8 @@ if(t)
 		}
 		else
 		{
-		add_vector_range(NULL, fetchlow(t)->which, 
-			fetchhigh(t)->which, direction);
+		add_vector_range(NULL, fetchlow(t)->t_which, 
+			fetchhigh(t)->t_which, direction);
 		}
 	}
 }
@@ -784,8 +784,8 @@ if(GLOBALS->entrybox_text_local_treesearch_gtk2_c_3)
 	 
 	        DEBUG(printf("Bundle name is: %s\n",entrybox_text_local));
 	        add_vector_range(GLOBALS->entrybox_text_local_treesearch_gtk2_c_3, 
-				fetchlow(sel)->which,
-				fetchhigh(sel)->which, 
+				fetchlow(sel)->t_which,
+				fetchhigh(sel)->t_which, 
 				GLOBALS->bundle_direction_treesearch_gtk2_c_3);
 		}
         free_2(GLOBALS->entrybox_text_local_treesearch_gtk2_c_3);
@@ -861,8 +861,8 @@ sig_selection_foreach (GtkTreeModel *model,
 
   if(!sel) return;
 
-  low = fetchlow(sel)->which;
-  high = fetchhigh(sel)->which;
+  low = fetchlow(sel)->t_which;
+  high = fetchhigh(sel)->t_which;
 
   /* Add signals and vectors.  */
   for(i=low;i<=high;i++)
@@ -957,8 +957,8 @@ sig_selection_foreach_preload_lx2
 
   if(!sel) return;
 
-  low = fetchlow(sel)->which;
-  high = fetchhigh(sel)->which;
+  low = fetchlow(sel)->t_which;
+  high = fetchhigh(sel)->t_which;
 
   /* If signals are vectors, coalesces vectors if so.  */
   for(i=low;i<=high;i++)
@@ -2156,6 +2156,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2010/09/27 18:54:31  gtkwave
+ * add check for null node in dynamic sst creation
+ *
  * Revision 1.49  2010/09/27 18:02:35  gtkwave
  * force open tree node fix for dynamic trees
  *

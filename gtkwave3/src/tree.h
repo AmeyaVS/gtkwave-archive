@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,6 +77,9 @@ enum tree_kind
 
  };
 
+#define WAVE_T_WHICH_UNDEFINED_COMPNAME (-1)
+#define WAVE_T_WHICH_COMPNAME_START (-2)
+
 #ifdef WAVE_USE_STRUCT_PACKING
 #pragma pack(push)
 #pragma pack(1)
@@ -86,7 +89,7 @@ struct tree
 {
 struct tree *next;
 struct tree *child;
-int which;		/* 'i' for facs[i] table, -1 means not a full signame */
+int t_which;		/* 'i' for facs[i] table, value of < 0 means not a full signame */
 
 unsigned kind : 7; 	/* Kind of the leaf: ghwlib reads this as val & 0x7f so only 7 bits needed */
 unsigned children_in_gui : 1; /* indicates that the child notes are in the gtk2 tree */
@@ -137,6 +140,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/12/17 06:29:20  gtkwave
+ * Added --enable-struct-pack configure flag
+ *
  * Revision 1.8  2010/09/23 22:04:55  gtkwave
  * added incremental SST build code
  *

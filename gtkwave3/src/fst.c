@@ -176,7 +176,7 @@ static void fst_append_graft_chain(int len, char *nam, int which, struct tree *p
 struct tree *t = calloc_2(1, sizeof(struct tree) + len);
 
 strcpy(t->name, nam);
-t->which = which;
+t->t_which = which;
 
 t->child = par;
 t->next = GLOBALS->terminals_tchain_tree_c_1;
@@ -1283,6 +1283,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.39  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.38  2011/01/07 20:17:10  gtkwave
  * remove redundant fields from struct fac
  *

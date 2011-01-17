@@ -1866,8 +1866,8 @@ sig_selection_foreach_dnd
  
   if(!sel) return;
 
-  low = fetchlow(sel)->which;
-  high = fetchhigh(sel)->which;
+  low = fetchlow(sel)->t_which;
+  high = fetchhigh(sel)->t_which;
  
   /* If signals are vectors, iterate through them if so.  */
   for(i=low;i<=high;i++)
@@ -2955,6 +2955,9 @@ return(strdup_2("--script TCL_ERROR : Tcl support not compiled into gtkwave\n"))
 /*
  * $Id$
  * $Log$
+ * Revision 1.94  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.93  2010/10/06 21:12:29  gtkwave
  * fix for rpc_script_execute when tcl disabled
  *

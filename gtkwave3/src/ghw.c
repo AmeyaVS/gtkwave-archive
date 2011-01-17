@@ -1,5 +1,5 @@
 /*  GHDL Wavefile reader interface.
-    Copyright (C) 2005-2010 Tristan Gingold and Tony Bybell
+    Copyright (C) 2005-2011 Tristan Gingold and Tony Bybell
 
     GHDL is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -217,7 +217,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 
 /*
- * preserve tree->which ordering so hierarchy children index pointers don't get corrupted
+ * preserve tree->t_which ordering so hierarchy children index pointers don't get corrupted
  */
 
 static void recurse_tree_build_whichcache(struct tree *t)
@@ -227,7 +227,7 @@ if(t)
 	if(t->child) { recurse_tree_build_whichcache(t->child); }
 	if(t->next) { recurse_tree_build_whichcache(t->next); }
 
-	if(t->which >= 0) GLOBALS->gwt_ghw_c_1 = ghw_insert(t, GLOBALS->gwt_ghw_c_1, t->which, GLOBALS->facs[t->which]);
+	if(t->t_which >= 0) GLOBALS->gwt_ghw_c_1 = ghw_insert(t, GLOBALS->gwt_ghw_c_1, t->t_which, GLOBALS->facs[t->t_which]);
 	}
 }
 
@@ -238,12 +238,12 @@ if(t)
 	if(t->child) { recurse_tree_fix_from_whichcache(t->child); }
 	if(t->next) { recurse_tree_fix_from_whichcache(t->next); }
 
-	if(t->which >= 0) 
+	if(t->t_which >= 0) 
 		{
 		GLOBALS->gwt_ghw_c_1 = ghw_splay(t, GLOBALS->gwt_ghw_c_1);
 		GLOBALS->gwt_corr_ghw_c_1 = ghw_splay(GLOBALS->gwt_ghw_c_1->sym, GLOBALS->gwt_corr_ghw_c_1); /* all facs are in this tree so this is OK */
 
-		t->which = GLOBALS->gwt_corr_ghw_c_1->val_old;				
+		t->t_which = GLOBALS->gwt_corr_ghw_c_1->val_old;				
 		}
 	}
 }
@@ -259,7 +259,7 @@ free_2(t);
 
 
 /*
- * sort facs and also cache/reconstruct tree->which pointers
+ * sort facs and also cache/reconstruct tree->t_which pointers
  */
 static void ghw_sortfacs(void)
 {
@@ -456,9 +456,9 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
       GLOBALS->nbr_sig_ref_ghw_c_1++;
       res = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(pfx));
       strcpy(res->name, (char *)pfx);
-      res->which = *(*sig)++;
+      res->t_which = *(*sig)++;
 
-      s->n = GLOBALS->nxp_ghw_c_1[res->which];
+      s->n = GLOBALS->nxp_ghw_c_1[res->t_which];
       return res;
     case ghdl_rtik_subtype_array:
     case ghdl_rtik_subtype_array_ptr:
@@ -466,7 +466,7 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
 	struct tree *r;
 	res = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(pfx));
 	strcpy(res->name, (char *)pfx);
-	res->which = -1;
+	res->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 	r = res;
 	build_hierarchy_array (h, t, 0, "", &res, sig);
 	r->child = r->next;
@@ -481,7 +481,7 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
 
 	res = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(pfx));
 	strcpy(res->name, (char *)pfx);
-	res->which = -1;
+	res->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
 	last = NULL;
 	for (i = 0; i < t->rec.nbr_fields; i++)
@@ -574,7 +574,7 @@ build_hierarchy (struct ghw_handler *h, struct ghw_hie *hie)
 		}
         }
 
-      t->which = -1;
+      t->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
       /* Recurse.  */
       prev = NULL;
@@ -742,16 +742,16 @@ set_fac_name_1 (struct tree *t)
 		}
 	}
 
-      if (t->which >= 0)
+      if (t->t_which >= 0)
 	{
         struct symchain *sc = GLOBALS->firstnode;
 	struct symbol *s = sc->symbol;
 
 	s->name = strdup_2(GLOBALS->fac_name_ghw_c_1);
-	s->n = GLOBALS->nxp_ghw_c_1[t->which];
+	s->n = GLOBALS->nxp_ghw_c_1[t->t_which];
 	if(!s->n->nname) s->n->nname = s->name;
 
-	t->which = GLOBALS->sym_which_ghw_c_1++; /* patch in gtkwave "which" as node is correct */
+	t->t_which = GLOBALS->sym_which_ghw_c_1++; /* patch in gtkwave "which" as node is correct */
 
 	GLOBALS->curnode = GLOBALS->firstnode->next;
 	free_2(GLOBALS->firstnode);
@@ -1133,6 +1133,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/03/15 01:17:00  gtkwave
+ * fix abuse of next pointer in ghw symbol creation/traversal
+ *
  * Revision 1.13  2010/03/14 20:12:28  gtkwave
  * rename next hash pointer in struct symbol
  *

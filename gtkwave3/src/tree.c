@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2009.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -89,7 +89,7 @@ if(GLOBALS->treeroot)
 		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
 		strcpy(t->name, scopename);
 		t->kind = ttype;
-		t->which = -1;
+		t->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
 		if(GLOBALS->mod_tree_parent->child)
 			{
@@ -114,7 +114,7 @@ if(GLOBALS->treeroot)
 		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
 		strcpy(t->name, scopename);
 		t->kind = ttype;
-		t->which = -1;
+		t->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
 		t->next = GLOBALS->treeroot;
 		GLOBALS->mod_tree_parent = GLOBALS->treeroot = t;
@@ -125,7 +125,7 @@ if(GLOBALS->treeroot)
 	t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
 	strcpy(t->name, scopename);
 	t->kind = ttype;
-	t->which = -1;
+	t->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
 	GLOBALS->mod_tree_parent = GLOBALS->treeroot = t;
 	}
@@ -230,10 +230,10 @@ while(t)
 		treedebug(t->child, s2);
 		}
 
-	if(t->which>=0) /* for when valid netnames like A.B.C, A.B.C.D exist (not legal excluding texsim) */
+	if(t->t_which>=0) /* for when valid netnames like A.B.C, A.B.C.D exist (not legal excluding texsim) */
 			/* otherwise this would be an 'else' */
 		{
-		printf("%3d) %s\n", t->which, s2);
+		printf("%3d) %s\n", t->t_which, s2);
 		}
 
 	free_2(s2);
@@ -248,18 +248,18 @@ char *tmp, *tmp2, *tmp3;
 gchar *text [1];
 GdkDrawable *pxm, *msk;
 
-if(t2->which!=-1)
+if(t2->t_which >= 0)
 	{
-        if(GLOBALS->facs[t2->which]->vec_root)
+        if(GLOBALS->facs[t2->t_which]->vec_root)
         	{
                 if(GLOBALS->autocoalesce)
                 	{
-                        if(GLOBALS->facs[t2->which]->vec_root!=GLOBALS->facs[t2->which])
+                        if(GLOBALS->facs[t2->t_which]->vec_root!=GLOBALS->facs[t2->t_which])
                         	{
 				return(NULL);
                                 }
 
-                        tmp2=makename_chain(GLOBALS->facs[t2->which]);
+                        tmp2=makename_chain(GLOBALS->facs[t2->t_which]);
                         tmp3=leastsig_hiername(tmp2);
                         tmp=wave_alloca(strlen(tmp3)+4);
                         strcpy(tmp,   "[] ");
@@ -449,11 +449,11 @@ while(t)
 		order_facs_from_treesort_2(t->child);
 		}
 
-	if(t->which>=0) /* for when valid netnames like A.B.C, A.B.C.D exist (not legal excluding texsim) */
+	if(t->t_which>=0) /* for when valid netnames like A.B.C, A.B.C.D exist (not legal excluding texsim) */
 			/* otherwise this would be an 'else' */
 		{
-		GLOBALS->facs2_tree_c_1[GLOBALS->facs2_pos_tree_c_1] = GLOBALS->facs[t->which];
-		t->which = GLOBALS->facs2_pos_tree_c_1--;
+		GLOBALS->facs2_tree_c_1[GLOBALS->facs2_pos_tree_c_1] = GLOBALS->facs[t->t_which];
+		t->t_which = GLOBALS->facs2_pos_tree_c_1--;
 		}
 
 	t=t->next;
@@ -537,7 +537,7 @@ rs:		s=get_module_name(s);
 
 		if(s)
 			{
-			nt->which=-1;
+			nt->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
 			if(prevt)				/* make first in chain */
 				{
@@ -553,7 +553,7 @@ rs:		s=get_module_name(s);
 			else
 			{
 			nt->child = prevt;			/* parent */
-			nt->which = which;
+			nt->t_which = which;
 			nt->next = GLOBALS->terminals_tchain_tree_c_1;
 			GLOBALS->terminals_tchain_tree_c_1 = nt;
 			return;
@@ -570,14 +570,14 @@ rs:		s=get_module_name(s);
 
 			if(s)
 				{
-				nt->which = -1;
+				nt->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 				t->child = nt;
 				t = nt;
 				}
 				else
 				{
 				nt->child = t;			/* parent */
-				nt->which = which;
+				nt->t_which = which;
 				nt->next = GLOBALS->terminals_tchain_tree_c_1;
 				GLOBALS->terminals_tchain_tree_c_1 = nt;
 				}
@@ -594,7 +594,7 @@ else
 		nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
 		memcpy(nt->name, GLOBALS->module_tree_c_1, GLOBALS->module_len_tree_c_1);
 
-		if(!s) nt->which=which; else nt->which=-1;
+		if(!s) nt->t_which=which; else nt->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
 		if(GLOBALS->treeroot)
 			{
@@ -737,6 +737,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/09/23 22:04:55  gtkwave
+ * added incremental SST build code
+ *
  * Revision 1.8  2009/07/02 18:50:47  gtkwave
  * decorate VCD module trees with type info, add move to front to buildname
  *

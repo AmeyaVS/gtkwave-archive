@@ -986,3 +986,8 @@
 		Modified shmidcat to exit on EOF.
 		Inlined getch() in vcd readers.
 		Added sys_fst.c VPI source for NC Verilog and XL.
+		Added component typename dumping into sys_fst.c so that
+		NC can dump component names.
+		Rename t->which field to t->tr_which in struct tree in
+		anticipation of overloading negative numbers to point to
+		component name indices in the future.

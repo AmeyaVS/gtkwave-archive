@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -223,8 +223,8 @@ while(t)
 			}
 			else
 			{
-			add_vector_range(NULL, fetchlow(t)->which,
-				fetchhigh(t)->which, direction);
+			add_vector_range(NULL, fetchlow(t)->t_which,
+				fetchhigh(t)->t_which, direction);
 			}
 		}
 	if(level) { t=t->next; } else { break; }
@@ -241,8 +241,8 @@ if(t)
 		}
 		else
 		{
-		add_vector_range(NULL, fetchlow(t)->which, 
-			fetchhigh(t)->which, direction);
+		add_vector_range(NULL, fetchlow(t)->t_which, 
+			fetchhigh(t)->t_which, direction);
 		}
 	}
 }
@@ -276,8 +276,8 @@ if(GLOBALS->entrybox_text_local_treesearch_gtk1_c)
 	 
 	        DEBUG(printf("Bundle name is: %s\n",GLOBALS->entrybox_text_local_treesearch_gtk1_c));
 	        add_vector_range(GLOBALS->entrybox_text_local_treesearch_gtk1_c, 
-				fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which,
-				fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which, 
+				fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which,
+				fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which, 
 				GLOBALS->bundle_direction_treesearch_gtk1_c);
 		}
         free_2(GLOBALS->entrybox_text_local_treesearch_gtk1_c);
@@ -337,7 +337,7 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
         {
         struct symbol *s;  
         s=GLOBALS->facs[i];
@@ -352,7 +352,7 @@ if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
                 {
                 struct symbol *s, *t;
                 s=GLOBALS->facs[i];
@@ -389,7 +389,7 @@ if(GLOBALS->is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
         {
 	int len;
         struct symbol *s, *t;  
@@ -449,7 +449,7 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
         {
         struct symbol *s;  
         s=GLOBALS->facs[i];
@@ -464,7 +464,7 @@ if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
                 {
                 struct symbol *s, *t;
                 s=GLOBALS->facs[i];
@@ -501,7 +501,7 @@ if(GLOBALS->is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
         {
 	int len;
         struct symbol *s, *t;  
@@ -566,7 +566,7 @@ if(!GLOBALS->selectedtree_treesearch_gtk1_c) return;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
         {
         struct symbol *s;  
         s=GLOBALS->facs[i];
@@ -581,7 +581,7 @@ if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
                 {
                 struct symbol *s, *t;
                 s=GLOBALS->facs[i];
@@ -618,7 +618,7 @@ if(GLOBALS->is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->which;i++)
+for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
         {
 	int len;
         struct symbol *s, *t;  
@@ -815,6 +815,9 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2010/05/27 06:07:25  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.13  2010/03/16 21:01:11  gtkwave
  * remove selected member of struct symbol
  *

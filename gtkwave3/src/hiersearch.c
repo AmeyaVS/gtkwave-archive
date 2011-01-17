@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) Tony Bybell 1999-2008.
+ * Copyright (c) Tony Bybell 1999-2011.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,19 +65,19 @@ if(!GLOBALS->hier_grouping)
 	                        strcpy(tmp+4, t2->name);
 	                        }
                         	else
-				if(t2->which!=-1)
+				if(t2->t_which >= 0)
 				{
-				if(GLOBALS->facs[t2->which]->vec_root)
+				if(GLOBALS->facs[t2->t_which]->vec_root)
 					{
 					if(GLOBALS->autocoalesce)
 						{
-						if(GLOBALS->facs[t2->which]->vec_root!=GLOBALS->facs[t2->which])
+						if(GLOBALS->facs[t2->t_which]->vec_root!=GLOBALS->facs[t2->t_which])
 							{
 							t2=t2->next;
 							continue;
 							}
 
-						tmp2=makename_chain(GLOBALS->facs[t2->which]);
+						tmp2=makename_chain(GLOBALS->facs[t2->t_which]);
 						tmp3=leastsig_hiername(tmp2);
 						tmp=wave_alloca(strlen(tmp3)+4);
 						strcpy(tmp,   "[] ");
@@ -118,19 +118,19 @@ if(!GLOBALS->hier_grouping)
 		{
                 if(!t2->child)
                         {
-			if(t2->which!=-1)
+			if(t2->t_which >= 0)
 				{
-				if(GLOBALS->facs[t2->which]->vec_root)
+				if(GLOBALS->facs[t2->t_which]->vec_root)
 					{
 					if(GLOBALS->autocoalesce)
 						{
-						if(GLOBALS->facs[t2->which]->vec_root!=GLOBALS->facs[t2->which])
+						if(GLOBALS->facs[t2->t_which]->vec_root!=GLOBALS->facs[t2->t_which])
 							{
 							t2=t2->next;
 							continue;
 							}
 
-						tmp2=makename_chain(GLOBALS->facs[t2->which]);
+						tmp2=makename_chain(GLOBALS->facs[t2->t_which]);
 						tmp3=leastsig_hiername(tmp2);
 						tmp=wave_alloca(strlen(tmp3)+4);
 						strcpy(tmp,   "[] ");
@@ -310,7 +310,7 @@ if(!GLOBALS->h_selectedtree_hiersearch_c_1) return;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
         struct symbol *s;  
         s=GLOBALS->facs[i];
@@ -325,7 +325,7 @@ if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
 	        {
 	        struct symbol *s, *t;  
 	        s=GLOBALS->facs[i];
@@ -362,7 +362,7 @@ if(GLOBALS->is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
 	int len;
         struct symbol *s, *t;  
@@ -410,7 +410,7 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
         struct symbol *s;  
         s=GLOBALS->facs[i];
@@ -425,7 +425,7 @@ if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
 	        {
 	        struct symbol *s, *t;  
 	        s=GLOBALS->facs[i];
@@ -462,7 +462,7 @@ if(GLOBALS->is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
 	int len;
         struct symbol *s, *t;  
@@ -523,7 +523,7 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
         struct symbol *s;  
         s=GLOBALS->facs[i];
@@ -538,7 +538,7 @@ if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
 	        {
 	        struct symbol *s, *t;  
 	        s=GLOBALS->facs[i];
@@ -575,7 +575,7 @@ if(GLOBALS->is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which;i++)
+for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
 	int len;
         struct symbol *s, *t;  
@@ -659,8 +659,8 @@ if(GLOBALS->entrybox_text_local_hiersearch_c_1)
 	
 	        DEBUG(printf("Bundle name is: %s\n",entrybox_text_local));
 	        add_vector_range(GLOBALS->entrybox_text_local_hiersearch_c_1,
-	                        fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->which,
-	                        fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->which,
+	                        fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which,
+	                        fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which,
 	                        GLOBALS->bundle_direction_hiersearch_c_1);
 		}
         free_2(GLOBALS->entrybox_text_local_hiersearch_c_1);
@@ -981,6 +981,9 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.9  2010/05/27 06:07:24  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.8  2010/03/16 21:01:09  gtkwave
  * remove selected member of struct symbol
  *
