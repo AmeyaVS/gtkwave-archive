@@ -985,4 +985,4 @@
 		buffer with no red-black tree searching.
 		Modified shmidcat to exit on EOF.
 		Inlined getch() in vcd readers.
-		Added sys_fst.c VPI source for NC Verilog.
+		Added sys_fst.c VPI source for NC Verilog and XL.

@@ -1,6 +1,6 @@
 /*
 
-FST dumper for NC Verilog
+FST dumper for NC Verilog / Verilog-XL
 
 to compile/run under AIX: 
 
@@ -8,7 +8,7 @@ ar -xv /lib/libz.a   # to get libz.so.1
 xlc -O3 -c sys_fst.c fstapi.c fastlz.c
 ld -G -o sys_fst.so sys_fst.o fstapi.o fastlz.o libz.so.1 -bnoentry -bexpall -lld -lc
 
-ncverilog r.v +loadvpi=sys_fst.so:sys_fst_register +access+r
+[nc]verilog r.v +loadvpi=sys_fst.so:sys_fst_register +access+r
 
  */
 
