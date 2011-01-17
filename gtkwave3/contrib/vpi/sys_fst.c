@@ -289,7 +289,7 @@ sys_dumpfile_calltf(char *name)
 
 
 static int
-draw_module_type(vpiHandle item, int typ, char *str)
+draw_module_type(vpiHandle item, int typ)
 {
     vpiHandle       iter = vpi_iterate(typ, item);
     vpiHandle       net;
@@ -455,10 +455,10 @@ static int
 draw_module(vpiHandle item, int typ)
 {
     if (typ == vpiModule) {
-	draw_module_type(item, vpiNet, "net");
+	draw_module_type(item, vpiNet);
     }
-    draw_module_type(item, vpiReg, "reg");
-    draw_module_type(item, vpiVariables, "var");
+    draw_module_type(item, vpiReg);
+    draw_module_type(item, vpiVariables);
 
     return (0);
 }
@@ -467,13 +467,14 @@ draw_module(vpiHandle item, int typ)
 static int
 draw_scope_fst(vpiHandle item, int depth, int depth_max)
 {
+    const char     *fstscopnam;
+    const char     *defname = NULL;
     vpiHandle       orig = item;
 
     if ((depth_max) && (depth >= depth_max))
 	return (0);
 
     if (depth == 0) {
-	const char     *fstscopnam = vpi_get_str(vpiName, item);
 	int             vpitype = vpi_get(vpiType, item);
 	int             fsttype;
 
@@ -494,11 +495,12 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 	case vpiModule:
 	default:
 	    fsttype = FST_ST_VCD_MODULE;
+	    defname = vpi_get_str(vpiDefName, item);
 	    break;
 	}
 
-
-	fstWriterSetScope(ctx, fsttype, fstscopnam, NULL);
+	fstscopnam = vpi_get_str(vpiName, item);
+	fstWriterSetScope(ctx, fsttype, fstscopnam, defname);
 
 	draw_module(item, vpitype);
 	if (vpitype == vpiModule) {
@@ -511,7 +513,6 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 
 	if (iter)
 	    while ((item = vpi_scan(iter))) {
-		const char     *fstscopnam = vpi_get_str(vpiName, item);
 		int             vpitype = vpi_get(vpiType, item);
 		int             fsttype;
 
@@ -532,11 +533,13 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 		case vpiModule:
 		default:
 		    fsttype = FST_ST_VCD_MODULE;
+	    	    defname = vpi_get_str(vpiDefName, item);
 		    break;
 		}
 
 
-		fstWriterSetScope(ctx, fsttype, fstscopnam, NULL);
+		fstscopnam = vpi_get_str(vpiName, item);
+		fstWriterSetScope(ctx, fsttype, fstscopnam, defname);
 
 		draw_module(item, vpitype);
 
