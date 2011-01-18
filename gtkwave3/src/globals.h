@@ -893,6 +893,8 @@ int facs2_pos_tree_c_1; /* from tree.c 482 */
  */
 #ifdef _WAVE_HAVE_JUDY
 Pvoid_t comp_name_judy;
+#else
+JRB comp_name_jrb;
 #endif
 char **comp_name_idx;
 int comp_name_serial;

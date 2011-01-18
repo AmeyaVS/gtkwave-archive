@@ -909,6 +909,8 @@ NULL, /* facs2_tree_c_1 451 */
  */
 #ifdef _WAVE_HAVE_JUDY
 NULL, /* comp_name_judy */
+#else
+NULL, /* comp_name_jrb */
 #endif
 NULL, /* comp_name_idx */
 0, /* comp_name_serial */

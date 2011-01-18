@@ -139,7 +139,7 @@ JRB make_jrb()
   return head;
 }
  
-JRB jrb_find_gte_str(JRB n, char *key, int *fnd)
+JRB jrb_find_gte_str(JRB n, const char *key, int *fnd)
 {
   int cmp;
  
@@ -167,7 +167,7 @@ JRB jrb_find_gte_str(JRB n, char *key, int *fnd)
   }
 }
  
-JRB jrb_find_str(JRB n, char *key)
+JRB jrb_find_str(JRB n, const char *key)
 {
   int fnd;
   JRB j;
@@ -609,6 +609,9 @@ JRB jrb_insert_gen(JRB tree, Jval key, Jval val,
 /*
  * $Id$
  * $Log$
+ * Revision 1.3  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.2  2008/07/18 17:30:58  gtkwave
  * adding cvs headers
  *

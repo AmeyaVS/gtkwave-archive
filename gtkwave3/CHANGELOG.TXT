@@ -991,4 +991,5 @@
 		Rename t->which field to t->tr_which in struct tree in
 		anticipation of overloading negative numbers to point to
 		component name indices in the future.
-		Added component names in gtk2 tree (currently Judy only).
+		Added component names in gtk2 tree.  Currently the FST
+		dumper is the only one that uses this.

@@ -13,6 +13,8 @@
 
 #ifdef _WAVE_HAVE_JUDY
 
+/* Judy version */
+
 void iter_through_comp_name_table(void)
 {
 Pvoid_t  PJArray = GLOBALS->comp_name_judy;
@@ -69,14 +71,61 @@ return(++GLOBALS->comp_name_serial);	/* always nonzero */
 
 #else
 
-int add_to_comp_name_table(const char *s)	/* always zero = don't add */
-{
-return(0);
-}
+/* JRB alternate (not as memory efficient initially) */
 
 void iter_through_comp_name_table(void)
 {
-/* nothing */
+if(GLOBALS->comp_name_jrb)
+	{
+	char *mem = malloc_2(GLOBALS->comp_name_total_stringmem);
+	char **idx = GLOBALS->comp_name_idx = calloc_2(GLOBALS->comp_name_serial, sizeof(char *));
+	char *Index;
+	char *pnt = mem;
+	JRB node;
+
+	jrb_traverse(node, GLOBALS->comp_name_jrb)
+	    {
+		Index = node->key.s;
+		int slen = strlen(Index);
+
+		memcpy(pnt, Index, slen+1);
+		free_2(Index);
+	        idx[node->val.i] = pnt;
+		pnt += (slen + 1);
+	    }
+	
+	jrb_free_tree(GLOBALS->comp_name_jrb);
+	GLOBALS->comp_name_jrb = NULL;
+	}
+}
+
+int add_to_comp_name_table(const char *s)
+{
+int slen;
+JRB str;
+Jval jv;
+
+if(!GLOBALS->comp_name_jrb) { GLOBALS->comp_name_jrb = make_jrb(); }
+
+str = jrb_find_str(GLOBALS->comp_name_jrb, s);
+
+if(str)
+	{
+	return(str->val.i + 1);
+	}
+
+slen = strlen(s);
+GLOBALS->comp_name_total_stringmem += (slen + 1);
+
+if(slen > GLOBALS->comp_name_longest)
+	{
+	GLOBALS->comp_name_longest = slen;
+	}
+
+jv.i = GLOBALS->comp_name_serial;
+jrb_insert_str(GLOBALS->comp_name_jrb, strdup_2(s), jv);
+
+return(++GLOBALS->comp_name_serial);	/* always nonzero */
 }
 
 #endif
@@ -84,4 +133,7 @@ void iter_through_comp_name_table(void)
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  */

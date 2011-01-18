@@ -60,7 +60,7 @@ extern JRB jrb_insert_gen(JRB tree, Jval key, Jval val, int (*func)(Jval,Jval));
 /* returns an external node in t whose value is equal k. Returns NULL if
    there is no such node in the tree */
 
-extern JRB jrb_find_str(JRB root, char *key);
+extern JRB jrb_find_str(JRB root, const char *key);
 extern JRB jrb_find_int(JRB root, int ikey);
 extern JRB jrb_find_vptr(JRB root, void *vkey);
 extern JRB jrb_find_gen(JRB root, Jval, int (*func)(Jval, Jval));
@@ -70,7 +70,7 @@ extern JRB jrb_find_gen(JRB root, Jval, int (*func)(Jval, Jval));
   k or whose value is the smallest value greater than k. Sets found to
   1 if the key was found, and 0 otherwise.  */
 
-extern JRB jrb_find_gte_str(JRB root, char *key, int *found);
+extern JRB jrb_find_gte_str(JRB root, const char *key, int *found);
 extern JRB jrb_find_gte_int(JRB root, int ikey, int *found);
 extern JRB jrb_find_gte_vptr(JRB root, void *vkey, int *found);
 extern JRB jrb_find_gte_gen(JRB root, Jval key, 
@@ -113,6 +113,9 @@ int jrb_plength(JRB n);       /* returns the # of nodes in path from
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2008/07/18 17:30:58  gtkwave
+ * adding cvs headers
+ *
  * Revision 1.1  2008/07/18 17:27:01  gtkwave
  * adding hierpack code
  *

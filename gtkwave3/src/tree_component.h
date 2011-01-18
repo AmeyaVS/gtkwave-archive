@@ -11,6 +11,8 @@
 
 #ifdef _WAVE_HAVE_JUDY
 #include <Judy.h>
+#else
+#include "jrb.h"
 #endif
 
 #ifndef WAVE_TREE_COMP_H
@@ -24,5 +26,8 @@ int add_to_comp_name_table(const char *s);
 /*
  * $Id$
  * $Log$
+ * Revision 1.1  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  */
 
