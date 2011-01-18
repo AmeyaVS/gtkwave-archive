@@ -84,7 +84,7 @@ while((h = fstReaderIterateHier(xc)))
 				default:			ttype = TREE_UNKNOWN; break;
 				}
 
-			allocate_and_decorate_module_tree_node(ttype, h->u.scope.name);
+			allocate_and_decorate_module_tree_node(ttype, h->u.scope.name, h->u.scope.component);
                         break;
                 case FST_HT_UPSCOPE:
 			GLOBALS->mod_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
@@ -594,6 +594,7 @@ for(i=0;i<=F_NAME_MODULUS;i++)
 free_2(f_name); f_name = NULL;
 
 freeze_facility_pack();
+iter_through_comp_name_table();
 
 fprintf(stderr, FST_RDLOAD"Built %d signal%s and %d alias%s.\n", 
 	numvars, (numvars == 1) ? "" : "s", 
@@ -1283,6 +1284,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.40  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.39  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

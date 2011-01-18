@@ -1115,7 +1115,7 @@ for(;;)
 				strcpy(s->str, GLOBALS->yytext_vcd_partial_c_2);
 				s->mod_tree_parent = GLOBALS->mod_tree_parent;
 
-				allocate_and_decorate_module_tree_node(ttype, GLOBALS->yytext_vcd_partial_c_2);
+				allocate_and_decorate_module_tree_node(ttype, GLOBALS->yytext_vcd_partial_c_2, NULL);
 
 				if(GLOBALS->slistcurr)
 					{
@@ -2570,6 +2570,9 @@ gtkwave_main_iteration();
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2011/01/16 07:56:08  gtkwave
+ * inlining of character get functions
+ *
  * Revision 1.42  2010/12/19 07:59:10  gtkwave
  * warnings fixes
  *

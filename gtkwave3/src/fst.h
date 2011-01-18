@@ -18,6 +18,7 @@
 
 #include "vcd.h"
 #include "ae2.h"
+#include "tree_component.h"
 
 TimeType fst_main(char *fname, char *skip_start, char *skip_end);
 void import_fst_trace(nptr np);
@@ -29,6 +30,9 @@ void fst_import_masked(void);
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.1  2009/08/06 20:03:15  gtkwave
  * creation
  *

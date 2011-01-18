@@ -22,6 +22,7 @@
 #include "debug.h"
 #include "symbol.h"
 #include "vcd.h"
+#include "tree_component.h"
 
 
 /* Kind of the tree.  */
@@ -128,7 +129,7 @@ void maketree2(GtkCTreeNode *subtree, struct tree *t, int depth, GtkCTreeNode *g
 #endif
 
 char *leastsig_hiername(char *nam);
-void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename);
+void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename, const char *compname);
 
 void treesort(struct tree *t, struct tree *p);
 void order_facs_from_treesort(struct tree *t, void *v);
@@ -140,6 +141,9 @@ void treenamefix(struct tree *t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.9  2010/12/17 06:29:20  gtkwave
  * Added --enable-struct-pack configure flag
  *

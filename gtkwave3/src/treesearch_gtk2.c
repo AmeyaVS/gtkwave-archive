@@ -98,7 +98,7 @@ fill_sig_store (void)
 	char *s, *tmp2;
 	int vartype;
 
-	if(i == -1) continue;
+	if(i < 0) continue;
 
 	vartype = GLOBALS->facs[i]->n->vartype;
 	if((vartype < 0) || (vartype > ND_VARTYPE_MAX))
@@ -2156,6 +2156,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 /*
  * $Id$
  * $Log$
+ * Revision 1.51  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.50  2010/09/27 18:54:31  gtkwave
  * add check for null node in dynamic sst creation
  *

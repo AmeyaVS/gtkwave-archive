@@ -67,9 +67,20 @@ for(;;)
 /*
  * decorated module add
  */
-void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename)
+void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename, const char *compname)
 {
 struct tree *t;
+int mtyp = WAVE_T_WHICH_UNDEFINED_COMPNAME;
+
+if(compname && compname[0] && strcmp(scopename, compname))
+	{
+	int ix = add_to_comp_name_table(compname);
+	if(ix)
+		{
+		ix--;
+		mtyp = WAVE_T_WHICH_COMPNAME_START - ix;
+		}
+	}
 
 if(GLOBALS->treeroot)
 	{
@@ -89,7 +100,7 @@ if(GLOBALS->treeroot)
 		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
 		strcpy(t->name, scopename);
 		t->kind = ttype;
-		t->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
+		t->t_which = mtyp;
 
 		if(GLOBALS->mod_tree_parent->child)
 			{
@@ -114,7 +125,7 @@ if(GLOBALS->treeroot)
 		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
 		strcpy(t->name, scopename);
 		t->kind = ttype;
-		t->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
+		t->t_which = mtyp;
 
 		t->next = GLOBALS->treeroot;
 		GLOBALS->mod_tree_parent = GLOBALS->treeroot = t;
@@ -125,7 +136,7 @@ if(GLOBALS->treeroot)
 	t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
 	strcpy(t->name, scopename);
 	t->kind = ttype;
-	t->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
+	t->t_which = mtyp;
 
 	GLOBALS->mod_tree_parent = GLOBALS->treeroot = t;
 	}
@@ -280,7 +291,25 @@ if(t2->t_which >= 0)
 	}
         else
         {
-        tmp=t2->name;
+	if(t2->t_which == WAVE_T_WHICH_UNDEFINED_COMPNAME)
+		{
+        	tmp=t2->name;
+		}
+		else
+		{
+		int thidx = -t2->t_which + WAVE_T_WHICH_COMPNAME_START;
+		if((thidx >= 0) && (thidx < GLOBALS->comp_name_serial))
+			{
+			char *sc = GLOBALS->comp_name_idx[thidx];
+			int tlen = strlen(t2->name) + 1 + 1 + strlen(sc) + 1 + 1;
+			tmp = wave_alloca(tlen);
+			sprintf(tmp, "%s (%s)", t2->name, sc);
+			}
+			else
+			{
+	        	tmp=t2->name;	/* should never get a value out of range here! */
+			}
+		}
         }
 
 text[0]=tmp;
@@ -737,6 +766,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.10  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.9  2010/09/23 22:04:55  gtkwave
  * added incremental SST build code
  *

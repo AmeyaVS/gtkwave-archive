@@ -905,6 +905,18 @@ NULL, /* facs2_tree_c_1 451 */
 
 
 /*
+ * tree_component.c
+ */
+#ifdef _WAVE_HAVE_JUDY
+NULL, /* comp_name_judy */
+#endif
+NULL, /* comp_name_idx */
+0, /* comp_name_serial */
+0, /* comp_name_total_stringmem */
+0, /* comp_name_longest */
+
+
+/*
  * treesearch_gtk1.c
  */
 NULL, /* GtkWidget *window1_treesearch_gtk1_c;  */
