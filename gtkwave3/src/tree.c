@@ -301,9 +301,9 @@ if(t2->t_which >= 0)
 		if((thidx >= 0) && (thidx < GLOBALS->comp_name_serial))
 			{
 			char *sc = GLOBALS->comp_name_idx[thidx];
-			int tlen = strlen(t2->name) + 1 + 1 + strlen(sc) + 1 + 1;
+			int tlen = strlen(t2->name) + 2 + 1 + strlen(sc) + 1 + 1;
 			tmp = wave_alloca(tlen);
-			sprintf(tmp, "%s (%s)", t2->name, sc);
+			sprintf(tmp, "%s  (%s)", t2->name, sc);
 			}
 			else
 			{
@@ -766,6 +766,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  * Revision 1.10  2011/01/17 19:24:21  gtkwave
  * tree modifications to support decorated internal hierarchy nodes
  *
