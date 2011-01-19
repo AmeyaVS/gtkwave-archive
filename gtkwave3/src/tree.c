@@ -18,8 +18,27 @@
 #include "tree.h"
 #include "vcd.h"
 
-
 enum TreeBuildTypes { MAKETREE_FLATTEN, MAKETREE_LEAF, MAKETREE_NODE };
+
+
+#ifdef WAVE_USE_STRUCT_PACKING
+struct tree *talloc_2(size_t siz)
+{
+if(GLOBALS->talloc_pool_base)
+	{
+	if((siz + GLOBALS->talloc_idx) <= WAVE_TALLOC_POOL_SIZE)
+		{
+		unsigned char *m = GLOBALS->talloc_pool_base + GLOBALS->talloc_idx;
+		GLOBALS->talloc_idx += siz;
+		return((struct tree *)m);
+		}
+	}
+
+GLOBALS->talloc_pool_base = calloc_2(1, WAVE_TALLOC_POOL_SIZE);
+GLOBALS->talloc_idx = 0;
+return(talloc_2(siz));
+}
+#endif
 
 
 /*
@@ -27,7 +46,6 @@ enum TreeBuildTypes { MAKETREE_FLATTEN, MAKETREE_LEAF, MAKETREE_NODE };
  */
 void init_tree(void)
 {
-/* treeroot=(struct tree *)calloc_2(1,sizeof(struct tree)); */
 GLOBALS->module_tree_c_1=(char *)malloc_2(GLOBALS->longestname+1);
 }
 
@@ -97,7 +115,7 @@ if(GLOBALS->treeroot)
 			t = t->next;
 			}
 
-		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
+		t = talloc_2(sizeof(struct tree) + strlen(scopename));
 		strcpy(t->name, scopename);
 		t->kind = ttype;
 		t->t_which = mtyp;
@@ -122,7 +140,7 @@ if(GLOBALS->treeroot)
 			t = t->next;
 			}
 
-		t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
+		t = talloc_2(sizeof(struct tree) + strlen(scopename));
 		strcpy(t->name, scopename);
 		t->kind = ttype;
 		t->t_which = mtyp;
@@ -133,7 +151,7 @@ if(GLOBALS->treeroot)
 	}
 	else
 	{
-	t = calloc_2(1, sizeof(struct tree) + strlen(scopename));
+	t = talloc_2(sizeof(struct tree) + strlen(scopename));
 	strcpy(t->name, scopename);
 	t->kind = ttype;
 	t->t_which = mtyp;
@@ -561,7 +579,7 @@ rs:		s=get_module_name(s);
 				}
 			}
 
-		nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
+		nt=(struct tree *)talloc_2(sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
 		memcpy(nt->name, GLOBALS->module_tree_c_1, GLOBALS->module_len_tree_c_1);
 
 		if(s)
@@ -594,7 +612,7 @@ rs:		s=get_module_name(s);
 			{
 			s=get_module_name(s);
 		
-			nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
+			nt=(struct tree *)talloc_2(sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
 			memcpy(nt->name, GLOBALS->module_tree_c_1, GLOBALS->module_len_tree_c_1);
 
 			if(s)
@@ -620,7 +638,7 @@ else
 		{
 		s=get_module_name(s);
 
-		nt=(struct tree *)calloc_2(1,sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
+		nt=(struct tree *)talloc_2(sizeof(struct tree)+GLOBALS->module_len_tree_c_1);
 		memcpy(nt->name, GLOBALS->module_tree_c_1, GLOBALS->module_len_tree_c_1);
 
 		if(!s) nt->t_which=which; else nt->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
@@ -766,6 +784,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2011/01/18 02:38:35  gtkwave
+ * added extra spacing between component type name for readability
+ *
  * Revision 1.11  2011/01/18 00:00:12  gtkwave
  * preliminary tree component support
  *

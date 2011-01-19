@@ -173,7 +173,7 @@ return(NULL);
 
 static void fst_append_graft_chain(int len, char *nam, int which, struct tree *par)
 {
-struct tree *t = calloc_2(1, sizeof(struct tree) + len);
+struct tree *t = talloc_2(sizeof(struct tree) + len);
 
 strcpy(t->name, nam);
 t->t_which = which;
@@ -1284,6 +1284,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.41  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  * Revision 1.40  2011/01/17 19:24:21  gtkwave
  * tree modifications to support decorated internal hierarchy nodes
  *

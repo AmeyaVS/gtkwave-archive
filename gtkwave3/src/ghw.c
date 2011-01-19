@@ -21,6 +21,7 @@
 #include <config.h>
 #include "ghw.h"
 #include "ghwlib.h"
+#include "tree.h"
 
 /************************ splay ************************/
 
@@ -1104,7 +1105,9 @@ ghw_main(char *fname)
  struct tree *t = calloc_2(1, sizeof(struct tree) + strlen(base_hier));
  memcpy(t, GLOBALS->treeroot, sizeof(struct tree));
  strcpy(t->name, base_hier);
- free_2(GLOBALS->treeroot);
+#ifndef WAVE_TALLOC_POOL_SIZE
+ free_2(GLOBALS->treeroot); /* if using tree alloc pool, can't deallocate this */
+#endif
  GLOBALS->treeroot = t;
  }
 
@@ -1133,6 +1136,9 @@ ghw_main(char *fname)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.14  2010/03/15 01:17:00  gtkwave
  * fix abuse of next pointer in ghw symbol creation/traversal
  *

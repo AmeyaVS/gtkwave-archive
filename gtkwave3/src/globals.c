@@ -902,6 +902,8 @@ NULL, /* terminals_tchain_tree_c_1 446 */
 1, /* fast_tree_sort 450 */
 NULL, /* facs2_tree_c_1 451 */
 0, /* facs2_pos_tree_c_1 452 */
+NULL, /* talloc_pool_base */
+0, /* talloc_idx */
 
 
 /*

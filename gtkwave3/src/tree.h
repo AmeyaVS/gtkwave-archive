@@ -136,11 +136,22 @@ void order_facs_from_treesort(struct tree *t, void *v);
 
 void treenamefix(struct tree *t);
 
+
+#ifdef WAVE_USE_STRUCT_PACKING
+#define WAVE_TALLOC_POOL_SIZE (65536)
+struct tree *talloc_2(size_t siz);
+#else
+#define talloc_2(x) calloc_2(1,(x))
+#endif
+
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.11  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  * Revision 1.10  2011/01/17 19:24:21  gtkwave
  * tree modifications to support decorated internal hierarchy nodes
  *

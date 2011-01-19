@@ -977,7 +977,7 @@
 		codes.
 		Added gtkwave_server to distro but it is not currently in
 		automake as it is not ready for use.
-3.3.19	17jan11	Added more NULL pointer checking to vcd2fst to prevent
+3.3.19	19jan11	Added more NULL pointer checking to vcd2fst to prevent
 		crashes on malformed files.
 		Removed redundant fields from struct fac and use the ones
 		in struct Node instead.
@@ -988,8 +988,7 @@
 		Added sys_fst.c VPI source for NC Verilog and XL.
 		Added component typename dumping into sys_fst.c so that
 		NC can dump component names.
-		Rename t->which field to t->tr_which in struct tree in
-		anticipation of overloading negative numbers to point to
-		component name indices in the future.
 		Added component type names in gtk2 tree.  Currently the 
 		FST dumper is the only one that uses this.
+		Allocate tree structures from tree allocation pool when
+		structure packing is enabled.
