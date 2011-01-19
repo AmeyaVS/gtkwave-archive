@@ -8,8 +8,6 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 
-# AC_CHECK_SIZEOF(void *)
-
 # Checks for build options
 # ------------- Inline -------------------
 
@@ -487,6 +485,11 @@ AC_CHECK_HEADERS([rpc/types.h rpc/xdr.h], [], [],
      #endif
      ]])
 
+
+# Checks for operand sizes.
+AC_CHECK_SIZEOF(void *)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(int)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
