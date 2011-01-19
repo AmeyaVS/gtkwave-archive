@@ -32,6 +32,11 @@ if(GLOBALS->talloc_pool_base)
 		GLOBALS->talloc_idx += siz;
 		return((struct tree *)m);
 		}
+	else
+	if(siz >= WAVE_TALLOC_ALTREQ_SIZE)
+		{
+		return(calloc_2(1, siz));
+		}
 	}
 
 GLOBALS->talloc_pool_base = calloc_2(1, WAVE_TALLOC_POOL_SIZE);
@@ -784,6 +789,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2011/01/19 06:36:31  gtkwave
+ * added tree allocation pool when misaligned structs are enabled
+ *
  * Revision 1.12  2011/01/18 02:38:35  gtkwave
  * added extra spacing between component type name for readability
  *

@@ -138,7 +138,8 @@ void treenamefix(struct tree *t);
 
 
 #ifdef WAVE_USE_STRUCT_PACKING
-#define WAVE_TALLOC_POOL_SIZE (65536)
+#define WAVE_TALLOC_POOL_SIZE (64 * 1024)
+#define WAVE_TALLOC_ALTREQ_SIZE (4 * 1024)
 struct tree *talloc_2(size_t siz);
 #else
 #define talloc_2(x) calloc_2(1,(x))
@@ -149,6 +150,9 @@ struct tree *talloc_2(size_t siz);
 /*
  * $Id$
  * $Log$
+ * Revision 1.12  2011/01/19 06:36:31  gtkwave
+ * added tree allocation pool when misaligned structs are enabled
+ *
  * Revision 1.11  2011/01/18 00:00:12  gtkwave
  * preliminary tree component support
  *
