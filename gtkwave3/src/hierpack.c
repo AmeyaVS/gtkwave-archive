@@ -73,7 +73,10 @@ if(GLOBALS->do_hier_compress)
 	free_2(GLOBALS->hp_offs); GLOBALS->hp_offs = NULL;
 	GLOBALS->hp_buf_siz = 0;
 
-	GLOBALS->fmem_buf = realloc_2(GLOBALS->fmem_buf, GLOBALS->hp_prev);
+	if(GLOBALS->fmem_buf)
+		{
+		GLOBALS->fmem_buf = realloc_2(GLOBALS->fmem_buf, GLOBALS->hp_prev);
+		}
 	fprintf(stderr, "FACPACK | Compressed %lu to %lu bytes.\n", (unsigned long)GLOBALS->fmem_uncompressed_siz, (unsigned long)GLOBALS->hp_prev);
 	}
 }
@@ -201,6 +204,9 @@ return(strdup_2(str+ob));
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.6  2010/03/01 19:19:50  gtkwave
  * more hier_pfx code movement into hierpack.c
  *

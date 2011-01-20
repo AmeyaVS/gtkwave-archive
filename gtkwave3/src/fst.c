@@ -242,6 +242,11 @@ GLOBALS->facs=(struct symbol **)malloc_2(GLOBALS->numfacs*sizeof(struct symbol *
 GLOBALS->mvlfacs_fst_alias = calloc_2(GLOBALS->numfacs,sizeof(fstHandle));
 GLOBALS->mvlfacs_fst_rvs_alias = calloc_2(GLOBALS->numfacs,sizeof(fstHandle));
 
+if(!GLOBALS->fast_tree_sort)
+	{
+	GLOBALS->do_hier_compress = 0;
+	}
+
 init_facility_pack();
 
 fprintf(stderr, FST_RDLOAD"Processing %d facs.\n", GLOBALS->numfacs);
@@ -497,8 +502,11 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	        symadd_name_exists_sym_exists(s,str,0);
 		prevsymroot = prevsym = NULL;
 
-		len = sprintf(buf, "%s[%d:%d]", pnam,node_block[i].msi, node_block[i].lsi);
-		if(GLOBALS->fast_tree_sort) fst_append_graft_chain(len, buf, i, ppar);
+		if(GLOBALS->fast_tree_sort) 
+			{
+			len = sprintf(buf, "%s[%d:%d]", pnam,node_block[i].msi, node_block[i].lsi);
+			fst_append_graft_chain(len, buf, i, ppar);
+			}
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
@@ -532,8 +540,11 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			prevsymroot = prevsym = s;
 			}
 
-		len = sprintf(buf, "%s[%d]", pnam,node_block[i].msi);
-		if(GLOBALS->fast_tree_sort) fst_append_graft_chain(len, buf, i, ppar);
+		if(GLOBALS->fast_tree_sort) 
+			{
+			len = sprintf(buf, "%s[%d]", pnam,node_block[i].msi);
+			fst_append_graft_chain(len, buf, i, ppar);
+			}
 		}
 		else
 		{
@@ -557,7 +568,10 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			GLOBALS->mvlfacs_fst_c_3[i].len=32;
 			}
 
-		if(GLOBALS->fast_tree_sort) fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
+		if(GLOBALS->fast_tree_sort) 
+			{
+			fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
+			}
 		}
 		
         if(longest_nam_candidate > GLOBALS->longestname) GLOBALS->longestname = longest_nam_candidate;
@@ -1295,6 +1309,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.43  2011/01/20 02:16:13  gtkwave
+ * remove redundant strlen ops and replace with query function
+ *
  * Revision 1.42  2011/01/19 06:36:31  gtkwave
  * added tree allocation pool when misaligned structs are enabled
  *
