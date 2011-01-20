@@ -60,6 +60,7 @@ return((void *)(GLOBALS->double_curr_fst++));
  */
 static int memrevcmp(int i, const char *s1, const char *s2)
 {
+i--;
 for(;i>=0;i--)
         {
         if(s1[i] != s2[i]) break;
@@ -591,69 +592,69 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			fst_append_graft_chain(len, buf, i, ppar);
 			}
 		}
-	else if ( 
-			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
-			((i!=GLOBALS->numfacs-1)&&(f_name_len[(i)&F_NAME_MODULUS] == f_name_len[(i+1)&F_NAME_MODULUS])&&(!memrevcmp(f_name_len[(i)&F_NAME_MODULUS], f_name[(i)&F_NAME_MODULUS], f_name[(i+1)&F_NAME_MODULUS]))))
-			||
-			(((i!=0)&&(f_name_len[(i)&F_NAME_MODULUS] == f_name_len[(i-1)&F_NAME_MODULUS])&&(!memrevcmp(f_name_len[(i)&F_NAME_MODULUS], f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))) &&
-			(node_block[i].msi!=-1)&&(node_block[i].lsi!=-1))
-		)
+	else
 		{
-		int len = sprintf_2_sd(buf, f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
-		str=malloc_2((longest_nam_candidate = len)+1);
-		if(!GLOBALS->alt_hier_delimeter)
+		int gatecmp = (f->len==1) && (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) && (node_block[i].msi!=-1) && (node_block[i].lsi!=-1);
+		int revcmp = gatecmp && (i) && (f_name_len[(i)&F_NAME_MODULUS] == f_name_len[(i-1)&F_NAME_MODULUS]) && (!memrevcmp(f_name_len[(i)&F_NAME_MODULUS], f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]));
+
+		if(gatecmp)
 			{
-			strcpy(str, buf);
+			int len = sprintf_2_sd(buf, f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
+			str=malloc_2((longest_nam_candidate = len)+1);
+			if(!GLOBALS->alt_hier_delimeter)
+				{
+				strcpy(str, buf);
+				}
+				else
+				{
+				strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
+				}
+			s=&sym_block[i];
+		        symadd_name_exists_sym_exists(s,str,0);
+			if((allowed_to_autocoalesce)&&(prevsym)&&(revcmp)&&(!strchr(f_name[(i)&F_NAME_MODULUS], '\\')))	/* allow chaining for search functions.. */
+				{
+				prevsym->vec_root = prevsymroot;
+				prevsym->vec_chain = s;
+				s->vec_root = prevsymroot;
+				prevsym = s;
+				}
+				else
+				{
+				prevsymroot = prevsym = s;
+				}
+
+			if(GLOBALS->fast_tree_sort) 
+				{
+				len = sprintf_2_sd(buf, pnam,node_block[i].msi);
+				fst_append_graft_chain(len, buf, i, ppar);
+				}
 			}
 			else
 			{
-			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
-			}
-		s=&sym_block[i];
-	        symadd_name_exists_sym_exists(s,str,0);
-		if((allowed_to_autocoalesce)&&(prevsym)&&(i>0)&&(f_name_len[(i)&F_NAME_MODULUS] == f_name_len[(i-1)&F_NAME_MODULUS])&&(!memrevcmp(f_name_len[(i)&F_NAME_MODULUS], f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))&&(!strchr(f_name[(i)&F_NAME_MODULUS], '\\')))	/* allow chaining for search functions.. */
-			{
-			prevsym->vec_root = prevsymroot;
-			prevsym->vec_chain = s;
-			s->vec_root = prevsymroot;
-			prevsym = s;
-			}
-			else
-			{
-			prevsymroot = prevsym = s;
-			}
-
-		if(GLOBALS->fast_tree_sort) 
-			{
-			len = sprintf_2_sd(buf, pnam,node_block[i].msi);
-			fst_append_graft_chain(len, buf, i, ppar);
-			}
-		}
-		else
-		{
-		str=malloc_2((longest_nam_candidate = f_name_len[(i)&F_NAME_MODULUS])+1);
-		if(!GLOBALS->alt_hier_delimeter)
-			{
-			strcpy(str, f_name[(i)&F_NAME_MODULUS]);
-			}
-			else
-			{
-			strcpy_vcdalt(str, f_name[(i)&F_NAME_MODULUS], GLOBALS->alt_hier_delimeter);
-			}
-		s=&sym_block[i];
-	        symadd_name_exists_sym_exists(s,str,0);
-		prevsymroot = prevsym = NULL;
-
-		if(f->flags&VZT_RD_SYM_F_INTEGER)
-			{
-			node_block[i].msi=31;
-			node_block[i].lsi=0;
-			GLOBALS->mvlfacs_fst_c_3[i].len=32;
-			}
-
-		if(GLOBALS->fast_tree_sort) 
-			{
-			fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
+			str=malloc_2((longest_nam_candidate = f_name_len[(i)&F_NAME_MODULUS])+1);
+			if(!GLOBALS->alt_hier_delimeter)
+				{
+				strcpy(str, f_name[(i)&F_NAME_MODULUS]);
+				}
+				else
+				{
+				strcpy_vcdalt(str, f_name[(i)&F_NAME_MODULUS], GLOBALS->alt_hier_delimeter);
+				}
+			s=&sym_block[i];
+		        symadd_name_exists_sym_exists(s,str,0);
+			prevsymroot = prevsym = NULL;
+	
+			if(f->flags&VZT_RD_SYM_F_INTEGER)
+				{
+				node_block[i].msi=31;
+				node_block[i].lsi=0;
+				GLOBALS->mvlfacs_fst_c_3[i].len=32;
+				}
+	
+			if(GLOBALS->fast_tree_sort) 
+				{
+				fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
+				}
 			}
 		}
 		
@@ -1393,6 +1394,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2011/01/20 19:07:20  gtkwave
+ * add reverse equality mem compare
+ *
  * Revision 1.44  2011/01/20 05:35:56  gtkwave
  * fast tree sort = 0 fix
  *
