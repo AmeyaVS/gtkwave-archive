@@ -54,7 +54,86 @@ if(GLOBALS->double_curr_fst==GLOBALS->double_fini_fst)
 
 return((void *)(GLOBALS->double_curr_fst++));
 }  
-  
+
+/*
+ * reverse equality mem compare
+ */
+static int memrevcmp(int i, const char *s1, const char *s2)
+{
+for(;i>=0;i--)
+        {
+        if(s1[i] != s2[i]) break;
+        }
+
+return(i+1);
+}
+
+
+
+/* 
+ * fast itoa for decimal numbers
+ */
+static char* itoa_2(int value, char* result)
+{
+char* ptr = result, *ptr1 = result, tmp_char;
+int tmp_value;
+
+do {
+        tmp_value = value;
+        value /= 10;
+        *ptr++ = "9876543210123456789" [9 + (tmp_value - value * 10)];
+} while ( value );
+
+if (tmp_value < 0) *ptr++ = '-';
+result = ptr;
+*ptr-- = '\0';
+while(ptr1 < ptr) {
+        tmp_char = *ptr;
+        *ptr--= *ptr1;
+        *ptr1++ = tmp_char;
+}
+return(result);
+}
+
+
+/*
+ * preformatted sprintf statements which remove parsing latency
+ */
+static int sprintf_2_sd(char *s, char *c, int d)
+{
+char *s2 = s;
+
+while(*c)
+        {
+        *(s2++) = *(c++);
+        }
+*(s2++) = '[';
+s2 = itoa_2(d, s2);
+*(s2++) = ']';
+*s2 = 0;
+
+return(s2 - s);
+}
+
+
+static int sprintf_2_sdd(char *s, char *c, int d, int d2)
+{
+char *s2 = s;
+
+while(*c)
+        {
+        *(s2++) = *(c++);
+        }
+*(s2++) = '[';
+s2 = itoa_2(d, s2);
+*(s2++) = ':';
+s2 = itoa_2(d2, s2);
+*(s2++) = ']';
+*s2 = 0;
+
+return(s2 - s);
+}
+
 /******************************************************************/
 
 
@@ -214,6 +293,7 @@ char *nnam = NULL, *pnam = NULL, *pnam2 = NULL;
 uint32_t activity_idx, num_activity_changes;
 struct tree *npar = NULL, *ppar = NULL;
 char **f_name = NULL;
+int   *f_name_len = NULL;
 int allowed_to_autocoalesce;
 
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
@@ -235,6 +315,7 @@ exponent_to_time_scale(scale);
 GLOBALS->numfacs=fstReaderGetVarCount(GLOBALS->fst_fst_c_1);
 GLOBALS->mvlfacs_fst_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
 f_name = calloc_2(F_NAME_MODULUS+1,sizeof(char *));
+f_name_len = calloc_2(F_NAME_MODULUS+1,sizeof(int));
 GLOBALS->fst_table_fst_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry));
 sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
@@ -316,7 +397,7 @@ if(GLOBALS->numfacs)
 	{
 	char *fnam;
 	char *pnt = NULL;
-	int hier_len, name_len;
+	int hier_len, name_len, tlen;
 
 	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len);
 	if(!h)
@@ -330,19 +411,20 @@ if(GLOBALS->numfacs)
 	hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
 	if(hier_len)
 		{
-		fnam = malloc_2(hier_len + 1 + name_len + 1);
+		fnam = malloc_2((tlen = hier_len + 1 + name_len) + 1);
 		memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
 		fnam[hier_len] = GLOBALS->hier_delimeter;
 		memcpy(fnam + hier_len + 1, nnam, name_len + 1);
 		}
 		else
 		{
-		fnam = malloc_2(name_len + 1);
+		fnam = malloc_2((tlen = name_len) + 1);
 		memcpy(fnam, nnam, name_len + 1);
 		}
 	/* free_2(nnam); ...deallocated through pnam */
 	
 	f_name[0]=fnam;
+	f_name_len[0] = tlen;
 	}
 
 
@@ -351,7 +433,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	char buf[65537];
 	char *str;	
 	struct fac *f;
-	int hier_len, name_len;
+	int hier_len, name_len, tlen;
 	unsigned char nvt;
 	int longest_nam_candidate = 0;
 
@@ -462,19 +544,20 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
 		if(hier_len)
 			{
-			fnam = malloc_2(hier_len + 1 + name_len + 1);
+			fnam = malloc_2((tlen = hier_len + 1 + name_len) + 1);
 			memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
 			fnam[hier_len] = GLOBALS->hier_delimeter;
 			memcpy(fnam + hier_len + 1, nnam, name_len + 1);
 			}
 			else
 			{
-			fnam = malloc_2(name_len + 1);
+			fnam = malloc_2((tlen = name_len) + 1);
 			memcpy(fnam, nnam, name_len + 1);
 			}
 		/* free_2(nnam); ...deallocated through pnam */
 
 		f_name[(i+1)&F_NAME_MODULUS]=fnam;
+		f_name_len[(i+1)&F_NAME_MODULUS]=tlen;
 		}
 
 	if(i>1)
@@ -487,7 +570,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
-		int len=sprintf(buf, "%s[%d:%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi, node_block[i].lsi);
+		int len=sprintf_2_sdd(buf, f_name[(i)&F_NAME_MODULUS],node_block[i].msi, node_block[i].lsi);
 		str=malloc_2((longest_nam_candidate = len)+1);
 
 		if(!GLOBALS->alt_hier_delimeter)
@@ -504,19 +587,19 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(GLOBALS->fast_tree_sort) 
 			{
-			len = sprintf(buf, "%s[%d:%d]", pnam,node_block[i].msi, node_block[i].lsi);
+			len = sprintf_2_sdd(buf, pnam,node_block[i].msi, node_block[i].lsi);
 			fst_append_graft_chain(len, buf, i, ppar);
 			}
 		}
 	else if ( 
 			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
-			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i+1)&F_NAME_MODULUS]))))
+			((i!=GLOBALS->numfacs-1)&&(f_name_len[(i)&F_NAME_MODULUS] == f_name_len[(i+1)&F_NAME_MODULUS])&&(!memrevcmp(f_name_len[(i)&F_NAME_MODULUS], f_name[(i)&F_NAME_MODULUS], f_name[(i+1)&F_NAME_MODULUS]))))
 			||
-			(((i!=0)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))) &&
+			(((i!=0)&&(f_name_len[(i)&F_NAME_MODULUS] == f_name_len[(i-1)&F_NAME_MODULUS])&&(!memrevcmp(f_name_len[(i)&F_NAME_MODULUS], f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))) &&
 			(node_block[i].msi!=-1)&&(node_block[i].lsi!=-1))
 		)
 		{
-		int len = sprintf(buf, "%s[%d]", f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
+		int len = sprintf_2_sd(buf, f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
 		str=malloc_2((longest_nam_candidate = len)+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -528,7 +611,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 		s=&sym_block[i];
 	        symadd_name_exists_sym_exists(s,str,0);
-		if((allowed_to_autocoalesce)&&(prevsym)&&(i>0)&&(!strcmp(f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))&&(!strchr(f_name[(i)&F_NAME_MODULUS], '\\')))	/* allow chaining for search functions.. */
+		if((allowed_to_autocoalesce)&&(prevsym)&&(i>0)&&(f_name_len[(i)&F_NAME_MODULUS] == f_name_len[(i-1)&F_NAME_MODULUS])&&(!memrevcmp(f_name_len[(i)&F_NAME_MODULUS], f_name[(i)&F_NAME_MODULUS], f_name[(i-1)&F_NAME_MODULUS]))&&(!strchr(f_name[(i)&F_NAME_MODULUS], '\\')))	/* allow chaining for search functions.. */
 			{
 			prevsym->vec_root = prevsymroot;
 			prevsym->vec_chain = s;
@@ -542,13 +625,13 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(GLOBALS->fast_tree_sort) 
 			{
-			len = sprintf(buf, "%s[%d]", pnam,node_block[i].msi);
+			len = sprintf_2_sd(buf, pnam,node_block[i].msi);
 			fst_append_graft_chain(len, buf, i, ppar);
 			}
 		}
 		else
 		{
-		str=malloc_2((longest_nam_candidate = strlen(f_name[(i)&F_NAME_MODULUS]))+1);
+		str=malloc_2((longest_nam_candidate = f_name_len[(i)&F_NAME_MODULUS])+1);
 		if(!GLOBALS->alt_hier_delimeter)
 			{
 			strcpy(str, f_name[(i)&F_NAME_MODULUS]);
@@ -617,6 +700,7 @@ for(i=0;i<=F_NAME_MODULUS;i++)
 		}
 	}
 free_2(f_name); f_name = NULL;
+free_2(f_name_len); f_name_len = NULL;
 
 freeze_facility_pack();
 iter_through_comp_name_table();
@@ -1309,6 +1393,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.44  2011/01/20 05:35:56  gtkwave
+ * fast tree sort = 0 fix
+ *
  * Revision 1.43  2011/01/20 02:16:13  gtkwave
  * remove redundant strlen ops and replace with query function
  *
