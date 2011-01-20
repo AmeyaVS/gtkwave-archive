@@ -268,6 +268,7 @@ NULL, /* fonts_layout */
  */
 NULL, /* fst_fst_c_1 */
 NULL, /* fst_scope_name */
+0, /* fst_scope_name_len */
 0, /* first_cycle_fst_c_3 */
 0, /* last_cycle_fst_c_3 */
 0, /* total_cycles_fst_c_3 */

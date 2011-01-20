@@ -992,3 +992,4 @@
 		FST dumper is the only one that uses this.
 		Allocate tree structures from tree allocation pool when
 		structure packing is enabled.
+		Removed redundant strlen ops from fst.c

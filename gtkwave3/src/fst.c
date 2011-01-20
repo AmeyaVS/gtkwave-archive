@@ -58,7 +58,7 @@ return((void *)(GLOBALS->double_curr_fst++));
 /******************************************************************/
 
 
-static struct fstHier *extractNextVar(void *xc, int *msb, int *lsb, char **nam)
+static struct fstHier *extractNextVar(void *xc, int *msb, int *lsb, char **nam, int *namlen)
 {
 struct fstHier *h;
 const char *pnts;
@@ -73,6 +73,7 @@ while((h = fstReaderIterateHier(xc)))
                 {
                 case FST_HT_SCOPE:
                         GLOBALS->fst_scope_name = fstReaderPushScope(xc, h->u.scope.name, GLOBALS->mod_tree_parent);
+			GLOBALS->fst_scope_name_len = fstReaderGetCurrentScopeLen(xc);
 
 			switch(h->u.scope.typ)
 				{
@@ -89,9 +90,11 @@ while((h = fstReaderIterateHier(xc)))
                 case FST_HT_UPSCOPE:
 			GLOBALS->mod_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
                         GLOBALS->fst_scope_name = fstReaderPopScope(xc);
+			GLOBALS->fst_scope_name_len = fstReaderGetCurrentScopeLen(xc);
                         break;
                 case FST_HT_VAR:
-                        GLOBALS->fst_scope_name = fstReaderGetCurrentFlatScope(xc);
+                        /* GLOBALS->fst_scope_name = fstReaderGetCurrentFlatScope(xc); */
+			/* GLOBALS->fst_scope_name_len = fstReaderGetCurrentScopeLen(xc); */
 
 			s = malloc_2(strlen(h->u.var.name) + 1);
 			pnts = h->u.var.name;
@@ -108,7 +111,7 @@ while((h = fstReaderIterateHier(xc)))
 					}
 				pnts++;
 				}			
-			*pntd = 0;
+			*pntd = 0; *namlen = pntd - s;
 
 			if(!lb_last)
 				{
@@ -159,13 +162,21 @@ while((h = fstReaderIterateHier(xc)))
 					}
 				}			
 
-			if(lb_last) *lb_last = 0;
+			if(lb_last) 
+				{ 
+				*lb_last = 0; 
+				if((lb_last - s) < (*namlen)) 
+					{ 
+					*namlen = lb_last - s; 
+					} 
+				}
 			*nam = s;
 			return(h);
                         break;
                 }
         }
 
+*namlen = 0;
 *nam = NULL;
 return(NULL);
 }
@@ -302,7 +313,7 @@ if(GLOBALS->numfacs)
 	char *pnt = NULL;
 	int hier_len, name_len;
 
-	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
+	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len);
 	if(!h)
 		{
 		fstReaderClose(GLOBALS->fst_fst_c_1); GLOBALS->fst_fst_c_1 = NULL;
@@ -310,8 +321,8 @@ if(GLOBALS->numfacs)
 		}
 
 	npar = GLOBALS->mod_tree_parent;
-	name_len = strlen(nnam);
-	hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
+	/* name_len = strlen(nnam); ...strlen calculated in extractNextVar() */
+	hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
 	if(hier_len)
 		{
 		fnam = malloc_2(hier_len + 1 + name_len + 1);
@@ -434,16 +445,16 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		char *fnam;
 		char *pnt = NULL;
 
-		h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
+		h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len);
 		if(!h)
 			{
 			/* this should never happen */
 			fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
-			h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam);
+			h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len);
 			}
 		npar = GLOBALS->mod_tree_parent;
-		name_len = strlen(nnam);
-		hier_len = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
+		/* name_len = strlen(nnam); ...strlen calculated in extractNextVar() */
+		hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
 		if(hier_len)
 			{
 			fnam = malloc_2(hier_len + 1 + name_len + 1);
@@ -1284,6 +1295,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.42  2011/01/19 06:36:31  gtkwave
+ * added tree allocation pool when misaligned structs are enabled
+ *
  * Revision 1.41  2011/01/18 00:00:12  gtkwave
  * preliminary tree component support
  *

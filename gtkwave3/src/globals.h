@@ -268,6 +268,7 @@ char use_pango_fonts;
  */
 void *fst_fst_c_1; 
 const char *fst_scope_name;
+int fst_scope_name_len;
 TimeType first_cycle_fst_c_3;
 TimeType last_cycle_fst_c_3; 
 TimeType total_cycles_fst_c_3;

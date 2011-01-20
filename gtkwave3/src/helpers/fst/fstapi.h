@@ -178,6 +178,7 @@ const char *fstReaderPopScope(void *ctx);
 const char *fstReaderPushScope(void *ctx, const char *nam, void *user_info);
 const char *fstReaderGetCurrentFlatScope(void *ctx);
 void *fstReaderGetCurrentScopeUserInfo(void *ctx);
+int fstReaderGetCurrentScopeLen(void *ctx);
 
 signed char fstReaderGetTimescale(void *ctx);
 uint64_t fstReaderGetStartTime(void *ctx);
