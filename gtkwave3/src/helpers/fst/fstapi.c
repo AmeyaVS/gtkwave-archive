@@ -2638,6 +2638,7 @@ if(!(isfeof=feof(xc->fh)))
 				*(pnt++) = ch; 
 				}; /* scopename */
 			*pnt = 0;
+			xc->hier.u.scope.name_length = pnt - xc->hier.u.scope.name;
 
 			xc->hier.u.scope.component = pnt = xc->str_scope_comp;
 			while((ch = fgetc(xc->fh))) 
@@ -2645,6 +2646,7 @@ if(!(isfeof=feof(xc->fh)))
 				*(pnt++) = ch; 
 				}; /* scopecomp */
 			*pnt = 0;
+			xc->hier.u.scope.component_length = pnt - xc->hier.u.scope.component;
 			break;
 
 		case FST_ST_VCD_UPSCOPE:
@@ -2683,6 +2685,7 @@ if(!(isfeof=feof(xc->fh)))
 				*(pnt++) = ch; 
 				}; /* varname */
 			*pnt = 0;
+			xc->hier.u.var.name_length = pnt - xc->hier.u.var.name;
 			xc->hier.u.var.length = fstReaderVarint32(xc->fh);
 			if(tag == FST_VT_VCD_PORT)
 				{

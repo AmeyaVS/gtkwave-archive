@@ -122,6 +122,8 @@ union {
 		unsigned char typ; /* FST_ST_VCD_MODULE ... FST_ST_VCD_FORK */
 		const char *name;
 		const char *component;
+		uint32_t name_length;		/* strlen(u.scope.name) */
+		uint32_t component_length;	/* strlen(u.scope.component) */
 		} scope;
 
 	/* if htyp == FST_HT_VAR */
@@ -131,6 +133,7 @@ union {
 		const char *name;
 		uint32_t length;
 		fstHandle handle;
+		uint32_t name_length; /* strlen(u.var.name) */
 		unsigned is_alias : 1;
 		} var;
 	} u;

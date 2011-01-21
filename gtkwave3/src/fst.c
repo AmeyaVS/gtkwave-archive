@@ -176,7 +176,7 @@ while((h = fstReaderIterateHier(xc)))
                         /* GLOBALS->fst_scope_name = fstReaderGetCurrentFlatScope(xc); */
 			/* GLOBALS->fst_scope_name_len = fstReaderGetCurrentScopeLen(xc); */
 
-			s = malloc_2(strlen(h->u.var.name) + 1);
+			s = malloc_2(h->u.var.name_length + 1);
 			pnts = h->u.var.name;
 			pntd = s;
 			while(*pnts)
@@ -294,7 +294,7 @@ char *nnam = NULL, *pnam = NULL, *pnam2 = NULL;
 uint32_t activity_idx, num_activity_changes;
 struct tree *npar = NULL, *ppar = NULL;
 char **f_name = NULL;
-int   *f_name_len = NULL;
+int   *f_name_len = NULL, *f_name_max_len = NULL;
 int allowed_to_autocoalesce;
 
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
@@ -313,10 +313,12 @@ if(!allowed_to_autocoalesce)
 scale=(signed char)fstReaderGetTimescale(GLOBALS->fst_fst_c_1);
 exponent_to_time_scale(scale);
 
-GLOBALS->numfacs=fstReaderGetVarCount(GLOBALS->fst_fst_c_1);
-GLOBALS->mvlfacs_fst_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
 f_name = calloc_2(F_NAME_MODULUS+1,sizeof(char *));
 f_name_len = calloc_2(F_NAME_MODULUS+1,sizeof(int));
+f_name_max_len = calloc_2(F_NAME_MODULUS+1,sizeof(int));
+
+GLOBALS->numfacs=fstReaderGetVarCount(GLOBALS->fst_fst_c_1);
+GLOBALS->mvlfacs_fst_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
 GLOBALS->fst_table_fst_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry));
 sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
@@ -425,7 +427,7 @@ if(GLOBALS->numfacs)
 	/* free_2(nnam); ...deallocated through pnam */
 	
 	f_name[0]=fnam;
-	f_name_len[0] = tlen;
+	f_name_len[0] = f_name_max_len[0] = tlen;
 	}
 
 
@@ -545,26 +547,42 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
 		if(hier_len)
 			{
-			fnam = malloc_2((tlen = hier_len + 1 + name_len) + 1);
+			tlen = hier_len + 1 + name_len;
+			if(tlen > f_name_max_len[(i+1)&F_NAME_MODULUS])
+				{
+				if(f_name[(i+1)&F_NAME_MODULUS]) free_2(f_name[(i+1)&F_NAME_MODULUS]);
+				f_name_max_len[(i+1)&F_NAME_MODULUS] = tlen;
+				fnam = malloc_2(tlen + 1);
+				}
+				else
+				{
+				fnam = f_name[(i+1)&F_NAME_MODULUS];
+				}
+
 			memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
 			fnam[hier_len] = GLOBALS->hier_delimeter;
 			memcpy(fnam + hier_len + 1, nnam, name_len + 1);
 			}
 			else
 			{
-			fnam = malloc_2((tlen = name_len) + 1);
+			tlen = name_len;
+			if(tlen > f_name_max_len[(i+1)&F_NAME_MODULUS])
+				{
+				if(f_name[(i+1)&F_NAME_MODULUS]) free_2(f_name[(i+1)&F_NAME_MODULUS]);
+				f_name_max_len[(i+1)&F_NAME_MODULUS] = tlen;
+				fnam = malloc_2(tlen + 1);
+				}
+				else
+				{
+				fnam = f_name[(i+1)&F_NAME_MODULUS];
+				}
+
 			memcpy(fnam, nnam, name_len + 1);
 			}
 		/* free_2(nnam); ...deallocated through pnam */
 
-		f_name[(i+1)&F_NAME_MODULUS]=fnam;
-		f_name_len[(i+1)&F_NAME_MODULUS]=tlen;
-		}
-
-	if(i>1)
-		{
-		free_2(f_name[(i-2)&F_NAME_MODULUS]);
-		f_name[(i-2)&F_NAME_MODULUS] = NULL;
+		f_name[(i+1)&F_NAME_MODULUS] = fnam;
+		f_name_len[(i+1)&F_NAME_MODULUS] = tlen;
 		}
 
 	f=GLOBALS->mvlfacs_fst_c_3+i;
@@ -661,7 +679,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
         if(longest_nam_candidate > GLOBALS->longestname) GLOBALS->longestname = longest_nam_candidate;
 
         GLOBALS->facs[i]=&sym_block[i];
-
         n=&node_block[i];
 
 	if(GLOBALS->do_hier_compress)
@@ -1394,6 +1411,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2011/01/20 23:34:53  gtkwave
+ * fix to autocoalesce code
+ *
  * Revision 1.45  2011/01/20 19:07:20  gtkwave
  * add reverse equality mem compare
  *
