@@ -165,7 +165,7 @@ while((h = fstReaderIterateHier(xc)))
 				default:			ttype = TREE_UNKNOWN; break;
 				}
 
-			allocate_and_decorate_module_tree_node(ttype, h->u.scope.name, h->u.scope.component);
+			allocate_and_decorate_module_tree_node(ttype, h->u.scope.name, h->u.scope.component,  h->u.scope.name_length, h->u.scope.component_length);
                         break;
                 case FST_HT_UPSCOPE:
 			GLOBALS->mod_tree_parent = fstReaderGetCurrentScopeUserInfo(xc);
@@ -1457,6 +1457,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.48  2011/01/21 21:32:30  gtkwave
+ * remove redundant and repetitive allocations
+ *
  * Revision 1.47  2011/01/21 21:04:31  gtkwave
  * signal name processing optimization on reader
  *

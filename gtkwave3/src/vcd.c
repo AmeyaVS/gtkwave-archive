@@ -1148,7 +1148,7 @@ for(;;)
 				strcpy(s->str, GLOBALS->yytext_vcd_c_1);
 				s->mod_tree_parent = GLOBALS->mod_tree_parent;
 
-				allocate_and_decorate_module_tree_node(ttype, GLOBALS->yytext_vcd_c_1, NULL);
+				allocate_and_decorate_module_tree_node(ttype, GLOBALS->yytext_vcd_c_1, NULL, GLOBALS->yylen_vcd_c_1, 0);
 
 				if(GLOBALS->slistcurr)
 					{
@@ -2645,6 +2645,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.45  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  * Revision 1.44  2011/01/16 07:56:08  gtkwave
  * inlining of character get functions
  *

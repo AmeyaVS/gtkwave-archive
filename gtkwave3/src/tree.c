@@ -90,14 +90,14 @@ for(;;)
 /*
  * decorated module add
  */
-void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename, const char *compname)
+void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename, const char *compname, uint32_t scopename_len, uint32_t compname_len)
 {
 struct tree *t;
 int mtyp = WAVE_T_WHICH_UNDEFINED_COMPNAME;
 
 if(compname && compname[0] && strcmp(scopename, compname))
 	{
-	int ix = add_to_comp_name_table(compname);
+	int ix = add_to_comp_name_table(compname, compname_len);
 	if(ix)
 		{
 		ix--;
@@ -120,7 +120,7 @@ if(GLOBALS->treeroot)
 			t = t->next;
 			}
 
-		t = talloc_2(sizeof(struct tree) + strlen(scopename));
+		t = talloc_2(sizeof(struct tree) + scopename_len);
 		strcpy(t->name, scopename);
 		t->kind = ttype;
 		t->t_which = mtyp;
@@ -145,7 +145,7 @@ if(GLOBALS->treeroot)
 			t = t->next;
 			}
 
-		t = talloc_2(sizeof(struct tree) + strlen(scopename));
+		t = talloc_2(sizeof(struct tree) + scopename_len);
 		strcpy(t->name, scopename);
 		t->kind = ttype;
 		t->t_which = mtyp;
@@ -156,7 +156,7 @@ if(GLOBALS->treeroot)
 	}
 	else
 	{
-	t = talloc_2(sizeof(struct tree) + strlen(scopename));
+	t = talloc_2(sizeof(struct tree) + scopename_len);
 	strcpy(t->name, scopename);
 	t->kind = ttype;
 	t->t_which = mtyp;
@@ -789,6 +789,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.14  2011/01/19 16:18:19  gtkwave
+ * fix for large allocations of tree alloc
+ *
  * Revision 1.13  2011/01/19 06:36:31  gtkwave
  * added tree allocation pool when misaligned structs are enabled
  *

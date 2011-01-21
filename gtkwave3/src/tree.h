@@ -129,7 +129,8 @@ void maketree2(GtkCTreeNode *subtree, struct tree *t, int depth, GtkCTreeNode *g
 #endif
 
 char *leastsig_hiername(char *nam);
-void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename, const char *compname);
+void allocate_and_decorate_module_tree_node(unsigned char ttype, const char *scopename, const char *compname, uint32_t scopename_len, uint32_t compname_len);
+
 
 void treesort(struct tree *t, struct tree *p);
 void order_facs_from_treesort(struct tree *t, void *v);
@@ -150,6 +151,9 @@ struct tree *talloc_2(size_t siz);
 /*
  * $Id$
  * $Log$
+ * Revision 1.13  2011/01/19 16:18:19  gtkwave
+ * fix for large allocations of tree alloc
+ *
  * Revision 1.12  2011/01/19 06:36:31  gtkwave
  * added tree allocation pool when misaligned structs are enabled
  *

@@ -1471,7 +1471,7 @@ for(;;)
 				strcpy(s->str, GLOBALS->yytext_vcd_recoder_c_3);
 				s->mod_tree_parent = GLOBALS->mod_tree_parent;
 
-				allocate_and_decorate_module_tree_node(ttype, GLOBALS->yytext_vcd_recoder_c_3, NULL);
+				allocate_and_decorate_module_tree_node(ttype, GLOBALS->yytext_vcd_recoder_c_3, NULL, GLOBALS->yylen_vcd_recoder_c_3, 0);
 
 				if(GLOBALS->slistcurr)
 					{
@@ -3264,6 +3264,9 @@ np->mv.mvlfac_vlist = NULL;
 /*
  * $Id$
  * $Log$
+ * Revision 1.55  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  * Revision 1.54  2011/01/16 07:56:08  gtkwave
  * inlining of character get functions
  *

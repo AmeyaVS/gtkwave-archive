@@ -19,13 +19,16 @@
 #define WAVE_TREE_COMP_H
 
 void iter_through_comp_name_table(void);
-int add_to_comp_name_table(const char *s);
+int add_to_comp_name_table(const char *s, int slen);
 
 #endif
 
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2011/01/18 03:06:29  gtkwave
+ * added JRB support for component trees when Judy is not available
+ *
  * Revision 1.1  2011/01/18 00:00:12  gtkwave
  * preliminary tree component support
  *

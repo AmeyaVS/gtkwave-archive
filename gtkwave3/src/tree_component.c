@@ -45,17 +45,15 @@ if(GLOBALS->comp_name_judy)
 }
 
 
-int add_to_comp_name_table(const char *s)
+int add_to_comp_name_table(const char *s, int slen)
 {
 PPvoid_t PPValue = JudySLGet(GLOBALS->comp_name_judy, (uint8_t *)s, PJE0);
-int slen;
 
 if(PPValue)
 	{
         return((*(char **)PPValue) - ((char *)NULL) + 1);
         }
 
-slen = strlen(s);
 GLOBALS->comp_name_total_stringmem += (slen + 1);
 
 if(slen > GLOBALS->comp_name_longest)
@@ -99,9 +97,8 @@ if(GLOBALS->comp_name_jrb)
 	}
 }
 
-int add_to_comp_name_table(const char *s)
+int add_to_comp_name_table(const char *s, int slen)
 {
-int slen;
 JRB str;
 Jval jv;
 
@@ -114,7 +111,6 @@ if(str)
 	return(str->val.i + 1);
 	}
 
-slen = strlen(s);
 GLOBALS->comp_name_total_stringmem += (slen + 1);
 
 if(slen > GLOBALS->comp_name_longest)
@@ -133,6 +129,9 @@ return(++GLOBALS->comp_name_serial);	/* always nonzero */
 /*
  * $Id$
  * $Log$
+ * Revision 1.2  2011/01/18 03:06:29  gtkwave
+ * added JRB support for component trees when Judy is not available
+ *
  * Revision 1.1  2011/01/18 00:00:12  gtkwave
  * preliminary tree component support
  *
