@@ -297,6 +297,9 @@ char **f_name = NULL;
 int   *f_name_len = NULL, *f_name_max_len = NULL;
 int allowed_to_autocoalesce;
 
+int f_name_build_buf_len = 128;
+char *f_name_build_buf = malloc_2(f_name_build_buf_len + 1);
+
 GLOBALS->fst_fst_c_1 = fstReaderOpen(fname);
 if(!GLOBALS->fst_fst_c_1)
         {
@@ -590,7 +593,20 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
 		int len=sprintf_2_sdd(buf, f_name[(i)&F_NAME_MODULUS],node_block[i].msi, node_block[i].lsi);
-		str=malloc_2((longest_nam_candidate = len)+1);
+		longest_nam_candidate = len;
+
+		if(!GLOBALS->do_hier_compress)
+			{
+			str=malloc_2(len+1);
+			}
+			else
+			{
+			if(len > f_name_build_buf_len)
+				{
+				free_2(f_name_build_buf); f_name_build_buf = malloc_2((f_name_build_buf_len=len)+1);
+				}
+			str = f_name_build_buf;
+			}
 
 		if(!GLOBALS->alt_hier_delimeter)
 			{
@@ -618,7 +634,21 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		if(gatecmp)
 			{
 			int len = sprintf_2_sd(buf, f_name[(i)&F_NAME_MODULUS],node_block[i].msi);
-			str=malloc_2((longest_nam_candidate = len)+1);
+
+			longest_nam_candidate = len;
+			if(!GLOBALS->do_hier_compress)
+				{
+				str=malloc_2(len+1);
+				}
+				else
+				{
+				if(len > f_name_build_buf_len)
+					{
+					free_2(f_name_build_buf); f_name_build_buf = malloc_2((f_name_build_buf_len=len)+1);
+					}
+				str = f_name_build_buf;
+				}
+
 			if(!GLOBALS->alt_hier_delimeter)
 				{
 				strcpy(str, buf);
@@ -649,7 +679,22 @@ for(i=0;i<GLOBALS->numfacs;i++)
 			}
 			else
 			{
-			str=malloc_2((longest_nam_candidate = f_name_len[(i)&F_NAME_MODULUS])+1);
+			int len = f_name_len[(i)&F_NAME_MODULUS];
+
+			longest_nam_candidate = len;
+			if(!GLOBALS->do_hier_compress)
+				{
+				str=malloc_2(len+1);
+				}
+				else
+				{
+				if(len > f_name_build_buf_len)
+					{
+					free_2(f_name_build_buf); f_name_build_buf = malloc_2((f_name_build_buf_len=len)+1);
+					}
+				str = f_name_build_buf;
+				}
+
 			if(!GLOBALS->alt_hier_delimeter)
 				{
 				strcpy(str, f_name[(i)&F_NAME_MODULUS]);
@@ -684,7 +729,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if(GLOBALS->do_hier_compress)
 		{
 		n->nname = compress_facility(s->name, longest_nam_candidate);
-		free_2(s->name);
+		/* free_2(s->name); ...removed as f_name_build_buf is now used */
 		s->name = n->nname;	
 		}
 		else
@@ -706,6 +751,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
         s->n=n;
         }			/* for(i) of facs parsing */
 
+if(f_name_build_buf) { free_2(f_name_build_buf); f_name_build_buf = NULL; }
 if(pnam2) { free_2(pnam2); pnam2 = NULL; }
 if(pnam) { free_2(pnam); pnam = NULL; }
 
@@ -1411,6 +1457,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.47  2011/01/21 21:04:31  gtkwave
+ * signal name processing optimization on reader
+ *
  * Revision 1.46  2011/01/20 23:34:53  gtkwave
  * fix to autocoalesce code
  *
