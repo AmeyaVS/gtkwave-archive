@@ -1624,58 +1624,58 @@ for(i=0;i<GLOBALS->numfacs;i++)
                 symadd_name_exists_sym_exists(s,str,0);
 		prevsymroot = prevsym = NULL;
 		}
-	else if ( 
-			((f->len==1)&&(!(f->flags&(LT_SYM_F_INTEGER|LT_SYM_F_DOUBLE|LT_SYM_F_STRING)))&&
-			((i!=GLOBALS->numfacs-1)&&(!strcmp(f_name[i], f_name[i+1]))))
-			||
-			(((i!=0)&&(!strcmp(f_name[i], f_name[i-1]))) &&
-			(node_block[i].msi!=-1)&&(node_block[i].lsi!=-1))
-		)
-		{
-		int len = sprintf(buf, "%s[%d]", f_name[i],node_block[i].msi);
-		str=malloc_2(len+1);
-		if(!GLOBALS->alt_hier_delimeter)
-			{
-			strcpy(str, buf);
-			}
-			else
-			{
-			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
-			}
-                s=&sym_block[i];
-                symadd_name_exists_sym_exists(s,str,0);
-		if((prevsym)&&(i>0)&&(!strcmp(f_name[i], f_name[i-1]))&&(!strchr(f_name[i], '\\'))) /* allow chaining for search functions.. */
-			{
-			prevsym->vec_root = prevsymroot;
-			prevsym->vec_chain = s;
-			s->vec_root = prevsymroot;
-			prevsym = s;
-			}
-			else
-			{
-			prevsymroot = prevsym = s;
-			}
-		}
 		else
 		{
-		str=malloc_2(strlen(f_name[i])+1);
-		if(!GLOBALS->alt_hier_delimeter)
+		int gatecmp = (f->len==1) && (!(f->flags&(LT_SYM_F_INTEGER|LT_SYM_F_DOUBLE|LT_SYM_F_STRING))) && (node_block[i].msi!=-1) && (node_block[i].lsi!=-1);
+		int revcmp = gatecmp && (i) && (!strcmp(f_name[i], f_name[i-1]));
+
+		if(gatecmp)
 			{
-			strcpy(str, f_name[i]);
+			int len = sprintf(buf, "%s[%d]", f_name[i],node_block[i].msi);
+			str=malloc_2(len+1);
+			if(!GLOBALS->alt_hier_delimeter)
+				{
+				strcpy(str, buf);
+				}
+				else
+				{
+				strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
+				}
+	                s=&sym_block[i];
+	                symadd_name_exists_sym_exists(s,str,0);
+			if((prevsym)&&(revcmp)&&(!strchr(f_name[i], '\\'))) /* allow chaining for search functions.. */
+				{
+				prevsym->vec_root = prevsymroot;
+				prevsym->vec_chain = s;
+				s->vec_root = prevsymroot;
+				prevsym = s;
+				}
+				else
+				{
+				prevsymroot = prevsym = s;
+				}
 			}
 			else
 			{
-			strcpy_vcdalt(str, f_name[i], GLOBALS->alt_hier_delimeter);
-			}
-                s=&sym_block[i];
-                symadd_name_exists_sym_exists(s,str,0);
-		prevsymroot = prevsym = NULL;
-
-		if(f->flags&LT_SYM_F_INTEGER)
-			{
-			node_block[i].msi=31;
-			node_block[i].lsi=0;
-			GLOBALS->mvlfacs_lxt_c_2[i].len=32;
+			str=malloc_2(strlen(f_name[i])+1);
+			if(!GLOBALS->alt_hier_delimeter)
+				{
+				strcpy(str, f_name[i]);
+				}
+				else
+				{
+				strcpy_vcdalt(str, f_name[i], GLOBALS->alt_hier_delimeter);
+				}
+	                s=&sym_block[i];
+	                symadd_name_exists_sym_exists(s,str,0);
+			prevsymroot = prevsym = NULL;
+	
+			if(f->flags&LT_SYM_F_INTEGER)
+				{
+				node_block[i].msi=31;
+				node_block[i].lsi=0;
+				GLOBALS->mvlfacs_lxt_c_2[i].len=32;
+				}
 			}
 		}
 		
@@ -2369,6 +2369,9 @@ np->numhist++;
 /*
  * $Id$
  * $Log$
+ * Revision 1.23  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.22  2011/01/07 20:17:10  gtkwave
  * remove redundant fields from struct fac
  *
