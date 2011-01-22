@@ -103,7 +103,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if(i!=(GLOBALS->numfacs-1))
 		{
 		char *fnam = lxt2_rd_get_facname(GLOBALS->lx2_lx2_c_1, i+1);
-	        char *pnt = NULL;
 		int flen = strlen(fnam);
 		f_name[(i+1)&F_NAME_MODULUS]=malloc_2(flen+1);
 		strcpy(f_name[(i+1)&F_NAME_MODULUS], fnam);
@@ -821,6 +820,9 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.21  2011/01/21 15:49:52  gtkwave
+ * simplify strand coalesce routine and make same as FST's
+ *
  * Revision 1.20  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

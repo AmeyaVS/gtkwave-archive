@@ -37,6 +37,7 @@ void 		import_ae2_trace(nptr np);
 void 		ae2_set_fac_process_mask(nptr np);
 void 		ae2_import_masked(void);
 
+
 #ifndef _MSC_VER
 /*
  * texsim prototypes/libae2rw interfacing...
@@ -74,6 +75,7 @@ unsigned long	ae2_read_num_symbols(AE2_HANDLE handle);
 unsigned long 	ae2_read_symbol_name(AE2_HANDLE handle, unsigned long symbol_idx, char* name);
 unsigned long	ae2_read_symbol_rows(AE2_HANDLE handle, unsigned long symbol_idx);
 unsigned long	ae2_read_symbol_length(AE2_HANDLE handle, unsigned long symbol_idx);
+unsigned long	ae2_read_symbol_sparse_flag(AE2_HANDLE handle, unsigned long symbol_idx);
 unsigned long 	ae2_read_value(AE2_HANDLE handle, FACREF* fr, uint64_t cycle, char* value);
 uint64_t 	ae2_read_next_value(AE2_HANDLE handle, FACREF* fr, uint64_t cycle, char* value);
 void 		ae2_read_end(AE2_HANDLE handle);
@@ -88,6 +90,9 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 /*
  * $Id$
  * $Log$
+ * Revision 1.7  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.6  2008/09/27 19:08:39  gtkwave
  * compiler warning fixes
  *

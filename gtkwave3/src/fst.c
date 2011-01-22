@@ -138,7 +138,7 @@ return(s2 - s);
 /******************************************************************/
 
 
-static struct fstHier *extractNextVar(void *xc, int *msb, int *lsb, char **nam, int *namlen)
+static struct fstHier *extractNextVar(void *xc, int *msb, int *lsb, char **nam, int *namlen, int *nnam_max)
 {
 struct fstHier *h;
 const char *pnts;
@@ -176,7 +176,11 @@ while((h = fstReaderIterateHier(xc)))
                         /* GLOBALS->fst_scope_name = fstReaderGetCurrentFlatScope(xc); */
 			/* GLOBALS->fst_scope_name_len = fstReaderGetCurrentScopeLen(xc); */
 
-			s = malloc_2(h->u.var.name_length + 1);
+			if(h->u.var.name_length > (*nnam_max))
+				{
+				free_2(*nam); *nam = malloc_2(((*nnam_max) = h->u.var.name_length) + 1);
+				}
+			s = *nam;
 			pnts = h->u.var.name;
 			pntd = s;
 			while(*pnts)
@@ -290,12 +294,13 @@ struct symbol *sym_block = NULL;
 struct Node *node_block = NULL;
 struct fstHier *h = NULL;
 int msb, lsb;
-char *nnam = NULL, *pnam = NULL, *pnam2 = NULL;
+char *nnam = NULL;
 uint32_t activity_idx, num_activity_changes;
-struct tree *npar = NULL, *ppar = NULL;
+struct tree *npar = NULL;
 char **f_name = NULL;
 int   *f_name_len = NULL, *f_name_max_len = NULL;
 int allowed_to_autocoalesce;
+int nnam_max = 0;
 
 int f_name_build_buf_len = 128;
 char *f_name_build_buf = malloc_2(f_name_build_buf_len + 1);
@@ -319,6 +324,9 @@ exponent_to_time_scale(scale);
 f_name = calloc_2(F_NAME_MODULUS+1,sizeof(char *));
 f_name_len = calloc_2(F_NAME_MODULUS+1,sizeof(int));
 f_name_max_len = calloc_2(F_NAME_MODULUS+1,sizeof(int));
+
+nnam_max = 16;
+nnam = malloc_2(nnam_max);
 
 GLOBALS->numfacs=fstReaderGetVarCount(GLOBALS->fst_fst_c_1);
 GLOBALS->mvlfacs_fst_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
@@ -399,41 +407,6 @@ if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
         GLOBALS->hier_delimeter='.';
         }
 
-if(GLOBALS->numfacs)
-	{
-	char *fnam;
-	char *pnt = NULL;
-	int hier_len, name_len, tlen;
-
-	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len);
-	if(!h)
-		{
-		fstReaderClose(GLOBALS->fst_fst_c_1); GLOBALS->fst_fst_c_1 = NULL;
-		return(LLDescriptor(0));
-		}
-
-	npar = GLOBALS->mod_tree_parent;
-	/* name_len = strlen(nnam); ...strlen calculated in extractNextVar() */
-	hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
-	if(hier_len)
-		{
-		fnam = malloc_2((tlen = hier_len + 1 + name_len) + 1);
-		memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
-		fnam[hier_len] = GLOBALS->hier_delimeter;
-		memcpy(fnam + hier_len + 1, nnam, name_len + 1);
-		}
-		else
-		{
-		fnam = malloc_2((tlen = name_len) + 1);
-		memcpy(fnam, nnam, name_len + 1);
-		}
-	/* free_2(nnam); ...deallocated through pnam */
-	
-	f_name[0]=fnam;
-	f_name_len[0] = f_name_max_len[0] = tlen;
-	}
-
-
 for(i=0;i<GLOBALS->numfacs;i++)
         {
 	char buf[65537];
@@ -442,6 +415,54 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	int hier_len, name_len, tlen;
 	unsigned char nvt;
 	int longest_nam_candidate = 0;
+	char *fnam;
+
+	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len, &nnam_max);
+	if(!h)
+		{
+		/* this should never happen */
+		fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
+		h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len, &nnam_max);
+		}
+	npar = GLOBALS->mod_tree_parent;
+	hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
+	if(hier_len)
+		{
+		tlen = hier_len + 1 + name_len;
+		if(tlen > f_name_max_len[i&F_NAME_MODULUS])
+			{
+			if(f_name[i&F_NAME_MODULUS]) free_2(f_name[i&F_NAME_MODULUS]);
+			f_name_max_len[i&F_NAME_MODULUS] = tlen;
+			fnam = malloc_2(tlen + 1);
+			}
+			else
+			{
+			fnam = f_name[i&F_NAME_MODULUS];
+			}
+
+		memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
+		fnam[hier_len] = GLOBALS->hier_delimeter;
+		memcpy(fnam + hier_len + 1, nnam, name_len + 1);
+		}
+		else
+		{
+		tlen = name_len;
+		if(tlen > f_name_max_len[i&F_NAME_MODULUS])
+			{
+			if(f_name[i&F_NAME_MODULUS]) free_2(f_name[i&F_NAME_MODULUS]);
+			f_name_max_len[i&F_NAME_MODULUS] = tlen;
+			fnam = malloc_2(tlen + 1);
+			}
+			else
+			{
+			fnam = f_name[i&F_NAME_MODULUS];
+			}
+
+		memcpy(fnam, nnam, name_len + 1);
+		}
+
+	f_name[i&F_NAME_MODULUS] = fnam;
+	f_name_len[i&F_NAME_MODULUS] = tlen;
 
 	GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
         if((h->u.var.length > 1) && (msb == -1) && (lsb == -1))
@@ -527,67 +548,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		numvars++;
 		}
 
-	if(pnam2) { free_2(pnam2); }
-	pnam2 = pnam;
-	pnam = nnam;
-
-	ppar = npar;
-
-	if(i!=(GLOBALS->numfacs-1))
-		{
-		char *fnam;
-		char *pnt = NULL;
-
-		h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len);
-		if(!h)
-			{
-			/* this should never happen */
-			fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
-			h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len);
-			}
-		npar = GLOBALS->mod_tree_parent;
-		/* name_len = strlen(nnam); ...strlen calculated in extractNextVar() */
-		hier_len = GLOBALS->fst_scope_name ? GLOBALS->fst_scope_name_len : 0;
-		if(hier_len)
-			{
-			tlen = hier_len + 1 + name_len;
-			if(tlen > f_name_max_len[(i+1)&F_NAME_MODULUS])
-				{
-				if(f_name[(i+1)&F_NAME_MODULUS]) free_2(f_name[(i+1)&F_NAME_MODULUS]);
-				f_name_max_len[(i+1)&F_NAME_MODULUS] = tlen;
-				fnam = malloc_2(tlen + 1);
-				}
-				else
-				{
-				fnam = f_name[(i+1)&F_NAME_MODULUS];
-				}
-
-			memcpy(fnam, GLOBALS->fst_scope_name, hier_len);
-			fnam[hier_len] = GLOBALS->hier_delimeter;
-			memcpy(fnam + hier_len + 1, nnam, name_len + 1);
-			}
-			else
-			{
-			tlen = name_len;
-			if(tlen > f_name_max_len[(i+1)&F_NAME_MODULUS])
-				{
-				if(f_name[(i+1)&F_NAME_MODULUS]) free_2(f_name[(i+1)&F_NAME_MODULUS]);
-				f_name_max_len[(i+1)&F_NAME_MODULUS] = tlen;
-				fnam = malloc_2(tlen + 1);
-				}
-				else
-				{
-				fnam = f_name[(i+1)&F_NAME_MODULUS];
-				}
-
-			memcpy(fnam, nnam, name_len + 1);
-			}
-		/* free_2(nnam); ...deallocated through pnam */
-
-		f_name[(i+1)&F_NAME_MODULUS] = fnam;
-		f_name_len[(i+1)&F_NAME_MODULUS] = tlen;
-		}
-
 	f=GLOBALS->mvlfacs_fst_c_3+i;
 
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
@@ -622,8 +582,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(GLOBALS->fast_tree_sort) 
 			{
-			len = sprintf_2_sdd(buf, pnam,node_block[i].msi, node_block[i].lsi);
-			fst_append_graft_chain(len, buf, i, ppar);
+			len = sprintf_2_sdd(buf, nnam,node_block[i].msi, node_block[i].lsi);
+			fst_append_graft_chain(len, buf, i, npar);
 			}
 		}
 	else
@@ -673,8 +633,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 			if(GLOBALS->fast_tree_sort) 
 				{
-				len = sprintf_2_sd(buf, pnam,node_block[i].msi);
-				fst_append_graft_chain(len, buf, i, ppar);
+				len = sprintf_2_sd(buf, nnam,node_block[i].msi);
+				fst_append_graft_chain(len, buf, i, npar);
 				}
 			}
 			else
@@ -716,7 +676,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	
 			if(GLOBALS->fast_tree_sort) 
 				{
-				fst_append_graft_chain(strlen(pnam), pnam, i, ppar);
+				fst_append_graft_chain(strlen(nnam), nnam, i, npar);
 				}
 			}
 		}
@@ -728,7 +688,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if(GLOBALS->do_hier_compress)
 		{
-		n->nname = compress_facility(s->name, longest_nam_candidate);
+		n->nname = compress_facility((unsigned char *)s->name, longest_nam_candidate);
 		/* free_2(s->name); ...removed as f_name_build_buf is now used */
 		s->name = n->nname;	
 		}
@@ -751,9 +711,8 @@ for(i=0;i<GLOBALS->numfacs;i++)
         s->n=n;
         }			/* for(i) of facs parsing */
 
+if(nnam) { free_2(nnam); nnam = NULL; }
 if(f_name_build_buf) { free_2(f_name_build_buf); f_name_build_buf = NULL; }
-if(pnam2) { free_2(pnam2); pnam2 = NULL; }
-if(pnam) { free_2(pnam); pnam = NULL; }
 
 for(i=0;i<=F_NAME_MODULUS;i++)
 	{
@@ -1457,6 +1416,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.49  2011/01/21 22:40:28  gtkwave
+ * pass string lengths from api directly to code to avoid length calculations
+ *
  * Revision 1.48  2011/01/21 21:32:30  gtkwave
  * remove redundant and repetitive allocations
  *

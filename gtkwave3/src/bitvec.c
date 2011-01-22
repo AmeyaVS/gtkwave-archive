@@ -1208,7 +1208,6 @@ if(nodepnt)
 
 		if(GLOBALS->do_hier_compress)
 			{
-			int was_packed;
 			s1 = hier_decompress_flagged(s1, &s1_was_packed);
 			s2 = hier_decompress_flagged(s2, &s2_was_packed);
 			}
@@ -3313,6 +3312,9 @@ return(made);
 /*
  * $Id$
  * $Log$
+ * Revision 1.29  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.28  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *

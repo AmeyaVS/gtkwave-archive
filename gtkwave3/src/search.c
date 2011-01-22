@@ -33,14 +33,11 @@ clist_sigcmp (GtkCList      *clist,
 {  
   char *text1 = NULL;
   char *text2 = NULL;
+  int rc;
 
   GtkCListRow *row1 = (GtkCListRow *) ptr1; 
   GtkCListRow *row2 = (GtkCListRow *) ptr2;
 
-  char *nd1, *nd2;
-  int was_packed1=0, was_packed2=0;
-  int rc;
-  
   switch (row1->cell[clist->sort_column].type)
     {
     case GTK_CELL_TEXT:
@@ -1106,6 +1103,9 @@ void searchbox(char *title, GtkSignalFunc func)
 /*
  * $Id$
  * $Log$
+ * Revision 1.17  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.16  2010/05/27 06:07:24  gtkwave
  * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
  *

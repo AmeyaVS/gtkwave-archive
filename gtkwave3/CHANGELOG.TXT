@@ -977,7 +977,7 @@
 		codes.
 		Added gtkwave_server to distro but it is not currently in
 		automake as it is not ready for use.
-3.3.19	19jan11	Added more NULL pointer checking to vcd2fst to prevent
+3.3.19	21jan11	Added more NULL pointer checking to vcd2fst to prevent
 		crashes on malformed files.
 		Removed redundant fields from struct fac and use the ones
 		in struct Node instead.
@@ -992,4 +992,5 @@
 		FST dumper is the only one that uses this.
 		Allocate tree structures from tree allocation pool when
 		structure packing is enabled.
-		Removed redundant strlen ops from fst.c
+		Removed redundant strlen ops from fst.c.
+		Compiler warnings fixes.
