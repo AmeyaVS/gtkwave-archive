@@ -270,7 +270,7 @@ static void fst_append_graft_chain(int len, char *nam, int which, struct tree *p
 {
 struct tree *t = talloc_2(sizeof(struct tree) + len);
 
-strcpy(t->name, nam);
+memcpy(t->name, nam, len+1);
 t->t_which = which;
 
 t->child = par;
@@ -570,7 +570,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 		if(!GLOBALS->alt_hier_delimeter)
 			{
-			strcpy(str, buf);
+			memcpy(str, buf, len+1);
 			}
 			else
 			{
@@ -611,7 +611,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 			if(!GLOBALS->alt_hier_delimeter)
 				{
-				strcpy(str, buf);
+				memcpy(str, buf, len+1);
 				}
 				else
 				{
@@ -657,7 +657,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 			if(!GLOBALS->alt_hier_delimeter)
 				{
-				strcpy(str, f_name[(i)&F_NAME_MODULUS]);
+				memcpy(str, f_name[(i)&F_NAME_MODULUS], len+1);
 				}
 				else
 				{
@@ -1416,6 +1416,9 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 /*
  * $Id$
  * $Log$
+ * Revision 1.50  2011/01/22 01:29:24  gtkwave
+ * sourcecode cleanup / warnings fixes
+ *
  * Revision 1.49  2011/01/21 22:40:28  gtkwave
  * pass string lengths from api directly to code to avoid length calculations
  *
