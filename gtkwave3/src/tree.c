@@ -435,7 +435,7 @@ struct tree *t2 = *(struct tree **)v2;
 return(sigcmp(t2->name, t1->name));	/* because list must be in rvs */
 }
 
-void treesort(struct tree *t, struct tree *p)
+static void treesort_2(struct tree *t, struct tree *p, struct tree ***tm, int *tm_siz)
 {
 struct tree *it;
 struct tree **srt;
@@ -450,13 +450,21 @@ if(t->next)
 		cnt++;
 		it=it->next;
 		} while(it);
-	
-	srt = malloc_2(cnt * sizeof(struct tree *)); /* was previously wave_alloca but with too many signals the stack overflows */
+
+	if(cnt > *tm_siz)
+		{
+		*tm_siz = cnt;
+		if(*tm) { free_2(*tm); }
+		*tm = malloc_2((cnt+1) * sizeof(struct tree *));
+		}
+	srt = *tm;
+
 	for(i=0;i<cnt;i++)
 		{
 		srt[i] = t;
 		t=t->next;
 		}
+	srt[i] = NULL;
 
 	qsort((void *)srt, cnt, sizeof(struct tree *), tree_qsort_cmp);
 
@@ -469,26 +477,39 @@ if(t->next)
 		GLOBALS->treeroot = srt[0];
 		}
 
-	for(i=0;i<(cnt-1);i++)
+	for(i=0;i<cnt;i++)
 		{
 		srt[i]->next = srt[i+1];
-		if(srt[i]->child)
-			{
-			treesort(srt[i]->child, srt[i]);
-			}
-		}
-	srt[i]->next = NULL;
-	if(srt[i]->child)
-		{
-		treesort(srt[i]->child, srt[i]);
 		}
 
-	free_2(srt);
+	it = srt[0];
+	for(i=0;i<cnt;i++)
+		{
+		if(it->child)
+			{
+			treesort_2(it->child, it, tm, tm_siz);
+			}
+		it = it->next;
+		}
 	}
 else if (t->child)
 	{
-	treesort(t->child, t);
+	treesort_2(t->child, t, tm, tm_siz);
 	}
+}
+
+
+void treesort(struct tree *t, struct tree *p)
+{
+struct tree **tm = NULL;
+int tm_siz = 0;
+
+treesort_2(t, p, &tm, &tm_siz);
+if(tm)
+	{
+	free_2(tm);
+	}
+
 }
 
 
@@ -789,6 +810,9 @@ if(!GLOBALS->hier_grouping)
 /*
  * $Id$
  * $Log$
+ * Revision 1.15  2011/01/21 22:40:28  gtkwave
+ * pass string lengths from api directly to code to avoid length calculations
+ *
  * Revision 1.14  2011/01/19 16:18:19  gtkwave
  * fix for large allocations of tree alloc
  *

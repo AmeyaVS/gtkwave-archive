@@ -130,9 +130,13 @@ static char *tokens[]={ "var", "end", "scope", "upscope",
  * histent structs are NEVER freed so this is OK..
  * (we are allocating as many entries that fit in 64k minus the size of the two
  * bookkeeping void* pointers found in the malloc_2/free_2 routines in
- * debug.c)
+ * debug.c--unless Judy, then can dispense with pointer subtraction)
  */
+#ifdef _WAVE_HAVE_JUDY
+#define VCD_HISTENT_GRANULARITY ( (64*1024) / sizeof(HistEnt) )
+#else
 #define VCD_HISTENT_GRANULARITY ( ( (64*1024)-(2*sizeof(void *)) ) / sizeof(HistEnt) )
+#endif
 
 struct HistEnt *histent_calloc(void)
 {
@@ -2645,6 +2649,9 @@ return(GLOBALS->max_time);
 /*
  * $Id$
  * $Log$
+ * Revision 1.46  2011/01/21 22:40:29  gtkwave
+ * pass string lengths from api directly to code to avoid length calculations
+ *
  * Revision 1.45  2011/01/18 00:00:12  gtkwave
  * preliminary tree component support
  *
