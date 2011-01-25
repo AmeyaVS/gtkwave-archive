@@ -106,17 +106,11 @@ unsigned char flags;  /* so far only set on glitch/real condition */
 
 
 enum HistEntFlagBits
-{ HIST_GLITCH_B, HIST_REAL_B, HIST_STRING_B 
-};
+{ HIST_GLITCH_B, HIST_REAL_B, HIST_STRING_B };
 
 #define HIST_GLITCH (1<<HIST_GLITCH_B)
 #define HIST_REAL   (1<<HIST_REAL_B)
-
-#ifndef STRICT_VCD_ONLY
-	#define HIST_STRING (1<<HIST_STRING_B)
-#else
-	#define HIST_STRING 0	/* for gcc -O2 optimization */
-#endif
+#define HIST_STRING (1<<HIST_STRING_B)
 
 #ifdef WAVE_USE_STRUCT_PACKING
 #pragma pack(push)
@@ -478,6 +472,9 @@ void ClearGroupTraces(Trptr t);
 /*
  * $Id$
  * $Log$
+ * Revision 1.36  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.35  2010/12/18 23:56:50  gtkwave
  * more structure rearrangement and packing
  *
