@@ -107,8 +107,11 @@ int jrb_plength(JRB n);       /* returns the # of nodes in path from
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: jrb.h,v 1.1.1.1 2007/05/30 04:25:54 gtkwave Exp $
+ * $Log: jrb.h,v $
+ * Revision 1.1.1.1  2007/05/30 04:25:54  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *

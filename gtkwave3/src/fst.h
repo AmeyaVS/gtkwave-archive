@@ -28,8 +28,11 @@ void fst_import_masked(void);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: fst.h,v 1.3 2011/01/18 00:00:12 gtkwave Exp $
+ * $Log: fst.h,v $
+ * Revision 1.3  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  * Revision 1.2  2010/04/27 23:10:56  gtkwave
  * made inttype.h inclusion conditional
  *

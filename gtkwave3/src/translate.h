@@ -48,8 +48,11 @@ void set_current_translate_file(char *name);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: translate.h,v 1.5 2010/07/19 22:32:31 gtkwave Exp $
+ * $Log: translate.h,v $
+ * Revision 1.5  2010/07/19 22:32:31  gtkwave
+ * added gtkwave::setCurrentTranslateEnums
+ *
  * Revision 1.4  2010/07/19 21:12:19  gtkwave
  * added file/proc/trans access functions to Tcl script interpreter
  *

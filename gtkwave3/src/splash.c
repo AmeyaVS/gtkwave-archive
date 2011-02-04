@@ -809,8 +809,11 @@ void splash_sync(off_t current, off_t total)
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: splash.c,v 1.4 2008/12/25 03:52:32 gtkwave Exp $
+ * $Log: splash.c,v $
+ * Revision 1.4  2008/12/25 03:52:32  gtkwave
+ * -Wshadow warning fixes
+ *
  * Revision 1.3  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

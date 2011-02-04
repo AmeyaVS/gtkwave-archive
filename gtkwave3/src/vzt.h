@@ -27,8 +27,11 @@ void 		vzt_import_masked(void);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: vzt.h,v 1.3 2010/04/27 23:10:56 gtkwave Exp $
+ * $Log: vzt.h,v $
+ * Revision 1.3  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.2  2007/08/26 21:35:50  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

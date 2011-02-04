@@ -468,7 +468,7 @@ static int
 draw_scope_fst(vpiHandle item, int depth, int depth_max)
 {
     const char     *fstscopnam;
-    const char     *defname = NULL;
+    char           *defname = NULL;
     vpiHandle       orig = item;
 
     if ((depth_max) && (depth >= depth_max))
@@ -495,13 +495,14 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 	case vpiModule:
 	default:
 	    fsttype = FST_ST_VCD_MODULE;
-	    defname = vpi_get_str(vpiDefName, item);
+	    defname = strdup(vpi_get_str(vpiDefName, item));
 	    break;
 	}
 
 	fstscopnam = vpi_get_str(vpiName, item);
-	if(defname && !strcmp(defname, fstscopnam)) { defname = NULL; } /* no sense in storing a duplicate name */
+	if(defname && !strcmp(defname, fstscopnam)) { free(defname); defname = NULL; } /* no sense in storing a duplicate name */
 	fstWriterSetScope(ctx, fsttype, fstscopnam, defname);
+        if(defname) free(defname);
 
 	draw_module(item, vpitype);
 	if (vpitype == vpiModule) {
@@ -534,14 +535,15 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 		case vpiModule:
 		default:
 		    fsttype = FST_ST_VCD_MODULE;
-	    	    defname = vpi_get_str(vpiDefName, item);
+	    	    defname = strdup(vpi_get_str(vpiDefName, item));
 		    break;
 		}
 
 
 		fstscopnam = vpi_get_str(vpiName, item);
-		if(defname && !strcmp(defname, fstscopnam)) { defname = NULL; } /* no sense in storing a duplicate name */
+		if(defname && !strcmp(defname, fstscopnam)) { free(defname); defname = NULL; } /* no sense in storing a duplicate name */
 		fstWriterSetScope(ctx, fsttype, fstscopnam, defname);
+		if(defname) free(defname);
 
 		draw_module(item, vpitype);
 

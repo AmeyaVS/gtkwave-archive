@@ -29,8 +29,11 @@ const char *is_builtin_define (register const char *str, register unsigned int l
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: vlex.h,v 1.2 2007/09/23 18:33:53 gtkwave Exp $
+ * $Log: vlex.h,v $
+ * Revision 1.2  2007/09/23 18:33:53  gtkwave
+ * warnings cleanups from sun compile
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:38  gtkwave
  * Imported sources
  *

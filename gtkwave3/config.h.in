@@ -265,6 +265,9 @@
    release 3. */
 #undef SETVBUF_REVERSED
 
+/* The size of a `double', as computed by sizeof. */
+#undef SIZEOF_DOUBLE
+
 /* The size of a `int', as computed by sizeof. */
 #undef SIZEOF_INT
 

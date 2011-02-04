@@ -1455,7 +1455,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
     vbox = gtk_vbox_new (FALSE, 1);
     gtk_widget_show (vbox);
 
-    vpan = gtk_vpaned_new ();
+    GLOBALS->sst_vpaned = vpan = gtk_vpaned_new (); /* GLOBALS->sst_vpaned is to be used to clone position over during reload */
     gtk_widget_show (vpan);
     gtk_box_pack_start (GTK_BOX (vbox), vpan, TRUE, TRUE, 1);
 
@@ -2154,8 +2154,11 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: treesearch_gtk2.c,v 1.52 2011/01/18 00:00:12 gtkwave Exp $
+ * $Log: treesearch_gtk2.c,v $
+ * Revision 1.52  2011/01/18 00:00:12  gtkwave
+ * preliminary tree component support
+ *
  * Revision 1.51  2011/01/17 19:24:21  gtkwave
  * tree modifications to support decorated internal hierarchy nodes
  *

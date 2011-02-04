@@ -20,8 +20,11 @@ int wave_lineclip(int *coords, int *rect);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: clipping.h,v 1.1.1.1 2007/05/30 04:27:20 gtkwave Exp $
+ * $Log: clipping.h,v $
+ * Revision 1.1.1.1  2007/05/30 04:27:20  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:11  gtkwave
  * initial release
  *

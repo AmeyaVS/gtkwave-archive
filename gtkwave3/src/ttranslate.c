@@ -768,8 +768,11 @@ return(cvt_ok);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: ttranslate.c,v 1.21 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: ttranslate.c,v $
+ * Revision 1.21  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.20  2010/08/26 18:42:23  gtkwave
  * added support for transaction filters in mingw
  *

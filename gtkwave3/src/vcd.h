@@ -136,8 +136,11 @@ int vcd_keyword_code(const char *s, unsigned int len);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: vcd.h,v 1.11 2010/12/17 06:29:20 gtkwave Exp $
+ * $Log: vcd.h,v $
+ * Revision 1.11  2010/12/17 06:29:20  gtkwave
+ * Added --enable-struct-pack configure flag
+ *
  * Revision 1.10  2010/12/12 18:32:45  gtkwave
  * add "string" variable type to parsing of vcd variable declarations
  *

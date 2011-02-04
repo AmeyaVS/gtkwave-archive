@@ -145,8 +145,11 @@ return(table);
 }
    
 /*
- * $Id$
- * $Log$
+ * $Id: pagebuttons.c,v 1.4 2007/09/12 19:24:45 gtkwave Exp $
+ * $Log: pagebuttons.c,v $
+ * Revision 1.4  2007/09/12 19:24:45  gtkwave
+ * more ctx_swap_watchdog updates
+ *
  * Revision 1.3  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

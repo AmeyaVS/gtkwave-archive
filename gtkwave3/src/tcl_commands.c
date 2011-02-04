@@ -2106,8 +2106,11 @@ static void dummy_function(void)
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: tcl_commands.c,v 1.46 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: tcl_commands.c,v $
+ * Revision 1.46  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.45  2010/10/26 17:37:35  gtkwave
  * added initial_signal_window_width rc variable
  *

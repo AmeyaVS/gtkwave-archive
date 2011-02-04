@@ -530,8 +530,11 @@ return(0);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: stem_recurse.c,v 1.9 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: stem_recurse.c,v $
+ * Revision 1.9  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.8  2010/07/16 16:12:36  gtkwave
  * pedantic warning fixes
  *

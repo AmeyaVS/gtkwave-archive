@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id$
+# $Id: autogen.sh,v 1.2 2008/11/23 06:38:55 gtkwave Exp $
 #
 # Run the various GNU autotools to bootstrap the build
 # system.  Should only need to be done once.

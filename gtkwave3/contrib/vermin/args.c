@@ -183,8 +183,11 @@ for(i=0;i<argc;i++)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: args.c,v 1.3 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: args.c,v $
+ * Revision 1.3  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.2  2008/11/08 15:39:11  gtkwave
  * updated -f argument file handling in vermin
  *

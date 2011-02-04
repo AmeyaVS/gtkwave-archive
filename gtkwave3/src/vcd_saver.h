@@ -30,8 +30,11 @@ extern char *output_hier(char *name);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: vcd_saver.h,v 1.5 2010/03/31 15:42:47 gtkwave Exp $
+ * $Log: vcd_saver.h,v $
+ * Revision 1.5  2010/03/31 15:42:47  gtkwave
+ * added preliminary transaction filter support
+ *
  * Revision 1.4  2008/12/06 19:55:53  gtkwave
  * more adds to the timinganalyzer output writer
  *

@@ -452,8 +452,11 @@ if(GLOBALS->num_proc_filters < PROC_FILTER_MAX)
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: ptranslate.c,v 1.15 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: ptranslate.c,v $
+ * Revision 1.15  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.14  2010/08/25 22:58:23  gtkwave
  * added process file support for mingw
  *

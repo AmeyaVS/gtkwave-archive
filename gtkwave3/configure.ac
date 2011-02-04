@@ -488,6 +488,7 @@ AC_CHECK_HEADERS([rpc/types.h rpc/xdr.h], [], [],
 
 # Checks for operand sizes.
 AC_CHECK_SIZEOF(void *)
+AC_CHECK_SIZEOF(double)
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(int)
 

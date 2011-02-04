@@ -902,8 +902,11 @@ return(0);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vcd2fst.c,v 1.21 2010/12/27 19:40:16 gtkwave Exp $
+ * $Log: vcd2fst.c,v $
+ * Revision 1.21  2010/12/27 19:40:16  gtkwave
+ * added null pointer checking during parsing of change records
+ *
  * Revision 1.20  2010/12/19 07:59:10  gtkwave
  * warnings fixes
  *

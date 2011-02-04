@@ -1392,8 +1392,11 @@ gtk_signal_disconnect(GTK_OBJECT(GLOBALS->mainwindow), id);
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: signalwindow.c,v 1.51 2010/10/06 20:15:51 gtkwave Exp $
+ * $Log: signalwindow.c,v $
+ * Revision 1.51  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  * Revision 1.50  2010/04/14 07:49:02  gtkwave
  * updated mouseover handling
  *

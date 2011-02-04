@@ -378,7 +378,7 @@ while(h[0])	/* should never exit through this point the way we set up histents w
 
 vadd=(vptr)calloc_2(1,sizeof(struct VectorEnt)+numextrabytes);
 vadd->time=MAX_HISTENT_TIME;
-for(i=0;i<=numextrabytes;i++) vadd->v[i]=0x55;
+for(i=0;i<=numextrabytes;i++) vadd->v[i]=AN_U; /* formerly 0x55 */
 vcurr->next=vadd;
 regions++;
 
@@ -1853,12 +1853,13 @@ if(!n->extvals)
 		{
 		narray[i] = (nptr)calloc_2(1, sizeof(struct Node));
 		sprintf(nam+offset, "[%d]", actual);	
+#ifdef WAVE_ARRAY_SUPPORT
 		if(n->array_height)
 			{
 			len = offset + strlen(nam+offset);
 			sprintf(nam+len, "{%d}", n->this_row);
 			}
-
+#endif
 		len = offset + strlen(nam+offset);
 		narray[i]->nname = (char *)malloc_2(len+1);
 		strcpy(narray[i]->nname, nam);
@@ -2052,11 +2053,13 @@ if(!n->extvals)
 
 	np = (nptr)calloc_2(1, sizeof(struct Node));
 	sprintf(nam+offset, "[%d]", actual);
+#ifdef WAVE_ARRAY_SUPPORT
         if(n->array_height)
         	{
                 len = offset + strlen(nam+offset);
                 sprintf(nam+len, "{%d}", n->this_row);
                 }
+#endif
 	len = offset + strlen(nam+offset);
 
 
@@ -3310,8 +3313,11 @@ return(made);
 /****************/
 
 /*
- * $Id$
- * $Log$
+ * $Id: bitvec.c,v 1.30 2011/01/22 01:29:24 gtkwave Exp $
+ * $Log: bitvec.c,v $
+ * Revision 1.30  2011/01/22 01:29:24  gtkwave
+ * sourcecode cleanup / warnings fixes
+ *
  * Revision 1.29  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

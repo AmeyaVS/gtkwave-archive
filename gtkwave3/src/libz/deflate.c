@@ -47,7 +47,7 @@
  *
  */
 
-/* @(#) $Id$ */
+/* @(#) $Id: deflate.c,v 1.2 2010/06/30 04:58:25 gtkwave Exp $ */
 
 #include "deflate.h"
 

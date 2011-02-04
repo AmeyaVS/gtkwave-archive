@@ -965,8 +965,11 @@ free_2(mem - WAVE_ZIVWRAP);
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: vlist.c,v 1.18 2009/10/08 15:32:53 gtkwave Exp $
+ * $Log: vlist.c,v $
+ * Revision 1.18  2009/10/08 15:32:53  gtkwave
+ * remove all instances of "long long"
+ *
  * Revision 1.17  2009/03/05 20:04:52  gtkwave
  * fix valgrind error in vlist_fwrite()
  *

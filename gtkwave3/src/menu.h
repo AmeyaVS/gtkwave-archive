@@ -349,8 +349,11 @@ bvptr combine_traces(int direction, Trptr single_trace_only);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: menu.h,v 1.44 2010/10/06 20:15:51 gtkwave Exp $
+ * $Log: menu.h,v $
+ * Revision 1.44  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  * Revision 1.43  2010/08/26 18:42:23  gtkwave
  * added support for transaction filters in mingw
  *

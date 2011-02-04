@@ -24,8 +24,11 @@ int strand_pnt(char *s);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: ghw.h,v 1.3 2009/12/29 07:07:49 gtkwave Exp $
+ * $Log: ghw.h,v $
+ * Revision 1.3  2009/12/29 07:07:49  gtkwave
+ * fixes for ghw files
+ *
  * Revision 1.2  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

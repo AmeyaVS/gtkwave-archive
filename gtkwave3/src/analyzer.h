@@ -18,6 +18,10 @@
 #include "vlist.h"
 #include "debug.h"
 
+#ifdef AET2_IS_PRESENT
+#define WAVE_ARRAY_SUPPORT
+#endif
+
 typedef struct _SearchProgressData {
     GtkWidget *window;
     GtkWidget *pbar;
@@ -80,6 +84,10 @@ enum AnalyzerBits  { AN_0, AN_X, AN_Z, AN_1, AN_H, AN_U, AN_W, AN_L, AN_DASH, AN
 
 /* ^^^   Bit representation   ^^^ */
 
+#if (SIZEOF_VOID_P == SIZEOF_DOUBLE)
+#define WAVE_HAS_H_DOUBLE
+#endif
+
 
 #ifdef WAVE_USE_STRUCT_PACKING
 #pragma pack(push)
@@ -94,6 +102,9 @@ union
   {
   unsigned char h_val;  /* value: AN_STR[val] or AnalyzerBits which correspond */
   char *h_vector;	/* pointer to a whole vector of h_val type bits */
+#ifdef WAVE_HAS_H_DOUBLE
+  double h_double;
+#endif
   } v;
 
 TimeType time;        /* time of transition */
@@ -171,7 +182,11 @@ struct Node
     int msi, lsi;	/* for 64-bit, more efficient than having as an external struct ExtNode*/
 
     int      numhist;	/* number of elements in the harray */
+
+#ifdef WAVE_ARRAY_SUPPORT
     unsigned int array_height, this_row;
+#endif
+
     unsigned vardir : 2;  /* see nodeVarDir, this is an internal value (currently unused) */
     unsigned vartype : 5; /* see nodeVarType, this is an internal value */
 
@@ -470,8 +485,11 @@ void ClearGroupTraces(Trptr t);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: analyzer.h,v 1.37 2011/01/25 17:43:12 gtkwave Exp $
+ * $Log: analyzer.h,v $
+ * Revision 1.37  2011/01/25 17:43:12  gtkwave
+ * cannot remove HIST_STRING for optimization reasons
+ *
  * Revision 1.36  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

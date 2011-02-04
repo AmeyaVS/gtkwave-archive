@@ -206,8 +206,11 @@ extern void		NpDestroyInstanceInterp(Tcl_Interp *interp);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: tcl_np.h,v 1.4 2009/11/30 17:09:35 gtkwave Exp $
+ * $Log: tcl_np.h,v $
+ * Revision 1.4  2009/11/30 17:09:35  gtkwave
+ * NpLog fix for 3 arguments
+ *
  * Revision 1.3  2009/11/11 16:30:58  gtkwave
  * changed tcl library ordering, no tk unless --wish
  *

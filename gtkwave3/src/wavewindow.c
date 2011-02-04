@@ -1642,11 +1642,13 @@ void populateBuffer (Trptr t, char *altname, char* buf)
 	      ptr = ptr + strlen(ptr);
 	    }
 
+#ifdef WAVE_ARRAY_SUPPORT
 	  if((!t->vector)&&(t->n.nd)&&(t->n.nd->array_height))
 	    {
 	      sprintf(ptr, "{%d}", t->n.nd->this_row);
 	      ptr = ptr + strlen(ptr);
 	    }
+#endif
 	}
 
       if (IsGroupBegin(t))
@@ -1993,7 +1995,11 @@ while(t)
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
+#ifdef WAVE_HAS_H_DOUBLE
+							str=convert_ascii_real(t, &h_ptr->v.h_double);
+#else
 							str=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
+#endif
 							}
 							else
 							{
@@ -2247,7 +2253,11 @@ if((t->name || bv)&&(bv || !(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH))))
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
+#ifdef WAVE_HAS_H_DOUBLE
+							str=convert_ascii_real(t, &h_ptr->v.h_double);
+#else
 							str=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
+#endif
 							}
 							else
 							{
@@ -2941,8 +2951,12 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 				tv = mynan;
 				if(h3->flags&HIST_REAL)
 					{
+#ifdef WAVE_HAS_H_DOUBLE
+					if(!(h3->flags&HIST_STRING)) tv = h3->v.h_double;
+#else
 					if(!(h3->flags&HIST_STRING) && h3->v.h_vector)
 						tv = *(double *)h3->v.h_vector;
+#endif
 					}
 					else
 					{
@@ -3027,8 +3041,12 @@ if(t->flags & TR_ANALOG_FULLSCALE) /* otherwise use dynamic */
 	tv = mynan;
 	if(h3->flags&HIST_REAL)
 		{
+#ifdef WAVE_HAS_H_DOUBLE
+		if(!(h3->flags&HIST_STRING)) tv = h3->v.h_double;
+#else
 		if(!(h3->flags&HIST_STRING) && h3->v.h_vector)
 			tv = *(double *)h3->v.h_vector;
+#endif
 		}
 		else
 		{
@@ -3137,8 +3155,12 @@ tv = tv2 = mynan;
 
 if(h->flags&HIST_REAL)
 	{
+#ifdef WAVE_HAS_H_DOUBLE
+	if(!(h->flags&HIST_STRING)) tv = h->v.h_double;
+#else
 	if(!(h->flags&HIST_STRING) && h->v.h_vector)
 		tv = *(double *)h->v.h_vector;
+#endif
 	}
 	else
 	{
@@ -3147,8 +3169,12 @@ if(h->flags&HIST_REAL)
 
 if(h2->flags&HIST_REAL)
 	{
+#ifdef WAVE_HAS_H_DOUBLE
+	if(!(h2->flags&HIST_STRING)) tv2 = h2->v.h_double;
+#else
 	if(!(h2->flags&HIST_STRING) && h2->v.h_vector)
 		tv2 = *(double *)h2->v.h_vector;
+#endif
 	}
 	else
 	{
@@ -3523,7 +3549,11 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 			{
 			if(!(h->flags&HIST_STRING))
 				{
+#ifdef WAVE_HAS_H_DOUBLE
+				ascii=convert_ascii_real(t, &h->v.h_double);
+#else
 				ascii=convert_ascii_real(t, (double *)h->v.h_vector);
+#endif
 				}
 				else
 				{
@@ -3586,7 +3616,11 @@ if(_x0<0) _x0=0;	/* fixup left margin */
 			{
 			if(!(h->flags&HIST_STRING))
 				{
+#ifdef WAVE_HAS_H_DOUBLE
+				ascii=convert_ascii_real(t, &h->v.h_double);
+#else
 				ascii=convert_ascii_real(t, (double *)h->v.h_vector);
+#endif
 				}
 				else
 				{
@@ -4319,8 +4353,11 @@ GLOBALS->tims.end+=GLOBALS->shift_timebase;
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: wavewindow.c,v 1.75 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: wavewindow.c,v $
+ * Revision 1.75  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.74  2010/10/26 17:37:35  gtkwave
  * added initial_signal_window_width rc variable
  *

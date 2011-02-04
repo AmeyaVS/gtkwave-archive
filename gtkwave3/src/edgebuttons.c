@@ -315,7 +315,11 @@ while(s)
 				{
 				if(!(s->his.h->flags&HIST_STRING))
 					{
+#ifdef WAVE_HAS_H_DOUBLE
+					chval=convert_ascii_real(t, &s->his.h->v.h_double);
+#else
 					chval=convert_ascii_real(t, (double *)s->his.h->v.h_vector);
+#endif
 					}
 					else
 					{
@@ -594,8 +598,11 @@ return(table);
 }
    
 /*
- * $Id$
- * $Log$
+ * $Id: edgebuttons.c,v 1.12 2010/06/13 20:37:59 gtkwave Exp $
+ * $Log: edgebuttons.c,v $
+ * Revision 1.12  2010/06/13 20:37:59  gtkwave
+ * added strace repeat count
+ *
  * Revision 1.11  2010/05/01 19:46:28  gtkwave
  * cppcheck warning fixes
  *

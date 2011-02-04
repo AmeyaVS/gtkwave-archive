@@ -253,7 +253,9 @@ if(ascii[len-1]=='}')
 				unsigned int whichrow = atoi(&ascii[i+1]);
 				if(rows_return) *rows_return = whichrow;
 
+#ifdef WAVE_ARRAY_SUPPORT
 				if(whichrow <= (*rc)->n->array_height) 
+#endif
 					{	
 					return(*rc);
 					}
@@ -269,8 +271,11 @@ if(rc) return(*rc); else return(NULL);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: bsearch.c,v 1.11 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: bsearch.c,v $
+ * Revision 1.11  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.10  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *

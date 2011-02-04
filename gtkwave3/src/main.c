@@ -2716,8 +2716,11 @@ void optimize_vcd_file(void) {
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: main.c,v 1.104 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: main.c,v $
+ * Revision 1.104  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.103  2010/11/07 16:20:33  gtkwave
  * make fst the default file format for --optimize action in gtkwave
  *

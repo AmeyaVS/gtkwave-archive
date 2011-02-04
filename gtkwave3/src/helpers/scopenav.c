@@ -163,8 +163,11 @@ return(nh_curr->name);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: scopenav.c,v 1.2 2009/04/30 19:18:41 gtkwave Exp $
+ * $Log: scopenav.c,v $
+ * Revision 1.2  2009/04/30 19:18:41  gtkwave
+ * added space before final brackets in VCD writers
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:19  gtkwave
  * Imported sources
  *

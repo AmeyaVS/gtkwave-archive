@@ -22,8 +22,11 @@ struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: bsearch.h,v 1.3 2008/02/19 22:56:11 gtkwave Exp $
+ * $Log: bsearch.h,v $
+ * Revision 1.3  2008/02/19 22:56:11  gtkwave
+ * rtlbrowse update to handle aet time substitutions
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

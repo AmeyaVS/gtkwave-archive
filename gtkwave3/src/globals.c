@@ -974,6 +974,7 @@ NULL, /* cleanup_treesearch_gtk2_c_8 468 */
 0, /* dnd_tgt_on_signalarea_treesearch_gtk2_c_1 471 */
 0, /* dnd_tgt_on_wavearea_treesearch_gtk2_c_1 */
 NULL, /* dnd_sigview */
+NULL, /* sst_vpaned */
 
 
 /*
@@ -1368,6 +1369,8 @@ void reload_into_new_context(void)
  gint tree_frame_x = -1, tree_frame_y = -1;
  gdouble tree_vadj_value = 0.0;
  gdouble tree_hadj_value = 0.0;
+ gdouble treeview_vadj_value = 0.0;
+ gdouble treeview_hadj_value = 0.0;
  int fix_from_time = 0, fix_to_time = 0;
  TimeType from_time = LLDescriptor(0), to_time = LLDescriptor(0);
  char timestr[32];
@@ -1427,15 +1430,23 @@ void reload_into_new_context(void)
 #if WAVE_USE_GTK2
  if(GLOBALS->gtk2_tree_frame)
 	{
+	/* upper tree */
 	GtkCList *cl = GTK_CLIST(GLOBALS->ctree_main);
 	GtkAdjustment *vadj = gtk_clist_get_vadjustment(cl);
 	GtkAdjustment *hadj = gtk_clist_get_hadjustment(cl);
 
-	tree_vadj_value = vadj->value;
-	tree_hadj_value = hadj->value;
+	if(vadj) tree_vadj_value = vadj->value;
+	if(hadj) tree_hadj_value = hadj->value;
 
 	tree_frame_x = (GLOBALS->gtk2_tree_frame)->allocation.width;
 	tree_frame_y = (GLOBALS->gtk2_tree_frame)->allocation.height;
+
+	/* lower signal set */
+	vadj = gtk_tree_view_get_vadjustment((GtkTreeView *)GLOBALS->dnd_sigview);
+	hadj = gtk_tree_view_get_hadjustment((GtkTreeView *)GLOBALS->dnd_sigview);
+
+	if(vadj) treeview_vadj_value = vadj->value;
+	if(hadj) treeview_hadj_value = hadj->value;
 	}
 #endif
 
@@ -1577,6 +1588,7 @@ void reload_into_new_context(void)
  new_globals->wavewindow = GLOBALS->wavewindow;
  new_globals->toppanedwindow = GLOBALS->toppanedwindow;
  new_globals->sstpane = GLOBALS->sstpane;
+ new_globals->sst_vpaned = GLOBALS->sst_vpaned;
  new_globals->expanderwindow = GLOBALS->expanderwindow;
  new_globals->signal_hslider = GLOBALS->signal_hslider;
  new_globals->wave_vslider = GLOBALS->wave_vslider;
@@ -2228,10 +2240,12 @@ void reload_into_new_context(void)
  /* XXX need to destroy/free the old tree widgets. */
  #if GTK_CHECK_VERSION(2,4,0)
  if(!GLOBALS->hide_sst) {
+   gint pane_pos = gtk_paned_get_position(GLOBALS->sst_vpaned);
    gtk_widget_hide(GLOBALS->expanderwindow);
    gtk_container_remove(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
    GLOBALS->sstpane = treeboxframe("SST", GTK_SIGNAL_FUNC(mkmenu_treesearch_cleanup));
    gtk_container_add(GTK_CONTAINER(GLOBALS->expanderwindow), GLOBALS->sstpane);
+   gtk_paned_set_position(GLOBALS->sst_vpaned, pane_pos);
    gtk_widget_show(GLOBALS->expanderwindow);
    if(GLOBALS->dnd_sigview)
         {
@@ -2287,7 +2301,7 @@ void reload_into_new_context(void)
 	{
 	GtkAdjustment *vadj = gtk_clist_get_vadjustment(cl);
 
-	if((tree_vadj_value >= vadj->lower) && (tree_vadj_value <= vadj->upper))
+	if((vadj) && (tree_vadj_value >= vadj->lower) && (tree_vadj_value <= vadj->upper))
 		{ 
 		vadj->value = tree_vadj_value;
 		gtk_clist_set_vadjustment(cl, vadj);
@@ -2301,7 +2315,7 @@ void reload_into_new_context(void)
 	{
 	GtkAdjustment *hadj = gtk_clist_get_hadjustment(cl);
 
-	if((tree_hadj_value >= hadj->lower) && (tree_hadj_value <= hadj->upper))
+	if((hadj) && (tree_hadj_value >= hadj->lower) && (tree_hadj_value <= hadj->upper))
 		{ 
 		hadj->value = tree_hadj_value;
 		gtk_clist_set_hadjustment(cl, hadj);
@@ -2406,6 +2420,46 @@ void reload_into_new_context(void)
 
  printf("GTKWAVE | ...waveform reloaded\n");
  gtkwavetcl_setvar(WAVE_TCLCB_RELOAD_END, GLOBALS->loaded_file_name, WAVE_TCLCB_RELOAD_END_FLAGS);
+
+ /* update lower signal set in SST to correct position */
+#if WAVE_USE_GTK2
+   if((GLOBALS->dnd_sigview) && ((treeview_vadj_value != 0.0) || (treeview_hadj_value != 0.0)))
+	{
+	   struct Global *G2 = GLOBALS;
+	   while (gtk_events_pending()) gtk_main_iteration();
+
+	   if((G2 == GLOBALS)&&(GLOBALS->dnd_sigview))
+		{
+		   if(treeview_vadj_value != 0.0)
+			{
+			GtkAdjustment *vadj = gtk_tree_view_get_vadjustment((GtkTreeView *)GLOBALS->dnd_sigview);
+		
+			if((vadj) && (treeview_vadj_value >= vadj->lower) && (treeview_vadj_value <= vadj->upper))
+				{ 
+				vadj->value = treeview_vadj_value;
+				gtk_tree_view_set_vadjustment((GtkTreeView *)GLOBALS->dnd_sigview, vadj);
+		
+				gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "changed");
+				gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "value_changed"); 
+				}
+			}
+	
+		   if(treeview_hadj_value != 0.0)
+			{
+			GtkAdjustment *hadj = gtk_tree_view_get_hadjustment((GtkTreeView *)GLOBALS->dnd_sigview);
+		
+			if((hadj) && (treeview_hadj_value >= hadj->lower) && (treeview_hadj_value <= hadj->upper))
+				{ 
+				hadj->value = treeview_hadj_value;
+				gtk_tree_view_set_hadjustment((GtkTreeView *)GLOBALS->dnd_sigview, hadj);
+		
+				gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "changed");
+				gtk_signal_emit_by_name (GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "value_changed"); 
+				}
+			}
+		}
+	}
+#endif
 }
 
 

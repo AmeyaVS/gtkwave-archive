@@ -161,8 +161,11 @@ if(GLOBALS->busy_busy_c_1)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: busy.c,v 1.14 2010/08/03 01:33:48 gtkwave Exp $
+ * $Log: busy.c,v $
+ * Revision 1.14  2010/08/03 01:33:48  gtkwave
+ * error message to stderr
+ *
  * Revision 1.13  2010/02/18 23:06:04  gtkwave
  * change name of main iteration loop calls
  *

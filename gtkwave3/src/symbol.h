@@ -44,7 +44,7 @@ typedef long off_t;
 struct fac
 {
 struct Node *working_node;
-int array_height;
+int node_alias;
 int len;
 unsigned int flags;
 };
@@ -134,8 +134,11 @@ void destroy_s_selected(void);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: symbol.h,v 1.16 2011/01/07 20:17:10 gtkwave Exp $
+ * $Log: symbol.h,v $
+ * Revision 1.16  2011/01/07 20:17:10  gtkwave
+ * remove redundant fields from struct fac
+ *
  * Revision 1.15  2010/12/17 06:29:20  gtkwave
  * Added --enable-struct-pack configure flag
  *

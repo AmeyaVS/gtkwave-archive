@@ -168,8 +168,11 @@ V_XORLIT
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: keyword_tokens.h,v 1.2 2009/12/29 07:18:01 gtkwave Exp $
+ * $Log: keyword_tokens.h,v $
+ * Revision 1.2  2009/12/29 07:18:01  gtkwave
+ * header fix for macro vs enum conflict
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:42  gtkwave
  * Imported sources
  *

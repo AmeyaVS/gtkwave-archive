@@ -30,8 +30,11 @@ void gtkwave_main_iteration(void);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: busy.h,v 1.4 2010/02/18 23:06:04 gtkwave Exp $
+ * $Log: busy.h,v $
+ * Revision 1.4  2010/02/18 23:06:04  gtkwave
+ * change name of main iteration loop calls
+ *
  * Revision 1.3  2007/09/11 02:12:50  gtkwave
  * context locking in busy spinloops (gtk_main_iteration() calls)
  *

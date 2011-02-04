@@ -2181,8 +2181,11 @@ if(lt)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: lxt2_write.c,v 1.3 2010/05/03 20:11:03 gtkwave Exp $
+ * $Log: lxt2_write.c,v $
+ * Revision 1.3  2010/05/03 20:11:03  gtkwave
+ * cppcheck warning fixes
+ *
  * Revision 1.2  2008/12/20 05:08:26  gtkwave
  * -Wshadow warning cleanups
  *

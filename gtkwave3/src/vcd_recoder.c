@@ -2199,7 +2199,11 @@ switch(ch)
 		he=histent_calloc();
 		he->flags=HIST_REAL;
 	        he->time=-1;
+#ifdef WAVE_HAS_H_DOUBLE
+                he->v.h_double = strtod("NaN", NULL);
+#else
 	        he->v.h_vector=NULL;
+#endif
 	
 		n->curr=he;
 		n->head.next=he;
@@ -2211,9 +2215,15 @@ switch(ch)
 		if(regadd) { tim*=(GLOBALS->time_scale); }
 	
 		if(
+#ifdef WAVE_HAS_H_DOUBLE
+                  (vector&&(n->curr->v.h_double!=*(double *)vector))
+#else
 		  (n->curr->v.h_vector&&vector&&(*(double *)n->curr->v.h_vector!=*(double *)vector))
+#endif
 			||(tim==GLOBALS->start_time_vcd_recoder_c_3)
+#ifndef WAVE_HAS_H_DOUBLE
 			||(!n->curr->v.h_vector)
+#endif
 			||(GLOBALS->vcd_preserve_glitches)
 			) /* same region == go skip */ 
 	        	{
@@ -2221,9 +2231,12 @@ switch(ch)
 				{
 				DEBUG(printf("Warning: Real number Glitch at time ["TTFormat"] Signal [%p].\n",
 					tim, n));
+#ifdef WAVE_HAS_H_DOUBLE
+                                n->curr->v.h_double = *((double *)vector);
+#else
 				if(n->curr->v.h_vector) free_2(n->curr->v.h_vector);
 				n->curr->v.h_vector=vector;		/* we have a glitch! */
-	
+#endif	
 				GLOBALS->num_glitches_vcd_recoder_c_4++;
 				if(!(n->curr->flags&HIST_GLITCH))
 					{
@@ -2236,8 +2249,11 @@ switch(ch)
 	                	he=histent_calloc();
 				he->flags=HIST_REAL;
 	                	he->time=tim;
+#ifdef WAVE_HAS_H_DOUBLE
+				he->v.h_double = *((double *)vector);
+#else
 	                	he->v.h_vector=vector;
-	
+#endif
 	                	n->curr->next=he;
 				n->curr=he;
 	                	GLOBALS->regions+=regadd;
@@ -2245,8 +2261,13 @@ switch(ch)
 	                }
 			else
 			{
+#ifndef WAVE_HAS_H_DOUBLE
 			free_2(vector);
+#endif
 			}
+#ifdef WAVE_HAS_H_DOUBLE
+	        free_2(vector);
+#endif
 	       }
 	break;
 	}
@@ -3262,8 +3283,11 @@ np->mv.mvlfac_vlist = NULL;
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vcd_recoder.c,v 1.56 2011/01/21 22:40:29 gtkwave Exp $
+ * $Log: vcd_recoder.c,v $
+ * Revision 1.56  2011/01/21 22:40:29  gtkwave
+ * pass string lengths from api directly to code to avoid length calculations
+ *
  * Revision 1.55  2011/01/18 00:00:12  gtkwave
  * preliminary tree component support
  *

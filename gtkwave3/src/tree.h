@@ -149,8 +149,11 @@ struct tree *talloc_2(size_t siz);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: tree.h,v 1.14 2011/01/21 22:40:29 gtkwave Exp $
+ * $Log: tree.h,v $
+ * Revision 1.14  2011/01/21 22:40:29  gtkwave
+ * pass string lengths from api directly to code to avoid length calculations
+ *
  * Revision 1.13  2011/01/19 16:18:19  gtkwave
  * fix for large allocations of tree alloc
  *

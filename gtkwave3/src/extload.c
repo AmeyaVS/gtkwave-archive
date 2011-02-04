@@ -353,8 +353,6 @@ for(;;)
 				GLOBALS->extload_idcodes[i] = d2;
 				if(GLOBALS->extload_inv_idcodes[d2] == 0) GLOBALS->extload_inv_idcodes[d2] = i+1; /* root alias */
 
-				GLOBALS->mvlfacs_vzt_c_3[i].array_height=0;
-
 				if(!strcmp("vcd_real", typ))
 					{
 					GLOBALS->mvlfacs_vzt_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
@@ -719,9 +717,13 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 	}
 else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	{
+#ifdef WAVE_HAS_H_DOUBLE
+	sscanf(*value, "%lg", &htemp->v.h_double);
+#else
 	double *d = malloc_2(sizeof(double));
 	sscanf(*value, "%lg", d);
 	htemp->v.h_vector = (char *)d;
+#endif
 	htemp->flags = HIST_REAL;
 	}
 else	/* string */
@@ -802,7 +804,7 @@ fprintf(stderr, EXTLOAD"Import: %s\n", np->nname);
 /* new stuff */
 len = np->mv.mvlfac->len;
 
-if((f->array_height <= 1)&&(last_modification_check())) /* sorry, arrays not supported */
+if(last_modification_check()) /* place array height check here in an "&&" branch, sorry, arrays not supported */
 	{
 	char sbuff[65537];
 	TimeType tim;
@@ -953,8 +955,11 @@ if(nold!=np)
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: extload.c,v 1.13 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: extload.c,v $
+ * Revision 1.13  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.12  2011/01/07 20:17:10  gtkwave
  * remove redundant fields from struct fac
  *

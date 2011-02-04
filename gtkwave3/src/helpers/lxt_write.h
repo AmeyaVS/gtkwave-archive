@@ -266,8 +266,11 @@ int 			lt_emit_value_bit_string(struct lt_trace *lt, struct lt_symbol *s, unsign
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: lxt_write.h,v 1.4 2010/04/27 23:10:56 gtkwave Exp $
+ * $Log: lxt_write.h,v $
+ * Revision 1.4  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.3  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

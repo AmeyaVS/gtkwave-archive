@@ -747,8 +747,11 @@ switch(scale)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: currenttime.c,v 1.16 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: currenttime.c,v $
+ * Revision 1.16  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.15  2010/01/18 20:47:02  gtkwave
  * added named locker marking
  *

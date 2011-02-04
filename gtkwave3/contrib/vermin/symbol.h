@@ -26,8 +26,11 @@ extern struct ifdef_stack_t *ifdef_stack_top;
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: symbol.h,v 1.1.1.1 2007/05/30 04:25:52 gtkwave Exp $
+ * $Log: symbol.h,v $
+ * Revision 1.1.1.1  2007/05/30 04:25:52  gtkwave
+ * Imported sources
+ *
  * Revision 1.1  2007/04/21 21:08:51  gtkwave
  * changed from vertex to vermin
  *

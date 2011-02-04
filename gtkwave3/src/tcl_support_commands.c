@@ -603,7 +603,11 @@ llist_p *signal_change_list(char *sig_name, int dir, TimeType start_time,
 	  h_ptr = (hptr)lp->u.p ;
 	  if(h_ptr->flags&HIST_REAL) {
 	    if(!(h_ptr->flags&HIST_STRING)) {
+#ifdef WAVE_HAS_H_DOUBLE
+	      s=convert_ascii_real(t, &h_ptr->v.h_double);
+#else
 	      s=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
+#endif
 	    } else {
 	      s=convert_ascii_string((char *)h_ptr->v.h_vector);
 	    }

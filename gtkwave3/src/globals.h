@@ -958,6 +958,7 @@ Traces tcache_treesearch_gtk2_c_2; /* from treesearch_gtk2.c 500 */
 unsigned char dnd_tgt_on_signalarea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 501 */
 unsigned char dnd_tgt_on_wavearea_treesearch_gtk2_c_1; /* from treesearch_gtk2.c */
 GtkWidget *dnd_sigview; /* from treesearch_gtk2.c */
+GtkPaned *sst_vpaned; /* from treesearch_gtk2.c */
 
 
 /*

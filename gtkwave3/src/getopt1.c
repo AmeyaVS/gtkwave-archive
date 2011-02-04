@@ -204,8 +204,11 @@ main (argc, argv)
 #endif /* TEST */
 
 /*
- * $Id$
- * $Log$
+ * $Id: getopt1.c,v 1.3 2007/08/26 21:35:40 gtkwave Exp $
+ * $Log: getopt1.c,v $
+ * Revision 1.3  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.2.2.2  2007/08/06 03:50:46  gtkwave
  * globals support for ae2, gtk1, cygwin, mingw.  also cleaned up some machine
  * generated structs, etc.

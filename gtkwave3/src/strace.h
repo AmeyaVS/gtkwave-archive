@@ -132,8 +132,11 @@ void tracesearchbox(const char *title, GtkSignalFunc func, gpointer data);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: strace.h,v 1.9 2010/07/01 23:02:41 gtkwave Exp $
+ * $Log: strace.h,v $
+ * Revision 1.9  2010/07/01 23:02:41  gtkwave
+ * header file cleanup
+ *
  * Revision 1.8  2010/02/24 17:35:35  gtkwave
  * gtk1 compile fixes
  *

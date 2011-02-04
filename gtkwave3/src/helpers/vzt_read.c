@@ -2384,8 +2384,11 @@ return(rcval);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vzt_read.c,v 1.10 2010/10/25 17:56:49 gtkwave Exp $
+ * $Log: vzt_read.c,v $
+ * Revision 1.10  2010/10/25 17:56:49  gtkwave
+ * give x86_64 priority over 386 for inline assembly
+ *
  * Revision 1.9  2010/10/25 17:50:42  gtkwave
  * add conditional compiles for inline assembly code (can disable)
  *

@@ -436,8 +436,11 @@ return(255);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: twinwave.c,v 1.4 2009/04/23 19:38:50 gtkwave Exp $
+ * $Log: twinwave.c,v $
+ * Revision 1.4  2009/04/23 19:38:50  gtkwave
+ * add mingw support to twinwave
+ *
  * Revision 1.3  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

@@ -180,8 +180,11 @@ void helpbox(char *title, int width, char *default_text)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: help.c,v 1.6 2009/05/16 18:00:56 gtkwave Exp $
+ * $Log: help.c,v $
+ * Revision 1.6  2009/05/16 18:00:56  gtkwave
+ * added additional help text for MISSING_FILE filetype
+ *
  * Revision 1.5  2008/01/13 23:39:58  gtkwave
  * help window ergonomics (auto click-to-front, not-editable status set)
  *

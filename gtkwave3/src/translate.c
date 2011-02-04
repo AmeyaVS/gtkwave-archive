@@ -584,8 +584,11 @@ set_current_translate_generic(lst, 0); /* use enums */
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: translate.c,v 1.9 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: translate.c,v $
+ * Revision 1.9  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.8  2010/07/19 22:32:31  gtkwave
  * added gtkwave::setCurrentTranslateEnums
  *

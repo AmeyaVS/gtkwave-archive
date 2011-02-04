@@ -336,8 +336,11 @@ if(GLOBALS->use_pango_fonts)
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: fonts.c,v 1.10 2008/07/01 18:51:06 gtkwave Exp $
+ * $Log: fonts.c,v $
+ * Revision 1.10  2008/07/01 18:51:06  gtkwave
+ * compiler warning fixes for amd64
+ *
  * Revision 1.9  2008/02/20 18:55:14  gtkwave
  * strncmp length fix from previous update
  *

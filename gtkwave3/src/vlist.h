@@ -72,8 +72,11 @@ void vlist_packer_decompress_destroy(char *mem);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: vlist.h,v 1.7 2007/12/24 19:56:03 gtkwave Exp $
+ * $Log: vlist.h,v $
+ * Revision 1.7  2007/12/24 19:56:03  gtkwave
+ * preparing for 3.1.2 version bump
+ *
  * Revision 1.6  2007/12/18 03:49:51  gtkwave
  * fixed header typo (ifdef'd out so missed)
  *

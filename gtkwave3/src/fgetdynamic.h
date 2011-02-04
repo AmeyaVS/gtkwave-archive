@@ -30,8 +30,11 @@ char *wave_script_args_fgetmalloc_stripspaces(struct wave_script_args *wave_scri
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: fgetdynamic.h,v 1.3 2009/12/15 23:40:59 gtkwave Exp $
+ * $Log: fgetdynamic.h,v $
+ * Revision 1.3  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.2  2007/08/26 21:35:40  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

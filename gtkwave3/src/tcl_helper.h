@@ -108,8 +108,11 @@ void set_globals_interp(char *me, int install_tk);
 #endif
 
 /* 
- * $Id$
- * $Log$
+ * $Id: tcl_helper.h,v 1.28 2010/10/06 20:15:51 gtkwave Exp $
+ * $Log: tcl_helper.h,v $
+ * Revision 1.28  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  * Revision 1.27  2010/07/27 22:52:16  gtkwave
  * added nonblocking setvar (to be used only for well-known reasons)
  *

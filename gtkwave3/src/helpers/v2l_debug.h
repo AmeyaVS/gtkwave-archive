@@ -110,8 +110,11 @@ TimeType atoi_64(char *str);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: v2l_debug.h,v 1.2 2009/04/20 18:48:12 gtkwave Exp $
+ * $Log: v2l_debug.h,v $
+ * Revision 1.2  2009/04/20 18:48:12  gtkwave
+ * mingw fixes
+ *
  * Revision 1.1.1.1  2007/05/30 04:28:19  gtkwave
  * Imported sources
  *

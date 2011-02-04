@@ -65,7 +65,7 @@ node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	GLOBALS->mvlfacs_lx2_c_1[i].array_height=lxt2_rd_get_fac_rows(GLOBALS->lx2_lx2_c_1, i);
+	GLOBALS->mvlfacs_lx2_c_1[i].node_alias=lxt2_rd_get_fac_rows(GLOBALS->lx2_lx2_c_1, i);
 	node_block[i].msi=lxt2_rd_get_fac_msb(GLOBALS->lx2_lx2_c_1, i);
 	node_block[i].lsi=lxt2_rd_get_fac_lsb(GLOBALS->lx2_lx2_c_1, i);
 	GLOBALS->mvlfacs_lx2_c_1[i].flags=lxt2_rd_get_fac_flags(GLOBALS->lx2_lx2_c_1, i);
@@ -116,12 +116,12 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if(GLOBALS->mvlfacs_lx2_c_1[i].flags&LXT2_RD_SYM_F_ALIAS)
 		{
-		int alias = GLOBALS->mvlfacs_lx2_c_1[i].array_height;
+		int alias = GLOBALS->mvlfacs_lx2_c_1[i].node_alias;
 		f=GLOBALS->mvlfacs_lx2_c_1+alias;
 
 		while(f->flags&LXT2_RD_SYM_F_ALIAS)
 			{
-			f=GLOBALS->mvlfacs_lx2_c_1+f->array_height;
+			f=GLOBALS->mvlfacs_lx2_c_1+f->node_alias;
 			}
 
 		numalias++;
@@ -478,9 +478,13 @@ if(!(f->flags&(LXT2_RD_SYM_F_DOUBLE|LXT2_RD_SYM_F_STRING)))
 	}
 else if(f->flags&LXT2_RD_SYM_F_DOUBLE)
 	{
+#ifdef WAVE_HAS_H_DOUBLE
+	sscanf(*value, "%lg", &htemp->v.h_double);
+#else
 	double *d = malloc_2(sizeof(double));
 	sscanf(*value, "%lg", d);
 	htemp->v.h_vector = (char *)d;
+#endif
 	htemp->flags = HIST_REAL;
 	}
 else	/* string */
@@ -567,7 +571,7 @@ fprintf(stderr, "Import: %s\n", np->nname);
 /* new stuff */
 len = np->mv.mvlfac->len;
 
-if(f->array_height <= 1) /* sorry, arrays not supported, but lx2 doesn't support them yet either */
+if(f->node_alias <= 1) /* sorry, arrays not supported, but lx2 doesn't support them yet either */
 	{
 	lxt2_rd_set_fac_process_mask(GLOBALS->lx2_lx2_c_1, txidx);
 	lxt2_rd_iter_blocks(GLOBALS->lx2_lx2_c_1, lx2_callback, NULL);
@@ -686,7 +690,7 @@ if(np->mv.mvlfac->flags&LXT2_RD_SYM_F_ALIAS)
 	if(!(np->mv.mvlfac)) return;	/* already imported */
 	}
 
-if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but lx2 doesn't support them yet either */
+if(np->mv.mvlfac->node_alias <= 1) /* sorry, arrays not supported, but lx2 doesn't support them yet either */
 	{
 	lxt2_rd_set_fac_process_mask(GLOBALS->lx2_lx2_c_1, txidx);
 	GLOBALS->lx2_table_lx2_c_1[txidx].np = np;
@@ -818,8 +822,11 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: lx2.c,v 1.22 2011/01/22 01:29:24 gtkwave Exp $
+ * $Log: lx2.c,v $
+ * Revision 1.22  2011/01/22 01:29:24  gtkwave
+ * sourcecode cleanup / warnings fixes
+ *
  * Revision 1.21  2011/01/21 15:49:52  gtkwave
  * simplify strand coalesce routine and make same as FST's
  *

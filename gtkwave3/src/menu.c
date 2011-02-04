@@ -3622,14 +3622,18 @@ char *append_array_row(nptr n)
 int was_packed = 0;
 char *hname = hier_decompress_flagged(n->nname, &was_packed);
 
+#ifdef WAVE_ARRAY_SUPPORT
 if(!n->array_height)
+#endif
 	{
 	strcpy(GLOBALS->buf_menu_c_1, hname);
 	}
+#ifdef WAVE_ARRAY_SUPPORT
 	else
 	{
 	sprintf(GLOBALS->buf_menu_c_1, "%s{%d}", hname, n->this_row);
 	}
+#endif
 
 if(was_packed) free_2(hname);
 
@@ -6309,8 +6313,11 @@ void SetTraceScrollbarRowValue(int row, unsigned location)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: menu.c,v 1.117 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: menu.c,v $
+ * Revision 1.117  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.116  2010/10/06 20:15:51  gtkwave
  * preliminary version of RPC mechanism
  *

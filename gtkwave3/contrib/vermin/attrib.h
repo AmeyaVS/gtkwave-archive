@@ -37,8 +37,11 @@ extern int do_not_translate, do_not_translate_mask;
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: attrib.h,v 1.2 2008/11/12 19:49:42 gtkwave Exp $
+ * $Log: attrib.h,v $
+ * Revision 1.2  2008/11/12 19:49:42  gtkwave
+ * changed usage of usize
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:51  gtkwave
  * Imported sources
  *

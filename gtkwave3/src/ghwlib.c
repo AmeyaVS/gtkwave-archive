@@ -1804,8 +1804,11 @@ ghw_disp_types (struct ghw_handler *h)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: ghwlib.c,v 1.7 2009/12/29 07:07:49 gtkwave Exp $
+ * $Log: ghwlib.c,v $
+ * Revision 1.7  2009/12/29 07:07:49  gtkwave
+ * fixes for ghw files
+ *
  * Revision 1.6  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *

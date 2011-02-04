@@ -49,8 +49,11 @@ void lx2_import_masked(void);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: lx2.h,v 1.6 2010/12/17 06:29:20 gtkwave Exp $
+ * $Log: lx2.h,v $
+ * Revision 1.6  2010/12/17 06:29:20  gtkwave
+ * Added --enable-struct-pack configure flag
+ *
  * Revision 1.5  2010/09/15 18:35:42  gtkwave
  * added F_NAME_MODULUS to reduce temp memory usage
  *

@@ -1,8 +1,11 @@
 #header << 
 
 /*
- * $Id$
- * $Log$
+ * $Id: verilog.g,v 1.7 2009/12/29 18:36:35 gtkwave Exp $
+ * $Log: verilog.g,v $
+ * Revision 1.7  2009/12/29 18:36:35  gtkwave
+ * typo fix in printf
+ *
  * Revision 1.6  2009/01/13 22:39:24  gtkwave
  * compile fixes for mingw
  *

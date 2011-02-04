@@ -78,8 +78,11 @@ enum FileType {
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: main.h,v 1.8 2009/06/07 08:40:44 gtkwave Exp $
+ * $Log: main.h,v $
+ * Revision 1.8  2009/06/07 08:40:44  gtkwave
+ * adding FST support
+ *
  * Revision 1.7  2009/04/24 20:00:03  gtkwave
  * rtlbrowse exit kill mods
  *

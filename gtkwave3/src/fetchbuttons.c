@@ -211,8 +211,11 @@ return(table);
 }
    
 /*
- * $Id$
- * $Log$
+ * $Id: fetchbuttons.c,v 1.4 2007/09/12 19:24:45 gtkwave Exp $
+ * $Log: fetchbuttons.c,v $
+ * Revision 1.4  2007/09/12 19:24:45  gtkwave
+ * more ctx_swap_watchdog updates
+ *
  * Revision 1.3  2007/09/12 17:26:44  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

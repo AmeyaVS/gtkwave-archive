@@ -96,8 +96,11 @@ return(!msk1 && !msk2); /* see if points are really inside */
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: clipping.c,v 1.7 2010/02/22 18:57:07 gtkwave Exp $
+ * $Log: clipping.c,v $
+ * Revision 1.7  2010/02/22 18:57:07  gtkwave
+ * added more checking in coord re-calculate eqns
+ *
  * Revision 1.6  2010/02/22 17:15:11  gtkwave
  * add y-coord clamping to avoid integer round off errors
  *

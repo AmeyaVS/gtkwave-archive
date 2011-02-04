@@ -189,7 +189,11 @@ if(tname)
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
+#ifdef WAVE_HAS_H_DOUBLE
+							str=convert_ascii_real(t, &h_ptr->v.h_double);
+#else
 							str=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
+#endif
 							}
 							else
 							{
@@ -446,8 +450,11 @@ if(tname) { free_2(tname); }
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: mouseover_sigs.c,v 1.11 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: mouseover_sigs.c,v $
+ * Revision 1.11  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.10  2010/04/04 19:09:57  gtkwave
  * rename name->bvname in struct BitVector for easier grep tracking
  *

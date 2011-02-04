@@ -42,8 +42,12 @@
  * bookkeeping void* pointers found in the malloc_2/free_2 routines in
  * debug.c)
  */
+#ifdef _WAVE_HAVE_JUDY
+#define FST_DOUBLE_GRANULARITY ( (4*1024) / sizeof(double) )
+#else
 #define FST_DOUBLE_GRANULARITY ( ( (4*1024)-(2*sizeof(void *)) ) / sizeof(double) )
-                 
+#endif     
+            
 static void *double_slab_calloc(void)
 {
 if(GLOBALS->double_curr_fst==GLOBALS->double_fini_fst)
@@ -464,7 +468,6 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	f_name[i&F_NAME_MODULUS] = fnam;
 	f_name_len[i&F_NAME_MODULUS] = tlen;
 
-	GLOBALS->mvlfacs_fst_c_3[i].array_height = 1;
         if((h->u.var.length > 1) && (msb == -1) && (lsb == -1))
 		{
 		node_block[i].msi = h->u.var.length - 1;
@@ -537,14 +540,14 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	
 	if(h->u.var.is_alias)
 		{
-		GLOBALS->mvlfacs_fst_alias[i] = h->u.var.handle - 1; /* subtract 1 to scale it with gtkwave-style numbering */
+		GLOBALS->mvlfacs_fst_c_3[i].node_alias = h->u.var.handle - 1; /* subtract 1 to scale it with gtkwave-style numbering */
 		GLOBALS->mvlfacs_fst_c_3[i].flags |= VZT_RD_SYM_F_ALIAS;
 		numalias++;
 		}
 	else
 		{
 		GLOBALS->mvlfacs_fst_rvs_alias[numvars] = i;
-		GLOBALS->mvlfacs_fst_alias[i] = numvars;
+		GLOBALS->mvlfacs_fst_c_3[i].node_alias = numvars;
 		numvars++;
 		}
 
@@ -724,6 +727,8 @@ for(i=0;i<=F_NAME_MODULUS;i++)
 	}
 free_2(f_name); f_name = NULL;
 free_2(f_name_len); f_name_len = NULL;
+
+if(numvars != GLOBALS->numfacs) { GLOBALS->mvlfacs_fst_rvs_alias = realloc_2(GLOBALS->mvlfacs_fst_rvs_alias, numvars * sizeof(fstHandle)); }
 
 freeze_facility_pack();
 iter_through_comp_name_table();
@@ -1004,7 +1009,11 @@ else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	{
 	if((l2e->histent_curr)&&(l2e->histent_curr->v.h_vector)) /* remove duplicate values */
 		{
+#ifdef WAVE_HAS_H_DOUBLE
+		if(!memcmp(&l2e->histent_curr->v.h_double, value, sizeof(double)))
+#else
 		if(!memcmp(l2e->histent_curr->v.h_vector, value, sizeof(double)))
+#endif
 			{
 			return;
 			}
@@ -1021,8 +1030,12 @@ else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	*/
 
 	htemp = histent_calloc();
+#ifdef WAVE_HAS_H_DOUBLE
+	memcpy(&htemp->v.h_double, value, sizeof(double));
+#else
 	htemp->v.h_vector = double_slab_calloc();
 	memcpy(htemp->v.h_vector, value, sizeof(double));
+#endif
 	htemp->flags = HIST_REAL;
 	}
 else	/* string */
@@ -1116,7 +1129,7 @@ if(!(f=np->mv.mvlfac)) return;	/* already imported */
 txidx = f - GLOBALS->mvlfacs_fst_c_3;
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = GLOBALS->mvlfacs_fst_alias[txidx]; /* this is to map to fstHandles, so even non-aliased are remapped */
+	txidx = GLOBALS->mvlfacs_fst_c_3[txidx].node_alias; /* this is to map to fstHandles, so even non-aliased are remapped */
 	txidx = GLOBALS->mvlfacs_fst_rvs_alias[txidx];
 	np = GLOBALS->mvlfacs_fst_c_3[txidx].working_node;
 
@@ -1132,11 +1145,11 @@ fprintf(stderr, "Import: %s\n", np->nname);
 /* new stuff */
 len = np->mv.mvlfac->len;
 
-if(f->array_height <= 1) /* sorry, arrays not supported, but fst doesn't support them yet either */
+/* check here for array height in future */
 	{
-	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
+	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_c_3[txidx].node_alias+1);
 	fstReaderIterBlocks2(GLOBALS->fst_fst_c_1, fst_callback, fst_callback2, NULL, NULL);
-	fstReaderClrFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
+	fstReaderClrFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_c_3[txidx].node_alias+1);
 	}
 
 histent_tail = htemp = histent_calloc();
@@ -1169,10 +1182,13 @@ if(len>1)
 		}
 		else
 		{
+#ifdef WAVE_HAS_H_DOUBLE
+		htemp->v.h_double = strtod("NaN", NULL);
+#else
                 double *d = malloc_2(sizeof(double));
-
                 *d = strtod("NaN", NULL);
                 htemp->v.h_vector = (char *)d;
+#endif
                 htemp->flags = HIST_REAL;
 		}
         htempx = htemp;
@@ -1257,16 +1273,16 @@ if(!(f=np->mv.mvlfac)) return;	/* already imported */
 txidx = f-GLOBALS->mvlfacs_fst_c_3;
 if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS) 
 	{
-	txidx = GLOBALS->mvlfacs_fst_alias[txidx];
+	txidx = GLOBALS->mvlfacs_fst_c_3[txidx].node_alias;
 	txidx = GLOBALS->mvlfacs_fst_rvs_alias[txidx]; 
 	np = GLOBALS->mvlfacs_fst_c_3[txidx].working_node;
 
 	if(!(np->mv.mvlfac)) return;	/* already imported */
 	}
 
-if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but fst doesn't support them yet either */
+/* check here for array height in future */
 	{
-	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_alias[txidx]+1);
+	fstReaderSetFacProcessMask(GLOBALS->fst_fst_c_1, GLOBALS->mvlfacs_fst_c_3[txidx].node_alias+1);
 	GLOBALS->fst_table_fst_c_1[txidx].np = np;
 	}
 }
@@ -1341,10 +1357,14 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 				}
 				else
 				{
+#ifdef WAVE_HAS_H_DOUBLE
+				htemp->v.h_double = strtod("NaN", NULL);				
+#else
 				double *d = malloc_2(sizeof(double));
 
 				*d = strtod("NaN", NULL);
 				htemp->v.h_vector = (char *)d;
+#endif
 				htemp->flags = HIST_REAL;
 				htempx = htemp;
 				}
@@ -1414,8 +1434,11 @@ for(txidxi=0;txidxi<GLOBALS->fst_maxhandle;txidxi++)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: fst.c,v 1.51 2011/01/22 05:42:52 gtkwave Exp $
+ * $Log: fst.c,v $
+ * Revision 1.51  2011/01/22 05:42:52  gtkwave
+ * replace some string copies with mem copies
+ *
  * Revision 1.50  2011/01/22 01:29:24  gtkwave
  * sourcecode cleanup / warnings fixes
  *

@@ -202,8 +202,11 @@ main (int argc, char **argv)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: ghwdump.c,v 1.3 2008/12/20 05:08:26 gtkwave Exp $
+ * $Log: ghwdump.c,v $
+ * Revision 1.3  2008/12/20 05:08:26  gtkwave
+ * -Wshadow warning cleanups
+ *
  * Revision 1.2  2008/07/01 18:51:07  gtkwave
  * compiler warning fixes for amd64
  *

@@ -189,8 +189,11 @@ return(rc ? rc->token : V_STRING);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vcd_keywords.c,v 1.4 2010/12/12 18:32:45 gtkwave Exp $
+ * $Log: vcd_keywords.c,v $
+ * Revision 1.4  2010/12/12 18:32:45  gtkwave
+ * add "string" variable type to parsing of vcd variable declarations
+ *
  * Revision 1.2  2010/02/22 21:13:36  gtkwave
  * added "realtime" VCD variable
  *

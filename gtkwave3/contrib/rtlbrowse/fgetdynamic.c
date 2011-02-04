@@ -75,8 +75,11 @@ if(!fgetmalloc_len)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: fgetdynamic.c,v 1.1.1.1 2007/05/30 04:25:38 gtkwave Exp $
+ * $Log: fgetdynamic.c,v $
+ * Revision 1.1.1.1  2007/05/30 04:25:38  gtkwave
+ * Imported sources
+ *
  * Revision 1.2  2007/04/20 02:08:10  gtkwave
  * initial release
  *

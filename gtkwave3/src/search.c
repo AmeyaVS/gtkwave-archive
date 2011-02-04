@@ -1101,8 +1101,11 @@ void searchbox(char *title, GtkSignalFunc func)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: search.c,v 1.18 2011/01/22 01:29:24 gtkwave Exp $
+ * $Log: search.c,v $
+ * Revision 1.18  2011/01/22 01:29:24  gtkwave
+ * sourcecode cleanup / warnings fixes
+ *
  * Revision 1.17  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

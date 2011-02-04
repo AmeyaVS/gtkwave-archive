@@ -28,8 +28,11 @@
 #endif 
 
 /*
- * $Id$
- * $Log$
+ * $Id: wavealloca.h,v 1.3 2009/12/06 00:10:17 gtkwave Exp $
+ * $Log: wavealloca.h,v $
+ * Revision 1.3  2009/12/06 00:10:17  gtkwave
+ * mingw compatibility fix from icarus
+ *
  * Revision 1.2  2007/08/26 21:35:50  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

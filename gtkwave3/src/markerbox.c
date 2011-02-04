@@ -335,8 +335,11 @@ void markerbox(char *title, GtkSignalFunc func)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: markerbox.c,v 1.10 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: markerbox.c,v $
+ * Revision 1.10  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.9  2010/05/27 06:07:24  gtkwave
  * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
  *

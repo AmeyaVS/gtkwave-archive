@@ -852,8 +852,11 @@ if((match=(struct wave_rgb_color *)bsearch((void *)str, (void *)colors, C_ARRAY_
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: rgb.c,v 1.6 2010/03/31 06:37:44 gtkwave Exp $
+ * $Log: rgb.c,v $
+ * Revision 1.6  2010/03/31 06:37:44  gtkwave
+ * fix for colors struct marked as const
+ *
  * Revision 1.5  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

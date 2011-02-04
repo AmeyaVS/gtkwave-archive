@@ -417,8 +417,11 @@ return(rc);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: lxt2vcd.c,v 1.6 2009/04/30 19:18:41 gtkwave Exp $
+ * $Log: lxt2vcd.c,v $
+ * Revision 1.6  2009/04/30 19:18:41  gtkwave
+ * added space before final brackets in VCD writers
+ *
  * Revision 1.5  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *

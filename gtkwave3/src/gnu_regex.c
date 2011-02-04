@@ -5891,8 +5891,11 @@ static void dummy_compilation_unit(void)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: gnu_regex.c,v 1.3 2009/01/09 16:32:37 gtkwave Exp $
+ * $Log: gnu_regex.c,v $
+ * Revision 1.3  2009/01/09 16:32:37  gtkwave
+ * changed boolean datatype to char to avoid compiler conflicts
+ *
  * Revision 1.2  2008/02/12 16:24:05  gtkwave
  * mingw fixes
  *

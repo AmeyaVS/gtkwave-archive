@@ -88,8 +88,11 @@ uint64_t 	ae2_read_ith_sparse_row(AE2_HANDLE handle, unsigned long symbol_idx, u
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: ae2.h,v 1.8 2011/01/22 01:29:24 gtkwave Exp $
+ * $Log: ae2.h,v $
+ * Revision 1.8  2011/01/22 01:29:24  gtkwave
+ * sourcecode cleanup / warnings fixes
+ *
  * Revision 1.7  2010/04/27 23:10:56  gtkwave
  * made inttype.h inclusion conditional
  *

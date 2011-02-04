@@ -2017,8 +2017,11 @@ return(0);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vcd2vzt.c,v 1.16 2010/12/14 19:53:14 gtkwave Exp $
+ * $Log: vcd2vzt.c,v $
+ * Revision 1.16  2010/12/14 19:53:14  gtkwave
+ * scaled back id multiplier from 95 to 94
+ *
  * Revision 1.15  2010/12/12 18:32:45  gtkwave
  * add "string" variable type to parsing of vcd variable declarations
  *

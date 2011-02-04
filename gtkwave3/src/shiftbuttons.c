@@ -151,8 +151,11 @@ return(table);
 }
    
 /*
- * $Id$
- * $Log$
+ * $Id: shiftbuttons.c,v 1.4 2007/09/12 19:24:45 gtkwave Exp $
+ * $Log: shiftbuttons.c,v $
+ * Revision 1.4  2007/09/12 19:24:45  gtkwave
+ * more ctx_swap_watchdog updates
+ *
  * Revision 1.3  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

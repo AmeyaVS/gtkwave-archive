@@ -145,7 +145,11 @@ if(t->name)
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
+#ifdef WAVE_HAS_H_DOUBLE
+							str=convert_ascii_real(t, &h_ptr->v.h_double);
+#else
 							str=convert_ascii_real(t, (double *)h_ptr->v.h_vector);
+#endif
 							}
 							else
 							{
@@ -400,8 +404,11 @@ if(flagged_name) { free_2(flagged_name); }
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: mouseover.c,v 1.15 2010/04/01 03:10:58 gtkwave Exp $
+ * $Log: mouseover.c,v $
+ * Revision 1.15  2010/04/01 03:10:58  gtkwave
+ * time warp fixes
+ *
  * Revision 1.14  2010/03/24 23:05:10  gtkwave
  * added RealToBits menu option
  *

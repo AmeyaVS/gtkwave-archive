@@ -475,8 +475,11 @@ return table;
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: zoombuttons.c,v 1.5 2008/08/05 20:14:26 gtkwave Exp $
+ * $Log: zoombuttons.c,v $
+ * Revision 1.5  2008/08/05 20:14:26  gtkwave
+ * make step_increment equal to 1/10 of the page inc rather than pixel level
+ *
  * Revision 1.4  2007/09/12 19:24:45  gtkwave
  * more ctx_swap_watchdog updates
  *

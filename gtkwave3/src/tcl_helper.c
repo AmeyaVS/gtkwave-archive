@@ -1476,7 +1476,11 @@ if(t)
 						{
 						if(!(h_ptr->flags&HIST_STRING))
 							{
+#ifdef WAVE_HAS_H_DOUBLE
+							rc = convert_ascii_real(t, &h_ptr->v.h_double);
+#else
 							rc = convert_ascii_real(t, (double *)h_ptr->v.h_vector);
+#endif
 							}
 							else
 							{
@@ -2953,8 +2957,11 @@ return(strdup_2("--script TCL_ERROR : Tcl support not compiled into gtkwave\n"))
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: tcl_helper.c,v 1.95 2011/01/17 19:24:21 gtkwave Exp $
+ * $Log: tcl_helper.c,v $
+ * Revision 1.95  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.94  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

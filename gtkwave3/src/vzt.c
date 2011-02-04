@@ -65,7 +65,7 @@ node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	GLOBALS->mvlfacs_vzt_c_3[i].array_height=vzt_rd_get_fac_rows(GLOBALS->vzt_vzt_c_1, i);
+	GLOBALS->mvlfacs_vzt_c_3[i].node_alias=vzt_rd_get_fac_rows(GLOBALS->vzt_vzt_c_1, i);
 	node_block[i].msi=vzt_rd_get_fac_msb(GLOBALS->vzt_vzt_c_1, i);
 	node_block[i].lsi=vzt_rd_get_fac_lsb(GLOBALS->vzt_vzt_c_1, i);
 	GLOBALS->mvlfacs_vzt_c_3[i].flags=vzt_rd_get_fac_flags(GLOBALS->vzt_vzt_c_1, i);
@@ -116,12 +116,12 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if(GLOBALS->mvlfacs_vzt_c_3[i].flags&VZT_RD_SYM_F_ALIAS)
 		{
-		int alias = GLOBALS->mvlfacs_vzt_c_3[i].array_height;
+		int alias = GLOBALS->mvlfacs_vzt_c_3[i].node_alias;
 		f=GLOBALS->mvlfacs_vzt_c_3+alias;
 
 		while(f->flags&VZT_RD_SYM_F_ALIAS)
 			{
-			f=GLOBALS->mvlfacs_vzt_c_3+f->array_height;
+			f=GLOBALS->mvlfacs_vzt_c_3+f->node_alias;
 			}
 
 		numalias++;
@@ -479,9 +479,13 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
 	}
 else if(f->flags&VZT_RD_SYM_F_DOUBLE)
 	{
+#ifdef WAVE_HAS_H_DOUBLE
+	sscanf(*value, "%lg", &htemp->v.h_double);
+#else
 	double *d = malloc_2(sizeof(double));
 	sscanf(*value, "%lg", d);
 	htemp->v.h_vector = (char *)d;
+#endif
 	htemp->flags = HIST_REAL;
 	}
 else	/* string */
@@ -557,7 +561,7 @@ fprintf(stderr, "Import: %s\n", np->nname);
 /* new stuff */
 len = np->mv.mvlfac->len;
 
-if(f->array_height <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
+if(f->node_alias <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
 	{
 	vzt_rd_set_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx);
 	vzt_rd_iter_blocks(GLOBALS->vzt_vzt_c_1, vzt_callback, NULL);
@@ -665,7 +669,7 @@ if(np->mv.mvlfac->flags&VZT_RD_SYM_F_ALIAS)
 	if(!(np->mv.mvlfac)) return;	/* already imported */
 	}
 
-if(np->mv.mvlfac->array_height <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
+if(np->mv.mvlfac->node_alias <= 1) /* sorry, arrays not supported, but vzt doesn't support them yet either */
 	{
 	vzt_rd_set_fac_process_mask(GLOBALS->vzt_vzt_c_1, txidx);
 	GLOBALS->vzt_table_vzt_c_1[txidx].np = np;
@@ -785,8 +789,11 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vzt.c,v 1.19 2011/01/21 15:49:52 gtkwave Exp $
+ * $Log: vzt.c,v $
+ * Revision 1.19  2011/01/21 15:49:52  gtkwave
+ * simplify strand coalesce routine and make same as FST's
+ *
  * Revision 1.18  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

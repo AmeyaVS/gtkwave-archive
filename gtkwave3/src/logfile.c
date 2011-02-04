@@ -647,8 +647,11 @@ while(l)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: logfile.c,v 1.9 2010/06/04 07:46:17 gtkwave Exp $
+ * $Log: logfile.c,v $
+ * Revision 1.9  2010/06/04 07:46:17  gtkwave
+ * units fix for logfiles for gtk1
+ *
  * Revision 1.8  2010/06/04 01:21:54  gtkwave
  * units fix for logfiles (if not explicitly dragged across manually)
  *

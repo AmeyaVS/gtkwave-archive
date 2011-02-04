@@ -21,8 +21,11 @@ char *hier_decompress_flagged(char *n, int *was_packed);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: hierpack.h,v 1.5 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: hierpack.h,v $
+ * Revision 1.5  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.4  2010/03/01 19:19:50  gtkwave
  * more hier_pfx code movement into hierpack.c
  *

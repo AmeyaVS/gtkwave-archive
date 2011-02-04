@@ -422,8 +422,11 @@ void ghw_disp_types (struct ghw_handler *h);
 #endif /* _GHWLIB_H_ */
 
 /*
- * $Id$
- * $Log$
+ * $Id: ghwlib.h,v 1.7 2010/04/27 23:10:56 gtkwave Exp $
+ * $Log: ghwlib.h,v $
+ * Revision 1.7  2010/04/27 23:10:56  gtkwave
+ * made inttype.h inclusion conditional
+ *
  * Revision 1.6  2010/04/25 01:04:21  gtkwave
  * typo fix
  *

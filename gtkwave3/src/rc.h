@@ -119,8 +119,11 @@ int  f_zoom_pow10_snap (char *str);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: rc.h,v 1.5 2010/01/22 02:10:49 gtkwave Exp $
+ * $Log: rc.h,v $
+ * Revision 1.5  2010/01/22 02:10:49  gtkwave
+ * added second pattern search capability
+ *
  * Revision 1.4  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

@@ -209,8 +209,11 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: tree_widget.c,v 1.10 2010/06/23 05:40:48 gtkwave Exp $
+ * $Log: tree_widget.c,v $
+ * Revision 1.10  2010/06/23 05:40:48  gtkwave
+ * added dnd from gtkwave into rtlbrowse
+ *
  * Revision 1.9  2008/12/20 05:45:03  gtkwave
  * gtk1 compatibility and -Wshadow warning fixes
  *

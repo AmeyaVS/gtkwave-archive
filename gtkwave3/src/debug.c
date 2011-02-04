@@ -570,8 +570,11 @@ return(tmpspace);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: debug.c,v 1.18 2010/11/19 06:47:16 gtkwave Exp $
+ * $Log: debug.c,v $
+ * Revision 1.18  2010/11/19 06:47:16  gtkwave
+ * use PJE0 macro for unuser error return on judy function calls
+ *
  * Revision 1.17  2010/09/16 05:05:16  gtkwave
  * dummy up sparse vs regular array handling
  *

@@ -120,8 +120,11 @@ return(stripspaces(s));
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: fgetdynamic.c,v 1.5 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: fgetdynamic.c,v $
+ * Revision 1.5  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.4  2009/12/15 23:40:59  gtkwave
  * removed old style scripts; also removed tempfiles for Tcl args
  *

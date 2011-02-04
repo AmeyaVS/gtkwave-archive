@@ -20,8 +20,11 @@ GdkGC *alloc_color(GtkWidget *widget, int tuple, GdkGC *fallback);	/* tuple is e
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: color.h,v 1.2 2007/08/26 21:35:40 gtkwave Exp $
+ * $Log: color.h,v $
+ * Revision 1.2  2007/08/26 21:35:40  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.2  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

@@ -52,8 +52,11 @@ void pipeio_destroy(struct pipe_ctx *p);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: pipeio.h,v 1.4 2010/08/25 22:58:23 gtkwave Exp $
+ * $Log: pipeio.h,v $
+ * Revision 1.4  2010/08/25 22:58:23  gtkwave
+ * added process file support for mingw
+ *
  * Revision 1.3  2009/09/14 03:00:08  gtkwave
  * bluespec code integration
  *

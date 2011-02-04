@@ -323,8 +323,11 @@ return(rc);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: lxt2miner.c,v 1.6 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: lxt2miner.c,v $
+ * Revision 1.6  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.5  2009/04/27 21:26:34  gtkwave
  * printf format string warning fixes
  *

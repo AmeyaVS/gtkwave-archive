@@ -287,8 +287,11 @@ char *				vzt_rd_value(struct vzt_rd_trace *lt, vztint64_t simtime, vztint32_t f
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: vzt_read.h,v 1.7 2010/05/27 06:49:31 gtkwave Exp $
+ * $Log: vzt_read.h,v $
+ * Revision 1.7  2010/05/27 06:49:31  gtkwave
+ * printf warnings fixes
+ *
  * Revision 1.6  2010/04/27 23:10:56  gtkwave
  * made inttype.h inclusion conditional
  *

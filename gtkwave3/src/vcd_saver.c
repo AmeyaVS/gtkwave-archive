@@ -686,7 +686,11 @@ for(;;)
 				}
 				else
 				{
+#ifdef WAVE_HAS_H_DOUBLE
+				double *d = &GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_double;
+#else
 				double *d = (double *)GLOBALS->hp_vcd_saver_c_1[0]->hist->v.h_vector;
+#endif
                                 double value;
 
 				if(!d)
@@ -1143,7 +1147,11 @@ if(h->flags&HIST_REAL)
 	{
         if(!(h->flags&HIST_STRING))
         	{               
+#ifdef WAVE_HAS_H_DOUBLE
+                ascii=convert_ascii_real(t, &h->v.h_double);
+#else
                 ascii=convert_ascii_real(t, (double *)h->v.h_vector);
+#endif
                 }
                 else
                 {
@@ -1550,8 +1558,11 @@ return(errno ? VCDSAV_FILE_ERROR : VCDSAV_OK);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vcd_saver.c,v 1.22 2010/12/19 07:59:10 gtkwave Exp $
+ * $Log: vcd_saver.c,v $
+ * Revision 1.22  2010/12/19 07:59:10  gtkwave
+ * warnings fixes
+ *
  * Revision 1.21  2010/12/12 18:32:45  gtkwave
  * add "string" variable type to parsing of vcd variable declarations
  *

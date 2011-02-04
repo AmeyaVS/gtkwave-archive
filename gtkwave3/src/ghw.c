@@ -790,6 +790,9 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
   union ghw_type *sig_type = sig->type;
   int flags;
   int is_vector = 0;
+#ifdef WAVE_HAS_H_DOUBLE
+  int is_double = 0;
+#endif
 
   if (sig_type == NULL)
     return;
@@ -881,10 +884,15 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       break;
     case ghdl_rtik_type_f64:
       {
+#ifdef WAVE_HAS_H_DOUBLE
+        he->v.h_double = sig->val->f64;
+        is_double = 1;
+#else
 	double *d = malloc_2(sizeof (double));
 	*d = sig->val->f64;
 	he->v.h_vector = (char *)d;
         is_vector = 1;
+#endif
       }
       break;
     case ghdl_rtik_type_i32:
@@ -906,13 +914,31 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
     /* deglitch */
     if(n->curr->time == he->time)
 	{
-        GLOBALS->num_glitches_ghw_c_1++;
+	int gl_add = 0;
+
+	if(n->curr->time) /* filter out time zero glitches */
+		{
+		gl_add = 1;
+		}
+
+        GLOBALS->num_glitches_ghw_c_1 += gl_add;
+
 	if(!(n->curr->flags&HIST_GLITCH))
         	{
-                n->curr->flags|=HIST_GLITCH;    /* set the glitch flag */
-                GLOBALS->num_glitch_regions_ghw_c_1++;
+		if(gl_add)
+			{
+	                n->curr->flags|=HIST_GLITCH;    /* set the glitch flag */
+	                GLOBALS->num_glitch_regions_ghw_c_1++;
+			}
                 }
 
+#ifdef WAVE_HAS_H_DOUBLE
+	if(is_double)
+		{
+		n->curr->v.h_double = he->v.h_double;
+		}
+	else
+#endif
         if(is_vector)
                 {
                 if(n->curr->v.h_vector &&
@@ -1134,8 +1160,11 @@ ghw_main(char *fname)
 /*******************************************************************************/
 
 /*
- * $Id$
- * $Log$
+ * $Id: ghw.c,v 1.16 2011/01/19 06:36:31 gtkwave Exp $
+ * $Log: ghw.c,v $
+ * Revision 1.16  2011/01/19 06:36:31  gtkwave
+ * added tree allocation pool when misaligned structs are enabled
+ *
  * Revision 1.15  2011/01/17 19:24:21  gtkwave
  * tree modifications to support decorated internal hierarchy nodes
  *

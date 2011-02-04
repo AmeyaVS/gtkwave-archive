@@ -132,8 +132,11 @@ if(mreg)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: regex.c,v 1.3 2008/05/29 15:54:16 gtkwave Exp $
+ * $Log: regex.c,v $
+ * Revision 1.3  2008/05/29 15:54:16  gtkwave
+ * added HAVE_BZERO patches for MinGW
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

@@ -526,10 +526,13 @@ return(AddNodeTraceReturn(nd, aliasname, NULL));
 /* add multiple nodes (if array) */
 int AddNodeUnroll(nptr nd, char *aliasname)
 {
+#ifdef WAVE_ARRAY_SUPPORT
 if(nd->array_height <= 1)
+#endif
 	{
 	return(AddNodeTraceReturn(nd, aliasname, NULL));
 	}
+#ifdef WAVE_ARRAY_SUPPORT
 	else
 	{
 	int i;
@@ -541,6 +544,7 @@ if(nd->array_height <= 1)
 		}
 	return(rc);
 	}
+#endif
 }
 
 
@@ -1522,8 +1526,11 @@ if((underflow_sticky) || (oc_cnt > 0))
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: analyzer.c,v 1.32 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: analyzer.c,v $
+ * Revision 1.32  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.31  2010/09/10 05:58:40  gtkwave
  * structor reordering of VectorEnt to benefit 32-bit architectures
  *

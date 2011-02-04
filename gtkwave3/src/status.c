@@ -169,8 +169,12 @@ return(table);
 }
    
 /*
- * $Id$
- * $Log$
+ * $Id: status.c,v 1.7 2010/08/03 01:37:26 gtkwave Exp $
+ * $Log: status.c,v $
+ * Revision 1.7  2010/08/03 01:37:26  gtkwave
+ * added gtkwave::cbFromEntryUpdated, gtkwave::cbToEntryUpdated
+ * and gtkwave::cbStatusText.
+ *
  * Revision 1.6  2008/02/12 23:35:42  gtkwave
  * preparing for 3.1.5 revision bump
  *

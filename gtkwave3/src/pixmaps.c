@@ -5256,8 +5256,11 @@ gtk_window_set_icon(GTK_WINDOW(window), gp);
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: pixmaps.c,v 1.12 2009/09/22 13:51:14 gtkwave Exp $
+ * $Log: pixmaps.c,v $
+ * Revision 1.12  2009/09/22 13:51:14  gtkwave
+ * warnings fixes
+ *
  * Revision 1.11  2009/08/11 22:08:58  gtkwave
  * added iconify for gtkwave
  *

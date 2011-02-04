@@ -263,8 +263,11 @@ void showchange(char *title, Trptr t, GtkSignalFunc func)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: showchange.c,v 1.5 2010/05/27 06:07:24 gtkwave Exp $
+ * $Log: showchange.c,v $
+ * Revision 1.5  2010/05/27 06:07:24  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.4  2007/09/12 17:26:45  gtkwave
  * experimental ctx_swap_watchdog added...still tracking down mouse thrash crashes
  *

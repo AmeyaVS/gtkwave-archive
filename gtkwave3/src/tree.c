@@ -808,8 +808,11 @@ if(!GLOBALS->hier_grouping)
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: tree.c,v 1.16 2011/01/23 21:55:54 gtkwave Exp $
+ * $Log: tree.c,v $
+ * Revision 1.16  2011/01/23 21:55:54  gtkwave
+ * more optimizations
+ *
  * Revision 1.15  2011/01/21 22:40:28  gtkwave
  * pass string lengths from api directly to code to avoid length calculations
  *

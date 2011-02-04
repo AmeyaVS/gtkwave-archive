@@ -535,7 +535,7 @@ if(GLOBALS->zfacgeometry_size_lxt_c_1)
 
 for(i=0;i<GLOBALS->numfacs;i++)
 	{
-	GLOBALS->mvlfacs_lxt_c_2[i].array_height=get_32(offs);
+	GLOBALS->mvlfacs_lxt_c_2[i].node_alias=get_32(offs);
 	node_block[i].msi=get_32(offs+4);
 	node_block[i].lsi=get_32(offs+8);
 	GLOBALS->mvlfacs_lxt_c_2[i].flags=get_32(offs+12);
@@ -1052,7 +1052,7 @@ if(!GLOBALS->sync_table_offset_lxt_c_1)
 
 		offscache2 = offs;
 
-		height = GLOBALS->mvlfacs_lxt_c_2[facidx].array_height;
+		height = GLOBALS->mvlfacs_lxt_c_2[facidx].node_alias;
 		if(height)
 			{
 			if(height >= 256*65536)       
@@ -1595,12 +1595,12 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
 	if(GLOBALS->mvlfacs_lxt_c_2[i].flags&LT_SYM_F_ALIAS)
 		{
-		int alias = GLOBALS->mvlfacs_lxt_c_2[i].array_height;
+		int alias = GLOBALS->mvlfacs_lxt_c_2[i].node_alias;
 		f=GLOBALS->mvlfacs_lxt_c_2+alias;
 
 		while(f->flags&LT_SYM_F_ALIAS)
 			{
-			f=GLOBALS->mvlfacs_lxt_c_2+f->array_height;
+			f=GLOBALS->mvlfacs_lxt_c_2+f->node_alias;
 			}
 		}
 		else
@@ -1846,7 +1846,7 @@ if(!(f=np->mv.mvlfac)) return;	/* already imported */
 
 if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
 	{
-	int alias = np->mv.mvlfac->array_height;
+	int alias = np->mv.mvlfac->node_alias;
 	f=GLOBALS->mvlfacs_lxt_c_2+alias;
 
 	if(GLOBALS->resolve_lxt_alias_to[alias])
@@ -1860,15 +1860,15 @@ if(np->mv.mvlfac->flags&LT_SYM_F_ALIAS)
 
 	while(f->flags&LT_SYM_F_ALIAS)
 		{
-		f=GLOBALS->mvlfacs_lxt_c_2+f->array_height;
+		f=GLOBALS->mvlfacs_lxt_c_2+f->node_alias;
 
-		if(GLOBALS->resolve_lxt_alias_to[f->array_height])
+		if(GLOBALS->resolve_lxt_alias_to[f->node_alias])
 			{
-			if(!GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2]) GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2] = GLOBALS->resolve_lxt_alias_to[f->array_height];
+			if(!GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2]) GLOBALS->resolve_lxt_alias_to[np->mv.mvlfac - GLOBALS->mvlfacs_lxt_c_2] = GLOBALS->resolve_lxt_alias_to[f->node_alias];
 			}
 			else
 			{
-			GLOBALS->resolve_lxt_alias_to[f->array_height] = np; 
+			GLOBALS->resolve_lxt_alias_to[f->node_alias] = np; 
 			}
 		}
 	}
@@ -1914,7 +1914,7 @@ histent_head->next = htemp;	/* x */
 
 np->numhist=2;
 
-if(f->array_height < 1)	/* sorry, arrays not supported */
+if(f->node_alias < 1)	/* sorry, arrays not supported */
 while(offs)
 	{
 	unsigned char val = 0;
@@ -2235,13 +2235,23 @@ while(offs)
 
 			if(GLOBALS->double_is_native_lxt_c_1)
 				{
+#ifdef WAVE_HAS_H_DOUBLE
+				memcpy(&htemp->v.h_double, ((char *)GLOBALS->mm_lxt_c_1+offs_dbl), sizeof(double));
+#else
 				htemp->v.h_vector = ((char *)GLOBALS->mm_lxt_c_1+offs_dbl);
 				DEBUG(printf(LXTHDR"Added double '%.16g'\n", *((double *)(GLOBALS->mm_lxt_c_1+offs_dbl))));
+#endif
 				}
 				else
 				{
+#ifdef WAVE_HAS_H_DOUBLE
+				double *h_d = (double *)swab_double_via_mask(offs_dbl);
+				htemp->v.h_double = *h_d;
+				free_2(h_d);
+#else
 				htemp->v.h_vector = swab_double_via_mask(offs_dbl);
 				DEBUG(printf(LXTHDR"Added bytefixed double '%.16g'\n", *((double *)(htemp->v.h_vector))));
+#endif
 				}
 			htemp->time = tmval;
 			htemp->next = histent_head;
@@ -2367,8 +2377,11 @@ np->numhist++;
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: lxt.c,v 1.24 2011/01/21 15:49:52 gtkwave Exp $
+ * $Log: lxt.c,v $
+ * Revision 1.24  2011/01/21 15:49:52  gtkwave
+ * simplify strand coalesce routine and make same as FST's
+ *
  * Revision 1.23  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

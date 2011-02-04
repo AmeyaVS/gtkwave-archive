@@ -21,8 +21,11 @@ extern AE2_HANDLE ae2;
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: wavelink.h,v 1.3 2009/06/13 22:02:18 gtkwave Exp $
+ * $Log: wavelink.h,v $
+ * Revision 1.3  2009/06/13 22:02:18  gtkwave
+ * beginning to add FST support to rtlbrowse
+ *
  * Revision 1.2  2007/08/26 21:35:39  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

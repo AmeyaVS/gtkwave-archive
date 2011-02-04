@@ -318,8 +318,11 @@ return(255);
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: shmidcat.c,v 1.9 2011/01/14 16:23:18 gtkwave Exp $
+ * $Log: shmidcat.c,v $
+ * Revision 1.9  2011/01/14 16:23:18  gtkwave
+ * modified to exit on EOF
+ *
  * Revision 1.8  2009/12/22 19:57:26  gtkwave
  * warnings fixes on postincrement p++
  *

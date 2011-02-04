@@ -1735,8 +1735,11 @@ return(blk);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: lxt2_read.c,v 1.6 2010/10/25 17:56:49 gtkwave Exp $
+ * $Log: lxt2_read.c,v $
+ * Revision 1.6  2010/10/25 17:56:49  gtkwave
+ * give x86_64 priority over 386 for inline assembly
+ *
  * Revision 1.5  2010/10/25 17:50:42  gtkwave
  * add conditional compiles for inline assembly code (can disable)
  *

@@ -854,7 +854,11 @@ while(s)
 				{
 				if(!(s->his.h->flags&HIST_STRING))
 					{
+#ifdef WAVE_HAS_H_DOUBLE
+					chval=convert_ascii_real(t, &s->his.h->v.h_double);
+#else
 					chval=convert_ascii_real(t, (double *)s->his.h->v.h_vector);
+#endif
 					}
 					else
 					{
@@ -1218,7 +1222,11 @@ while(s)
 				{
 				if(!(s->his.h->flags&HIST_STRING))
 					{
+#ifdef WAVE_HAS_H_DOUBLE
+					chval=convert_ascii_real(t, &s->his.h->v.h_double);
+#else
 					chval=convert_ascii_real(t, (double *)s->his.h->v.h_vector);
+#endif
 					}
 					else
 					{
@@ -1729,8 +1737,11 @@ if(GLOBALS->strace_ctx->timearray)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: strace.c,v 1.24 2011/01/13 17:20:39 gtkwave Exp $
+ * $Log: strace.c,v $
+ * Revision 1.24  2011/01/13 17:20:39  gtkwave
+ * rewrote hierarchy / facility packing code
+ *
  * Revision 1.23  2010/10/02 18:58:55  gtkwave
  * ctype.h compiler warning fixes (char vs int)
  *

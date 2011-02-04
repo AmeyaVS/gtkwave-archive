@@ -991,8 +991,11 @@ return;
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: rc.c,v 1.27 2010/12/30 09:22:00 gtkwave Exp $
+ * $Log: rc.c,v $
+ * Revision 1.27  2010/12/30 09:22:00  gtkwave
+ * added userprofile patch for win32
+ *
  * Revision 1.26  2010/10/26 17:37:35  gtkwave
  * added initial_signal_window_width rc variable
  *

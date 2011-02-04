@@ -432,8 +432,11 @@ return(rc);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: vzt2vcd.c,v 1.8 2009/06/14 19:26:14 gtkwave Exp $
+ * $Log: vzt2vcd.c,v $
+ * Revision 1.8  2009/06/14 19:26:14  gtkwave
+ * fix short description (-l should be -v)
+ *
  * Revision 1.7  2009/04/30 19:18:41  gtkwave
  * added space before final brackets in VCD writers
  *

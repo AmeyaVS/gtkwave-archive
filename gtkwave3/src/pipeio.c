@@ -191,8 +191,11 @@ free_2(p);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: pipeio.c,v 1.7 2010/08/26 18:42:23 gtkwave Exp $
+ * $Log: pipeio.c,v $
+ * Revision 1.7  2010/08/26 18:42:23  gtkwave
+ * added support for transaction filters in mingw
+ *
  * Revision 1.6  2010/08/26 00:40:29  gtkwave
  * updated filter failure so it is non-fatal on mingw
  *

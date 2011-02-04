@@ -202,8 +202,11 @@ return(strdup_2(str+ob));
 
 
 /*
- * $Id$
- * $Log$
+ * $Id: hierpack.c,v 1.8 2011/01/20 05:35:56 gtkwave Exp $
+ * $Log: hierpack.c,v $
+ * Revision 1.8  2011/01/20 05:35:56  gtkwave
+ * fast tree sort = 0 fix
+ *
  * Revision 1.7  2011/01/13 17:20:39  gtkwave
  * rewrote hierarchy / facility packing code
  *

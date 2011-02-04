@@ -91,6 +91,16 @@ void **JenkinsIns(void *base_i, unsigned char *mem, uint32_t length, uint32_t ha
 /*                   01234567 */
 
 
+/*
+ * prevent old file overwrite when currently being read
+ */
+static FILE *unlink_fopen(const char *nam, const char *mode)
+{
+unlink(nam);
+return(fopen(nam, mode));
+}
+
+
 /* 
  * to remove warn_unused_result compile time messages
  * (in the future there needs to be results checking)
@@ -701,7 +711,7 @@ struct fstWriterContext *xc = calloc(1, sizeof(struct fstWriterContext));
 
 xc->compress_hier = use_compressed_hier;
 
-if((!nam)||(!(xc->handle=fopen(nam, "w+b"))))
+if((!nam)||(!(xc->handle=unlink_fopen(nam, "w+b"))))
         {
         free(xc);
         xc=NULL;
@@ -713,7 +723,7 @@ if((!nam)||(!(xc->handle=fopen(nam, "w+b"))))
 
 	memcpy(hf, nam, flen);
 	strcpy(hf + flen, ".hier");
-	xc->hier_handle = fopen(hf, "w+b");
+	xc->hier_handle = unlink_fopen(hf, "w+b");
 
 	xc->geom_handle = tmpfile();	/* .geom */
 	xc->valpos_handle = tmpfile();	/* .offs */

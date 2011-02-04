@@ -30,8 +30,11 @@ void remove_all_proc_filters(void);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: ptranslate.h,v 1.4 2010/07/19 21:12:19 gtkwave Exp $
+ * $Log: ptranslate.h,v $
+ * Revision 1.4  2010/07/19 21:12:19  gtkwave
+ * added file/proc/trans access functions to Tcl script interpreter
+ *
  * Revision 1.3  2010/03/30 18:33:27  gtkwave
  * fixed cut and paste errors from file to proc
  *

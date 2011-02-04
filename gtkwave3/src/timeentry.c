@@ -179,8 +179,12 @@ return(mainbox);
 }
    
 /*
- * $Id$
- * $Log$
+ * $Id: timeentry.c,v 1.7 2010/08/03 01:37:26 gtkwave Exp $
+ * $Log: timeentry.c,v $
+ * Revision 1.7  2010/08/03 01:37:26  gtkwave
+ * added gtkwave::cbFromEntryUpdated, gtkwave::cbToEntryUpdated
+ * and gtkwave::cbStatusText.
+ *
  * Revision 1.6  2009/01/16 19:27:00  gtkwave
  * added more tcl commands
  *

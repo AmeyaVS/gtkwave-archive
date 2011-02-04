@@ -98,7 +98,8 @@ if(!GLOBALS->hier_grouping)
 				}
 				else
 	                        {
-	                        tmp=t2->name;
+	                        /* tmp=t2->name; */
+				goto skip_node; /* GHW */
 	                        }
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
 			pixlen=font_engine_string_measure(GLOBALS->signalfont,(gchar *)(tmp));
@@ -106,7 +107,7 @@ if(!GLOBALS->hier_grouping)
 		maxpixlen=(pixlen>maxpixlen)?pixlen:maxpixlen;		
 		gtk_clist_set_row_data(cl, row,t2); 
 		GLOBALS->num_rows_hiersearch_c_1++;
-		t2=t2->next;
+skip_node:	t2=t2->next;
 		}
 	}
 	else
@@ -151,7 +152,8 @@ if(!GLOBALS->hier_grouping)
 				}
 				else
 	                        {
-	                        tmp=t2->name;
+	                        /* tmp=t2->name; */
+				goto skip_node_2; /* GHW */
 	                        }
 
 			row=gtk_clist_prepend(cl,(gchar **)&tmp);
@@ -160,7 +162,7 @@ if(!GLOBALS->hier_grouping)
 			gtk_clist_set_row_data(cl, row,t2); 
 			GLOBALS->num_rows_hiersearch_c_1++;
                         }
-		t2=t2->next;
+skip_node_2:	t2=t2->next;
 		}
 
 	t2=t;
@@ -313,6 +315,7 @@ set_window_busy(widget);
 for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
         struct symbol *s;  
+	if(i<0) break; /* GHW */
         s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
@@ -328,6 +331,7 @@ if(GLOBALS->is_lx2)
 	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
 	        {
 	        struct symbol *s, *t;  
+		if(i<0) break; /* GHW */
 	        s=GLOBALS->facs[i];
 		t=s->vec_root;
 		if((t)&&(GLOBALS->autocoalesce))
@@ -366,6 +370,7 @@ for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLO
         {
 	int len;
         struct symbol *s, *t;  
+	if(i<0) break; /* GHW */
         s=GLOBALS->facs[i];
 	t=s->vec_root;
 	if((t)&&(GLOBALS->autocoalesce))
@@ -413,6 +418,7 @@ set_window_busy(widget);
 for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
         struct symbol *s;  
+	if(i<0) break; /* GHW */
         s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
@@ -428,6 +434,7 @@ if(GLOBALS->is_lx2)
 	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
 	        {
 	        struct symbol *s, *t;  
+		if(i<0) break; /* GHW */
 	        s=GLOBALS->facs[i];
 		t=s->vec_root;
 		if((t)&&(GLOBALS->autocoalesce))
@@ -466,6 +473,7 @@ for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLO
         {
 	int len;
         struct symbol *s, *t;  
+	if(i<0) break; /* GHW */
         s=GLOBALS->facs[i];
 	t=s->vec_root;
 	if((t)&&(GLOBALS->autocoalesce))
@@ -526,6 +534,7 @@ set_window_busy(widget);
 for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
         {
         struct symbol *s;  
+	if(i<0) break; /* GHW */
         s=GLOBALS->facs[i];
 	if(s->vec_root)
 		{
@@ -541,6 +550,7 @@ if(GLOBALS->is_lx2)
 	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
 	        {
 	        struct symbol *s, *t;  
+		if(i<0) break; /* GHW */
 	        s=GLOBALS->facs[i];
 		t=s->vec_root;
 		if((t)&&(GLOBALS->autocoalesce))
@@ -579,6 +589,7 @@ for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLO
         {
 	int len;
         struct symbol *s, *t;  
+	if(i<0) break; /* GHW */
         s=GLOBALS->facs[i];
 	t=s->vec_root;
 	if((t)&&(GLOBALS->autocoalesce))
@@ -979,8 +990,11 @@ void hier_searchbox(char *title, GtkSignalFunc func)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: hiersearch.c,v 1.10 2011/01/17 19:24:21 gtkwave Exp $
+ * $Log: hiersearch.c,v $
+ * Revision 1.10  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.9  2010/05/27 06:07:24  gtkwave
  * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
  *

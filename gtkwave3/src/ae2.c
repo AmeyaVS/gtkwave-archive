@@ -1380,8 +1380,11 @@ for(txidx=0;txidx<GLOBALS->numfacs;txidx++)
 /* ...of AET2_IS_PRESENT */
 
 /*
- * $Id$
- * $Log$
+ * $Id: ae2.c,v 1.19 2010/09/16 15:24:25 gtkwave Exp $
+ * $Log: ae2.c,v $
+ * Revision 1.19  2010/09/16 15:24:25  gtkwave
+ * non-sparse array fix
+ *
  * Revision 1.18  2010/09/16 05:05:16  gtkwave
  * dummy up sparse vs regular array handling
  *

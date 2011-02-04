@@ -2680,8 +2680,11 @@ free_vars:
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: logfile.c,v 1.36 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: logfile.c,v $
+ * Revision 1.36  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.35  2010/06/25 12:01:56  gtkwave
  * removed c++ style comment
  *

@@ -112,8 +112,11 @@ void simplereqbox(char *title, int width, char *default_text,
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: simplereq.c,v 1.7 2010/05/27 06:07:25 gtkwave Exp $
+ * $Log: simplereq.c,v $
+ * Revision 1.7  2010/05/27 06:07:25  gtkwave
+ * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
+ *
  * Revision 1.6  2009/12/15 23:40:59  gtkwave
  * removed old style scripts; also removed tempfiles for Tcl args
  *

@@ -64,8 +64,11 @@ int munmap(void *start, size_t length);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: lxt.h,v 1.2 2007/08/26 21:35:41 gtkwave Exp $
+ * $Log: lxt.h,v $
+ * Revision 1.2  2007/08/26 21:35:41  gtkwave
+ * integrated global context management from SystemOfCode2007 branch
+ *
  * Revision 1.1.1.1.2.3  2007/08/25 19:43:45  gtkwave
  * header cleanups
  *

@@ -813,8 +813,11 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: treesearch_gtk1.c,v 1.15 2011/01/17 19:24:21 gtkwave Exp $
+ * $Log: treesearch_gtk1.c,v $
+ * Revision 1.15  2011/01/17 19:24:21  gtkwave
+ * tree modifications to support decorated internal hierarchy nodes
+ *
  * Revision 1.14  2010/05/27 06:07:25  gtkwave
  * Moved gtk_grab_add() after gtk_widget_show() as newer gtk needs that order.
  *

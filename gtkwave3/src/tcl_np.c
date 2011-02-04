@@ -769,8 +769,11 @@ static void dummy_compilation_unit(void)
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: tcl_np.c,v 1.12 2010/02/09 16:42:48 gtkwave Exp $
+ * $Log: tcl_np.c,v $
+ * Revision 1.12  2010/02/09 16:42:48  gtkwave
+ * Replaced Tcl_GetStringResult() with Tcl_GetVar() on Tk init fail.
+ *
  * Revision 1.11  2009/12/24 20:55:27  gtkwave
  * warnings cleanups
  *

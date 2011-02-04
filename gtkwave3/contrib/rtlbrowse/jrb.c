@@ -607,8 +607,11 @@ JRB jrb_insert_gen(JRB tree, Jval key, Jval val,
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: jrb.c,v 1.2 2009/12/24 20:55:27 gtkwave Exp $
+ * $Log: jrb.c,v $
+ * Revision 1.2  2009/12/24 20:55:27  gtkwave
+ * warnings cleanups
+ *
  * Revision 1.1.1.1  2007/05/30 04:25:40  gtkwave
  * Imported sources
  *

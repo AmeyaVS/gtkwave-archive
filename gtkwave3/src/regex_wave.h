@@ -24,8 +24,11 @@ void wave_regex_alloc_free(void *pnt);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: regex_wave.h,v 1.3 2008/09/22 03:27:03 gtkwave Exp $
+ * $Log: regex_wave.h,v $
+ * Revision 1.3  2008/09/22 03:27:03  gtkwave
+ * more DND adds
+ *
  * Revision 1.2  2007/08/26 21:35:44  gtkwave
  * integrated global context management from SystemOfCode2007 branch
  *

@@ -174,8 +174,11 @@ void print_concat(struct i_primary *c, struct i_explist *e);
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: inter.h,v 1.3 2009/01/13 22:39:24 gtkwave Exp $
+ * $Log: inter.h,v $
+ * Revision 1.3  2009/01/13 22:39:24  gtkwave
+ * compile fixes for mingw
+ *
  * Revision 1.2  2007/11/25 01:42:36  gtkwave
  * added named parameter support to module instantiations in the vermin
  * parser.  (this is a verilog 2001 feature.)

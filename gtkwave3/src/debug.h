@@ -84,12 +84,6 @@
 #define DEBUG(x)
 #endif
 
-#ifdef DEBUG_MALLOC
-#define DEBUG_M(x) x
-#else
-#define DEBUG_M(x)
-#endif
-
 
 #ifdef DEBUG_MALLOC_LINES
 void free_2(void *ptr, char *filename, int lineno);
@@ -201,8 +195,11 @@ unsigned viewer_is_initialized : 1;
 #endif
 
 /*
- * $Id$
- * $Log$
+ * $Id: debug.h,v 1.14 2010/10/06 20:15:51 gtkwave Exp $
+ * $Log: debug.h,v $
+ * Revision 1.14  2010/10/06 20:15:51  gtkwave
+ * preliminary version of RPC mechanism
+ *
  * Revision 1.13  2010/09/16 04:08:55  gtkwave
  * add back in memory debugging printfs and defines
  *

@@ -322,8 +322,11 @@ if(!GLOBALS->facs_are_sorted)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: symbol.c,v 1.13 2010/11/19 06:47:16 gtkwave Exp $
+ * $Log: symbol.c,v $
+ * Revision 1.13  2010/11/19 06:47:16  gtkwave
+ * use PJE0 macro for unuser error return on judy function calls
+ *
  * Revision 1.12  2010/03/18 17:12:37  gtkwave
  * pedantic warning cleanups
  *

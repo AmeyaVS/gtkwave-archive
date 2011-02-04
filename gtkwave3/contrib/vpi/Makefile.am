@@ -21,7 +21,6 @@ libsysvzt_la_SOURCES= ../../src/libz/adler32.c ../../src/libz/compress.c ../../s
 	../../src/libz/inffast.h ../../src/libz/inffixed.h ../../src/libz/inflate.c ../../src/libz/inflate.h \
 	../../src/libz/inftrees.c ../../src/libz/inftrees.h ../../src/libz/trees.c ../../src/libz/trees.h ../../src/libz/uncompr.c \
 	../../src/libz/zconf.h ../../src/libz/zlib.h ../../src/libz/zutil.c ../../src/libz/zutil.h \
-	../../src/helpers/lxt_write.h ../../src/helpers/lxt_write.c \
 	../../src/helpers/fst/fstapi.c ../../src/helpers/fst/fstapi.h ../../src/helpers/fst/fastlz.c ../../src/helpers/fst/fastlz.h \
 	sys_fst.c
 

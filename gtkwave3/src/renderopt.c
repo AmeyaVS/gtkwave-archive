@@ -379,8 +379,11 @@ void renderbox(char *title)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: renderopt.c,v 1.11 2009/12/15 23:40:59 gtkwave Exp $
+ * $Log: renderopt.c,v $
+ * Revision 1.11  2009/12/15 23:40:59  gtkwave
+ * removed old style scripts; also removed tempfiles for Tcl args
+ *
  * Revision 1.10  2009/05/21 04:04:10  gtkwave
  * crash fixes introduced by ps2pdf addition
  *

@@ -988,8 +988,11 @@ if(ics)
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: preproc.c,v 1.5 2010/10/02 18:58:55 gtkwave Exp $
+ * $Log: preproc.c,v $
+ * Revision 1.5  2010/10/02 18:58:55  gtkwave
+ * ctype.h compiler warning fixes (char vs int)
+ *
  * Revision 1.4  2010/07/22 21:03:08  gtkwave
  * update preprocessor handling for ifdef stack
  *

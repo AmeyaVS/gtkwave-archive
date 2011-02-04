@@ -1714,8 +1714,11 @@ return(retval);
 }
 
 /*
- * $Id$
- * $Log$
+ * $Id: baseconvert.c,v 1.18 2010/08/25 22:58:23 gtkwave Exp $
+ * $Log: baseconvert.c,v $
+ * Revision 1.18  2010/08/25 22:58:23  gtkwave
+ * added process file support for mingw
+ *
  * Revision 1.17  2010/06/23 05:45:34  gtkwave
  * warnings fixes
  *
