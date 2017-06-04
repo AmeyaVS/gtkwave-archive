@@ -259,6 +259,8 @@ NULL, /* extload_prevsym */
 0, /* extload_vd_prev */
 0, /* f_name_build_buf_len */
 NULL, /* f_name_build_buf */
+0, /* extload_max_tree */
+0, /* extload_curr_tree */
 
 
 /*
@@ -1874,6 +1876,7 @@ void reload_into_new_context_2(void)
  new_globals->paned_pack_semantics = GLOBALS->paned_pack_semantics;
  new_globals->left_justify_sigs = GLOBALS->left_justify_sigs;
  new_globals->lxt_clock_compress_to_z = GLOBALS->lxt_clock_compress_to_z;
+ new_globals->extload_max_tree = GLOBALS->extload_max_tree;
  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
  new_globals->show_base = GLOBALS->show_base;
  new_globals->display_grid = GLOBALS->display_grid;

@@ -458,6 +458,16 @@ GLOBALS->lxt_clock_compress_to_z=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_max_fsdb_trees(char *str)
+{
+int val;
+DEBUG(printf("f_max_fsdb_trees(\"%s\")\n",str));
+val=atoi_64(str);
+GLOBALS->extload_max_tree=(val<0)?0:val;
+return(0);
+}
+
+
 int f_page_divisor(char *str)
 {
 DEBUG(printf("f_page_divisor(\"%s\")\n",str));
@@ -907,6 +917,7 @@ static struct rc_entry rcitems[]=
 { "keep_xz_colors", f_keep_xz_colors },
 { "left_justify_sigs", f_left_justify_sigs },
 { "lxt_clock_compress_to_z", f_lxt_clock_compress_to_z },
+{ "max_fsdb_trees", f_max_fsdb_trees },
 { "page_divisor", f_page_divisor },
 { "ps_maxveclen", f_ps_maxveclen },
 { "ruler_origin", f_ruler_origin },

@@ -283,7 +283,10 @@ When nonzero, indicates that the signal window signal name justification should 
 .TP 
 \fBlxt_clock_compress_to_z\fR <\fIvalue\fP>
 For LXT (not LXT2) allows clocks to compress to a 'z' value so that regular/periodic value changes may be noted.
-.TP 
+.TP
+\fBmax_fsdb_trees\fR <\fIvalue\fP>
+sets the maximum number of hierarchy and signal trees to process for an FSDB file.  Default = 0 = unlimited.  The intent of this is to work around sim environments that accidentally call fsdbDumpVars multiple times. 
+.TP
 \fBpage_divisor\fR <\fIvalue\fP>
 Sets the scroll amount for page left and right operations. (The buttons, not the hscrollbar.) Values over 1.0 are taken as 1/x and values equal to and less than 1.0 are taken literally. (i.e., 2 gives a half-page scroll and .67 gives 2/3). The default is 1.0.
 .TP 

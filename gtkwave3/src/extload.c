@@ -891,17 +891,45 @@ GLOBALS->extload_i++;
 #ifdef WAVE_FSDB_READER_IS_PRESENT
 static void extload_hiertree_callback(void *pnt)
 {
+static int tree_end = 0;
+
 char *s = (char *)pnt;
 
-switch(s[0])
+if((GLOBALS->extload_curr_tree < GLOBALS->extload_max_tree) || (!GLOBALS->extload_max_tree))
 	{
-	case 'S':
-	case 'U': 	get_varname(s, NULL, NULL, -1);
-			GLOBALS->extload_hlen = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
-			break;
+	switch(s[0])
+		{
+		case 'S':
+		case 'U': 	get_varname(s, NULL, NULL, -1);
+				GLOBALS->extload_hlen = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
+				break;
+	
+		case 'V':	process_extload_variable(s);
+				break;
+	
+		case 'E':
+	                {
+			GLOBALS->extload_curr_tree++;
+			fprintf(stderr, EXTLOAD"End tree #%d: %d vs %d symbols\n", GLOBALS->extload_curr_tree, GLOBALS->extload_i + 1, GLOBALS->numfacs); //
+			if((GLOBALS->extload_curr_tree == GLOBALS->extload_max_tree) && (GLOBALS->extload_max_tree))
+				{
+				if(GLOBALS->numfacs > (GLOBALS->extload_i + 1))
+					{
+					fprintf(stderr, EXTLOAD"Max tree count of %d processed, freeing extra memory.\n", GLOBALS->extload_max_tree);
+					GLOBALS->numfacs = GLOBALS->extload_i + 1;
 
-	case 'V':	process_extload_variable(s);
-	default:	break;
+					/* make sure these match the corresponding calloc_2 in extload_main_2! */
+					GLOBALS->mvlfacs_vzt_c_3=(struct fac *)realloc_2(GLOBALS->mvlfacs_vzt_c_3, GLOBALS->numfacs * sizeof(struct fac));
+					GLOBALS->vzt_table_vzt_c_1=(struct lx2_entry *)realloc_2(GLOBALS->vzt_table_vzt_c_1, GLOBALS->numfacs * sizeof(struct lx2_entry));
+					GLOBALS->extload_sym_block = (struct symbol *)realloc_2(GLOBALS->extload_sym_block, GLOBALS->numfacs * sizeof(struct symbol));
+					GLOBALS->extload_node_block=(struct Node *)realloc_2(GLOBALS->extload_node_block, GLOBALS->numfacs * sizeof(struct Node));
+					GLOBALS->extload_idcodes=(unsigned int *)realloc_2(GLOBALS->extload_idcodes, GLOBALS->numfacs * sizeof(unsigned int));
+					}
+				}
+			}
+	
+		default:	break;
+		}
 	}
 }
 #endif
@@ -1142,6 +1170,7 @@ if(msk != (1+2+4+8+16+32))
 GLOBALS->min_time *= GLOBALS->time_scale;
 GLOBALS->max_time *= GLOBALS->time_scale;
 
+/* make sure these match the corresponding realloc_2 in extload_hiertree_callback! */
 GLOBALS->mvlfacs_vzt_c_3=(struct fac *)calloc_2(GLOBALS->numfacs,sizeof(struct fac));
 GLOBALS->vzt_table_vzt_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof(struct lx2_entry));
 GLOBALS->extload_namecache=(char **)calloc_2(F_NAME_MODULUS+1, sizeof(char *));

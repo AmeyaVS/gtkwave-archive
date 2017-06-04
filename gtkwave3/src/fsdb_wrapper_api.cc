@@ -816,7 +816,8 @@ switch (cb_type)
 		break;
 
     	case FSDB_TREE_CBT_END_TREE:
-		/* fprintf(stderr, "End Tree:\n"); */
+		strcpy(bf, "End Tree:");
+		cb(bf);
 		break;
 
 	case FSDB_TREE_CBT_STRUCT_BEGIN:
