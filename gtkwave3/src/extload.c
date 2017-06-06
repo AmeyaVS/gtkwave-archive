@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2009-2015.
+ * Copyright (c) Tony Bybell 2009-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -910,7 +910,7 @@ if((GLOBALS->extload_curr_tree < GLOBALS->extload_max_tree) || (!GLOBALS->extloa
 		case 'E':
 	                {
 			GLOBALS->extload_curr_tree++;
-			fprintf(stderr, EXTLOAD"End tree #%d: %d vs %d symbols\n", GLOBALS->extload_curr_tree, GLOBALS->extload_i + 1, GLOBALS->numfacs); //
+			fprintf(stderr, EXTLOAD"End tree #%d: %d vs %d symbols\n", GLOBALS->extload_curr_tree, GLOBALS->extload_i + 1, GLOBALS->numfacs);
 			if((GLOBALS->extload_curr_tree == GLOBALS->extload_max_tree) && (GLOBALS->extload_max_tree))
 				{
 				if(GLOBALS->numfacs > (GLOBALS->extload_i + 1))
