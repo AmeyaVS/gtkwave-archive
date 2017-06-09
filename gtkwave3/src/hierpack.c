@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2008-2011.
+ * Copyright (c) Tony Bybell 2008-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -11,7 +11,7 @@
 
 #define VLI_SIZE (10)
 
-void out_c(unsigned char ch)
+static void out_c(unsigned char ch)
 {
 if((GLOBALS->fmem_buf_offs+1) >= GLOBALS->fmem_buf_siz)
 	{
