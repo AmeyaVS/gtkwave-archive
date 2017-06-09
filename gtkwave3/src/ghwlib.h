@@ -1,5 +1,5 @@
 /*  GHDL Wavefile reader library.
-    Copyright (C) 2005-2012 Tristan Gingold
+    Copyright (C) 2005-2017 Tristan Gingold
 
     GHDL is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free
@@ -13,8 +13,8 @@
 
     You should have received a copy of the GNU General Public License
     along with GCC; see the file COPYING.  If not, write to the Free
-    Software Foundation, 51 Franklin Street - Suite 500, Boston, MA
-    02110-1335, USA.
+    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+    02111-1307, USA.
 */
 
 
@@ -24,27 +24,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#define GHWLLD "%"PRId64
-#define GHWLD  "%"PRId32
+#ifdef HAVE_CONFIG_H
+#include "config.h"
 #endif
 
+/* The ghwlib uses the standard c99 int32_t and int64_t.  They are declared
+   in stdint.h.  Header inttypes.h includes stdint.h and provides macro for
+   printf and co specifiers.  Use it if known to be available.  */
 
-#ifndef GHWLLD
-#if HAVE_STDINT_H
-#include <stdint.h>
-#if __WORDSIZE == 64
-	#define GHWLLD "%ld"
-	#define GHWLD "%d"
+#if defined(__cplusplus) \
+  || (defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)) \
+  || defined(HAVE_INTTYPES_H)
+/* Use C99 standard header.  */
+# include <inttypes.h>
+# define GHWPRI64 "%"PRId64
+# define GHWPRI32 "%"PRId32
 #else
-	#define GHWLLD "%lld"
-	#define GHWLD "%ld"
+# include <stdint.h>
+# define GHWPRI64 "%lld"
+# define GHWPRI32 "%d"
 #endif
-#endif
-#endif
-
 
 enum ghdl_rtik {
   ghdl_rtik_top,		/* 0  */
@@ -83,8 +82,8 @@ enum ghdl_rtik {
   ghdl_rtik_type_file,
   ghdl_rtik_subtype_scalar,
   ghdl_rtik_subtype_array,	/* 35 */
-  ghdl_rtik_subtype_array_ptr,
-  ghdl_rtik_subtype_unconstrained_array,
+  ghdl_rtik_subtype_array_ptr,             /* Obsolete.  */
+  ghdl_rtik_subtype_unconstrained_array,   /* Obsolete.  */
   ghdl_rtik_subtype_record,
   ghdl_rtik_subtype_access,
   ghdl_rtik_type_protected,
@@ -106,7 +105,7 @@ enum ghw_wkt_type {
 
 struct ghw_range_b2
 {
-  unsigned kind : 8;
+  enum ghdl_rtik kind : 8;
   int dir : 8; /* 0: to, !0: downto.  */
   unsigned char left;
   unsigned char right;
@@ -114,7 +113,7 @@ struct ghw_range_b2
 
 struct ghw_range_e8
 {
-  unsigned kind : 8;
+  enum ghdl_rtik kind : 8;
   int dir : 8; /* 0: to, !0: downto.  */
   unsigned char left;
   unsigned char right;
@@ -122,7 +121,7 @@ struct ghw_range_e8
 
 struct ghw_range_i32
 {
-  unsigned kind : 8;
+  enum ghdl_rtik kind : 8;
   int dir : 8; /* 0: to, !0: downto.  */
   int32_t left;
   int32_t right;
@@ -130,7 +129,7 @@ struct ghw_range_i32
 
 struct ghw_range_i64
 {
-  unsigned kind : 8;
+  enum ghdl_rtik kind : 8;
   int dir : 8;
   int64_t left;
   int64_t right;
@@ -138,7 +137,7 @@ struct ghw_range_i64
 
 struct ghw_range_f64
 {
-  unsigned kind : 8;
+  enum ghdl_rtik kind : 8;
   int dir : 8;
   double left;
   double right;
@@ -146,11 +145,9 @@ struct ghw_range_f64
 
 union ghw_range
 {
-  unsigned kind : 8;
-  struct ghw_range_e8 e8;
-  /* PATCH-BEGIN: */
+  enum ghdl_rtik kind : 8;
   struct ghw_range_b2 b2;
-  /* PATCH-END: */
+  struct ghw_range_e8 e8;
   struct ghw_range_i32 i32;
   struct ghw_range_i64 i64;
   struct ghw_range_f64 f64;
@@ -171,7 +168,7 @@ struct ghw_type_enum
   const char *name;
 
   enum ghw_wkt_type wkt;
-  int nbr;
+  unsigned int nbr;
   const char **lits;
 };
 
@@ -200,7 +197,7 @@ struct ghw_type_array
   enum ghdl_rtik kind;
   const char *name;
 
-  int nbr_dim;
+  unsigned int nbr_dim;
   union ghw_type *el;
   union ghw_type **dims;
 };
@@ -211,7 +208,7 @@ struct ghw_subtype_array
   const char *name;
 
   struct ghw_type_array *base;
-  int nbr_el;
+  int nbr_scalars;
   union ghw_range **rngs;
 };
 
@@ -235,9 +232,19 @@ struct ghw_type_record
   enum ghdl_rtik kind;
   const char *name;
 
-  int nbr_fields;
-  int nbr_el;	/* Number of scalar signals.  */
-  struct ghw_record_element *el;
+  unsigned int nbr_fields;
+  int nbr_scalars;	/* Number of scalar elements (ie nbr of signals).  */
+  struct ghw_record_element *els;
+};
+
+struct ghw_subtype_record
+{
+  enum ghdl_rtik kind;
+  const char *name;
+
+  struct ghw_type_record *base;
+  int nbr_scalars;	/* Number of scalar elements (ie nbr of signals).  */
+  struct ghw_record_element *els;
 };
 
 union ghw_type
@@ -249,6 +256,7 @@ union ghw_type
   struct ghw_type_physical ph;
   struct ghw_subtype_scalar ss;
   struct ghw_subtype_array sa;
+  struct ghw_subtype_record sr;
   struct ghw_type_array ar;
   struct ghw_type_record rec;
 };
@@ -288,6 +296,8 @@ enum ghw_hie_kind {
   ghw_hie_port_linkage = 21
 };
 
+#define GHW_NO_SIG 0
+
 struct ghw_hie
 {
   enum ghw_hie_kind kind;
@@ -306,7 +316,7 @@ struct ghw_hie
     {
       union ghw_type *type;
       /* Array of signal elements.
-	 Last element is 0.  */
+	 Last element is GHW_NO_SIG (0).  */
       unsigned int *sigs;
     } sig;
   } u;
@@ -315,12 +325,12 @@ struct ghw_hie
 struct ghw_handler
 {
   FILE *stream;
-  unsigned stream_ispipe : 1;
-
+  /* True if STREAM was popen, else was fopen.  */
+  unsigned char stream_ispipe;
   /* True if words are big-endian.  */
-  int word_be;
-  int word_len;
-  int off_len;
+  unsigned char word_be;
+  unsigned char word_len;
+  unsigned char off_len;
   /* Minor version.  */
   int version;
 
@@ -329,20 +339,22 @@ struct ghw_handler
 
   /* String table.  */
   /* Number of strings.  */
-  int nbr_str;
+  unsigned nbr_str;
   /* Size of the strings (without nul).  */
-  int str_size;
+  unsigned str_size;
   /* String table.  */
   char **str_table;
   /* Array containing strings.  */
   char *str_content;
 
   /* Type table.  */
-  int nbr_types;
+  unsigned nbr_types;
   union ghw_type **types;
 
   /* Non-composite (or basic) signals.  */
-  int nbr_sigs;
+  unsigned nbr_sigs;
+  char *skip_sigs;
+  int flag_full_names;
   struct ghw_sig *sigs;
 
   /* Hierarchy.  */
@@ -356,7 +368,11 @@ struct ghw_handler
    Return < 0 in case of error. */
 int ghw_open (struct ghw_handler *h, const char *filename);
 
+/* Return base type of T.  */
 union ghw_type *ghw_get_base_type (union ghw_type *t);
+
+/* Return length of RNG.  */
+int ghw_get_range_length (union ghw_range *rng);
 
 /* Put the ASCII representation of VAL into BUF, whose size if LEN.
    A NUL is always written to BUF.  */
@@ -368,6 +384,8 @@ const char *ghw_get_hie_name (struct ghw_hie *h);
 void ghw_disp_hie (struct ghw_handler *h, struct ghw_hie *top);
 
 int ghw_read_base (struct ghw_handler *h);
+
+void ghw_filter_signals (struct ghw_handler *h, int *signals_to_keep, int nb_signals_to_keep);
 
 void ghw_disp_values (struct ghw_handler *h);
 
@@ -397,7 +415,6 @@ enum ghw_res {
 };
 
 int ghw_read_sm (struct ghw_handler *h, enum ghw_sm_type *sm);
-enum ghw_res ghw_read_sm_hdr (struct ghw_handler *h, int *list);
 
 int ghw_read_dump (struct ghw_handler *h);
 
@@ -414,7 +431,7 @@ void ghw_close (struct ghw_handler *h);
 
 const char *ghw_get_dir (int is_downto);
 
-int ghw_get_range_length (union ghw_range *rng);
+void ghw_disp_subtype_indication (struct ghw_handler *h, union ghw_type *t);
 
 /* Note: TYPE must be a base type (used only to display literals).  */
 void ghw_disp_range (union ghw_type *type, union ghw_range *rng);
@@ -423,4 +440,3 @@ void ghw_disp_type (struct ghw_handler *h, union ghw_type *t);
 
 void ghw_disp_types (struct ghw_handler *h);
 #endif /* _GHWLIB_H_ */
-

@@ -408,6 +408,33 @@ static struct tree *
 build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
 		      const char *pfx, unsigned int **sig);
 
+static struct tree *
+build_hierarchy_record (struct ghw_handler *h, const char *pfx,
+			unsigned nbr_els, struct ghw_record_element *els,
+			unsigned int **sig)
+{
+  struct tree *res;
+  struct tree *last;
+  struct tree *c;
+  unsigned int i;
+
+  res = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(pfx) + 1);
+  strcpy(res->name, (char *)pfx);
+  res->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
+
+  last = NULL;
+  for (i = 0; i < nbr_els; i++)
+    {
+      c = build_hierarchy_type (h, els[i].type, els[i].name, sig);
+      if (last == NULL)
+	res->child = c;
+      else
+	last->next = c;
+      last = c;
+    }
+  return res;
+}
+
 static void
 build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 		       const char *pfx, struct tree **res, unsigned int **sig)
@@ -449,7 +476,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS->asbuf, "%s%c"GHWLD, pfx, dim == 0 ? '[' : ',', v);
+	    sprintf(GLOBALS->asbuf, "%s%c"GHWPRI32,
+                    pfx, dim == 0 ? '[' : ',', v);
             nam = strdup_2(GLOBALS->asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, nam, res, sig);
 	    free_2(nam);
@@ -479,7 +507,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS->asbuf, "%s%c"GHWLD, pfx, dim == 0 ? '[' : ',', v);
+	    sprintf(GLOBALS->asbuf, "%s%c"GHWPRI32,
+                    pfx, dim == 0 ? '[' : ',', v);
             nam = strdup_2(GLOBALS->asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, nam, res, sig);
 	    free_2(nam);
@@ -509,7 +538,8 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
 	v = r->left;
 	while (1)
 	  {
-	    sprintf(GLOBALS->asbuf, "%s%c"GHWLD, pfx, dim == 0 ? '[' : ',', v);
+	    sprintf(GLOBALS->asbuf, "%s%c"GHWPRI32,
+                    pfx, dim == 0 ? '[' : ',', v);
             nam = strdup_2(GLOBALS->asbuf);
 	    build_hierarchy_array (h, arr, dim + 1, nam, res, sig);
 	    free_2(nam);
@@ -584,28 +614,10 @@ build_hierarchy_type (struct ghw_handler *h, union ghw_type *t,
 	return r;
       }
     case ghdl_rtik_type_record:
-      {
-	struct tree *last;
-	struct tree *c;
-	int i;
-
-	res = (struct tree *) calloc_2(1, sizeof (struct tree) + strlen(pfx) + 1);
-	strcpy(res->name, (char *)pfx);
-	res->t_which = WAVE_T_WHICH_UNDEFINED_COMPNAME;
-
-	last = NULL;
-	for (i = 0; i < t->rec.nbr_fields; i++)
-	  {
-	    c = build_hierarchy_type
-	      (h, t->rec.el[i].type, t->rec.el[i].name, sig);
-	    if (last == NULL)
-	      res->child = c;
-	    else
-	      last->next = c;
-	    last = c;
-	  }
-	return res;
-      }
+      return build_hierarchy_record(h, pfx, t->rec.nbr_fields, t->rec.els, sig);
+    case ghdl_rtik_subtype_record:
+      return build_hierarchy_record
+	(h, pfx, t->sr.base->nbr_fields, t->sr.els, sig);
     default:
       fprintf (stderr, "build_hierarchy_type: unhandled type %d\n", t->kind);
       abort ();
@@ -1006,13 +1018,13 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       break;
     case ghdl_rtik_type_i32:
     case ghdl_rtik_type_p32:
-      sprintf (GLOBALS->asbuf, GHWLD, sig->val->i32);
+      sprintf (GLOBALS->asbuf, GHWPRI32, sig->val->i32);
       he->v.h_vector = strdup_2(GLOBALS->asbuf);
       is_vector = 1;
       break;
     case ghdl_rtik_type_i64:
     case ghdl_rtik_type_p64:
-      sprintf (GLOBALS->asbuf, GHWLLD, sig->val->i64);
+      sprintf (GLOBALS->asbuf, GHWPRI64, sig->val->i64);
       he->v.h_vector = strdup_2(GLOBALS->asbuf);
       is_vector = 1;
       break;
@@ -1134,7 +1146,7 @@ read_traces (struct ghw_handler *h)
 	case ghw_res_snapshot:
 	  if (h->snap_time > GLOBALS->max_time)
 	    GLOBALS->max_time = h->snap_time;
-	  /* printf ("Time is "GHWLLD"\n", h->snap_time); */
+	  /* printf ("Time is "GHWPRI64"\n", h->snap_time); */
 
 	  for (i = 0; i < h->nbr_sigs; i++)
 	    add_history (h, GLOBALS->nxp_ghw_c_1[i], i);
@@ -1144,7 +1156,7 @@ read_traces (struct ghw_handler *h)
 	    {
 	      int sig;
 
-	      /* printf ("Time is "GHWLLD"\n", h->snap_time); */
+	      /* printf ("Time is "GHWPRI64"\n", h->snap_time); */
 	      if (h->snap_time < LLDescriptor(9223372036854775807))
 		{
 		  if (h->snap_time > GLOBALS->max_time)
