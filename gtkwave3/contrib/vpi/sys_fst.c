@@ -1,7 +1,6 @@
 /*
 
 FST dumper for NC Verilog / Verilog-XL
-
 to compile/run under AIX: 
 
 ar -xv /lib/libz.a   # to get libz.so.1
@@ -10,10 +9,24 @@ ld -G -o sys_fst.so sys_fst.o fstapi.o fastlz.o libz.so.1 -bnoentry -bexpall -ll
 
 [nc]verilog r.v +loadvpi=sys_fst.so:sys_fst_register +access+r
 
+
+FST dumper for VCS
+to compile/run under LINUX:
+
+gcc -O2 -c -fPIC *.c -Iincludes_directory
+ld -G -o sys_fst.so ../../src/libz/*.o *.o
+vcs +v2k -R +vpi +acc+2 +memchbk -full64 t.v -P sys_fst.tab sys_fst.so
+
+sys_fst.tab:
+
+$fstdumpfile check=sys_dumpfile_compiletf call=sys_dumpfile_calltf acc+=r:*
+$fstdumpvars check=sys_dumpvars_compiletf call=sys_dumpvars_calltf acc+=r:*
+$fstdumpoff  check=sys_dumpoff_compiletf  call=sys_dumpoff_calltf  acc+=r:*
+
  */
 
-#include  "vpi_user.h"
-#include  "acc_user.h"
+#include  <vpi_user.h>
+#include  <acc_user.h>
 #include  <stdio.h>
 #include  <stdlib.h>
 #include  <string.h>
@@ -25,13 +38,12 @@ ld -G -o sys_fst.so sys_fst.o fstapi.o fastlz.o libz.so.1 -bnoentry -bexpall -ll
 struct fst_info {
     struct fst_info *dump_chain;
     vpiHandle       item;
+    s_vpi_value     value;
 
     fstHandle       fstSym;
     unsigned        is_real:1;
     unsigned        is_changed:1;
 };
-
-static int variable_cb(p_cb_data cause);
 
 /*************************************************/
 
@@ -41,7 +53,6 @@ static char    *dump_path = NULL;
 
 static int      dump_is_off = 0;
 
-static struct fst_info *fst_list = 0;
 static struct fst_info *fst_dump_list = 0;
 
 static int      dumpvars_status = 0;	/* 0:fresh 1:cb installed,
@@ -66,7 +77,10 @@ dump_header_pending(void)
 }
 
 
-static int
+int variable_cb_rosync(p_cb_data cause);
+
+
+int
 variable_cb_rosync(p_cb_data cause)
 {
     p_vpi_time      tim = cause->time;
@@ -92,12 +106,16 @@ variable_cb_rosync(p_cb_data cause)
 	    fstWriterEmitValueChange(ctx, a_info->fstSym, &d);
 	}
 
+
 	a_info->is_changed = 0;
-	a_info = a_info->dump_chain;
+	struct fst_info *a_info_next = a_info->dump_chain;
+	a_info->dump_chain = NULL;
+	a_info = a_info_next;
     }
 
     fst_dump_list = NULL;
     return (0);
+
 }
 
 
@@ -117,11 +135,11 @@ install_rosync_cb(void)
     cb.user_data = NULL;
     cb.obj = NULL;
 
-    vpi_register_cb(&cb);
+    vpi_free_object(vpi_register_cb(&cb));
 }
 
 
-static int
+int
 variable_cb(p_cb_data cause)
 {
     struct fst_info *info = (struct fst_info *) cause->user_data;
@@ -130,7 +148,7 @@ variable_cb(p_cb_data cause)
 	return (0);
     if (dump_header_pending())
 	return (0);
-    if (info->is_changed)
+    if (info->is_changed) 
 	return (0);
 
     if (!fst_dump_list) {
@@ -183,7 +201,7 @@ install_dumpvars_callback(void)
     cb.user_data = NULL;
     cb.obj = NULL;
 
-    vpi_register_cb(&cb);
+    vpi_free_object(vpi_register_cb(&cb));
 
     dumpvars_status = 1;
     return (0);
@@ -193,9 +211,10 @@ install_dumpvars_callback(void)
 static int
 end_of_sim_cb(p_cb_data cause)
 {
-    if (ctx) {
+    if (ctx) 	
+	{
 	fstWriterClose(ctx);
-    }
+    	}
     return (0);
 }
 
@@ -235,12 +254,12 @@ open_dumpfile(void)
 	cb.user_data = NULL;
 	cb.obj = NULL;
 
-	vpi_register_cb(&cb);
+	vpi_free_object(vpi_register_cb(&cb));
     }
 }
 
 
-static int
+int
 sys_dumpfile_compiletf(char *name)
 {
     vpiHandle       sys = vpi_handle(vpiSysTfCall, 0);
@@ -281,7 +300,7 @@ sys_dumpfile_compiletf(char *name)
 }
 
 
-static int
+int
 sys_dumpfile_calltf(char *name)
 {
     return (0);
@@ -429,6 +448,7 @@ draw_module_type(vpiHandle item, int typ)
 	info->dump_chain = fst_dump_list;
     	fst_dump_list = info;
 
+
 	memset(&cb, 0, sizeof(cb));
 	memset(&time, 0, sizeof(time));
 	time.type = vpiSimTime;
@@ -436,15 +456,13 @@ draw_module_type(vpiHandle item, int typ)
 	cb.time = &time;
 	cb.user_data = (char *) info;
 
-	cb.value = NULL; /* was &info->value; */
+	cb.value = &info->value; /* NC seems to be ok with NULL, but VCS needs &info->value */
+	info->value.format = vpiObjTypeVal;
 	cb.obj = net;
 	cb.reason = cbValueChange;
 	cb.cb_rtn = variable_cb;
 
-	/* info->value.format = vpiObjTypeVal; */
-	fst_list = info;
-
-	vpi_register_cb(&cb);
+	vpi_free_object(vpi_register_cb(&cb));
     }
 
     return (0);
@@ -562,7 +580,7 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
  * This function is also used in sys_fst to check the arguments of the fst
  * variant of $dumpvars. 
  */
-static int
+int
 sys_dumpvars_compiletf(char *name)
 {
     vpiHandle       sys = vpi_handle(vpiSysTfCall, 0);
@@ -602,7 +620,7 @@ sys_dumpvars_compiletf(char *name)
 }
 
 
-static int
+int
 sys_dumpvars_calltf(char *name)
 {
     unsigned        depth;
@@ -672,7 +690,7 @@ sys_dumpoff_compiletf(char *name)
 }
 
 
-static int
+int
 sys_dumpoff_calltf(char *name)
 {
     dump_is_off = 1;
