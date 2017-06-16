@@ -13,7 +13,7 @@ ld -G -o sys_fst.so sys_fst.o fstapi.o fastlz.o libz.so.1 -bnoentry -bexpall -ll
 FST dumper for VCS
 to compile/run under LINUX:
 
-gcc -O2 -c -fPIC *.c -Iincludes_directory
+gcc -O2 -c -fPIC *.c -I/tool/cbar/apps/vcs-mx/2015.09-SP2-14/include/
 ld -G -o sys_fst.so ../../src/libz/*.o *.o
 vcs +v2k -R +vpi +acc+2 +memchbk -full64 t.v -P sys_fst.tab sys_fst.so
 
@@ -48,6 +48,7 @@ struct fst_info {
 /*************************************************/
 
 static struct fstContext *ctx = NULL;
+static uint64_t        prev64 = 0;
 
 static char    *dump_path = NULL;
 
@@ -88,7 +89,11 @@ variable_cb_rosync(p_cb_data cause)
     struct fst_info *a_info = fst_dump_list;
     s_vpi_value     value;
 
-    fstWriterEmitTimeChange(ctx, now64);
+   if((now64 > prev64) || (!now64))
+	{
+	fstWriterEmitTimeChange(ctx, now64);
+    	prev64 = now64;
+	}
 
     while (a_info) {
 	if (!a_info->is_real) {
@@ -214,8 +219,40 @@ end_of_sim_cb(p_cb_data cause)
     if (ctx) 	
 	{
 	fstWriterClose(ctx);
+	ctx = NULL;
+	prev64 = 0;
     	}
     return (0);
+}
+
+static int
+next_time_cb(p_cb_data cause)
+{
+struct t_cb_data cb;
+struct t_vpi_time vtime;
+
+p_vpi_time      tim = cause->time;
+uint64_t        now64 = timerec_to_time64(tim);
+
+if(now64 > prev64)
+	{
+	fstWriterEmitTimeChange(ctx, now64);
+	prev64 = now64;
+	}
+
+memset(&cb, 0, sizeof(cb));
+memset(&vtime, 0, sizeof(vtime));
+
+vtime.type = vpiSimTime;
+cb.time = &vtime;
+cb.reason = cbNextSimTime;
+cb.cb_rtn = next_time_cb;
+cb.user_data = NULL;
+cb.obj = NULL;
+
+vpi_free_object(vpi_register_cb(&cb));
+
+return (0);
 }
 
 
@@ -235,6 +272,7 @@ open_dumpfile(void)
 	 * primary 
 	 */
 	ctx = fstWriterCreate(dump_path, 1);
+	prev64 = 0;
 
 	time(&walltime);
 	fstWriterSetDate(ctx, asctime(localtime(&walltime)));
@@ -251,6 +289,18 @@ open_dumpfile(void)
 	cb.time = &vtime;
 	cb.reason = cbEndOfSimulation;
 	cb.cb_rtn = end_of_sim_cb;
+	cb.user_data = NULL;
+	cb.obj = NULL;
+
+	vpi_free_object(vpi_register_cb(&cb));
+
+	memset(&cb, 0, sizeof(cb));
+	memset(&vtime, 0, sizeof(vtime));
+
+	vtime.type = vpiSimTime;
+	cb.time = &vtime;
+	cb.reason = cbNextSimTime;
+	cb.cb_rtn = next_time_cb;
 	cb.user_data = NULL;
 	cb.obj = NULL;
 
