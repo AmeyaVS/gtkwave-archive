@@ -546,6 +546,14 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 	int             vpitype = vpi_get(vpiType, item);
 	int             fsttype;
 
+        int lineno = vpi_get(vpiLineNo, item);
+	const char *fname = vpi_get_str(vpiFile, item);
+	fstWriterSetSourceInstantiationStem(ctx, fname, lineno, 1);
+
+        lineno = vpi_get(vpiDefLineNo, item);
+	fname = vpi_get_str(vpiDefFile, item);
+	fstWriterSetSourceStem(ctx, fname, lineno, 1);
+
 	switch (vpitype) {
 	case vpiTaskFunc:
 	case vpiTask:
@@ -585,6 +593,14 @@ draw_scope_fst(vpiHandle item, int depth, int depth_max)
 	    while ((item = vpi_scan(iter))) {
 		int             vpitype = vpi_get(vpiType, item);
 		int             fsttype;
+
+	        int lineno = vpi_get(vpiLineNo, item);
+		const char *fname = vpi_get_str(vpiFile, item);
+		fstWriterSetSourceInstantiationStem(ctx, fname, lineno, 1);
+
+	        lineno = vpi_get(vpiDefLineNo, item);
+		fname = vpi_get_str(vpiDefFile, item);
+		fstWriterSetSourceStem(ctx, fname, lineno, 1);
 
 		switch (vpitype) {
 		case vpiTaskFunc:
