@@ -273,6 +273,8 @@ open_dumpfile(void)
 	 */
 	ctx = fstWriterCreate(dump_path, 1);
 	prev64 = 0;
+	fstWriterSetPackType(ctx, FST_WR_PT_LZ4);
+	/* fstWriterSetParallelMode(ctx, 1); */
 
 	time(&walltime);
 	fstWriterSetDate(ctx, asctime(localtime(&walltime)));
