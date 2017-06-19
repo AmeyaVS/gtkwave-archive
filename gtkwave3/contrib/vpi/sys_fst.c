@@ -13,7 +13,7 @@ ld -G -o sys_fst.so sys_fst.o fstapi.o fastlz.o libz.so.1 -bnoentry -bexpall -ll
 FST dumper for VCS
 to compile/run under LINUX:
 
-gcc -O2 -c -fPIC *.c -I/tool/cbar/apps/vcs-mx/2015.09-SP2-14/include/
+gcc -O2 -c -fPIC *.c
 ld -G -o sys_fst.so ../../src/libz/*.o *.o
 vcs +v2k -R +vpi +acc+2 +memchbk -full64 t.v -P sys_fst.tab sys_fst.so
 
@@ -482,11 +482,29 @@ draw_module_type(vpiHandle item, int typ)
 		fstWriterCreateVar(ctx, vtyp, FST_VD_IMPLICIT, siz, name,
 				   0);
 	} else {
-	    char           *n2 = malloc(strlen(name) + 32);
+	    char           *n2 = malloc(strlen(name) + 64);
+	    int len = ilrange - irrange;
+	    if(len < 0) len = - len;
+	    len++;
+
 	    if (ilrange == irrange) {
-		sprintf(n2, "%s [%d]", name, irrange);
+		if(siz == len)
+			{
+			sprintf(n2, "%s [%d]", name, irrange);
+			}
+			else
+			{
+			sprintf(n2, "%s [%d][%d:0]", name, irrange, siz/len-1);
+			}
 	    } else {
-		sprintf(n2, "%s [%d:%d]", name, ilrange, irrange);
+		if(siz == len)
+			{
+			sprintf(n2, "%s [%d:%d]", name, ilrange, irrange);
+			}
+			else
+			{
+			sprintf(n2, "%s [%d:%d][%d:0]", name, ilrange, irrange, siz/len-1);
+			}
 	    }
 
 	    info->fstSym =
