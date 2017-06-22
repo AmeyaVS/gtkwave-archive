@@ -1597,4 +1597,5 @@
 3.3.81	09jun17	Added max_fsdb_trees environment variable.
 		Fixed -C option so it is persistent across new tabs.		
 		Integrated updated GHW reader code.
-3.3.82	16jun17	Get sys_fst working with VCS VPI.
+3.3.82	22jun17	Get sys_fst working with VCS VPI.
+		Added string concatenations for vectors.

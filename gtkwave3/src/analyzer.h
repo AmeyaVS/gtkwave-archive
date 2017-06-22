@@ -142,6 +142,7 @@ typedef struct VectorEnt
 {
 TimeType time;
 vptr next;
+unsigned char flags;  /* so far only set on strings */
 unsigned char v[]; /* C99 */
 } VectorEnt;
 

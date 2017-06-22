@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2016.
+ * Copyright (c) Tony Bybell 1999-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1623,7 +1623,7 @@ char *convert_ascii(Trptr t, vptr v)
 {
 char *s;
 
-if(!t->t_filter_converted)
+if((!t->t_filter_converted) && (!(v->flags & HIST_STRING)))
 	{
 	s = convert_ascii_2(t, v);
 	}

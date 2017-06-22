@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2012.
+ * Copyright (c) Tony Bybell 1999-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -246,6 +246,8 @@ int numextrabytes;
 TimeType mintime, lasttime=-1;
 bvptr bitvec=NULL;
 TimeType tshift, tmod;
+int is_string;
+int string_len;
 
 if(!b) return(NULL);
 
@@ -294,51 +296,107 @@ while(h[0])	/* should never exit through this point the way we set up histents w
 
 	regions++;
 
+	is_string = 1;
+	string_len = 0;
+	for(i=0;i<b->nnbits;i++)
+                {
+		if((h[i]->flags & HIST_STRING))
+			{
+			if(h[i]->time >= 0)
+				{ 
+				if(h[i]->v.h_vector)
+					{
+					if((GLOBALS->loaded_file_type == GHW_FILE) && (h[i]->v.h_vector[0] == '\'') && (h[i]->v.h_vector[1]) && (h[i]->v.h_vector[2] == '\''))
+						{
+						string_len++;
+						}
+						else
+						{
+						string_len += strlen(h[i]->v.h_vector);
+						}
+					}
+				}
+			}
+			else
+			{
+			is_string = 0;
+			break;
+			}
+		}
+
+	if(is_string)
+		{
+		vadd->flags |= HIST_STRING;
+		vadd=(vptr)realloc_2(vadd,sizeof(struct VectorEnt)+string_len+1);
+		vadd->v[0] = 0;
+		}
+
 	for(i=0;i<b->nnbits;i++)
 		{
 		unsigned char enc;
 
 		tshift = (b->attribs) ? b->attribs[i].shift : 0;
 
-		if((b->attribs)&&(b->attribs[i].flags & TR_INVERT))
+		if(!is_string)
 			{
-			enc  = ((unsigned char)(h[i]->v.h_val));
-			switch(enc)	/* don't remember if it's preconverted in all cases; being conservative is OK */
+			if((b->attribs)&&(b->attribs[i].flags & TR_INVERT))
 				{
-				case AN_0: case '0':
-					enc = AN_1; break;
-
-				case AN_1: case '1':
-					enc = AN_0; break;
-
-				case AN_H: case 'h': case 'H':
-					enc = AN_L; break;
-
-				case AN_L: case 'l': case 'L':
-					enc = AN_H; break;
-
-				case 'x': case 'X':
-					enc = AN_X; break;
-
-				case 'z': case 'Z':
-					enc = AN_Z; break;
-
-				case 'u': case 'U':
-					enc = AN_U; break;
-
-				case 'w': case 'W':
-					enc = AN_W; break;
-
-				default:
-					enc = enc & AN_MSK; break;
+				enc  = ((unsigned char)(h[i]->v.h_val));
+				switch(enc)	/* don't remember if it's preconverted in all cases; being conservative is OK */
+					{
+					case AN_0: case '0':
+						enc = AN_1; break;
+	
+					case AN_1: case '1':
+						enc = AN_0; break;
+	
+					case AN_H: case 'h': case 'H':
+						enc = AN_L; break;
+	
+					case AN_L: case 'l': case 'L':
+						enc = AN_H; break;
+	
+					case 'x': case 'X':
+						enc = AN_X; break;
+	
+					case 'z': case 'Z':
+						enc = AN_Z; break;
+	
+					case 'u': case 'U':
+						enc = AN_U; break;
+	
+					case 'w': case 'W':
+						enc = AN_W; break;
+	
+					default:
+						enc = enc & AN_MSK; break;
+					}
 				}
+				else
+				{
+				enc  = ((unsigned char)(h[i]->v.h_val)) & AN_MSK;
+				}
+
+			vadd->v[i] = enc;
 			}
 			else
 			{
-			enc  = ((unsigned char)(h[i]->v.h_val)) & AN_MSK;
+			if(h[i]->time >= 0)
+				{
+				if(h[i]->v.h_vector)
+					{
+					if((GLOBALS->loaded_file_type == GHW_FILE) && (h[i]->v.h_vector[0] == '\'') && (h[i]->v.h_vector[1]) && (h[i]->v.h_vector[2] == '\''))
+						{
+						char ghw_str[2] = {h[i]->v.h_vector[1], 0};
+						strcat(vadd->v, ghw_str);
+						}
+						else
+						{
+						strcat(vadd->v, h[i]->v.h_vector);
+						}
+					}			
+				}
 			}
-
-		vadd->v[i] = enc;
 
 		if(h[i]->next)
 			{
