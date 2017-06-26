@@ -1599,3 +1599,4 @@
 		Integrated updated GHW reader code.
 3.3.82	22jun17	Get sys_fst working with VCS VPI.
 		Added string concatenations for vectors.
+		Added asserts to ghwlib.c to make scan-view clean.

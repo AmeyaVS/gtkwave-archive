@@ -483,6 +483,8 @@ get_nbr_elements (union ghw_type *t)
 int
 ghw_get_range_length (union ghw_range *rng)
 {
+assert(rng); /* scan-view detects possible null pointer dereference here through a convoluted sequence of steps which probably violate what GHW would do*/
+
   switch (rng->kind)
     {
     case ghdl_rtik_type_i32:
@@ -1202,6 +1204,8 @@ print_name (struct ghw_hie *hie, int full_names)
   struct ghw_hie *p;
   struct ghw_hie **buf;
   struct ghw_hie **end;
+
+  assert (hie->name); /* scan view complains about possibility of depth=0 below on malloc */
 
   if (0 == full_names)
     {
