@@ -1600,3 +1600,4 @@
 3.3.82	02jul17	Get sys_fst working with VCS VPI.
 		Added string concatenations for vectors.
 		Added asserts to ghwlib.c to make scan-view clean.
+3.3.83	02jul17	Version bump in SVN work area.
