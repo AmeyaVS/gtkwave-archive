@@ -249,6 +249,7 @@ char extload_already_errored; /* from extload.c */
 char **extload_namecache;
 int *extload_namecache_max;
 int *extload_namecache_lens;
+int *extload_namecache_patched;
 struct symbol *extload_sym_block;
 struct Node *extload_node_block;
 void *extload_xc;

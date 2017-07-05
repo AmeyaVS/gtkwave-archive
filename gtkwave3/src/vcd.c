@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2014.
+ * Copyright (c) Tony Bybell 1999-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1555,7 +1555,10 @@ for(;;)
 				{
                                 if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
                                         {
-                                        v->msi = v->size-1; v->lsi = 0;
+					if((v->msi-v->lsi+1) > v->size) /* if() is 2d add */
+						{
+	                                        v->msi = v->size-1; v->lsi = 0;
+						}
                                         /* all this formerly was goto err; */
                                         }
                                         else
@@ -1568,7 +1571,10 @@ for(;;)
 				{
                                 if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
                                         {
-                                        v->lsi = v->size-1; v->msi = 0;
+					if((v->lsi-v->msi+1) > v->size) /* if() is 2d add */
+						{
+	                                        v->lsi = v->size-1; v->msi = 0;
+						}
                                         /* all this formerly was goto err; */
                                         }
                                         else
@@ -2307,6 +2313,22 @@ while(v)
 			/* if((v->vartype!=V_REAL)&&(v->vartype!=V_STRINGTYPE)) */
 				{
 				sprintf(str+slen-1,"[%d:%d]",v->msi,v->lsi);
+				/* 2d add */
+                                if((v->msi>v->lsi)&&((v->msi-v->lsi+1)!=v->size))   
+                                        {
+                                        if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
+                                                {
+                                                v->msi = v->size-1; v->lsi = 0;
+                                                }
+                                        }
+                                else
+                                if((v->lsi>=v->msi)&&((v->lsi-v->msi+1)!=v->size))
+                                        {
+                                        if((v->vartype!=V_EVENT)&&(v->vartype!=V_PARAMETER))
+                                                {
+                                                v->lsi = v->size-1; v->msi = 0;
+                                                }
+                                        }
 				}
 				else
 				{

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2016.
+ * Copyright (c) Tony Bybell 1999-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -3502,6 +3502,13 @@ bvptr combine_traces(int direction, Trptr single_trace_only)
 	  char *namex;
 	  int was_packed = HIER_DEPACK_ALLOC;
 
+	  int row = 0, bit = 0;
+	  int row2 = 0, bit2 = 0;
+	  int is_2d = 0;
+	  int iy, offsety;
+	  char *namey;
+	  char sep2d = ':';
+
 	  namex = hier_decompress_flagged(n[0]->nname, &was_packed);
 
 	  offset = strlen(namex);
@@ -3511,17 +3518,142 @@ bvptr combine_traces(int direction, Trptr single_trace_only)
 	    }
 	  if(ix>-1) offset=ix;
 
-	  nam=(char *)wave_alloca(offset+40);
+          if(ix>3) /* is_2d is for handling 2-d stored in 1-d vector */
+                {
+                if(namex[ix-1]==']')
+                        {
+                        int j = ix-2;
+                        for(;j>=0;j--)
+                                {
+                                if(namex[j]=='[') break;
+                                }
+
+                        if(j>-1)
+                                {
+                                int items = sscanf(namex+j, "[%d][%d]", &row, &bit);
+                                if(items == 2)
+                                        {
+                                        /* printf(">> %d %d (items = %d)\n", row, bit, items); */
+
+                                        offset = j;
+					is_2d = 1;
+                                        }
+                                }
+                        }
+                }
+
+	  nam=(char *)wave_alloca(offset+50); /* to handle [a:b][c:d] case */
 	  memcpy(nam, namex, offset);
 	  if(was_packed) { free_2(namex); }
 
+	  if(is_2d)
+		{
+		is_2d = 0;
+		namey = hier_decompress_flagged(n[nodepnt-1]->nname, &was_packed);
+
+	  	offsety = strlen(namey);
+	  	for(iy=offsety-1;iy>=0;iy--)
+	    		{
+	      		if(namey[iy]=='[') break;
+	    		}
+	  	/* if(iy>-1) offsety=iy; not needed as in above as gets overwritten below by offsety = j */
+	        if(iy>3)
+                	{
+                	if(namey[iy-1]==']')
+                	        {
+                	        int j = iy-2;
+                	        for(;j>=0;j--)
+                	                {
+                	                if(namey[j]=='[') break;
+                	                }
+	
+	                        if(j>-1)
+	                                {
+	                                int items = sscanf(namey+j, "[%d][%d]", &row2, &bit2);
+	                                if(items == 2)
+	                                        {
+						int rowabs, bitabs, width2d;
+	                                        /* printf(">> %d %d (items = %d)\n", row2, bit2, items); */
+	
+	                                        offsety = j;
+						is_2d = (offset == offsety) && !memcmp(nam, namey, offsety);
+
+						rowabs = (row2 > row) ? (row2 - row + 1) : (row - row2 + 1);
+						bitabs = (bit2 > bit) ? (bit2 - bit + 1) : (bit - bit2 + 1);
+						width2d = rowabs * bitabs;
+						sep2d = (width2d == nodepnt) ? ':' : '|';
+	                                        }
+	                                }
+	                        }
+	                }
+
+		if(was_packed) { free_2(namey); }
+		}
+
+
 	  if(direction)
 	    {
-	      sprintf(nam+offset, "[%d%s%d]", n[0]->expansion->actual, (bitblast_delta!=0) ? ":" : "|", n[nodepnt-1]->expansion->actual);
+	      if(!is_2d)
+		{
+	      	sprintf(nam+offset, "[%d%s%d]", n[0]->expansion->actual, (bitblast_delta!=0) ? ":" : "|", n[nodepnt-1]->expansion->actual);
+		}
+		else
+		{
+		if(row == row2)
+			{
+			if(bit == bit2)
+				{
+			      	sprintf(nam+offset, "[%d][%d]", row, bit);
+				}
+				else
+				{
+			      	sprintf(nam+offset, "[%d][%d%c%d]", row, bit, sep2d, bit2);
+				}
+			}
+			else
+			{
+			if(bit == bit2)
+				{
+			      	sprintf(nam+offset, "[%d%c%d][%d]", row, sep2d, row2, bit);
+				}
+				else
+				{
+			      	sprintf(nam+offset, "[%d%c%d][%d%c%d]", row, sep2d, row2, bit, sep2d, bit2);
+				}
+			}
+		}
 	    }
 	  else
 	    {
-	      sprintf(nam+offset, "[%d%s%d]", n[nodepnt-1]->expansion->actual,  (bitblast_delta!=0) ? ":" : "|", n[0]->expansion->actual);
+	      if(!is_2d)
+		{
+	      	sprintf(nam+offset, "[%d%s%d]", n[nodepnt-1]->expansion->actual,  (bitblast_delta!=0) ? ":" : "|", n[0]->expansion->actual);
+		}
+		else
+		{
+		if(row == row2)
+			{
+			if(bit == bit2)
+				{
+			      	sprintf(nam+offset, "[%d][%d]", row, bit);
+				}
+				else
+				{
+			      	sprintf(nam+offset, "[%d][%d%c%d]", row, bit2, sep2d, bit);
+				}
+			}
+			else
+			{
+			if(bit == bit2)
+				{
+			      	sprintf(nam+offset, "[%d%c%d][%d]", row2, sep2d, row, bit);
+				}
+				else
+				{
+			      	sprintf(nam+offset, "[%d%c%d][%d%c%d]", row2, sep2d, row, bit2, sep2d, bit);
+				}
+			}
+		}
 	    }
 
 	  strcpy(b->name=(char *)malloc_2(offset + strlen(nam+offset)+1), nam);

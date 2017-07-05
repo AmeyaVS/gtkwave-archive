@@ -206,15 +206,17 @@ return(1);
 #endif
 
 #ifdef WAVE_FSDB_READER_IS_PRESENT
-static char *get_varname(char *sbuff, unsigned char *vtp, unsigned char *vdp, int i)
+static char *get_varname(char *sbuff, unsigned char *vtp, unsigned char *vdp, int i, int *patched_len)
 {
 #else
-static char *get_varname(unsigned char *vtp, unsigned char *vdp, int i)
+static char *get_varname(unsigned char *vtp, unsigned char *vdp, int i, int *patched_len)
 {
 static char sbuff[65537];
 #endif
 char * rc;
 int vt, vt_len;
+
+*patched_len = 0; /* zero says is ok, otherwise size overrides msi/lsi */
 
 #ifndef WAVE_FSDB_READER_IS_PRESENT
 for(;;)
@@ -308,6 +310,7 @@ for(;;)
 							{
 							lb = colon = rb = NULL;
 							}
+						if(pnt[1] == '[') esc = pnt; /* pretend we're escaped to handle 2d */
 						}
 					else if(pnt[0] == ':')
 						{
@@ -387,10 +390,18 @@ for(;;)
 								? (GLOBALS->extload_node_block[i].msi - GLOBALS->extload_node_block[i].lsi + 1)
 								: (GLOBALS->extload_node_block[i].lsi - GLOBALS->extload_node_block[i].msi + 1);
 
-						if(len_parse != GLOBALS->mvlfacs_vzt_c_3[i].len)
+						if((GLOBALS->mvlfacs_vzt_c_3[i].len > len_parse) && !(GLOBALS->mvlfacs_vzt_c_3[i].len % len_parse)) /* check if 2d array */
 							{
-							GLOBALS->extload_node_block[i].msi=l;
-							GLOBALS->extload_node_block[i].lsi=r;
+							/* printf("len_parse: %d vs len: %d\n", len_parse, GLOBALS->mvlfacs_vzt_c_3[i].len); */
+							*patched_len = GLOBALS->mvlfacs_vzt_c_3[i].len;
+							}
+							else /* original, non-2d behavior */
+							{
+							if(len_parse != GLOBALS->mvlfacs_vzt_c_3[i].len)
+								{
+								GLOBALS->extload_node_block[i].msi=l;
+								GLOBALS->extload_node_block[i].lsi=r;
+								}
 							}
 						}
 						else
@@ -635,13 +646,14 @@ struct fac *f;
 char *fnam;
 int flen;
 int longest_nam_candidate = 0;
+int patched_len = 0;
 
 i = GLOBALS->extload_i;
 
 if(i<0)
 	{
 #ifdef WAVE_FSDB_READER_IS_PRESENT
-	fnam = get_varname(s_gv, &GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, 0);
+	fnam = get_varname(s_gv, &GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, 0, &patched_len);
 	flen = strlen(fnam);
 
 	if(GLOBALS->extload_hlen)
@@ -651,20 +663,23 @@ if(i<0)
 		*(GLOBALS->extload_namecache[0 & F_NAME_MODULUS]+GLOBALS->extload_hlen) = '.';
 		strcpy(GLOBALS->extload_namecache[0 & F_NAME_MODULUS]+GLOBALS->extload_hlen+1, fnam);
 		GLOBALS->extload_namecache_lens[0 & F_NAME_MODULUS]=GLOBALS->extload_hlen + 1 + flen;
+		GLOBALS->extload_namecache_patched[0 & F_NAME_MODULUS]=patched_len;
 		}
 	else
 		{
 		GLOBALS->extload_namecache[0 & F_NAME_MODULUS]=malloc_2(GLOBALS->extload_namecache_max[0 & F_NAME_MODULUS]=flen+1);
 		strcpy(GLOBALS->extload_namecache[0 & F_NAME_MODULUS], fnam);
 		GLOBALS->extload_namecache_lens[0 & F_NAME_MODULUS] = flen;
+		GLOBALS->extload_namecache_patched[0 & F_NAME_MODULUS]=patched_len;
 		}
 #else
-	fnam = get_varname(&GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, 0);
+	fnam = get_varname(&GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, 0, &patched_len);
 	flen = strlen(fnam);
 
 	GLOBALS->extload_namecache[0 & F_NAME_MODULUS]=malloc_2(GLOBALS->extload_namecache_max[0 & F_NAME_MODULUS]=flen+1);
 	strcpy(GLOBALS->extload_namecache[0 & F_NAME_MODULUS], fnam);
 	GLOBALS->extload_namecache_lens[0 & F_NAME_MODULUS] = flen;
+	GLOBALS->extload_namecache_patched[0 & F_NAME_MODULUS]=patched_len;
 #endif
 	}
 else
@@ -674,7 +689,7 @@ else
 	if(i!=(GLOBALS->numfacs-1))
 		{
 #ifdef WAVE_FSDB_READER_IS_PRESENT
-		fnam = get_varname(s_gv, &GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, i+1);
+		fnam = get_varname(s_gv, &GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, i+1, &patched_len);
 		flen = strlen(fnam);
 
 		if(GLOBALS->extload_hlen)
@@ -689,6 +704,7 @@ else
 			*(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]+GLOBALS->extload_hlen) = '.';
 			strcpy(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]+GLOBALS->extload_hlen+1, fnam);
 			GLOBALS->extload_namecache_lens[(i+1)&F_NAME_MODULUS] = GLOBALS->extload_hlen + 1 + flen;
+			GLOBALS->extload_namecache_patched[(i+1)&F_NAME_MODULUS] = patched_len;
 			}
 		else
 			{
@@ -699,9 +715,10 @@ else
 				}
 			strcpy(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS], fnam);
 			GLOBALS->extload_namecache_lens[(i+1)&F_NAME_MODULUS] = flen;
+			GLOBALS->extload_namecache_patched[(i+1)&F_NAME_MODULUS] = patched_len;
 			}
 #else
-		fnam = get_varname(&GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, i+1);
+		fnam = get_varname(&GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, i+1, &patched_len);
 		flen = strlen(fnam);
 
 		if(GLOBALS->extload_namecache_max[(i+1)&F_NAME_MODULUS] < (flen+1))
@@ -710,6 +727,7 @@ else
 			}
 		strcpy(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS], fnam);
 			GLOBALS->extload_namecache_lens[(i+1)&F_NAME_MODULUS] = flen;
+		GLOBALS->extload_namecache_patched[(i+1)&F_NAME_MODULUS] = patched_len;
 #endif
 		}
 
@@ -718,6 +736,11 @@ else
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
 		int len=sprintf_2_sdd(buf, GLOBALS->extload_namecache[i&F_NAME_MODULUS],GLOBALS->extload_node_block[i].msi, GLOBALS->extload_node_block[i].lsi);
+		if(GLOBALS->extload_namecache_patched[i&F_NAME_MODULUS]) /* 2d */
+			{
+                        GLOBALS->extload_node_block[i].msi=GLOBALS->extload_namecache_patched[i&F_NAME_MODULUS] - 1;
+                        GLOBALS->extload_node_block[i].lsi=0;
+			}
 		longest_nam_candidate = len;
 
                 if(!GLOBALS->do_hier_compress)
@@ -892,6 +915,7 @@ GLOBALS->extload_i++;
 static void extload_hiertree_callback(void *pnt)
 {
 static int tree_end = 0;
+int patched_len = 0;
 
 char *s = (char *)pnt;
 
@@ -900,7 +924,7 @@ if((GLOBALS->extload_curr_tree < GLOBALS->extload_max_tree) || (!GLOBALS->extloa
 	switch(s[0])
 		{
 		case 'S':
-		case 'U': 	get_varname(s, NULL, NULL, -1);
+		case 'U': 	get_varname(s, NULL, NULL, -1, &patched_len);
 				GLOBALS->extload_hlen = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
 				break;
 	
@@ -1176,6 +1200,7 @@ GLOBALS->vzt_table_vzt_c_1=(struct lx2_entry *)calloc_2(GLOBALS->numfacs, sizeof
 GLOBALS->extload_namecache=(char **)calloc_2(F_NAME_MODULUS+1, sizeof(char *));
 GLOBALS->extload_namecache_max=(int *)calloc_2(F_NAME_MODULUS+1, sizeof(int));
 GLOBALS->extload_namecache_lens=(int *)calloc_2(F_NAME_MODULUS+1, sizeof(int));
+GLOBALS->extload_namecache_patched=(int *)calloc_2(F_NAME_MODULUS+1, sizeof(int));
 GLOBALS->extload_sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(struct symbol));
 GLOBALS->extload_node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 GLOBALS->extload_idcodes=(unsigned int *)calloc_2(GLOBALS->numfacs, sizeof(unsigned int));
@@ -1221,6 +1246,7 @@ for(i=0;i<=F_NAME_MODULUS;i++)
 free_2(GLOBALS->extload_namecache); GLOBALS->extload_namecache = NULL;
 free_2(GLOBALS->extload_namecache_max); GLOBALS->extload_namecache_max = NULL;
 free_2(GLOBALS->extload_namecache_lens); GLOBALS->extload_namecache_lens = NULL;
+free_2(GLOBALS->extload_namecache_patched); GLOBALS->extload_namecache_patched = NULL;
 
 fstReaderClose(GLOBALS->extload_xc); /* corresponds to fstReaderOpenForUtilitiesOnly() */
 
@@ -1243,7 +1269,7 @@ for(GLOBALS->extload_i=-1;(GLOBALS->numfacs) && (GLOBALS->extload_i<GLOBALS->num
 	{
 	process_extload_variable();
 	}
-while(get_varname(&GLOBALS->extload_vt_prev, NULL, -1)); /* read through end to process all upscopes */
+while(get_varname(&GLOBALS->extload_vt_prev, NULL, -1, &patched_len)); /* read through end to process all upscopes */
 
 decorated_module_cleanup(); /* ...also now in gtk2_treesearch.c */
 iter_through_comp_name_table();

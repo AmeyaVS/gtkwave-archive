@@ -1850,6 +1850,11 @@ int offset, len;
 eptr rc=NULL;
 exptr exp1;
 
+int row_hi = 0, row_lo = 0, new_msi = 0, new_lsi = 0;
+int row_delta = 0, bit_delta = 0;
+int curr_row = 0, curr_bit = 0;
+int is_2d = 0;
+
 if(n->mv.mvlfac) import_trace(n);
 
 if(!n->extvals)
@@ -1897,6 +1902,38 @@ if(!n->extvals)
 		if(namex[i]=='[') break;
 		}
 	if(i>-1) offset=i;
+
+	if(i>3)
+		{
+		if(namex[i-1]==']')
+			{
+			int j = i-2;
+			int colon_seen = 0;
+		        for(;j>=0;j--)
+		                {
+                		if(namex[j]=='[') break;
+				if(namex[j]==':') colon_seen = 1;
+                		}  
+
+			if((j>-1)&&(colon_seen))
+				{
+				int items = sscanf(namex+j, "[%d:%d][%d:%d]", &row_hi, &row_lo, &new_msi, &new_lsi);
+				if(items == 4)
+					{
+					/* printf(">> %d %d %d %d (items = %d)\n", row_hi, row_lo, new_msi, new_lsi, items); */
+
+					row_delta = (row_hi > row_lo)   ? -1 : 1;
+					bit_delta = (new_msi > new_lsi) ? -1 : 1;
+
+					curr_row = row_hi;
+					curr_bit = new_msi;
+
+					is_2d = (((row_lo - row_hi) * row_delta) + 1) * (((new_lsi - new_msi) * bit_delta) + 1) == width;
+					if(is_2d) offset = j;
+					}
+				}
+			}
+		}
 
 	nam=(char *)wave_alloca(offset+20+30);
 	memcpy(nam, namex, offset);
@@ -1950,7 +1987,23 @@ if(!n->extvals)
 	for(i=0;i<width;i++)
 		{
 		narray[i] = (nptr)calloc_2(1, sizeof(struct Node));
-		sprintf(nam+offset, "[%d]", actual);
+		if(!is_2d)
+			{
+			sprintf(nam+offset, "[%d]", actual);
+			}
+			else
+			{
+			sprintf(nam+offset, "[%d][%d]", curr_row, curr_bit);
+			if(curr_bit == new_lsi)
+				{
+				curr_bit = new_msi;
+				curr_row += row_delta;
+				}
+				else
+				{
+				curr_bit += bit_delta;
+				}
+			}
 #ifdef WAVE_ARRAY_SUPPORT
 		if(n->array_height)
 			{
@@ -2053,8 +2106,13 @@ int i, j;
 int actual;
 nptr np;
 char *nam;
-int offset, len;
+int offset, len, width;
 exptr exp1;
+
+int row_hi = 0, row_lo = 0, new_msi = 0, new_lsi = 0;
+int row_delta = 0, bit_delta = 0;
+int curr_row = 0, curr_bit = 0;
+int is_2d = 0;
 
 if(n->mv.mvlfac) import_trace(n);
 
@@ -2070,11 +2128,13 @@ if(!n->extvals)
 
 	if(n->lsi > n->msi)
 		{
+		width = n->lsi - n->msi + 1;
 		rgh = n->lsi; lft = n->msi;
 		actual = n->msi + bit;
 		}
 		else
 		{
+		width = n->msi - n->lsi + 1;
 		rgh = n->msi; lft = n->lsi;
 		actual = n->msi - bit;
 		}
@@ -2093,12 +2153,45 @@ if(!n->extvals)
 		{
 		namex = n->nname;
 		}
+
 	offset = strlen(namex);
 	for(i=offset-1;i>=0;i--)
 		{
 		if(namex[i]=='[') break;
 		}
 	if(i>-1) offset=i;
+
+	if(i>3)
+		{
+		if(namex[i-1]==']')
+			{
+			int j = i-2;
+			int colon_seen = 0;
+		        for(;j>=0;j--)
+		                {
+                		if(namex[j]=='[') break;
+				if(namex[j]==':') colon_seen = 1;
+                		}  
+
+			if((j>-1)&&(colon_seen))
+				{
+				int items = sscanf(namex+j, "[%d:%d][%d:%d]", &row_hi, &row_lo, &new_msi, &new_lsi);
+				if(items == 4)
+					{
+					/* printf("bit >> %d %d %d %d (items = %d)\n", row_hi, row_lo, new_msi, new_lsi, items); */
+
+					row_delta = (row_hi > row_lo)   ? -1 : 1;
+					bit_delta = (new_msi > new_lsi) ? -1 : 1;
+
+					curr_row = row_hi;
+					curr_bit = new_msi;
+
+					is_2d = (((row_lo - row_hi) * row_delta) + 1) * (((new_lsi - new_msi) * bit_delta) + 1) == width;
+					if(is_2d) offset = j;
+					}
+				}
+			}
+		}
 
 	nam=(char *)wave_alloca(offset+20);
 	memcpy(nam, namex, offset);
@@ -2150,7 +2243,29 @@ if(!n->extvals)
 	DEBUG(fprintf(stderr, "Extracting: (%d to %d) for offset #%d over %d entries.\n", n->msi, n->lsi, bit, n->numhist));
 
 	np = (nptr)calloc_2(1, sizeof(struct Node));
-	sprintf(nam+offset, "[%d]", actual);
+
+
+	if(!is_2d)
+		{
+		sprintf(nam+offset, "[%d]", actual);
+		}
+		else
+		{
+		for(i=0;i<bit;i++)
+			{
+			if(curr_bit == new_lsi)
+				{
+				curr_bit = new_msi;
+				curr_row += row_delta;
+				}
+				else
+				{
+				curr_bit += bit_delta;
+				}
+			}
+		sprintf(nam+offset, "[%d][%d]", curr_row, curr_bit);
+		}
+
 #ifdef WAVE_ARRAY_SUPPORT
         if(n->array_height)
         	{

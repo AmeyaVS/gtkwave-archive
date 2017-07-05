@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2009-2016.
+ * Copyright (c) Tony Bybell 2009-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -630,6 +630,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	unsigned char nvt, nvd, ndt;
 	int longest_nam_candidate = 0;
 	char *fnam;
+	int len_subst = 0;
 
 	h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len, &nnam_max);
 	if(!h)
@@ -686,6 +687,14 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 		else
 		{
+		int abslen = (msb >= lsb) ? (msb - lsb + 1) : (lsb - msb + 1);
+
+		if((h->u.var.length > abslen) && !(h->u.var.length % abslen)) /* check if 2d array */
+			{
+			/* printf("h->u.var.length: %d, abslen: %d '%s'\n", h->u.var.length, abslen, fnam); */
+			len_subst = 1;
+			}
+
 		node_block[i].msi = msb;
 		node_block[i].lsi = lsb;
 		}
@@ -813,6 +822,13 @@ for(i=0;i<GLOBALS->numfacs;i++)
 	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
 		{
 		int len=sprintf_2_sdd(buf, f_name[(i)&F_NAME_MODULUS],node_block[i].msi, node_block[i].lsi);
+
+		if(len_subst) /* preserve 2d in name, but make 1d internally */
+			{
+			node_block[i].msi = h->u.var.length-1;
+			node_block[i].lsi = 0;
+			}
+
 		longest_nam_candidate = len;
 
 		if(!GLOBALS->do_hier_compress)
