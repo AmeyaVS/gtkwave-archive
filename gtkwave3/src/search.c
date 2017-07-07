@@ -184,7 +184,6 @@ for(i=0;i<5;i++) GLOBALS->regex_mutex_search_c_1[i]=0;
 GLOBALS->regex_which_search_c_1=(int)((intptr_t)which);
 GLOBALS->regex_mutex_search_c_1[GLOBALS->regex_which_search_c_1] = 1; /* mark our choice */
 
-
 DEBUG(printf("picked: %s\n", regex_name[GLOBALS->regex_which_search_c_1]));
 }
 
@@ -950,6 +949,7 @@ void searchbox(char *title, GtkSignalFunc func)
     GtkTooltips *tooltips;
     GtkAdjustment *adj;
     GtkWidget *align;
+    int cached_which = GLOBALS->regex_which_search_c_1;
 
     /* fix problem where ungrab doesn't occur if button pressed + simultaneous accelerator key occurs */
     if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
@@ -1097,9 +1097,13 @@ void searchbox(char *title, GtkSignalFunc func)
         gtk_widget_show (GLOBALS->menuitem_search[i]);
         gtkwave_signal_connect(GTK_OBJECT (GLOBALS->menuitem_search[i]), "activate", GTK_SIGNAL_FUNC(regex_clicked), (void *)((intptr_t)i));
         GLOBALS->regex_mutex_search_c_1[i]=0;
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (GLOBALS->menuitem_search[i]), FALSE); //
         }
 
-        GLOBALS->regex_mutex_search_c_1[0]=1;     /* "range" */
+	GLOBALS->regex_which_search_c_1 = cached_which;
+    	if((GLOBALS->regex_which_search_c_1<0)||(GLOBALS->regex_which_search_c_1>4)) GLOBALS->regex_which_search_c_1 = 0;
+        GLOBALS->regex_mutex_search_c_1[GLOBALS->regex_which_search_c_1]=1;     /* configure for "range", etc */
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (GLOBALS->menuitem_search[GLOBALS->regex_which_search_c_1]), TRUE);
 
         optionmenu = gtk_option_menu_new ();
         gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu), menu);

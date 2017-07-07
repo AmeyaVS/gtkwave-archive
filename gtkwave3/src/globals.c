@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Kermin Elliott Fleming 2007-2016.
+ * Copyright (c) Kermin Elliott Fleming 2007-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1931,6 +1931,9 @@ void reload_into_new_context_2(void)
 #if GTK_CHECK_VERSION(2,4,0)
  strcpy2_into_new_context(new_globals, &new_globals->pFileChooseFilterName, &GLOBALS->pFileChooseFilterName);
 #endif
+
+ /* search.c */
+ new_globals->regex_which_search_c_1 = GLOBALS->regex_which_search_c_1; /* preserve search type */
 
  /* ttranslate.c */
  strcpy2_into_new_context(new_globals, &new_globals->ttranslate_args, &GLOBALS->ttranslate_args);
