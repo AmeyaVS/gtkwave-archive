@@ -1061,6 +1061,7 @@ if(GLOBALS->extload_ffr_ctx)
 	}
 
 #else
+int patched_len = 0;
 
 last_modification_check();
 sprintf(sbuff, "%s -info %s 2>&1", EXTLOAD_PATH, fname);
