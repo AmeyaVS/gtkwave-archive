@@ -8,6 +8,7 @@
  */
 
 #include <config.h>
+#include <fstapi.h>
 #include "fsdb_wrapper_api.h"
 
 #ifdef WAVE_FSDB_READER_IS_PRESENT
@@ -899,6 +900,352 @@ fsdbRC rc = fsdb_obj->ffrGetTransInfo((fsdbTransId)idx, info);
 return(rc != FSDB_RC_FAILURE);
 }
 
+
+/*
+ * Reformat FSDB hierarchy info into FST's format (for use with WAVE_USE_FSDB_FST_BRIDGE)
+ */
+static void 
+__DumpScope2(fsdbTreeCBDataScope* scope, void (*cb)(void *))
+{
+unsigned char typ;
+struct fstHier fh;
+
+switch (scope->type) 
+	{
+    	case FSDB_ST_VCD_MODULE:
+		typ = FST_ST_VCD_MODULE; 
+		break;
+
+	case FSDB_ST_VCD_TASK:
+		typ = FST_ST_VCD_TASK; 
+		break;
+
+	case FSDB_ST_VCD_FUNCTION:
+		typ = FST_ST_VCD_FUNCTION; 
+		break;
+	
+	case FSDB_ST_VCD_BEGIN:
+		typ = FST_ST_VCD_BEGIN; 
+		break;
+	
+	case FSDB_ST_VCD_FORK:
+		typ = FST_ST_VCD_FORK; 
+		break;
+
+	case FSDB_ST_VCD_GENERATE:
+		typ = FST_ST_VCD_GENERATE; 
+		break;
+
+	case FSDB_ST_SV_INTERFACE:
+		typ = FST_ST_VCD_INTERFACE; 
+		break;
+
+	case FSDB_ST_VHDL_ARCHITECTURE:
+		typ = FST_ST_VHDL_ARCHITECTURE;
+		break;
+
+	case FSDB_ST_VHDL_PROCEDURE:
+		typ = FST_ST_VHDL_PROCEDURE;
+		break;
+
+	case FSDB_ST_VHDL_FUNCTION:
+		typ = FST_ST_VHDL_FUNCTION;
+		break;
+
+	case FSDB_ST_VHDL_RECORD:
+		typ = FST_ST_VHDL_RECORD;
+		break;
+
+	case FSDB_ST_VHDL_PROCESS:
+		typ = FST_ST_VHDL_PROCESS;
+		break;
+
+	case FSDB_ST_VHDL_BLOCK:
+		typ = FST_ST_VHDL_BLOCK;
+		break;
+
+	case FSDB_ST_VHDL_FOR_GENERATE:
+		typ = FST_ST_VHDL_FOR_GENERATE;
+		break;
+
+	case FSDB_ST_VHDL_IF_GENERATE:
+		typ = FST_ST_VHDL_IF_GENERATE;
+		break;
+
+	case FSDB_ST_VHDL_GENERATE:
+		typ = FST_ST_VHDL_GENERATE;
+		break;
+
+	default:
+		typ = FST_ST_VCD_MODULE;
+		break;
+    	}
+
+fh.htyp = FST_HT_SCOPE;
+fh.u.scope.typ = typ;
+fh.u.scope.name = scope->name;
+fh.u.scope.name_length = strlen(fh.u.scope.name);
+if(scope->module)
+	{
+	fh.u.scope.component = scope->module;
+	fh.u.scope.component_length = strlen(fh.u.scope.component);
+	}
+	else
+	{
+	fh.u.scope.component = NULL;
+	fh.u.scope.component_length = 0;
+	}
+
+cb(&fh);
+}
+
+
+static void 
+__DumpVar2(fsdbTreeCBDataVar *var, void (*cb)(void *))
+{
+unsigned char typ;
+unsigned char dir;
+struct fstHier fh;
+
+switch (var->type) 
+	{
+    	case FSDB_VT_VCD_EVENT:
+		typ = FST_VT_VCD_EVENT; 
+  		break;
+
+    	case FSDB_VT_VCD_INTEGER:
+		typ = FST_VT_VCD_INTEGER; 
+		break;
+
+    	case FSDB_VT_VCD_PARAMETER:
+		typ = FST_VT_VCD_PARAMETER; 
+		break;
+
+    	case FSDB_VT_VCD_REAL:
+		typ = FST_VT_VCD_REAL; 
+		break;
+
+    	case FSDB_VT_VCD_REG:
+		typ = FST_VT_VCD_REG; 
+		break;
+
+    	case FSDB_VT_VCD_SUPPLY0:
+		typ = FST_VT_VCD_SUPPLY0; 
+		break;
+
+    	case FSDB_VT_VCD_SUPPLY1:
+		typ = FST_VT_VCD_SUPPLY1; 
+		break;
+
+    	case FSDB_VT_VCD_TIME:
+		typ = FST_VT_VCD_TIME;
+		break;
+
+    	case FSDB_VT_VCD_TRI:
+		typ = FST_VT_VCD_TRI;
+		break;
+
+    	case FSDB_VT_VCD_TRIAND:
+		typ = FST_VT_VCD_TRIAND;
+		break;
+
+    	case FSDB_VT_VCD_TRIOR:
+		typ = FST_VT_VCD_TRIOR;
+		break;
+
+    	case FSDB_VT_VCD_TRIREG:
+		typ = FST_VT_VCD_TRIREG;
+		break;
+
+    	case FSDB_VT_VCD_TRI0:
+		typ = FST_VT_VCD_TRI0;
+		break;
+
+    	case FSDB_VT_VCD_TRI1:
+		typ = FST_VT_VCD_TRI1;
+		break;
+
+    	case FSDB_VT_VCD_WAND:
+		typ = FST_VT_VCD_WAND;
+		break;
+
+    	case FSDB_VT_VCD_WIRE:
+		typ = FST_VT_VCD_WIRE;
+		break;
+
+    	case FSDB_VT_VCD_WOR:
+		typ = FST_VT_VCD_WOR;
+		break;
+
+    	case FSDB_VT_VCD_PORT:
+		typ = FST_VT_VCD_PORT;
+		break;
+
+    	case FSDB_VT_VHDL_SIGNAL:
+    	case FSDB_VT_VHDL_VARIABLE:
+    	case FSDB_VT_VHDL_CONSTANT:
+    	case FSDB_VT_VHDL_FILE:
+    	case FSDB_VT_VCD_MEMORY:
+    	case FSDB_VT_VHDL_MEMORY:
+    	case FSDB_VT_VCD_MEMORY_DEPTH:
+    	case FSDB_VT_VHDL_MEMORY_DEPTH:         
+		switch(var->vc_dt)
+			{
+			case FSDB_VC_DT_FLOAT:
+			case FSDB_VC_DT_DOUBLE:
+				typ = FST_VT_VCD_REAL;
+				break;
+
+			case FSDB_VC_DT_UNKNOWN:
+			case FSDB_VC_DT_BYTE:
+			case FSDB_VC_DT_SHORT:
+			case FSDB_VC_DT_INT:
+			case FSDB_VC_DT_LONG:
+			case FSDB_VC_DT_HL_INT:
+			case FSDB_VC_DT_PHYSICAL:
+			default:
+				if(var->type == FSDB_VT_VHDL_SIGNAL)
+					{
+					typ = FST_VT_VCD_WIRE;
+					}
+				else
+					{
+					typ = FST_VT_VCD_REG;
+					}
+				break;
+			}
+		break;
+
+	case FSDB_VT_STREAM: /* these hold transactions: not yet supported */
+		typ = FST_VT_GEN_STRING;
+		break;
+
+    	default:
+		typ = FST_VT_VCD_WIRE;
+		break;
+    	}
+
+    switch(var->direction)
+	{
+	case FSDB_VD_INPUT:    	dir = FST_VD_INPUT; break;
+	case FSDB_VD_OUTPUT:   	dir = FST_VD_OUTPUT; break;
+	case FSDB_VD_INOUT:    	dir = FST_VD_INOUT; break;
+	case FSDB_VD_BUFFER:   	dir = FST_VD_BUFFER; break;
+	case FSDB_VD_LINKAGE:  	dir = FST_VD_LINKAGE; break;
+	case FSDB_VD_IMPLICIT: 
+	default:	       	dir = FST_VD_IMPLICIT; break;
+	}
+
+
+fh.htyp = FST_HT_VAR;
+fh.u.var.typ = typ;
+fh.u.var.direction = dir;
+fh.u.var.svt_workspace = 0;
+fh.u.var.sdt_workspace = 0;
+fh.u.var.sxt_workspace = 0;
+fh.u.var.name = var->name;
+fh.u.var.length = (var->lbitnum > var->rbitnum) ? (var->lbitnum - var->rbitnum + 1) : (var->rbitnum - var->lbitnum + 1);
+fh.u.var.handle = var->u.idcode;
+fh.u.var.name_length = strlen(fh.u.var.name);
+fh.u.var.is_alias = 0; // for now
+
+cb(&fh);
+}
+
+
+static void 
+__DumpStruct2(fsdbTreeCBDataStructBegin* str, void (*cb)(void *))
+{
+struct fstHier fh;
+
+fh.htyp = FST_HT_SCOPE;
+fh.u.scope.typ = FST_ST_VCD_STRUCT;
+fh.u.scope.name = str->name;
+fh.u.scope.name_length = strlen(fh.u.scope.name);
+fh.u.scope.component = NULL;
+fh.u.scope.component_length = 0;
+
+cb(&fh);
+}
+
+
+static void 
+__DumpArray2(fsdbTreeCBDataArrayBegin* arr, void (*cb)(void *))
+{
+/* printf("NAME: %s SIZE: %d is_partial_dumped: %d\n", arr->name, (int)arr->size, (int)arr->is_partial_dumped); */
+}
+
+
+
+static bool_T __MyTreeCB2(fsdbTreeCBType cb_type, 
+			 void *client_data, void *tree_cb_data)
+{
+void (*cb)(void *) = (void (*)(void *))client_data;
+struct fstHier fh;
+
+
+
+char bf[16];
+
+switch (cb_type) 
+	{
+    	case FSDB_TREE_CBT_BEGIN_TREE:
+		/* fprintf(stderr, "Begin Tree:\n"); */
+		break;
+
+    	case FSDB_TREE_CBT_SCOPE:
+		__DumpScope2((fsdbTreeCBDataScope*)tree_cb_data, cb);
+		break;
+
+    	case FSDB_TREE_CBT_VAR:
+		__DumpVar2((fsdbTreeCBDataVar*)tree_cb_data, cb);
+		break;
+
+    	case FSDB_TREE_CBT_UPSCOPE:
+	case FSDB_TREE_CBT_STRUCT_END:
+		fh.htyp = FST_HT_UPSCOPE;
+		cb(&fh);
+		break;
+
+    	case FSDB_TREE_CBT_END_TREE:
+		fh.htyp = FST_HT_TREEEND;
+		cb(&fh);
+		break;
+
+	case FSDB_TREE_CBT_STRUCT_BEGIN:
+		__DumpStruct2((fsdbTreeCBDataStructBegin*)tree_cb_data, cb);
+		break;
+
+	/* not yet supported */
+    	case FSDB_TREE_CBT_ARRAY_BEGIN:
+		__DumpArray2((fsdbTreeCBDataArrayBegin*)tree_cb_data, cb);
+		break;
+    	case FSDB_TREE_CBT_ARRAY_END:
+		break;
+
+    	case FSDB_TREE_CBT_FILE_TYPE:
+    	case FSDB_TREE_CBT_SIMULATOR_VERSION:
+    	case FSDB_TREE_CBT_SIMULATION_DATE:
+    	case FSDB_TREE_CBT_X_AXIS_SCALE:
+    	case FSDB_TREE_CBT_END_ALL_TREE:
+    	case FSDB_TREE_CBT_RECORD_BEGIN:
+    	case FSDB_TREE_CBT_RECORD_END:
+        	break;
+             
+    	default:
+		return(FALSE);
+    	}
+
+return(TRUE);
+}
+
+extern "C" void fsdbReaderReadScopeVarTree2(void *ctx,void (*cb)(void *))
+{
+ffrObject *fsdb_obj = (ffrObject *)ctx;
+
+fsdb_obj->ffrSetTreeCBFunc(__MyTreeCB2, (void *) cb);
+fsdb_obj->ffrReadScopeVarTree();
+}
 
 #else
 

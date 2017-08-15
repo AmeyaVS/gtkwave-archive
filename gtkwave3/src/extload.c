@@ -32,6 +32,12 @@
 #include "busy.h"
 #include "hierpack.h"
 
+#ifdef WAVE_FSDB_READER_IS_PRESENT
+/* experimental new code that uses FST's on the fly fast tree build algorithm */
+#define WAVE_USE_FSDB_FST_BRIDGE
+#endif
+
+
 #ifndef EXTLOAD_SUFFIX
 
 const char *extload_loader_fail_msg = "Sorry, EXTLOAD support was not compiled into this executable, exiting.\n\n";
@@ -958,6 +964,620 @@ if((GLOBALS->extload_curr_tree < GLOBALS->extload_max_tree) || (!GLOBALS->extloa
 }
 #endif
 
+/* ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+
+#ifdef WAVE_USE_FSDB_FST_BRIDGE
+static char *get_varname2(struct fstHier *fh, unsigned char *vtp, unsigned char *vdp, int i, int *patched_len)
+{
+char *sbuff = NULL;
+static char zbuf[65537]; /* OK as this does not need to be re-entrant */
+
+*patched_len = 0; /* zero says is ok, otherwise size overrides msi/lsi */
+
+	{
+	if((fh->htyp == FST_HT_VAR) && (i >= 0))
+		{
+			{
+			const char *pnt;
+			char typ[64];
+			const char *esc = NULL;
+			const char *lb = NULL;
+			const char *colon = NULL;
+			const char *rb = NULL;
+			int state = 0;
+			char *cpyto;
+
+			pnt = (fh->u.var.name[fh->u.var.name_length-1] == ']') ? fh->u.var.name : &fh->u.var.name[fh->u.var.name_length];
+			while(*pnt)
+				{
+				if(pnt[0] == '\\')
+					{
+					esc = pnt;
+					}
+				else
+					{
+					if(pnt[0] == '[')
+						{
+						lb = pnt;
+						colon = NULL;
+						rb = NULL;
+						state = 1;
+						}
+					else if(pnt[0] == ']')
+						{
+						rb = pnt;
+						state = 0;
+						/* if(pnt[1] == '[') esc = pnt; */ /* pretend we're escaped to handle 2d */
+						}
+					else if(pnt[0] == ':')
+						{
+						if(state)
+							{
+							colon = pnt;
+							}
+						}
+					}
+				pnt++;
+				}
+
+
+				{
+				unsigned int l, r;
+				unsigned int d2;
+
+				if(lb)
+					{
+					if(rb)
+						{
+						l = atoi(lb);
+						r = atoi(rb);
+						}
+						else
+						{
+						l = r = 0;
+						}
+					}
+					else
+					{				
+					l = fh->u.var.length - 1;
+					r = 0;
+					}
+				d2 = fh->u.var.handle;
+
+				GLOBALS->extload_idcodes[i] = d2;
+				if(GLOBALS->extload_inv_idcodes[d2] == 0) GLOBALS->extload_inv_idcodes[d2] = i+1; /* root alias */
+
+				if(fh->u.var.typ == FST_VT_VCD_REAL)
+					{
+					GLOBALS->mvlfacs_vzt_c_3[i].flags = VZT_RD_SYM_F_DOUBLE;
+					GLOBALS->extload_node_block[i].msi=0;
+					GLOBALS->extload_node_block[i].lsi=0;
+					GLOBALS->mvlfacs_vzt_c_3[i].len=64;
+					}
+				else
+				if(fh->u.var.typ == FST_VT_VCD_INTEGER)
+					{
+					GLOBALS->mvlfacs_vzt_c_3[i].flags = VZT_RD_SYM_F_INTEGER;
+					GLOBALS->extload_node_block[i].msi=0;
+					GLOBALS->extload_node_block[i].lsi=0;
+					GLOBALS->mvlfacs_vzt_c_3[i].len=32;
+					}
+				else
+					{
+					int len_parse = 1;
+
+					GLOBALS->mvlfacs_vzt_c_3[i].len = fh->u.var.length;
+
+					/* if(esc && lb && rb) */
+					if(lb && rb)
+						{
+						GLOBALS->extload_node_block[i].msi = atoi(lb+1);
+						if(colon)
+							{
+							GLOBALS->extload_node_block[i].lsi = atoi(colon+1);
+							}
+							else
+							{
+							GLOBALS->extload_node_block[i].lsi = GLOBALS->extload_node_block[i].msi;
+							}
+
+						len_parse = (GLOBALS->extload_node_block[i].msi > GLOBALS->extload_node_block[i].lsi)
+								? (GLOBALS->extload_node_block[i].msi - GLOBALS->extload_node_block[i].lsi + 1)
+								: (GLOBALS->extload_node_block[i].lsi - GLOBALS->extload_node_block[i].msi + 1);
+
+						if((GLOBALS->mvlfacs_vzt_c_3[i].len > len_parse) && !(GLOBALS->mvlfacs_vzt_c_3[i].len % len_parse)) /* check if 2d array */
+							{
+							/* printf("len_parse: %d vs len: %d\n", len_parse, GLOBALS->mvlfacs_vzt_c_3[i].len); */
+							*patched_len = GLOBALS->mvlfacs_vzt_c_3[i].len;
+							}
+							else /* original, non-2d behavior */
+							{
+							if(len_parse != GLOBALS->mvlfacs_vzt_c_3[i].len)
+								{
+								GLOBALS->extload_node_block[i].msi=l;
+								GLOBALS->extload_node_block[i].lsi=r;
+								}
+							}
+						}
+						else
+						{
+						if(lb && !l && !r) /* fix for stranded signals */
+							{
+							GLOBALS->extload_node_block[i].msi=atoi(lb+1);
+							GLOBALS->extload_node_block[i].lsi=atoi(lb+1);
+							}
+							else
+							{
+							GLOBALS->extload_node_block[i].msi=l;
+							GLOBALS->extload_node_block[i].lsi=r;
+							}
+						}
+
+					GLOBALS->mvlfacs_vzt_c_3[i].flags = VZT_RD_SYM_F_BITS;
+					}
+				}
+
+			/* now extract directional/type information */
+			if(vdp)
+				{
+				switch(fh->u.var.direction)
+					{
+					case FST_VD_INPUT:  *vdp = ND_DIR_IN;  GLOBALS->nonimplicit_direction_encountered = 1; break;
+					case FST_VD_OUTPUT: *vdp = ND_DIR_OUT; GLOBALS->nonimplicit_direction_encountered = 1; break;
+					case FST_VD_INOUT:  *vdp = ND_DIR_INOUT; GLOBALS->nonimplicit_direction_encountered = 1; break;
+					case FST_VD_IMPLICIT:
+					default:	    *vdp = ND_DIR_IMPLICIT; break;
+					}
+				}
+			
+			if(vtp)
+				{
+				*vtp = fh->u.var.typ;
+				}
+
+			pnt = fh->u.var.name;
+			sbuff = cpyto = zbuf;
+			sbuff[0] = 0;
+
+			if(*pnt)
+				{
+				while(*pnt)
+					{
+					/* if((*pnt == '[')||(isspace(*pnt))) break; */
+
+					if(isspace(*pnt)) break;
+					if((*pnt == '[') && (pnt == strrchr(pnt, '['))) /* fix for arrays */
+						{
+						/* now to fix possible generate... */
+						const char *pnt2 = pnt;
+						char lastch = *pnt2;
+						int colon_seen = 0;
+
+						pnt2++;
+						while(*pnt2 && !isspace(*pnt2) && (*pnt2 != '['))
+							{
+							lastch = *pnt2; pnt2++;
+							if(lastch == ':') { colon_seen = 1; }
+							};
+
+						if(lastch == ']') /* fix for NC verilog arrays */
+							{
+							int rng;
+
+							if(colon_seen) break;
+
+							rng = GLOBALS->extload_node_block[i].msi - GLOBALS->extload_node_block[i].lsi;
+							if(!rng)
+								{
+								break;
+								}
+							}
+						}
+
+					if(*pnt == '\\') /* this is not strictly correct, but fixes generic ranges from icarus */
+						{
+						pnt++;
+						continue;
+						}
+					*(cpyto++) = *(pnt++);
+					}
+				*cpyto = 0;
+				return(sbuff);
+				}
+			}
+		}
+	else
+        if(fh->htyp == FST_HT_SCOPE)
+                {
+			{
+			unsigned char ttype;
+
+                        GLOBALS->fst_scope_name = fstReaderPushScope(GLOBALS->extload_xc, fh->u.scope.name, GLOBALS->mod_tree_parent);
+
+			switch(fh->u.scope.typ)
+				{
+				case FST_ST_VCD_MODULE: ttype = TREE_VCD_ST_MODULE; break;
+				case FST_ST_VCD_TASK: ttype = TREE_VCD_ST_TASK; break;
+				case FST_ST_VCD_FUNCTION: ttype = TREE_VCD_ST_FUNCTION; break;
+				case FST_ST_VCD_FORK: ttype = TREE_VCD_ST_FORK; break;
+				case FST_ST_VCD_BEGIN: ttype = TREE_VCD_ST_BEGIN; break;
+				case FST_ST_VCD_GENERATE: ttype = TREE_VCD_ST_GENERATE; break;
+				case FST_ST_VCD_STRUCT: ttype = TREE_VCD_ST_STRUCT; break;
+				case FST_ST_VCD_INTERFACE: ttype = TREE_VCD_ST_INTERFACE; break;				
+				case FST_ST_VHDL_ARCHITECTURE: ttype = TREE_VHDL_ST_ARCHITECTURE; break;
+				case FST_ST_VHDL_RECORD: ttype = TREE_VHDL_ST_RECORD; break;
+				case FST_ST_VHDL_BLOCK: ttype = TREE_VHDL_ST_BLOCK; break;
+				case FST_ST_VHDL_GENERATE: ttype = TREE_VHDL_ST_GENERATE; break;
+				case FST_ST_VHDL_IF_GENERATE: ttype = TREE_VHDL_ST_GENIF; break;
+				case FST_ST_VHDL_FUNCTION: ttype = TREE_VHDL_ST_FUNCTION; break;
+				case FST_ST_VHDL_FOR_GENERATE: ttype = TREE_VHDL_ST_GENFOR; break;
+				case FST_ST_VHDL_PROCEDURE: ttype = TREE_VHDL_ST_PROCEDURE; break;
+				case FST_ST_VHDL_PROCESS: ttype = TREE_VHDL_ST_PROCESS; break;
+				default: ttype = TREE_UNKNOWN; break;
+				}
+
+	                allocate_and_decorate_module_tree_node(ttype, fh->u.scope.name, fh->u.scope.component, fh->u.scope.name_length, fh->u.scope.component_length, 0, 0);
+			}
+		}
+	else
+        if(fh->htyp == FST_HT_UPSCOPE)
+                {
+                GLOBALS->mod_tree_parent = fstReaderGetCurrentScopeUserInfo(GLOBALS->extload_xc);
+                GLOBALS->fst_scope_name = fstReaderPopScope(GLOBALS->extload_xc);
+		}
+	}
+
+return(NULL);
+}
+
+static void fsdb_append_graft_chain(int len, char *nam, int which, struct tree *par)
+{
+struct tree *t = talloc_2(sizeof(struct tree) + len + 1);
+
+memcpy(t->name, nam, len+1);
+t->t_which = which;
+
+t->child = par;
+t->next = GLOBALS->terminals_tchain_tree_c_1;
+GLOBALS->terminals_tchain_tree_c_1 = t;
+}
+
+
+static void process_extload_variable2(struct fstHier *s_gv)
+{
+int i;
+unsigned char vt, nvt;
+unsigned char vd;
+struct Node *n;
+struct symbol *s;
+char buf[65537];
+char *str;
+struct fac *f;
+char *fnam;
+int flen;
+int longest_nam_candidate = 0;
+int patched_len = 0;
+struct tree *npar;
+
+static char fnam_prev[65537]; /* OK as this does not need to be re-entrant */
+
+i = GLOBALS->extload_i;
+
+if(i<0)
+	{
+	fnam = get_varname2(s_gv, &GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, 0, &patched_len);
+	flen = strlen(fnam);
+	npar = GLOBALS->mod_tree_parent;
+
+	if(fnam) strcpy(fnam_prev, fnam);
+
+	if(GLOBALS->extload_hlen)
+		{
+		GLOBALS->extload_namecache[0 & F_NAME_MODULUS]=malloc_2(GLOBALS->extload_namecache_max[0 & F_NAME_MODULUS]=GLOBALS->extload_hlen+1+flen+1);
+		memcpy(GLOBALS->extload_namecache[0 & F_NAME_MODULUS], GLOBALS->fst_scope_name, GLOBALS->extload_hlen);
+		*(GLOBALS->extload_namecache[0 & F_NAME_MODULUS]+GLOBALS->extload_hlen) = '.';
+		strcpy(GLOBALS->extload_namecache[0 & F_NAME_MODULUS]+GLOBALS->extload_hlen+1, fnam);
+		GLOBALS->extload_namecache_lens[0 & F_NAME_MODULUS]=GLOBALS->extload_hlen + 1 + flen;
+		GLOBALS->extload_namecache_patched[0 & F_NAME_MODULUS]=patched_len;
+		GLOBALS->extload_npar[0 & F_NAME_MODULUS]=npar;
+		}
+	else
+		{
+		GLOBALS->extload_namecache[0 & F_NAME_MODULUS]=malloc_2(GLOBALS->extload_namecache_max[0 & F_NAME_MODULUS]=flen+1);
+		strcpy(GLOBALS->extload_namecache[0 & F_NAME_MODULUS], fnam);
+		GLOBALS->extload_namecache_lens[0 & F_NAME_MODULUS] = flen;
+		GLOBALS->extload_namecache_patched[0 & F_NAME_MODULUS]=patched_len;
+		GLOBALS->extload_npar[0 & F_NAME_MODULUS]=npar;
+		}
+	}
+else
+	{
+	vt = GLOBALS->extload_vt_prev;
+	vd = GLOBALS->extload_vd_prev;
+	if(i!=(GLOBALS->numfacs-1))
+		{
+		fnam = get_varname2(s_gv, &GLOBALS->extload_vt_prev, &GLOBALS->extload_vd_prev, i+1, &patched_len);
+		flen = strlen(fnam);
+		npar = GLOBALS->mod_tree_parent;
+
+		if(GLOBALS->extload_hlen)
+			{
+			if(GLOBALS->extload_namecache_max[(i+1)&F_NAME_MODULUS] < (GLOBALS->extload_hlen+1+flen+1))
+				{
+				if(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]) free_2(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]);
+				GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]=malloc_2(GLOBALS->extload_namecache_max[(i+1)&F_NAME_MODULUS] = GLOBALS->extload_hlen+1+flen+1);
+				}
+
+			memcpy(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS], GLOBALS->fst_scope_name, GLOBALS->extload_hlen);
+			*(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]+GLOBALS->extload_hlen) = '.';
+			strcpy(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]+GLOBALS->extload_hlen+1, fnam);
+			GLOBALS->extload_namecache_lens[(i+1)&F_NAME_MODULUS] = GLOBALS->extload_hlen + 1 + flen;
+			GLOBALS->extload_namecache_patched[(i+1)&F_NAME_MODULUS] = patched_len;
+			GLOBALS->extload_npar[(i+1) & F_NAME_MODULUS]=npar;
+			}
+		else
+			{
+			if(GLOBALS->extload_namecache_max[(i+1)&F_NAME_MODULUS] < (flen+1))
+				{
+				if(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS])free_2(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]);
+				GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]=malloc_2(GLOBALS->extload_namecache_max[(i+1)&F_NAME_MODULUS] = flen+1);
+				}
+			strcpy(GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS], fnam);
+			GLOBALS->extload_namecache_lens[(i+1)&F_NAME_MODULUS] = flen;
+			GLOBALS->extload_namecache_patched[(i+1)&F_NAME_MODULUS] = patched_len;
+			GLOBALS->extload_npar[(i+1) & F_NAME_MODULUS]=npar;
+			}
+		}
+
+	f=GLOBALS->mvlfacs_vzt_c_3+i;
+
+	if((f->len>1)&& (!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))) )
+		{
+		int len=sprintf_2_sdd(buf, GLOBALS->extload_namecache[i&F_NAME_MODULUS],GLOBALS->extload_node_block[i].msi, GLOBALS->extload_node_block[i].lsi);
+		if(GLOBALS->extload_namecache_patched[i&F_NAME_MODULUS]) /* 2d */
+			{
+                        GLOBALS->extload_node_block[i].msi=GLOBALS->extload_namecache_patched[i&F_NAME_MODULUS] - 1;
+                        GLOBALS->extload_node_block[i].lsi=0;
+			}
+		longest_nam_candidate = len;
+
+                if(!GLOBALS->do_hier_compress)
+                        {
+                        str=malloc_2(len+1);
+                        }   
+                        else
+                        {
+                        if(len > GLOBALS->f_name_build_buf_len)
+                                {
+                                free_2(GLOBALS->f_name_build_buf); GLOBALS->f_name_build_buf = malloc_2((GLOBALS->f_name_build_buf_len=len)+1);
+                                }
+                        str = GLOBALS->f_name_build_buf;
+                        }
+
+		if(!GLOBALS->alt_hier_delimeter)
+			{
+			strcpy(str, buf);
+			}
+			else
+			{
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
+			}
+		s=&GLOBALS->extload_sym_block[i];
+	        symadd_name_exists_sym_exists(s,str,0);
+		GLOBALS->extload_prevsymroot = GLOBALS->extload_prevsym = NULL;
+
+                if(GLOBALS->fast_tree_sort)
+                       	{
+                        len = sprintf_2_sdd(buf, fnam_prev,GLOBALS->extload_node_block[i].msi, GLOBALS->extload_node_block[i].lsi);
+                        fsdb_append_graft_chain(len, buf, i, GLOBALS->extload_npar[i & F_NAME_MODULUS]);
+			if(fnam) strcpy(fnam_prev, fnam);
+                        }
+		}
+	else if (
+			((f->len==1)&&(!(f->flags&(VZT_RD_SYM_F_INTEGER|VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))&&
+			((i!=GLOBALS->numfacs-1)&&(GLOBALS->extload_namecache_lens[i&F_NAME_MODULUS]==GLOBALS->extload_namecache_lens[(i+1)&F_NAME_MODULUS])&&(!memrevcmp(GLOBALS->extload_namecache_lens[i&F_NAME_MODULUS],GLOBALS->extload_namecache[i&F_NAME_MODULUS], GLOBALS->extload_namecache[(i+1)&F_NAME_MODULUS]))))
+			||
+			(((i!=0)&&(GLOBALS->extload_namecache_lens[i&F_NAME_MODULUS]==GLOBALS->extload_namecache_lens[(i-1)&F_NAME_MODULUS])&&(!memrevcmp(GLOBALS->extload_namecache_lens[i&F_NAME_MODULUS], GLOBALS->extload_namecache[i&F_NAME_MODULUS], GLOBALS->extload_namecache[(i-1)&F_NAME_MODULUS]))) &&
+			(GLOBALS->extload_node_block[i].msi!=-1)&&(GLOBALS->extload_node_block[i].lsi!=-1))
+		)
+		{
+		int len = sprintf_2_sd(buf, GLOBALS->extload_namecache[i&F_NAME_MODULUS],GLOBALS->extload_node_block[i].msi);
+		longest_nam_candidate = len;
+
+                if(!GLOBALS->do_hier_compress)
+                        {
+                        str=malloc_2(len+1);
+                        }
+                        else
+                        {
+                        if(len > GLOBALS->f_name_build_buf_len)
+                                {
+                                free_2(GLOBALS->f_name_build_buf); GLOBALS->f_name_build_buf = malloc_2((GLOBALS->f_name_build_buf_len=len)+1);
+                                }
+                        str = GLOBALS->f_name_build_buf;
+                        }
+
+		if(!GLOBALS->alt_hier_delimeter)
+			{
+			strcpy(str, buf);
+			}
+			else
+			{
+			strcpy_vcdalt(str, buf, GLOBALS->alt_hier_delimeter);
+			}
+		s=&GLOBALS->extload_sym_block[i];
+	        symadd_name_exists_sym_exists(s,str,0);
+		if((GLOBALS->extload_prevsym)&&(i>0)&&(GLOBALS->extload_namecache_lens[i&F_NAME_MODULUS]==GLOBALS->extload_namecache_lens[(i-1)&F_NAME_MODULUS])&&(!memrevcmp(GLOBALS->extload_namecache_lens[i&F_NAME_MODULUS], GLOBALS->extload_namecache[i&F_NAME_MODULUS], GLOBALS->extload_namecache[(i-1)&F_NAME_MODULUS])))	/* allow chaining for search functions.. */
+			{
+			GLOBALS->extload_prevsym->vec_root = GLOBALS->extload_prevsymroot;
+			GLOBALS->extload_prevsym->vec_chain = s;
+			s->vec_root = GLOBALS->extload_prevsymroot;
+			GLOBALS->extload_prevsym = s;
+			}
+			else
+			{
+			GLOBALS->extload_prevsymroot = GLOBALS->extload_prevsym = s;
+			}
+
+                if(GLOBALS->fast_tree_sort)
+                       	{
+                        len = sprintf_2_sd(buf, fnam_prev, GLOBALS->extload_node_block[i].msi);
+                        fsdb_append_graft_chain(len, buf, i, GLOBALS->extload_npar[i & F_NAME_MODULUS]);
+			if(fnam) strcpy(fnam_prev, fnam);
+                       	}
+
+		}
+		else
+		{
+		int len = GLOBALS->extload_namecache_lens[i&F_NAME_MODULUS];
+
+		longest_nam_candidate = len;
+                if(!GLOBALS->do_hier_compress)
+                        {
+                        str=malloc_2(len+1);
+                        }
+                        else
+                        {   
+                        if(len > GLOBALS->f_name_build_buf_len)
+                                {
+                                free_2(GLOBALS->f_name_build_buf); GLOBALS->f_name_build_buf = malloc_2((GLOBALS->f_name_build_buf_len=len)+1);
+                                }
+                        str = GLOBALS->f_name_build_buf;
+                        }
+
+		if(!GLOBALS->alt_hier_delimeter)
+			{
+			strcpy(str, GLOBALS->extload_namecache[i&F_NAME_MODULUS]);
+			}
+			else
+			{
+			strcpy_vcdalt(str, GLOBALS->extload_namecache[i&F_NAME_MODULUS], GLOBALS->alt_hier_delimeter);
+			}
+		s=&GLOBALS->extload_sym_block[i];
+	        symadd_name_exists_sym_exists(s,str,0);
+		GLOBALS->extload_prevsymroot = GLOBALS->extload_prevsym = NULL;
+
+		if(f->flags&VZT_RD_SYM_F_INTEGER)
+			{
+			GLOBALS->extload_node_block[i].msi=31;
+			GLOBALS->extload_node_block[i].lsi=0;
+			GLOBALS->mvlfacs_vzt_c_3[i].len=32;
+			}
+
+                if(GLOBALS->fast_tree_sort)
+                       	{
+                        fsdb_append_graft_chain(strlen(fnam_prev), fnam_prev, i, GLOBALS->extload_npar[i & F_NAME_MODULUS]);
+			if(fnam) strcpy(fnam_prev, fnam);
+                       	}
+		}
+
+        n=&GLOBALS->extload_node_block[i];
+
+	if(longest_nam_candidate > GLOBALS->longestname) GLOBALS->longestname = longest_nam_candidate;
+
+        if(GLOBALS->do_hier_compress)
+                {
+                n->nname = compress_facility((unsigned char *)s->name, longest_nam_candidate);
+                /* free_2(s->name); ...removed as GLOBALS->f_name_build_buf is now used */
+                s->name = n->nname;
+                }
+                else
+                {
+                n->nname=s->name;
+                }
+
+        n->nname=s->name;
+        n->mv.mvlfac = GLOBALS->mvlfacs_vzt_c_3+i;
+	GLOBALS->mvlfacs_vzt_c_3[i].working_node = n;
+
+	if((f->len>1)||(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
+		{
+		n->extvals = 1;
+		}
+
+        n->head.time=-1;        /* mark 1st node as negative time */
+        n->head.v.h_val=AN_X;
+        s->n=n;
+
+	switch(vt)
+	        {
+	        case FST_VT_VCD_EVENT:  	nvt = ND_VCD_EVENT; break;
+	        case FST_VT_VCD_PARAMETER: 	nvt = ND_VCD_PARAMETER; break;
+	        case FST_VT_VCD_INTEGER:        nvt = ND_VCD_INTEGER; break;
+	        case FST_VT_VCD_REAL:           nvt = ND_VCD_REAL; break;
+	        case FST_VT_VCD_REG:            nvt = ND_VCD_REG; break;
+	        case FST_VT_VCD_SUPPLY0:        nvt = ND_VCD_SUPPLY0; break;
+	        case FST_VT_VCD_SUPPLY1:        nvt = ND_VCD_SUPPLY1; break;
+	        case FST_VT_VCD_TIME:           nvt = ND_VCD_TIME; break;
+	        case FST_VT_VCD_TRI:            nvt = ND_VCD_TRI; break;
+	        case FST_VT_VCD_TRIAND:         nvt = ND_VCD_TRIAND; break;
+	        case FST_VT_VCD_TRIOR:          nvt = ND_VCD_TRIOR; break;
+	        case FST_VT_VCD_TRIREG:         nvt = ND_VCD_TRIREG; break;
+	        case FST_VT_VCD_TRI0:           nvt = ND_VCD_TRI0; break;
+	        case FST_VT_VCD_TRI1:           nvt = ND_VCD_TRI1; break;
+	        case FST_VT_VCD_WAND:           nvt = ND_VCD_WAND; break;
+	        case FST_VT_VCD_WIRE:           nvt = ND_VCD_WIRE; break;
+	        case FST_VT_VCD_WOR:            nvt = ND_VCD_WOR; break;
+	        case FST_VT_VCD_PORT:           nvt = ND_VCD_PORT; break;
+	        case FST_VT_GEN_STRING:         nvt = ND_GEN_STRING; break;
+	        default:                nvt = ND_UNSPECIFIED_DEFAULT; break;
+	        }
+	n->vartype = nvt;
+	n->vardir = vd;
+        }
+
+GLOBALS->extload_i++;
+}
+
+static void extload_hiertree_callback2(void *pnt)
+{
+static int tree_end = 0;
+int patched_len = 0;
+
+struct fstHier *s = (struct fstHier *)pnt;
+
+if((GLOBALS->extload_curr_tree < GLOBALS->extload_max_tree) || (!GLOBALS->extload_max_tree))
+	{
+	switch(s->htyp)
+		{
+		case FST_HT_SCOPE:
+		case FST_HT_UPSCOPE: 	get_varname2(s, NULL, NULL, -1, &patched_len);
+				GLOBALS->extload_hlen = GLOBALS->fst_scope_name ? strlen(GLOBALS->fst_scope_name) : 0;
+				break;
+	
+		case FST_HT_VAR:	
+					process_extload_variable2(s);
+				break;
+	
+		case FST_HT_TREEEND:
+	                {
+			GLOBALS->extload_curr_tree++;
+			fprintf(stderr, EXTLOAD"End tree #%d: %d vs %d symbols\n", GLOBALS->extload_curr_tree, GLOBALS->extload_i + 1, GLOBALS->numfacs);
+			if((GLOBALS->extload_curr_tree == GLOBALS->extload_max_tree) && (GLOBALS->extload_max_tree))
+				{
+				if(GLOBALS->numfacs > (GLOBALS->extload_i + 1))
+					{
+					fprintf(stderr, EXTLOAD"Max tree count of %d processed, freeing extra memory.\n", GLOBALS->extload_max_tree);
+					GLOBALS->numfacs = GLOBALS->extload_i + 1;
+
+					/* make sure these match the corresponding calloc_2 in extload_main_2! */
+					GLOBALS->mvlfacs_vzt_c_3=(struct fac *)realloc_2(GLOBALS->mvlfacs_vzt_c_3, GLOBALS->numfacs * sizeof(struct fac));
+					GLOBALS->vzt_table_vzt_c_1=(struct lx2_entry *)realloc_2(GLOBALS->vzt_table_vzt_c_1, GLOBALS->numfacs * sizeof(struct lx2_entry));
+					GLOBALS->extload_sym_block = (struct symbol *)realloc_2(GLOBALS->extload_sym_block, GLOBALS->numfacs * sizeof(struct symbol));
+					GLOBALS->extload_node_block=(struct Node *)realloc_2(GLOBALS->extload_node_block, GLOBALS->numfacs * sizeof(struct Node));
+					GLOBALS->extload_idcodes=(unsigned int *)realloc_2(GLOBALS->extload_idcodes, GLOBALS->numfacs * sizeof(unsigned int));
+					}
+				}
+			}
+	
+		default:	break;
+		}
+	}
+}
+
+#endif
+/* ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+
 
 /*
  * mainline
@@ -1207,6 +1827,11 @@ GLOBALS->extload_node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(stru
 GLOBALS->extload_idcodes=(unsigned int *)calloc_2(GLOBALS->numfacs, sizeof(unsigned int));
 GLOBALS->extload_inv_idcodes=(int *)calloc_2(max_idcode+1, sizeof(int));
 
+#ifdef WAVE_USE_FSDB_FST_BRIDGE
+GLOBALS->extload_npar=(struct tree **)calloc_2(F_NAME_MODULUS+1, sizeof(struct tree *));
+GLOBALS->fast_tree_sort = 1;
+#endif
+
 if(!GLOBALS->fast_tree_sort)
         {
         GLOBALS->do_hier_compress = 0;
@@ -1230,8 +1855,13 @@ if(!GLOBALS->hier_was_explicitly_set)    /* set default hierarchy split char */
 GLOBALS->extload_xc = fstReaderOpenForUtilitiesOnly();
 
 GLOBALS->extload_i=-1;
+#ifdef WAVE_USE_FSDB_FST_BRIDGE
+fsdbReaderReadScopeVarTree2(GLOBALS->extload_ffr_ctx, extload_hiertree_callback2);
+process_extload_variable2(NULL); /* flush out final cached variable */
+#else
 fsdbReaderReadScopeVarTree(GLOBALS->extload_ffr_ctx, extload_hiertree_callback);
 process_extload_variable(NULL); /* flush out final cached variable */
+#endif
 
 decorated_module_cleanup(); /* ...also now in gtk2_treesearch.c */
 iter_through_comp_name_table();
@@ -1248,6 +1878,9 @@ free_2(GLOBALS->extload_namecache); GLOBALS->extload_namecache = NULL;
 free_2(GLOBALS->extload_namecache_max); GLOBALS->extload_namecache_max = NULL;
 free_2(GLOBALS->extload_namecache_lens); GLOBALS->extload_namecache_lens = NULL;
 free_2(GLOBALS->extload_namecache_patched); GLOBALS->extload_namecache_patched = NULL;
+#ifdef WAVE_USE_FSDB_FST_BRIDGE
+free_2(GLOBALS->extload_npar); GLOBALS->extload_npar = NULL;
+#endif
 
 fstReaderClose(GLOBALS->extload_xc); /* corresponds to fstReaderOpenForUtilitiesOnly() */
 
@@ -1309,12 +1942,14 @@ if(GLOBALS->fast_tree_sort)
         fprintf(stderr, EXTLOAD"Building facility hierarchy tree.\n");
 
         init_tree();
+#ifndef WAVE_USE_FSDB_FST_BRIDGE
         for(i=0;i<GLOBALS->numfacs;i++)
                 {
                 int was_packed = HIER_DEPACK_STATIC; /* no need to free_2() afterward then */
                 char *sb = hier_decompress_flagged(GLOBALS->facs[i]->name, &was_packed);
                 build_tree_from_name(sb, i);
                 }
+#endif
 /* SPLASH */                            splash_sync(4, 5);
         treegraft(&GLOBALS->treeroot);
 
@@ -1789,3 +2424,4 @@ if(GLOBALS->extload_inv_idcodes[txidx_in_trace] > 0)
 }
 
 #endif
+

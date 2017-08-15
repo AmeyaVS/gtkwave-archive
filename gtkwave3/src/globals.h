@@ -255,6 +255,7 @@ struct Node *extload_node_block;
 void *extload_xc;
 struct symbol *extload_prevsymroot;
 struct symbol *extload_prevsym;
+struct tree **extload_npar;
 int extload_i;
 int extload_hlen;
 unsigned char extload_vt_prev;

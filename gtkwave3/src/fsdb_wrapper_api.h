@@ -68,6 +68,8 @@ int fsdbReaderGetMaxFsdbTag64(void *ctx, uint64_t *tim);
 unsigned int fsdbReaderGetDumpOffRange(void *ctx, struct fsdbReaderBlackoutChain_t **r);
 int fsdbReaderGetTransInfo(void *ctx, int idx, void **trans_info);
 
+void fsdbReaderReadScopeVarTree2(void *ctx,void (*cb)(void *));
+
 #ifdef __cplusplus
 }
 #endif

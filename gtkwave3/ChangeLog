@@ -1603,3 +1603,5 @@
 3.3.83	04aug17	Preserve search type for regex search across reloads or
 		close/reopens of regex search widget.
 		Update local libz to current version.		
+3.3.84	15aug17	Updated FSDB reader with experimental FST tree build
+		routines for faster init.

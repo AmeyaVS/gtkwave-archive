@@ -254,6 +254,7 @@ NULL, /* extload_node_block */
 NULL, /* extload_xc */
 NULL, /* extload_prevsymroot */
 NULL, /* extload_prevsym */
+NULL, /* extload_npar */
 0, /* extload_i */
 0, /* extload_hlen */
 0, /* extload_vt_prev */
