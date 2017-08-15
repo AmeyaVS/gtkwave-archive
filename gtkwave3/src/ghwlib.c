@@ -675,15 +675,15 @@ ghw_read_type (struct ghw_handler *h)
 	      ph->nbr_units = 0;
 	    else
 	      {
-		unsigned i;
+		unsigned ix; /* was "i", but fails -Wshadow */
 
 		if (ghw_read_uleb128 (h, &ph->nbr_units) != 0)
 		  goto err_p32;
 		ph->units = malloc (ph->nbr_units * sizeof (struct ghw_unit));
-		for (i = 0; i < ph->nbr_units; i++)
+		for (ix = 0; ix < ph->nbr_units; ix++)
 		  {
-		    ph->units[i].name = ghw_read_strid (h);
-		    if (ghw_read_lsleb128 (h, &ph->units[i].val) < 0)
+		    ph->units[ix].name = ghw_read_strid (h);
+		    if (ghw_read_lsleb128 (h, &ph->units[ix].val) < 0)
 		      goto err_p32;
 		  }
 	      }

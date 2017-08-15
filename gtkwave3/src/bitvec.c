@@ -1907,8 +1907,8 @@ if(!n->extvals)
 		{
 		if(namex[i-1]==']')
 			{
-			int j = i-2;
 			int colon_seen = 0;
+			j = i-2;
 		        for(;j>=0;j--)
 		                {
                 		if(namex[j]=='[') break;
@@ -2165,8 +2165,8 @@ if(!n->extvals)
 		{
 		if(namex[i-1]==']')
 			{
-			int j = i-2;
 			int colon_seen = 0;
+			j = i-2;
 		        for(;j>=0;j--)
 		                {
                 		if(namex[j]=='[') break;

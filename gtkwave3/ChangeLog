@@ -1605,3 +1605,5 @@
 		Update local libz to current version.		
 3.3.84	15aug17	Updated FSDB reader with experimental FST tree build
 		routines for faster init.
+		Removed warnings found when compiling with -Wshadow.
+
