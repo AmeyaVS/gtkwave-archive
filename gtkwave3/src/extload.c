@@ -1826,10 +1826,8 @@ GLOBALS->extload_sym_block = (struct symbol *)calloc_2(GLOBALS->numfacs, sizeof(
 GLOBALS->extload_node_block=(struct Node *)calloc_2(GLOBALS->numfacs,sizeof(struct Node));
 GLOBALS->extload_idcodes=(unsigned int *)calloc_2(GLOBALS->numfacs, sizeof(unsigned int));
 GLOBALS->extload_inv_idcodes=(int *)calloc_2(max_idcode+1, sizeof(int));
-
 #ifdef WAVE_USE_FSDB_FST_BRIDGE
 GLOBALS->extload_npar=(struct tree **)calloc_2(F_NAME_MODULUS+1, sizeof(struct tree *));
-GLOBALS->fast_tree_sort = 1;
 #endif
 
 if(!GLOBALS->fast_tree_sort)
