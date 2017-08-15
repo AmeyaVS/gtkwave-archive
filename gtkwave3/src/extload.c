@@ -1253,7 +1253,7 @@ struct symbol *s;
 char buf[65537];
 char *str;
 struct fac *f;
-char *fnam;
+char *fnam = NULL;
 int flen;
 int longest_nam_candidate = 0;
 int patched_len = 0;
