@@ -1606,7 +1606,7 @@
 3.3.84	18aug17	Updated FSDB reader with experimental FST tree build
 		routines for faster init.
 		Removed warnings found when compiling with -Wshadow.
-		Automatically enable --comphier for FST and FSDB if facility
+		Automatically enable --comphier for FST/FSDB/AE2 if facility
 		count reaches 500000.  This is to reduce memory consumption
 		for traces with very many signals.  Added disable_auto_comphier
 		to override this behavior.
