@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2016.
+ * Copyright (c) Tony Bybell 1999-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -695,6 +695,7 @@ if(!GLOBALS)
 
 	GLOBALS->extload_max_tree = old_g->extload_max_tree;
 	GLOBALS->do_hier_compress = old_g->do_hier_compress;
+	GLOBALS->disable_auto_comphier = old_g->disable_auto_comphier;
 
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->editor_name, &old_g->editor_name);
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_logfile, &old_g->fontname_logfile);

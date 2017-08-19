@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2016.
+ * Copyright (c) Tony Bybell 1999-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -154,6 +154,13 @@ int f_disable_ae2_alias(char *str)
 {
 DEBUG(printf("f_disable_ae2_alias(\"%s\")\n",str));
 GLOBALS->disable_ae2_alias=atoi_64(str)?1:0;
+return(0);
+}
+
+int f_disable_auto_comphier(char *str)
+{
+DEBUG(printf("f_disable_auto_comphier(\"%s\")\n",str));
+GLOBALS->disable_auto_comphier=atoi_64(str)?1:0;
 return(0);
 }
 
@@ -882,6 +889,7 @@ static struct rc_entry rcitems[]=
 { "convert_to_reals", f_convert_to_reals },
 { "cursor_snap", f_cursor_snap },
 { "disable_ae2_alias", f_disable_ae2_alias },
+{ "disable_auto_comphier", f_disable_auto_comphier },
 { "disable_empty_gui", f_disable_empty_gui },
 { "disable_mouseover", f_disable_mouseover },
 { "disable_tooltips", f_disable_tooltips },

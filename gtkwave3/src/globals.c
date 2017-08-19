@@ -399,6 +399,7 @@ NULL, /* fmem_buf */
 0, /* fmem_buf_siz */
 0, /* fmem_buf_offs */
 0, /* fmem_uncompressed_siz */
+0, /* disable_auto_comphier */
 
 
 /*
@@ -1859,6 +1860,7 @@ void reload_into_new_context_2(void)
  new_globals->keep_xz_colors = GLOBALS->keep_xz_colors;
  new_globals->disable_tooltips = GLOBALS->disable_tooltips;
  new_globals->do_hier_compress = GLOBALS->do_hier_compress;
+ new_globals->disable_auto_comphier = GLOBALS->disable_auto_comphier;
  new_globals->do_initial_zoom_fit = GLOBALS->do_initial_zoom_fit;
  new_globals->do_initial_zoom_fit_used = GLOBALS->do_initial_zoom_fit_used;
  new_globals->do_resize_signals = GLOBALS->do_resize_signals;

@@ -201,3 +201,10 @@ return((avoid_strdup != HIER_DEPACK_ALLOC) ? (str+ob) : strdup_2(str+ob));
 }
 
 
+void hier_auto_enable(void)
+{
+if((!GLOBALS->do_hier_compress) && (!GLOBALS->disable_auto_comphier) && (GLOBALS->numfacs >= HIER_AUTO_ENABLE_CNT))
+	{
+	GLOBALS->do_hier_compress = 1;
+	}
+}

@@ -554,6 +554,10 @@ if(!GLOBALS->fast_tree_sort)
 	{
 	GLOBALS->do_hier_compress = 0;
 	}
+	else
+	{
+	hier_auto_enable(); /* enable if greater than threshold */
+	}
 
 init_facility_pack();
 

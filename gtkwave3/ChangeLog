@@ -1603,7 +1603,10 @@
 3.3.83	04aug17	Preserve search type for regex search across reloads or
 		close/reopens of regex search widget.
 		Update local libz to current version.		
-3.3.84	15aug17	Updated FSDB reader with experimental FST tree build
+3.3.84	18aug17	Updated FSDB reader with experimental FST tree build
 		routines for faster init.
 		Removed warnings found when compiling with -Wshadow.
-
+		Automatically enable --comphier for FST and FSDB if facility
+		count reaches 500000.  This is to reduce memory consumption
+		for traces with very many signals.  Added disable_auto_comphier
+		to override this behavior.

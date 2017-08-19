@@ -32,6 +32,7 @@ ruler_origin 0
 ruler_step 0
 disable_ae2_alias no
 keep_xz_colors no
+disable_auto_comphier no
 
 strace_repeat_count 1
 enable_fast_exit yes
@@ -81,6 +82,7 @@ vcd_explicit_zero_subscripts no
 
 disable_mouseover no
 clipboard_mouseover yes
+
 
 #
 # color additions

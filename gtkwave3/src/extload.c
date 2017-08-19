@@ -1834,6 +1834,10 @@ if(!GLOBALS->fast_tree_sort)
         {
         GLOBALS->do_hier_compress = 0;
         }
+	else
+	{
+	hier_auto_enable(); /* enable if greater than threshold */
+	}
 
 GLOBALS->f_name_build_buf_len = 128;
 GLOBALS->f_name_build_buf = malloc_2(GLOBALS->f_name_build_buf_len + 1);
