@@ -342,7 +342,7 @@ if(t && (tname = get_fullname(t)))
 		{
 		GdkDisplay *g = gdk_display_get_default();
 		GtkClipboard *clip = gtk_clipboard_get_for_display (g, GDK_SELECTION_CLIPBOARD); /* GDK_SELECTION_PRIMARY is middle mouse button */
-		gtk_clipboard_set_text (clip, asciivalue, value_charlen);
+		gtk_clipboard_set_text (clip, asciivalue ? asciivalue : "", value_charlen);
 		}
 #endif
 
