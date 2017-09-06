@@ -809,12 +809,20 @@ create_facs (struct ghw_handler *h)
 		break;
 	      }
 	    /* FALLTHROUGH */
-	  case ghdl_rtik_type_e32:
 	  case ghdl_rtik_type_i32:
-	  case ghdl_rtik_type_i64:
-	  case ghdl_rtik_type_f64:
 	  case ghdl_rtik_type_p32:
+	    n->extvals = 1;
+	    n->msi = 31; n->lsi = 0;
+	    n->vartype = ND_VCD_INTEGER;
+	    break;
+	  case ghdl_rtik_type_i64:
 	  case ghdl_rtik_type_p64:
+	    n->extvals = 1;
+	    n->msi = 63; n->lsi = 0;
+	    n->vartype = ND_VCD_INTEGER;
+	    break;
+	  case ghdl_rtik_type_e32: /* ajb: what is e32? */
+	  case ghdl_rtik_type_f64:
 	    n->extvals = 1;
 	    n->msi = n->lsi = 0;
 	    break;
@@ -922,6 +930,12 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
 
   switch (sig_type->kind)
     {
+    case ghdl_rtik_type_i32:
+    case ghdl_rtik_type_i64:
+    case ghdl_rtik_type_p32:
+    case ghdl_rtik_type_p64:
+      flags = 0; break;
+
     case ghdl_rtik_type_b2:
       if (sig_type->en.wkt == ghw_wkt_bit)
 	{
@@ -937,10 +951,6 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
 	}
       /* FALLTHROUGH */
     case ghdl_rtik_type_e32:
-    case ghdl_rtik_type_i32:
-    case ghdl_rtik_type_i64:
-    case ghdl_rtik_type_p32:
-    case ghdl_rtik_type_p64:
       flags = HIST_STRING|HIST_REAL;
       if (HIST_STRING == 0)
 	{
@@ -1018,14 +1028,26 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
       break;
     case ghdl_rtik_type_i32:
     case ghdl_rtik_type_p32:
-      sprintf (GLOBALS->asbuf, GHWPRI32, sig->val->i32);
-      he->v.h_vector = strdup_2(GLOBALS->asbuf);
+	{
+	int i;
+	he->v.h_vector = malloc_2(32);
+	for(i=0;i<32;i++)
+		{
+		he->v.h_vector[31-i] = ((sig->val->i32 >> i) & 1) ? AN_1: AN_0;
+		}
+	}
       is_vector = 1;
       break;
     case ghdl_rtik_type_i64:
     case ghdl_rtik_type_p64:
-      sprintf (GLOBALS->asbuf, GHWPRI64, sig->val->i64);
-      he->v.h_vector = strdup_2(GLOBALS->asbuf);
+	{
+	int i;
+	he->v.h_vector = malloc_2(64);
+	for(i=0;i<64;i++)
+		{
+		he->v.h_vector[63-i] = ((sig->val->i64 >> i) & 1) ? AN_1: AN_0;
+		}
+	}
       is_vector = 1;
       break;
     default:
