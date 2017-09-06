@@ -1613,6 +1613,6 @@
 		Fix null pointer sent to gtk_clipboard_set_text() for
 		mouseover to clipboard cut ops.
 3.3.85	06sep17	Fix integer type in GHW loader so integer value changes are
-		stored as a string. This then allows bitwise manipulations
+		not stored as a string. This then allows bitwise manipulations
 		of integers.
 
