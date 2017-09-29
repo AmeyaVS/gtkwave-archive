@@ -211,6 +211,7 @@ return(1);
 }
 #endif
 
+#ifndef WAVE_USE_FSDB_FST_BRIDGE
 #ifdef WAVE_FSDB_READER_IS_PRESENT
 static char *get_varname(char *sbuff, unsigned char *vtp, unsigned char *vdp, int i, int *patched_len)
 {
@@ -633,8 +634,9 @@ for(;;)
 
 return(NULL);
 }
+#endif
 
-
+#ifndef WAVE_USE_FSDB_FST_BRIDGE
 #ifdef WAVE_FSDB_READER_IS_PRESENT
 static void process_extload_variable(char *s_gv)
 #else
@@ -915,12 +917,12 @@ else
 
 GLOBALS->extload_i++;
 }
+#endif
 
-
+#ifndef WAVE_USE_FSDB_FST_BRIDGE
 #ifdef WAVE_FSDB_READER_IS_PRESENT
 static void extload_hiertree_callback(void *pnt)
 {
-static int tree_end = 0;
 int patched_len = 0;
 
 char *s = (char *)pnt;
@@ -963,6 +965,7 @@ if((GLOBALS->extload_curr_tree < GLOBALS->extload_max_tree) || (!GLOBALS->extloa
 	}
 }
 #endif
+#endif
 
 /* ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 
@@ -979,8 +982,7 @@ static char zbuf[65537]; /* OK as this does not need to be re-entrant */
 		{
 			{
 			const char *pnt;
-			char typ[64];
-			const char *esc = NULL;
+			/* const char *esc = NULL; */
 			const char *lb = NULL;
 			const char *colon = NULL;
 			const char *rb = NULL;
@@ -992,7 +994,7 @@ static char zbuf[65537]; /* OK as this does not need to be re-entrant */
 				{
 				if(pnt[0] == '\\')
 					{
-					esc = pnt;
+					/* esc = pnt; */
 					}
 				else
 					{
@@ -1531,7 +1533,6 @@ GLOBALS->extload_i++;
 
 static void extload_hiertree_callback2(void *pnt)
 {
-static int tree_end = 0;
 int patched_len = 0;
 
 struct fstHier *s = (struct fstHier *)pnt;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2014.
+ * Copyright (c) Tony Bybell 1999-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -312,6 +312,12 @@ WV_MENU_HWM,
 #endif
 WV_MENU_HWV,
 WV_MENU_NUMITEMS
+};
+
+enum WV_RecurseType {
+WV_RECURSE_APPEND,
+WV_RECURSE_INSERT,
+WV_RECURSE_REPLACE,
 };
 
 void menu_new_viewer(gpointer null_data, guint callback_action, GtkWidget *widget);

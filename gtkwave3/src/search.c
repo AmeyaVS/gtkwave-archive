@@ -1097,7 +1097,7 @@ void searchbox(char *title, GtkSignalFunc func)
         gtk_widget_show (GLOBALS->menuitem_search[i]);
         gtkwave_signal_connect(GTK_OBJECT (GLOBALS->menuitem_search[i]), "activate", GTK_SIGNAL_FUNC(regex_clicked), (void *)((intptr_t)i));
         GLOBALS->regex_mutex_search_c_1[i]=0;
-	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (GLOBALS->menuitem_search[i]), FALSE); //
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (GLOBALS->menuitem_search[i]), FALSE);
         }
 
 	GLOBALS->regex_which_search_c_1 = cached_which;
