@@ -29,7 +29,8 @@ void DND_helper_quartz(char *data);
 #endif
 
 void recurse_import(GtkWidget *widget, guint callback_action);
-#define WV_RECURSE_IMPORT_WARN (15000)
+/* always warn in case this is to be used to count the number of signals under a level of hierarchy */
+#define WV_RECURSE_IMPORT_WARN (0)
 
 #endif
 
