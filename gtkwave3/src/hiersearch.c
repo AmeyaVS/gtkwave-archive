@@ -314,17 +314,46 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 
 /***************************************************************************/
 
+static void recurse_fetch_high_low(struct tree *t)
+{
+top:
+if(t->t_which >= 0)
+        {
+        if(t->t_which > GLOBALS->fetchhigh) GLOBALS->fetchhigh = t->t_which;
+        if(GLOBALS->fetchlow < 0)
+                {
+                GLOBALS->fetchlow = t->t_which;
+                }
+        else
+        if(t->t_which < GLOBALS->fetchlow)
+                {
+                GLOBALS->fetchlow = t->t_which;
+                }
+        }
+
+if(t->child)
+        {
+        recurse_fetch_high_low(t->child);
+        }
+
+if(t->next) { t = t->next; goto top; }
+}
+
+
 static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 (void)nothing;
 
 int i;
 
-if(!GLOBALS->h_selectedtree_hiersearch_c_1) return;
+if((!GLOBALS->h_selectedtree_hiersearch_c_1)||(!GLOBALS->h_selectedtree_hiersearch_c_1->child)) return;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
+recurse_fetch_high_low(GLOBALS->h_selectedtree_hiersearch_c_1->child);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
         struct symbol *s;
 	if(i<0) break; /* GHW */
@@ -340,7 +369,7 @@ if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
 	        {
 	        struct symbol *s, *t;
 		if(i<0) break; /* GHW */
@@ -378,7 +407,7 @@ if(GLOBALS->is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
 	int len;
         struct symbol *s, *t;
@@ -421,7 +450,7 @@ static void insert_callback(GtkWidget *widget, GtkWidget *nothing)
 Traces tcache;
 int i;
 
-if(!GLOBALS->h_selectedtree_hiersearch_c_1) return;
+if((!GLOBALS->h_selectedtree_hiersearch_c_1)||(!GLOBALS->h_selectedtree_hiersearch_c_1->child)) return;
 
 memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
 GLOBALS->traces.total=0;
@@ -429,7 +458,10 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
+recurse_fetch_high_low(GLOBALS->h_selectedtree_hiersearch_c_1->child);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
         struct symbol *s;
 	if(i<0) break; /* GHW */
@@ -445,7 +477,7 @@ if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
 	        {
 	        struct symbol *s, *t;
 		if(i<0) break; /* GHW */
@@ -483,7 +515,7 @@ if(GLOBALS->is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
 	int len;
         struct symbol *s, *t;
@@ -539,7 +571,7 @@ Traces tcache;
 int i;
 Trptr tfirst=NULL, tlast=NULL;
 
-if(!GLOBALS->h_selectedtree_hiersearch_c_1) return;
+if((!GLOBALS->h_selectedtree_hiersearch_c_1)||(!GLOBALS->h_selectedtree_hiersearch_c_1->child)) return;
 
 memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
 GLOBALS->traces.total=0;
@@ -547,7 +579,10 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
+recurse_fetch_high_low(GLOBALS->h_selectedtree_hiersearch_c_1->child);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
         struct symbol *s;
 	if(i<0) break; /* GHW */
@@ -563,7 +598,7 @@ if(GLOBALS->is_lx2)
 	{
 	int pre_import = 0;
 
-	for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
 	        {
 	        struct symbol *s, *t;
 		if(i<0) break; /* GHW */
@@ -601,7 +636,7 @@ if(GLOBALS->is_lx2)
 	}
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i<=fetchhigh(GLOBALS->h_selectedtree_hiersearch_c_1)->t_which;i++)
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
 	int len;
         struct symbol *s, *t;

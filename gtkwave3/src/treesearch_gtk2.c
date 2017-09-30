@@ -2551,14 +2551,9 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 
 /***************************************************************************/
 
-void recurse_fetch_high_low(struct tree *t, int level)
+static void recurse_fetch_high_low(struct tree *t)
 {
-/* int i; */
-
 top:
-/* for(i=0;i<(level*4);i++) printf(" "); */
-/* printf("t->name: '%s' %d\n", t->name, t->t_which); */
-
 if(t->t_which >= 0)
 	{
 	if(t->t_which > GLOBALS->fetchhigh) GLOBALS->fetchhigh = t->t_which;
@@ -2575,11 +2570,10 @@ if(t->t_which >= 0)
 
 if(t->child)
 	{
-	recurse_fetch_high_low(t->child, level+1);
+	recurse_fetch_high_low(t->child);
 	}
 
 if(t->next) { t = t->next; goto top; }
-
 }
 
 
@@ -2965,7 +2959,7 @@ if(GLOBALS->sst_sig_root_treesearch_gtk2_c_1)
 	int fz;
 
 	GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
-	if(GLOBALS->sst_sig_root_treesearch_gtk2_c_1->child) recurse_fetch_high_low(GLOBALS->sst_sig_root_treesearch_gtk2_c_1->child, 0);
+	if(GLOBALS->sst_sig_root_treesearch_gtk2_c_1->child) recurse_fetch_high_low(GLOBALS->sst_sig_root_treesearch_gtk2_c_1->child);
 	fz = GLOBALS->fetchhigh - GLOBALS->fetchlow + 1;
 	void (*func)(GtkWidget *, gpointer);
 
