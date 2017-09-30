@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2010
+ * Copyright (c) Tony Bybell 2010-2017
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,9 @@ int treebox_is_active(void);
 #if WAVE_USE_GTK2
 void DND_helper_quartz(char *data);
 #endif
+
+void recurse_import(GtkWidget *widget, guint callback_action);
+#define WV_RECURSE_IMPORT_WARN (0)
 
 #endif
 

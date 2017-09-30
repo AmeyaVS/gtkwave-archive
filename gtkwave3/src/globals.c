@@ -1102,6 +1102,8 @@ NULL, /* cleanup_treesearch_gtk2_c_8 468 */
 0, /* dnd_tgt_on_wavearea_treesearch_gtk2_c_1 */
 NULL, /* dnd_sigview */
 NULL, /* sst_vpaned */
+0, /* fetchlow */
+0, /* fetchhigh */
 
 
 /*

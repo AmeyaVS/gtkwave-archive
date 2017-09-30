@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tristan Gingold and Tony Bybell 2006-2014.
+ * Copyright (c) Tristan Gingold and Tony Bybell 2006-2017.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2549,3 +2549,450 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 	}
 }
 
+/***************************************************************************/
+
+void recurse_fetch_high_low(struct tree *t, int level)
+{
+/* int i; */
+
+top:
+/* for(i=0;i<(level*4);i++) printf(" "); */
+/* printf("t->name: '%s' %d\n", t->name, t->t_which); */
+
+if(t->t_which >= 0)
+	{
+	if(t->t_which > GLOBALS->fetchhigh) GLOBALS->fetchhigh = t->t_which;
+	if(GLOBALS->fetchlow < 0) 
+		{
+		GLOBALS->fetchlow = t->t_which;
+		}
+	else
+	if(t->t_which < GLOBALS->fetchlow) 
+		{
+		GLOBALS->fetchlow = t->t_which;
+		}
+	}
+
+if(t->child)
+	{
+	recurse_fetch_high_low(t->child, level+1);
+	}
+
+if(t->next) { t = t->next; goto top; }
+
+}
+
+
+
+static void recurse_append_callback(GtkWidget *widget, gpointer data)
+{
+int i;
+
+if(!GLOBALS->sst_sig_root_treesearch_gtk2_c_1 || !data) return;
+
+set_window_busy(widget);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+        {
+        struct symbol *s;
+	if(i<0) break; /* GHW */
+        s=GLOBALS->facs[i];
+	if(s->vec_root)
+		{
+		set_s_selected(s->vec_root, GLOBALS->autocoalesce);
+		}
+        }
+
+/* LX2 */
+if(GLOBALS->is_lx2)
+	{
+	int pre_import = 0;
+
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+	        {
+	        struct symbol *s, *t;
+		if(i<0) break; /* GHW */
+	        s=GLOBALS->facs[i];
+		t=s->vec_root;
+		if((t)&&(GLOBALS->autocoalesce))
+			{
+			if(get_s_selected(t))
+				{
+				while(t)
+					{
+					if(t->n->mv.mvlfac)
+						{
+						lx2_set_fac_process_mask(t->n);
+						pre_import++;
+						}
+					t=t->vec_chain;
+					}
+				}
+			}
+			else
+			{
+			if(s->n->mv.mvlfac)
+				{
+				lx2_set_fac_process_mask(s->n);
+				pre_import++;
+				}
+			}
+	        }
+
+	if(pre_import)
+		{
+		lx2_import_masked();
+		}
+	}
+/* LX2 */
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+        {
+	int len;
+        struct symbol *s, *t;
+	if(i<0) break; /* GHW */
+        s=GLOBALS->facs[i];
+	t=s->vec_root;
+	if((t)&&(GLOBALS->autocoalesce))
+		{
+		if(get_s_selected(t))
+			{
+			set_s_selected(t, 0);
+			len=0;
+			while(t)
+				{
+				len++;
+				t=t->vec_chain;
+				}
+			if(len) add_vector_chain(s->vec_root, len);
+			}
+		}
+		else
+		{
+	        AddNodeUnroll(s->n, NULL);
+		}
+        }
+
+set_window_idle(widget);
+
+GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = GLOBALS->traces.last;
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+}
+
+
+static void recurse_insert_callback(GtkWidget *widget, gpointer data)
+{
+Traces tcache;
+int i;
+
+if(!GLOBALS->sst_sig_root_treesearch_gtk2_c_1 || !data) return;
+
+memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
+GLOBALS->traces.total=0;
+GLOBALS->traces.first=GLOBALS->traces.last=NULL;
+
+set_window_busy(widget);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+        {
+        struct symbol *s;
+	if(i<0) break; /* GHW */
+        s=GLOBALS->facs[i];
+	if(s->vec_root)
+		{
+		set_s_selected(s->vec_root, GLOBALS->autocoalesce);
+		}
+        }
+
+/* LX2 */
+if(GLOBALS->is_lx2)
+	{
+	int pre_import = 0;
+
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+	        {
+	        struct symbol *s, *t;
+		if(i<0) break; /* GHW */
+	        s=GLOBALS->facs[i];
+		t=s->vec_root;
+		if((t)&&(GLOBALS->autocoalesce))
+			{
+			if(get_s_selected(t))
+				{
+				while(t)
+					{
+					if(t->n->mv.mvlfac)
+						{
+						lx2_set_fac_process_mask(t->n);
+						pre_import++;
+						}
+					t=t->vec_chain;
+					}
+				}
+			}
+			else
+			{
+			if(s->n->mv.mvlfac)
+				{
+				lx2_set_fac_process_mask(s->n);
+				pre_import++;
+				}
+			}
+	        }
+
+	if(pre_import)
+		{
+		lx2_import_masked();
+		}
+	}
+/* LX2 */
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+        {
+	int len;
+        struct symbol *s, *t;
+	if(i<0) break; /* GHW */
+        s=GLOBALS->facs[i];
+	t=s->vec_root;
+	if((t)&&(GLOBALS->autocoalesce))
+		{
+		if(get_s_selected(t))
+			{
+			set_s_selected(t, 0);
+			len=0;
+			while(t)
+				{
+				len++;
+				t=t->vec_chain;
+				}
+			if(len) add_vector_chain(s->vec_root, len);
+			}
+		}
+		else
+		{
+	        AddNodeUnroll(s->n, NULL);
+		}
+        }
+
+set_window_idle(widget);
+
+GLOBALS->traces.buffercount=GLOBALS->traces.total;
+GLOBALS->traces.buffer=GLOBALS->traces.first;
+GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+GLOBALS->traces.first=tcache.first;
+GLOBALS->traces.last=tcache.last;
+GLOBALS->traces.total=tcache.total;
+
+PasteBuffer();
+
+GLOBALS->traces.buffercount=tcache.buffercount;
+GLOBALS->traces.buffer=tcache.buffer;
+GLOBALS->traces.bufferlast=tcache.bufferlast;
+
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+}
+
+
+static void recurse_replace_callback(GtkWidget *widget, gpointer data)
+{
+Traces tcache;
+int i;
+Trptr tfirst=NULL, tlast=NULL;
+
+if(!GLOBALS->sst_sig_root_treesearch_gtk2_c_1 || !data) return;
+
+memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
+GLOBALS->traces.total=0;
+GLOBALS->traces.first=GLOBALS->traces.last=NULL;
+
+set_window_busy(widget);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+        {
+        struct symbol *s;
+	if(i<0) break; /* GHW */
+        s=GLOBALS->facs[i];
+	if(s->vec_root)
+		{
+		set_s_selected(s->vec_root, GLOBALS->autocoalesce);
+		}
+        }
+
+/* LX2 */
+if(GLOBALS->is_lx2)
+	{
+	int pre_import = 0;
+
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+	        {
+	        struct symbol *s, *t;
+		if(i<0) break; /* GHW */
+	        s=GLOBALS->facs[i];
+		t=s->vec_root;
+		if((t)&&(GLOBALS->autocoalesce))
+			{
+			if(get_s_selected(t))
+				{
+				while(t)
+					{
+					if(t->n->mv.mvlfac)
+						{
+						lx2_set_fac_process_mask(t->n);
+						pre_import++;
+						}
+					t=t->vec_chain;
+					}
+				}
+			}
+			else
+			{
+			if(s->n->mv.mvlfac)
+				{
+				lx2_set_fac_process_mask(s->n);
+				pre_import++;
+				}
+			}
+	        }
+
+	if(pre_import)
+		{
+		lx2_import_masked();
+		}
+	}
+/* LX2 */
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
+        {
+	int len;
+        struct symbol *s, *t;
+	if(i<0) break; /* GHW */
+        s=GLOBALS->facs[i];
+	t=s->vec_root;
+	if((t)&&(GLOBALS->autocoalesce))
+		{
+		if(get_s_selected(t))
+			{
+			set_s_selected(t, 0);
+			len=0;
+			while(t)
+				{
+				len++;
+				t=t->vec_chain;
+				}
+			if(len) add_vector_chain(s->vec_root, len);
+			}
+		}
+		else
+		{
+	        AddNodeUnroll(s->n, NULL);
+		}
+        }
+
+set_window_idle(widget);
+
+tfirst=GLOBALS->traces.first; tlast=GLOBALS->traces.last;       /* cache for highlighting */
+
+GLOBALS->traces.buffercount=GLOBALS->traces.total;
+GLOBALS->traces.buffer=GLOBALS->traces.first;
+GLOBALS->traces.bufferlast=GLOBALS->traces.last;
+GLOBALS->traces.first=tcache.first;
+GLOBALS->traces.last=tcache.last;
+GLOBALS->traces.total=tcache.total;
+
+{
+Trptr t = GLOBALS->traces.first;
+Trptr *tp = NULL;
+int numhigh = 0;
+int it;
+
+while(t) { if(t->flags & TR_HIGHLIGHT) { numhigh++; } t = t->t_next; }
+if(numhigh)
+        {
+        tp = calloc_2(numhigh, sizeof(Trptr));
+        t = GLOBALS->traces.first;
+        it = 0;
+        while(t) { if(t->flags & TR_HIGHLIGHT) { tp[it++] = t; } t = t->t_next; }
+        }
+
+PasteBuffer();
+
+GLOBALS->traces.buffercount=tcache.buffercount;
+GLOBALS->traces.buffer=tcache.buffer;
+GLOBALS->traces.bufferlast=tcache.bufferlast;
+
+for(i=0;i<numhigh;i++)
+        {
+        tp[i]->flags |= TR_HIGHLIGHT;
+        }
+
+t = tfirst;
+while(t)
+        {
+        t->flags &= ~TR_HIGHLIGHT;
+        if(t==tlast) break;
+        t=t->t_next;
+        }
+
+CutBuffer();
+
+while(tfirst)
+        {
+        tfirst->flags |= TR_HIGHLIGHT;
+        if(tfirst==tlast) break;
+        tfirst=tfirst->t_next;
+        }
+
+if(tp)
+        {
+        free_2(tp);
+        }
+}
+
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+}
+
+
+void recurse_import(GtkWidget *widget, guint callback_action)
+{
+if(GLOBALS->sst_sig_root_treesearch_gtk2_c_1)
+	{
+	int fz;
+
+	GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
+	if(GLOBALS->sst_sig_root_treesearch_gtk2_c_1->child) recurse_fetch_high_low(GLOBALS->sst_sig_root_treesearch_gtk2_c_1->child, 0);
+	fz = GLOBALS->fetchhigh - GLOBALS->fetchlow + 1;
+	void (*func)(GtkWidget *, gpointer);
+
+	switch(callback_action)
+		{
+		case WV_RECURSE_INSERT:		func = recurse_insert_callback; break;
+		case WV_RECURSE_REPLACE:	func = recurse_replace_callback; break;
+	
+		case WV_RECURSE_APPEND:
+		default:			func = recurse_append_callback; break;
+		}
+
+	if((GLOBALS->fetchlow >= 0) && (GLOBALS->fetchhigh >= 0))
+		{
+		if(fz > WV_RECURSE_IMPORT_WARN)
+			{
+			char recwarn[128];
+			sprintf(recwarn, "Really import %d facilit%s?", fz, (fz==1)?"y":"ies");
+		
+			simplereqbox("Recurse Warning",300,recwarn,"Yes", "No", GTK_SIGNAL_FUNC(func), 0);
+			}
+			else
+			{
+			func(widget, (gpointer)1);
+			}
+		}
+	}
+}
+
+/***************************************************************************/

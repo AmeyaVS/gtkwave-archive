@@ -6361,6 +6361,17 @@ menu_open_hierarchy_2a(null_data, callback_action, widget, FST_MT_SOURCEISTEM); 
 
 /**/
 
+#if WAVE_USE_GTK2
+void menu_recurse_import(gpointer null_data, guint callback_action, GtkWidget *widget)
+{
+(void) null_data;
+
+recurse_import(widget, callback_action);
+}
+#endif
+
+/**/
+
 
 static void dataformat(int mask, int patch)
 {
@@ -8680,11 +8691,17 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 /*** sst popup menu code ***/
 /***************************/
 
-#if !defined __MINGW32__ && !defined _MSC_VER
+#if WAVE_USE_GTK2
 static gtkwave_mlist_t sst_popmenu_items[] =
 {
+    WAVE_GTKIFE("/Recurse Import/Append", NULL, menu_recurse_import, WV_RECURSE_APPEND, "<Item>"),
+    WAVE_GTKIFE("/Recurse Import/Insert", NULL, menu_recurse_import, WV_RECURSE_INSERT, "<Item>"),
+    WAVE_GTKIFE("/Recurse Import/Replace", NULL, menu_recurse_import, WV_RECURSE_REPLACE, "<Item>"),
+
+#if !defined __MINGW32__ && !defined _MSC_VER
     WAVE_GTKIFE("/Open Source Definition", NULL, menu_open_sst_hierarchy_source, WV_MENU_OPENHS, "<Item>"),
-    WAVE_GTKIFE("/Open Source Instantiation", NULL, menu_open_sst_hierarchy_isource, WV_MENU_OPENIHS, "<Item>")
+    WAVE_GTKIFE("/Open Source Instantiation", NULL, menu_open_sst_hierarchy_isource, WV_MENU_OPENIHS, "<Item>"),
+#endif
 };
 
 
@@ -8695,19 +8712,22 @@ void do_sst_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
   GtkWidget *menu;
   int button, event_time;
 
-  if(!GLOBALS->stem_path_string_table)
-	{
-	return; /* no stems so no popup */
-	}
-
+#if !defined __MINGW32__ && !defined _MSC_VER
   if(!GLOBALS->sst_signal_popup_menu)
     {
     int nmenu_items = sizeof(sst_popmenu_items) / sizeof(sst_popmenu_items[0]);
 
+    if(!GLOBALS->stem_path_string_table)
+	{
+	nmenu_items-=2; /* remove all stems popups */
+	}
+    else
     if(!GLOBALS->istem_struct_base)
 	{
 	nmenu_items--; /* remove "/Open Source Instantiation" if not present */
 	}
+    /* still have recurse import popup */
+#endif
 
 #ifdef WAVE_USE_MLIST_T
     GLOBALS->sst_signal_popup_menu = menu = alt_menu(sst_popmenu_items, nmenu_items, NULL, NULL, FALSE);

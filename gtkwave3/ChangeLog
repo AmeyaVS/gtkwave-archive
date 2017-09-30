@@ -1615,4 +1615,5 @@
 3.3.85	06sep17	Fix integer type in GHW loader so integer value changes are
 		not stored as a string. This then allows bitwise manipulations
 		of integers.
-3.3.86	22sep17	Version bump for development.
+3.3.86	22sep17	Added recurse import function (found before only in the hier
+		search) into the SST.
