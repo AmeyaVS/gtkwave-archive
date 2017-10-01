@@ -2974,6 +2974,8 @@ if(GLOBALS->sst_sig_root_treesearch_gtk2_c_1)
 
 	if((GLOBALS->fetchlow >= 0) && (GLOBALS->fetchhigh >= 0))
 		{
+		widget = GLOBALS->mainwindow; /* otherwise using widget passed from the menu item crashes on OSX */
+
 		if(fz > WV_RECURSE_IMPORT_WARN)
 			{
 			char recwarn[128];

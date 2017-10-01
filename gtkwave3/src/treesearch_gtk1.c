@@ -354,6 +354,32 @@ GLOBALS->bundle_direction_treesearch_gtk1_c=1;
 bundle_callback_generic();
 }
 
+static void recurse_fetch_high_low(struct tree *t)
+{
+top:
+if(t->t_which >= 0)
+        {
+	if(t->t_which > GLOBALS->fetchhigh) GLOBALS->fetchhigh = t->t_which;
+        if(GLOBALS->fetchlow < 0)
+               	{
+                GLOBALS->fetchlow = t->t_which;
+               	}
+        else
+	if(t->t_which < GLOBALS->fetchlow)
+                {
+               	GLOBALS->fetchlow = t->t_which;
+               	}
+        }
+
+if(t->child)
+        {
+        recurse_fetch_high_low(t->child);
+        }
+
+if(t->next) { t = t->next; goto top; }
+}
+
+
 static void insert_callback(GtkWidget *widget, GtkWidget *nothing)
 {
 (void)nothing;
@@ -361,7 +387,7 @@ static void insert_callback(GtkWidget *widget, GtkWidget *nothing)
 Traces tcache;
 int i;
 
-if(!GLOBALS->selectedtree_treesearch_gtk1_c) return;
+if((!GLOBALS->selectedtree_treesearch_gtk1_c) || (!GLOBALS->selectedtree_treesearch_gtk1_c->child)) return;
 
 memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
 GLOBALS->traces.total=0;
@@ -369,7 +395,10 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
+recurse_fetch_high_low(GLOBALS->selectedtree_treesearch_gtk1_c->child);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
         struct symbol *s;
         s=GLOBALS->facs[i];
@@ -384,7 +413,7 @@ if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
                 {
                 struct symbol *s, *t;
                 s=GLOBALS->facs[i];
@@ -421,7 +450,7 @@ if(GLOBALS->is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
 	int len;
         struct symbol *s, *t;
@@ -475,7 +504,7 @@ Traces tcache;
 int i;
 Trptr tfirst=NULL, tlast=NULL;
 
-if(!GLOBALS->selectedtree_treesearch_gtk1_c) return;
+if((!GLOBALS->selectedtree_treesearch_gtk1_c) || (!GLOBALS->selectedtree_treesearch_gtk1_c->child)) return;
 
 memcpy(&tcache,&GLOBALS->traces,sizeof(Traces));
 GLOBALS->traces.total=0;
@@ -483,7 +512,10 @@ GLOBALS->traces.first=GLOBALS->traces.last=NULL;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
+recurse_fetch_high_low(GLOBALS->selectedtree_treesearch_gtk1_c->child);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
         struct symbol *s;
         s=GLOBALS->facs[i];
@@ -498,7 +530,7 @@ if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
                 {
                 struct symbol *s, *t;
                 s=GLOBALS->facs[i];
@@ -535,7 +567,7 @@ if(GLOBALS->is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
 	int len;
         struct symbol *s, *t;
@@ -631,11 +663,14 @@ static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 (void)nothing;
 int i;
 
-if(!GLOBALS->selectedtree_treesearch_gtk1_c) return;
+if((!GLOBALS->selectedtree_treesearch_gtk1_c) || (!GLOBALS->selectedtree_treesearch_gtk1_c->child)) return;
 
 set_window_busy(widget);
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+GLOBALS->fetchlow = GLOBALS->fetchhigh = -1;
+recurse_fetch_high_low(GLOBALS->selectedtree_treesearch_gtk1_c->child);
+
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
         struct symbol *s;
         s=GLOBALS->facs[i];
@@ -650,7 +685,7 @@ if(GLOBALS->is_lx2)
         {
         int pre_import = 0;
 
-        for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+	for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
                 {
                 struct symbol *s, *t;
                 s=GLOBALS->facs[i];
@@ -687,7 +722,7 @@ if(GLOBALS->is_lx2)
         }
 /* LX2 */
 
-for(i=fetchlow(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i<=fetchhigh(GLOBALS->selectedtree_treesearch_gtk1_c)->t_which;i++)
+for(i=GLOBALS->fetchlow;i<=GLOBALS->fetchhigh;i++)
         {
 	int len;
         struct symbol *s, *t;
