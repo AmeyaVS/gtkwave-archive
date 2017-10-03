@@ -1094,7 +1094,6 @@ NULL, /* ctree_main 463 */
 NULL, /* afl_treesearch_gtk2_c_1 464 */
 NULL, /* window_treesearch_gtk2_c_12 465 */
 NULL, /* tree_treesearch_gtk2_c_1 466 */
-0, /* bundle_direction_treesearch_gtk2_c_3 467 */
 NULL, /* cleanup_treesearch_gtk2_c_8 468 */
 0, /* pre_import_treesearch_gtk2_c_1 469 */
 {0,0,NULL,NULL,NULL,NULL,0,NULL,NULL,0}, /* tcache_treesearch_gtk2_c_2 470 */

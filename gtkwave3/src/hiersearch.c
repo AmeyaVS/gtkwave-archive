@@ -314,7 +314,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
 
 /***************************************************************************/
 
-static void recurse_fetch_high_low(struct tree *t)
+void recurse_fetch_high_low(struct tree *t)
 {
 top:
 if(t->t_which >= 0)
@@ -337,6 +337,65 @@ if(t->child)
         }
 
 if(t->next) { t = t->next; goto top; }
+}
+
+/* Get the highest signal from T.  */
+struct tree *fetchhigh(struct tree *t)
+{
+while(t->child) t=t->child;
+return(t);
+}
+
+/* Get the lowest signal from T.  */
+struct tree *fetchlow(struct tree *t)
+{
+if(t->child)
+	{
+        t=t->child;
+
+        for(;;)
+                {
+                while(t->next) t=t->next;
+                if(t->child) t=t->child; else break;
+                }
+        }
+return(t);
+}
+
+static void fetchvex2(struct tree *t, char direction, char level)
+{
+while(t)
+        {
+        if(t->child)
+                {
+                if(t->child->child)
+                        {
+                        fetchvex2(t->child, direction, 1);
+                        }
+                        else
+                        {
+                        add_vector_range(NULL, fetchlow(t)->t_which,
+                                fetchhigh(t)->t_which, direction);
+                        }
+                }
+        if(level) { t=t->next; } else { break; }
+        }
+}
+
+void fetchvex(struct tree *t, char direction)
+{
+if(t)
+     	{
+        if(t->child)
+                {
+                fetchvex2(t, direction, 0);
+                }
+                else
+                {
+                add_vector_range(NULL, fetchlow(t)->t_which,
+                        fetchhigh(t)->t_which, direction);
+                }
+        }
 }
 
 

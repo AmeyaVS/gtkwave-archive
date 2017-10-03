@@ -1079,7 +1079,6 @@ GtkCTree *ctree_main; /* from treesearch_gtk2.c 493 */
 struct autocoalesce_free_list *afl_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 494 */
 GtkWidget *window_treesearch_gtk2_c_12; /* from treesearch_gtk2.c 495 */
 GtkWidget *tree_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 496 */
-char bundle_direction_treesearch_gtk2_c_3; /* from treesearch_gtk2.c 497 */
 void (*cleanup_treesearch_gtk2_c_8)(void); /* from treesearch_gtk2.c 498 */
 int pre_import_treesearch_gtk2_c_1; /* from treesearch_gtk2.c 499 */
 Traces tcache_treesearch_gtk2_c_2; /* from treesearch_gtk2.c 500 */

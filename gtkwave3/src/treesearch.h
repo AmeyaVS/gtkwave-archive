@@ -19,9 +19,6 @@ void select_tree_node(char *name);
 void dnd_setup(GtkWidget *src, GtkWidget *widget, int enable_receive); /* dnd from gtk2 tree to signalwindow */
 void treeview_select_all_callback(void); /* gtk2 */
 void treeview_unselect_all_callback(void); /* gtk2 */
-struct tree *fetchlow(struct tree *t);
-struct tree *fetchhigh(struct tree *t);
-void fetchvex(struct tree *t, char direction);
 int treebox_is_active(void);
 
 #if WAVE_USE_GTK2
