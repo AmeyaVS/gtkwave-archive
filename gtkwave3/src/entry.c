@@ -76,7 +76,8 @@ void entrybox(char *title, int width, char *dflt_text, char *comment, int maxch,
 #ifndef WAVE_MAC_USE_ENTRY
     GtkWidget *vbox, *hbox;
     GtkWidget *button1, *button2;
-    int height = (comment) ? 75 : 60;
+/*  int height = (comment) ? 75 : 60; */
+    int height = -1; /* changed as recent gnome themes have taller window title bars so 75 is not enough */
 #endif
 
     GLOBALS->cleanup_entry_c_1=func;

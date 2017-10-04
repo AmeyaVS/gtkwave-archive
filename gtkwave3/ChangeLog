@@ -1619,3 +1619,6 @@
 		search) into the SST.  
 		Removed obsolete bundle functionality from SST as recurse 
 		import more accurately imports recursively.
+		Made entrybox taller (using -1) as recent versions of
+		gnome have taller window titlebars and the widget was not
+		tall enough.
