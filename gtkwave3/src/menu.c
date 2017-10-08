@@ -8712,11 +8712,11 @@ void do_sst_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
   GtkWidget *menu;
   int button, event_time;
 
-#if !defined __MINGW32__ && !defined _MSC_VER
   if(!GLOBALS->sst_signal_popup_menu)
     {
     int nmenu_items = sizeof(sst_popmenu_items) / sizeof(sst_popmenu_items[0]);
 
+#if !defined __MINGW32__ && !defined _MSC_VER
     if(!GLOBALS->stem_path_string_table)
 	{
 	nmenu_items-=2; /* remove all stems popups */
