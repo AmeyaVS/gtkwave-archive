@@ -166,3 +166,19 @@ contrib/bundle_for_osx/gtk_diff_against_modulesets.patch file.
 -311211ajb  bybell@nc.rr.com
 
 ===============================================================================
+
+MSYS2 notes for creating a working environment for compiling gtkwave:
+
+pacman -Syuu 
+[repeat "pacman -Syuu" multiple times until environment stabilizes]
+pacman -S --needed base-devel mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain git subversion mercurial mingw-w64-i686-cmake mingw-w64-x86_64-cmake 
+pacman -S base-devel mingw-w64-toolchain mingw-w64-i686-gtk2 
+pacman -S base-devel mingw-w64-toolchain mingw-w64-i686-gtk2 
+pacman -S mingw-w64-i686-gtk2 
+pacman -S mingw-w64-x86_64-gtk2 
+pacman -S mingw-w64-i686-gtk3 
+pacman -S mingw-w64-x86_64-gtk3 
+
+-121217ajb  bybell@rocketmail.com
+
+===============================================================================
