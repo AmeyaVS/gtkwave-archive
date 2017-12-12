@@ -1622,3 +1622,4 @@
 		Made entrybox taller (using -1) as recent versions of
 		gnome have taller window titlebars and the widget was not
 		tall enough.
+3.3.87	12dec17	Added missing prototype for ghw_read_sm_hdr in ghwlib.h.
