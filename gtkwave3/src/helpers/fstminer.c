@@ -60,8 +60,8 @@ struct fstHier *h;
 char *s;
 const char *fst_scope_name = NULL;
 int fst_scope_name_len = 0;
-long snum = 0;
-long max_snum = 0;
+intptr_t snum = 0;
+intptr_t max_snum = 0;
 
 while((h = fstReaderIterateHier(xc)))
         {
@@ -89,7 +89,7 @@ while((h = fstReaderIterateHier(xc)))
                 case FST_HT_UPSCOPE:
                         /* fst_scope_name = scan-build */ fstReaderPopScope(xc);
 			fst_scope_name_len = fstReaderGetCurrentScopeLen(xc);
-			snum = fst_scope_name_len ? (long)fstReaderGetCurrentScopeUserInfo(xc) : 0;
+			snum = fst_scope_name_len ? (intptr_t)fstReaderGetCurrentScopeUserInfo(xc) : 0;
                         break;
                 case FST_HT_VAR:
 			if(!h->u.var.is_alias)

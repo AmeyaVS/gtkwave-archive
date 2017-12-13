@@ -306,7 +306,7 @@ struct vlist_packer_t *vlist_p = vlist_packer_create();
 struct vlist_t *vlist_summary_index;
 
 struct vcdsymbol *v = GLOBALS->vcdsymroot_vcd_recoder_c_3;
-guint64 val = (guint64)(unsigned long)GLOBALS->time_vlist_vcd_recoder_write;
+guint64 val = (guint64)(uintptr_t)GLOBALS->time_vlist_vcd_recoder_write;
 guint64 nval;
 char buf[33];
 char *pnt;
@@ -329,7 +329,7 @@ val = 0;
 while(v)
 	{
 	nptr n = v->narray[0];
-	nval = (guint64)(unsigned long)n->mv.mvlfac_vlist;
+	nval = (guint64)(uintptr_t)n->mv.mvlfac_vlist;
 
 	vlist_packer_emit_uv64(&vlist_p, nval - val);
 	val = nval;
@@ -344,7 +344,7 @@ GLOBALS->time_vlist_vcd_recoder_write = vlist_summary_index;
 vlist_freeze(&vlist_summary_index);
 
 pnt = buf;
-val = (guint64)(unsigned long)vlist_summary_index;
+val = (guint64)(uintptr_t)vlist_summary_index;
 while((nval = val>>7))
 	{
 	*(pnt++) = (val&0x7f);

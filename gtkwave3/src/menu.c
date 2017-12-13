@@ -3842,7 +3842,7 @@ if(GLOBALS->helpbox_is_active)
 	    /* at least one good trace, so do it */
 	    /* data contains WV_MENU_SPS or WV_MENU_SPS2 or ... but the base is WV_MENU_SPS*/
 	    char buf[128];
-	    long which = ((long)callback_action) - WV_MENU_SPS;
+	    intptr_t which = ((long)callback_action) - WV_MENU_SPS;
 
 	    if((which < 0) || (which >= WAVE_NUM_STRACE_WINDOWS))
 			{ /* should never happen unless menus are defined wrong */
@@ -8954,7 +8954,7 @@ while(ptr)
 
 		if(!ptr->child && mi[ptr->idx].callback)
 			{
-		      	g_signal_connect (menuitem, "activate", G_CALLBACK (mi[ptr->idx].callback), (gpointer)(long)mi[ptr->idx].callback_action);
+		      	g_signal_connect (menuitem, "activate", G_CALLBACK (mi[ptr->idx].callback), (gpointer)(intptr_t)mi[ptr->idx].callback_action);
 			alt_menu_install_accelerator(accel, menuitem, mi[ptr->idx].accelerator, mi[ptr->idx].path);
 			}
 		}

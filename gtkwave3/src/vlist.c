@@ -78,7 +78,7 @@ if(GLOBALS->vlist_handle)
  */
 static int vlist_fread_hdr(struct vlist_t *vl, FILE *f)
 {
-unsigned long val;
+uintptr_t val;
 unsigned int vali;
 int ch, shamt, rc = 0;
 
@@ -137,13 +137,13 @@ static int vlist_fwrite(struct vlist_t *vl, unsigned int rsiz, FILE *f)
 {
 unsigned char mem[ 4 * sizeof(long) * 2];
 unsigned char *pnt = mem;
-unsigned long val, nxt;
+uintptr_t val, nxt;
 unsigned int vali, nxti;
 int offs_as_int;
 int rc;
 int len = 0;
 
-val = (unsigned long)(vl->next);
+val = (uintptr_t)(vl->next);
 while((nxt = val>>7))
         {
         *(pnt++) = (val&0x7f);
@@ -280,7 +280,7 @@ if(GLOBALS->vlist_handle)
 		{
 		struct vlist_t vhdr;
 		struct vlist_t *vrebuild;
-		long vl_offs = (long)vl;
+		uintptr_t vl_offs = (long)vl;
 		int rc;
 
 		off_t seekpos = (off_t) vl_offs;	/* possible overflow conflicts were already handled in the writer */
@@ -401,7 +401,7 @@ if(vl->offs == vl->siz)
 	if(compressable && GLOBALS->vlist_handle)
 		{
 		size_t rc;
-		long write_cnt;
+		uintptr_t write_cnt;
 
 		fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
 

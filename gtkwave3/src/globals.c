@@ -2768,7 +2768,7 @@ switch(type)
 				{
 				struct Global *test_g = (*GLOBALS->contexts)[i];
 
-				vp = (void **)(((char *)test_g) + (long)data);
+				vp = (void **)(((char *)test_g) + (intptr_t)data);
 				wcmp = (GtkWindow *)(*vp);
 
 				if(wcmp != NULL)
@@ -2833,7 +2833,7 @@ switch(type)
 return(FALSE);
 }
 
-void install_focus_cb(GtkWidget *w, unsigned long ptr_offset)
+void install_focus_cb(GtkWidget *w, intptr_t ptr_offset)
 {
 gtk_signal_connect (GTK_OBJECT(w), "enter_notify_event", GTK_SIGNAL_FUNC(context_swapper), (void *)ptr_offset);
 gtk_signal_connect (GTK_OBJECT(w), "focus_in_event", GTK_SIGNAL_FUNC(context_swapper), (void *)ptr_offset);
@@ -2873,7 +2873,7 @@ printf(">>>\t%d\n", d);
 return(0);
 }
 
-gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line)
+gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, intptr_t line)
 {
 gulong rc;
 
@@ -2890,7 +2890,7 @@ return(rc);
 }
 
 
-gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line)
+gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, intptr_t line)
 {
 gulong rc;
 

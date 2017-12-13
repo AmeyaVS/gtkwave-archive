@@ -1370,10 +1370,10 @@ void strcpy2_into_new_context(struct Global *g, char **newstrref, char **oldstrr
 void free_and_destroy_page_context(void);
 void dead_context_sweep(void);
 
-void install_focus_cb(GtkWidget *w, unsigned long ptr_offset);
+void install_focus_cb(GtkWidget *w, intptr_t ptr_offset);
 
-gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line);
-gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, unsigned long line);
+gulong gtkwave_signal_connect_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, intptr_t line);
+gulong gtkwave_signal_connect_object_x(GtkObject *object, const gchar *name, GtkSignalFunc func, gpointer data, char *f, intptr_t line);
 
 #ifdef GTKWAVE_SIGNAL_CONNECT_DEBUG
 #define gtkwave_signal_connect(a,b,c,d) gtkwave_signal_connect_x(a,b,c,d,__FILE__,__LINE__)
