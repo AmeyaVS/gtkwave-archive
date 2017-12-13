@@ -797,6 +797,7 @@ int treebox_is_active(void)
 return(GLOBALS->is_active_treesearch_gtk2_c_6);
 }
 
+#if 0
 static void enter_callback_e(GtkWidget *widget, GtkWidget *nothing)
 {
 (void)widget;
@@ -880,6 +881,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_widget_show(GLOBALS->window1_treesearch_gtk2_c_3);
     wave_gtk_grab_add(GLOBALS->window1_treesearch_gtk2_c_3);
 }
+#endif
 
 /***************************************************************************/
 
@@ -1263,7 +1265,7 @@ void treebox(char *title, GtkSignalFunc func, GtkWidget *old_window)
 {
     GtkWidget *scrolled_win, *sig_scroll_win;
     GtkWidget *hbox;
-    GtkWidget *button1, *button2, *button3, *button3a, *button4, *button5;
+    GtkWidget *button1, *button2, *button4, *button5;
     GtkWidget *frameh, *sig_frame;
     GtkWidget *vbox, *vpan, *filter_hbox;
     GtkWidget *filter_label;
@@ -1550,7 +1552,7 @@ GtkWidget* treeboxframe(char *title, GtkSignalFunc func)
 
     GtkWidget *scrolled_win, *sig_scroll_win;
     GtkWidget *hbox;
-    GtkWidget *button1, *button2, *button3, *button3a, *button4;
+    GtkWidget *button1, *button2, *button4;
     GtkWidget *frameh, *sig_frame;
     GtkWidget *vbox, *vpan, *filter_hbox;
     GtkWidget *filter_label;

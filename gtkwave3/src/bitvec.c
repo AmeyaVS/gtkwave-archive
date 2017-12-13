@@ -387,12 +387,14 @@ while(h[0])	/* should never exit through this point the way we set up histents w
 					{
 					if((GLOBALS->loaded_file_type == GHW_FILE) && (h[i]->v.h_vector[0] == '\'') && (h[i]->v.h_vector[1]) && (h[i]->v.h_vector[2] == '\''))
 						{
-						char ghw_str[2] = {h[i]->v.h_vector[1], 0};
-						strcat(vadd->v, ghw_str);
+						char ghw_str[2];
+						ghw_str[0] = h[i]->v.h_vector[1];
+						ghw_str[1] = 0;
+						strcat((char *)vadd->v, ghw_str);
 						}
 						else
 						{
-						strcat(vadd->v, h[i]->v.h_vector);
+						strcat((char *)vadd->v, h[i]->v.h_vector);
 						}
 					}			
 				}
