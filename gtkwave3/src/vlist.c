@@ -280,7 +280,7 @@ if(GLOBALS->vlist_handle)
 		{
 		struct vlist_t vhdr;
 		struct vlist_t *vrebuild;
-		uintptr_t vl_offs = (long)vl;
+		uintptr_t vl_offs = (uintptr_t)vl;
 		int rc;
 
 		off_t seekpos = (off_t) vl_offs;	/* possible overflow conflicts were already handled in the writer */
@@ -541,7 +541,7 @@ if((siz != vl->siz)&&(!GLOBALS->vlist_handle))
 if(GLOBALS->vlist_handle)
 	{
 	size_t rc;
-	long write_cnt;
+	uintptr_t write_cnt;
 
 	vl = *v;
 	fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
