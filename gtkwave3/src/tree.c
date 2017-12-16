@@ -94,7 +94,7 @@ for(;;)
 #ifdef _WAVE_HAVE_JUDY
 static int gen_hier_string(char *dest, void *pnt)
 {
-unsigned long p = (unsigned long)(pnt);
+uintptr_t p = (uintptr_t)(pnt);
 char *dest_copy = dest;
 
 while(p)
