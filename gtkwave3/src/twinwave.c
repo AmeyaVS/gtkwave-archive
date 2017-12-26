@@ -27,8 +27,6 @@
 static int use_embedded = 1;
 #endif
 
-#if !defined _MSC_VER && defined WAVE_USE_GTK2
-
 static int plug_removed(GtkWidget *widget, gpointer data)
 {
 (void)widget;
@@ -64,7 +62,7 @@ int main(int argc, char **argv)
 struct gtkwave_dual_ipc_t *dual_ctx;
 char buf[257], buf2[257];
 int shmid;
-GtkWidget *main_vbox, *mainwindow, *vpan;
+GtkWidget *mainwindow;
 int i;
 int split_point = -1;
 #ifdef __MINGW32__
@@ -72,7 +70,10 @@ char mapName[65];
 HANDLE hMapFile;
 #endif
 
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
 GtkWidget *xsocket[2] = { NULL, NULL };
+GtkWidget *main_vbox, *vpan;
+#endif
 
 WAVE_LOCALE_FIX
 
@@ -123,7 +124,7 @@ gtk_widget_show(mainwindow);
 
 gtk_signal_connect(GTK_OBJECT(mainwindow), "destroy", GTK_SIGNAL_FUNC(quit_callback), "WM destroy");
 
-
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
 xsocket[0] = gtk_socket_new ();
 xsocket[1] = gtk_socket_new ();
 gtk_widget_show (xsocket[0]);
@@ -145,6 +146,7 @@ gtk_paned_pack1 (GTK_PANED (vpan), xsocket[0], TRUE, FALSE);
 gtk_signal_connect(GTK_OBJECT(xsocket[1]), "plug-removed", GTK_SIGNAL_FUNC(plug_removed), NULL);
 
 gtk_paned_pack2 (GTK_PANED (vpan), xsocket[1], TRUE, FALSE);
+#endif
 
 #ifdef __MINGW32__
 shmid = getpid();
@@ -461,25 +463,3 @@ if(shmid >=0)
 
 return(0);
 }
-
-#else
-
-int main(int argc, char **argv)
-{
-(void)argc;
-(void)argv;
-
-#ifndef WAVE_USE_GTK2
-fprintf(stderr, "Sorry, this requires GTK+-2.0 or greater to run!\n");
-#endif
-
-#if defined _MSC_VER || defined __MINGW32__
-fprintf(stderr, "Sorry, this doesn't run under Win32!\n");
-#endif
-
-fprintf(stderr, "If you find that this program works on your platform, please report this to the maintainers.\n");
-
-return(255);
-}
-
-#endif

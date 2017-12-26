@@ -1625,3 +1625,4 @@
 3.3.87	12dec17	Added missing prototype for ghw_read_sm_hdr in ghwlib.h.
 		Made intptr_t changes vs long during casting for win64.
 		Warnings fixes.
+		Re-enable twinwave for Win32/64.
