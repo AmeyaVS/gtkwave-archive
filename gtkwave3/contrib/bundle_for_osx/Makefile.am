@@ -11,6 +11,7 @@ EXTRA_DIST= \
 	gtkwave_files.icns \
 	gtkwave.icns \
 	gtkwave.pl \
+	gtkwave_bin_launcher.sh \
 	gtkwave_savefiles.icns \
 	Info-gtkwave.plist \
 	launcher.sh \
