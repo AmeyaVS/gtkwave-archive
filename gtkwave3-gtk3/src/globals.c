@@ -967,6 +967,10 @@ NULL, /* facs2_tree_c_1 451 */
 0, /* facs2_pos_tree_c_1 452 */
 NULL, /* talloc_pool_base */
 0, /* talloc_idx */
+NULL, /* sst_exclude_filename */
+0, /* exclhiermask */
+NULL, /* exclcompname */
+NULL, /* exclinstname */
 
 
 /*
@@ -1943,6 +1947,18 @@ void reload_into_new_context_2(void)
  new_globals->filter_matlen_treesearch_gtk2_c_1 = GLOBALS->filter_matlen_treesearch_gtk2_c_1;
  new_globals->filter_noregex_treesearch_gtk2_c_1 = GLOBALS->filter_noregex_treesearch_gtk2_c_1;
 
+ strcpy2_into_new_context(new_globals, &new_globals->sst_exclude_filename, &GLOBALS->sst_exclude_filename);
+ if(GLOBALS->exclcompname)
+        {
+	jrb_free_tree(GLOBALS->exclcompname); /* strings get freed by automatic _2 mechanism */
+        GLOBALS->exclcompname = NULL;
+        }
+ if(GLOBALS->exclinstname)
+        {
+	jrb_free_tree(GLOBALS->exclinstname); /* strings get freed by automatic _2 mechanism */
+        GLOBALS->exclinstname = NULL;
+        }
+
  /* timeentry.c */
  new_globals->from_entry = GLOBALS->from_entry;
  new_globals->to_entry = GLOBALS->to_entry;
@@ -2168,6 +2184,8 @@ void reload_into_new_context_2(void)
  init_proctrans_data();
  init_ttrans_data();
  /* load_all_fonts(); */
+
+ sst_exclusion_loader();
 
  /* attempt to reload file and recover on loader errors until successful */
  for(;;)

@@ -970,6 +970,10 @@ struct symbol **facs2_tree_c_1; /* from tree.c 481 */
 int facs2_pos_tree_c_1; /* from tree.c 482 */
 unsigned char *talloc_pool_base;
 size_t talloc_idx;
+char *sst_exclude_filename;
+uint64_t exclhiermask;
+JRB exclcompname;
+JRB exclinstname;
 
 
 /*

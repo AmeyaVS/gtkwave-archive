@@ -178,5 +178,7 @@ XXX_NUM_COLUMNS
 void XXX_maketree(GtkTreeIter *subtree, struct tree *t);
 void XXX_maketree2(GtkTreeIter *subtree, struct tree *t, int depth);
 
+void sst_exclusion_loader(void);
+
 #endif
 
