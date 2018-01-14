@@ -921,18 +921,44 @@ while(t2)
 
 	if(t2->child)
 		{
-		if(!graft)
+                int blacklist = 0;
+
+                if(GLOBALS->exclhiermask)
+                        {
+                        uint64_t exclone = 1;
+                        if((exclone << t2->kind) & GLOBALS->exclhiermask) blacklist = 1;
+                        }
+
+                if(GLOBALS->exclinstname)
+                        {
+                        JRB str = jrb_find_str(GLOBALS->exclinstname, t2->name);
+                        if(str) blacklist = 1;
+                        }
+
+                if(GLOBALS->exclcompname)
+                        {
+                        int thidx = -t2->t_which + WAVE_T_WHICH_COMPNAME_START;
+                        char *sc = ((thidx >= 0) && (thidx < GLOBALS->comp_name_serial)) ? GLOBALS->comp_name_idx[thidx] : t2->name;
+
+                        JRB str = jrb_find_str(GLOBALS->exclcompname, sc);
+                        if(str) blacklist = 1;
+                        }
+
+		if(!blacklist)
 			{
-			sibling_test=maketree_nodes(subtree, t2, sibling, MAKETREE_NODE);
-			}
+			if(!graft)
+				{
+				sibling_test=maketree_nodes(subtree, t2, sibling, MAKETREE_NODE);
+				}
 			else
-			{
-			sibling_test = graft;
-			}
-		if(sibling_test)
-			{
-			GLOBALS->any_tree_node = sibling_test;
-			maketree2(sibling=sibling_test, t2->child, depth + 1, NULL);
+				{
+				sibling_test = graft;
+				}
+			if(sibling_test)
+				{
+				GLOBALS->any_tree_node = sibling_test;
+				maketree2(sibling=sibling_test, t2->child, depth + 1, NULL);
+				}
 			}
 		}
 
@@ -1003,3 +1029,141 @@ if(!GLOBALS->hier_grouping)
 
 #endif
 
+
+/* 
+ * SST Exclusion filtering for XXX_maketree2() above
+ */
+#define SST_EXCL_MESS "SSTEXCL | "
+
+enum sst_excl_mode
+{
+SST_EXCL_NONE,
+SST_EXCL_HIER,
+SST_EXCL_COMP,
+SST_EXCL_INST
+};
+
+void sst_exclusion_loader(void)
+{
+JRB str;
+Jval jv;
+
+int dummy = 0;
+
+if(GLOBALS->sst_exclude_filename)
+	{
+	FILE *f = fopen(GLOBALS->sst_exclude_filename, "rb");
+	int exclmode = SST_EXCL_NONE;
+	uint64_t exclhier = 0;
+	uint64_t exclone = 1;
+
+	if(!f)
+		{
+		fprintf(stderr, SST_EXCL_MESS"Could not open '%s' SST exclusion file!\n", GLOBALS->sst_exclude_filename);
+		fprintf(stderr, SST_EXCL_MESS);
+		perror("Why");
+		return;
+		}
+	
+	fprintf(stderr, SST_EXCL_MESS"Processing '%s'.\n", GLOBALS->sst_exclude_filename);
+
+	while(!feof(f))
+		{
+		char *iline = fgetmalloc(f);
+		if(iline)
+			{
+			char *p = iline;
+			char *e;
+
+			while (*p)
+				{
+				if(isspace(*p)) p++; else break;
+				}
+
+			e = p;
+			while (*e)
+				{
+				if(isspace(*e)) { *e = 0; break; }
+				e++;
+				}
+
+			switch (*p)
+				{
+				case '#': break;
+				case '/': break;
+
+				case '[':
+					if(!strcmp(p, "[hiertype]")) 	  { exclmode = SST_EXCL_HIER; }
+					else if(!strcmp(p, "[compname]")) { exclmode = SST_EXCL_COMP; }
+					else if(!strcmp(p, "[instname]")) { exclmode = SST_EXCL_INST; }
+					else                              { exclmode = SST_EXCL_NONE; }
+					break;					
+
+				default:
+					switch(exclmode)
+						{
+						case SST_EXCL_HIER: /* this if/else chain is good enough for an init script */
+							if(!strcmp(p, "VCD_ST_MODULE")) { exclhier |= exclone << TREE_VCD_ST_MODULE; }
+							else if(!strcmp(p, "VCD_ST_TASK")) { exclhier |= exclone << TREE_VCD_ST_TASK; }
+							else if(!strcmp(p, "VCD_ST_FUNCTION")) { exclhier |= exclone << TREE_VCD_ST_FUNCTION; }
+							else if(!strcmp(p, "VCD_ST_BEGIN")) { exclhier |= exclone << TREE_VCD_ST_BEGIN; }
+							else if(!strcmp(p, "VCD_ST_FORK")) { exclhier |= exclone << TREE_VCD_ST_FORK; }
+							else if(!strcmp(p, "VCD_ST_GENERATE")) { exclhier |= exclone << TREE_VCD_ST_GENERATE; }
+							else if(!strcmp(p, "VCD_ST_STRUCT")) { exclhier |= exclone << TREE_VCD_ST_STRUCT; }
+							else if(!strcmp(p, "VCD_ST_UNION")) { exclhier |= exclone << TREE_VCD_ST_UNION; }
+							else if(!strcmp(p, "VCD_ST_CLASS")) { exclhier |= exclone << TREE_VCD_ST_CLASS; }
+							else if(!strcmp(p, "VCD_ST_INTERFACE")) { exclhier |= exclone << TREE_VCD_ST_INTERFACE; }
+							else if(!strcmp(p, "VCD_ST_PACKAGE")) { exclhier |= exclone << TREE_VCD_ST_PACKAGE; }
+							else if(!strcmp(p, "VCD_ST_PROGRAM")) { exclhier |= exclone << TREE_VCD_ST_PROGRAM; }
+							else if(!strcmp(p, "VHDL_ST_DESIGN")) { exclhier |= exclone << TREE_VHDL_ST_DESIGN; }
+							else if(!strcmp(p, "VHDL_ST_BLOCK")) { exclhier |= exclone << TREE_VHDL_ST_BLOCK; }
+							else if(!strcmp(p, "VHDL_ST_GENIF")) { exclhier |= exclone << TREE_VHDL_ST_GENIF; }
+							else if(!strcmp(p, "VHDL_ST_GENFOR")) { exclhier |= exclone << TREE_VHDL_ST_GENFOR; }
+							else if(!strcmp(p, "VHDL_ST_INSTANCE")) { exclhier |= exclone << TREE_VHDL_ST_INSTANCE; }
+							else if(!strcmp(p, "VHDL_ST_PACKAGE")) { exclhier |= exclone << TREE_VHDL_ST_PACKAGE; }
+							else if(!strcmp(p, "VHDL_ST_PACKAGE")) { exclhier |= exclone << TREE_VHDL_ST_PACKAGE; }
+
+							else if(!strcmp(p, "VHDL_ST_SIGNAL")) { exclhier |= exclone << TREE_VHDL_ST_SIGNAL; }
+							else if(!strcmp(p, "VHDL_ST_PORTIN")) { exclhier |= exclone << TREE_VHDL_ST_PORTIN; }
+							else if(!strcmp(p, "VHDL_ST_PORTOUT")) { exclhier |= exclone << TREE_VHDL_ST_PORTOUT; }
+							else if(!strcmp(p, "VHDL_ST_PORTINOUT")) { exclhier |= exclone << TREE_VHDL_ST_PORTINOUT; }
+							else if(!strcmp(p, "VHDL_ST_BUFFER")) { exclhier |= exclone << TREE_VHDL_ST_BUFFER; }
+							else if(!strcmp(p, "VHDL_ST_LINKAGE")) { exclhier |= exclone << TREE_VHDL_ST_LINKAGE; }
+
+							else if(!strcmp(p, "VHDL_ST_ARCHITECTURE")) { exclhier |= exclone << TREE_VHDL_ST_ARCHITECTURE; }
+							else if(!strcmp(p, "VHDL_ST_FUNCTION")) { exclhier |= exclone << TREE_VHDL_ST_FUNCTION; }
+							else if(!strcmp(p, "VHDL_ST_PROCEDURE")) { exclhier |= exclone << TREE_VHDL_ST_PROCEDURE; }
+							else if(!strcmp(p, "VHDL_ST_RECORD")) { exclhier |= exclone << TREE_VHDL_ST_RECORD; }
+							else if(!strcmp(p, "VHDL_ST_PROCESS")) { exclhier |= exclone << TREE_VHDL_ST_PROCESS; }
+							else if(!strcmp(p, "VHDL_ST_GENERATE")) { exclhier |= exclone << TREE_VHDL_ST_GENERATE; }
+							break;
+
+						case SST_EXCL_COMP:
+							if(!GLOBALS->exclcompname) { GLOBALS->exclcompname = make_jrb(); }
+							str = jrb_find_str(GLOBALS->exclcompname, p);
+							jv.i = dummy++;
+							if(!str) jrb_insert_str(GLOBALS->exclcompname, strdup_2(p), jv);
+							break;
+
+						case SST_EXCL_INST:
+							if(!GLOBALS->exclinstname) { GLOBALS->exclinstname = make_jrb(); }
+							str = jrb_find_str(GLOBALS->exclinstname, p);
+							jv.i = dummy++;
+							if(!str) jrb_insert_str(GLOBALS->exclinstname, strdup_2(p), jv);
+							break;
+
+						default:	break;
+						}
+					break;
+				}			
+
+			free_2(iline);
+			}
+
+		GLOBALS->exclhiermask |= exclhier;
+		}
+
+	fclose(f);
+	}
+
+}

@@ -344,6 +344,7 @@ RPC_GETOPT
 CHDIR_GETOPT
 RPC_GETOPT3
 "  -4, --rcvar                specify single rc variable values individually\n"
+"  -5, --sstexclude           specify sst exclusion filter filename\n"
 INTR_GETOPT
 "  -C, --comphier             use compressed hierarchy names (slower)\n"
 "  -g, --giga                 use gigabyte mempacking when recoding (slower)\n"
@@ -697,6 +698,8 @@ if(!GLOBALS)
 	GLOBALS->do_hier_compress = old_g->do_hier_compress;
 	GLOBALS->disable_auto_comphier = old_g->disable_auto_comphier;
 
+	strcpy2_into_new_context(GLOBALS, &GLOBALS->sst_exclude_filename, &old_g->sst_exclude_filename);
+
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->editor_name, &old_g->editor_name);
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_logfile, &old_g->fontname_logfile);
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->fontname_signals, &old_g->fontname_signals);
@@ -817,10 +820,11 @@ while (1)
 		{"chdir", 1, 0, '2'},
 		{"restore", 0, 0, '3'},
                 {"rcvar", 1, 0, '4'},
+		{"sstexclude", 1, 0, '5'},
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "zf:Fon:a:Ar:dl:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:1:2:34:", long_options,
+        c = getopt_long (argc, argv, "zf:Fon:a:Ar:dl:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:1:2:34:5:", long_options,
 &option_index);
 
         if (c == -1) break;     /* no more args */
@@ -1033,6 +1037,16 @@ while (1)
 				}
 			}
 			break;
+
+                case '5':
+                        {
+                        if(GLOBALS->sst_exclude_filename)
+                                {
+                                free_2(GLOBALS->sst_exclude_filename);
+                                }
+                        GLOBALS->sst_exclude_filename = strdup_2(optarg);
+                        }
+                        break;
 
                 case 's':
 			if(GLOBALS->skip_start) free_2(GLOBALS->skip_start);
@@ -1391,6 +1405,7 @@ if(is_vcd)
 	}
 
 strcat(GLOBALS->winname,GLOBALS->loaded_file_name);
+sst_exclusion_loader();
 
 loader_check_head:
 

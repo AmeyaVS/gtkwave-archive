@@ -170,5 +170,8 @@ struct tree *talloc_2(size_t siz);
 #define talloc_2(x) calloc_2(1,(x))
 #endif
 
+
+void sst_exclusion_loader(void);
+
 #endif
 
