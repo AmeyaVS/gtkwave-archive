@@ -382,7 +382,7 @@ RPC_GETOPT
 CHDIR_GETOPT
 RPC_GETOPT3
 "  -4, --rcvar                specify single rc variable values individually\n"
-"  -5, --sstexclude           specify sst excusion filter filename\n"
+"  -5, --sstexclude           specify sst exclusion filter filename\n"
 INTR_GETOPT
 "  -C, --comphier             use compressed hierarchy names (slower)\n"
 "  -g, --giga                 use gigabyte mempacking when recoding (slower)\n"
