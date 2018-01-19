@@ -8374,7 +8374,7 @@ while(ptr)
 
 	if(!strcmp(mi[ptr->idx].item_type, "<Separator>"))
 		{
-#ifdef MAC_INTEGRATION
+#if defined(MAC_INTEGRATION) || defined(WAVE_GTK3_MENU_SEPARATOR)
 		menuitem = gtk_separator_menu_item_new();
 #else
 		menuitem = gtk_menu_item_new();

@@ -11,6 +11,7 @@
 /* workaround for wave_vslider not rendering properly on startup */
 #define WAVE_ALLOW_GTK3_VSLIDER_WORKAROUND
 #define WAVE_GTK3_HIERSEARCH_DEBOUNCE
+#define WAVE_GTK3_MENU_SEPARATOR
 #endif
 
 #define WAVE_GTKIFE(a,b,c,d,e) {a,b,c,d,e,NULL}
