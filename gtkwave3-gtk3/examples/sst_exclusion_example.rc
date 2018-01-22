@@ -50,7 +50,7 @@
 //
 // Add your own component type names here (e.g., fill_buffer in the
 // case	of an instantiation such as: fill_buffer FB0())
-// each on its separate line
+// each on its separate line underneath the [compname] tag
 //
 [compname]
 
@@ -58,6 +58,6 @@
 //
 // Add your own instantiation names here (e.g., FB0, FB1 in the
 // case of an instantiation such as: fill_buffer FB0())
-// each on its separate line
+// each on its separate line underneath the [instname] tag
 //
 [instname]
