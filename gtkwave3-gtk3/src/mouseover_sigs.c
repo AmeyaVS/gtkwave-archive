@@ -344,9 +344,17 @@ if(t && (tname = get_fullname(t)))
 
 	if(GLOBALS->clipboard_mouseover)
 		{
-		GdkDisplay *g = gdk_display_get_default();
-		GtkClipboard *clip = gtk_clipboard_get_for_display (g, GDK_SELECTION_CLIPBOARD); /* GDK_SELECTION_PRIMARY is middle mouse button */
-		gtk_clipboard_set_text (clip, asciivalue ? asciivalue : "", value_charlen);
+                GdkDisplay *g = gdk_display_get_default();
+                GtkClipboard *clip;
+
+                if(t->name)
+                        {
+                        clip = gtk_clipboard_get_for_display (g, GDK_SELECTION_PRIMARY); /* middle mouse button	*/
+                        gtk_clipboard_set_text (clip, t->name, strlen(t->name));
+                        }
+
+                clip = gtk_clipboard_get_for_display (g, GDK_SELECTION_CLIPBOARD); /* ctrl-c/ctrl-v */
+                gtk_clipboard_set_text (clip, asciivalue ? asciivalue : "", value_charlen);
 		}
 
 	name_charlen = tname ? strlen(tname) : 0;
