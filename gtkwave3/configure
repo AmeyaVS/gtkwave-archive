@@ -632,6 +632,10 @@ TCL_LDADD
 MINGW_LDADD
 POW_LIB
 LIBOBJS
+RPC_LDADD
+RPC_CFLAGS
+TIRPC_LIBS
+TIRPC_CFLAGS
 ALLOCA
 EGREP
 GREP
@@ -804,6 +808,7 @@ enable_option_checking
 enable_silent_rules
 enable_maintainer_mode
 with_gconf
+with_tirpc
 with_xdgdatadir
 enable_mime_update
 enable_struct_pack
@@ -846,7 +851,9 @@ GCONF_CFLAGS
 GCONF_LIBS
 GTK_UNIX_PRINT_CFLAGS
 GTK_UNIX_PRINT_LIBS
-CPP'
+CPP
+TIRPC_CFLAGS
+TIRPC_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1502,6 +1509,7 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-gconf            Use GConf to store preferences
+  --with-tirpc            Use TI-RPC as RPC implementation (instead of SunRPC)
   --with-xdgdatadir=path  Change where the theme icons and mime registrations are installed [DATADIR]
   --with-tcl              directory containing tcl configuration
                           (tclConfig.sh)
@@ -1536,6 +1544,9 @@ Some influential environment variables:
   GTK_UNIX_PRINT_LIBS
               linker flags for GTK_UNIX_PRINT, overriding pkg-config
   CPP         C preprocessor
+  TIRPC_CFLAGS
+              C compiler flags for TIRPC, overriding pkg-config
+  TIRPC_LIBS  linker flags for TIRPC, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -3199,6 +3210,15 @@ if test "${with_gconf+set}" = set; then :
   withval=$with_gconf;
 else
   with_gconf=check
+fi
+
+
+# ------------ TI-RPC ------------------
+
+
+# Check whether --with-tirpc was given.
+if test "${with_tirpc+set}" = set; then :
+  withval=$with_tirpc;
 fi
 
 
@@ -8534,13 +8554,90 @@ fi
 done
 
 
-# rpc workaround for cygwin
-for ac_header in rpc/types.h rpc/xdr.h
+# TI-RPC needed after glibc 2.26, where SunRPC will go away
+if test "x$with_tirpc" = xyes; then :
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for TIRPC" >&5
+$as_echo_n "checking for TIRPC... " >&6; }
+
+if test -n "$TIRPC_CFLAGS"; then
+    pkg_cv_TIRPC_CFLAGS="$TIRPC_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libtirpc\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libtirpc") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_TIRPC_CFLAGS=`$PKG_CONFIG --cflags "libtirpc" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$TIRPC_LIBS"; then
+    pkg_cv_TIRPC_LIBS="$TIRPC_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libtirpc\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libtirpc") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_TIRPC_LIBS=`$PKG_CONFIG --libs "libtirpc" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        TIRPC_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libtirpc" 2>&1`
+        else
+	        TIRPC_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libtirpc" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$TIRPC_PKG_ERRORS" >&5
+
+	as_fn_error $? "libtirpc requested, but library not found." "$LINENO" 5
+
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	as_fn_error $? "libtirpc requested, but library not found." "$LINENO" 5
+
+else
+	TIRPC_CFLAGS=$pkg_cv_TIRPC_CFLAGS
+	TIRPC_LIBS=$pkg_cv_TIRPC_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	RPC_CFLAGS=$TIRPC_CFLAGS; RPC_LDADD=$TIRPC_LIBS;
+fi
+else
+  RPC_CFLAGS=""; RPC_LDADD="";
+      # rpc workaround for cygwin
+      for ac_header in rpc/types.h rpc/xdr.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "#ifdef HAVE_RPC_TYPES_H
-     # include <rpc/types.h>
-     #endif
+             # include <rpc/types.h>
+             #endif
 
 "
 if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
@@ -8551,6 +8648,101 @@ _ACEOF
 fi
 
 done
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdrmem_create in -lnsl" >&5
+$as_echo_n "checking for xdrmem_create in -lnsl... " >&6; }
+if ${ac_cv_lib_nsl_xdrmem_create+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lnsl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char xdrmem_create ();
+int
+main ()
+{
+return xdrmem_create ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_nsl_xdrmem_create=yes
+else
+  ac_cv_lib_nsl_xdrmem_create=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_nsl_xdrmem_create" >&5
+$as_echo "$ac_cv_lib_nsl_xdrmem_create" >&6; }
+if test "x$ac_cv_lib_nsl_xdrmem_create" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBNSL 1
+_ACEOF
+
+  LIBS="-lnsl $LIBS"
+
+fi
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdrmem_create in -lrpc" >&5
+$as_echo_n "checking for xdrmem_create in -lrpc... " >&6; }
+if ${ac_cv_lib_rpc_xdrmem_create+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lrpc  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char xdrmem_create ();
+int
+main ()
+{
+return xdrmem_create ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_rpc_xdrmem_create=yes
+else
+  ac_cv_lib_rpc_xdrmem_create=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rpc_xdrmem_create" >&5
+$as_echo "$ac_cv_lib_rpc_xdrmem_create" >&6; }
+if test "x$ac_cv_lib_rpc_xdrmem_create" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBRPC 1
+_ACEOF
+
+  LIBS="-lrpc $LIBS"
+
+fi
+
+
+
+fi
+
 
 
 
@@ -10135,96 +10327,6 @@ _ACEOF
 fi
 done
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdrmem_create in -lnsl" >&5
-$as_echo_n "checking for xdrmem_create in -lnsl... " >&6; }
-if ${ac_cv_lib_nsl_xdrmem_create+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lnsl  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char xdrmem_create ();
-int
-main ()
-{
-return xdrmem_create ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_nsl_xdrmem_create=yes
-else
-  ac_cv_lib_nsl_xdrmem_create=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_nsl_xdrmem_create" >&5
-$as_echo "$ac_cv_lib_nsl_xdrmem_create" >&6; }
-if test "x$ac_cv_lib_nsl_xdrmem_create" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBNSL 1
-_ACEOF
-
-  LIBS="-lnsl $LIBS"
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdrmem_create in -lrpc" >&5
-$as_echo_n "checking for xdrmem_create in -lrpc... " >&6; }
-if ${ac_cv_lib_rpc_xdrmem_create+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lrpc  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char xdrmem_create ();
-int
-main ()
-{
-return xdrmem_create ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_rpc_xdrmem_create=yes
-else
-  ac_cv_lib_rpc_xdrmem_create=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rpc_xdrmem_create" >&5
-$as_echo "$ac_cv_lib_rpc_xdrmem_create" >&6; }
-if test "x$ac_cv_lib_rpc_xdrmem_create" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBRPC 1
-_ACEOF
-
-  LIBS="-lrpc $LIBS"
-
-fi
-
 
 # some AIX adds (linker flag for 32 bit compiles)
 if test "X$OSTYPE" = "Xaix" ; then
@@ -10408,6 +10510,9 @@ ac_config_files="$ac_config_files Makefile doc/Makefile contrib/Makefile contrib
   TK_LIB_SPEC           : $TK_LIB_SPEC
   TK_LDADD              : $TK_LDADD
 
+  RPC_CFLAGS            : $RPC_CFLAGS
+  RPC_LDADD             : $RPC_LDADD
+
   CPPFLAGS              : $CPPFLAGS
   CFLAGS                : $CFLAGS
   LDFLAGS               : $LDFLAGS
@@ -10468,6 +10573,9 @@ $as_echo "$as_me:
   TK_INCLUDE_SPEC       : $TK_INCLUDE_SPEC
   TK_LIB_SPEC           : $TK_LIB_SPEC
   TK_LDADD              : $TK_LDADD
+
+  RPC_CFLAGS            : $RPC_CFLAGS
+  RPC_LDADD             : $RPC_LDADD
 
   CPPFLAGS              : $CPPFLAGS
   CFLAGS                : $CFLAGS

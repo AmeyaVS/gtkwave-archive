@@ -16,6 +16,11 @@ AC_ARG_WITH([gconf],
         [],
         [with_gconf=check])
 
+# ------------ TI-RPC ------------------
+
+AC_ARG_WITH([tirpc],
+      [AS_HELP_STRING([--with-tirpc], [Use TI-RPC as RPC implementation (instead of SunRPC)])])
+
 # ------------- XDG -------------------
 AC_ARG_WITH(xdgdatadir, [  --with-xdgdatadir=path  Change where the theme icons and mime registrations are installed [[DATADIR]]], [opt_xdgdatadir=$withval])
 
@@ -734,12 +739,26 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/time.h unistd.h wchar.h wctype.h getopt.h])
 
-# rpc workaround for cygwin
-AC_CHECK_HEADERS([rpc/types.h rpc/xdr.h], [], [],
-     [[#ifdef HAVE_RPC_TYPES_H
-     # include <rpc/types.h>
-     #endif
-     ]])
+# TI-RPC needed after glibc 2.26, where SunRPC will go away
+AS_IF([test "x$with_tirpc" = xyes],
+     [PKG_CHECK_MODULES([TIRPC],
+                         [libtirpc],
+                         [RPC_CFLAGS=$TIRPC_CFLAGS; RPC_LDADD=$TIRPC_LIBS;],
+                         [AC_MSG_ERROR([libtirpc requested, but library not found.])]
+                       )],
+     [RPC_CFLAGS=""; RPC_LDADD="";
+      # rpc workaround for cygwin
+      AC_CHECK_HEADERS([rpc/types.h rpc/xdr.h], [], [],
+           [[#ifdef HAVE_RPC_TYPES_H
+             # include <rpc/types.h>
+             #endif
+           ]])
+      AC_CHECK_LIB(nsl,xdrmem_create)
+      AC_CHECK_LIB(rpc,xdrmem_create)
+     ]
+)
+AC_SUBST(RPC_CFLAGS)
+AC_SUBST(RPC_LDADD)
 
 
 # Checks for operand sizes.
@@ -774,8 +793,6 @@ AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([atexit btowc bzero dup2 memmove memset munmap pow putenv re_comp realpath regcomp select setenv strcasecmp strchr strdup strerror strncasecmp strrchr strstr getopt_long setenv unsetenv])
-AC_CHECK_LIB(nsl,xdrmem_create)
-AC_CHECK_LIB(rpc,xdrmem_create)
 
 # some AIX adds (linker flag for 32 bit compiles)
 if test "X$OSTYPE" = "Xaix" ; then
@@ -964,6 +981,9 @@ AC_MSG_NOTICE([
   TK_INCLUDE_SPEC       : $TK_INCLUDE_SPEC
   TK_LIB_SPEC           : $TK_LIB_SPEC
   TK_LDADD              : $TK_LDADD
+
+  RPC_CFLAGS            : $RPC_CFLAGS
+  RPC_LDADD             : $RPC_LDADD
 
   CPPFLAGS              : $CPPFLAGS
   CFLAGS                : $CFLAGS
