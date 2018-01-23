@@ -208,7 +208,15 @@ if(t->name)
 
 /************************************************************************************************/
 
+#if GTK_CHECK_VERSION(3,0,0)
+static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
+{
+cairo_set_source_surface(cr, GLOBALS->surface_mo_pixmap_mouseover_c_1, 0, 0);
+cairo_paint (cr);
 
+return(FALSE);
+}
+#else
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
 cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(widget)));
@@ -221,6 +229,7 @@ cairo_destroy (cr);
 
 return(FALSE);
 }
+#endif
 
 
 static void create_mouseover(gint x, gint y, gint width, gint height)
@@ -260,7 +269,11 @@ XXX_gdk_draw_rectangle(GLOBALS->cr_mo_pixmap_mouseover_c_1, GLOBALS->rgb_mo_dk_g
 		1,1,
 		GLOBALS->mo_width_mouseover_c_1-2, GLOBALS->mo_height_mouseover_c_1-2);
 
-gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->mo_area_mouseover_c_1), "expose_event",G_CALLBACK(expose_event), NULL);
+#if GTK_CHECK_VERSION(3,0,0)
+g_signal_connect(XXX_GTK_OBJECT(GLOBALS->mo_area_mouseover_c_1), "draw",G_CALLBACK(draw_event), NULL);
+#else
+g_signal_connect(XXX_GTK_OBJECT(GLOBALS->mo_area_mouseover_c_1), "expose_event",G_CALLBACK(expose_event), NULL);
+#endif
 }
 
 #define MOUSEOVER_BREAKSIZE      (32)
