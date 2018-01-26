@@ -5040,9 +5040,21 @@ menu_write_save_cleanup(GtkWidget *widget, gpointer data)
 (void)data;
 
 FILE *wave;
+int len;
 
 if(!GLOBALS->filesel_ok)
 	{
+	return;
+	}
+
+len = strlen(*GLOBALS->fileselbox_text);
+if((!len) || ((*GLOBALS->fileselbox_text)[len-1] == '/')
+#if !defined __MINGW32__ && !defined _MSC_VER
+          || ((*GLOBALS->fileselbox_text)[len-1] == '\\')
+#endif
+)
+	{
+	GLOBALS->save_success_menu_c_1 = 2;
 	return;
 	}
 
@@ -5092,6 +5104,7 @@ menu_write_save_file(gpointer null_data, guint callback_action, GtkWidget *widge
 (void)null_data;
 (void)callback_action;
 (void)widget;
+int len = 0;
 
 if(GLOBALS->helpbox_is_active)
 	{
@@ -5103,7 +5116,16 @@ if(GLOBALS->helpbox_is_active)
 	return;
 	}
 
-if(!GLOBALS->filesel_writesave)
+if(GLOBALS->filesel_writesave)
+	{
+	len = strlen(GLOBALS->filesel_writesave);
+	}
+
+if	((!len) || (GLOBALS->filesel_writesave[len-1] == '/')
+#if !defined __MINGW32__ && !defined _MSC_VER
+	|| (GLOBALS->filesel_writesave[len-1] == '\\')
+#endif
+	)
 	{
 	fileselbox("Write Save File",&GLOBALS->filesel_writesave,GTK_SIGNAL_FUNC(menu_write_save_cleanup), GTK_SIGNAL_FUNC(NULL), GLOBALS->is_gtkw_save_file ? "*.gtkw" : "*.sav", 1);
 	}
@@ -5113,13 +5135,16 @@ if(!GLOBALS->filesel_writesave)
 	GLOBALS->save_success_menu_c_1 = 0;
 	GLOBALS->fileselbox_text = &GLOBALS->filesel_writesave;
 	menu_write_save_cleanup(NULL, NULL);
-	if(GLOBALS->save_success_menu_c_1)
+	if(GLOBALS->save_success_menu_c_1 != 2) /* cancelled */
 		{
-		status_text("Wrote save file OK.\n");
-		}
-		else
-		{
-		status_text("Problem writing save file.\n");
+		if(GLOBALS->save_success_menu_c_1)
+			{
+			status_text("Wrote save file OK.\n");
+			}
+			else
+			{
+			status_text("Problem writing save file.\n");
+			}
 		}
 	}
 }
