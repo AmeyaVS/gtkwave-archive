@@ -1220,11 +1220,11 @@ v_v2k_list_of_ports: V_LP v_v2k_iio_declaration (V_COMMA v_v2k_iio_declaration)*
 v_v2k_iio_declaration:	v_v2k_input_declaration | v_v2k_output_declaration | v_v2k_inout_declaration	// v2k1
 		;
 
-v_v2k_input_declaration: V_INPUT v_optnettype v_optsigned (v_range | ) v_name_of_variable		// v2k1
+v_v2k_input_declaration: V_INPUT v_optnettype v_optsigned (v_range | ) v_name_of_variable (v_range | ) 		// v2k1
                 ;
-v_v2k_output_declaration: V_OUTPUT v_optnettype v_optsigned (v_range | ) v_name_of_variable		// v2k1
+v_v2k_output_declaration: V_OUTPUT v_optnettype v_optsigned (v_range | ) v_name_of_variable (v_range | )	// v2k1
                 ;
-v_v2k_inout_declaration: V_INOUT v_optnettype v_optsigned (v_range | ) v_name_of_variable		// v2k1
+v_v2k_inout_declaration: V_INOUT v_optnettype v_optsigned (v_range | ) v_name_of_variable (v_range | ) 		// v2k1
                 ;
 
 

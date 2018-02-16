@@ -1458,12 +1458,29 @@ v_v2k_input_declaration()
   }
 #line 1223 "./verilog.g"
   v_name_of_variable();
+#line 1223 "./verilog.g"
+  {
+    zzBLOCK(zztasp2);
+    zzMake0;
+    {
+    if ( (LA(1)==V_LBRACK) ) {
+#line 1223 "./verilog.g"
+      v_range();
+    }
+    else {
+      if ( (setwd3[LA(1)]&0x10) ) {
+      }
+      else {zzFAIL(1,zzerr13,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    }
+    zzEXIT(zztasp2);
+    }
+  }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd3, 0x10);
+  zzresynch(setwd3, 0x20);
   }
 }
 
@@ -1495,21 +1512,39 @@ v_v2k_output_declaration()
       v_range();
     }
     else {
-      if ( (setwd3[LA(1)]&0x20) ) {
+      if ( (setwd3[LA(1)]&0x40) ) {
       }
-      else {zzFAIL(1,zzerr13,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr14,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
   }
 #line 1225 "./verilog.g"
   v_name_of_variable();
+#line 1225 "./verilog.g"
+  {
+    zzBLOCK(zztasp2);
+    zzMake0;
+    {
+    if ( (LA(1)==V_LBRACK)
+ ) {
+#line 1225 "./verilog.g"
+      v_range();
+    }
+    else {
+      if ( (setwd3[LA(1)]&0x80) ) {
+      }
+      else {zzFAIL(1,zzerr15,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    }
+    zzEXIT(zztasp2);
+    }
+  }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd3, 0x40);
+  zzresynch(setwd4, 0x1);
   }
 }
 
@@ -1541,21 +1576,39 @@ v_v2k_inout_declaration()
       v_range();
     }
     else {
-      if ( (setwd3[LA(1)]&0x80) ) {
+      if ( (setwd4[LA(1)]&0x2) ) {
       }
-      else {zzFAIL(1,zzerr14,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr16,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
   }
 #line 1227 "./verilog.g"
   v_name_of_variable();
+#line 1227 "./verilog.g"
+  {
+    zzBLOCK(zztasp2);
+    zzMake0;
+    {
+    if ( (LA(1)==V_LBRACK) ) {
+#line 1227 "./verilog.g"
+      v_range();
+    }
+    else {
+      if ( (setwd4[LA(1)]&0x4)
+ ) {
+      }
+      else {zzFAIL(1,zzerr17,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    }
+    zzEXIT(zztasp2);
+    }
+  }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd4, 0x1);
+  zzresynch(setwd4, 0x8);
   }
 }
 
@@ -1571,8 +1624,7 @@ v_list_of_ports()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_LP)
- ) {
+  if ( (LA(1)==V_LP) ) {
 #line 1231 "./verilog.g"
     zzmatch(V_LP); zzCONSUME;
 #line 1231 "./verilog.g"
@@ -1598,14 +1650,14 @@ v_list_of_ports()
   else {
     if ( (LA(1)==V_SEMI) ) {
     }
-    else {zzFAIL(1,zzerr15,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr18,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd4, 0x2);
+  zzresynch(setwd4, 0x10);
   }
 }
 
@@ -1621,12 +1673,13 @@ v_port()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd4[LA(1)]&0x4) ) {
+  if ( (setwd4[LA(1)]&0x20) ) {
 #line 1235 "./verilog.g"
     v_port_expression();
   }
   else {
-    if ( (LA(1)==V_DOT) ) {
+    if ( (LA(1)==V_DOT)
+ ) {
 #line 1236 "./verilog.g"
       zzmatch(V_DOT); zzCONSUME;
 #line 1236 "./verilog.g"
@@ -1638,14 +1691,14 @@ v_port()
 #line 1236 "./verilog.g"
       zzmatch(V_RP); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr16,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr19,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd4, 0x8);
+  zzresynch(setwd4, 0x40);
   }
 }
 
@@ -1661,8 +1714,7 @@ v_port_expression()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd4[LA(1)]&0x10)
- ) {
+  if ( (setwd4[LA(1)]&0x80) ) {
 #line 1239 "./verilog.g"
     v_port_reference();
   }
@@ -1691,9 +1743,9 @@ v_port_expression()
       zzmatch(V_RBRACE); zzCONSUME;
     }
     else {
-      if ( (setwd4[LA(1)]&0x20) ) {
+      if ( (setwd5[LA(1)]&0x1) ) {
       }
-      else {zzFAIL(1,zzerr17,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr20,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -1701,7 +1753,7 @@ v_port_expression()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd4, 0x40);
+  zzresynch(setwd5, 0x2);
   }
 }
 
@@ -1724,7 +1776,8 @@ v_port_reference()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (LA(1)==V_LBRACK) ) {
+    if ( (LA(1)==V_LBRACK)
+ ) {
 #line 1245 "./verilog.g"
       {
         zzBLOCK(zztasp3);
@@ -1739,8 +1792,7 @@ v_port_reference()
           zzBLOCK(zztasp4);
           zzMake0;
           {
-          if ( (LA(1)==V_COLON)
- ) {
+          if ( (LA(1)==V_COLON) ) {
 #line 1245 "./verilog.g"
             zzmatch(V_COLON); zzCONSUME;
 #line 1245 "./verilog.g"
@@ -1749,7 +1801,7 @@ v_port_reference()
           else {
             if ( (LA(1)==V_RBRACK) ) {
             }
-            else {zzFAIL(1,zzerr18,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+            else {zzFAIL(1,zzerr21,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
           zzEXIT(zztasp4);
           }
@@ -1761,9 +1813,9 @@ v_port_reference()
       }
     }
     else {
-      if ( (setwd4[LA(1)]&0x80) ) {
+      if ( (setwd5[LA(1)]&0x4) ) {
       }
-      else {zzFAIL(1,zzerr19,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr22,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -1773,7 +1825,7 @@ v_port_reference()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd5, 0x1);
+  zzresynch(setwd5, 0x8);
   }
 }
 
@@ -1794,13 +1846,13 @@ v_module_item()
     v_parameter_declaration();
   }
   else {
-    if ( (LA(1)==V_LOCALPARAM) ) {
+    if ( (LA(1)==V_LOCALPARAM)
+ ) {
 #line 1250 "./verilog.g"
       v_localparam_declaration();
     }
     else {
-      if ( (LA(1)==V_INPUT)
- ) {
+      if ( (LA(1)==V_INPUT) ) {
 #line 1251 "./verilog.g"
         v_input_declaration();
       }
@@ -1820,13 +1872,13 @@ v_module_item()
               v_reg_declaration();
             }
             else {
-              if ( (LA(1)==V_TIME) ) {
+              if ( (LA(1)==V_TIME)
+ ) {
 #line 1255 "./verilog.g"
                 v_time_declaration();
               }
               else {
-                if ( (LA(1)==V_INTEGER)
- ) {
+                if ( (LA(1)==V_INTEGER) ) {
 #line 1256 "./verilog.g"
                   v_integer_declaration();
                 }
@@ -1846,18 +1898,18 @@ v_module_item()
                         v_event_declaration();
                       }
                       else {
-                        if ( (setwd5[LA(1)]&0x2) ) {
+                        if ( (setwd5[LA(1)]&0x10)
+ ) {
 #line 1260 "./verilog.g"
                           v_gate_declaration();
                         }
                         else {
-                          if ( (LA(1)==V_PRIMITIVE)
- ) {
+                          if ( (LA(1)==V_PRIMITIVE) ) {
 #line 1261 "./verilog.g"
                             v_udp();
                           }
                           else {
-                            if ( (setwd5[LA(1)]&0x4) ) {
+                            if ( (setwd5[LA(1)]&0x20) ) {
 #line 1262 "./verilog.g"
                               v_module_instantiation();
                             }
@@ -1867,18 +1919,18 @@ v_module_item()
                                 v_parameter_override();
                               }
                               else {
-                                if ( (setwd5[LA(1)]&0x8) ) {
+                                if ( (setwd5[LA(1)]&0x40) ) {
 #line 1264 "./verilog.g"
                                   v_continuous_assign();
                                 }
                                 else {
-                                  if ( (LA(1)==V_INITIAL) ) {
+                                  if ( (LA(1)==V_INITIAL)
+ ) {
 #line 1265 "./verilog.g"
                                     v_initial_statement();
                                   }
                                   else {
-                                    if ( (LA(1)==V_ALWAYS)
- ) {
+                                    if ( (LA(1)==V_ALWAYS) ) {
 #line 1266 "./verilog.g"
                                       v_always_statement();
                                     }
@@ -1898,11 +1950,12 @@ v_module_item()
                                             v_specify_block();
                                           }
                                           else {
-                                            if ( (LA(1)==V_GENERATE) ) {
+                                            if ( (LA(1)==V_GENERATE)
+ ) {
 #line 1270 "./verilog.g"
                                               v_generate_block();
                                             }
-                                            else {zzFAIL(1,zzerr20,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                                            else {zzFAIL(1,zzerr23,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                                           }
                                         }
                                       }
@@ -1929,7 +1982,7 @@ v_module_item()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd5, 0x10);
+  zzresynch(setwd5, 0x80);
   }
 }
 
@@ -1999,8 +2052,7 @@ v_udp()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (LA(1)==V_COMMA)
- ) {
+    while ( (LA(1)==V_COMMA) ) {
 #line 1316 "./verilog.g"
       zzmatch(V_COMMA); zzCONSUME;
 #line 1316 "./verilog.g"
@@ -2024,7 +2076,7 @@ v_udp()
 #line 1317 "./verilog.g"
       v_udp_declaration();
       zzLOOP(zztasp2);
-    } while ( (setwd5[LA(1)]&0x20) );
+    } while ( (setwd6[LA(1)]&0x1) );
     zzEXIT(zztasp2);
     }
   }
@@ -2085,7 +2137,7 @@ v_udp()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd5, 0x40);
+  zzresynch(setwd6, 0x2);
   }
 }
 
@@ -2111,11 +2163,12 @@ v_udp_declaration()
       v_reg_declaration();
     }
     else {
-      if ( (LA(1)==V_INPUT) ) {
+      if ( (LA(1)==V_INPUT)
+ ) {
 #line 1369 "./verilog.g"
         v_input_declaration();
       }
-      else {zzFAIL(1,zzerr21,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr24,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -2123,7 +2176,7 @@ v_udp_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd5, 0x80);
+  zzresynch(setwd6, 0x4);
   }
 }
 
@@ -2139,8 +2192,7 @@ v_udp_initial_statement()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_INITIAL)
- ) {
+  if ( (LA(1)==V_INITIAL) ) {
 #line 1372 "./verilog.g"
     zzmatch(V_INITIAL); zzCONSUME;
 #line 1372 "./verilog.g"
@@ -2155,14 +2207,14 @@ v_udp_initial_statement()
   else {
     if ( (LA(1)==V_TABLE) ) {
     }
-    else {zzFAIL(1,zzerr22,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr25,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd6, 0x1);
+  zzresynch(setwd6, 0x8);
   }
 }
 
@@ -2191,14 +2243,14 @@ v_init_val()
  zzCONSUME;
 
     }
-    else {zzFAIL(1,zzerr23,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr26,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd6, 0x2);
+  zzresynch(setwd6, 0x10);
   }
 }
 
@@ -2221,7 +2273,7 @@ v_output_terminal_name()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd6, 0x4);
+  zzresynch(setwd6, 0x20);
   }
 }
 
@@ -2248,7 +2300,7 @@ v_table_definition()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd6, 0x8);
+  zzresynch(setwd6, 0x40);
   }
 }
 
@@ -2274,7 +2326,8 @@ v_table_entries()
 #line 1387 "./verilog.g"
       v_com_seq_entry();
       zzLOOP(zztasp2);
-    } while ( (setwd6[LA(1)]&0x10) );
+    } while ( (setwd6[LA(1)]&0x80)
+ );
     zzEXIT(zztasp2);
     }
   }
@@ -2283,7 +2336,7 @@ v_table_entries()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd6, 0x20);
+  zzresynch(setwd7, 0x1);
   }
 }
 
@@ -2308,8 +2361,7 @@ v_com_seq_entry()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd6[LA(1)]&0x40) && 
-(LA(2)==V_COLON) ) {
+    if ( (setwd7[LA(1)]&0x2) && (LA(2)==V_COLON) ) {
 #line 1390 "./verilog.g"
       v_state();
 #line 1390 "./verilog.g"
@@ -2322,7 +2374,7 @@ v_com_seq_entry()
 #line 1391 "./verilog.g"
         zzmatch(V_OUTPUT_SYMBOL); zzCONSUME;
       }
-      else {zzFAIL(2,zzerr24,zzerr25,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(2,zzerr27,zzerr28,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -2334,7 +2386,7 @@ v_com_seq_entry()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd6, 0x80);
+  zzresynch(setwd7, 0x4);
   }
 }
 
@@ -2359,14 +2411,14 @@ v_level_symbol()
 #line 1395 "./verilog.g"
       zzmatch(V_LEVEL_SYMBOL_EXTRA); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr26,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr29,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd7, 0x1);
+  zzresynch(setwd7, 0x8);
   }
 }
 
@@ -2382,7 +2434,8 @@ v_edge()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_LP) ) {
+  if ( (LA(1)==V_LP)
+ ) {
 #line 1398 "./verilog.g"
     zzmatch(V_LP); zzCONSUME;
 #line 1398 "./verilog.g"
@@ -2391,19 +2444,18 @@ v_edge()
     zzmatch(V_RP); zzCONSUME;
   }
   else {
-    if ( (LA(1)==V_EDGE_SYMBOL)
- ) {
+    if ( (LA(1)==V_EDGE_SYMBOL) ) {
 #line 1399 "./verilog.g"
       zzmatch(V_EDGE_SYMBOL); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr27,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr30,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd7, 0x2);
+  zzresynch(setwd7, 0x10);
   }
 }
 
@@ -2419,7 +2471,7 @@ v_fake_edge()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd7[LA(1)]&0x4) ) {
+  if ( (setwd7[LA(1)]&0x20) ) {
 #line 1403 "./verilog.g"
     v_level_symbol();
 #line 1403 "./verilog.g"
@@ -2430,14 +2482,14 @@ v_fake_edge()
 #line 1404 "./verilog.g"
       zzmatch(V_IDENTIFIER); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr28,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr31,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd7, 0x8);
+  zzresynch(setwd7, 0x40);
   }
 }
 
@@ -2453,23 +2505,24 @@ v_level_symbol2()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd7[LA(1)]&0x10) ) {
+  if ( (setwd7[LA(1)]&0x80) ) {
 #line 1407 "./verilog.g"
     v_level_symbol();
   }
   else {
-    if ( (setwd7[LA(1)]&0x20) ) {
+    if ( (setwd8[LA(1)]&0x1)
+ ) {
 #line 1408 "./verilog.g"
       v_edge();
     }
-    else {zzFAIL(1,zzerr29,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr32,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd7, 0x40);
+  zzresynch(setwd8, 0x2);
   }
 }
 
@@ -2490,8 +2543,7 @@ v_input_list()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (setwd7[LA(1)]&0x80)
- ) {
+    while ( (setwd8[LA(1)]&0x4) ) {
 #line 1411 "./verilog.g"
       v_level_symbol2();
       zzLOOP(zztasp2);
@@ -2504,7 +2556,7 @@ v_input_list()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd8, 0x1);
+  zzresynch(setwd8, 0x8);
   }
 }
 
@@ -2527,7 +2579,7 @@ v_state()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd8, 0x2);
+  zzresynch(setwd8, 0x10);
   }
 }
 
@@ -2552,14 +2604,14 @@ v_next_state()
 #line 1419 "./verilog.g"
       zzmatch(V_HYPHEN); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr30,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr33,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd8, 0x4);
+  zzresynch(setwd8, 0x20);
   }
 }
 
@@ -2595,7 +2647,7 @@ v_task()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (setwd8[LA(1)]&0x8) ) {
+    while ( (setwd8[LA(1)]&0x40) ) {
 #line 1431 "./verilog.g"
       v_tf_declaration();
       zzLOOP(zztasp2);
@@ -2616,7 +2668,7 @@ v_task()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd8, 0x10);
+  zzresynch(setwd8, 0x80);
   }
 }
 
@@ -2648,15 +2700,15 @@ v_function()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd8[LA(1)]&0x20) ) {
+    if ( (setwd9[LA(1)]&0x1)
+ ) {
 #line 1444 "./verilog.g"
       v_range_or_type();
     }
     else {
-      if ( (setwd8[LA(1)]&0x40)
- ) {
+      if ( (setwd9[LA(1)]&0x2) ) {
       }
-      else {zzFAIL(1,zzerr31,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr34,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -2675,7 +2727,7 @@ v_function()
 #line 1445 "./verilog.g"
       v_tf_declaration();
       zzLOOP(zztasp2);
-    } while ( (setwd8[LA(1)]&0x80) );
+    } while ( (setwd9[LA(1)]&0x4) );
     zzEXIT(zztasp2);
     }
   }
@@ -2692,7 +2744,7 @@ v_function()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd9, 0x1);
+  zzresynch(setwd9, 0x8);
   }
 }
 
@@ -2718,11 +2770,12 @@ v_range_or_type()
       zzmatch(V_INTEGER); zzCONSUME;
     }
     else {
-      if ( (LA(1)==V_REAL) ) {
+      if ( (LA(1)==V_REAL)
+ ) {
 #line 1452 "./verilog.g"
         zzmatch(V_REAL); zzCONSUME;
       }
-      else {zzFAIL(1,zzerr32,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr35,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -2730,7 +2783,7 @@ v_range_or_type()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd9, 0x2);
+  zzresynch(setwd9, 0x10);
   }
 }
 
@@ -2746,8 +2799,7 @@ v_tf_declaration()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_PARAMETER)
- ) {
+  if ( (LA(1)==V_PARAMETER) ) {
 #line 1455 "./verilog.g"
     v_parameter_declaration();
   }
@@ -2767,13 +2819,13 @@ v_tf_declaration()
           v_output_declaration();
         }
         else {
-          if ( (LA(1)==V_INOUT) ) {
+          if ( (LA(1)==V_INOUT)
+ ) {
 #line 1459 "./verilog.g"
             v_inout_declaration();
           }
           else {
-            if ( (LA(1)==V_REG)
- ) {
+            if ( (LA(1)==V_REG) ) {
 #line 1460 "./verilog.g"
               v_reg_declaration();
             }
@@ -2792,7 +2844,7 @@ v_tf_declaration()
 #line 1463 "./verilog.g"
                     v_real_declaration();
                   }
-                  else {zzFAIL(1,zzerr33,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                  else {zzFAIL(1,zzerr36,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 }
               }
             }
@@ -2806,7 +2858,7 @@ v_tf_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd9, 0x4);
+  zzresynch(setwd9, 0x20);
   }
 }
 
@@ -2831,15 +2883,15 @@ v_parameter_declaration()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (LA(1)==V_LBRACK) ) {
+    if ( (LA(1)==V_LBRACK)
+ ) {
 #line 1470 "./verilog.g"
       v_range();
     }
     else {
-      if ( (setwd9[LA(1)]&0x8)
- ) {
+      if ( (setwd9[LA(1)]&0x40) ) {
       }
-      else {zzFAIL(1,zzerr34,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr37,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -2853,7 +2905,7 @@ v_parameter_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd9, 0x10);
+  zzresynch(setwd9, 0x80);
   }
 }
 
@@ -2883,9 +2935,9 @@ v_localparam_declaration()
       v_range();
     }
     else {
-      if ( (setwd9[LA(1)]&0x20) ) {
+      if ( (setwd10[LA(1)]&0x1) ) {
       }
-      else {zzFAIL(1,zzerr35,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr38,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -2899,7 +2951,7 @@ v_localparam_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd9, 0x40);
+  zzresynch(setwd10, 0x2);
   }
 }
 
@@ -2926,7 +2978,7 @@ v_param_assignment()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd9, 0x80);
+  zzresynch(setwd10, 0x4);
   }
 }
 
@@ -2964,7 +3016,7 @@ v_list_of_param_assignments()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd10, 0x1);
+  zzresynch(setwd10, 0x8);
   }
 }
 
@@ -2991,15 +3043,15 @@ v_input_declaration()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd10[LA(1)]&0x2) ) {
+    if ( (setwd10[LA(1)]&0x10)
+ ) {
 #line 1484 "./verilog.g"
       v_list_of_variables();
 #line 1484 "./verilog.g"
       zzmatch(V_SEMI); zzCONSUME;
     }
     else {
-      if ( (LA(1)==V_LBRACK)
- ) {
+      if ( (LA(1)==V_LBRACK) ) {
 #line 1485 "./verilog.g"
         v_range();
 #line 1485 "./verilog.g"
@@ -3007,7 +3059,7 @@ v_input_declaration()
 #line 1485 "./verilog.g"
         zzmatch(V_SEMI); zzCONSUME;
       }
-      else {zzFAIL(1,zzerr36,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr39,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3017,7 +3069,7 @@ v_input_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd10, 0x4);
+  zzresynch(setwd10, 0x20);
   }
 }
 
@@ -3044,7 +3096,7 @@ v_output_declaration()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd10[LA(1)]&0x8) ) {
+    if ( (setwd10[LA(1)]&0x40) ) {
 #line 1488 "./verilog.g"
       v_list_of_variables();
 #line 1488 "./verilog.g"
@@ -3059,7 +3111,7 @@ v_output_declaration()
 #line 1489 "./verilog.g"
         zzmatch(V_SEMI); zzCONSUME;
       }
-      else {zzFAIL(1,zzerr37,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr40,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3069,7 +3121,7 @@ v_output_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd10, 0x10);
+  zzresynch(setwd10, 0x80);
   }
 }
 
@@ -3096,14 +3148,15 @@ v_inout_declaration()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd10[LA(1)]&0x20) ) {
+    if ( (setwd11[LA(1)]&0x1) ) {
 #line 1492 "./verilog.g"
       v_list_of_variables();
 #line 1492 "./verilog.g"
       zzmatch(V_SEMI); zzCONSUME;
     }
     else {
-      if ( (LA(1)==V_LBRACK) ) {
+      if ( (LA(1)==V_LBRACK)
+ ) {
 #line 1493 "./verilog.g"
         v_range();
 #line 1493 "./verilog.g"
@@ -3111,7 +3164,7 @@ v_inout_declaration()
 #line 1493 "./verilog.g"
         zzmatch(V_SEMI); zzCONSUME;
       }
-      else {zzFAIL(1,zzerr38,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr41,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3121,7 +3174,7 @@ v_inout_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd10, 0x40);
+  zzresynch(setwd11, 0x2);
   }
 }
 
@@ -3137,22 +3190,21 @@ v_net_chg()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_LP)
- ) {
+  if ( (LA(1)==V_LP) ) {
 #line 1496 "./verilog.g"
     v_charge_strength();
   }
   else {
-    if ( (setwd10[LA(1)]&0x80) ) {
+    if ( (setwd11[LA(1)]&0x4) ) {
     }
-    else {zzFAIL(1,zzerr39,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr42,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd11, 0x1);
+  zzresynch(setwd11, 0x8);
   }
 }
 
@@ -3178,13 +3230,13 @@ v_nettype()
       zzmatch(V_TRI); zzCONSUME;
     }
     else {
-      if ( (LA(1)==V_TRI1) ) {
+      if ( (LA(1)==V_TRI1)
+ ) {
 #line 1502 "./verilog.g"
         zzmatch(V_TRI1); zzCONSUME;
       }
       else {
-        if ( (LA(1)==V_SUPPLY0)
- ) {
+        if ( (LA(1)==V_SUPPLY0) ) {
 #line 1503 "./verilog.g"
           zzmatch(V_SUPPLY0); zzCONSUME;
         }
@@ -3204,13 +3256,13 @@ v_nettype()
                 zzmatch(V_TRI0); zzCONSUME;
               }
               else {
-                if ( (LA(1)==V_SUPPLY1) ) {
+                if ( (LA(1)==V_SUPPLY1)
+ ) {
 #line 1507 "./verilog.g"
                   zzmatch(V_SUPPLY1); zzCONSUME;
                 }
                 else {
-                  if ( (LA(1)==V_WOR)
- ) {
+                  if ( (LA(1)==V_WOR) ) {
 #line 1508 "./verilog.g"
                     zzmatch(V_WOR); zzCONSUME;
                   }
@@ -3224,7 +3276,7 @@ v_nettype()
 #line 1510 "./verilog.g"
                         zzmatch(V_TRIREG); zzCONSUME;
                       }
-                      else {zzFAIL(1,zzerr40,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                      else {zzFAIL(1,zzerr43,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                     }
                   }
                 }
@@ -3240,7 +3292,7 @@ v_nettype()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd11, 0x2);
+  zzresynch(setwd11, 0x10);
   }
 }
 
@@ -3256,20 +3308,20 @@ v_optnettype()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd11[LA(1)]&0x4) ) {
+  if ( (setwd11[LA(1)]&0x20) ) {
 #line 1514 "./verilog.g"
     v_nettype();
   }
   else {
-    if ( (LA(1)==V_REG) ) {
+    if ( (LA(1)==V_REG)
+ ) {
 #line 1515 "./verilog.g"
       zzmatch(V_REG); zzCONSUME;
     }
     else {
-      if ( (setwd11[LA(1)]&0x8)
- ) {
+      if ( (setwd11[LA(1)]&0x40) ) {
       }
-      else {zzFAIL(1,zzerr41,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr44,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -3277,7 +3329,7 @@ v_optnettype()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd11, 0x10);
+  zzresynch(setwd11, 0x80);
   }
 }
 
@@ -3311,7 +3363,7 @@ v_expandrange()
 #line 1521 "./verilog.g"
         v_range();
       }
-      else {zzFAIL(1,zzerr42,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr45,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -3319,7 +3371,7 @@ v_expandrange()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd11, 0x20);
+  zzresynch(setwd12, 0x1);
   }
 }
 
@@ -3350,7 +3402,7 @@ v_reg_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd11, 0x40);
+  zzresynch(setwd12, 0x2);
   }
 }
 
@@ -3366,22 +3418,22 @@ v_reg_range()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_LBRACK) ) {
+  if ( (LA(1)==V_LBRACK)
+ ) {
 #line 1527 "./verilog.g"
     v_range();
   }
   else {
-    if ( (setwd11[LA(1)]&0x80)
- ) {
+    if ( (setwd12[LA(1)]&0x4) ) {
     }
-    else {zzFAIL(1,zzerr43,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr46,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd12, 0x1);
+  zzresynch(setwd12, 0x8);
   }
 }
 
@@ -3411,9 +3463,9 @@ v_time_declaration()
       v_range();
     }
     else {
-      if ( (setwd12[LA(1)]&0x2) ) {
+      if ( (setwd12[LA(1)]&0x10) ) {
       }
-      else {zzFAIL(1,zzerr44,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr47,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3427,7 +3479,7 @@ v_time_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd12, 0x4);
+  zzresynch(setwd12, 0x20);
   }
 }
 
@@ -3457,9 +3509,10 @@ v_integer_declaration()
       v_range();
     }
     else {
-      if ( (setwd12[LA(1)]&0x8) ) {
+      if ( (setwd12[LA(1)]&0x40)
+ ) {
       }
-      else {zzFAIL(1,zzerr45,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr48,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3473,7 +3526,7 @@ v_integer_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd12, 0x10);
+  zzresynch(setwd12, 0x80);
   }
 }
 
@@ -3498,15 +3551,14 @@ v_genvar_declaration()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (LA(1)==V_LBRACK)
- ) {
+    if ( (LA(1)==V_LBRACK) ) {
 #line 1537 "./verilog.g"
       v_range();
     }
     else {
-      if ( (setwd12[LA(1)]&0x20) ) {
+      if ( (setwd13[LA(1)]&0x1) ) {
       }
-      else {zzFAIL(1,zzerr46,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr49,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3520,7 +3572,7 @@ v_genvar_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd12, 0x40);
+  zzresynch(setwd13, 0x2);
   }
 }
 
@@ -3550,9 +3602,9 @@ v_real_declaration()
       v_range();
     }
     else {
-      if ( (setwd12[LA(1)]&0x80) ) {
+      if ( (setwd13[LA(1)]&0x4) ) {
       }
-      else {zzFAIL(1,zzerr47,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr50,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3566,7 +3618,7 @@ v_real_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd13, 0x1);
+  zzresynch(setwd13, 0x8);
   }
 }
 
@@ -3591,7 +3643,8 @@ v_event_declaration()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (LA(1)==V_COMMA) ) {
+    while ( (LA(1)==V_COMMA)
+ ) {
 #line 1543 "./verilog.g"
       zzmatch(V_COMMA); zzCONSUME;
 #line 1543 "./verilog.g"
@@ -3608,7 +3661,7 @@ v_event_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd13, 0x2);
+  zzresynch(setwd13, 0x10);
   }
 }
 
@@ -3624,8 +3677,7 @@ v_continuous_assign()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_ASSIGN)
- ) {
+  if ( (LA(1)==V_ASSIGN) ) {
 #line 1546 "./verilog.g"
     zzmatch(V_ASSIGN); zzCONSUME;
 #line 1546 "./verilog.g"
@@ -3638,7 +3690,7 @@ v_continuous_assign()
     zzmatch(V_SEMI); zzCONSUME;
   }
   else {
-    if ( (setwd13[LA(1)]&0x4) ) {
+    if ( (setwd13[LA(1)]&0x20) ) {
 #line 1547 "./verilog.g"
       v_nettype();
 #line 1548 "./verilog.g"
@@ -3654,16 +3706,16 @@ v_continuous_assign()
         zzBLOCK(zztasp2);
         zzMake0;
         {
-        if ( (setwd13[LA(1)]&0x8) && (setwd13[LA(2)]&0x10) ) {
+        if ( (setwd13[LA(1)]&0x40) && (setwd13[LA(2)]&0x80) ) {
 #line 1551 "./verilog.g"
           v_list_of_variables();
         }
         else {
-          if ( (setwd13[LA(1)]&0x20) && (setwd13[LA(2)]&0x40) ) {
+          if ( (setwd14[LA(1)]&0x1) && (setwd14[LA(2)]&0x2) ) {
 #line 1551 "./verilog.g"
             v_list_of_assignments();
           }
-          else {zzFAIL(2,zzerr48,zzerr49,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(2,zzerr51,zzerr52,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
         zzEXIT(zztasp2);
         }
@@ -3671,14 +3723,14 @@ v_continuous_assign()
 #line 1551 "./verilog.g"
       zzmatch(V_SEMI); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr50,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr53,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd13, 0x80);
+  zzresynch(setwd14, 0x4);
   }
 }
 
@@ -3694,22 +3746,22 @@ v_cont_drv()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_LP) ) {
+  if ( (LA(1)==V_LP)
+ ) {
 #line 1554 "./verilog.g"
     v_drive_strength();
   }
   else {
-    if ( (setwd14[LA(1)]&0x1)
- ) {
+    if ( (setwd14[LA(1)]&0x8) ) {
     }
-    else {zzFAIL(1,zzerr51,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr54,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd14, 0x2);
+  zzresynch(setwd14, 0x10);
   }
 }
 
@@ -3725,21 +3777,21 @@ v_cont_exr()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd14[LA(1)]&0x4) ) {
+  if ( (setwd14[LA(1)]&0x20) ) {
 #line 1558 "./verilog.g"
     v_expandrange();
   }
   else {
-    if ( (setwd14[LA(1)]&0x8) ) {
+    if ( (setwd14[LA(1)]&0x40) ) {
     }
-    else {zzFAIL(1,zzerr52,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr55,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd14, 0x10);
+  zzresynch(setwd14, 0x80);
   }
 }
 
@@ -3760,16 +3812,17 @@ v_cont_dly()
     v_delay();
   }
   else {
-    if ( (setwd14[LA(1)]&0x20) ) {
+    if ( (setwd15[LA(1)]&0x1)
+ ) {
     }
-    else {zzFAIL(1,zzerr53,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr56,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd14, 0x40);
+  zzresynch(setwd15, 0x2);
   }
 }
 
@@ -3796,7 +3849,7 @@ v_parameter_override()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd14, 0x80);
+  zzresynch(setwd15, 0x4);
   }
 }
 
@@ -3821,8 +3874,7 @@ v_list_of_variables()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (LA(1)==V_COMMA)
- ) {
+    while ( (LA(1)==V_COMMA) ) {
 #line 1571 "./verilog.g"
       zzmatch(V_COMMA); zzCONSUME;
 #line 1571 "./verilog.g"
@@ -3839,7 +3891,7 @@ v_list_of_variables()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd15, 0x1);
+  zzresynch(setwd15, 0x8);
   }
 }
 
@@ -3865,9 +3917,9 @@ v_optrange_list()
       v_range();
     }
     else {
-      if ( (setwd15[LA(1)]&0x2) ) {
+      if ( (setwd15[LA(1)]&0x10) ) {
       }
-      else {zzFAIL(1,zzerr54,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr57,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -3877,7 +3929,7 @@ v_optrange_list()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd15, 0x4);
+  zzresynch(setwd15, 0x20);
   }
 }
 
@@ -3900,7 +3952,7 @@ v_name_of_variable()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd15, 0x8);
+  zzresynch(setwd15, 0x40);
   }
 }
 
@@ -3938,7 +3990,7 @@ v_list_of_register_variables()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd15, 0x10);
+  zzresynch(setwd15, 0x80);
   }
 }
 
@@ -3954,13 +4006,13 @@ v_register_variable()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd15[LA(1)]&0x20) && (setwd15[LA(2)]&0x40) ) {
+  if ( (setwd16[LA(1)]&0x1) && 
+(setwd16[LA(2)]&0x2) ) {
 #line 1584 "./verilog.g"
     v_name_of_register();
   }
   else {
-    if ( (setwd15[LA(1)]&0x80) && 
-(LA(2)==V_EQ) ) {
+    if ( (setwd16[LA(1)]&0x4) && (LA(2)==V_EQ) ) {
 #line 1585 "./verilog.g"
       v_name_of_register();
 #line 1585 "./verilog.g"
@@ -3969,7 +4021,7 @@ v_register_variable()
       v_expression();
     }
     else {
-      if ( (setwd16[LA(1)]&0x1) && (LA(2)==V_LBRACK) ) {
+      if ( (setwd16[LA(1)]&0x8) && (LA(2)==V_LBRACK) ) {
 #line 1586 "./verilog.g"
         v_name_of_memory();
 #line 1586 "./verilog.g"
@@ -3983,7 +4035,7 @@ v_register_variable()
 #line 1587 "./verilog.g"
         zzmatch(V_RBRACK); zzCONSUME;
       }
-      else {zzFAIL(2,zzerr55,zzerr56,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(2,zzerr58,zzerr59,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -3991,7 +4043,7 @@ v_register_variable()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd16, 0x2);
+  zzresynch(setwd16, 0x10);
   }
 }
 
@@ -4014,7 +4066,7 @@ v_name_of_register()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd16, 0x4);
+  zzresynch(setwd16, 0x20);
   }
 }
 
@@ -4037,7 +4089,7 @@ v_name_of_memory()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd16, 0x8);
+  zzresynch(setwd16, 0x40);
   }
 }
 
@@ -4060,7 +4112,7 @@ v_name_of_event()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd16, 0x10);
+  zzresynch(setwd16, 0x80);
   }
 }
 
@@ -4093,13 +4145,13 @@ v_charge_strength()
         zzmatch(V_MEDIUM); zzCONSUME;
       }
       else {
-        if ( (LA(1)==V_LARGE) ) {
+        if ( (LA(1)==V_LARGE)
+ ) {
 #line 1601 "./verilog.g"
           zzmatch(V_LARGE); zzCONSUME;
         }
         else {
-          if ( (setwd16[LA(1)]&0x20)
- ) {
+          if ( (setwd17[LA(1)]&0x1) ) {
 #line 1602 "./verilog.g"
             v_strength0();
 #line 1602 "./verilog.g"
@@ -4108,7 +4160,7 @@ v_charge_strength()
             v_strength1();
           }
           else {
-            if ( (setwd16[LA(1)]&0x40) ) {
+            if ( (setwd17[LA(1)]&0x2) ) {
 #line 1603 "./verilog.g"
               v_strength1();
 #line 1603 "./verilog.g"
@@ -4116,7 +4168,7 @@ v_charge_strength()
 #line 1603 "./verilog.g"
               v_strength0();
             }
-            else {zzFAIL(1,zzerr57,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+            else {zzFAIL(1,zzerr60,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
         }
       }
@@ -4131,7 +4183,7 @@ v_charge_strength()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd16, 0x80);
+  zzresynch(setwd17, 0x4);
   }
 }
 
@@ -4154,7 +4206,7 @@ v_drive_strength()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd17[LA(1)]&0x1) ) {
+    if ( (setwd17[LA(1)]&0x8) ) {
 #line 1606 "./verilog.g"
       v_strength0();
 #line 1606 "./verilog.g"
@@ -4163,7 +4215,7 @@ v_drive_strength()
       v_strength1();
     }
     else {
-      if ( (setwd17[LA(1)]&0x2) ) {
+      if ( (setwd17[LA(1)]&0x10) ) {
 #line 1607 "./verilog.g"
         v_strength1();
 #line 1607 "./verilog.g"
@@ -4171,7 +4223,7 @@ v_drive_strength()
 #line 1607 "./verilog.g"
         v_strength0();
       }
-      else {zzFAIL(1,zzerr58,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr61,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -4183,7 +4235,7 @@ v_drive_strength()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd17, 0x4);
+  zzresynch(setwd17, 0x20);
   }
 }
 
@@ -4199,13 +4251,13 @@ v_strength0()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_SUPPLY0) ) {
+  if ( (LA(1)==V_SUPPLY0)
+ ) {
 #line 1610 "./verilog.g"
     zzmatch(V_SUPPLY0); zzCONSUME;
   }
   else {
-    if ( (LA(1)==V_STRONG0)
- ) {
+    if ( (LA(1)==V_STRONG0) ) {
 #line 1611 "./verilog.g"
       zzmatch(V_STRONG0); zzCONSUME;
     }
@@ -4224,7 +4276,7 @@ v_strength0()
 #line 1614 "./verilog.g"
             zzmatch(V_HIGHZ0); zzCONSUME;
           }
-          else {zzFAIL(1,zzerr59,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(1,zzerr62,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
       }
     }
@@ -4234,7 +4286,7 @@ v_strength0()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd17, 0x8);
+  zzresynch(setwd17, 0x40);
   }
 }
 
@@ -4250,13 +4302,13 @@ v_strength1()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_SUPPLY1) ) {
+  if ( (LA(1)==V_SUPPLY1)
+ ) {
 #line 1617 "./verilog.g"
     zzmatch(V_SUPPLY1); zzCONSUME;
   }
   else {
-    if ( (LA(1)==V_STRONG1)
- ) {
+    if ( (LA(1)==V_STRONG1) ) {
 #line 1618 "./verilog.g"
       zzmatch(V_STRONG1); zzCONSUME;
     }
@@ -4275,7 +4327,7 @@ v_strength1()
 #line 1621 "./verilog.g"
             zzmatch(V_HIGHZ1); zzCONSUME;
           }
-          else {zzFAIL(1,zzerr60,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(1,zzerr63,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
       }
     }
@@ -4285,7 +4337,7 @@ v_strength1()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd17, 0x10);
+  zzresynch(setwd17, 0x80);
   }
 }
 
@@ -4301,22 +4353,22 @@ v_optsigned()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_SIGNED) ) {
+  if ( (LA(1)==V_SIGNED)
+ ) {
 #line 1625 "./verilog.g"
     zzmatch(V_SIGNED); zzCONSUME;
   }
   else {
-    if ( (setwd17[LA(1)]&0x20)
- ) {
+    if ( (setwd18[LA(1)]&0x1) ) {
     }
-    else {zzFAIL(1,zzerr61,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr64,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd17, 0x40);
+  zzresynch(setwd18, 0x2);
   }
 }
 
@@ -4347,7 +4399,7 @@ v_range()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd17, 0x80);
+  zzresynch(setwd18, 0x4);
   }
 }
 
@@ -4385,7 +4437,7 @@ v_list_of_assignments()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd18, 0x1);
+  zzresynch(setwd18, 0x8);
   }
 }
 
@@ -4431,7 +4483,7 @@ v_gate_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd18, 0x2);
+  zzresynch(setwd18, 0x10);
   }
 }
 
@@ -4452,13 +4504,13 @@ v_gatetype()
     zzmatch(V_ANDLIT); zzCONSUME;
   }
   else {
-    if ( (LA(1)==V_NANDLIT) ) {
+    if ( (LA(1)==V_NANDLIT)
+ ) {
 #line 1645 "./verilog.g"
       zzmatch(V_NANDLIT); zzCONSUME;
     }
     else {
-      if ( (LA(1)==V_ORLIT)
- ) {
+      if ( (LA(1)==V_ORLIT) ) {
 #line 1645 "./verilog.g"
         zzmatch(V_ORLIT); zzCONSUME;
       }
@@ -4478,13 +4530,13 @@ v_gatetype()
               zzmatch(V_XNORLIT); zzCONSUME;
             }
             else {
-              if ( (LA(1)==V_BUF) ) {
+              if ( (LA(1)==V_BUF)
+ ) {
 #line 1646 "./verilog.g"
                 zzmatch(V_BUF); zzCONSUME;
               }
               else {
-                if ( (LA(1)==V_BUFIF0)
- ) {
+                if ( (LA(1)==V_BUFIF0) ) {
 #line 1646 "./verilog.g"
                   zzmatch(V_BUFIF0); zzCONSUME;
                 }
@@ -4504,13 +4556,13 @@ v_gatetype()
                         zzmatch(V_NOTIF0); zzCONSUME;
                       }
                       else {
-                        if ( (LA(1)==V_NOTIF1) ) {
+                        if ( (LA(1)==V_NOTIF1)
+ ) {
 #line 1646 "./verilog.g"
                           zzmatch(V_NOTIF1); zzCONSUME;
                         }
                         else {
-                          if ( (LA(1)==V_PULLDOWN)
- ) {
+                          if ( (LA(1)==V_PULLDOWN) ) {
 #line 1646 "./verilog.g"
                             zzmatch(V_PULLDOWN); zzCONSUME;
                           }
@@ -4530,13 +4582,13 @@ v_gatetype()
                                   zzmatch(V_RNMOS); zzCONSUME;
                                 }
                                 else {
-                                  if ( (LA(1)==V_PMOS) ) {
+                                  if ( (LA(1)==V_PMOS)
+ ) {
 #line 1647 "./verilog.g"
                                     zzmatch(V_PMOS); zzCONSUME;
                                   }
                                   else {
-                                    if ( (LA(1)==V_RPMOS)
- ) {
+                                    if ( (LA(1)==V_RPMOS) ) {
 #line 1647 "./verilog.g"
                                       zzmatch(V_RPMOS); zzCONSUME;
                                     }
@@ -4556,13 +4608,13 @@ v_gatetype()
                                             zzmatch(V_TRAN); zzCONSUME;
                                           }
                                           else {
-                                            if ( (LA(1)==V_RTRAN) ) {
+                                            if ( (LA(1)==V_RTRAN)
+ ) {
 #line 1647 "./verilog.g"
                                               zzmatch(V_RTRAN); zzCONSUME;
                                             }
                                             else {
-                                              if ( (LA(1)==V_TRANIF0)
- ) {
+                                              if ( (LA(1)==V_TRANIF0) ) {
 #line 1648 "./verilog.g"
                                                 zzmatch(V_TRANIF0); zzCONSUME;
                                               }
@@ -4581,7 +4633,7 @@ v_gatetype()
 #line 1648 "./verilog.g"
                                                       zzmatch(V_RTRANIF1); zzCONSUME;
                                                     }
-                                                    else {zzFAIL(1,zzerr62,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                                                    else {zzFAIL(1,zzerr65,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                                                   }
                                                 }
                                               }
@@ -4612,7 +4664,7 @@ v_gatetype()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd18, 0x4);
+  zzresynch(setwd18, 0x20);
   }
 }
 
@@ -4628,22 +4680,22 @@ v_gate_drv()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_LP) && (setwd18[LA(2)]&0x8) ) {
+  if ( (LA(1)==V_LP) && 
+(setwd18[LA(2)]&0x40) ) {
 #line 1651 "./verilog.g"
     v_drive_strength();
   }
   else {
-    if ( (setwd18[LA(1)]&0x10) && 
-(setwd18[LA(2)]&0x20) ) {
+    if ( (setwd18[LA(1)]&0x80) && (setwd19[LA(2)]&0x1) ) {
     }
-    else {zzFAIL(2,zzerr63,zzerr64,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(2,zzerr66,zzerr67,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd18, 0x40);
+  zzresynch(setwd19, 0x2);
   }
 }
 
@@ -4664,16 +4716,16 @@ v_gate_dly()
     v_delay();
   }
   else {
-    if ( (setwd18[LA(1)]&0x80) ) {
+    if ( (setwd19[LA(1)]&0x4) ) {
     }
-    else {zzFAIL(1,zzerr65,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr68,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd19, 0x1);
+  zzresynch(setwd19, 0x8);
   }
 }
 
@@ -4694,16 +4746,17 @@ v_gate_range()
     v_range();
   }
   else {
-    if ( (LA(1)==V_LP) ) {
+    if ( (LA(1)==V_LP)
+ ) {
     }
-    else {zzFAIL(1,zzerr66,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr69,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd19, 0x2);
+  zzresynch(setwd19, 0x10);
   }
 }
 
@@ -4730,8 +4783,7 @@ v_gate_instance()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (LA(1)==V_COMMA)
- ) {
+    while ( (LA(1)==V_COMMA) ) {
 #line 1665 "./verilog.g"
       zzmatch(V_COMMA); zzCONSUME;
 #line 1665 "./verilog.g"
@@ -4748,7 +4800,7 @@ v_gate_instance()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd19, 0x4);
+  zzresynch(setwd19, 0x20);
   }
 }
 
@@ -4764,7 +4816,7 @@ v_name_of_gate_instance()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd19[LA(1)]&0x8) ) {
+  if ( (setwd19[LA(1)]&0x40) ) {
 #line 1668 "./verilog.g"
     v_identifier_nodot();
 #line 1668 "./verilog.g"
@@ -4773,14 +4825,14 @@ v_name_of_gate_instance()
   else {
     if ( (LA(1)==V_LP) ) {
     }
-    else {zzFAIL(1,zzerr67,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr70,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd19, 0x10);
+  zzresynch(setwd19, 0x80);
   }
 }
 
@@ -4796,21 +4848,22 @@ v_terminal()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd19[LA(1)]&0x20) ) {
+  if ( (setwd20[LA(1)]&0x1) ) {
 #line 1672 "./verilog.g"
     v_expression();
   }
   else {
-    if ( (setwd19[LA(1)]&0x40) ) {
+    if ( (setwd20[LA(1)]&0x2)
+ ) {
     }
-    else {zzFAIL(1,zzerr68,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr71,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd19, 0x80);
+  zzresynch(setwd20, 0x4);
   }
 }
 
@@ -4839,8 +4892,7 @@ v_udp_instantiation()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (LA(1)==V_COMMA)
- ) {
+    while ( (LA(1)==V_COMMA) ) {
 #line 1677 "./verilog.g"
       zzmatch(V_COMMA); zzCONSUME;
 #line 1677 "./verilog.g"
@@ -4857,7 +4909,7 @@ v_udp_instantiation()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd20, 0x1);
+  zzresynch(setwd20, 0x8);
   }
 }
 
@@ -4882,7 +4934,7 @@ v_name_of_udp()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd20, 0x2);
+  zzresynch(setwd20, 0x10);
   }
 }
 
@@ -4926,7 +4978,7 @@ v_udp_instance()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd20, 0x4);
+  zzresynch(setwd20, 0x20);
   }
 }
 
@@ -4942,7 +4994,7 @@ v_name_of_udp_instance()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd20[LA(1)]&0x8) ) {
+  if ( (setwd20[LA(1)]&0x40) ) {
 #line 1688 "./verilog.g"
     v_identifier_nodot();
 #line 1688 "./verilog.g"
@@ -4951,14 +5003,14 @@ v_name_of_udp_instance()
   else {
     if ( (LA(1)==V_LP) ) {
     }
-    else {zzFAIL(1,zzerr69,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr72,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd20, 0x10);
+  zzresynch(setwd20, 0x80);
   }
 }
 
@@ -4996,7 +5048,8 @@ v_module_instantiation()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (LA(1)==V_COMMA) ) {
+    while ( (LA(1)==V_COMMA)
+ ) {
 #line 1710 "./verilog.g"
       zzmatch(V_COMMA); zzCONSUME;
 #line 1710 "./verilog.g"
@@ -5022,7 +5075,7 @@ v_module_instantiation()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd20, 0x20);
+  zzresynch(setwd21, 0x1);
   }
 }
 
@@ -5047,7 +5100,7 @@ v_name_of_module()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd20, 0x40);
+  zzresynch(setwd21, 0x2);
   }
 }
 
@@ -5063,8 +5116,7 @@ v_parameter_value_assignment()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_POUND) && 
-(LA(2)==V_LP) ) {
+  if ( (LA(1)==V_POUND) && (LA(2)==V_LP) ) {
 #line 1724 "./verilog.g"
     zzmatch(V_POUND); zzCONSUME;
 #line 1724 "./verilog.g"
@@ -5075,16 +5127,16 @@ v_parameter_value_assignment()
     zzmatch(V_RP); zzCONSUME;
   }
   else {
-    if ( (LA(1)==V_POUND) && (setwd20[LA(2)]&0x80) ) {
+    if ( (LA(1)==V_POUND) && (setwd21[LA(2)]&0x4) ) {
 #line 1725 "./verilog.g"
       zzmatch(V_POUND); zzCONSUME;
 #line 1725 "./verilog.g"
       v_number();
     }
     else {
-      if ( (setwd21[LA(1)]&0x1) ) {
+      if ( (setwd21[LA(1)]&0x8) ) {
       }
-      else {zzFAIL(2,zzerr70,zzerr71,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(2,zzerr73,zzerr74,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -5092,7 +5144,7 @@ v_parameter_value_assignment()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd21, 0x2);
+  zzresynch(setwd21, 0x10);
   }
 }
 
@@ -5121,7 +5173,7 @@ v_module_instance()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd21, 0x4);
+  zzresynch(setwd21, 0x20);
   }
 }
 
@@ -5137,21 +5189,22 @@ v_name_of_instance_opt()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd21[LA(1)]&0x8) ) {
+  if ( (setwd21[LA(1)]&0x40) ) {
 #line 1733 "./verilog.g"
     v_name_of_instance();
   }
   else {
-    if ( (LA(1)==V_LP) ) {
+    if ( (LA(1)==V_LP)
+ ) {
     }
-    else {zzFAIL(1,zzerr72,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr75,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd21, 0x10);
+  zzresynch(setwd21, 0x80);
   }
 }
 
@@ -5185,7 +5238,7 @@ v_name_of_instance()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd21, 0x20);
+  zzresynch(setwd22, 0x1);
   }
 }
 
@@ -5201,22 +5254,21 @@ v_mod_range()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (LA(1)==V_LBRACK)
- ) {
+  if ( (LA(1)==V_LBRACK) ) {
 #line 1749 "./verilog.g"
     v_range();
   }
   else {
     if ( (LA(1)==V_LP) ) {
     }
-    else {zzFAIL(1,zzerr73,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr76,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd21, 0x40);
+  zzresynch(setwd22, 0x2);
   }
 }
 
@@ -5232,7 +5284,7 @@ v_list_of_module_connections()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd21[LA(1)]&0x80) ) {
+  if ( (setwd22[LA(1)]&0x4) ) {
 #line 1753 "./verilog.g"
     v_module_port_connection();
 #line 1753 "./verilog.g"
@@ -5252,7 +5304,8 @@ v_list_of_module_connections()
     }
   }
   else {
-    if ( (LA(1)==V_DOT) ) {
+    if ( (LA(1)==V_DOT)
+ ) {
 #line 1754 "./verilog.g"
       v_named_port_connection();
 #line 1754 "./verilog.g"
@@ -5260,8 +5313,7 @@ v_list_of_module_connections()
         zzBLOCK(zztasp2);
         zzMake0;
         {
-        while ( (LA(1)==V_COMMA)
- ) {
+        while ( (LA(1)==V_COMMA) ) {
 #line 1754 "./verilog.g"
           zzmatch(V_COMMA); zzCONSUME;
 #line 1754 "./verilog.g"
@@ -5272,14 +5324,14 @@ v_list_of_module_connections()
         }
       }
     }
-    else {zzFAIL(1,zzerr74,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr77,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd22, 0x1);
+  zzresynch(setwd22, 0x8);
   }
 }
 
@@ -5295,21 +5347,21 @@ v_module_port_connection()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd22[LA(1)]&0x2) ) {
+  if ( (setwd22[LA(1)]&0x10) ) {
 #line 1757 "./verilog.g"
     v_expression();
   }
   else {
-    if ( (setwd22[LA(1)]&0x4) ) {
+    if ( (setwd22[LA(1)]&0x20) ) {
     }
-    else {zzFAIL(1,zzerr75,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr78,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd22, 0x8);
+  zzresynch(setwd22, 0x40);
   }
 }
 
@@ -5336,14 +5388,15 @@ v_named_port_connection()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd22[LA(1)]&0x10) ) {
+    if ( (setwd22[LA(1)]&0x80) ) {
 #line 1761 "./verilog.g"
       v_expression();
     }
     else {
-      if ( (LA(1)==V_RP) ) {
+      if ( (LA(1)==V_RP)
+ ) {
       }
-      else {zzFAIL(1,zzerr76,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr79,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -5355,7 +5408,7 @@ v_named_port_connection()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd22, 0x20);
+  zzresynch(setwd23, 0x1);
   }
 }
 
@@ -5380,7 +5433,7 @@ v_initial_statement()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd22, 0x40);
+  zzresynch(setwd23, 0x2);
   }
 }
 
@@ -5405,7 +5458,7 @@ v_always_statement()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd22, 0x80);
+  zzresynch(setwd23, 0x4);
   }
 }
 
@@ -5421,8 +5474,7 @@ v_statement_or_null()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd23[LA(1)]&0x1)
- ) {
+  if ( (setwd23[LA(1)]&0x8) ) {
 #line 1775 "./verilog.g"
     v_statement();
   }
@@ -5431,14 +5483,14 @@ v_statement_or_null()
 #line 1776 "./verilog.g"
       zzmatch(V_SEMI); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr77,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr80,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd23, 0x2);
+  zzresynch(setwd23, 0x10);
   }
 }
 
@@ -5454,7 +5506,7 @@ v_statement()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd23[LA(1)]&0x4) && (setwd23[LA(2)]&0x8) && !(
+  if ( (setwd23[LA(1)]&0x20) && (setwd23[LA(2)]&0x40) && !(
  LA(1)==V_IDENTIFIER && LA(2)==V_LP
 || LA(1)==V_IDENTIFIER2 && LA(2)==V_LP
 || LA(1)==V_FUNCTION_NAME && LA(2)==V_LP
@@ -5482,17 +5534,17 @@ v_statement()
         zzBLOCK(zztasp2);
         zzMake0;
         {
-        if ( (LA(1)==V_ELSE) && (setwd23[LA(2)]&0x10) ) {
+        if ( (LA(1)==V_ELSE) && 
+(setwd23[LA(2)]&0x80) ) {
 #line 1781 "./verilog.g"
           zzmatch(V_ELSE); zzCONSUME;
 #line 1781 "./verilog.g"
           v_statement_or_null();
         }
         else {
-          if ( (setwd23[LA(1)]&0x20) && 
-(setwd23[LA(2)]&0x40) ) {
+          if ( (setwd24[LA(1)]&0x1) && (setwd24[LA(2)]&0x2) ) {
           }
-          else {zzFAIL(2,zzerr78,zzerr79,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(2,zzerr81,zzerr82,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
         zzEXIT(zztasp2);
         }
@@ -5518,7 +5570,7 @@ v_statement()
 #line 1782 "./verilog.g"
             v_case_item();
             zzLOOP(zztasp2);
-          } while ( (setwd23[LA(1)]&0x80) );
+          } while ( (setwd24[LA(1)]&0x4) );
           zzEXIT(zztasp2);
           }
         }
@@ -5545,7 +5597,8 @@ v_statement()
 #line 1783 "./verilog.g"
               v_case_item();
               zzLOOP(zztasp2);
-            } while ( (setwd24[LA(1)]&0x1) );
+            } while ( (setwd24[LA(1)]&0x8)
+ );
             zzEXIT(zztasp2);
             }
           }
@@ -5553,8 +5606,7 @@ v_statement()
           zzmatch(V_ENDCASE); zzCONSUME;
         }
         else {
-          if ( (LA(1)==V_CASEZ)
- ) {
+          if ( (LA(1)==V_CASEZ) ) {
 #line 1784 "./verilog.g"
             zzmatch(V_CASEZ); zzCONSUME;
 #line 1784 "./verilog.g"
@@ -5573,7 +5625,7 @@ v_statement()
 #line 1784 "./verilog.g"
                 v_case_item();
                 zzLOOP(zztasp2);
-              } while ( (setwd24[LA(1)]&0x2) );
+              } while ( (setwd24[LA(1)]&0x10) );
               zzEXIT(zztasp2);
               }
             }
@@ -5601,7 +5653,8 @@ v_statement()
                 v_statement();
               }
               else {
-                if ( (LA(1)==V_WHILE) ) {
+                if ( (LA(1)==V_WHILE)
+ ) {
 #line 1787 "./verilog.g"
                   zzmatch(V_WHILE); zzCONSUME;
 #line 1787 "./verilog.g"
@@ -5614,8 +5667,7 @@ v_statement()
                   v_statement();
                 }
                 else {
-                  if ( (LA(1)==V_FOR)
- ) {
+                  if ( (LA(1)==V_FOR) ) {
 #line 1788 "./verilog.g"
                     zzmatch(V_FOR); zzCONSUME;
 #line 1788 "./verilog.g"
@@ -5636,7 +5688,7 @@ v_statement()
                     v_statement();
                   }
                   else {
-                    if ( (setwd24[LA(1)]&0x4) ) {
+                    if ( (setwd24[LA(1)]&0x20) ) {
 #line 1790 "./verilog.g"
                       v_delay_or_event_control_stmt();
 #line 1790 "./verilog.g"
@@ -5665,18 +5717,18 @@ v_statement()
                           zzmatch(V_SEMI); zzCONSUME;
                         }
                         else {
-                          if ( (LA(1)==V_BEGIN) ) {
+                          if ( (LA(1)==V_BEGIN)
+ ) {
 #line 1793 "./verilog.g"
                             v_seq_block();
                           }
                           else {
-                            if ( (LA(1)==V_FORK)
- ) {
+                            if ( (LA(1)==V_FORK) ) {
 #line 1794 "./verilog.g"
                               v_par_block();
                             }
                             else {
-                              if ( (setwd24[LA(1)]&0x8) && (setwd24[LA(2)]&0x10) ) {
+                              if ( (setwd24[LA(1)]&0x40) && (setwd24[LA(2)]&0x80) ) {
 #line 1795 "./verilog.g"
                                 v_task_enable();
                               }
@@ -5707,7 +5759,8 @@ v_statement()
                                     zzmatch(V_SEMI); zzCONSUME;
                                   }
                                   else {
-                                    if ( (LA(1)==V_DEASSIGN) ) {
+                                    if ( (LA(1)==V_DEASSIGN)
+ ) {
 #line 1798 "./verilog.g"
                                       zzmatch(V_DEASSIGN); zzCONSUME;
 #line 1798 "./verilog.g"
@@ -5716,8 +5769,7 @@ v_statement()
                                       zzmatch(V_SEMI); zzCONSUME;
                                     }
                                     else {
-                                      if ( (LA(1)==V_FORCE)
- ) {
+                                      if ( (LA(1)==V_FORCE) ) {
 #line 1799 "./verilog.g"
                                         zzmatch(V_FORCE); zzCONSUME;
 #line 1799 "./verilog.g"
@@ -5734,7 +5786,7 @@ v_statement()
 #line 1800 "./verilog.g"
                                           zzmatch(V_SEMI); zzCONSUME;
                                         }
-                                        else {zzFAIL(2,zzerr80,zzerr81,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                                        else {zzFAIL(2,zzerr83,zzerr84,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                                       }
                                     }
                                   }
@@ -5759,7 +5811,7 @@ v_statement()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd24, 0x20);
+  zzresynch(setwd25, 0x1);
   }
 }
 
@@ -5786,7 +5838,7 @@ v_assignment()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd24, 0x40);
+  zzresynch(setwd25, 0x2);
   }
 }
 
@@ -5818,7 +5870,7 @@ v_block_or_non_assignment()
 #line 1807 "./verilog.g"
         v_non_blocking_assignment();
       }
-      else {zzFAIL(1,zzerr82,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr85,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -5828,7 +5880,7 @@ v_block_or_non_assignment()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd24, 0x80);
+  zzresynch(setwd25, 0x4);
   }
 }
 
@@ -5851,19 +5903,19 @@ v_blocking_assignment()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd25[LA(1)]&0x1) ) {
+    if ( (setwd25[LA(1)]&0x8)
+ ) {
 #line 1810 "./verilog.g"
       v_expression();
     }
     else {
-      if ( (setwd25[LA(1)]&0x2)
- ) {
+      if ( (setwd25[LA(1)]&0x10) ) {
 #line 1811 "./verilog.g"
         v_delay_or_event_control();
 #line 1811 "./verilog.g"
         v_expression();
       }
-      else {zzFAIL(1,zzerr83,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr86,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -5873,7 +5925,7 @@ v_blocking_assignment()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd25, 0x4);
+  zzresynch(setwd25, 0x20);
   }
 }
 
@@ -5896,18 +5948,18 @@ v_non_blocking_assignment()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd25[LA(1)]&0x8) ) {
+    if ( (setwd25[LA(1)]&0x40) ) {
 #line 1814 "./verilog.g"
       v_expression();
     }
     else {
-      if ( (setwd25[LA(1)]&0x10) ) {
+      if ( (setwd25[LA(1)]&0x80) ) {
 #line 1815 "./verilog.g"
         v_delay_or_event_control();
 #line 1815 "./verilog.g"
         v_expression();
       }
-      else {zzFAIL(1,zzerr84,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr87,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -5917,7 +5969,7 @@ v_non_blocking_assignment()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd25, 0x20);
+  zzresynch(setwd26, 0x1);
   }
 }
 
@@ -5938,13 +5990,13 @@ v_delay_or_event_control()
     v_delay_control();
   }
   else {
-    if ( (LA(1)==V_AT) ) {
+    if ( (LA(1)==V_AT)
+ ) {
 #line 1819 "./verilog.g"
       v_event_control();
     }
     else {
-      if ( (LA(1)==V_REPEAT)
- ) {
+      if ( (LA(1)==V_REPEAT) ) {
 #line 1820 "./verilog.g"
         zzmatch(V_REPEAT); zzCONSUME;
 #line 1820 "./verilog.g"
@@ -5956,7 +6008,7 @@ v_delay_or_event_control()
 #line 1820 "./verilog.g"
         v_event_control();
       }
-      else {zzFAIL(1,zzerr85,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr88,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -5964,7 +6016,7 @@ v_delay_or_event_control()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd25, 0x40);
+  zzresynch(setwd26, 0x2);
   }
 }
 
@@ -5989,14 +6041,14 @@ v_delay_or_event_control_stmt()
 #line 1824 "./verilog.g"
       v_event_control();
     }
-    else {zzFAIL(1,zzerr86,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr89,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd25, 0x80);
+  zzresynch(setwd26, 0x4);
   }
 }
 
@@ -6012,7 +6064,7 @@ v_case_item()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd26[LA(1)]&0x1) ) {
+  if ( (setwd26[LA(1)]&0x8) ) {
 #line 1827 "./verilog.g"
     v_explist();
 #line 1828 "./verilog.g"
@@ -6021,7 +6073,8 @@ v_case_item()
     v_statement_or_null();
   }
   else {
-    if ( (LA(1)==V_DEFAULT) ) {
+    if ( (LA(1)==V_DEFAULT)
+ ) {
 #line 1829 "./verilog.g"
       zzmatch(V_DEFAULT); zzCONSUME;
 #line 1829 "./verilog.g"
@@ -6029,32 +6082,31 @@ v_case_item()
         zzBLOCK(zztasp2);
         zzMake0;
         {
-        if ( (LA(1)==V_COLON)
- ) {
+        if ( (LA(1)==V_COLON) ) {
 #line 1829 "./verilog.g"
           zzmatch(V_COLON); zzCONSUME;
 #line 1829 "./verilog.g"
           v_statement_or_null();
         }
         else {
-          if ( (setwd26[LA(1)]&0x2) ) {
+          if ( (setwd26[LA(1)]&0x10) ) {
 #line 1830 "./verilog.g"
             v_statement_or_null();
           }
-          else {zzFAIL(1,zzerr87,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(1,zzerr90,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
         zzEXIT(zztasp2);
         }
       }
     }
-    else {zzFAIL(1,zzerr88,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr91,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd26, 0x4);
+  zzresynch(setwd26, 0x20);
   }
 }
 
@@ -6086,13 +6138,13 @@ v_seq_block()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd26[LA(1)]&0x8) ) {
+    if ( (setwd26[LA(1)]&0x40) ) {
 #line 1841 "./verilog.g"
       {
         zzBLOCK(zztasp3);
         zzMake0;
         {
-        while ( (setwd26[LA(1)]&0x10) ) {
+        while ( (setwd26[LA(1)]&0x80) ) {
 #line 1841 "./verilog.g"
           v_statement();
           zzLOOP(zztasp3);
@@ -6102,7 +6154,8 @@ v_seq_block()
       }
     }
     else {
-      if ( (LA(1)==V_COLON) ) {
+      if ( (LA(1)==V_COLON)
+ ) {
 #line 1842 "./verilog.g"
         zzmatch(V_COLON); zzCONSUME;
 #line 1842 "./verilog.g"
@@ -6112,8 +6165,7 @@ v_seq_block()
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          while ( (setwd26[LA(1)]&0x20)
- ) {
+          while ( (setwd27[LA(1)]&0x1) ) {
 #line 1842 "./verilog.g"
             v_block_declaration();
             zzLOOP(zztasp3);
@@ -6126,7 +6178,7 @@ v_seq_block()
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          while ( (setwd26[LA(1)]&0x40) ) {
+          while ( (setwd27[LA(1)]&0x2) ) {
 #line 1843 "./verilog.g"
             v_statement();
             zzLOOP(zztasp3);
@@ -6135,7 +6187,7 @@ v_seq_block()
           }
         }
       }
-      else {zzFAIL(1,zzerr89,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr92,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -6151,7 +6203,7 @@ v_seq_block()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd26, 0x80);
+  zzresynch(setwd27, 0x4);
   }
 }
 
@@ -6183,13 +6235,13 @@ v_par_block()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd27[LA(1)]&0x1) ) {
+    if ( (setwd27[LA(1)]&0x8) ) {
 #line 1856 "./verilog.g"
       {
         zzBLOCK(zztasp3);
         zzMake0;
         {
-        while ( (setwd27[LA(1)]&0x2) ) {
+        while ( (setwd27[LA(1)]&0x10) ) {
 #line 1856 "./verilog.g"
           v_statement();
           zzLOOP(zztasp3);
@@ -6199,7 +6251,8 @@ v_par_block()
       }
     }
     else {
-      if ( (LA(1)==V_COLON) ) {
+      if ( (LA(1)==V_COLON)
+ ) {
 #line 1857 "./verilog.g"
         zzmatch(V_COLON); zzCONSUME;
 #line 1857 "./verilog.g"
@@ -6209,8 +6262,7 @@ v_par_block()
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          while ( (setwd27[LA(1)]&0x4)
- ) {
+          while ( (setwd27[LA(1)]&0x20) ) {
 #line 1857 "./verilog.g"
             v_block_declaration();
             zzLOOP(zztasp3);
@@ -6223,7 +6275,7 @@ v_par_block()
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          while ( (setwd27[LA(1)]&0x8) ) {
+          while ( (setwd27[LA(1)]&0x40) ) {
 #line 1858 "./verilog.g"
             v_statement();
             zzLOOP(zztasp3);
@@ -6232,7 +6284,7 @@ v_par_block()
           }
         }
       }
-      else {zzFAIL(1,zzerr90,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr93,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -6248,7 +6300,7 @@ v_par_block()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd27, 0x10);
+  zzresynch(setwd27, 0x80);
   }
 }
 
@@ -6271,7 +6323,7 @@ v_name_of_block()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd27, 0x20);
+  zzresynch(setwd28, 0x1);
   }
 }
 
@@ -6297,13 +6349,13 @@ v_block_declaration()
       v_localparam_declaration();
     }
     else {
-      if ( (LA(1)==V_REG) ) {
+      if ( (LA(1)==V_REG)
+ ) {
 #line 1867 "./verilog.g"
         v_reg_declaration();
       }
       else {
-        if ( (LA(1)==V_INTEGER)
- ) {
+        if ( (LA(1)==V_INTEGER) ) {
 #line 1868 "./verilog.g"
           v_integer_declaration();
         }
@@ -6322,7 +6374,7 @@ v_block_declaration()
 #line 1871 "./verilog.g"
                 v_event_declaration();
               }
-              else {zzFAIL(1,zzerr91,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+              else {zzFAIL(1,zzerr94,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
           }
         }
@@ -6334,7 +6386,7 @@ v_block_declaration()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd27, 0x40);
+  zzresynch(setwd28, 0x2);
   }
 }
 
@@ -6350,15 +6402,15 @@ v_task_enable()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd27[LA(1)]&0x80) && (LA(2)==V_SEMI) ) {
+  if ( (setwd28[LA(1)]&0x4) && 
+(LA(2)==V_SEMI) ) {
 #line 1874 "./verilog.g"
     v_name_of_task();
 #line 1874 "./verilog.g"
     zzmatch(V_SEMI); zzCONSUME;
   }
   else {
-    if ( (setwd28[LA(1)]&0x1) && 
-(LA(2)==V_LP) ) {
+    if ( (setwd28[LA(1)]&0x8) && (LA(2)==V_LP) ) {
 #line 1875 "./verilog.g"
       v_name_of_task();
 #line 1875 "./verilog.g"
@@ -6370,14 +6422,14 @@ v_task_enable()
 #line 1875 "./verilog.g"
       zzmatch(V_SEMI); zzCONSUME;
     }
-    else {zzFAIL(2,zzerr92,zzerr93,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(2,zzerr95,zzerr96,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd28, 0x2);
+  zzresynch(setwd28, 0x10);
   }
 }
 
@@ -6400,7 +6452,7 @@ v_name_of_task()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd28, 0x4);
+  zzresynch(setwd28, 0x20);
   }
 }
 
@@ -6423,7 +6475,7 @@ v_name_of_task_or_block()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd28, 0x8);
+  zzresynch(setwd28, 0x40);
   }
 }
 
@@ -6446,9 +6498,9 @@ v_generate_block()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (setwd28[LA(1)]&0x10) ) {
+    while ( (setwd28[LA(1)]&0x80) ) {
 #line 1885 "./verilog.g"
-      zzsetmatch(zzerr94, zzerr95); zzCONSUME;
+      zzsetmatch(zzerr97, zzerr98); zzCONSUME;
       zzLOOP(zztasp2);
     }
     zzEXIT(zztasp2);
@@ -6461,7 +6513,7 @@ v_generate_block()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd28, 0x20);
+  zzresynch(setwd29, 0x1);
   }
 }
 
@@ -6484,9 +6536,9 @@ v_specify_block()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (setwd28[LA(1)]&0x40) ) {
+    while ( (setwd29[LA(1)]&0x2) ) {
 #line 1892 "./verilog.g"
-      zzsetmatch(zzerr96, zzerr97); zzCONSUME;
+      zzsetmatch(zzerr99, zzerr100); zzCONSUME;
       zzLOOP(zztasp2);
     }
     zzEXIT(zztasp2);
@@ -6499,7 +6551,7 @@ v_specify_block()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd28, 0x80);
+  zzresynch(setwd29, 0x4);
   }
 }
 
@@ -6524,7 +6576,7 @@ v_constant_expression()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd29, 0x1);
+  zzresynch(setwd29, 0x8);
   }
 }
 
@@ -6540,7 +6592,7 @@ v_lvalue()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd29[LA(1)]&0x2) ) {
+  if ( (setwd29[LA(1)]&0x10) ) {
 #line 1902 "./verilog.g"
     v_identifier();
 #line 1904 "./verilog.g"
@@ -6548,7 +6600,8 @@ v_lvalue()
       zzBLOCK(zztasp2);
       zzMake0;
       {
-      if ( (LA(1)==V_LBRACK) ) {
+      if ( (LA(1)==V_LBRACK)
+ ) {
 #line 1904 "./verilog.g"
         zzmatch(V_LBRACK); zzCONSUME;
 #line 1904 "./verilog.g"
@@ -6558,8 +6611,7 @@ v_lvalue()
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          if ( (LA(1)==V_COLON)
- ) {
+          if ( (LA(1)==V_COLON) ) {
 #line 1905 "./verilog.g"
             zzmatch(V_COLON); zzCONSUME;
 #line 1905 "./verilog.g"
@@ -6572,7 +6624,7 @@ v_lvalue()
 #line 1907 "./verilog.g"
               zzaRet.prim = i_primary_symbit_make(zzaArg(zztasp1,1).symbol,zzaArg(zztasp2,2).prim);
             }
-            else {zzFAIL(1,zzerr98,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+            else {zzFAIL(1,zzerr101,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
           zzEXIT(zztasp3);
           }
@@ -6583,11 +6635,11 @@ v_lvalue()
         v_opt_array_handling();
       }
       else {
-        if ( (setwd29[LA(1)]&0x4) ) {
+        if ( (setwd29[LA(1)]&0x20) ) {
 #line 1910 "./verilog.g"
           zzaRet.prim = i_primary_make(PRIM_SYMBOL,zzaArg(zztasp1,1).symbol);
         }
-        else {zzFAIL(1,zzerr99,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+        else {zzFAIL(1,zzerr102,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
       zzEXIT(zztasp2);
       }
@@ -6600,14 +6652,14 @@ v_lvalue()
 #line 1912 "./verilog.g"
       zzaRet.prim = zzaArg(zztasp1,1 ).prim;
     }
-    else {zzFAIL(1,zzerr100,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr103,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd29, 0x8);
+  zzresynch(setwd29, 0x40);
   }
 }
 
@@ -6645,7 +6697,7 @@ v_expression()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd29, 0x10);
+  zzresynch(setwd29, 0x80);
   }
 }
 
@@ -6666,15 +6718,15 @@ v_expression2()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd29[LA(1)]&0x20) ) {
+    if ( (setwd30[LA(1)]&0x1)
+ ) {
 #line 1930 "./verilog.g"
       v_primary();
 #line 1930 "./verilog.g"
       push_primary(zzaArg(zztasp2,1 ).prim);
     }
     else {
-      if ( (setwd29[LA(1)]&0x40)
- ) {
+      if ( (setwd30[LA(1)]&0x2) ) {
 #line 1931 "./verilog.g"
         v_unary_operator();
 #line 1931 "./verilog.g"
@@ -6691,7 +6743,7 @@ v_expression2()
  zzCONSUME;
 
         }
-        else {zzFAIL(1,zzerr101,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+        else {zzFAIL(1,zzerr104,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
     }
     zzEXIT(zztasp2);
@@ -6702,7 +6754,7 @@ v_expression2()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd29[LA(1)]&0x80) ) {
+    if ( (setwd30[LA(1)]&0x4) ) {
 #line 1934 "./verilog.g"
       v_binary_operator();
 #line 1934 "./verilog.g"
@@ -6725,9 +6777,10 @@ v_expression2()
         push_primary(i_bin_expr_make(zzaArg(zztasp2,2 ).prim,i_oper_make(V_COLON, 1),zzaArg(zztasp2,4 ).prim));
       }
       else {
-        if ( (setwd30[LA(1)]&0x1) ) {
+        if ( (setwd30[LA(1)]&0x8)
+ ) {
         }
-        else {zzFAIL(1,zzerr102,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+        else {zzFAIL(1,zzerr105,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
     }
     zzEXIT(zztasp2);
@@ -6738,7 +6791,7 @@ v_expression2()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd30, 0x2);
+  zzresynch(setwd30, 0x10);
   }
 }
 
@@ -6761,8 +6814,7 @@ v_mintypmax_expression()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (LA(1)==V_COLON)
- ) {
+    if ( (LA(1)==V_COLON) ) {
 #line 1942 "./verilog.g"
       zzmatch(V_COLON); zzCONSUME;
 #line 1942 "./verilog.g"
@@ -6775,11 +6827,11 @@ v_mintypmax_expression()
       zzaRet.prim = i_primary_mintypmax_make(zzaArg(zztasp1,1).prim, zzaArg(zztasp2,2).prim, zzaArg(zztasp2,4).prim);
     }
     else {
-      if ( (setwd30[LA(1)]&0x4) ) {
+      if ( (setwd30[LA(1)]&0x20) ) {
 #line 1944 "./verilog.g"
         zzaRet.prim = zzaArg(zztasp1,1).prim;
       }
-      else {zzFAIL(1,zzerr103,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr106,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -6789,7 +6841,7 @@ v_mintypmax_expression()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd30, 0x8);
+  zzresynch(setwd30, 0x40);
   }
 }
 
@@ -6823,7 +6875,8 @@ v_unary_operator()
 
     }
     else {
-      if ( (LA(1)==V_BANG) ) {
+      if ( (LA(1)==V_BANG)
+ ) {
 #line 1949 "./verilog.g"
         zzmatch(V_BANG);
 #line 1949 "./verilog.g"
@@ -6832,8 +6885,7 @@ v_unary_operator()
 
       }
       else {
-        if ( (LA(1)==V_TILDE)
- ) {
+        if ( (LA(1)==V_TILDE) ) {
 #line 1950 "./verilog.g"
           zzmatch(V_TILDE);
 #line 1950 "./verilog.g"
@@ -6869,7 +6921,8 @@ v_unary_operator()
 
               }
               else {
-                if ( (LA(1)==V_NOR) ) {
+                if ( (LA(1)==V_NOR)
+ ) {
 #line 1954 "./verilog.g"
                   zzmatch(V_NOR);
 #line 1954 "./verilog.g"
@@ -6878,8 +6931,7 @@ v_unary_operator()
 
                 }
                 else {
-                  if ( (LA(1)==V_XOR)
- ) {
+                  if ( (LA(1)==V_XOR) ) {
 #line 1955 "./verilog.g"
                     zzmatch(V_XOR);
 #line 1955 "./verilog.g"
@@ -6905,7 +6957,7 @@ v_unary_operator()
  zzCONSUME;
 
                       }
-                      else {zzFAIL(1,zzerr104,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                      else {zzFAIL(1,zzerr107,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                     }
                   }
                 }
@@ -6921,7 +6973,7 @@ v_unary_operator()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd30, 0x10);
+  zzresynch(setwd30, 0x80);
   }
 }
 
@@ -6946,7 +6998,8 @@ v_binary_operator()
 
   }
   else {
-    if ( (LA(1)==V_STAR) ) {
+    if ( (LA(1)==V_STAR)
+ ) {
 #line 1961 "./verilog.g"
       zzmatch(V_STAR);
 #line 1961 "./verilog.g"
@@ -6955,8 +7008,7 @@ v_binary_operator()
 
     }
     else {
-      if ( (LA(1)==V_SLASH)
- ) {
+      if ( (LA(1)==V_SLASH) ) {
 #line 1962 "./verilog.g"
         zzmatch(V_SLASH);
 #line 1962 "./verilog.g"
@@ -6992,7 +7044,8 @@ v_binary_operator()
 
             }
             else {
-              if ( (LA(1)==V_SHL) ) {
+              if ( (LA(1)==V_SHL)
+ ) {
 #line 1966 "./verilog.g"
                 zzmatch(V_SHL);
 #line 1966 "./verilog.g"
@@ -7001,8 +7054,7 @@ v_binary_operator()
 
               }
               else {
-                if ( (LA(1)==V_SHR)
- ) {
+                if ( (LA(1)==V_SHR) ) {
 #line 1967 "./verilog.g"
                   zzmatch(V_SHR);
 #line 1967 "./verilog.g"
@@ -7038,7 +7090,8 @@ v_binary_operator()
 
                       }
                       else {
-                        if ( (LA(1)==V_LEQ) ) {
+                        if ( (LA(1)==V_LEQ)
+ ) {
 #line 1971 "./verilog.g"
                           zzmatch(V_LEQ);
 #line 1971 "./verilog.g"
@@ -7047,8 +7100,7 @@ v_binary_operator()
 
                         }
                         else {
-                          if ( (LA(1)==V_GT)
- ) {
+                          if ( (LA(1)==V_GT) ) {
 #line 1972 "./verilog.g"
                             zzmatch(V_GT);
 #line 1972 "./verilog.g"
@@ -7084,7 +7136,8 @@ v_binary_operator()
 
                                 }
                                 else {
-                                  if ( (LA(1)==V_EQ3) ) {
+                                  if ( (LA(1)==V_EQ3)
+ ) {
 #line 1976 "./verilog.g"
                                     zzmatch(V_EQ3);
 #line 1976 "./verilog.g"
@@ -7093,8 +7146,7 @@ v_binary_operator()
 
                                   }
                                   else {
-                                    if ( (LA(1)==V_NEQ2)
- ) {
+                                    if ( (LA(1)==V_NEQ2) ) {
 #line 1977 "./verilog.g"
                                       zzmatch(V_NEQ2);
 #line 1977 "./verilog.g"
@@ -7130,7 +7182,8 @@ v_binary_operator()
 
                                           }
                                           else {
-                                            if ( (LA(1)==V_XNOR) ) {
+                                            if ( (LA(1)==V_XNOR)
+ ) {
 #line 1981 "./verilog.g"
                                               zzmatch(V_XNOR);
 #line 1981 "./verilog.g"
@@ -7139,8 +7192,7 @@ v_binary_operator()
 
                                             }
                                             else {
-                                              if ( (LA(1)==V_XNOR2)
- ) {
+                                              if ( (LA(1)==V_XNOR2) ) {
 #line 1982 "./verilog.g"
                                                 zzmatch(V_XNOR2);
 #line 1982 "./verilog.g"
@@ -7176,7 +7228,8 @@ v_binary_operator()
 
                                                     }
                                                     else {
-                                                      if ( (LA(1)==V_OR2) ) {
+                                                      if ( (LA(1)==V_OR2)
+ ) {
 #line 1986 "./verilog.g"
                                                         zzmatch(V_OR2);
 #line 1986 "./verilog.g"
@@ -7184,7 +7237,7 @@ v_binary_operator()
  zzCONSUME;
 
                                                       }
-                                                      else {zzFAIL(1,zzerr105,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                                                      else {zzFAIL(1,zzerr108,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                                                     }
                                                   }
                                                 }
@@ -7216,7 +7269,7 @@ v_binary_operator()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd30, 0x20);
+  zzresynch(setwd31, 0x1);
   }
 }
 
@@ -7237,8 +7290,7 @@ v_opt_array_handling()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (LA(1)==V_LBRACK)
- ) {
+    if ( (LA(1)==V_LBRACK) ) {
 #line 1990 "./verilog.g"
       zzmatch(V_LBRACK); zzCONSUME;
 #line 1990 "./verilog.g"
@@ -7257,7 +7309,7 @@ v_opt_array_handling()
         else {
           if ( (LA(1)==V_RBRACK) ) {
           }
-          else {zzFAIL(1,zzerr106,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(1,zzerr109,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
         zzEXIT(zztasp3);
         }
@@ -7266,9 +7318,9 @@ v_opt_array_handling()
       zzmatch(V_RBRACK); zzCONSUME;
     }
     else {
-      if ( (setwd30[LA(1)]&0x40) ) {
+      if ( (setwd31[LA(1)]&0x2) ) {
       }
-      else {zzFAIL(1,zzerr107,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr110,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -7278,7 +7330,7 @@ v_opt_array_handling()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd30, 0x80);
+  zzresynch(setwd31, 0x4);
   }
 }
 
@@ -7294,15 +7346,15 @@ v_primary()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd31[LA(1)]&0x1) ) {
+  if ( (setwd31[LA(1)]&0x8)
+ ) {
 #line 1992 "./verilog.g"
     v_number();
 #line 1992 "./verilog.g"
     zzaRet.prim = i_primary_make(PRIM_NUMBER,zzaArg(zztasp1,1 ).num);
   }
   else {
-    if ( (setwd31[LA(1)]&0x2) && 
-(setwd31[LA(2)]&0x4) ) {
+    if ( (setwd31[LA(1)]&0x10) && (setwd31[LA(2)]&0x20) ) {
 #line 1993 "./verilog.g"
       v_identifier();
 #line 1994 "./verilog.g"
@@ -7343,33 +7395,33 @@ v_primary()
  zzCONSUME;
 
               }
-              else {zzFAIL(1,zzerr108,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+              else {zzFAIL(1,zzerr111,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
             zzEXIT(zztasp3);
             }
           }
         }
         else {
-          if ( (setwd31[LA(1)]&0x8) ) {
+          if ( (setwd31[LA(1)]&0x40)
+ ) {
 #line 2000 "./verilog.g"
             zzaRet.prim= i_primary_make(PRIM_SYMBOL,zzaArg(zztasp1,1).symbol);
           }
-          else {zzFAIL(1,zzerr109,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(1,zzerr112,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
         zzEXIT(zztasp2);
         }
       }
     }
     else {
-      if ( (LA(1)==V_LBRACE)
- ) {
+      if ( (LA(1)==V_LBRACE) ) {
 #line 2001 "./verilog.g"
         v_multiple_concatenation();
 #line 2001 "./verilog.g"
         zzaRet.prim = zzaArg(zztasp1,1 ).prim;
       }
       else {
-        if ( (setwd31[LA(1)]&0x10) && (LA(2)==V_LP) ) {
+        if ( (setwd31[LA(1)]&0x80) && (LA(2)==V_LP) ) {
 #line 2002 "./verilog.g"
           v_function_call();
 #line 2002 "./verilog.g"
@@ -7388,7 +7440,7 @@ v_primary()
  zzCONSUME;
 
           }
-          else {zzFAIL(2,zzerr110,zzerr111,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(2,zzerr113,zzerr114,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
       }
     }
@@ -7398,7 +7450,7 @@ v_primary()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd31, 0x20);
+  zzresynch(setwd32, 0x1);
   }
 }
 
@@ -7423,7 +7475,8 @@ v_number()
 
   }
   else {
-    if ( (LA(1)==V_HBASE) ) {
+    if ( (LA(1)==V_HBASE)
+ ) {
 #line 2008 "./verilog.g"
       zzmatch(V_HBASE);
 #line 2008 "./verilog.g"
@@ -7432,8 +7485,7 @@ v_number()
 
     }
     else {
-      if ( (LA(1)==V_DBASE)
- ) {
+      if ( (LA(1)==V_DBASE) ) {
 #line 2009 "./verilog.g"
         zzmatch(V_DBASE);
 #line 2009 "./verilog.g"
@@ -7469,7 +7521,8 @@ v_number()
 
             }
             else {
-              if ( (LA(1)==V_FLOAT2) ) {
+              if ( (LA(1)==V_FLOAT2)
+ ) {
 #line 2013 "./verilog.g"
                 zzmatch(V_FLOAT2);
 #line 2013 "./verilog.g"
@@ -7477,7 +7530,7 @@ v_number()
  zzCONSUME;
 
               }
-              else {zzFAIL(1,zzerr112,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+              else {zzFAIL(1,zzerr115,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
           }
         }
@@ -7489,7 +7542,7 @@ v_number()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd31, 0x40);
+  zzresynch(setwd32, 0x2);
   }
 }
 
@@ -7520,7 +7573,7 @@ v_concatenation()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd31, 0x80);
+  zzresynch(setwd32, 0x4);
   }
 }
 
@@ -7550,8 +7603,7 @@ v_multiple_concatenation()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd32[LA(1)]&0x1)
- ) {
+    if ( (setwd32[LA(1)]&0x8) ) {
 #line 2033 "./verilog.g"
       {
         zzBLOCK(zztasp3);
@@ -7588,7 +7640,7 @@ v_multiple_concatenation()
  zzCONSUME;
 
       }
-      else {zzFAIL(1,zzerr113,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr116,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
     zzEXIT(zztasp2);
     }
@@ -7600,7 +7652,7 @@ v_multiple_concatenation()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd32, 0x2);
+  zzresynch(setwd32, 0x10);
   }
 }
 
@@ -7633,7 +7685,7 @@ v_function_call()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd32, 0x4);
+  zzresynch(setwd32, 0x20);
   }
 }
 
@@ -7658,7 +7710,7 @@ v_name_of_function()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd32, 0x8);
+  zzresynch(setwd32, 0x40);
   }
 }
 
@@ -7707,7 +7759,7 @@ v_explist()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd32, 0x10);
+  zzresynch(setwd32, 0x80);
   }
 }
 
@@ -7723,26 +7775,26 @@ v_fn_expression()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd32[LA(1)]&0x20) ) {
+  if ( (setwd33[LA(1)]&0x1)
+ ) {
 #line 2066 "./verilog.g"
     v_expression();
 #line 2066 "./verilog.g"
     zzaRet.prim = zzaArg(zztasp1,1 ).prim;
   }
   else {
-    if ( (setwd32[LA(1)]&0x40)
- ) {
+    if ( (setwd33[LA(1)]&0x2) ) {
 #line 2067 "./verilog.g"
       zzaRet.prim = NULL;
     }
-    else {zzFAIL(1,zzerr114,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr117,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd32, 0x80);
+  zzresynch(setwd33, 0x4);
   }
 }
 
@@ -7791,7 +7843,7 @@ v_mexplist()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd33, 0x1);
+  zzresynch(setwd33, 0x8);
   }
 }
 
@@ -7829,18 +7881,19 @@ v_mfn_expression()
 
   }
   else {
-    if ( (setwd33[LA(1)]&0x2) ) {
+    if ( (setwd33[LA(1)]&0x10) ) {
 #line 2094 "./verilog.g"
       v_expression();
 #line 2094 "./verilog.g"
       zzaRet.prim = zzaArg(zztasp1,1 ).prim;
     }
     else {
-      if ( (setwd33[LA(1)]&0x4) ) {
+      if ( (setwd33[LA(1)]&0x20)
+ ) {
 #line 2095 "./verilog.g"
         zzaRet.prim = NULL;
       }
-      else {zzFAIL(1,zzerr115,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr118,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -7848,7 +7901,7 @@ v_mfn_expression()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd33, 0x8);
+  zzresynch(setwd33, 0x40);
   }
 }
 
@@ -7864,8 +7917,7 @@ v_identifier()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  if ( (setwd33[LA(1)]&0x10)
- ) {
+  if ( (setwd33[LA(1)]&0x80) ) {
 #line 2102 "./verilog.g"
     v_identifier_nodot();
 #line 2102 "./verilog.g"
@@ -7880,14 +7932,14 @@ v_identifier()
  zzCONSUME;
 
     }
-    else {zzFAIL(1,zzerr116,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr119,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd33, 0x20);
+  zzresynch(setwd34, 0x1);
   }
 }
 
@@ -7921,7 +7973,8 @@ v_identifier_nodot()
 
     }
     else {
-      if ( (LA(1)==V_FUNCTION_NAME) ) {
+      if ( (LA(1)==V_FUNCTION_NAME)
+ ) {
 #line 2109 "./verilog.g"
         zzmatch(V_FUNCTION_NAME);
 #line 2109 "./verilog.g"
@@ -7929,7 +7982,7 @@ v_identifier_nodot()
  zzCONSUME;
 
       }
-      else {zzFAIL(1,zzerr117,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      else {zzFAIL(1,zzerr120,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
   zzEXIT(zztasp1);
@@ -7937,7 +7990,7 @@ v_identifier_nodot()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd33, 0x40);
+  zzresynch(setwd34, 0x2);
   }
 }
 
@@ -7960,13 +8013,12 @@ v_delay()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd33[LA(1)]&0x80)
- ) {
+    if ( (setwd34[LA(1)]&0x4) ) {
 #line 2112 "./verilog.g"
       v_number();
     }
     else {
-      if ( (setwd34[LA(1)]&0x1) ) {
+      if ( (setwd34[LA(1)]&0x8) ) {
 #line 2113 "./verilog.g"
         v_identifier();
       }
@@ -7994,7 +8046,7 @@ v_delay()
 #line 2115 "./verilog.g"
           zzmatch(V_RP); zzCONSUME;
         }
-        else {zzFAIL(1,zzerr118,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+        else {zzFAIL(1,zzerr121,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
     }
     zzEXIT(zztasp2);
@@ -8005,7 +8057,7 @@ v_delay()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd34, 0x2);
+  zzresynch(setwd34, 0x10);
   }
 }
 
@@ -8028,13 +8080,13 @@ v_delay_control()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd34[LA(1)]&0x4) ) {
+    if ( (setwd34[LA(1)]&0x20)
+ ) {
 #line 2118 "./verilog.g"
       v_number();
     }
     else {
-      if ( (setwd34[LA(1)]&0x8)
- ) {
+      if ( (setwd34[LA(1)]&0x40) ) {
 #line 2119 "./verilog.g"
         v_identifier();
       }
@@ -8047,7 +8099,7 @@ v_delay_control()
 #line 2120 "./verilog.g"
           zzmatch(V_RP); zzCONSUME;
         }
-        else {zzFAIL(1,zzerr119,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+        else {zzFAIL(1,zzerr122,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
     }
     zzEXIT(zztasp2);
@@ -8058,7 +8110,7 @@ v_delay_control()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd34, 0x10);
+  zzresynch(setwd34, 0x80);
   }
 }
 
@@ -8081,7 +8133,7 @@ v_event_control()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd34[LA(1)]&0x20) ) {
+    if ( (setwd35[LA(1)]&0x1) ) {
 #line 2123 "./verilog.g"
       v_identifier();
     }
@@ -8095,11 +8147,12 @@ v_event_control()
         zzmatch(V_RP); zzCONSUME;
       }
       else {
-        if ( (LA(1)==V_STAR) ) {
+        if ( (LA(1)==V_STAR)
+ ) {
 #line 2125 "./verilog.g"
           zzmatch(V_STAR); zzCONSUME;
         }
-        else {zzFAIL(1,zzerr120,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+        else {zzFAIL(1,zzerr123,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
     }
     zzEXIT(zztasp2);
@@ -8110,7 +8163,7 @@ v_event_control()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd34, 0x40);
+  zzresynch(setwd35, 0x2);
   }
 }
 
@@ -8133,8 +8186,7 @@ v_event_expression()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (setwd34[LA(1)]&0x80)
- ) {
+    while ( (setwd35[LA(1)]&0x4) ) {
 #line 2130 "./verilog.g"
       v_orcomma();
 #line 2130 "./verilog.g"
@@ -8149,7 +8201,7 @@ v_event_expression()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd35, 0x1);
+  zzresynch(setwd35, 0x8);
   }
 }
 
@@ -8174,14 +8226,14 @@ v_orcomma()
 #line 2134 "./verilog.g"
       zzmatch(V_COMMA); zzCONSUME;
     }
-    else {zzFAIL(1,zzerr121,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+    else {zzFAIL(1,zzerr124,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
   zzEXIT(zztasp1);
   return;
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd35, 0x2);
+  zzresynch(setwd35, 0x10);
   }
 }
 
@@ -8202,20 +8254,20 @@ v_event_expression2()
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (setwd35[LA(1)]&0x4) ) {
+    if ( (setwd35[LA(1)]&0x20) ) {
 #line 2137 "./verilog.g"
       v_expression();
     }
     else {
-      if ( (LA(1)==V_POSEDGE) ) {
+      if ( (LA(1)==V_POSEDGE)
+ ) {
 #line 2138 "./verilog.g"
         zzmatch(V_POSEDGE); zzCONSUME;
 #line 2138 "./verilog.g"
         v_expression();
       }
       else {
-        if ( (LA(1)==V_NEGEDGE)
- ) {
+        if ( (LA(1)==V_NEGEDGE) ) {
 #line 2139 "./verilog.g"
           zzmatch(V_NEGEDGE); zzCONSUME;
 #line 2139 "./verilog.g"
@@ -8226,7 +8278,7 @@ v_event_expression2()
 #line 2140 "./verilog.g"
             zzmatch(V_STAR); zzCONSUME;
           }
-          else {zzFAIL(1,zzerr122,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(1,zzerr125,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
       }
     }
@@ -8238,6 +8290,6 @@ v_event_expression2()
 fail:
   zzEXIT(zztasp1);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd35, 0x8);
+  zzresynch(setwd35, 0x40);
   }
 }
