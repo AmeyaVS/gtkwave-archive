@@ -154,6 +154,9 @@ normalize all xxx_ function names created from gtk1/2 -> gtk2/3 conversion to XX
 gtk_tree_view_[g|s]et_[v|h]adjustment -> gtk_scrollable_[g|s]et_[v|h]adjustment for gtk3
 gtk_text_view_get_vadjustment -> gtk_scrollable_get_vadjustment
 
+19:
+fixed overwide x-size misallocation in pattern search window.  seems to be a problem with hbox allocations.
+
 ===
 
 to do:

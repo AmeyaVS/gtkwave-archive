@@ -344,7 +344,11 @@ static void update_mark_count_label(void)
 if(GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1)
     {
     char mark_count_buf[64];
+#if GTK_CHECK_VERSION(3,0,0)
+    sprintf (mark_count_buf, "Beg/End Marks: %d", GLOBALS->strace_ctx->timearray_size);
+#else
     sprintf (mark_count_buf, "Mark Count: %d", GLOBALS->strace_ctx->timearray_size);
+#endif
     gtk_label_set_text (GTK_LABEL(GLOBALS->strace_ctx->ptr_mark_count_label_strace_c_1), mark_count_buf);
     }
 }
@@ -491,7 +495,7 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
     do		/* add GUI elements for displaying mark count and mark count start/end */
 	{
 	unsigned int idx;
-	GtkWidget *ptr_mark_start_label, *ptr_mark_end_label;
+	GtkWidget *ptr_mark_label;
 	GtkWidget *mark_count_hbox_start,  *mark_count_hbox_end;
 	GtkWidget *count_vbox_left, *count_vbox_right, *count_vbox, *count_hbox;
 
@@ -514,10 +518,12 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
 	mark_count_hbox_start=gtk_hbox_new (TRUE, 0);
 	gtk_widget_show (mark_count_hbox_start);
 	gtk_box_pack_start (GTK_BOX(count_vbox),mark_count_hbox_start,FALSE,FALSE,0);
-	ptr_mark_start_label=gtk_label_new ("Marking Begins at:");
-	gtk_widget_show (ptr_mark_start_label);
-	gtk_box_pack_start (GTK_BOX (mark_count_hbox_start),ptr_mark_start_label,TRUE,FALSE,0);
-
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+	ptr_mark_label=gtk_label_new ("Marking Begins at:");
+	gtk_widget_show (ptr_mark_label);
+	gtk_box_pack_start (GTK_BOX (mark_count_hbox_start),ptr_mark_label,TRUE,FALSE,0);
+#endif
 	combo_box = gtk_combo_box_text_new ();
 	for(idx=0; idx<sizeof(item_mark_start_strings)/sizeof(struct item_mark_string); ++idx)
 		{
@@ -535,10 +541,12 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
 	mark_count_hbox_end=gtk_hbox_new (TRUE, 0);
 	gtk_widget_show (mark_count_hbox_end);
 	gtk_box_pack_start (GTK_BOX(count_vbox),mark_count_hbox_end,FALSE,FALSE,0);
-	ptr_mark_end_label=gtk_label_new ("Marking Stops at:");
-	gtk_widget_show (ptr_mark_end_label);
-	gtk_box_pack_start (GTK_BOX (mark_count_hbox_end),ptr_mark_end_label,TRUE,FALSE,0);
-
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+	ptr_mark_label=gtk_label_new ("Marking Stops at:");
+	gtk_widget_show (ptr_mark_label);
+	gtk_box_pack_start (GTK_BOX (mark_count_hbox_end),ptr_mark_label,TRUE,FALSE,0);
+#endif
 	combo_box = gtk_combo_box_text_new ();
 	for(idx=0; idx<sizeof(item_mark_end_strings)/sizeof(struct item_mark_string); ++idx)
 		{
