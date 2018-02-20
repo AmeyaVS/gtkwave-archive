@@ -1434,6 +1434,7 @@ TimeType endtime =MAX_HISTENT_TIME;
 int notfirst=0;
 TimeType *t;
 int t_allocated;
+TimeType orig_basetime;
 
 if(GLOBALS->strace_ctx->timearray)
 	{
@@ -1484,6 +1485,7 @@ if(basetime>endtime)
 t_allocated = 1;
 t = malloc_2(sizeof(TimeType) * t_allocated);
 
+orig_basetime = basetime;
 while(1)
 	{
 	basetime=strace_timetrace(basetime, notfirst);
@@ -1498,12 +1500,15 @@ while(1)
 		if(basetime>endtime) break; /* formerly was >= which didn't mark the endpoint if true which is incorrect */
 		}			    /* i.e., if start is markable, end should be also */
 
-	t[GLOBALS->strace_ctx->timearray_size] = basetime;
-	GLOBALS->strace_ctx->timearray_size++;
-	if(GLOBALS->strace_ctx->timearray_size == t_allocated)
+	if(basetime >= orig_basetime)
 		{
-		t_allocated *= 2;
-		t = realloc_2(t, sizeof(TimeType) * t_allocated);
+		t[GLOBALS->strace_ctx->timearray_size] = basetime;
+		GLOBALS->strace_ctx->timearray_size++;
+		if(GLOBALS->strace_ctx->timearray_size == t_allocated)
+			{
+			t_allocated *= 2;
+			t = realloc_2(t, sizeof(TimeType) * t_allocated);
+			}
 		}
 	}
 

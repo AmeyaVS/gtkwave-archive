@@ -1632,7 +1632,7 @@
 		Re-enable twinwave for Win32/64.
 		Added missing gtkwave_bin_launcher.sh in contrib/bundle_for_osx
 		Makefile.am.
-3.3.88	15feb18	Added --sstexclude command line option to prune unwanted
+3.3.88	20feb18	Added --sstexclude command line option to prune unwanted
 		clutter from the SST window.
 		Updated "/View/Mouseover Copies To Clipboard" menu option to
                 copying signal names into the clipboard so they can be pasted
@@ -1640,4 +1640,4 @@
 		Fixed Write Save File to handle getting confused by initial
 		cancel then retry.
                 Updated	v2k input/output declarations to handle	unpacked arrays.
-
+                Fix for	pattern	marks that could overshoot the left marker.
