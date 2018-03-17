@@ -705,10 +705,12 @@ else if(flags&TR_REAL)
 	{
 	char *parse;
 
-	if(nbits==64)
+	if((nbits==64) || (nbits==32))
 		{
 		UTimeType utt = LLDescriptor(0);
 		double d;
+		float f;
+		uint32_t utt_32;
 
 		parse=newbuff+3;
 		cvt_gray(flags,parse,nbits);
@@ -730,9 +732,18 @@ else if(flags&TR_REAL)
 				}
 			}
 
-		memcpy(&d, &utt, sizeof(double));
 		os=/*pnt=*/(char *)calloc_2(1,32); /* scan-build */
+		if(nbits==64)
+			{
+			memcpy(&d, &utt, sizeof(double));
 		sprintf(os, "%.16g", d);
+		}
+		else
+		{
+			utt_32 = utt;
+			memcpy(&f, &utt_32, sizeof(float));
+			sprintf(os, "%f", f);
+			}
 		}
 		else
 		{
@@ -1407,10 +1418,12 @@ else if(flags&TR_REAL)
 	{
 	char *parse;
 
-	if(nbits==64)
+	if((nbits==64) || (nbits == 32))
 		{
 		UTimeType utt = LLDescriptor(0);
 		double d;
+		float f;
+		uint32_t utt_32;
 
 		parse=newbuff+3;
 		cvt_gray(flags,parse,nbits);
@@ -1432,9 +1445,19 @@ else if(flags&TR_REAL)
 				}
 			}
 
-		memcpy(&d, &utt, sizeof(double));
 		os=/*pnt=*/(char *)calloc_2(1,32); /* scan-build */
+
+		if(nbits==64)
+			{
+			memcpy(&d, &utt, sizeof(double));
 		sprintf(os, "%.16g", d);
+		}
+		else
+		{
+			utt_32 = utt;
+			memcpy(&f, &utt_32, sizeof(float));
+			sprintf(os, "%f", f);
+			}
 		}
 		else
 		{
@@ -1764,11 +1787,12 @@ if(flags&TR_REVERSE)
 
 if(flags&TR_REAL)
 	{
-	if(nbits==64) /* fail (NaN) otherwise */
+	if((nbits==64) || (nbits == 32)) /* fail (NaN) otherwise */
 		{
 		char *parse;
 		UTimeType val=0;
 		unsigned char fail=0;
+		uint32_t val_32;
 
 		parse=newbuff+3;
 		for(i=0;i<nbits;i++)
@@ -1778,10 +1802,22 @@ if(flags&TR_REAL)
 	        if((parse[i]==AN_1)||(parse[i]==AN_H)) {  val|=LLDescriptor(1); }
 	        else if((parse[i]!=AN_0)&&(parse[i]!=AN_L)) { fail=1; break; }
 			}
-		if(!fail)
-			{
-			memcpy(&retval, &val, sizeof(double)); /* otherwise strict-aliasing rules problem if retval = *(double *)&val; */
-			}
+
+
+                if(!fail)
+                        {
+                        if(nbits==64)
+                                {
+                                memcpy(&retval, &val, sizeof(double)); /* otherwise strict-aliasing rules problem if retval = *(double *)&val; */
+                                }
+                                else
+                                {
+                                float f;
+                                val_32 = val;
+                                memcpy(&f, &val, sizeof(double)); /* otherwise strict-aliasing rules problem if retval = *(double *)&val; */
+                                retval = (double)f;
+                                }
+                        }
 		}
 	}
     else

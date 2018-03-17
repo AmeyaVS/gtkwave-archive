@@ -1641,5 +1641,4 @@
 		cancel then retry.
                 Updated	v2k input/output declarations to handle	unpacked arrays.
                 Fix for	pattern	marks that could overshoot the left marker.
-3.3.89	17mar18	Bump revision to 3.3.89.
-
+3.3.89	17mar18	Added support for 32-bit conversions in BitsToReal.

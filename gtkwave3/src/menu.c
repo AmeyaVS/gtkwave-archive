@@ -6459,8 +6459,8 @@ if(GLOBALS->helpbox_is_active)
         help_text(
 		" will step through all highlighted traces and ensure that"
 		" vectors with this qualifier will be displayed with Real"
-		" values.  Note that this only works for 64-bit quantities"
-		" and that ones of other sizes will display as binary."
+		" values.  Note that this only works for 64 or 32-bit quantities"
+		" and that ones of other sizes (e.g., binary16) will display as binary."
         );
         return;
         }
