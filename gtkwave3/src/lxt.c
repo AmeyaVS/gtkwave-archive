@@ -1853,26 +1853,45 @@ prevtmval = LLDescriptor(-1);
 len = np->mv.mvlfac->len;
 
 histent_tail = htemp = histent_calloc();
-if(len>1)
+
+if(f->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING))
 	{
-	htemp->v.h_vector = (char *)malloc_2(len);
-	for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_Z;
+        htemp->v.h_vector = strdup_2((f->flags&LT_SYM_F_DOUBLE) ? "NaN" : "UNDEF");
+        htemp->flags = HIST_REAL;
+        if(f->flags&LT_SYM_F_STRING) htemp->flags |= HIST_STRING;
 	}
 	else
 	{
-	htemp->v.h_val = AN_Z;		/* z */
+	if(len>1)
+		{
+		htemp->v.h_vector = (char *)malloc_2(len);
+		for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_Z;
+		}
+		else
+		{
+		htemp->v.h_val = AN_Z;		/* z */
+		}
 	}
 htemp->time = MAX_HISTENT_TIME;
 
 histent_head = histent_calloc();
-if(len>1)
+if(f->flags&(LT_SYM_F_DOUBLE|LT_SYM_F_STRING))
 	{
-	histent_head->v.h_vector = (char *)malloc_2(len);
-	for(i=0;i<len;i++) histent_head->v.h_vector[i] = AN_X;
+        histent_head->v.h_vector = strdup_2((f->flags&LT_SYM_F_DOUBLE) ? "NaN" : "UNDEF");
+        histent_head->flags = HIST_REAL;
+        if(f->flags&LT_SYM_F_STRING) histent_head->flags |= HIST_STRING;
 	}
 	else
 	{
-	histent_head->v.h_val = AN_X; /* x */
+	if(len>1)
+		{
+		histent_head->v.h_vector = (char *)malloc_2(len);
+		for(i=0;i<len;i++) histent_head->v.h_vector[i] = AN_X;
+		}
+		else
+		{
+		histent_head->v.h_val = AN_X; /* x */
+		}
 	}
 histent_head->time = MAX_HISTENT_TIME-1;
 histent_head->next = htemp;	/* x */

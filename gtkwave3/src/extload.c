@@ -2311,26 +2311,44 @@ if(last_modification_check()) /* place array height check here in an "&&" branch
 #endif
 
 histent_tail = htemp = histent_calloc();
-if(len>1)
+if(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))
 	{
-	htemp->v.h_vector = (char *)malloc_2(len);
-	for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_Z;
-	}
-	else
-	{
-	htemp->v.h_val = AN_Z;		/* z */
+        htemp->v.h_vector = strdup_2((f->flags&VZT_RD_SYM_F_DOUBLE) ? "NaN" : "UNDEF");
+        htemp->flags = HIST_REAL;
+        if(f->flags&VZT_RD_SYM_F_STRING) htemp->flags |= HIST_STRING;
+        }
+        else
+        {
+	if(len>1)
+		{
+		htemp->v.h_vector = (char *)malloc_2(len);
+		for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_Z;
+		}
+		else
+		{
+		htemp->v.h_val = AN_Z;		/* z */
+		}
 	}
 htemp->time = MAX_HISTENT_TIME;
 
 htemp = histent_calloc();
-if(len>1)
+if(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))
+        {
+        htemp->v.h_vector = strdup_2((f->flags&VZT_RD_SYM_F_DOUBLE) ? "NaN" : "UNDEF");
+        htemp->flags = HIST_REAL;
+        if(f->flags&VZT_RD_SYM_F_STRING) htemp->flags |= HIST_STRING;
+        }
+        else
 	{
-	htemp->v.h_vector = (char *)malloc_2(len);
-	for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
-	}
-	else
-	{
-	htemp->v.h_val = AN_X;		/* x */
+	if(len>1)
+		{
+		htemp->v.h_vector = (char *)malloc_2(len);
+		for(i=0;i<len;i++) htemp->v.h_vector[i] = AN_X;
+		}
+		else
+		{
+		htemp->v.h_val = AN_X;		/* x */
+		}
 	}
 htemp->time = MAX_HISTENT_TIME-1;
 htemp->next = histent_tail;
@@ -2357,19 +2375,31 @@ if(!(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING)))
         {
         np->head.flags = HIST_REAL;
         if(f->flags&VZT_RD_SYM_F_STRING) np->head.flags |= HIST_STRING;
+
+	np->head.v.h_vector = strdup_2((f->flags&VZT_RD_SYM_F_DOUBLE) ? "NaN" : "UNDEF");
         }
 
 	{
         struct HistEnt *htemp2 = histent_calloc();
         htemp2->time = -1;
-        if(len>1)
-        	{
-                htemp2->v.h_vector = htemp->v.h_vector;
+
+        if(f->flags&(VZT_RD_SYM_F_DOUBLE|VZT_RD_SYM_F_STRING))
+		{
+                htemp2->v.h_vector = strdup_2((f->flags&VZT_RD_SYM_F_DOUBLE) ? "NaN" : "UNDEF");
+                htemp2->flags = HIST_REAL;
+                if(f->flags&VZT_RD_SYM_F_STRING) htemp2->flags |= HIST_STRING;
                 }
                 else
                 {
-                htemp2->v.h_val = htemp->v.h_val;
-                }
+	        if(len>1)
+	        	{
+	                htemp2->v.h_vector = htemp->v.h_vector;
+	                }
+	                else
+	                {
+	                htemp2->v.h_val = htemp->v.h_val;
+	                }
+		}
 	htemp2->next = htemp;
         htemp = htemp2;
         GLOBALS->vzt_table_vzt_c_1[txidx].numtrans++;
