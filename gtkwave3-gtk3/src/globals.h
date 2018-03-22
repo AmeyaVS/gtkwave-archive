@@ -587,7 +587,11 @@ char use_scrollbar_only; /* from main.c 237 */
 char force_toolbars; /* from main.c 238 */
 int hide_sst; /* from main.c 239 */
 int sst_expanded; /* from main.c 240 */
+#if GTK_CHECK_VERSION(3,0,0)
 Window socket_xid; /* from main.c 241 */
+#else
+GdkNativeWindow socket_xid; /* from main.c 241 */
+#endif
 int disable_menus; /* from main.c 242 */
 char *ftext_main_main_c_1; /* from main.c 243 */
 char use_toolbutton_interface; /* from main.c */
