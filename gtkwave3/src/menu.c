@@ -7389,6 +7389,32 @@ if(GLOBALS->dnd_state) { dnd_error(); return; } /* don't mess with sigs when dnd
 
 DEBUG(printf("Cut Traces\n"));
 
+/* fix up if there are traces above the current row being cut */
+if(GLOBALS->wave_vslider)
+	{
+	GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+	int value = wadj->value;
+
+	Trptr t = GLOBALS->traces.first;
+	int cnt = 0;
+	int high = 0;
+
+	while(t)
+	    	{
+		if(cnt >= value) break;
+
+		if(t->flags & TR_HIGHLIGHT)
+			{
+		      	high++;
+			}
+
+		t = GiveNextTrace(t);
+		cnt++;
+		}
+
+	if(value - high > 0) { wadj->value -= high; }
+	}
+
 cutbuffer = CutBuffer();
 if(cutbuffer)
 	{
