@@ -735,7 +735,7 @@ else if(flags&TR_REAL)
 				}
 			}
 
-		os=/*pnt=*/(char *)calloc_2(1,32); /* scan-build */
+		os=/*pnt=*/(char *)calloc_2(1,64); /* scan-build */
 		if(nbits==64)
 			{
 			memcpy(&d, &utt, sizeof(double));
@@ -1448,7 +1448,7 @@ else if(flags&TR_REAL)
 				}
 			}
 
-		os=/*pnt=*/(char *)calloc_2(1,32); /* scan-build */
+		os=/*pnt=*/(char *)calloc_2(1,64); /* scan-build */
 
 		if(nbits==64)
 			{

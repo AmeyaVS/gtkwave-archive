@@ -1639,5 +1639,6 @@
 		Fix for pattern marks that could overshoot the left marker.
 3.3.89  17mar18 Added support for 32-bit conversions in	BitsToReal.
 		Crash fix for pattern search with reals using LXT, LXT2, VZT.
-3.3.90  08apr18 For Cut Traces, fix up scroll position if there are traces 
+3.3.90  20apr18 For Cut Traces, fix up scroll position if there are traces
                 above the current row being cut.
+                Bits to	real crash fix for very	large floats.
