@@ -413,7 +413,7 @@ if(flags&TR_ASCII)
 	if(GLOBALS->show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+7)&7)):(newbuff+7);
-	cvt_gray(flags,parse,nbits);
+	cvt_gray(flags,parse,(flags&TR_RJUSTIFY)?((nbits+7)&~7):nbits);
 
 	for(i=0;i<nbits;i+=8)
 		{
@@ -453,7 +453,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)&&(!(flags&TR_POP
 	if(GLOBALS->show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
-	cvt_gray(flags,parse,nbits);
+	cvt_gray(flags,parse,(flags&TR_RJUSTIFY)?((nbits+3)&~3):nbits);
 
 	for(i=0;i<nbits;i+=4)
 		{
@@ -614,7 +614,7 @@ else if(flags&TR_OCT)
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
 		:(newbuff+3);
-	cvt_gray(flags,parse,nbits);
+	cvt_gray(flags,parse,(flags&TR_RJUSTIFY)?(((nbits+2)/3)*3):nbits);
 
 	for(i=0;i<nbits;i+=3)
 		{
@@ -1128,7 +1128,7 @@ if(flags&TR_ASCII)
 	if(GLOBALS->show_base) { *(pnt++)='"'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+7)&7)):(newbuff+7);
-	cvt_gray(flags,parse,nbits);
+	cvt_gray(flags,parse,(flags&TR_RJUSTIFY)?((nbits+7)&~7):nbits);
 
 	for(i=0;i<nbits;i+=8)
 		{
@@ -1167,7 +1167,7 @@ else if((flags&TR_HEX)||((flags&(TR_DEC|TR_SIGNED))&&(nbits>64)&&(!(flags&TR_POP
 	if(GLOBALS->show_base) { *(pnt++)='$'; }
 
 	parse=(flags&TR_RJUSTIFY)?(newbuff+((nbits+3)&3)):(newbuff+3);
-	cvt_gray(flags,parse,nbits);
+	cvt_gray(flags,parse,(flags&TR_RJUSTIFY)?((nbits+3)&~3):nbits);
 
 	for(i=0;i<nbits;i+=4)
 		{
@@ -1328,7 +1328,7 @@ else if(flags&TR_OCT)
 	parse=(flags&TR_RJUSTIFY)
 		?(newbuff+((nbits%3)?(nbits%3):3))
 		:(newbuff+3);
-	cvt_gray(flags,parse,nbits);
+	cvt_gray(flags,parse,(flags&TR_RJUSTIFY)?(((nbits+2)/3)*3):nbits);
 
 	for(i=0;i<nbits;i+=3)
 		{
