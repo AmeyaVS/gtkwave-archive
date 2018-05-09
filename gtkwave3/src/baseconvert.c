@@ -1815,7 +1815,7 @@ if(flags&TR_REAL)
         	                {
 				float f;
         	                val_32 = val;
-				memcpy(&f, &val, sizeof(double)); /* otherwise strict-aliasing rules problem if retval = *(double *)&val; */
+				memcpy(&f, &val_32, sizeof(float)); /* otherwise strict-aliasing rules problem if retval = *(double *)&val; */
 				retval = (double)f;
         	                }
 			}
