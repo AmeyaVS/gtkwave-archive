@@ -150,6 +150,8 @@ if(!strcmp(key, "zoom-size"))
 		g_settings_set(settings, "zoom-size", "s", "");
         	}
 	}
+
+if(str) g_free(str);
 }
 
 void wave_gconf_init(int argc, char **argv)

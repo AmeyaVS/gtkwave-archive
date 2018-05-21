@@ -347,8 +347,12 @@ ucase_ext[i] = 0;
 #define CHDIR_GETOPT
 #endif
 
+#if defined(WAVE_HAVE_GCONF) || defined(WAVE_HAVE_GSETTINGS)
 #ifdef WAVE_HAVE_GCONF
 #define RPC_GETOPT  "  -1, --rpcid=RPCID          specify RPCID of GConf session\n"
+#else
+#define RPC_GETOPT
+#endif
 #define RPC_GETOPT3 "  -3, --restore              restore previous RPCID numbered session\n"
 #else
 #define RPC_GETOPT
@@ -985,7 +989,7 @@ while (1)
 			break;
 
 		case '3':
-#ifdef WAVE_HAVE_GCONF
+#if defined(WAVE_HAVE_GCONF) || defined(WAVE_HAVE_GSETTINGS)
 			{
 			is_vcd = 0;
 			wave_gconf_restore(&GLOBALS->loaded_file_name, &wname, &override_rc, &chdir_cache, &opt_vcd);
@@ -2527,7 +2531,7 @@ if(scriptfile
 	scriptfile=NULL;
 	}
 
-#ifdef WAVE_HAVE_GCONF
+#if defined(WAVE_HAVE_GCONF) || defined(WAVE_HAVE_GSETTINGS)
 if(GLOBALS->loaded_file_type != MISSING_FILE)
 	{
 	if(!chdir_cache) { wave_gconf_client_set_string("/current/pwd", getenv("PWD")); }
