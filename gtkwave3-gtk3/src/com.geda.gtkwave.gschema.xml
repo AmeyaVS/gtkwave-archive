@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemalist>
+ 
+   <schema path="/com/geda/gtkwave/" id="com.geda.gtkwave">
+ 
+     <key name='open' type='s'>
+       <default>""</default>
+       <summary>Open File</summary>
+       <description>
+	Pass string for filename.
+       </description>
+     </key>
+
+     <key name='quit' type='s'>
+       <default>""</default>
+       <summary>Quit</summary>
+       <description>
+	Quits viewer.  Key is dummy argument.
+       </description>
+     </key>
+
+     <key name='writesave' type='s'>
+       <default>""</default>
+       <summary>Write Save File</summary>
+       <description>
+	Pass string for filename.
+       </description>
+     </key>
+
+     <key name='reload' type='s'>
+       <default>""</default>
+       <summary>Reloads</summary>
+       <description>
+	Reloads file.  Key is dummy argument.
+       </description>
+     </key>
+
+     <key name='zoom-full' type='s'>
+       <default>""</default>
+       <summary>Zoom Full</summary>
+       <description>
+	Zoom Full command.  Key is dummy argument.
+       </description>
+     </key>
+
+     <key name='move-to-time' type='s'>
+       <default>""</default>
+       <summary>Move To Time</summary>
+       <description>
+	Moves to a give time.  Key is a time string such as 10ns.
+       </description>
+     </key>
+
+     <key name='zoom-size' type='s'>
+       <default>""</default>
+       <summary>Zoom Size</summary>
+       <description>
+	Sets zoom size.  Key is the zoom factor.
+       </description>
+     </key>
+
+     <key name='dumpfile' type='s'>
+       <default>""</default>
+       <summary>Dumpfile name</summary>
+       <description>
+	Indicates current dumpfile name.
+       </description>
+     </key>
+
+     <key name='savefile' type='s'>
+       <default>""</default>
+       <summary>Savefile name</summary>
+       <description>
+	Indicates current savefile name.
+       </description>
+     </key>
+
+     <key name='rcfile' type='s'>
+       <default>""</default>
+       <summary>rcfile name</summary>
+       <description>
+	Indicates current rcfile name.
+       </description>
+     </key>
+
+     <key name='pwd' type='s'>
+       <default>""</default>
+       <summary>pwd</summary>
+       <description>
+	Indicates pwd.
+       </description>
+     </key>
+
+     <key name='optimized-vcd' type='s'>
+       <default>"0"</default>
+       <summary>Optimized VCD usage.</summary>
+       <description>
+	Value indicates VCD file is optimized.
+       </description>
+     </key>
+
+     <key name='imagegrab' type='s'>
+       <default>""</default>
+       <summary>Image grab</summary>
+       <description>
+	Indicates image grab filename.
+       </description>
+     </key>
+ 
+   </schema>
+ 
+</schemalist>

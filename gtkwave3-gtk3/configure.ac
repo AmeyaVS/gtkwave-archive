@@ -2,11 +2,25 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(gtkwave-gtk3, 3.3.90, bybell@rocketmail.com)
+AC_INIT(gtkwave-gtk3, 3.3.91, bybell@rocketmail.com)
 AC_CONFIG_SRCDIR([src/vcd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
+
+# ------------- GSETTINGS -------------------
+
+AC_ARG_WITH([gsettings],
+    [AS_HELP_STRING([--with-gsettings],
+        [Use GSettings to store preferences (precludes GConf)])],
+        [],
+	[with_gsettings=check])
+
+if test x$with_gsettings = xyes; then
+	GLIB_GSETTINGS
+        GSETTINGS_CFLAGS="-DWAVE_HAVE_GSETTINGS $GSETTINGS_CFLAGS"
+	AC_SUBST(GSETTINGS_CFLAGS)
+fi
 
 # ------------- GCONF -------------------
 
@@ -929,6 +943,7 @@ AC_MSG_NOTICE([
 
   GCONF_CFLAGS          : $GCONF_CFLAGS
   GCONF_LIBS            : $GCONF_LIBS
+  GSETTINGS_CFLAGS      : $GSETTINGS_CFLAGS
 
   GTK_UNIX_PRINT_CFLAGS : $GTK_UNIX_PRINT_CFLAGS
   GTK_UNIX_PRINT_LIBS   : $GTK_UNIX_PRINT_LIBS

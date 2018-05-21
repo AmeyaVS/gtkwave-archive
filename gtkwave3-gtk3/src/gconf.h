@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2012.
+ * Copyright (c) Tony Bybell 2012-2018.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,11 +16,11 @@
 #include <string.h>
 
 #ifdef WAVE_HAVE_GCONF
-
 #include <gconf/gconf-client.h>
-
 #endif
 
+#define WAVE_GSETTINGS_SCHEMA_ID "com.geda.gtkwave"
+/*                                1234567890123456 */
 
 #define WAVE_GCONF_DIR "/com.geda.gtkwave"
 /*                      12345678901234567 */
