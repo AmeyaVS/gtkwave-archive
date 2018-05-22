@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2012.
+ * Copyright (c) Tony Bybell 2012-2018.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,6 +13,229 @@
 #include "globals.h"
 
 int wave_rpc_id = 0;
+
+#ifdef WAVE_HAVE_GSETTINGS
+static GSettings *gs = NULL;
+
+static void remove_client(void)
+{
+if(gs)
+	{
+	g_object_unref(gs);
+	gs = NULL;
+	}
+}
+
+static void
+user_function (GSettings *settings,
+               gchar     *key,
+               gpointer   user_data)
+{
+char *str = NULL;
+g_settings_get (settings, key, "s", &str);
+
+if(!strcmp(key, "open"))
+	{
+	if((str)&&(str[0]))
+        	{
+          	fprintf(stderr, "GTKWAVE | RPC Open: '%s'\n", str);
+
+          	deal_with_rpc_open(str, NULL);
+		g_settings_set(settings, "open", "s", "");
+        	}
+	}
+else
+if(!strcmp(key, "quit"))
+	{
+	if((str)&&(str[0]))
+	        {
+          	const char *rc = str;
+          	int rcv = atoi(rc);
+          	fprintf(stderr, "GTKWAVE | RPC Quit: exit return code %d\n", rcv);
+          	g_settings_set(settings, "quit", "s", "");
+          	exit(rcv);
+        	}
+	}
+else
+if(!strcmp(key, "reload"))
+	{
+	if((str)&&(str[0]))
+        	{
+          	if(in_main_iteration()) return;
+          	reload_into_new_context();
+		g_settings_set(settings, "reload", "s", "");
+        	}
+	}
+else
+if(!strcmp(key, "zoom-full"))
+	{
+	if((str)&&(str[0]))
+	        {
+          	if(in_main_iteration()) return;
+          	service_zoom_full(NULL, NULL);
+		g_settings_set(settings, "zoom-full", "s", "");
+        	}
+	}
+else
+if(!strcmp(key, "writesave"))
+	{
+	if((str)&&(str[0]))
+        	{
+          	const char *fni = str;
+          	if(fni && !in_main_iteration())
+                	{
+                  	int use_arg = strcmp(fni, "+"); /* plus filename uses default */
+                  	const char *fn = use_arg ? fni : GLOBALS->filesel_writesave;
+                  	if(fn)
+                        	{
+                        	FILE *wave;
+
+                        	if(!(wave=fopen(fn, "wb")))
+                                	{
+                                	fprintf(stderr, "GTKWAVE | RPC Writesave: error opening save file '%s' for writing.\n", fn);
+                                	perror("Why");
+                                	errno=0;
+                                	}
+                                	else
+                                	{
+                                	write_save_helper(fn, wave);
+                                	if(use_arg)
+                                        	{
+                                        	if(GLOBALS->filesel_writesave) { free_2(GLOBALS->filesel_writesave); }
+                                        	GLOBALS->filesel_writesave = strdup_2(fn);
+                                        	}
+                                	wave_gconf_client_set_string("/current/savefile", fn);
+                                	fclose(wave);
+                                	fprintf(stderr, "GTKWAVE | RPC Writesave: wrote save file '%s'.\n", GLOBALS->filesel_writesave);
+                                	}
+                        	}
+                	}
+
+	  	g_settings_set(settings, "writesave", "s", "");
+        	}
+	}
+else
+if(!strcmp(key, "move-to-time"))
+	{
+	if((str)&&(str[0]))
+    		{
+       		if(!in_main_iteration())
+               		{
+               		char *e_copy = GLOBALS->entrybox_text;
+               		GLOBALS->entrybox_text=strdup_2(str);
+
+               		movetotime_cleanup(NULL, NULL);
+
+               		GLOBALS->entrybox_text = e_copy;
+               		}
+
+       		g_settings_set(settings, "move-to-time", "s", "");
+		}
+	}
+else
+if(!strcmp(key, "zoom-size"))
+	{
+	if((str)&&(str[0]))
+        	{
+          	if(!in_main_iteration())
+                	{
+                	char *e_copy = GLOBALS->entrybox_text;
+                	GLOBALS->entrybox_text=strdup_2(str);
+
+                	zoomsize_cleanup(NULL, NULL);
+
+                	GLOBALS->entrybox_text = e_copy;
+                	}
+
+		g_settings_set(settings, "zoom-size", "s", "");
+        	}
+	}
+
+if(str) g_free(str);
+}
+
+void wave_gconf_init(int argc, char **argv)
+{
+if(!gs)
+	{
+	gs = g_settings_new (WAVE_GSETTINGS_SCHEMA_ID);
+	g_signal_connect (gs, "changed", G_CALLBACK (user_function), NULL);
+	atexit(remove_client);
+	}
+}
+
+gboolean wave_gconf_client_set_string(const gchar *key, const gchar *val)
+{
+if(key && gs)
+        {
+	const char *ks = strrchr(key, '/');
+	char *k2 = NULL;
+	if(ks) { ks = ks+1; } else { ks = key; }
+	if(strchr(ks, '_'))
+		{
+		char *s;
+		k2 = s = strdup_2(ks);
+		while(*s) { if(*s=='_') *s='-'; s++; }
+		}
+	g_settings_set(gs, k2 ? k2 : ks, "s", val ? val : "");
+	if(k2) free_2(k2);
+        return(TRUE);
+        }
+
+return(FALSE);
+}
+
+
+static gchar *wave_gconf_client_get_string(const gchar *key)
+{
+if(key && gs)
+        {
+	const char *ks = strrchr(key, '/');
+	char *k2 = NULL;
+	char *str = NULL;
+	if(ks) { ks = ks+1; } else { ks = key; }
+	if(strchr(ks, '_'))
+		{
+		char *s;
+		k2 = s = strdup_2(ks);
+		while(*s) { if(*s=='_') *s='-'; s++; }
+		}
+	g_settings_get (gs, k2 ? k2 : ks, "s", &str);
+	if(k2) free_2(k2);
+        return(str);
+        }
+
+return(NULL);
+}
+
+void wave_gconf_restore(char **dumpfile, char **savefile, char **rcfile, char **wave_pwd, int *opt_vcd)
+{
+char *s;
+
+if(dumpfile && savefile && rcfile && wave_pwd && opt_vcd)
+        {
+        if(*dumpfile) { free_2(*dumpfile); *dumpfile = NULL; }
+        s = wave_gconf_client_get_string("/current/dumpfile");
+        if(s) { if(s[0]) *dumpfile = strdup_2(s); g_free(s); }
+
+        if(*savefile) { free_2(*savefile); *savefile = NULL; }
+        s = wave_gconf_client_get_string("/current/savefile");
+        if(s) { if(s[0]) *savefile = strdup_2(s); g_free(s); }
+
+        if(*rcfile) { free_2(*rcfile); *rcfile = NULL; }
+        s = wave_gconf_client_get_string("/current/rcfile");
+        if(s) { if(s[0]) *rcfile = strdup_2(s); g_free(s); }
+
+        if(*wave_pwd) { free_2(*wave_pwd); *wave_pwd = NULL; }
+        s = wave_gconf_client_get_string("/current/pwd");
+        if(s) { if(s[0]) *wave_pwd = strdup_2(s); g_free(s); }
+
+        s = wave_gconf_client_get_string("/current/optimized-vcd");
+        if(s) { if(s[0]) *opt_vcd = atoi(s); g_free(s); }
+        }
+}
+
+#else
 
 #ifdef WAVE_HAVE_GCONF
 
@@ -285,6 +508,7 @@ static void remove_client(void)
 if(client)
 	{
 	g_object_unref(client);
+	client = NULL;
 	}
 }
 
@@ -434,9 +658,11 @@ void wave_gconf_restore(char **dumpfile, char **savefile, char **rcfile, char **
 
 #endif
 
+#endif 
+
 /*
 
-Examples of RPC manipulation:
+Examples of RPC manipulation (gconf):
 
 gconftool-2 --dump /com.geda.gtkwave
 gconftool-2 --dump /com.geda.gtkwave --recursive-unset
@@ -454,5 +680,21 @@ gconftool-2 --type string --set /com.geda.gtkwave/0/zoom_full 0
 gconftool-2 --type string --set /com.geda.gtkwave/0/zoom_size -- -4.6
 gconftool-2 --type string --set /com.geda.gtkwave/0/move_to_time 123ns
 gconftool-2 --type string --set /com.geda.gtkwave/0/move_to_time A
+
+
+Examples of RPC manipulation (gsettings):
+
+gsettings set com.geda.gtkwave open /pub/systema_packed.fst
+
+gsettings set com.geda.gtkwave writesave /tmp/this.gtkw
+gsettings set com.geda.gtkwave writesave +
+
+gsettings set com.geda.gtkwave quit 0
+gsettings set com.geda.gtkwave reload 0
+
+gsettings set com.geda.gtkwave zoom-full 0
+gsettings set com.geda.gtkwave zoom-size -- -4.6
+gsettings set com.geda.gtkwave move-to-time 123ns
+gsettings set com.geda.gtkwave move-to-time A
 
 */

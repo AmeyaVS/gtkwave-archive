@@ -17,7 +17,7 @@ bin_PROGRAMS=	gtkwave twinwave
 AM_CFLAGS=	-I$(srcdir)/.. -I$(srcdir)/helpers $(FASTTREE_CFLAGS) $(GTK_CFLAGS) $(LIBLZMA_CFLAGS) \
 		$(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBFST_CFLAGS) $(AET2_CFLAGS) $(FSDB_CFLAGS) $(TCL_INCLUDE_SPEC) \
 		$(TCL_DEFADD) $(TK_INCLUDE_SPEC) $(EXTLOAD_CFLAGS) $(GEDIT_CFLAGS) $(LIBJUDY_CFLAGS) \
-		$(GTK_MAC_CFLAGS) $(GCONF_CFLAGS) $(LIBCOCOA_CFLAGS) $(GTK_UNIX_PRINT_CFLAGS)
+		$(GTK_MAC_CFLAGS) $(GCONF_CFLAGS) $(GSETTINGS_CFLAGS) $(LIBCOCOA_CFLAGS) $(GTK_UNIX_PRINT_CFLAGS)
 
 AM_CXXFLAGS=	$(AM_CFLAGS)
 
@@ -61,8 +61,11 @@ twinwave_LDADD= $(GTK_LIBS) $(GTK_MAC_LIBS) $(GCONF_LIBS)
 vcd_keywords.c: vcd_keywords.gperf
 	printf "$(GPERF) -o -i 1 -C -k 1,\044 -L C -H keyword_hash -N check_identifier -tT $(srcdir)/vcd_keywords.gperf >vcd_keywords.c" | sh
 
+gsettings_SCHEMAS = com.geda.gtkwave.gschema.xml
+@GSETTINGS_RULES@
+
 BUILT_SOURCES= vcd_keywords.c
 
 # I'm listing treesearch_gtk2.c here instead of in SOURCES because we don't directly
 # compile it.  Rather it is #include'd by treesearch.c.
-EXTRA_DIST= treesearch_gtk1.c treesearch_gtk2.c vcd_keywords.gperf gnu_regex.c
+EXTRA_DIST= treesearch_gtk1.c treesearch_gtk2.c vcd_keywords.gperf gnu_regex.c com.geda.gtkwave.gschema.xml

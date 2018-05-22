@@ -16,6 +16,15 @@ AC_ARG_WITH([gconf],
         [],
         [with_gconf=check])
 
+# ------------- GSETTINGS -------------------
+
+AC_ARG_WITH([gsettings],
+    [AS_HELP_STRING([--with-gsettings],
+        [Use GSettings to store preferences (precludes GConf)])],
+        [],
+	[with_gsettings=check])
+
+
 # ------------ TI-RPC ------------------
 
 AC_ARG_WITH([tirpc],
@@ -723,6 +732,13 @@ else
 	  AC_SUBST(GCONF_LIBS)
 	fi
 
+	if test x$with_gsettings = xyes; then
+	  PKG_CHECK_MODULES(GIO, gio-2.0 >= 2.0)
+          GLIB_GSETTINGS
+          GSETTINGS_CFLAGS="-DWAVE_HAVE_GSETTINGS $GSETTINGS_CFLAGS"
+          AC_SUBST(GSETTINGS_CFLAGS)
+	fi
+
 	PKG_CHECK_MODULES(GTK_UNIX_PRINT,gtk+-unix-print-2.0, GUP_F="yes", GUP_F="no")
 	if test "x$GUP_F" = xyes; then
 		GTK_UNIX_PRINT_CFLAGS="${GTK_UNIX_PRINT_CFLAGS} -DWAVE_GTK_UNIX_PRINT"
@@ -999,6 +1015,7 @@ AC_MSG_NOTICE([
 
   GCONF_CFLAGS          : $GCONF_CFLAGS
   GCONF_LIBS            : $GCONF_LIBS
+  GSETTINGS_CFLAGS      : $GSETTINGS_CFLAGS
 
   GTK_UNIX_PRINT_CFLAGS : $GTK_UNIX_PRINT_CFLAGS
   GTK_UNIX_PRINT_LIBS   : $GTK_UNIX_PRINT_LIBS
