@@ -348,12 +348,8 @@ ucase_ext[i] = 0;
 #endif
 
 #if defined(WAVE_HAVE_GCONF) || defined(WAVE_HAVE_GSETTINGS)
-#ifdef WAVE_HAVE_GCONF
 #define RPC_GETOPT  "  -1, --rpcid=RPCID          specify RPCID of GConf session\n"
-#else
-#define RPC_GETOPT
-#endif
-#ifdef WAVE_HAVE_GCONF
+#if defined(WAVE_HAVE_GCONF)
 #define RPC_GETOPT3 "  -3, --restore              restore previous RPCID numbered session\n"
 #else
 #define RPC_GETOPT3 "  -3, --restore              restore previous session\n"

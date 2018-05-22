@@ -7,7 +7,7 @@
        <default>""</default>
        <summary>Open File</summary>
        <description>
-	Pass string for filename.
+	Opens file for a given RPC ID.  Example: gsettings set com.geda.gtkwave open 0,/pub/systema_packed.fst
        </description>
      </key>
 
@@ -15,7 +15,7 @@
        <default>""</default>
        <summary>Quit</summary>
        <description>
-	Quits viewer.  Key is dummy argument.
+	Quits viewer for a given RPC ID and return code.  Example: gsettings set com.geda.gtkwave quit 0,255
        </description>
      </key>
 
@@ -23,7 +23,8 @@
        <default>""</default>
        <summary>Write Save File</summary>
        <description>
-	Pass string for filename.
+	Writes save file.  Example: gsettings set com.geda.gtkwave writesave 0,/tmp/this.gtkw
+	gsettings set com.geda.gtkwave writesave 0,+
        </description>
      </key>
 
@@ -31,7 +32,7 @@
        <default>""</default>
        <summary>Reloads</summary>
        <description>
-	Reloads file.  Key is dummy argument.
+	Reloads file for a given RPC ID.  Example: gsettings set com.geda.gtkwave reload 0
        </description>
      </key>
 
@@ -39,7 +40,7 @@
        <default>""</default>
        <summary>Zoom Full</summary>
        <description>
-	Zoom Full command.  Key is dummy argument.
+	Zoom Full for a given RPC ID.  Example: gsettings set com.geda.gtkwave zoom-full 0
        </description>
      </key>
 
@@ -47,7 +48,8 @@
        <default>""</default>
        <summary>Move To Time</summary>
        <description>
-	Moves to a give time.  Key is a time string such as 10ns.
+	Moves to a given time for a given RPC ID.  Example: gsettings set com.geda.gtkwave move-to-time 0,123ns
+	gsettings set com.geda.gtkwave move-to-time 0,A
        </description>
      </key>
 
@@ -55,7 +57,7 @@
        <default>""</default>
        <summary>Zoom Size</summary>
        <description>
-	Sets zoom size.  Key is the zoom factor.
+	Sets zoom size for a given RPC ID.  Example: gsettings set com.geda.gtkwave zoom-size 0,-4.6
        </description>
      </key>
 

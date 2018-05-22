@@ -26,22 +26,39 @@ if(gs)
 	}
 }
 
+static char *parse_rpc_id(char *str, int *this_wave_rpc_id)
+{
+char *comma = strchr(str, ',');
+char *str2 = comma ? (comma+1) : NULL;
+
+*this_wave_rpc_id = atoi(str);
+
+return(str2);
+}
+
 static void
 user_function (GSettings *settings,
                gchar     *key,
                gpointer   user_data)
 {
 char *str = NULL;
+char *str2 = NULL;
+int this_wave_rpc_id = -1;
+
 g_settings_get (settings, key, "s", &str);
 
 if(!strcmp(key, "open"))
 	{
 	if((str)&&(str[0]))
         	{
-          	fprintf(stderr, "GTKWAVE | RPC Open: '%s'\n", str);
+		str2 = parse_rpc_id(str, &this_wave_rpc_id);
+		if((this_wave_rpc_id == wave_rpc_id) && str2)
+			{
+	          	fprintf(stderr, "GTKWAVE | RPC Open: '%s'\n", str2);
 
-          	deal_with_rpc_open(str, NULL);
-		g_settings_set(settings, "open", "s", "");
+	          	deal_with_rpc_open(str, NULL);
+			g_settings_set(settings, "open", "s", "");
+			}
         	}
 	}
 else
@@ -49,11 +66,15 @@ if(!strcmp(key, "quit"))
 	{
 	if((str)&&(str[0]))
 	        {
-          	const char *rc = str;
-          	int rcv = atoi(rc);
-          	fprintf(stderr, "GTKWAVE | RPC Quit: exit return code %d\n", rcv);
-          	g_settings_set(settings, "quit", "s", "");
-          	exit(rcv);
+		str2 = parse_rpc_id(str, &this_wave_rpc_id);
+		if((this_wave_rpc_id == wave_rpc_id) && str2)
+			{
+	          	const char *rc = str2;
+	          	int rcv = atoi(rc);
+	          	fprintf(stderr, "GTKWAVE | RPC Quit: exit return code %d\n", rcv);
+	          	g_settings_set(settings, "quit", "s", "");
+	          	exit(rcv);
+			}
         	}
 	}
 else
@@ -61,9 +82,13 @@ if(!strcmp(key, "reload"))
 	{
 	if((str)&&(str[0]))
         	{
-          	if(in_main_iteration()) return;
-          	reload_into_new_context();
-		g_settings_set(settings, "reload", "s", "");
+		this_wave_rpc_id = atoi(str);
+		if(this_wave_rpc_id == wave_rpc_id)
+			{
+	          	if(in_main_iteration()) goto bot;
+	          	reload_into_new_context();
+			g_settings_set(settings, "reload", "s", "");
+			}
         	}
 	}
 else
@@ -71,9 +96,13 @@ if(!strcmp(key, "zoom-full"))
 	{
 	if((str)&&(str[0]))
 	        {
-          	if(in_main_iteration()) return;
-          	service_zoom_full(NULL, NULL);
-		g_settings_set(settings, "zoom-full", "s", "");
+		this_wave_rpc_id = atoi(str);
+		if(this_wave_rpc_id == wave_rpc_id)
+			{
+	          	if(in_main_iteration()) goto bot;
+	          	service_zoom_full(NULL, NULL);
+			g_settings_set(settings, "zoom-full", "s", "");
+			}
         	}
 	}
 else
@@ -81,37 +110,41 @@ if(!strcmp(key, "writesave"))
 	{
 	if((str)&&(str[0]))
         	{
-          	const char *fni = str;
-          	if(fni && !in_main_iteration())
-                	{
-                  	int use_arg = strcmp(fni, "+"); /* plus filename uses default */
-                  	const char *fn = use_arg ? fni : GLOBALS->filesel_writesave;
-                  	if(fn)
-                        	{
-                        	FILE *wave;
-
-                        	if(!(wave=fopen(fn, "wb")))
-                                	{
-                                	fprintf(stderr, "GTKWAVE | RPC Writesave: error opening save file '%s' for writing.\n", fn);
-                                	perror("Why");
-                                	errno=0;
-                                	}
-                                	else
-                                	{
-                                	write_save_helper(fn, wave);
-                                	if(use_arg)
-                                        	{
-                                        	if(GLOBALS->filesel_writesave) { free_2(GLOBALS->filesel_writesave); }
-                                        	GLOBALS->filesel_writesave = strdup_2(fn);
-                                        	}
-                                	wave_gconf_client_set_string("/current/savefile", fn);
-                                	fclose(wave);
-                                	fprintf(stderr, "GTKWAVE | RPC Writesave: wrote save file '%s'.\n", GLOBALS->filesel_writesave);
-                                	}
-                        	}
-                	}
-
-	  	g_settings_set(settings, "writesave", "s", "");
+		str2 = parse_rpc_id(str, &this_wave_rpc_id);
+		if((this_wave_rpc_id == wave_rpc_id) && str2)
+			{
+	          	const char *fni = str2;
+	          	if(fni && !in_main_iteration())
+	                	{
+	                  	int use_arg = strcmp(fni, "+"); /* plus filename uses default */
+	                  	const char *fn = use_arg ? fni : GLOBALS->filesel_writesave;
+	                  	if(fn)
+	                        	{
+	                        	FILE *wave;
+	
+	                        	if(!(wave=fopen(fn, "wb")))
+	                                	{
+	                                	fprintf(stderr, "GTKWAVE | RPC Writesave: error opening save file '%s' for writing.\n", fn);
+	                                	perror("Why");
+	                                	errno=0;
+	                                	}
+	                                	else
+	                                	{
+	                                	write_save_helper(fn, wave);
+	                                	if(use_arg)
+	                                        	{
+	                                        	if(GLOBALS->filesel_writesave) { free_2(GLOBALS->filesel_writesave); }
+	                                        	GLOBALS->filesel_writesave = strdup_2(fn);
+	                                        	}
+	                                	wave_gconf_client_set_string("/current/savefile", fn);
+	                                	fclose(wave);
+	                                	fprintf(stderr, "GTKWAVE | RPC Writesave: wrote save file '%s'.\n", GLOBALS->filesel_writesave);
+	                                	}
+	                        	}
+	                	}
+	
+		  	g_settings_set(settings, "writesave", "s", "");
+			}
         	}
 	}
 else
@@ -119,17 +152,20 @@ if(!strcmp(key, "move-to-time"))
 	{
 	if((str)&&(str[0]))
     		{
-       		if(!in_main_iteration())
-               		{
-               		char *e_copy = GLOBALS->entrybox_text;
-               		GLOBALS->entrybox_text=strdup_2(str);
-
-               		movetotime_cleanup(NULL, NULL);
-
-               		GLOBALS->entrybox_text = e_copy;
-               		}
-
-       		g_settings_set(settings, "move-to-time", "s", "");
+		str2 = parse_rpc_id(str, &this_wave_rpc_id);
+		if((this_wave_rpc_id == wave_rpc_id) && str2)
+			{
+	       		if(!in_main_iteration())
+	               		{
+	               		char *e_copy = GLOBALS->entrybox_text;
+	               		GLOBALS->entrybox_text=strdup_2(str2);
+	               		movetotime_cleanup(NULL, NULL);
+	
+	               		GLOBALS->entrybox_text = e_copy;
+	               		}
+	
+	       		g_settings_set(settings, "move-to-time", "s", "");
+			}
 		}
 	}
 else
@@ -137,20 +173,25 @@ if(!strcmp(key, "zoom-size"))
 	{
 	if((str)&&(str[0]))
         	{
-          	if(!in_main_iteration())
-                	{
-                	char *e_copy = GLOBALS->entrybox_text;
-                	GLOBALS->entrybox_text=strdup_2(str);
-
-                	zoomsize_cleanup(NULL, NULL);
-
-                	GLOBALS->entrybox_text = e_copy;
-                	}
-
-		g_settings_set(settings, "zoom-size", "s", "");
+		str2 = parse_rpc_id(str, &this_wave_rpc_id);
+		if((this_wave_rpc_id == wave_rpc_id) && str2)
+			{
+	          	if(!in_main_iteration())
+	                	{
+	                	char *e_copy = GLOBALS->entrybox_text;
+	                	GLOBALS->entrybox_text=strdup_2(str2);
+	
+	                	zoomsize_cleanup(NULL, NULL);
+	
+	                	GLOBALS->entrybox_text = e_copy;
+	                	}
+	
+			g_settings_set(settings, "zoom-size", "s", "");
+			}
         	}
 	}
 
+bot:
 if(str) g_free(str);
 }
 
@@ -682,19 +723,20 @@ gconftool-2 --type string --set /com.geda.gtkwave/0/move_to_time 123ns
 gconftool-2 --type string --set /com.geda.gtkwave/0/move_to_time A
 
 
-Examples of RPC manipulation (gsettings):
+Examples of RPC manipulation (gsettings).
+First number is RPC ID:
 
-gsettings set com.geda.gtkwave open /pub/systema_packed.fst
+gsettings set com.geda.gtkwave open 0,/pub/systema_packed.fst
 
-gsettings set com.geda.gtkwave writesave /tmp/this.gtkw
-gsettings set com.geda.gtkwave writesave +
+gsettings set com.geda.gtkwave writesave 0,/tmp/this.gtkw
+gsettings set com.geda.gtkwave writesave 0,+
 
-gsettings set com.geda.gtkwave quit 0
+gsettings set com.geda.gtkwave quit 0,0
 gsettings set com.geda.gtkwave reload 0
 
 gsettings set com.geda.gtkwave zoom-full 0
-gsettings set com.geda.gtkwave zoom-size -- -4.6
-gsettings set com.geda.gtkwave move-to-time 123ns
-gsettings set com.geda.gtkwave move-to-time A
+gsettings set com.geda.gtkwave zoom-size 0,-4.6
+gsettings set com.geda.gtkwave move-to-time 0,123ns
+gsettings set com.geda.gtkwave move-to-time 0,A
 
 */
