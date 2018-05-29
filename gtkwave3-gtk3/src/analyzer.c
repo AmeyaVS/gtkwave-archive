@@ -1480,13 +1480,13 @@ void UpdateTraceSelection(Trptr t)
       t->flags |= TR_HIGHLIGHT;
     }
   else
-  if(t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH))  /* seek to real xact trace if present... */
+  if((t->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)) && (GLOBALS->num_ttrans_filters))  /* seek to real xact trace if present... */
         {
 	if(!(t->flags & TR_HIGHLIGHT))
 		{
 	        Trptr tscan = t;
 	        int bcnt = 0;
-	        while((tscan) && (tscan = GivePrevTraceSkipUpdate(tscan, 1)))
+	        while((tscan) && (tscan = tscan->t_prev)) /* && branch formerly was (tscan = GivePrevTraceSkipUpdate(tscan, 1)): overkill as blank traces in transactions don't nest into groups */
 	                {
 	                if(!(tscan->flags & (TR_BLANK|TR_ANALOG_BLANK_STRETCH)))
 	                        {
