@@ -1650,6 +1650,7 @@
                 justified vectors such that the vector length is not a
                 multiple of the radix size (4 for hex, 3 for oct).
                 Warray-bounds warning fix for 32-bit conversions in BitsToReal.
-3.3.91  29may18 Added support for GSettings for when GConf is deprecated.
-                Performance fix	for large number of groups (remove useless
+3.3.91  29may18 Added support for GSettings for when GConf is removed from 
+                distributions such as Debian and Ubuntu.
+                Performance fix for large number of groups (remove useless
                 recursion required for transaction traces).
