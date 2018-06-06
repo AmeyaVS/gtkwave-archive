@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 2009-2017.
+ * Copyright (c) Tony Bybell 2009-2018.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -640,6 +640,11 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		/* this should never happen */
 		fstReaderIterateHierRewind(GLOBALS->fst_fst_c_1);
 		h = extractNextVar(GLOBALS->fst_fst_c_1, &msb, &lsb, &nnam, &name_len, &nnam_max);
+		if(!h)
+			{
+		        fprintf(stderr, FST_RDLOAD"Exiting, missing or malformed names table encountered.\n");
+        		exit(255);
+			}
 		}
 
 	npar = GLOBALS->mod_tree_parent;

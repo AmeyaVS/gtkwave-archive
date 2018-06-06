@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2015 Tony Bybell.
+ * Copyright (c) 2009-2018 Tony Bybell.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -3748,6 +3748,10 @@ if(!xc->fh)
         else /* FST_BL_SKIP */
                 {
                 pass_status = 0;
+                if(xc->fh)
+                        {
+                        fclose(xc->fh); xc->fh = NULL; /* needed in case .hier file is missing and there are no hier sections */
+                        }
                 }
 
         free(mem);
