@@ -128,6 +128,7 @@ void **JenkinsIns(void *base_i, const unsigned char *mem, uint32_t length, uint3
 #include <sys/sysctl.h>
 #endif
 
+#define FST_APIMESS "FSTAPI  | "
 
 /***********************/
 /***                 ***/
@@ -193,7 +194,7 @@ if(nam) /* cppcheck warning fix: nam is always defined, so this is not needed */
         dwRetVal = GetTempPath(MAX_PATH, lpTempPathBuffer);
         if((dwRetVal > MAX_PATH) || (dwRetVal == 0))
                 {
-                fprintf(stderr, "GetTempPath() failed in "__FILE__" line %d, exiting.\n", __LINE__);
+                fprintf(stderr, FST_APIMESS"GetTempPath() failed in "__FILE__" line %d, exiting.\n", __LINE__);
                 exit(255);
                 }
                 else
@@ -201,7 +202,7 @@ if(nam) /* cppcheck warning fix: nam is always defined, so this is not needed */
                 uRetVal = GetTempFileName(lpTempPathBuffer, TEXT("FSTW"), 0, szTempFileName);
                 if (uRetVal == 0)
                         {
-                        fprintf(stderr, "GetTempFileName() failed in "__FILE__" line %d, exiting.\n", __LINE__);
+                        fprintf(stderr, FST_APIMESS"GetTempFileName() failed in "__FILE__" line %d, exiting.\n", __LINE__);
                         exit(255);
                         }
                         else
@@ -2478,7 +2479,7 @@ if(xc)
 #ifndef FST_WRITER_PARALLEL
         if(xc->parallel_enabled)
                 {
-                fprintf(stderr, "ERROR: fstWriterSetParallelMode(), FST_WRITER_PARALLEL not enabled during compile, exiting.\n");
+                fprintf(stderr, FST_APIMESS"fstWriterSetParallelMode(), FST_WRITER_PARALLEL not enabled during compile, exiting.\n");
                 exit(255);
                 }
 #endif
@@ -2760,7 +2761,7 @@ if((xc) && (handle <= xc->maxhandle))
                                 xc->vchg_mem = realloc(xc->vchg_mem, xc->vchg_alloc_siz);
                                 if(!xc->vchg_mem)
                                         {
-                                        fprintf(stderr, "FATAL ERROR, could not realloc() in fstWriterEmitValueChange, exiting.\n");
+                                        fprintf(stderr, FST_APIMESS"Could not realloc() in fstWriterEmitValueChange, exiting.\n");
                                         exit(255);
                                         }
                                 }
@@ -2874,7 +2875,7 @@ if((xc) && (handle <= xc->maxhandle))
                         xc->vchg_mem = realloc(xc->vchg_mem, xc->vchg_alloc_siz);
                         if(!xc->vchg_mem)
                                 {
-                                fprintf(stderr, "FATAL ERROR, could not realloc() in fstWriterEmitVariableLengthValueChange, exiting.\n");
+                                fprintf(stderr, FST_APIMESS"Could not realloc() in fstWriterEmitVariableLengthValueChange, exiting.\n");
                                 exit(255);
                                 }
                         }
@@ -4439,7 +4440,7 @@ if(gzread_pass_status)
 
                                         if(rc != Z_OK)
                                                 {
-                                                printf("geom uncompress rc = %d\n", rc);
+                                                fprintf(stderr, FST_APIMESS"fstReaderInit(), geom uncompress rc = %d, exiting.\n", rc);
                                                 exit(255);
                                                 }
 
@@ -4809,7 +4810,7 @@ for(;;)
 
                 if(rc != Z_OK)
                         {
-                        printf("tsec uncompress rc = %d\n", rc);
+                        fprintf(stderr, FST_APIMESS"fstReaderIterBlocks2(), tsec uncompress rc = %d, exiting.\n", rc);
                         exit(255);
                         }
 
@@ -4885,7 +4886,7 @@ for(;;)
                                 rc = uncompress(mu, &destlen, mc, sourcelen);
                                 if(rc != Z_OK)
                                         {
-                                        printf("rc: %d\n", rc);
+                                        fprintf(stderr, FST_APIMESS"fstReaderIterBlocks2(), frame uncompress rc: %d, exiting.\n", rc);
                                         exit(255);
                                         }
                                 free(mc);
@@ -5245,7 +5246,7 @@ for(;;)
 
                                 if(rc != Z_OK)
                                         {
-                                        printf("\tfac: %d clen: %d (rc=%d)\n", (int)i, (int)val, rc);
+                                        fprintf(stderr, FST_APIMESS"fstReaderIterBlocks2(), fac: %d clen: %d (rc=%d), exiting.\n", (int)i, (int)val, rc);
                                         exit(255);
                                         }
 
@@ -5835,7 +5836,7 @@ if(tsec_uclen != tsec_clen)
 
         if(rc != Z_OK)
                 {
-                printf("tsec uncompress rc = %d\n", rc);
+                fprintf(stderr, FST_APIMESS"fstReaderGetValueFromHandleAtTime(), tsec uncompress rc = %d, exiting.\n", rc);
                 exit(255);
                 }
 
@@ -5883,7 +5884,7 @@ if(frame_uclen == frame_clen)
         rc = uncompress(xc->rvat_frame_data, &destlen, mc, sourcelen);
         if(rc != Z_OK)
                 {
-                printf("decompress rc: %d\n", rc);
+                fprintf(stderr, FST_APIMESS"fstReaderGetValueFromHandleAtTime(), frame decompress rc: %d, exiting.\n", rc);
                 exit(255);
                 }
         free(mc);
@@ -6075,7 +6076,7 @@ if(!xc->rvat_chain_mem)
 
                 if(rc != Z_OK)
                         {
-                        printf("\tclen: %d (rc=%d)\n", (int)xc->rvat_chain_len, rc);
+                        fprintf(stderr, FST_APIMESS"fstReaderGetValueFromHandleAtTime(), rvat decompress clen: %d (rc=%d), exiting.\n", (int)xc->rvat_chain_len, rc);
                         exit(255);
                         }
 
