@@ -804,7 +804,7 @@ if(rc<0)
         {
         xc->fseek_failed = 1;
 #ifdef FST_DEBUG
-        fprintf(stderr, "Seek to #%"PRId64" (whence = %d) failed!\n", offset, whence);
+        fprintf(stderr, FST_APIMESS"Seek to #%"PRId64" (whence = %d) failed!\n", offset, whence);
         perror("Why");
 #endif
         }
@@ -1664,7 +1664,7 @@ if(zerocnt)
         /* fpos += */ fstWriterVarint(f, (zerocnt << 1)); /* scan-build */
         }
 #ifdef FST_DEBUG
-fprintf(stderr, "value chains: %d\n", cnt);
+fprintf(stderr, FST_APIMESS"value chains: %d\n", cnt);
 #endif
 
 xc->vchg_mem[0] = '!';
@@ -1739,7 +1739,7 @@ if(xc->dump_size_limit)
                 xc2->size_limit_locked = 1;
                 xc2->is_initial_time = 1; /* to trick emit value and emit time change */
 #ifdef FST_DEBUG
-                fprintf(stderr, "<< dump file size limit reached, stopping dumping >>\n");
+                fprintf(stderr, FST_APIMESS"<< dump file size limit reached, stopping dumping >>\n");
 #endif
                 }
         }
@@ -3120,7 +3120,7 @@ if(rc<0)
         {
         xc->fseek_failed = 1;
 #ifdef FST_DEBUG
-        fprintf(stderr, "Seek to #%"PRId64" (whence = %d) failed!\n", offset, whence);
+        fprintf(stderr, FST_APIMESS"Seek to #%"PRId64" (whence = %d) failed!\n", offset, whence);
         perror("Why");
 #endif
         }
@@ -4731,7 +4731,7 @@ for(;;)
         if((sectype == EOF) || (sectype == FST_BL_SKIP))
                 {
 #ifdef FST_DEBUG
-                fprintf(stderr, "<< EOF >>\n");
+                fprintf(stderr, FST_APIMESS"<< EOF >>\n");
 #endif
                 break;
                 }
@@ -4770,9 +4770,9 @@ for(;;)
         mem_required_for_traversal = fstReaderUint64(xc->f);
         mem_for_traversal = malloc(mem_required_for_traversal + 66); /* add in potential fastlz overhead */
 #ifdef FST_DEBUG
-        fprintf(stderr, "sec: %u seclen: %d begtim: %d endtim: %d\n",
+        fprintf(stderr, FST_APIMESS"sec: %u seclen: %d begtim: %d endtim: %d\n",
                 secnum, (int)seclen, (int)beg_tim, (int)end_tim);
-        fprintf(stderr, "\tmem_required_for_traversal: %d\n", (int)mem_required_for_traversal);
+        fprintf(stderr, FST_APIMESS"mem_required_for_traversal: %d\n", (int)mem_required_for_traversal);
 #endif
         /* process time block */
         {
@@ -4790,7 +4790,7 @@ for(;;)
         tsec_clen = fstReaderUint64(xc->f);
         tsec_nitems = fstReaderUint64(xc->f);
 #ifdef FST_DEBUG
-        fprintf(stderr, "\ttime section unc: %d, com: %d (%d items)\n",
+        fprintf(stderr, FST_APIMESS"time section unc: %d, com: %d (%d items)\n",
                 (int)tsec_uclen, (int)tsec_clen, (int)tsec_nitems);
 #endif
         if(tsec_clen > seclen) break; /* corrupted tsec_clen: by definition it can't be larger than size of section */
@@ -5049,9 +5049,9 @@ for(;;)
         packtype = fgetc(xc->f);
 
 #ifdef FST_DEBUG
-        fprintf(stderr, "\tframe_uclen: %d, frame_clen: %d, frame_maxhandle: %d\n",
+        fprintf(stderr, FST_APIMESS"frame_uclen: %d, frame_clen: %d, frame_maxhandle: %d\n",
                 (int)frame_uclen, (int)frame_clen, (int)frame_maxhandle);
-        fprintf(stderr, "\tvc_maxhandle: %d, packtype: %c\n", (int)vc_maxhandle, packtype);
+        fprintf(stderr, FST_APIMESS"vc_maxhandle: %d, packtype: %c\n", (int)vc_maxhandle, packtype);
 #endif
 
         indx_pntr = blkpos + seclen - 24 -tsec_clen -8;
@@ -5059,7 +5059,7 @@ for(;;)
         chain_clen = fstReaderUint64(xc->f);
         indx_pos = indx_pntr - chain_clen;
 #ifdef FST_DEBUG
-        fprintf(stderr, "\tindx_pos: %d (%d bytes)\n", (int)indx_pos, (int)chain_clen);
+        fprintf(stderr, FST_APIMESS"indx_pos: %d (%d bytes)\n", (int)indx_pos, (int)chain_clen);
 #endif
         chain_cmem = malloc(chain_clen);
         if(!chain_cmem) goto block_err;
@@ -5178,7 +5178,7 @@ for(;;)
                 }
 
 #ifdef FST_DEBUG
-        fprintf(stderr, "\tdecompressed chain idx len: %"PRIu32"\n", idx);
+        fprintf(stderr, FST_APIMESS"decompressed chain idx len: %"PRIu32"\n", idx);
 #endif
 
         mc_mem_len = 16384;
@@ -5798,9 +5798,9 @@ mem_required_for_traversal =
         fstReaderUint64(xc->f);
 
 #ifdef FST_DEBUG
-fprintf(stderr, "rvat sec: %u seclen: %d begtim: %d endtim: %d\n",
+fprintf(stderr, FST_APIMESS"rvat sec: %u seclen: %d begtim: %d endtim: %d\n",
         secnum, (int)seclen, (int)beg_tim, (int)end_tim);
-fprintf(stderr, "\tmem_required_for_traversal: %d\n", (int)mem_required_for_traversal);
+fprintf(stderr, FST_APIMESS"mem_required_for_traversal: %d\n", (int)mem_required_for_traversal);
 #endif
 
 /* process time block */
@@ -5819,7 +5819,7 @@ tsec_uclen = fstReaderUint64(xc->f);
 tsec_clen = fstReaderUint64(xc->f);
 tsec_nitems = fstReaderUint64(xc->f);
 #ifdef FST_DEBUG
-fprintf(stderr, "\ttime section unc: %d, com: %d (%d items)\n",
+fprintf(stderr, FST_APIMESS"time section unc: %d, com: %d (%d items)\n",
         (int)tsec_uclen, (int)tsec_clen, (int)tsec_nitems);
 #endif
 ucdata = malloc(tsec_uclen);
@@ -5895,9 +5895,9 @@ xc->rvat_vc_start = ftello(xc->f);      /* points to '!' character */
 xc->rvat_packtype = fgetc(xc->f);
 
 #ifdef FST_DEBUG
-fprintf(stderr, "\tframe_uclen: %d, frame_clen: %d, frame_maxhandle: %d\n",
+fprintf(stderr, FST_APIMESS"frame_uclen: %d, frame_clen: %d, frame_maxhandle: %d\n",
         (int)frame_uclen, (int)frame_clen, (int)xc->rvat_frame_maxhandle);
-fprintf(stderr, "\tvc_maxhandle: %d\n", (int)xc->rvat_vc_maxhandle);
+fprintf(stderr, FST_APIMESS"vc_maxhandle: %d\n", (int)xc->rvat_vc_maxhandle);
 #endif
 
 indx_pntr = blkpos + seclen - 24 -tsec_clen -8;
@@ -5905,7 +5905,7 @@ fstReaderFseeko(xc, xc->f, indx_pntr, SEEK_SET);
 chain_clen = fstReaderUint64(xc->f);
 indx_pos = indx_pntr - chain_clen;
 #ifdef FST_DEBUG
-fprintf(stderr, "\tindx_pos: %d (%d bytes)\n", (int)indx_pos, (int)chain_clen);
+fprintf(stderr, FST_APIMESS"indx_pos: %d (%d bytes)\n", (int)indx_pos, (int)chain_clen);
 #endif
 chain_cmem = malloc(chain_clen);
 fstReaderFseeko(xc, xc->f, indx_pos, SEEK_SET);
@@ -6016,7 +6016,7 @@ for(i=0;i<idx;i++)
         }
 
 #ifdef FST_DEBUG
-fprintf(stderr, "\tdecompressed chain idx len: %"PRIu32"\n", idx);
+fprintf(stderr, FST_APIMESS"decompressed chain idx len: %"PRIu32"\n", idx);
 #endif
 
 xc->rvat_data_valid = 1;
