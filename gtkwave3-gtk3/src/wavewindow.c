@@ -1812,6 +1812,12 @@ GtkWidget *frame;
 GtkAdjustment *hadj, *vadj;
 
 table = gtk_table_new(10, 10, FALSE);
+
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
+/* this removes the warning generated from gtk_table_attach() on GLOBALS->vscroll_wavewindow_c_1 below */
+gtk_container_set_resize_mode(GTK_CONTAINER(table), GTK_RESIZE_IMMEDIATE);
+#endif
+
 GLOBALS->wavearea=gtk_drawing_area_new();
 gtk_widget_show(GLOBALS->wavearea);
 

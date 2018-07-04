@@ -10,6 +10,10 @@
 #if GTK_CHECK_VERSION(3,0,0)
 /* workaround for wave_vslider not rendering properly on startup */
 #define WAVE_ALLOW_GTK3_VSLIDER_WORKAROUND
+
+/* workaround for gtk warnings "How does the code know the size to allocate?" */
+#define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
+
 #define WAVE_GTK3_HIERSEARCH_DEBOUNCE
 #define WAVE_GTK3_MENU_SEPARATOR
 #endif
