@@ -25,6 +25,9 @@ void help_text(char *str)
 {
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 gtk_text_buffer_insert (GTK_TEXT_VIEW (GLOBALS->text_help_c_1)->buffer, &GLOBALS->iter_help_c_1, str, -1);
+
+GtkTextMark *mark = gtk_text_buffer_get_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), "end");
+gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (GLOBALS->text_help_c_1), GTK_TEXT_MARK(mark));
 #else
 gtk_text_insert (GTK_TEXT (GLOBALS->text_help_c_1), NULL, &GLOBALS->text_help_c_1->style->black, NULL, str, -1);
 #endif
@@ -37,6 +40,9 @@ void help_text_bold(char *str)
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 gtk_text_buffer_insert_with_tags (GTK_TEXT_VIEW (GLOBALS->text_help_c_1)->buffer, &GLOBALS->iter_help_c_1,
                                  str, -1, GLOBALS->bold_tag_help_c_1, NULL);
+
+GtkTextMark *mark = gtk_text_buffer_get_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), "end");
+gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (GLOBALS->text_help_c_1), GTK_TEXT_MARK(mark));
 #else
 gtk_text_insert (GTK_TEXT (GLOBALS->text_help_c_1), NULL, &GLOBALS->text_help_c_1->style->fg[GTK_STATE_SELECTED], &GLOBALS->text_help_c_1->style->bg[GTK_STATE_SELECTED], str, -1);
 #endif
@@ -82,6 +88,10 @@ gtk_text_view_set_editable (GTK_TEXT_VIEW(GLOBALS->text_help_c_1), FALSE);
 gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), &GLOBALS->iter_help_c_1);
 GLOBALS->bold_tag_help_c_1 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (GLOBALS->text_help_c_1)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
+
+GtkTextIter iter;
+gtk_text_buffer_get_end_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), &iter);
+gtk_text_buffer_create_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), "end", &iter, FALSE);
 #else
 GLOBALS->text_help_c_1 = gtk_text_new (NULL, NULL);
 gtk_text_set_editable(GTK_TEXT(GLOBALS->text_help_c_1), FALSE);

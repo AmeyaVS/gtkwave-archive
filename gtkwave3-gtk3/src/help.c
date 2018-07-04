@@ -25,6 +25,9 @@ void help_text(char *str)
 {
 gtk_text_buffer_insert (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), &GLOBALS->iter_help_c_1, str, -1);
 
+GtkTextMark *mark = gtk_text_buffer_get_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), "end");
+gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (GLOBALS->text_help_c_1), GTK_TEXT_MARK(mark));
+
 gdk_window_raise(gtk_widget_get_window(GLOBALS->window_help_c_2));
 }
 
@@ -32,6 +35,9 @@ void help_text_bold(char *str)
 {
 gtk_text_buffer_insert_with_tags (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), &GLOBALS->iter_help_c_1,
                                  str, -1, GLOBALS->bold_tag_help_c_1, NULL);
+
+GtkTextMark *mark = gtk_text_buffer_get_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), "end");
+gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (GLOBALS->text_help_c_1), GTK_TEXT_MARK(mark));
 
 gdk_window_raise(gtk_widget_get_window(GLOBALS->window_help_c_2));
 }
@@ -62,6 +68,7 @@ help_text("Click on any menu item or button that corresponds to a menu item"
 static GtkWidget *create_help_text (void)
 {
 GtkWidget *scrolled_window;
+GtkTextIter iter;
 
 GLOBALS->text_help_c_1 = gtk_text_view_new ();
 gtk_text_view_set_editable (GTK_TEXT_VIEW(GLOBALS->text_help_c_1), FALSE);
@@ -70,6 +77,9 @@ GLOBALS->bold_tag_help_c_1 = gtk_text_buffer_create_tag (gtk_text_view_get_buffe
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
 gtk_widget_set_size_request(GTK_WIDGET(GLOBALS->text_help_c_1), 100, 50);
 gtk_widget_show (GLOBALS->text_help_c_1);
+
+gtk_text_buffer_get_end_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), &iter);
+gtk_text_buffer_create_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_help_c_1)), "end", &iter, FALSE);
 
 scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC); 

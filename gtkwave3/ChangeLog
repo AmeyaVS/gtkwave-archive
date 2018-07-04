@@ -1651,3 +1651,4 @@
 		Performance fix for large number of groups (remove useless
 		recursion required for transaction traces).
 3.3.92	06jun18	Harden FST loader for missing .hier files (if applicable).
+		Fix scrolling on help window by adding scroll to end mark.
