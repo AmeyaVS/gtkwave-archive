@@ -31,6 +31,9 @@ if(!GLOBALS->quiet_checkmenu) /* when gtkwave_mlist_t check menuitems are being 
 		{
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN)
 	        gtk_text_buffer_insert (GTK_TEXT_VIEW (GLOBALS->text_status_c_2)->buffer, &GLOBALS->iter_status_c_3, str, -1);
+
+		GtkTextMark *mark = gtk_text_buffer_get_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), "end");
+		gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (GLOBALS->text_status_c_2), GTK_TEXT_MARK(mark));
 #else
 	        gtk_text_insert (GTK_TEXT (GLOBALS->text_status_c_2), NULL, &GLOBALS->text_status_c_2->style->black, NULL, str, -1);
 #endif
@@ -142,6 +145,9 @@ gtk_text_view_set_editable (GTK_TEXT_VIEW(GLOBALS->text_status_c_2), FALSE);
 gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &GLOBALS->iter_status_c_3);
 GLOBALS->bold_tag_status_c_3 = gtk_text_buffer_create_tag (GTK_TEXT_VIEW (GLOBALS->text_status_c_2)->buffer, "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
+GtkTextIter iter;
+gtk_text_buffer_get_end_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &iter);
+gtk_text_buffer_create_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), "end", &iter, FALSE);
 #else
 GLOBALS->text_status_c_2 = gtk_text_new (NULL, NULL);
 gtk_text_set_editable(GTK_TEXT(GLOBALS->text_status_c_2), FALSE);

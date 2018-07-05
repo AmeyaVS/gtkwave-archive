@@ -1654,6 +1654,8 @@
                 distributions such as Debian and Ubuntu.
                 Performance fix for large number of groups (remove useless
                 recursion required for transaction traces).
-3.3.92  03jul18 Harden FST loader for missing .hier files (if applicable).
+3.3.92  05jul18 Harden FST loader for missing .hier files (if applicable).
 		GTK3 "How does the code know the size to allocate?" warning fix.
 		Fix scrolling on help window by adding scroll to end mark.
+                Fix scrolling on status	window when use_toolbutton_interface
+                rc var is set to FALSE by adding scroll to end mark.

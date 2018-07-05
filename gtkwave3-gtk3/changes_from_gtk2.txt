@@ -171,3 +171,5 @@ for GLOBALS->treeview_main, see what hadj/vadj work is required in globals.c to 
 
 note that the deprecated function warnings when compiling with --enable-gtk3 have not been cleaned up yet as some of the suggested replacements don't work with the same defaults as the original widgets.
 see https://gist.github.com/fourdollars/7671312 for gtk_pointer_grab/ungrab replacements.
+
+need to fix status text window when --rcvar 'use_toolbutton_interface 0' is used as the text window grows in the y direction without bound.

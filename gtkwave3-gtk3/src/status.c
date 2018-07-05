@@ -30,6 +30,9 @@ if(!GLOBALS->quiet_checkmenu) /* when gtkwave_mlist_t check menuitems are being 
 	if(GLOBALS->text_status_c_2)
 		{
 	        gtk_text_buffer_insert (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &GLOBALS->iter_status_c_3, str, -1);
+
+                GtkTextMark *mark = gtk_text_buffer_get_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), "end");
+                gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (GLOBALS->text_status_c_2), GTK_TEXT_MARK(mark));
 		}
 		else
 		{
@@ -121,6 +124,7 @@ GtkWidget *
 create_text (void)
 {
 GtkWidget *table;
+GtkTextIter iter;
 
 /* Create a table to hold the text widget and scrollbars */
 table = gtk_table_new (1, 16, FALSE);
@@ -132,6 +136,9 @@ gtk_text_view_set_editable (GTK_TEXT_VIEW(GLOBALS->text_status_c_2), FALSE);
 gtk_text_buffer_get_start_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &GLOBALS->iter_status_c_3);
 GLOBALS->bold_tag_status_c_3 = gtk_text_buffer_create_tag (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), "bold",
                                       "weight", PANGO_WEIGHT_BOLD, NULL);
+gtk_text_buffer_get_end_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &iter);
+gtk_text_buffer_create_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), "end", &iter, FALSE);
+
 gtk_table_attach (GTK_TABLE (table), GLOBALS->text_status_c_2, 0, 14, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
