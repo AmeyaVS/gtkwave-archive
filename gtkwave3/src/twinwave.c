@@ -99,7 +99,9 @@ for(i=0;i<argc;i++)
 	if(!strcmp(argv[i], "++"))
 		{
 		split_point = i;
+#ifdef WAVE_USE_GTK2
 		use_embedded = 0;
+#endif
 		break;
 		}
 	}
@@ -130,7 +132,9 @@ xsocket[1] = gtk_socket_new ();
 gtk_widget_show (xsocket[0]);
 gtk_widget_show (xsocket[1]);
 
+#ifdef WAVE_USE_GTK2
 gtk_signal_connect(GTK_OBJECT(xsocket[0]), "plug-removed", GTK_SIGNAL_FUNC(plug_removed), NULL);
+#endif
 
 main_vbox = gtk_vbox_new(FALSE, 5);
 gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
@@ -143,7 +147,9 @@ gtk_box_pack_start (GTK_BOX (main_vbox), vpan, TRUE, TRUE, 1);
 
 gtk_paned_pack1 (GTK_PANED (vpan), xsocket[0], TRUE, FALSE);
 
+#ifdef WAVE_USE_GTK2
 gtk_signal_connect(GTK_OBJECT(xsocket[1]), "plug-removed", GTK_SIGNAL_FUNC(plug_removed), NULL);
+#endif
 
 gtk_paned_pack2 (GTK_PANED (vpan), xsocket[1], TRUE, FALSE);
 #endif
@@ -385,10 +391,12 @@ if(shmid >=0)
 				sleep(2);
 		               	shmctl(shmid, IPC_RMID, &ds); /* mark for destroy */
 #endif
+#ifdef WAVE_USE_GTK2
 				if(use_embedded)
 					{
 					gtk_main();
 					}
+#endif
 				}
 				else
 				{
@@ -396,11 +404,13 @@ if(shmid >=0)
 				char **arglist = calloc(n_items, sizeof(char *));
 
 				sprintf(buf, "0+%08X", shmid);
+#ifdef WAVE_USE_GTK2
 				if(use_embedded)
 					{
 					sprintf(buf2, "%x", gtk_socket_get_id (GTK_SOCKET(xsocket[0])));
 					}
 					else
+#endif
 					{
 					sprintf(buf2, "%x", 0);
 					}
@@ -430,11 +440,13 @@ if(shmid >=0)
 			char **arglist = calloc(n_items, sizeof(char *));
 
 			sprintf(buf, "1+%08X", shmid);
+#ifdef WAVE_USE_GTK2
 			if(use_embedded)
 				{
 				sprintf(buf2, "%x", gtk_socket_get_id (GTK_SOCKET(xsocket[1])));
 				}
 				else
+#endif
 				{
 				sprintf(buf2, "%x", 0);
 				}
