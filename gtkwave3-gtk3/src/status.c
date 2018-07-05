@@ -123,11 +123,11 @@ else
 GtkWidget *
 create_text (void)
 {
-GtkWidget *table;
+GtkWidget *sw;
 GtkTextIter iter;
 
 /* Create a table to hold the text widget and scrollbars */
-table = gtk_table_new (1, 16, FALSE);
+sw = gtk_scrolled_window_new (NULL, NULL);
 
 /* Put a text widget in the upper left hand corner. Note the use of
 * GTK_SHRINK in the y direction */
@@ -139,24 +139,15 @@ GLOBALS->bold_tag_status_c_3 = gtk_text_buffer_create_tag (gtk_text_view_get_buf
 gtk_text_buffer_get_end_iter (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), &iter);
 gtk_text_buffer_create_mark (gtk_text_view_get_buffer(GTK_TEXT_VIEW (GLOBALS->text_status_c_2)), "end", &iter, FALSE);
 
-gtk_table_attach (GTK_TABLE (table), GLOBALS->text_status_c_2, 0, 14, 0, 1,
-		      	GTK_FILL | GTK_EXPAND,
-		      	GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
+gtk_container_add (GTK_CONTAINER (sw),
+                   GLOBALS->text_status_c_2);
 gtk_widget_set_size_request(GTK_WIDGET(GLOBALS->text_status_c_2), 100, 50);
 gtk_widget_show (GLOBALS->text_status_c_2);
-
-/* And a VScrollbar in the upper right */
-{
-GLOBALS->vscrollbar_status_c_2 = gtk_vscrollbar_new (YYY_gtk_text_view_get_vadjustment(YYY_GTK_TEXT_VIEW (GLOBALS->text_status_c_2)));
-}
-gtk_table_attach (GTK_TABLE (table), GLOBALS->vscrollbar_status_c_2, 15, 16, 0, 1,
-			GTK_FILL, GTK_FILL | GTK_SHRINK | GTK_EXPAND, 0, 0);
-gtk_widget_show (GLOBALS->vscrollbar_status_c_2);
 
 /* Add a handler to put a message in the text widget when it is realized */
 g_signal_connect (XXX_GTK_OBJECT (GLOBALS->text_status_c_2), "realize", G_CALLBACK (realize_text), NULL);
 
 gtk_tooltips_set_tip_2(GLOBALS->text_status_c_2, "Status Window");
-return(table);
+return(sw);
 }
 
