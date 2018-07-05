@@ -887,7 +887,6 @@ GdkPixbuf *wave_splash_pixbuf;
  * status.c
  */
 GtkWidget *text_status_c_2; /* from status.c 426 */
-GtkWidget *vscrollbar_status_c_2; /* from status.c 427 */
 GtkTextIter iter_status_c_3; /* from status.c 428 */
 GtkTextTag *bold_tag_status_c_3; /* from status.c 429 */
 

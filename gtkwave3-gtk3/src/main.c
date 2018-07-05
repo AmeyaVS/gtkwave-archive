@@ -590,7 +590,6 @@ if(!GLOBALS)
 
 	/* status.c */
 	GLOBALS->text_status_c_2 = old_g->text_status_c_2;
-	GLOBALS->vscrollbar_status_c_2 = old_g->vscrollbar_status_c_2;
 	GLOBALS->iter_status_c_3 = old_g->iter_status_c_3;
 	GLOBALS->bold_tag_status_c_3 = old_g->bold_tag_status_c_3;
 

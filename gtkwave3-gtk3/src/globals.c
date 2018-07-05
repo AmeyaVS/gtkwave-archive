@@ -873,7 +873,6 @@ NULL, /* wave_splash_pixbuf */
  * status.c
  */
 NULL, /* text_status_c_2 398 */
-NULL, /* vscrollbar_status_c_2 399 */
 {NULL, NULL, 0, 0, 0, 0, 0, 0, NULL, NULL, 0, 0, 0, NULL}, /* iter_status_c_3 400 */
 NULL, /* bold_tag_status_c_3 401 */
 
