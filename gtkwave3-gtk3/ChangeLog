@@ -1659,4 +1659,4 @@
 		Fix scrolling on help window by adding scroll to end mark.
                 Fix scrolling on status	window when use_toolbutton_interface
                 rc var is set to FALSE by adding scroll to end mark.
-		Fix status window so it does not grow in the y direction.
+		GTK3: Fix status window so it does not grow in the y direction.

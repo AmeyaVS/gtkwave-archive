@@ -154,10 +154,10 @@ normalize all xxx_ function names created from gtk1/2 -> gtk2/3 conversion to XX
 gtk_tree_view_[g|s]et_[v|h]adjustment -> gtk_scrollable_[g|s]et_[v|h]adjustment for gtk3
 gtk_text_view_get_vadjustment -> gtk_scrollable_get_vadjustment
 
-19:
+19 changes:
 fixed overwide x-size misallocation in pattern search window.  seems to be a problem with hbox allocations.
 
-20:
+20 changes:
 fixed internal in gtk3 toolkit: (gtkwave:9908): Gtk-WARNING **: Allocating size to GtkFrame 0x1820c00 without calling gtk_widget_get_preferred_width/height().  gtk_container_set_resize_mode() is needed in create_wavewindow() because for some reason the vertical scrollbar attached to the table does not propagate resize allocations up to the frame.
 internal in gtk3 toolkit using + option (++ works): (twinwave:9756): Gtk-CRITICAL **: gtk_widget_destroy: assertion 'GTK_IS_WIDGET (widget)' failed (as of 3.22.26, this problem seems to be gone)
 
