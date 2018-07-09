@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2012.
+ * Copyright (c) Tony Bybell 1999-2018.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -523,7 +523,9 @@ void create_toolbar(GtkWidget *table)
     GtkWidget *find_entry;
     GtkWidget *tb;
     GtkWidget *stock;
+#if !GTK_CHECK_VERSION(3,0,0)
     GtkStyle  *style;
+#endif
     GtkWidget *hbox;
     int tb_pos = 0;
 
@@ -546,9 +548,11 @@ void create_toolbar(GtkWidget *table)
     gtk_box_pack_start (GTK_BOX (hbox), find_entry, FALSE, FALSE, 0);
 
     tb = gtk_toolbar_new();
+#if !GTK_CHECK_VERSION(3,0,0)
     style = gtk_widget_get_style(tb);
     style->xthickness = style->ythickness = 0;
     gtk_widget_set_style (tb, style);
+#endif
     gtk_widget_show (tb);
 
     gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
@@ -560,9 +564,11 @@ void create_toolbar(GtkWidget *table)
                                                  NULL,
                                                  tb_pos++);
 
+#if !GTK_CHECK_VERSION(3,0,0)
     style = gtk_widget_get_style(stock);
     style->xthickness = style->ythickness = 0;
     gtk_widget_set_style (stock, style);
+#endif
     gtk_widget_show(stock);
 
     stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -573,9 +579,11 @@ void create_toolbar(GtkWidget *table)
                                                  NULL,
                                                  tb_pos); /* scan-build: removed ++ on tb_pos as never read */
 
+#if !GTK_CHECK_VERSION(3,0,0)
     style = gtk_widget_get_style(stock);
     style->xthickness = style->ythickness = 0;
     gtk_widget_set_style (stock, style);
+#endif
     gtk_widget_show(stock);
 
     gtk_box_pack_start (GTK_BOX (hbox), tb, FALSE, FALSE, 0);
@@ -1523,7 +1531,9 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	GtkWidget *tbox;
 	GtkWidget *l1;
 	GtkWidget *image;
+#if !GTK_CHECK_VERSION(3,0,0)
 	GtkRcStyle *rcstyle;
+#endif
 
 	window = gtk_hpaned_new();
 	tbox = gtk_hbox_new(FALSE, 0);
@@ -1539,10 +1549,12 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         gtk_button_set_focus_on_click (GTK_BUTTON (close_button), FALSE);
 
         /* make it as small as possible */
+#if !GTK_CHECK_VERSION(3,0,0)
         rcstyle = gtk_rc_style_new ();
         rcstyle->xthickness = rcstyle->ythickness = 0;
         gtk_widget_modify_style (close_button, rcstyle);
         g_object_unref(rcstyle); /* was gtk_rc_style_unref (rcstyle) */
+#endif
 
         image = gtk_image_new_from_stock (GTK_STOCK_CLOSE,
                                           GTK_ICON_SIZE_MENU);
