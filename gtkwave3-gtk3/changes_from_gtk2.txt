@@ -162,6 +162,9 @@ fixed internal in gtk3 toolkit: (gtkwave:9908): Gtk-WARNING **: Allocating size 
 ifdef'd out gtk_widget_get_style/gtk_widget_set_style/gtk_rc_style_new/gtk_widget_modify_style as there is no apparent effect on gtk3.
 twinwave: gtk_vbox_new -> gtk_box_new + gtk_box_set_homogeneous
 twinwave: gtk_vpaned_new -> gtk_paned_new
+rtlbrowse: gtk_vbox_new -> gtk_box_new + gtk_box_set_homogeneous
+rtlbrowse: gtk_hbox_new -> gtk_box_new + gtk_box_set_homogeneous
+rtlbrowse: gtk_hpaned_new -> gtk_paned_new
 
 ===
 

@@ -528,8 +528,12 @@ void create_toolbar(GtkWidget *table)
 #endif
     GtkWidget *hbox;
     int tb_pos = 0;
-
+#if GTK_CHECK_VERSION(3,0,0)
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
+    gtk_box_set_homogeneous (GTK_BOX(hbox), FALSE);
+#else
     hbox = gtk_hbox_new (FALSE, 1);
+#endif
     gtk_widget_show (hbox);
 
     gtk_table_attach (GTK_TABLE (table), hbox, 0, 1, 255, 256,
@@ -1535,9 +1539,14 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	GtkRcStyle *rcstyle;
 #endif
 
+#if GTK_CHECK_VERSION(3,0,0)
+	window = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+	tbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+        gtk_box_set_homogeneous (GTK_BOX(tbox), FALSE);
+#else
 	window = gtk_hpaned_new();
 	tbox = gtk_hbox_new(FALSE, 0);
-
+#endif
 	l1 = gtk_label_new(title);
 
 	/* code from gedit... */
@@ -1577,7 +1586,12 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 	                        G_CALLBACK (destroy_via_closebutton_release), NULL); /* this will destroy the tab by destroying the parent container */
 	}
 
-    vbox = gtk_vbox_new (FALSE, 0);
+#if GTK_CHECK_VERSION(3,0,0)
+    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 1);
+    gtk_box_set_homogeneous (GTK_BOX(vbox), FALSE);
+#else
+    vbox = gtk_vbox_new (FALSE, 1);
+#endif
     gtk_container_add (GTK_CONTAINER (window), vbox);
     gtk_widget_show (vbox);
 
@@ -1599,7 +1613,13 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
     gtk_widget_show (separator);
 
+#if GTK_CHECK_VERSION(3,0,0)
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
+    gtk_box_set_homogeneous (GTK_BOX(hbox), FALSE);
+#else
     hbox = gtk_hbox_new (FALSE, 1);
+#endif
+
     gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
     gtk_widget_show (hbox);
 

@@ -158,7 +158,11 @@ void treebox(char *title, GCallback func, GtkWidget *old_window)
     table = gtk_table_new (256, 1, FALSE);
     gtk_widget_show (table);
 
+#if GTK_CHECK_VERSION(3,0,0)
+    frame2 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+#else
     frame2 = gtk_hpaned_new();
+#endif
     gtk_widget_show(frame2);
 
     notebook = gtk_notebook_new();
