@@ -137,12 +137,21 @@ gtk_widget_show (xsocket[1]);
 
 g_signal_connect(XXX_GTK_OBJECT(xsocket[0]), "plug-removed", G_CALLBACK(plug_removed), NULL);
 
+#if GTK_CHECK_VERSION(3,0,0)
+main_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+gtk_box_set_homogeneous (GTK_BOX(main_vbox), FALSE);
+#else
 main_vbox = gtk_vbox_new(FALSE, 5);
+#endif
 gtk_container_set_border_width(GTK_CONTAINER(main_vbox), 1);
 gtk_container_add(GTK_CONTAINER(mainwindow), main_vbox);
 gtk_widget_show(main_vbox);
 
+#if GTK_CHECK_VERSION(3,0,0)
+vpan = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
+#else
 vpan = gtk_vpaned_new ();
+#endif
 gtk_widget_show (vpan);
 gtk_box_pack_start (GTK_BOX (main_vbox), vpan, TRUE, TRUE, 1);
 
