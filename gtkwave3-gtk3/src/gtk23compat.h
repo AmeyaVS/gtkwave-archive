@@ -40,6 +40,9 @@
 GtkWidget *XXX_gtk_hbox_new (gboolean homogeneous, gint spacing);
 GtkWidget *XXX_gtk_vbox_new (gboolean homogeneous, gint spacing);
 
+#define YYY_gtk_hpaned_new(a) gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
+#define YYY_gtk_vpaned_new(a) gtk_paned_new(GTK_ORIENTATION_VERTICAL)
+
 #else
 
 #define YYY_GTK_TREE_VIEW GTK_TREE_VIEW
@@ -53,6 +56,9 @@ GtkWidget *XXX_gtk_vbox_new (gboolean homogeneous, gint spacing);
 
 #define XXX_gtk_hbox_new(a, b) gtk_hbox_new((a), (b))
 #define XXX_gtk_vbox_new(a, b) gtk_vbox_new((a), (b))
+
+#define YYY_gtk_hpaned_new(a) gtk_hpaned_new()
+#define YYY_gtk_vpaned_new(a) gtk_vpaned_new()
 
 #endif
 

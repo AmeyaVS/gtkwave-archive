@@ -1305,7 +1305,7 @@ do_tooltips:
     GLOBALS->treesearch_gtk2_window_vbox = vbox = XXX_gtk_vbox_new (FALSE, 1);
     gtk_widget_show (vbox);
 
-    vpan = gtk_vpaned_new ();
+    vpan = YYY_gtk_vpaned_new (0);
     gtk_widget_show (vpan);
 
 #if GTK_CHECK_VERSION(3,0,0)
@@ -1546,7 +1546,7 @@ GtkWidget* treeboxframe(char *title, GCallback func)
     vbox = XXX_gtk_vbox_new (FALSE, 1);
     gtk_widget_show (vbox);
 
-    vpan = gtk_vpaned_new (); /* GLOBALS->sst_vpaned is to be used to clone position over during reload */
+    vpan = YYY_gtk_vpaned_new (0); /* GLOBALS->sst_vpaned is to be used to clone position over during reload */
     GLOBALS->sst_vpaned = (GtkPaned *)vpan;
     if(GLOBALS->vpanedwindow_size_cache)
 	{

@@ -167,6 +167,8 @@ rtlbrowse: gtk_hbox_new -> gtk_box_new + gtk_box_set_homogeneous
 rtlbrowse: gtk_hpaned_new -> gtk_paned_new
 ls -1 | awk '{print "cat "$0" | sed s/gtk_hbox_new/XXX_gtk_hbox_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
 ls -1 | awk '{print "cat "$0" | sed s/gtk_vbox_new/XXX_gtk_vbox_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
+gtkwave: gtk_vpaned_new -> YYY_gtk_vpaned_new
+gtkwave: gtk_hpaned_new -> YYY_gtk_hpaned_new
 
 ===
 

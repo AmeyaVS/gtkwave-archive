@@ -2340,7 +2340,7 @@ gtk_widget_show(GLOBALS->signalwindow);
 
 if((!GLOBALS->hide_sst)&&(GLOBALS->loaded_file_type != MISSING_FILE))
 	{
-	GLOBALS->toppanedwindow = gtk_hpaned_new();
+	GLOBALS->toppanedwindow = YYY_gtk_hpaned_new(0);
 	GLOBALS->sstpane = treeboxframe("SST", G_CALLBACK(mkmenu_treesearch_cleanup));
 
 	GLOBALS->expanderwindow = gtk_expander_new_with_mnemonic("_SST");
@@ -2354,7 +2354,7 @@ if((!GLOBALS->hide_sst)&&(GLOBALS->loaded_file_type != MISSING_FILE))
 	gtk_widget_show(GLOBALS->expanderwindow);
 	}
 
-GLOBALS->panedwindow = panedwindow = gtk_hpaned_new();
+GLOBALS->panedwindow = panedwindow = YYY_gtk_hpaned_new(0);
 if(GLOBALS->panedwindow_size_cache)
 	{
 	gtk_paned_set_position(GTK_PANED(GLOBALS->panedwindow), GLOBALS->panedwindow_size_cache);
