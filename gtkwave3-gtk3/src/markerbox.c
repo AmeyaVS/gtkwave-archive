@@ -349,10 +349,10 @@ void markerbox(char *title, GCallback func)
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_markerbox_c_4), title);
     gtkwave_signal_connect(XXX_GTK_OBJECT (GLOBALS->window_markerbox_c_4), "delete_event",(GCallback) destroy_callback, NULL);
 
-    vbox = gtk_vbox_new (FALSE, 0);
+    vbox = XXX_gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
 
-    vbox_g = gtk_vbox_new (FALSE, 0);
+    vbox_g = XXX_gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox_g);
 
     table = gtk_table_new (256, 1, FALSE);
@@ -392,7 +392,7 @@ void markerbox(char *title, GCallback func)
     gtk_widget_show (label);
     gtk_box_pack_start (GTK_BOX (vbox_g), label, TRUE, TRUE, 0);
 
-    hbox = gtk_hbox_new(FALSE, 0);
+    hbox = XXX_gtk_hbox_new(FALSE, 0);
     gtk_widget_show (hbox);
 
     GLOBALS->entries_markerbox_c_1[i]=entry = X_gtk_entry_new_with_max_length (48);
@@ -426,7 +426,7 @@ void markerbox(char *title, GCallback func)
 
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_win), vbox_g);
 
-    hbox = gtk_hbox_new (FALSE, 1);
+    hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox);
 
     gtk_table_attach (GTK_TABLE (table), hbox, 0, 1, 255, 256,

@@ -119,7 +119,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window1_search_c_2), title);
     gtkwave_signal_connect(XXX_GTK_OBJECT (GLOBALS->window1_search_c_2), "delete_event",(GCallback) destroy_callback_e, NULL);
 
-    vbox = gtk_vbox_new (FALSE, 0);
+    vbox = XXX_gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (GLOBALS->window1_search_c_2), vbox);
     gtk_widget_show (vbox);
 
@@ -130,7 +130,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     gtk_box_pack_start (GTK_BOX (vbox), GLOBALS->entry_a_search_c_1, TRUE, TRUE, 0);
     gtk_widget_show (GLOBALS->entry_a_search_c_1);
 
-    hbox = gtk_hbox_new (FALSE, 1);
+    hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
     gtk_widget_show (hbox);
 
@@ -953,7 +953,7 @@ void searchbox(char *title, GCallback func)
     table = gtk_table_new (256, 1, FALSE);
     gtk_widget_show (table);
 
-    vbox1 = gtk_vbox_new (FALSE, 0);
+    vbox1 = XXX_gtk_vbox_new (FALSE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (vbox1), 3);
     gtk_widget_show (vbox1);
     frame1 = gtk_frame_new (NULL);
@@ -1041,7 +1041,7 @@ void searchbox(char *title, GCallback func)
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
 
-    hbox0 = gtk_hbox_new (FALSE, 1);
+    hbox0 = XXX_gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox0);
 
     button6 = gtk_button_new_with_label (" Select All ");
@@ -1055,7 +1055,7 @@ void searchbox(char *title, GCallback func)
 
 
 
-    small_hbox = gtk_hbox_new (TRUE, 0);
+    small_hbox = XXX_gtk_hbox_new (TRUE, 0);
     gtk_widget_show (small_hbox);
 
 GtkWidget *combo_box = gtk_combo_box_text_new ();
@@ -1106,7 +1106,7 @@ g_signal_connect (combo_box, "changed", G_CALLBACK (on_changed), NULL);
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
 
-    hbox = gtk_hbox_new (FALSE, 1);
+    hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox);
 
     button1 = gtk_button_new_with_label ("Append");

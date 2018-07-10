@@ -345,7 +345,7 @@ void ptrans_searchbox(char *title)
     table = gtk_table_new (256, 1, FALSE);
     gtk_widget_show (table);
 
-    vbox1 = gtk_vbox_new (FALSE, 0);
+    vbox1 = XXX_gtk_vbox_new (FALSE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (vbox1), 3);
     gtk_widget_show (vbox1);
 
@@ -406,7 +406,7 @@ void ptrans_searchbox(char *title)
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
 
-    hbox0 = gtk_hbox_new (FALSE, 1);
+    hbox0 = XXX_gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox0);
 
     button6 = gtk_button_new_with_label (" Add Proc Filter to List ");
@@ -427,7 +427,7 @@ void ptrans_searchbox(char *title)
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
 
-    hbox = gtk_hbox_new (FALSE, 1);
+    hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox);
 
     button1 = gtk_button_new_with_label (" OK ");

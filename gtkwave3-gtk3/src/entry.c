@@ -133,7 +133,7 @@ return;
     gtkwave_signal_connect(XXX_GTK_OBJECT (GLOBALS->window_entry_c_1), "delete_event",(GCallback) destroy_callback, NULL);
     gtk_window_set_resizable(GTK_WINDOW(GLOBALS->window_entry_c_1), FALSE);
 
-    vbox = gtk_vbox_new (FALSE, 0);
+    vbox = XXX_gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (GLOBALS->window_entry_c_1), vbox);
     gtk_widget_show (vbox);
 
@@ -141,7 +141,7 @@ return;
       {
 	GtkWidget *label, *cbox;
 
-	cbox = gtk_hbox_new (FALSE, 1);
+	cbox = XXX_gtk_hbox_new (FALSE, 1);
 	gtk_box_pack_start (GTK_BOX (vbox), cbox, FALSE, FALSE, 0);
 	gtk_widget_show (cbox);
 
@@ -159,7 +159,7 @@ return;
     gtk_box_pack_start (GTK_BOX (vbox), GLOBALS->entry_entry_c_1, FALSE, FALSE, 0);
     gtk_widget_show (GLOBALS->entry_entry_c_1);
 
-    hbox = gtk_hbox_new (FALSE, 1);
+    hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
     gtk_widget_show (hbox);
 

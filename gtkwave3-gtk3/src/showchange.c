@@ -143,7 +143,7 @@ void showchange(char *title, Trptr t, GCallback func)
   gtk_container_set_border_width (GTK_CONTAINER (GLOBALS->window_showchange_c_8), 0);
 
 
-  main_vbox = gtk_vbox_new (FALSE, 1);
+  main_vbox = XXX_gtk_vbox_new (FALSE, 1);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 1);
   gtk_widget_show (main_vbox);
 
@@ -161,7 +161,7 @@ void showchange(char *title, Trptr t, GCallback func)
   gtk_box_set_spacing(GTK_BOX(hbox), 5);
   gtk_widget_show (hbox);
 
-  box2 = gtk_vbox_new (FALSE, 5);
+  box2 = XXX_gtk_vbox_new (FALSE, 5);
   gtk_container_set_border_width (GTK_CONTAINER (box2), 5);
   gtk_widget_show (box2);
 
@@ -208,7 +208,7 @@ void showchange(char *title, Trptr t, GCallback func)
 
 /****************************************************************************************************/
 
-  box1 = gtk_vbox_new (FALSE, 5);
+  box1 = XXX_gtk_vbox_new (FALSE, 5);
   gtk_container_set_border_width (GTK_CONTAINER (box1), 5);
   gtk_widget_show (box1);
 
@@ -251,7 +251,7 @@ void showchange(char *title, Trptr t, GCallback func)
 
 /****************************************************************************************************/
 
-  ok_hbox = gtk_hbox_new (FALSE, 1);
+  ok_hbox = XXX_gtk_hbox_new (FALSE, 1);
   gtk_container_set_border_width (GTK_CONTAINER (ok_hbox), 1);
   gtk_widget_show (ok_hbox);
 

@@ -645,11 +645,11 @@ if(GLOBALS->tims.baseline<0)
 
 if(!GLOBALS->use_toolbutton_interface)
 	{
-	mainbox=gtk_vbox_new(FALSE, 0);
+	mainbox=XXX_gtk_vbox_new(FALSE, 0);
 	}
 	else
 	{
-	mainbox=gtk_hbox_new(FALSE, 0);
+	mainbox=XXX_gtk_hbox_new(FALSE, 0);
 	}
 
 gtk_widget_show(mainbox);

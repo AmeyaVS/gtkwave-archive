@@ -389,18 +389,18 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
     gtkwave_signal_connect(XXX_GTK_OBJECT (GLOBALS->strace_ctx->window_strace_c_10), "delete_event",(GCallback) destroy_callback, NULL);
     WV_STRACE_CURWIN(GLOBALS->strace_ctx->window_strace_c_10);
 
-    vbox = gtk_vbox_new (FALSE, 0);
+    vbox = XXX_gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (GLOBALS->strace_ctx->window_strace_c_10), vbox);
     gtk_widget_show (vbox);
 
-    vbox_g = gtk_vbox_new (FALSE, 0);
+    vbox_g = XXX_gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox_g);
 
     frame = gtk_frame_new (NULL);
     gtk_container_set_border_width (GTK_CONTAINER (frame), 3);
     gtk_widget_show(frame);
 
-    small_hbox = gtk_hbox_new (TRUE, 0);
+    small_hbox = XXX_gtk_hbox_new (TRUE, 0);
     gtk_widget_show (small_hbox);
 
     label=gtk_label_new("Logical Operation");
@@ -461,7 +461,7 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
     	gtk_box_pack_start (GTK_BOX (vbox_g), separator, FALSE, FALSE, 0);
 	}
 
-    small_hbox = gtk_hbox_new (TRUE, 0);
+    small_hbox = XXX_gtk_hbox_new (TRUE, 0);
     gtk_widget_show (small_hbox);
 
     label=gtk_label_new(t->name);
@@ -499,23 +499,23 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
 	GtkWidget *mark_count_hbox_start,  *mark_count_hbox_end;
 	GtkWidget *count_vbox_left, *count_vbox_right, *count_vbox, *count_hbox;
 
-	count_hbox=gtk_hbox_new (TRUE, 0);
+	count_hbox=XXX_gtk_hbox_new (TRUE, 0);
 	gtk_widget_show (count_hbox);
 	gtk_box_pack_start (GTK_BOX(vbox),count_hbox,FALSE,FALSE,0);
 
 		/* add a vertical box to display the mark count GUI elements */
-	count_vbox_left=gtk_vbox_new (TRUE, 0);
+	count_vbox_left=XXX_gtk_vbox_new (TRUE, 0);
 	gtk_widget_show (count_vbox_left);
 	gtk_box_pack_start (GTK_BOX(count_hbox),count_vbox_left,FALSE,FALSE,0);
-	count_vbox=gtk_vbox_new (TRUE, 0);
+	count_vbox=XXX_gtk_vbox_new (TRUE, 0);
 	gtk_widget_show (count_vbox);
 	gtk_box_pack_start (GTK_BOX(count_hbox),count_vbox,FALSE,FALSE,0);
-	count_vbox_right=gtk_vbox_new (TRUE, 0);
+	count_vbox_right=XXX_gtk_vbox_new (TRUE, 0);
 	gtk_widget_show (count_vbox_right);
 	gtk_box_pack_start (GTK_BOX(count_hbox),count_vbox_right,FALSE,FALSE,0);
 
 		/* add mark start GUI element */
-	mark_count_hbox_start=gtk_hbox_new (TRUE, 0);
+	mark_count_hbox_start=XXX_gtk_hbox_new (TRUE, 0);
 	gtk_widget_show (mark_count_hbox_start);
 	gtk_box_pack_start (GTK_BOX(count_vbox),mark_count_hbox_start,FALSE,FALSE,0);
 #if GTK_CHECK_VERSION(3,0,0)
@@ -538,7 +538,7 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
 	gtk_box_pack_start (GTK_BOX (mark_count_hbox_start), combo_box, TRUE, FALSE, 0);
 
 		/* add mark end GUI element */
-	mark_count_hbox_end=gtk_hbox_new (TRUE, 0);
+	mark_count_hbox_end=XXX_gtk_hbox_new (TRUE, 0);
 	gtk_widget_show (mark_count_hbox_end);
 	gtk_box_pack_start (GTK_BOX(count_vbox),mark_count_hbox_end,FALSE,FALSE,0);
 #if GTK_CHECK_VERSION(3,0,0)
@@ -567,7 +567,7 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
 	update_mark_count_label ();
 	} while (0);
 
-    hbox = gtk_hbox_new (FALSE, 1);
+    hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
     gtk_widget_show (hbox);
 

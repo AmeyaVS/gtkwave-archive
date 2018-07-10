@@ -37,6 +37,9 @@
 #define YYY_GTK_TEXT_VIEW GTK_SCROLLABLE
 #define YYY_gtk_text_view_get_vadjustment gtk_scrollable_get_vadjustment
 
+GtkWidget *XXX_gtk_hbox_new (gboolean homogeneous, gint spacing);
+GtkWidget *XXX_gtk_vbox_new (gboolean homogeneous, gint spacing);
+
 #else
 
 #define YYY_GTK_TREE_VIEW GTK_TREE_VIEW
@@ -47,6 +50,9 @@
 
 #define YYY_GTK_TEXT_VIEW GTK_TEXT_VIEW
 #define YYY_gtk_text_view_get_vadjustment gtk_text_view_get_vadjustment
+
+#define XXX_gtk_hbox_new(a, b) gtk_hbox_new((a), (b))
+#define XXX_gtk_vbox_new(a, b) gtk_vbox_new((a), (b))
 
 #endif
 
