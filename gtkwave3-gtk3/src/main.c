@@ -386,7 +386,11 @@ ucase_ext[i] = 0;
 #define RPC_GETOPT3
 #endif
 
+#ifdef WAVE_ALLOW_SLIDER_ZOOM
 #define SLIDEZOOM_OPT "  -z, --slider-zoom          enable horizontal slider stretch zoom\n"
+#else
+#define SLIDEZOOM_OPT
+#endif
 
 printf(
 "Usage: %s [OPTION]... [DUMPFILE] [SAVEFILE] [RCFILE]\n\n"
