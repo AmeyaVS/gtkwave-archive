@@ -24,6 +24,9 @@
 
 #define WAVE_GTK_SFUNCAST(x) ((void (*)(GtkWidget *, gpointer))(x))
 
+/* doesn't work in gtk 2 or 3 */
+#undef WAVE_ALLOW_SLIDER_ZOOM
+
 /* gtk3->4 deprecated */
 
 #if GTK_CHECK_VERSION(3,0,0)
@@ -73,4 +76,3 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #endif
 
 #endif
-

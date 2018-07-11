@@ -131,6 +131,7 @@ draw_slider_p(style, window, state_type, shadow_type, area, widget, detail, x, y
 }
 #endif
 
+#ifdef WAVE_ALLOW_SLIDER_ZOOM
 static gint slider_bpr(GtkWidget *widget, GdkEventButton *event)
 {
 (void)widget;
@@ -229,7 +230,7 @@ if(GLOBALS->str_wid_state == -1)
 
 return(FALSE);
 }
-
+#endif
 
 /******************************************************************/
 
@@ -1861,7 +1862,7 @@ GLOBALS->hscroll_wavewindow_c_2=YYY_gtk_hscrollbar_new(hadj);
 /* GTK_WIDGET_SET_FLAGS(GLOBALS->hscroll_wavewindow_c_2, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->hscroll_wavewindow_c_2);
 
-
+#ifdef WAVE_ALLOW_SLIDER_ZOOM
 if(GLOBALS->enable_slider_zoom)
 	{
 	GValue gvalue;
@@ -1881,7 +1882,7 @@ if(GLOBALS->enable_slider_zoom)
 	gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->hscroll_wavewindow_c_2), "button_release_event",G_CALLBACK(slider_brr), NULL);
 	gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->hscroll_wavewindow_c_2), "motion_notify_event",G_CALLBACK(slider_mnr), NULL);
 	}
-
+#endif
 
 gtk_table_attach (GTK_TABLE (table), GLOBALS->hscroll_wavewindow_c_2, 0, 9, 9, 10,
                         GTK_FILL,

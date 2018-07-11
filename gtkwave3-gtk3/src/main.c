@@ -747,7 +747,9 @@ if(!GLOBALS)
 	GLOBALS->use_toolbutton_interface = old_g->use_toolbutton_interface;
 
 	GLOBALS->use_scrollwheel_as_y = old_g->use_scrollwheel_as_y;
+#ifdef WAVE_ALLOW_SLIDER_ZOOM
 	GLOBALS->enable_slider_zoom = old_g->enable_slider_zoom;
+#endif
 
 	GLOBALS->missing_file_toolbar = old_g->missing_file_toolbar;
 
@@ -1223,7 +1225,12 @@ while (1)
 			break;
 
 		case 'z':
+#ifdef WAVE_ALLOW_SLIDER_ZOOM
 			GLOBALS->enable_slider_zoom = 1;
+#else
+		        fprintf(stderr,
+                		"GTKWAVE | --slider-zoom option does not work with this version of GTK, ignoring!\n");
+#endif
 			break;
 
                 case '?':

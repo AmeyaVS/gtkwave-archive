@@ -1660,3 +1660,5 @@
                 Fix scrolling on status	window when use_toolbutton_interface
                 rc var is set to FALSE by adding scroll to end mark.
 		GTK3: Fix status window so it does not grow in the y direction.
+		Ifdef out code for --slider-zoom as it does not function with
+		GTK toolkit versions > 1.x series.
