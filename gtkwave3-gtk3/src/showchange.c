@@ -155,9 +155,12 @@ void showchange(char *title, Trptr t, GCallback func)
   gtk_box_pack_start (GTK_BOX (main_vbox), separator, FALSE, TRUE, 0);
   gtk_widget_show (separator);
 
-
+#if GTK_CHECK_VERSION(3,0,0)
+  hbox = XXX_gtk_hbox_new(FALSE, 5);
+#else
   hbox = gtk_hbutton_box_new ();
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbox), GTK_BUTTONBOX_END);
+#endif
   gtk_box_set_spacing(GTK_BOX(hbox), 5);
   gtk_widget_show (hbox);
 
@@ -243,7 +246,11 @@ void showchange(char *title, Trptr t, GCallback func)
   gtk_widget_show (GLOBALS->toggle4_showchange_c_1);
   gtkwave_signal_connect (XXX_GTK_OBJECT (GLOBALS->toggle4_showchange_c_1), "toggled", G_CALLBACK(toggle4_callback), NULL);
 
+#if GTK_CHECK_VERSION(3,0,0)
+  gtk_box_pack_start(GTK_BOX(main_vbox), hbox, TRUE, FALSE, 0);
+#else
   gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
+#endif
 
   separator = XXX_gtk_hseparator_new ();
   gtk_box_pack_start (GTK_BOX (main_vbox), separator, FALSE, TRUE, 0);
