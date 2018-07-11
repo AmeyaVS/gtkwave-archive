@@ -1965,9 +1965,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(menu_cut_traces),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1977,9 +1979,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(menu_copy_traces),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -1989,9 +1993,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(menu_paste_traces),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
@@ -2003,9 +2009,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_zoom_fit),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -2015,9 +2023,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_zoom_in),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -2027,9 +2037,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_zoom_out),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -2039,9 +2051,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_zoom_undo),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -2051,9 +2065,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_zoom_left),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -2063,9 +2079,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_zoom_right),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
@@ -2077,9 +2095,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_left_edge),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
@@ -2089,9 +2109,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(service_right_edge),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 		style = gtk_widget_get_style(stock);
 		style->xthickness = style->ythickness = 0;
 		gtk_widget_set_style (stock, style);
+#endif
 		gtk_widget_show(stock);
 
 		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
@@ -2115,9 +2137,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 						 G_CALLBACK(menu_reload_waveform_marshal),
 						 NULL,
 						 tb_pos++);
+#if !GTK_CHECK_VERSION(3,0,0)
 			style = gtk_widget_get_style(stock);
 			style->xthickness = style->ythickness = 0;
 			gtk_widget_set_style (stock, style);
+#endif
 			gtk_widget_show(stock);
 
 			X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
