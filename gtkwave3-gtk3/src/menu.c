@@ -8189,8 +8189,12 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
       event_time = gtk_get_current_event_time ();
     }
 
+#if GTK_CHECK_VERSION(3,0,0)
+  gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
+#else
   gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
                   button, event_time);
+#endif
 }
 
 /***************************/
@@ -8252,8 +8256,12 @@ void do_sst_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
       event_time = gtk_get_current_event_time ();
     }
 
+#if GTK_CHECK_VERSION(3,0,0)
+  gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
+#else
   gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
                   button, event_time);
+#endif
 }
 
 

@@ -169,6 +169,7 @@ ls -1 | awk '{print "cat "$0" | sed s/gtk_hbox_new/XXX_gtk_hbox_new/g >"$0".xxx 
 ls -1 | awk '{print "cat "$0" | sed s/gtk_vbox_new/XXX_gtk_vbox_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
 gtkwave: gtk_vpaned_new -> YYY_gtk_vpaned_new
 gtkwave: gtk_hpaned_new -> YYY_gtk_hpaned_new
+gtk_menu_popup -> gtk_menu_popup_at_pointer
 
 ===
 
