@@ -2502,7 +2502,12 @@ gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->notebook, 0, 16, 1, 256,
                       	GTK_FILL | GTK_EXPAND,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 gtk_widget_show(whole_table);
+
+#if GTK_CHECK_VERSION(3,0,0)
+gtk_box_pack_end(GTK_BOX(main_vbox), whole_table, TRUE, TRUE, 0); /* prevents shrinkage of signal/waves windows if no waves loaded */
+#else
 gtk_container_add (GTK_CONTAINER (main_vbox), whole_table);
+#endif
 
 if(GLOBALS->tims.marker != -1)
 	{
