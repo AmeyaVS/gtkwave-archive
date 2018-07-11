@@ -1555,7 +1555,11 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         gtk_button_set_relief (GTK_BUTTON (close_button),
                                GTK_RELIEF_NONE);
         /* don't allow focus on the close button */
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_widget_set_focus_on_click (GTK_WIDGET (close_button), FALSE);
+#else
         gtk_button_set_focus_on_click (GTK_BUTTON (close_button), FALSE);
+#endif
 
         /* make it as small as possible */
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -1565,7 +1569,7 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         g_object_unref(rcstyle); /* was gtk_rc_style_unref (rcstyle) */
 #endif
 
-        image = gtk_image_new_from_stock (GTK_STOCK_CLOSE,
+        image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, 
                                           GTK_ICON_SIZE_MENU);
         gtk_container_add (GTK_CONTAINER (close_button), image);
 	/* ...code from gedit */

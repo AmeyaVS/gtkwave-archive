@@ -171,6 +171,7 @@ gtkwave: gtk_vpaned_new -> YYY_gtk_vpaned_new
 gtkwave: gtk_hpaned_new -> YYY_gtk_hpaned_new
 gtk_hseparator_new() -> gtk_separator_new(GTK_ORIENTATION_HORIZONTAL)
 gtk_menu_popup -> gtk_menu_popup_at_pointer
+gtk_button_set_focus_on_click -> gtk_widget_set_focus_on_click
 
 ===
 
