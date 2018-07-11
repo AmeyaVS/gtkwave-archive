@@ -89,6 +89,12 @@ char *gtkwave_argv0_cached = NULL;
 
 #if GTK_CHECK_VERSION(3,0,0)
 GtkWidget *
+XXX_gtk_hseparator_new (void)
+{
+return(gtk_separator_new(GTK_ORIENTATION_HORIZONTAL));
+}
+
+GtkWidget *
 XXX_gtk_hbox_new(gboolean homogeneous, gint spacing)
 {
 GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, spacing);

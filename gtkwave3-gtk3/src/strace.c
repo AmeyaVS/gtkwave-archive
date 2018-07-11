@@ -460,7 +460,7 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
 
     if(t!=GLOBALS->traces.first)
 	{
-    	separator = gtk_hseparator_new ();
+    	separator = XXX_gtk_hseparator_new ();
     	gtk_widget_show (separator);
     	gtk_box_pack_start (GTK_BOX (vbox_g), separator, FALSE, FALSE, 0);
 	}

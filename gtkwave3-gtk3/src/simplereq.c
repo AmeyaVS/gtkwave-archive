@@ -123,7 +123,7 @@ void simplereqbox(char *title, int width, char *default_text,
     gtk_container_add (GTK_CONTAINER (vbox), pixmapwid1);
 #endif
 
-    separator = gtk_hseparator_new ();
+    separator = XXX_gtk_hseparator_new ();
     gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
     gtk_widget_show (separator);
 

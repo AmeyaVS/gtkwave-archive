@@ -151,7 +151,7 @@ void showchange(char *title, Trptr t, GCallback func)
   gtk_box_pack_start (GTK_BOX (main_vbox), label, FALSE, TRUE, 0);
   gtk_widget_show (label);
 
-  separator = gtk_hseparator_new ();
+  separator = XXX_gtk_hseparator_new ();
   gtk_box_pack_start (GTK_BOX (main_vbox), separator, FALSE, TRUE, 0);
   gtk_widget_show (separator);
 
@@ -245,7 +245,7 @@ void showchange(char *title, Trptr t, GCallback func)
 
   gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
 
-  separator = gtk_hseparator_new ();
+  separator = XXX_gtk_hseparator_new ();
   gtk_box_pack_start (GTK_BOX (main_vbox), separator, FALSE, TRUE, 0);
   gtk_widget_show (separator);
 
