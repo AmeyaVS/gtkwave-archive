@@ -1648,7 +1648,11 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
                                G_CALLBACK(ok_callback),
                                ctx);
     gtk_widget_show (button1);
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_box_pack_start(GTK_BOX(hbox), button1, TRUE, TRUE, 0);
+#else
     gtk_container_add (GTK_CONTAINER (hbox), button1);
+#endif
     gtk_widget_set_can_default (button1, TRUE);
     g_signal_connect_swapped (XXX_GTK_OBJECT (button1),
                                 "realize",
