@@ -536,9 +536,15 @@ void create_toolbar(GtkWidget *table)
 #endif
     gtk_widget_show (hbox);
 
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_grid_attach (GTK_GRID (table), hbox, 0, 255, 255, 1);
+    gtk_widget_set_hexpand (GTK_WIDGET (hbox), TRUE);
+    gtk_widget_set_vexpand (GTK_WIDGET (hbox), FALSE); /* otherwise the bottom part stretches */
+#else
     gtk_table_attach (GTK_TABLE (table), hbox, 0, 1, 255, 256,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
+#endif
 
     find_label = gtk_label_new ("Find:");
     gtk_widget_show (find_label);

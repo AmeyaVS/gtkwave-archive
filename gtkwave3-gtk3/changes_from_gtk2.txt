@@ -170,6 +170,7 @@ gtk_hseparator_new() -> gtk_separator_new(GTK_ORIENTATION_HORIZONTAL)
 gtk_menu_popup -> gtk_menu_popup_at_pointer
 gtk_button_set_focus_on_click -> gtk_widget_set_focus_on_click
 gtk_[h|v]scrollbar_new -> gtk_scrollbar_new
+rtlbrowse: gtk_table_attach -> gtk_grid_attach/gtk_widget_set_hexpand/gtk_widget_set_vexpand
 
 ===
 
