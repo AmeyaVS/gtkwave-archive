@@ -167,7 +167,11 @@ return;
     gtk_widget_set_size_request(button1, 100, -1);
     gtkwave_signal_connect(XXX_GTK_OBJECT (button1), "clicked", G_CALLBACK(enter_callback), NULL);
     gtk_widget_show (button1);
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_box_pack_start(GTK_BOX(hbox), button1, TRUE, TRUE, 0);
+#else
     gtk_container_add (GTK_CONTAINER (hbox), button1);
+#endif
     gtk_widget_set_can_default (button1, TRUE);
     gtkwave_signal_connect_object (XXX_GTK_OBJECT (button1), "realize", (GCallback) gtk_widget_grab_default, XXX_GTK_OBJECT (button1));
 
@@ -177,7 +181,11 @@ return;
     gtkwave_signal_connect(XXX_GTK_OBJECT (button2), "clicked", G_CALLBACK(destroy_callback), NULL);
     gtk_widget_set_can_default (button2, TRUE);
     gtk_widget_show (button2);
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_box_pack_end(GTK_BOX(hbox), button2, TRUE, TRUE, 0);
+#else
     gtk_container_add (GTK_CONTAINER (hbox), button2);
+#endif
 
     gtk_widget_show(GLOBALS->window_entry_c_1);
     wave_gtk_grab_add(GLOBALS->window_entry_c_1);
