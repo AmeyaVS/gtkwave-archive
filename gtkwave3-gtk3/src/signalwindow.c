@@ -1731,7 +1731,7 @@ gtk_table_attach (GTK_TABLE (table), GLOBALS->signalarea, 0, 10, 0, 9,
 
 GLOBALS->signal_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->signal_hslider), "value_changed",G_CALLBACK(service_hslider), NULL);
-GLOBALS->hscroll_signalwindow_c_1=gtk_hscrollbar_new(GTK_ADJUSTMENT(GLOBALS->signal_hslider));
+GLOBALS->hscroll_signalwindow_c_1=YYY_gtk_hscrollbar_new(GTK_ADJUSTMENT(GLOBALS->signal_hslider));
 gtk_widget_show(GLOBALS->hscroll_signalwindow_c_1);
 gtk_table_attach (GTK_TABLE (table), GLOBALS->hscroll_signalwindow_c_1, 0, 10, 9, 10,
                         GTK_FILL,

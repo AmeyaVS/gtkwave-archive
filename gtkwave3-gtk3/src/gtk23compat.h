@@ -45,6 +45,9 @@ GtkWidget *XXX_gtk_vbox_new (gboolean homogeneous, gint spacing);
 
 GtkWidget *XXX_gtk_hseparator_new (void);
 
+#define YYY_gtk_hscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, a)
+#define YYY_gtk_vscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, a)
+
 #else
 
 #define YYY_GTK_TREE_VIEW GTK_TREE_VIEW
@@ -63,6 +66,9 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define YYY_gtk_vpaned_new(a) gtk_vpaned_new()
 
 #define XXX_gtk_hseparator_new gtk_hseparator_new
+
+#define YYY_gtk_hscrollbar_new(a) gtk_hscrollbar_new(a)
+#define YYY_gtk_vscrollbar_new(a) gtk_vscrollbar_new(a)
 
 #endif
 

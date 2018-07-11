@@ -160,18 +160,16 @@ fixed overwide x-size misallocation in pattern search window.  seems to be a pro
 20 changes:
 fixed internal in gtk3 toolkit: (gtkwave:9908): Gtk-WARNING **: Allocating size to GtkFrame 0x1820c00 without calling gtk_widget_get_preferred_width/height().  gtk_container_set_resize_mode() is needed in create_wavewindow() because for some reason the vertical scrollbar attached to the table does not propagate resize allocations up to the frame.
 ifdef'd out gtk_widget_get_style/gtk_widget_set_style/gtk_rc_style_new/gtk_widget_modify_style as there is no apparent effect on gtk3.
-twinwave: gtk_vbox_new -> gtk_box_new + gtk_box_set_homogeneous
-twinwave: gtk_vpaned_new -> gtk_paned_new
-rtlbrowse: gtk_vbox_new -> gtk_box_new + gtk_box_set_homogeneous
-rtlbrowse: gtk_hbox_new -> gtk_box_new + gtk_box_set_homogeneous
+twinwave: gtk_[v|h]box_new -> gtk_box_new + gtk_box_set_homogeneous
+twinwave: gtk_[v|h]paned_new -> gtk_paned_new
 rtlbrowse: gtk_hpaned_new -> gtk_paned_new
 ls -1 | awk '{print "cat "$0" | sed s/gtk_hbox_new/XXX_gtk_hbox_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
 ls -1 | awk '{print "cat "$0" | sed s/gtk_vbox_new/XXX_gtk_vbox_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
-gtkwave: gtk_vpaned_new -> YYY_gtk_vpaned_new
-gtkwave: gtk_hpaned_new -> YYY_gtk_hpaned_new
+gtkwave: gtk_[v|h]paned_new -> YYY_gtk_[v|h]paned_new
 gtk_hseparator_new() -> gtk_separator_new(GTK_ORIENTATION_HORIZONTAL)
 gtk_menu_popup -> gtk_menu_popup_at_pointer
 gtk_button_set_focus_on_click -> gtk_widget_set_focus_on_click
+gtk_[h|v]scrollbar_new -> gtk_scrollbar_new
 
 ===
 
