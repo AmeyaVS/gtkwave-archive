@@ -1599,7 +1599,11 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
     gtk_widget_show (label);
 
+#if GTK_CHECK_VERSION(3,0,0)
+    separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+#else
     separator = gtk_hseparator_new ();
+#endif
     gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
     gtk_widget_show (separator);
 
@@ -1609,7 +1613,11 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 
     g_signal_connect(XXX_GTK_OBJECT(text), "button_press_event",G_CALLBACK(button_press_event), NULL);
 
+#if GTK_CHECK_VERSION(3,0,0)
+    separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+#else
     separator = gtk_hseparator_new ();
+#endif
     gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
     gtk_widget_show (separator);
 
