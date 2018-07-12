@@ -355,10 +355,10 @@ void markerbox(char *title, GCallback func)
     vbox_g = XXX_gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox_g);
 
-    table = gtk_table_new (256, 1, FALSE);
+    table = XXX_gtk_table_new (256, 1, FALSE);
     gtk_widget_show (table);
 
-    gtk_table_attach (GTK_TABLE (table), vbox, 0, 1, 0, 255,
+    XXX_gtk_table_attach (XXX_GTK_TABLE (table), vbox, 0, 1, 0, 255,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
@@ -434,7 +434,7 @@ void markerbox(char *title, GCallback func)
     hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox);
 
-    gtk_table_attach (GTK_TABLE (table), hbox, 0, 1, 255, 256,
+    XXX_gtk_table_attach (XXX_GTK_TABLE (table), hbox, 0, 1, 255, 256,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 

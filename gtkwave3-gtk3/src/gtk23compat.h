@@ -18,6 +18,11 @@
 #define WAVE_GTK3_MENU_SEPARATOR
 #endif
 
+#if GTK_CHECK_VERSION(3,0,0)
+/* triggers "How does the code know the size to allocate?" warnings when treeview is expanded, so currently is disabled */
+/* #define WAVE_ALLOW_GTK3_GRID */
+#endif
+
 #define WAVE_GTKIFE(a,b,c,d,e) {a,b,c,d,e,NULL}
 #define WAVE_GDK_GET_POINTER(a,b,c,bi,ci,d)  gdk_window_get_pointer(a,bi,ci,d)
 #define WAVE_GDK_GET_POINTER_COPY x=xi; y=yi;
@@ -72,6 +77,35 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 
 #define YYY_gtk_hscrollbar_new(a) gtk_hscrollbar_new(a)
 #define YYY_gtk_vscrollbar_new(a) gtk_vscrollbar_new(a)
+
+
+#endif
+
+
+#ifdef WAVE_ALLOW_GTK3_GRID
+
+GtkWidget *XXX_gtk_table_new (guint rows,
+               guint columns,
+               gboolean homogeneous);
+
+void XXX_gtk_table_attach (GtkGrid *table,
+                  GtkWidget *child,
+                  guint left_attach,
+                  guint right_attach,
+                  guint top_attach,
+                  guint bottom_attach,
+                  GtkAttachOptions xoptions,
+                  GtkAttachOptions yoptions,
+                  guint xpadding,
+                  guint ypadding);
+
+#define XXX_GTK_TABLE GTK_GRID
+
+#else
+
+#define XXX_gtk_table_new gtk_table_new
+#define XXX_gtk_table_attach gtk_table_attach
+#define XXX_GTK_TABLE GTK_TABLE
 
 #endif
 

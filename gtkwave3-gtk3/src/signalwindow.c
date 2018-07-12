@@ -1638,7 +1638,7 @@ GtkWidget *table;
 GtkWidget *frame;
 char do_focusing = 0;
 
-table = gtk_table_new(10, 10, FALSE);
+table = XXX_gtk_table_new(10, 10, FALSE);
 
 GLOBALS->signalarea=gtk_drawing_area_new();
 
@@ -1725,7 +1725,7 @@ if(GLOBALS->use_standard_clicking)
 	goto sclick;
 	}
 
-gtk_table_attach (GTK_TABLE (table), GLOBALS->signalarea, 0, 10, 0, 9,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->signalarea, 0, 10, 0, 9,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 3, 2);
 
@@ -1733,9 +1733,16 @@ GLOBALS->signal_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->signal_hslider), "value_changed",G_CALLBACK(service_hslider), NULL);
 GLOBALS->hscroll_signalwindow_c_1=YYY_gtk_hscrollbar_new(GTK_ADJUSTMENT(GLOBALS->signal_hslider));
 gtk_widget_show(GLOBALS->hscroll_signalwindow_c_1);
-gtk_table_attach (GTK_TABLE (table), GLOBALS->hscroll_signalwindow_c_1, 0, 10, 9, 10,
+
+#ifdef WAVE_ALLOW_GTK3_GRID
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->hscroll_signalwindow_c_1, 0, 10, 9, 10,
+                        0,
+                        GTK_SHRINK, 3, 4);
+#else
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->hscroll_signalwindow_c_1, 0, 10, 9, 10,
                         GTK_FILL,
                         GTK_FILL | GTK_SHRINK, 3, 4);
+#endif
 gtk_widget_show(table);
 
 frame=gtk_frame_new("Signals");

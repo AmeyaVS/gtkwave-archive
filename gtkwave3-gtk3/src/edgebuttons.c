@@ -569,7 +569,7 @@ pixmapwid2=gtk_image_new_from_pixbuf(GLOBALS->rarrow_pixbuf);
 gtk_widget_show(pixmapwid2);
 
 /* Create a table to hold the text widget and scrollbars */
-table = gtk_table_new (1, 1, FALSE);
+table = XXX_gtk_table_new (1, 1, FALSE);
 
 main_vbox = XXX_gtk_vbox_new (FALSE, 1);
 gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 1);
@@ -581,11 +581,11 @@ gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
 gtk_widget_show (frame);
 gtk_widget_show (main_vbox);
 
-table2 = gtk_table_new (2, 1, FALSE);
+table2 = XXX_gtk_table_new (2, 1, FALSE);
 
 b1 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b1), pixmapwid1);
-gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b1, 0, 1, 0, 1,
 			GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b1), "clicked", G_CALLBACK(service_left_edge), XXX_GTK_OBJECT (table2));
@@ -594,7 +594,7 @@ gtk_widget_show(b1);
 
 b2 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b2), pixmapwid2);
-gtk_table_attach (GTK_TABLE (table2), b2, 0, 1, 1, 2,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b2, 0, 1, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b2), "clicked", G_CALLBACK(service_right_edge), XXX_GTK_OBJECT (table2));

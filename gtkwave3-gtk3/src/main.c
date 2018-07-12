@@ -88,6 +88,38 @@
 char *gtkwave_argv0_cached = NULL;
 
 #if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_GRID
+GtkWidget *
+XXX_gtk_table_new (guint rows,
+               guint columns,
+               gboolean homogeneous)
+{
+GtkWidget *grid = gtk_grid_new ();
+gtk_grid_set_row_homogeneous (grid, homogeneous);
+gtk_grid_set_column_homogeneous (grid, homogeneous);
+
+return(grid);
+}
+
+void
+XXX_gtk_table_attach (GtkGrid *table,
+                  GtkWidget *child,
+                  guint left_attach,
+                  guint right_attach,
+                  guint top_attach,
+                  guint bottom_attach,
+                  GtkAttachOptions xoptions,
+                  GtkAttachOptions yoptions,
+                  guint xpadding,
+                  guint ypadding)
+{
+gtk_grid_attach (table, child, left_attach, top_attach, right_attach - left_attach, bottom_attach - top_attach);
+
+gtk_widget_set_hexpand(child, (xoptions & (GTK_EXPAND | GTK_FILL)) != 0);
+gtk_widget_set_vexpand(child, (yoptions & (GTK_EXPAND | GTK_FILL)) != 0);
+}
+#endif
+
 GtkWidget *
 XXX_gtk_hseparator_new (void)
 {
@@ -1954,7 +1986,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 				}
 			}
 
-		whole_table = gtk_table_new (256, 16, FALSE);
+		whole_table = XXX_gtk_table_new (256, 16, FALSE);
 
 		tb = gtk_toolbar_new();
 		top_table = tb;		/* export this as our top widget rather than a table */
@@ -2218,7 +2250,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 				}
 			}
 
-		top_table = gtk_table_new (1, 284, FALSE);
+		top_table = XXX_gtk_table_new (1, 284, FALSE);
 
 		if(GLOBALS->force_toolbars)
 			{
@@ -2227,23 +2259,23 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
 			}
 
-		whole_table = gtk_table_new (256, 16, FALSE);
+		whole_table = XXX_gtk_table_new (256, 16, FALSE);
 
 		text1 = create_text ();
-		gtk_table_attach (GTK_TABLE (top_table), text1, 0, 141, 0, 1,
+		XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), text1, 0, 141, 0, 1,
 		                      	GTK_FILL,
 		                      	GTK_FILL | GTK_SHRINK, 0, 0);
 		gtk_widget_set_size_request(GTK_WIDGET(text1), 200, -1);
 		gtk_widget_show (text1);
 
 		dummy1=gtk_label_new("");
-		gtk_table_attach (GTK_TABLE (top_table), dummy1, 141, 171, 0, 1,
+		XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), dummy1, 141, 171, 0, 1,
 		                      	GTK_FILL,
 		                      	GTK_SHRINK, 0, 0);
 		gtk_widget_show (dummy1);
 
 		zoombuttons = create_zoom_buttons ();
-		gtk_table_attach (GTK_TABLE (top_table), zoombuttons, 171, 173, 0, 1,
+		XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), zoombuttons, 171, 173, 0, 1,
 		                      	GTK_FILL,
 		                      	GTK_SHRINK, 0, 0);
 		gtk_widget_show (zoombuttons);
@@ -2251,49 +2283,49 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		if(!GLOBALS->use_scrollbar_only)
 			{
 			pagebuttons = create_page_buttons ();
-			gtk_table_attach (GTK_TABLE (top_table), pagebuttons, 173, 174, 0, 1,
+			XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), pagebuttons, 173, 174, 0, 1,
 			                      	GTK_FILL,
 			                      	GTK_SHRINK, 0, 0);
 			gtk_widget_show (pagebuttons);
 			fetchbuttons = create_fetch_buttons ();
-			gtk_table_attach (GTK_TABLE (top_table), fetchbuttons, 174, 175, 0, 1,
+			XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), fetchbuttons, 174, 175, 0, 1,
 			                      	GTK_FILL,
 			                      	GTK_SHRINK, 0, 0);
 			gtk_widget_show (fetchbuttons);
 			discardbuttons = create_discard_buttons ();
-			gtk_table_attach (GTK_TABLE (top_table), discardbuttons, 175, 176, 0, 1,
+			XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), discardbuttons, 175, 176, 0, 1,
 			                      	GTK_FILL,
 			                      	GTK_SHRINK, 0, 0);
 			gtk_widget_show (discardbuttons);
 
 			shiftbuttons = create_shift_buttons ();
-			gtk_table_attach (GTK_TABLE (top_table), shiftbuttons, 176, 177, 0, 1,
+			XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), shiftbuttons, 176, 177, 0, 1,
 			                      	GTK_FILL,
 			                      	GTK_SHRINK, 0, 0);
 			gtk_widget_show (shiftbuttons);
 			}
 
 		edgebuttons = create_edge_buttons ();
-		gtk_table_attach (GTK_TABLE (top_table), edgebuttons, 177, 178, 0, 1,
+		XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), edgebuttons, 177, 178, 0, 1,
 		                      	GTK_FILL,
 		                      	GTK_SHRINK, 0, 0);
 		gtk_widget_show (edgebuttons);
 
 
 		dummy2=gtk_label_new("");
-		gtk_table_attach (GTK_TABLE (top_table), dummy2, 178, 215, 0, 1,
+		XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), dummy2, 178, 215, 0, 1,
 		                      	GTK_FILL,
 		                      	GTK_SHRINK, 0, 0);
 		gtk_widget_show (dummy2);
 
 		entry = create_entry_box();
-		gtk_table_attach (GTK_TABLE (top_table), entry, 215, 216, 0, 1,
+		XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), entry, 215, 216, 0, 1,
 		                      	GTK_SHRINK,
 		                      	GTK_SHRINK, 0, 0);
 		gtk_widget_show(entry);
 
 		timebox = create_time_box();
-		gtk_table_attach (GTK_TABLE (top_table), timebox, 216, 284, 0, 1,
+		XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), timebox, 216, 284, 0, 1,
 		                      	GTK_FILL | GTK_EXPAND,
 		                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 20, 0);
 		gtk_widget_show (timebox);
@@ -2307,7 +2339,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 
 			gtk_widget_show(r_pixbuf);
 
-			table = gtk_table_new (1, 1, FALSE);
+			table = XXX_gtk_table_new (1, 1, FALSE);
 
 			main_vbox1 = XXX_gtk_vbox_new (FALSE, 1);
 			gtk_container_set_border_width (GTK_CONTAINER (main_vbox1), 1);
@@ -2319,11 +2351,11 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 			gtk_widget_show (frame);
 			gtk_widget_show (main_vbox1);
 
-			table2 = gtk_table_new (2, 1, FALSE);
+			table2 = XXX_gtk_table_new (2, 1, FALSE);
 
 			b1 = gtk_button_new();
 			gtk_container_add(GTK_CONTAINER(b1), r_pixbuf);
-			gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
+			XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b1, 0, 1, 0, 1,
 			                        GTK_FILL | GTK_EXPAND,
 			                        GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
@@ -2333,7 +2365,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 			gtk_container_add (GTK_CONTAINER (frame), table2);
 			gtk_widget_show(table2);
 
-			gtk_table_attach (GTK_TABLE (top_table), table, 284, 285, 0, 1,
+			XXX_gtk_table_attach (XXX_GTK_TABLE (top_table), table, 284, 285, 0, 1,
 		                      	0,
 		                      	0, 2, 0);
 
@@ -2458,7 +2490,7 @@ if(GLOBALS->treeopen_chain_head)
 if(!mainwindow_already_built)
 	{
 	gtk_widget_show(top_table);
-	gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
+	XXX_gtk_table_attach (XXX_GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
 	                      	GTK_FILL | GTK_EXPAND,
 	                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 
@@ -2539,7 +2571,7 @@ if(mainwindow_already_built)
 	return(0);
 	}
 
-gtk_table_attach (GTK_TABLE (whole_table), GLOBALS->notebook, 0, 16, 1, 256,
+XXX_gtk_table_attach (XXX_GTK_TABLE (whole_table), GLOBALS->notebook, 0, 16, 1, 256,
                       	GTK_FILL | GTK_EXPAND,
                       	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 gtk_widget_show(whole_table);

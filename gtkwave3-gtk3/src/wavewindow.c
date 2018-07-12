@@ -1812,10 +1812,10 @@ GtkWidget *table;
 GtkWidget *frame;
 GtkAdjustment *hadj, *vadj;
 
-table = gtk_table_new(10, 10, FALSE);
+table = XXX_gtk_table_new(10, 10, FALSE);
 
 #ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
-/* this removes the warning generated from gtk_table_attach() on GLOBALS->vscroll_wavewindow_c_1 below */
+/* this removes the warning generated from XXX_gtk_table_attach() on GLOBALS->vscroll_wavewindow_c_1 below */
 gtk_container_set_resize_mode(GTK_CONTAINER(table), GTK_RESIZE_IMMEDIATE);
 #endif
 
@@ -1843,7 +1843,7 @@ gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "button_release_event"
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "scroll_event",G_CALLBACK(scroll_event), NULL);
 gtk_widget_set_can_focus(GTK_WIDGET(GLOBALS->wavearea), TRUE);
 
-gtk_table_attach (GTK_TABLE (table), GLOBALS->wavearea, 0, 9, 0, 9,GTK_FILL | GTK_EXPAND,GTK_FILL | GTK_EXPAND, 3, 2);
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->wavearea, 0, 9, 0, 9,GTK_FILL | GTK_EXPAND,GTK_FILL | GTK_EXPAND, 3, 2);
 
 GLOBALS->wave_vslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 vadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
@@ -1851,10 +1851,15 @@ gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wave_vslider), "value_changed",G_
 GLOBALS->vscroll_wavewindow_c_1=YYY_gtk_vscrollbar_new(vadj);
 /* GTK_WIDGET_SET_FLAGS(GLOBALS->vscroll_wavewindow_c_1, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->vscroll_wavewindow_c_1);
-gtk_table_attach (GTK_TABLE (table), GLOBALS->vscroll_wavewindow_c_1, 9, 10, 0, 9,
+#ifdef WAVE_ALLOW_GTK3_GRID
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->vscroll_wavewindow_c_1, 9, 10, 0, 9,
+                        0,
+                        GTK_SHRINK, 3, 3);
+#else
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->vscroll_wavewindow_c_1, 9, 10, 0, 9,
                         GTK_FILL,
                         GTK_FILL | GTK_SHRINK, 3, 3);
-
+#endif
 GLOBALS->wave_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wave_hslider), "value_changed",G_CALLBACK(service_hslider), NULL);
@@ -1884,9 +1889,15 @@ if(GLOBALS->enable_slider_zoom)
 	}
 #endif
 
-gtk_table_attach (GTK_TABLE (table), GLOBALS->hscroll_wavewindow_c_2, 0, 9, 9, 10,
+#ifdef WAVE_ALLOW_GTK3_GRID
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->hscroll_wavewindow_c_2, 0, 9, 9, 10,
+                        0,
+                        GTK_SHRINK, 3, 4);
+#else
+XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->hscroll_wavewindow_c_2, 0, 9, 9, 10,
                         GTK_FILL,
                         GTK_FILL | GTK_SHRINK, 3, 4);
+#endif
 gtk_widget_show(table);
 
 frame=gtk_frame_new("Waves");

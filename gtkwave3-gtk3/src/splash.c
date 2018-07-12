@@ -770,7 +770,11 @@ if((!GLOBALS->splash_disable)&&(!GLOBALS->splash_splash_c_1))
 #endif
 
 #if !defined __MINGW32__
+#ifdef WAVE_ALLOW_GTK3_GRID
+	dx = 0; dy = 0; /* necessary if GtkGrid is used instead of GtkTable */
+#else
 	dx = 8; dy = 8;
+#endif
 #else
 	dx = 8; dy = 8;
 #endif
@@ -781,12 +785,12 @@ if((!GLOBALS->splash_disable)&&(!GLOBALS->splash_splash_c_1))
 
         make_splash_pixmaps(GLOBALS->splash_splash_c_1);
 
-        splash_table = gtk_table_new(10, 10, FALSE);
+        splash_table = XXX_gtk_table_new(10, 10, FALSE);
         GLOBALS->darea_splash_c_1 = gtk_drawing_area_new();
         gtk_widget_show(GLOBALS->darea_splash_c_1);
 	gtk_widget_set_events(GLOBALS->darea_splash_c_1, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
 
-        gtk_table_attach (GTK_TABLE (splash_table), GLOBALS->darea_splash_c_1, 0, 9, 0, 9,GTK_FILL | GTK_EXPAND,GTK_FILL | GTK_EXPAND | GTK_SHRINK, 3, 3);
+        XXX_gtk_table_attach (XXX_GTK_TABLE (splash_table), GLOBALS->darea_splash_c_1, 0, 9, 0, 9,GTK_FILL | GTK_EXPAND,GTK_FILL | GTK_EXPAND | GTK_SHRINK, 3, 3);
 
         gtk_widget_show(splash_table);
         gtk_container_add(GTK_CONTAINER(GLOBALS->splash_splash_c_1), splash_table);

@@ -950,7 +950,7 @@ void searchbox(char *title, GCallback func)
     gtk_window_set_title(GTK_WINDOW (GLOBALS->window_search_c_7), title);
     gtkwave_signal_connect(XXX_GTK_OBJECT (GLOBALS->window_search_c_7), "delete_event",(GCallback) destroy_callback, NULL);
 
-    table = gtk_table_new (256, 1, FALSE);
+    table = XXX_gtk_table_new (256, 1, FALSE);
     gtk_widget_show (table);
 
     vbox1 = XXX_gtk_vbox_new (FALSE, 0);
@@ -959,7 +959,7 @@ void searchbox(char *title, GCallback func)
     frame1 = gtk_frame_new (NULL);
     gtk_container_set_border_width (GTK_CONTAINER (frame1), 3);
     gtk_widget_show(frame1);
-    gtk_table_attach (GTK_TABLE (table), frame1, 0, 1, 0, 1,
+    XXX_gtk_table_attach (XXX_GTK_TABLE (table), frame1, 0, 1, 0, 1,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
@@ -995,7 +995,7 @@ void searchbox(char *title, GCallback func)
     gtk_container_set_border_width (GTK_CONTAINER (frame2), 3);
     gtk_widget_show(frame2);
 
-    gtk_table_attach (GTK_TABLE (table), frame2, 0, 1, 1, 254,
+    XXX_gtk_table_attach (XXX_GTK_TABLE (table), frame2, 0, 1, 1, 254,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
@@ -1036,7 +1036,7 @@ void searchbox(char *title, GCallback func)
     frameh0 = gtk_frame_new (NULL);
     gtk_container_set_border_width (GTK_CONTAINER (frameh0), 3);
     gtk_widget_show(frameh0);
-    gtk_table_attach (GTK_TABLE (table), frameh0, 0, 1, 254, 255,
+    XXX_gtk_table_attach (XXX_GTK_TABLE (table), frameh0, 0, 1, 254, 255,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 
@@ -1101,7 +1101,7 @@ g_signal_connect (combo_box, "changed", G_CALLBACK (on_changed), NULL);
     frameh = gtk_frame_new (NULL);
     gtk_container_set_border_width (GTK_CONTAINER (frameh), 3);
     gtk_widget_show(frameh);
-    gtk_table_attach (GTK_TABLE (table), frameh, 0, 1, 255, 256,
+    XXX_gtk_table_attach (XXX_GTK_TABLE (table), frameh, 0, 1, 255, 256,
                         GTK_FILL | GTK_EXPAND,
                         GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 

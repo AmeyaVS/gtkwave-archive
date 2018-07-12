@@ -171,6 +171,9 @@ gtk_menu_popup -> gtk_menu_popup_at_pointer
 gtk_button_set_focus_on_click -> gtk_widget_set_focus_on_click
 gtk_[h|v]scrollbar_new -> gtk_scrollbar_new
 rtlbrowse: gtk_table_attach -> gtk_grid_attach/gtk_widget_set_hexpand/gtk_widget_set_vexpand
+ls -1 | awk '{print "cat "$0" | sed s/gtk_table_new/XXX_gtk_table_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
+ls -1 | awk '{print "cat "$0" | sed s/gtk_table_attach/XXX_gtk_table_attach/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
+ls -1 | awk '{print "cat "$0" | sed s/GTK_TABLE/XXX_GTK_TABLE/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
 
 ===
 
@@ -184,3 +187,6 @@ note that the deprecated function warnings when compiling with --enable-gtk3 hav
 see https://gist.github.com/fourdollars/7671312 for gtk_pointer_grab/ungrab replacements.
 
 internal in gtk3 toolkit using + option (++ works): (twinwave:9756): Gtk-CRITICAL **: gtk_widget_destroy: assertion 'GTK_IS_WIDGET (widget)'
+
+internal in gtk3 toolkit in SST treeview using GtkGrid instead of GtkTable.  This is strange as the standalone treeview does not use GtkTable:
+(gtkwave:28778): Gtk-WARNING **: Allocating size to GtkWindow 0x299e520 without calling gtk_widget_get_preferred_width/height(). How does the code know the size to allocate?

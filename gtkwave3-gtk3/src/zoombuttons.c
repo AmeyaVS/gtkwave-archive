@@ -427,7 +427,7 @@ gtk_widget_show(pixmapzright);
 
 
 /* Create a table to hold the text widget and scrollbars */
-table = gtk_table_new (1, 1, FALSE);
+table = XXX_gtk_table_new (1, 1, FALSE);
 
 main_vbox = XXX_gtk_vbox_new (FALSE, 1);
 gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 1);
@@ -438,11 +438,11 @@ gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
 gtk_widget_show (frame);
 gtk_widget_show (main_vbox);
 
-table2 = gtk_table_new (2, 3, FALSE);
+table2 = XXX_gtk_table_new (2, 3, FALSE);
 
 b1 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b1), pixmapzin);
-gtk_table_attach (GTK_TABLE (table2), b1, 0, 1, 0, 1,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b1, 0, 1, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b1), "clicked", G_CALLBACK(service_zoom_out), XXX_GTK_OBJECT (table2));
@@ -451,7 +451,7 @@ gtk_widget_show(b1);
 
 b2 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b2), pixmapzout);
-gtk_table_attach (GTK_TABLE (table2), b2, 0, 1, 1, 2,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b2, 0, 1, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b2), "clicked", G_CALLBACK(service_zoom_in), XXX_GTK_OBJECT (table2));
@@ -460,7 +460,7 @@ gtk_widget_show(b2);
 
 b3 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b3), pixmapzfit);
-gtk_table_attach (GTK_TABLE (table2), b3, 1, 2, 0, 1,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b3, 1, 2, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b3), "clicked", G_CALLBACK(service_zoom_fit), XXX_GTK_OBJECT (table2));
@@ -469,7 +469,7 @@ gtk_widget_show(b3);
 
 b4 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b4), pixmapzundo);
-gtk_table_attach (GTK_TABLE (table2), b4, 1, 2, 1, 2,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b4, 1, 2, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b4), "clicked", G_CALLBACK(service_zoom_undo), XXX_GTK_OBJECT (table2));
@@ -478,7 +478,7 @@ gtk_widget_show(b4);
 
 b5 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b5), pixmapzleft);
-gtk_table_attach (GTK_TABLE (table2), b5, 2, 3, 0, 1,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b5, 2, 3, 0, 1,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b5), "clicked", G_CALLBACK(service_zoom_left), XXX_GTK_OBJECT (table2));
@@ -487,7 +487,7 @@ gtk_widget_show(b5);
 
 b6 = gtk_button_new();
 gtk_container_add(GTK_CONTAINER(b6), pixmapzright);
-gtk_table_attach (GTK_TABLE (table2), b6, 2, 3, 1, 2,
+XXX_gtk_table_attach (XXX_GTK_TABLE (table2), b6, 2, 3, 1, 2,
 		      	GTK_FILL | GTK_EXPAND,
 		      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 1, 1);
 g_signal_connect_swapped (XXX_GTK_OBJECT (b6), "clicked", G_CALLBACK(service_zoom_right), XXX_GTK_OBJECT (table2));
