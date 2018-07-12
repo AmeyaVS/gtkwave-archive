@@ -1565,8 +1565,7 @@ GtkWidget* treeboxframe(char *title, GCallback func)
     gtk_container_set_border_width (GTK_CONTAINER (GLOBALS->gtk2_tree_frame), 3);
     gtk_widget_show(GLOBALS->gtk2_tree_frame);
 
-//    gtk_paned_pack1 (GTK_PANED (vpan), GLOBALS->gtk2_tree_frame, TRUE, FALSE);
-    gtk_paned_pack1 (GTK_PANED (vpan), GLOBALS->gtk2_tree_frame, TRUE, TRUE);
+    gtk_paned_pack1 (GTK_PANED (vpan), GLOBALS->gtk2_tree_frame, TRUE, FALSE);
 
     decorated_module_cleanup();
     XXX_maketree(NULL, GLOBALS->treeroot);
@@ -1666,8 +1665,7 @@ GtkWidget* treeboxframe(char *title, GCallback func)
     gtk_container_set_border_width (GTK_CONTAINER (sig_frame), 3);
     gtk_widget_show(sig_frame);
 
-//    gtk_paned_pack2 (GTK_PANED (vpan), sig_frame, TRUE, FALSE);
-    gtk_paned_pack2 (GTK_PANED (vpan), sig_frame, TRUE, TRUE);
+    gtk_paned_pack2 (GTK_PANED (vpan), sig_frame, TRUE, FALSE);
 
     sig_scroll_win = gtk_scrolled_window_new (NULL, NULL);
     gtk_widget_set_size_request (GTK_WIDGET (sig_scroll_win), 80, 100);
