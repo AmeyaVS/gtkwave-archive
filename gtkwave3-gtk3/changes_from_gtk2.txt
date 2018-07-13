@@ -180,6 +180,7 @@ rtlbrowse: gtk_tool_button_new_from_stock -> gtk_image_new_from_icon_name + gtk_
 Convert GtkStock strings to freedesktop ones using table from https://wiki.gnome.org/Attic/GtkNamingSpecInvestigation webpage.
 gdk_pointer_grab -> gdk_seat_grab
 gdk_pointer_ungrab -> gdk_seat_ungrab
+gdk_cursor_new -> gdk_cursor_new_for_display
 
 ===
 
