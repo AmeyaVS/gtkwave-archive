@@ -13,6 +13,7 @@
 
 /* workaround for gtk warnings "How does the code know the size to allocate?" */
 #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
+/* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_DEPRECATED_API */
 
 /* seat vs pointer enable */
 #define WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
@@ -77,6 +78,8 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define XXX_GTK_STOCK_GO_FORWARD "go-next"
 #define XXX_GTK_STOCK_REFRESH "view-refresh"
 
+cairo_t *XXX_gdk_cairo_create (GdkWindow *window, GdkDrawingContext **gdc);
+
 #else
 
 #define YYY_GTK_TREE_VIEW GTK_TREE_VIEW
@@ -114,6 +117,8 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define XXX_GTK_STOCK_GO_BACK GTK_STOCK_GO_BACK
 #define XXX_GTK_STOCK_GO_FORWARD GTK_STOCK_GO_FORWARD
 #define XXX_GTK_STOCK_REFRESH GTK_STOCK_REFRESH
+
+#define XXX_gdk_cairo_create(a, b) gdk_cairo_create(a)
 
 #endif
 

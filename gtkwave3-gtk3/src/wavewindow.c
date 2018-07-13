@@ -587,7 +587,10 @@ gint xl;
 
 if(!gtk_widget_get_window(GLOBALS->wavearea)) return;
 
-cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->wavearea)));
+#if GTK_CHECK_VERSION(3,0,0)
+GdkDrawingContext *gdc;
+#endif
+cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->wavearea)), &gdc);
 cairo_set_line_width(cr, GLOBALS->cr_line_width);
 
 GLOBALS->m1x_wavewindow_c_1=GLOBALS->m2x_wavewindow_c_1=-1;
@@ -650,7 +653,11 @@ if(GLOBALS->m1x_wavewindow_c_1==-1) GLOBALS->m1x_wavewindow_c_1=GLOBALS->m2x_wav
 
 update_dual();
 
-cairo_destroy(cr);
+#if GTK_CHECK_VERSION(3,0,0)
+gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->wavearea), gdc);
+#else
+cairo_destroy (cr);
+#endif
 }
 
 
@@ -658,11 +665,18 @@ static void draw_marker_partitions(void)
 {
 draw_marker();
 
-cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->wavearea)));
+#if GTK_CHECK_VERSION(3,0,0)
+GdkDrawingContext *gdc;
+#endif
+cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->wavearea)), &gdc);
 cairo_set_source_surface(cr, GLOBALS->surface_wavepixmap_wavewindow_c_1, 0, 0);
 cairo_paint (cr);
 
-cairo_destroy(cr);
+#if GTK_CHECK_VERSION(3,0,0)
+gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->wavearea), gdc);
+#else
+cairo_destroy (cr);
+#endif
 
 draw_marker();
 }
@@ -776,7 +790,10 @@ if(GLOBALS->cr_signalpixmap)
 
 		if(GLOBALS->signalarea_has_focus)
 			{
-			cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)));
+#if GTK_CHECK_VERSION(3,0,0)
+			GdkDrawingContext *gdc;
+#endif
+			cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)), &gdc);
 			cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
 			cairo_clip (cr);
 
@@ -784,18 +801,28 @@ if(GLOBALS->cr_signalpixmap)
 			cairo_paint (cr);			
 
 			draw_signalarea_focus(cr);
-			cairo_destroy(cr);
+#if GTK_CHECK_VERSION(3,0,0)
+			gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->signalarea), gdc);
+#else
+			cairo_destroy (cr);
+#endif
 			}
 			else
 			{
-			cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)));
+#if GTK_CHECK_VERSION(3,0,0)
+			GdkDrawingContext *gdc;
+#endif
+			cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)), &gdc);
 			cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
 			cairo_clip (cr);
 
 			cairo_set_source_surface(cr, GLOBALS->surface_signalpixmap, -xsrc, 0);
 			cairo_paint (cr);			
-
-			cairo_destroy(cr);
+#if GTK_CHECK_VERSION(3,0,0)
+                        gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->signalarea), gdc);
+#else
+                        cairo_destroy (cr);
+#endif
 			}
 
 		draw_marker();
@@ -826,7 +853,10 @@ RenderSigs((int)(gtk_adjustment_get_value(GTK_ADJUSTMENT(GLOBALS->wave_vslider))
 
 if(GLOBALS->signalarea_has_focus)
 	{
-	cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)));
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkDrawingContext *gdc;
+#endif
+	cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)), &gdc);
 	cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
 	cairo_clip (cr);
 
@@ -834,18 +864,29 @@ if(GLOBALS->signalarea_has_focus)
 	cairo_paint (cr);			
 
 	draw_signalarea_focus(cr);
+#if GTK_CHECK_VERSION(3,0,0)
+	gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->signalarea), gdc);
+#else
 	cairo_destroy (cr);
+#endif
 	}
 	else
 	{
-	cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)));
+#if GTK_CHECK_VERSION(3,0,0)
+        GdkDrawingContext *gdc;
+#endif
+	cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)), &gdc);
 	cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
 	cairo_clip (cr);
 
 	cairo_set_source_surface(cr, GLOBALS->surface_signalpixmap, -(gint)(gtk_adjustment_get_value(GTK_ADJUSTMENT(GLOBALS->signal_hslider))), 0);
 	cairo_paint (cr);			
 
-	cairo_destroy (cr);
+#if GTK_CHECK_VERSION(3,0,0)
+        gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->signalarea), gdc);
+#else
+        cairo_destroy (cr);
+#endif
 	}
 }
 
@@ -1788,14 +1829,21 @@ return(rc);
 #else
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
-cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(widget)));
+#if GTK_CHECK_VERSION(3,0,0)
+GdkDrawingContext *gdc;
+#endif
+cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(widget)), &gdc);
 gdk_cairo_region (cr, event->region);
 cairo_clip (cr);
 
 cairo_set_source_surface(cr, GLOBALS->surface_wavepixmap_wavewindow_c_1, 0, 0);
 cairo_paint (cr);
 
+#if GTK_CHECK_VERSION(3,0,0)
+gdk_window_end_draw_frame(gtk_widget_get_window(widget), gdc);
+#else
 cairo_destroy (cr);
+#endif
 
 draw_marker();
 
@@ -1828,7 +1876,7 @@ GtkAdjustment *hadj, *vadj;
 
 table = XXX_gtk_table_new(10, 10, FALSE);
 
-#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_DEPRECATED_API
 /* this removes the warning generated from XXX_gtk_table_attach() on GLOBALS->vscroll_wavewindow_c_1 below */
 gtk_container_set_resize_mode(GTK_CONTAINER(table), GTK_RESIZE_IMMEDIATE);
 #endif

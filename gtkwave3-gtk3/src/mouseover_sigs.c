@@ -262,7 +262,7 @@ return(FALSE);
 #else
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
-cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(widget)));
+cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(widget)), dummy);
 gdk_cairo_region (cr, event->region);
 cairo_clip (cr);
 
@@ -480,10 +480,18 @@ if(num_info_rows == 2)
 
 gdk_window_raise(gtk_widget_get_window(GLOBALS->mouseover_mouseover_c_1));
 
-cairo_t* cr = gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->mo_area_mouseover_c_1)));
+#if GTK_CHECK_VERSION(3,0,0)
+GdkDrawingContext *gdc;
+#endif
+
+cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->mo_area_mouseover_c_1)), &gdc);
 cairo_set_source_surface(cr, GLOBALS->surface_mo_pixmap_mouseover_c_1, 0, 0);
 cairo_paint (cr);
+#if GTK_CHECK_VERSION(3,0,0)
+gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->mo_area_mouseover_c_1), gdc);
+#else
 cairo_destroy (cr);
+#endif
 
 bot:
 if(asciivalue) { free_2(asciivalue); }

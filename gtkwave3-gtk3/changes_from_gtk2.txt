@@ -182,6 +182,8 @@ gdk_pointer_grab -> gdk_seat_grab
 gdk_pointer_ungrab -> gdk_seat_ungrab
 gdk_cursor_new -> gdk_cursor_new_for_display
 gdk_window_get_pointer->gdk_window_get_device_position
+gdk_cairo_create->gdk_window_begin_draw_frame and related support functions
+cairo_destroy->gdk_window_end_draw_frame
 
 ===
 
