@@ -494,7 +494,11 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
     gtk_box_pack_start (GTK_BOX (vbox_g), small_hbox, FALSE, FALSE, 0);
     }
 
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_container_add(GTK_CONTAINER(scrolled_win), vbox_g); /* removes gtk3 deprecated warning */
+#else
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_win), vbox_g);
+#endif
 
     do		/* add GUI elements for displaying mark count and mark count start/end */
 	{

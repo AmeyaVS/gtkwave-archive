@@ -429,7 +429,11 @@ void markerbox(char *title, GCallback func)
     gtk_box_pack_start (GTK_BOX (vbox_g), hbox, TRUE, TRUE, 0);
     }
 
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_container_add(GTK_CONTAINER(scrolled_win), vbox_g); /* GTK3: removes deprecated warning */
+#else
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_win), vbox_g);
+#endif
 
     hbox = XXX_gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox);
