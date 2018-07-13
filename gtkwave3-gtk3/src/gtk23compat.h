@@ -52,6 +52,22 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define YYY_gtk_hscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, a)
 #define YYY_gtk_vscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, a)
 
+#define XXX_GTK_STOCK_CANCEL "_Cancel"
+#define XXX_GTK_STOCK_OPEN "_Open"
+#define XXX_GTK_STOCK_SAVE "_Save"
+#define XXX_GTK_STOCK_CUT "edit-cut"
+#define XXX_GTK_STOCK_COPY "edit-copy"
+#define XXX_GTK_STOCK_PASTE "edit-paste"
+#define XXX_GTK_STOCK_ZOOM_FIT "zoom-fit-best"
+#define XXX_GTK_STOCK_ZOOM_IN "zoom-in"
+#define XXX_GTK_STOCK_ZOOM_OUT "zoom-out"
+#define XXX_GTK_STOCK_UNDO "edit-undo"
+#define XXX_GTK_STOCK_GOTO_FIRST "go-first"
+#define XXX_GTK_STOCK_GOTO_LAST "go-last"
+#define XXX_GTK_STOCK_GO_BACK "go-previous"
+#define XXX_GTK_STOCK_GO_FORWARD "go-next"
+#define XXX_GTK_STOCK_REFRESH "view-refresh"
+
 #else
 
 #define YYY_GTK_TREE_VIEW GTK_TREE_VIEW
@@ -73,6 +89,22 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 
 #define YYY_gtk_hscrollbar_new(a) gtk_hscrollbar_new(a)
 #define YYY_gtk_vscrollbar_new(a) gtk_vscrollbar_new(a)
+
+#define XXX_GTK_STOCK_CANCEL GTK_STOCK_CANCEL
+#define XXX_GTK_STOCK_OPEN GTK_STOCK_OPEN
+#define XXX_GTK_STOCK_SAVE GTK_STOCK_SAVE
+#define XXX_GTK_STOCK_CUT GTK_STOCK_CUT
+#define XXX_GTK_STOCK_COPY GTK_STOCK_COPY
+#define XXX_GTK_STOCK_PASTE GTK_STOCK_PASTE
+#define XXX_GTK_STOCK_ZOOM_FIT GTK_STOCK_ZOOM_FIT
+#define XXX_GTK_STOCK_ZOOM_IN GTK_STOCK_ZOOM_IN
+#define XXX_GTK_STOCK_ZOOM_OUT GTK_STOCK_ZOOM_OUT
+#define XXX_GTK_STOCK_UNDO GTK_STOCK_UNDO
+#define XXX_GTK_STOCK_GOTO_FIRST GTK_STOCK_GOTO_FIRST
+#define XXX_GTK_STOCK_GOTO_LAST GTK_STOCK_GOTO_LAST
+#define XXX_GTK_STOCK_GO_BACK GTK_STOCK_GO_BACK
+#define XXX_GTK_STOCK_GO_FORWARD GTK_STOCK_GO_FORWARD
+#define XXX_GTK_STOCK_REFRESH GTK_STOCK_REFRESH
 
 #endif
 

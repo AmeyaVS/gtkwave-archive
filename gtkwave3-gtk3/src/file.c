@@ -361,9 +361,9 @@ if(is_writemode)
 		title,
 	        NULL,
 	        GTK_FILE_CHOOSER_ACTION_SAVE,
-	        GTK_STOCK_CANCEL,
+	        XXX_GTK_STOCK_CANCEL,
 	        GTK_RESPONSE_CANCEL,
-	        GTK_STOCK_SAVE,
+	        XXX_GTK_STOCK_SAVE,
 	        GTK_RESPONSE_ACCEPT,
 	        NULL);
 
@@ -375,9 +375,9 @@ if(is_writemode)
 		title,
 	        NULL,
 	        GTK_FILE_CHOOSER_ACTION_OPEN,
-	        GTK_STOCK_CANCEL,
+	        XXX_GTK_STOCK_CANCEL,
 	        GTK_RESPONSE_CANCEL,
-	        GTK_STOCK_OPEN,
+	        XXX_GTK_STOCK_OPEN,
 	        GTK_RESPONSE_ACCEPT,
 	        NULL);
 	}

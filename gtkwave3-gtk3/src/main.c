@@ -2014,7 +2014,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_CUT,
+	                                         XXX_GTK_STOCK_CUT,
 						 "Cut Traces",
 						 NULL,
 						 G_CALLBACK(menu_cut_traces),
@@ -2028,7 +2028,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_COPY,
+	                                         XXX_GTK_STOCK_COPY,
 						 "Copy Traces",
 						 NULL,
 						 G_CALLBACK(menu_copy_traces),
@@ -2042,7 +2042,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_PASTE,
+	                                         XXX_GTK_STOCK_PASTE,
 						 "Paste Traces",
 						 NULL,
 						 G_CALLBACK(menu_paste_traces),
@@ -2058,7 +2058,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_ZOOM_FIT,
+	                                         XXX_GTK_STOCK_ZOOM_FIT,
 						 "Zoom Fit",
 						 NULL,
 						 G_CALLBACK(service_zoom_fit),
@@ -2072,7 +2072,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_ZOOM_IN,
+	                                         XXX_GTK_STOCK_ZOOM_IN,
 						 "Zoom In",
 						 NULL,
 						 G_CALLBACK(service_zoom_in),
@@ -2086,7 +2086,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_ZOOM_OUT,
+	                                         XXX_GTK_STOCK_ZOOM_OUT,
 						 "Zoom Out",
 						 NULL,
 						 G_CALLBACK(service_zoom_out),
@@ -2100,7 +2100,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_UNDO,
+	                                         XXX_GTK_STOCK_UNDO,
 						 "Zoom Undo",
 						 NULL,
 						 G_CALLBACK(service_zoom_undo),
@@ -2114,7 +2114,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_GOTO_FIRST,
+	                                         XXX_GTK_STOCK_GOTO_FIRST,
 						 "Zoom to Start",
 						 NULL,
 						 G_CALLBACK(service_zoom_left),
@@ -2128,7 +2128,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_GOTO_LAST,
+	                                         XXX_GTK_STOCK_GOTO_LAST,
 						 "Zoom to End",
 						 NULL,
 						 G_CALLBACK(service_zoom_right),
@@ -2144,7 +2144,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_GO_BACK,
+	                                         XXX_GTK_STOCK_GO_BACK,
 						 "Find Previous Edge",
 						 NULL,
 						 G_CALLBACK(service_left_edge),
@@ -2158,7 +2158,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_widget_show(stock);
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_GO_FORWARD,
+	                                         XXX_GTK_STOCK_GO_FORWARD,
 						 "Find Next Edge",
 						 NULL,
 						 G_CALLBACK(service_right_edge),
@@ -2186,7 +2186,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		if((GLOBALS->loaded_file_type != DUMPLESS_FILE)&&(!GLOBALS->disable_menus))
 			{
 			stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-	                                         GTK_STOCK_REFRESH,
+	                                         XXX_GTK_STOCK_REFRESH,
 						 "Reload",
 						 NULL,
 						 G_CALLBACK(menu_reload_waveform_marshal),

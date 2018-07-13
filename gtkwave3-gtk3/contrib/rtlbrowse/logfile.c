@@ -17,6 +17,16 @@
 #include "jrb.h"
 #include "wavelink.h"
 
+#if GTK_CHECK_VERSION(3,0,0)
+#define XXX_GTK_STOCK_GO_BACK "go-previous"
+#define XXX_GTK_STOCK_GO_FORWARD "go-next"
+#define XXX_GTK_STOCK_CLOSE "window-close"
+#else
+#define XXX_GTK_STOCK_GO_BACK GTK_STOCK_GO_BACK
+#define XXX_GTK_STOCK_GO_FORWARD GTK_STOCK_GO_FORWARD
+#define XXX_GTK_STOCK_CLOSE GTK_STOCK_CLOSE
+#endif
+
 extern ds_Tree *flattened_mod_list_root;
 extern struct gtkwave_annotate_ipc_t *anno_ctx;
 extern GtkWidget *notebook;
@@ -574,7 +584,7 @@ void create_toolbar(GtkWidget *table)
 
     gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
     stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-                                                 GTK_STOCK_GO_BACK,
+                                                 XXX_GTK_STOCK_GO_BACK,
                                                  "Search Back",
                                                  NULL,
                                                  G_CALLBACK(search_backward),
@@ -589,7 +599,7 @@ void create_toolbar(GtkWidget *table)
     gtk_widget_show(stock);
 
     stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
-                                                 GTK_STOCK_GO_FORWARD,
+                                                 XXX_GTK_STOCK_GO_FORWARD,
                                                  "Search Forward",
                                                  NULL,
                                                  G_CALLBACK(search_forward),
@@ -1583,10 +1593,10 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
 #endif
 
 #if GTK_CHECK_VERSION(3,0,0)
-        image = gtk_image_new_from_icon_name (GTK_STOCK_CLOSE, 
+        image = gtk_image_new_from_icon_name (XXX_GTK_STOCK_CLOSE, 
                                           GTK_ICON_SIZE_MENU);
 #else
-        image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, 
+        image = gtk_image_new_from_stock (XXX_GTK_STOCK_CLOSE, 
                                           GTK_ICON_SIZE_MENU);
 #endif
         gtk_container_add (GTK_CONTAINER (close_button), image);
