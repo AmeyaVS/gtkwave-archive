@@ -16,11 +16,7 @@
 
 #define WAVE_GTK3_HIERSEARCH_DEBOUNCE
 #define WAVE_GTK3_MENU_SEPARATOR
-#endif
-
-#if GTK_CHECK_VERSION(3,0,0)
-/* triggers "How does the code know the size to allocate?" warnings when treeview is expanded, so currently is disabled */
-/* #define WAVE_ALLOW_GTK3_GRID */
+#define WAVE_ALLOW_GTK3_GRID
 #endif
 
 #define WAVE_GTKIFE(a,b,c,d,e) {a,b,c,d,e,NULL}

@@ -186,10 +186,6 @@ remove gtksocket/plug mechanism and simply use separate windows to avoid gtkx/X1
 
 for GLOBALS->treeview_main, see what hadj/vadj work is required in globals.c to get this to scroll to the correct position.  it's not currently working right/consistently.
 
-note that the deprecated function warnings when compiling with --enable-gtk3 have not been cleaned up yet as some of the suggested replacements don't work with the same defaults as the original widgets.
 see https://gist.github.com/fourdollars/7671312 for gtk_pointer_grab/ungrab replacements.
 
 internal in gtk3 toolkit using + option (++ works): (twinwave:9756): Gtk-CRITICAL **: gtk_widget_destroy: assertion 'GTK_IS_WIDGET (widget)'
-
-internal in gtk3 toolkit in SST treeview when using GtkGrid instead of GtkTable.  It seems to be on GLOBALS->mainwindow from whole_table being a GtkGrid instead of GtkTable.
-(gtkwave:28778): Gtk-WARNING **: Allocating size to GtkWindow 0x299e520 without calling gtk_widget_get_preferred_width/height(). How does the code know the size to allocate?

@@ -814,6 +814,10 @@ XXX_create_sst_nodes_if_necessary(gtk_tree_view_get_model(GTK_TREE_VIEW(GLOBALS-
 
 XXX_generic_tree_expand_collapse_callback(1, gtk_tree_view_get_model(GTK_TREE_VIEW(GLOBALS->treeview_main)), iter, path);
 
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
+gtk_widget_queue_resize(GTK_WIDGET(GLOBALS->treeview_main));
+#endif
+
 #ifdef WAVE_ALLOW_QUARTZ_FLUSH_WORKAROUND
 #ifdef MAC_INTEGRATION
 /* workaround for ctree not rendering properly in OSX */
