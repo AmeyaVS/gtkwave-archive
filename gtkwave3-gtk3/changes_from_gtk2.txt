@@ -177,6 +177,7 @@ ls -1 | awk '{print "cat "$0" | sed s/GTK_TABLE/XXX_GTK_TABLE/g >"$0".xxx ; mv "
 Ifdef removal of gtk_handle_box_new force_toolbars code.
 rtlbrowse: gtk_image_new_from_stock -> gtk_image_new_from_icon_name
 rtlbrowse: gtk_tool_button_new_from_stock -> gtk_image_new_from_icon_name + gtk_tool_button_new
+Convert GtkStock strings to freedesktop ones using table from https://wiki.gnome.org/Attic/GtkNamingSpecInvestigation webpage.
 
 ===
 
