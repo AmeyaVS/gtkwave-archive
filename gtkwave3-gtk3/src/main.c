@@ -88,6 +88,20 @@
 char *gtkwave_argv0_cached = NULL;
 
 #if GTK_CHECK_VERSION(3,0,0)
+
+#ifdef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
+void
+XXX_gdk_pointer_ungrab (guint32 time_)
+{
+(void) time_;
+
+GdkDisplay *display = gdk_display_get_default();
+GdkSeat *seat = gdk_display_get_default_seat (display);
+gdk_seat_ungrab(seat);
+}
+#endif
+
+
 #ifdef WAVE_ALLOW_GTK3_GRID
 GtkWidget *
 XXX_gtk_table_new (guint rows,

@@ -271,7 +271,7 @@ static void entrybox_local(char *title, int width, char *default_text, int maxch
     GLOBALS->cleanup_e_hiersearch_c_1=func;
 
     /* fix problem where ungrab doesn't occur if button pressed + simultaneous accelerator key occurs */
-    if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+    if(GLOBALS->in_button_press_wavewindow_c_1) { XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME); }
 
     /* create a new modal window */
     GLOBALS->window1_hiersearch_c_1 = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
@@ -1036,7 +1036,7 @@ void hier_searchbox(char *title, GCallback func)
     GtkWidget *table;
 
     /* fix problem where ungrab doesn't occur if button pressed + simultaneous accelerator key occurs */
-    if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+    if(GLOBALS->in_button_press_wavewindow_c_1) { XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME); }
 
     if(GLOBALS->is_active_hiersearch_c_1)
 	{

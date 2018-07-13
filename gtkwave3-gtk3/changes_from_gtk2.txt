@@ -178,6 +178,8 @@ Ifdef removal of gtk_handle_box_new force_toolbars code.
 rtlbrowse: gtk_image_new_from_stock -> gtk_image_new_from_icon_name
 rtlbrowse: gtk_tool_button_new_from_stock -> gtk_image_new_from_icon_name + gtk_tool_button_new
 Convert GtkStock strings to freedesktop ones using table from https://wiki.gnome.org/Attic/GtkNamingSpecInvestigation webpage.
+gdk_pointer_grab -> gdk_seat_grab
+gdk_pointer_ungrab -> gdk_seat_ungrab
 
 ===
 
@@ -186,7 +188,5 @@ to do:
 remove gtksocket/plug mechanism and simply use separate windows to avoid gtkx/X11 dependencies?
 
 for GLOBALS->treeview_main, see what hadj/vadj work is required in globals.c to get this to scroll to the correct position.  it's not currently working right/consistently.
-
-see https://gist.github.com/fourdollars/7671312 for gtk_pointer_grab/ungrab replacements.
 
 internal in gtk3 toolkit using + option (++ works): (twinwave:9756): Gtk-CRITICAL **: gtk_widget_destroy: assertion 'GTK_IS_WIDGET (widget)'

@@ -3534,7 +3534,7 @@ pid_t pid;
 if(GLOBALS->filesel_ok)
 	{
 	/* fix problem where ungrab doesn't occur if button pressed + simultaneous accelerator key occurs */
-    	if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+    	if(GLOBALS->in_button_press_wavewindow_c_1) { XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME); }
 
 #if !defined __MINGW32__
 	/*
@@ -3649,7 +3649,7 @@ menu_new_viewer_tab_cleanup_2(char *fname, int optimize_vcd)
 	argv[1] = fname;
 
 	/* fix problem where ungrab doesn't occur if button pressed + simultaneous accelerator key occurs */
-    	if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+    	if(GLOBALS->in_button_press_wavewindow_c_1) { XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME); }
 
 	GLOBALS->vcd_jmp_buf = calloc(1, sizeof(jmp_buf));
 

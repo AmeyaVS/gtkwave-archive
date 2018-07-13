@@ -1554,7 +1554,10 @@ void reload_into_new_context_2(void)
  splash_button_press_event(NULL, NULL);
 
  /* fix problem where ungrab doesn't occur if button pressed + simultaneous reload accelerator key occurs */
- if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+ if(GLOBALS->in_button_press_wavewindow_c_1) 
+	{ 
+     	XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME);
+	}
 
  /* let all GTK/X events spin through in order to keep menus from freezing open during reload */
 #ifndef MAC_INTEGRATION
@@ -2869,7 +2872,10 @@ if(line)
 if(GLOBALS != g)
 	{
 	/* fix problem where ungrab doesn't occur if button pressed + simultaneous context swap occurs */
- 	if(GLOBALS && GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+ 	if(GLOBALS && GLOBALS->in_button_press_wavewindow_c_1) 
+		{ 
+	        XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME);
+		}
 
 	GLOBALS = g;
 	sprintf(sstr, "%d", GLOBALS->this_context_page);

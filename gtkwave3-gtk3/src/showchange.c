@@ -132,7 +132,7 @@ void showchange(char *title, Trptr t, GCallback func)
   GLOBALS->flags_showchange_c_1=t->flags;
 
   /* fix problem where ungrab doesn't occur if button pressed + simultaneous accelerator key occurs */
-  if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+  if(GLOBALS->in_button_press_wavewindow_c_1) { XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME); }
 
   GLOBALS->window_showchange_c_8 = gtk_window_new (GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
   install_focus_cb(GLOBALS->window_showchange_c_8, ((char *)&GLOBALS->window_showchange_c_8) - ((char *)GLOBALS));

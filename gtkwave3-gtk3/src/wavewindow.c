@@ -1402,10 +1402,24 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
 	button_motion_common(event->x,event->y,1,0);
 	GLOBALS->tims.timecache=GLOBALS->tims.start;
 
+#ifdef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
+	GdkDisplay *display = gdk_display_get_default();
+	GdkSeat *seat = gdk_display_get_default_seat (display);
+	GdkGrabStatus gs =
+	gdk_seat_grab (seat,
+               gtk_widget_get_window(widget),
+               GDK_SEAT_CAPABILITY_ALL_POINTING,
+               FALSE,
+               NULL,
+               event,
+               NULL,
+               NULL);
+#else
 	gdk_pointer_grab(gtk_widget_get_window(widget), FALSE,
 		m_bmask[GLOBALS->in_button_press_wavewindow_c_1] | /* key up on motion for button pressed ONLY */
 		GDK_POINTER_MOTION_HINT_MASK |
 	      	GDK_BUTTON_RELEASE_MASK, NULL, NULL, event->time);
+#endif
 
 #ifdef MAC_INTEGRATION
 	if ((event->state & GDK_MOD2_MASK) && (event->button==1))
@@ -1516,7 +1530,7 @@ if((event->button)&&(event->button==GLOBALS->in_button_press_wavewindow_c_1))
 
 	GLOBALS->tims.timecache=GLOBALS->tims.start;
 
-	gdk_pointer_ungrab(event->time);
+	XXX_gdk_pointer_ungrab(event->time);
 
 	if(event->button==3)	/* oh yeah, dragzoooooooom! */
 		{

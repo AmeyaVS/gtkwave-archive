@@ -14,6 +14,9 @@
 /* workaround for gtk warnings "How does the code know the size to allocate?" */
 #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
 
+/* seat vs pointer enable */
+#define WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
+
 #define WAVE_GTK3_HIERSEARCH_DEBOUNCE
 #define WAVE_GTK3_MENU_SEPARATOR
 #define WAVE_ALLOW_GTK3_GRID
@@ -110,11 +113,9 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 
 
 #ifdef WAVE_ALLOW_GTK3_GRID
-
 GtkWidget *XXX_gtk_table_new (guint rows,
                guint columns,
                gboolean homogeneous);
-
 void XXX_gtk_table_attach (GtkGrid *table,
                   GtkWidget *child,
                   guint left_attach,
@@ -125,15 +126,16 @@ void XXX_gtk_table_attach (GtkGrid *table,
                   GtkAttachOptions yoptions,
                   guint xpadding,
                   guint ypadding);
-
 #define XXX_GTK_TABLE GTK_GRID
-
 #else
-
 #define XXX_gtk_table_new gtk_table_new
 #define XXX_gtk_table_attach gtk_table_attach
 #define XXX_GTK_TABLE GTK_TABLE
+#endif
 
+
+#ifndef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
+#define XXX_gdk_pointer_ungrab gdk_pointer_ungrab
 #endif
 
 #endif

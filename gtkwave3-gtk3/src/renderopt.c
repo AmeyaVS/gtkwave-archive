@@ -362,7 +362,7 @@ void renderbox(char *title)
     int i;
 
     /* fix problem where ungrab doesn't occur if button pressed + simultaneous accelerator key occurs */
-    if(GLOBALS->in_button_press_wavewindow_c_1) { gdk_pointer_ungrab(GDK_CURRENT_TIME); }
+    if(GLOBALS->in_button_press_wavewindow_c_1) { XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME); }
 
     if(GLOBALS->wave_script_args)
         {
