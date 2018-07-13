@@ -53,8 +53,8 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define YYY_gtk_vscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, a)
 
 #define XXX_GTK_STOCK_CANCEL "_Cancel"
-#define XXX_GTK_STOCK_OPEN "_Open"
-#define XXX_GTK_STOCK_SAVE "_Save"
+#define XXX_GTK_STOCK_OPEN "document-open"
+#define XXX_GTK_STOCK_SAVE "document-save"
 #define XXX_GTK_STOCK_CUT "edit-cut"
 #define XXX_GTK_STOCK_COPY "edit-copy"
 #define XXX_GTK_STOCK_PASTE "edit-paste"
