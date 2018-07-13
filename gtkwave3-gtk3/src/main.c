@@ -89,6 +89,7 @@ char *gtkwave_argv0_cached = NULL;
 
 #if GTK_CHECK_VERSION(3,0,0)
 
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 cairo_t *XXX_gdk_cairo_create (GdkWindow *window, GdkDrawingContext **gdc)
 {
 cairo_region_t *region = gdk_window_get_visible_region (window);
@@ -100,6 +101,7 @@ cairo_t *cr = gdk_drawing_context_get_cairo_context (context);
 
 return(cr);
 }
+#endif
 
 
 #ifdef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB

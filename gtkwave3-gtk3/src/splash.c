@@ -685,7 +685,7 @@ return(FALSE);
 #else
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 GdkDrawingContext *gdc;
 #endif
 cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(widget)), &gdc);
@@ -695,7 +695,7 @@ cairo_clip (cr);
 gdk_cairo_set_source_pixbuf (cr, GLOBALS->wave_splash_pixbuf, 0.0, 0.0);
 cairo_paint (cr);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 gdk_window_end_draw_frame(gtk_widget_get_window(widget), gdc);
 #else
 cairo_destroy (cr);
@@ -811,7 +811,7 @@ if((!GLOBALS->splash_disable)&&(!GLOBALS->splash_splash_c_1))
 	gtk_events_pending_gtk_main_iteration();
 
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 	GdkDrawingContext *gdc;
 #endif
 	cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->darea_splash_c_1)), &gdc);
@@ -821,7 +821,7 @@ if((!GLOBALS->splash_disable)&&(!GLOBALS->splash_splash_c_1))
 	gdk_cairo_set_source_pixbuf (cr, GLOBALS->wave_splash_pixbuf, 0.0, 0.0);
 	cairo_paint (cr);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 	gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->darea_splash_c_1), gdc);
 #else
 	cairo_destroy (cr);
@@ -864,7 +864,7 @@ if(GLOBALS->splash_splash_c_1)
 			if((current==total)||(cur_bar_x>=WAVE_SPLASH_X-4)) GLOBALS->load_complete_splash_c_1=1;
 			/* if(current>total) current = total; */ /* scan-build */
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 			GdkDrawingContext *gdc;
 #endif
 		        cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->darea_splash_c_1)), &gdc);
@@ -872,7 +872,7 @@ if(GLOBALS->splash_splash_c_1)
 		        cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 1.0);
         		cairo_rectangle (cr, 0,WAVE_SPLASH_Y-4, (GLOBALS->prev_bar_x_splash_c_1 = cur_bar_x), 4);
 			cairo_fill(cr);
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 			gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->darea_splash_c_1), gdc);
 #else
 			cairo_destroy (cr);

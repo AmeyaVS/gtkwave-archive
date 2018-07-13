@@ -60,7 +60,7 @@ if(GLOBALS->cr_signalpixmap)
                 GtkAllocation allocation;
                 gtk_widget_get_allocation(GLOBALS->signalarea, &allocation);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 		GdkDrawingContext *gdc;
 #endif
                 cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)), &gdc);
@@ -71,7 +71,7 @@ if(GLOBALS->cr_signalpixmap)
                 cairo_paint (cr);
 
                 draw_signalarea_focus(cr);
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 		gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->signalarea), gdc);
 #else
 		cairo_destroy (cr);
@@ -82,7 +82,7 @@ if(GLOBALS->cr_signalpixmap)
                 GtkAllocation allocation;
                 gtk_widget_get_allocation(GLOBALS->signalarea, &allocation);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 		GdkDrawingContext *gdc;
 #endif
                 cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)), &gdc);
@@ -91,7 +91,7 @@ if(GLOBALS->cr_signalpixmap)
 
                 cairo_set_source_surface(cr, GLOBALS->surface_signalpixmap, -xsrc, 0);
                 cairo_paint (cr);
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
                 gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->signalarea), gdc);
 #else
                 cairo_destroy (cr);
@@ -436,7 +436,7 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 				}
 			}
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 		GdkDrawingContext *gdc;
 #endif
                 cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(GLOBALS->signalarea)), &gdc);
@@ -446,7 +446,7 @@ if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
                 cairo_set_source_surface(cr, GLOBALS->surface_signalpixmap, -xsrc, 0);
                 cairo_paint (cr);
 		draw_signalarea_focus(cr);
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 		gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->signalarea), gdc);
 #else
 		cairo_destroy (cr);
@@ -1584,7 +1584,7 @@ int xsrc;
 hadj=GTK_ADJUSTMENT(GLOBALS->signal_hslider);
 xsrc=(gint)gtk_adjustment_get_value(hadj);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 GdkDrawingContext *gdc;
 #endif
 cairo_t* cr = XXX_gdk_cairo_create (XXX_GDK_DRAWABLE (gtk_widget_get_window(widget)), &gdc);
@@ -1596,7 +1596,7 @@ cairo_paint (cr);
 
 draw_signalarea_focus(cr);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 gdk_window_end_draw_frame(gtk_widget_get_window(widget), gdc);
 #else
 cairo_destroy (cr);

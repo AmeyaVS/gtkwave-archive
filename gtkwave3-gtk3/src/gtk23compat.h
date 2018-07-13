@@ -13,6 +13,7 @@
 
 /* workaround for gtk warnings "How does the code know the size to allocate?" */
 #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
+/* this removes the GtkFrame warnings, but the API is deprecated */
 /* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_DEPRECATED_API */
 
 /* seat vs pointer enable */
@@ -21,6 +22,7 @@
 #define WAVE_GTK3_HIERSEARCH_DEBOUNCE
 #define WAVE_GTK3_MENU_SEPARATOR
 #define WAVE_ALLOW_GTK3_GRID
+#define WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 #endif
 
 #define WAVE_GTKIFE(a,b,c,d,e) {a,b,c,d,e,NULL}
@@ -78,8 +80,6 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define XXX_GTK_STOCK_GO_FORWARD "go-next"
 #define XXX_GTK_STOCK_REFRESH "view-refresh"
 
-cairo_t *XXX_gdk_cairo_create (GdkWindow *window, GdkDrawingContext **gdc);
-
 #else
 
 #define YYY_GTK_TREE_VIEW GTK_TREE_VIEW
@@ -118,8 +118,6 @@ cairo_t *XXX_gdk_cairo_create (GdkWindow *window, GdkDrawingContext **gdc);
 #define XXX_GTK_STOCK_GO_FORWARD GTK_STOCK_GO_FORWARD
 #define XXX_GTK_STOCK_REFRESH GTK_STOCK_REFRESH
 
-#define XXX_gdk_cairo_create(a, b) gdk_cairo_create(a)
-
 #endif
 
 
@@ -147,6 +145,13 @@ void XXX_gtk_table_attach (GtkGrid *table,
 
 #ifndef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
 #define XXX_gdk_pointer_ungrab gdk_pointer_ungrab
+#endif
+
+
+#ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
+cairo_t *XXX_gdk_cairo_create (GdkWindow *window, GdkDrawingContext **gdc);
+#else
+#define XXX_gdk_cairo_create(a, b) gdk_cairo_create(a)
 #endif
 
 #endif
