@@ -591,7 +591,9 @@ GtkWidget *entry;
 GtkWidget *timebox;
 GtkWidget *panedwindow;
 GtkWidget *dummy1, *dummy2;
+#if !GTK_CHECK_VERSION(3,0,0)
 GtkWidget *toolhandle=NULL;
+#endif
 int tcl_interpreter_needs_making = 0;
 struct Global *old_g = NULL;
 
@@ -1973,6 +1975,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 }
 #endif
 
+#if !GTK_CHECK_VERSION(3,0,0)
 			if(GLOBALS->force_toolbars)
 				{
 				toolhandle=gtk_handle_box_new();
@@ -1981,6 +1984,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 				gtk_box_pack_start(GTK_BOX(main_vbox), toolhandle, FALSE, TRUE, 0);
 				}
 				else
+#endif
 				{
 				gtk_box_pack_start(GTK_BOX(main_vbox), menubar, FALSE, TRUE, 0);
 				}
@@ -1994,12 +1998,14 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
 		tb_pos = 0;
 
+#if !GTK_CHECK_VERSION(3,0,0)
 		if(GLOBALS->force_toolbars)
 			{
 			toolhandle=gtk_handle_box_new();
 			gtk_widget_show(toolhandle);
 			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
 			}
+#endif
 
 		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         GTK_STOCK_CUT,
@@ -2237,6 +2243,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 }
 #endif
 
+#if !GTK_CHECK_VERSION(3,0,0)
 			if(GLOBALS->force_toolbars)
 				{
 				toolhandle=gtk_handle_box_new();
@@ -2245,6 +2252,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 				gtk_box_pack_start(GTK_BOX(main_vbox), toolhandle, FALSE, TRUE, 0);
 				}
 				else
+#endif
 				{
 				gtk_box_pack_start(GTK_BOX(main_vbox), menubar, FALSE, TRUE, 0);
 				}
@@ -2252,12 +2260,14 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 
 		top_table = XXX_gtk_table_new (1, 284, FALSE);
 
+#if !GTK_CHECK_VERSION(3,0,0)
 		if(GLOBALS->force_toolbars)
 			{
 			toolhandle=gtk_handle_box_new();
 			gtk_widget_show(toolhandle);
 			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
 			}
+#endif
 
 		whole_table = XXX_gtk_table_new (256, 16, FALSE);
 
@@ -2490,9 +2500,15 @@ if(GLOBALS->treeopen_chain_head)
 if(!mainwindow_already_built)
 	{
 	gtk_widget_show(top_table);
+#if GTK_CHECK_VERSION(3,0,0)
+	XXX_gtk_table_attach (XXX_GTK_TABLE (whole_table), top_table, 0, 16, 0, 1,
+	                      	GTK_FILL | GTK_EXPAND,
+	                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
+#else
 	XXX_gtk_table_attach (XXX_GTK_TABLE (whole_table), GLOBALS->force_toolbars?toolhandle:top_table, 0, 16, 0, 1,
 	                      	GTK_FILL | GTK_EXPAND,
 	                      	GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
+#endif
 
 	if(!GLOBALS->do_resize_signals)
 		{

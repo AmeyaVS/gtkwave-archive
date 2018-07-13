@@ -1662,3 +1662,5 @@
 		GTK3: Fix status window so it does not grow in the y direction.
 		Ifdef out code for --slider-zoom as it does not function with
 		GTK toolkit versions > 1.x series.
+		Ifdef out code for force_toolbars as it does not function with
+		GTK toolkit versions > 2.x series.

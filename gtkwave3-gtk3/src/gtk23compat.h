@@ -78,7 +78,6 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define YYY_gtk_hscrollbar_new(a) gtk_hscrollbar_new(a)
 #define YYY_gtk_vscrollbar_new(a) gtk_vscrollbar_new(a)
 
-
 #endif
 
 
