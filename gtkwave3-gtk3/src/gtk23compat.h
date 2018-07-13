@@ -23,7 +23,13 @@
 #endif
 
 #define WAVE_GTKIFE(a,b,c,d,e) {a,b,c,d,e,NULL}
+
+#if GTK_CHECK_VERSION(3,0,0)
+#define WAVE_GDK_GET_POINTER(a,b,c,bi,ci,d)  gdk_window_get_device_position(a, gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_display_get_default())), bi, ci, d)
+#else
 #define WAVE_GDK_GET_POINTER(a,b,c,bi,ci,d)  gdk_window_get_pointer(a,bi,ci,d)
+#endif
+
 #define WAVE_GDK_GET_POINTER_COPY x=xi; y=yi;
 
 #define WAVE_GTK_SFUNCAST(x) ((void (*)(GtkWidget *, gpointer))(x))

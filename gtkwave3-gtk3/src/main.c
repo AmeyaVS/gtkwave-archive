@@ -109,8 +109,8 @@ XXX_gtk_table_new (guint rows,
                gboolean homogeneous)
 {
 GtkWidget *grid = gtk_grid_new ();
-gtk_grid_set_row_homogeneous (grid, homogeneous);
-gtk_grid_set_column_homogeneous (grid, homogeneous);
+gtk_grid_set_row_homogeneous (GTK_GRID(grid), homogeneous);
+gtk_grid_set_column_homogeneous (GTK_GRID(grid), homogeneous);
 
 return(grid);
 }

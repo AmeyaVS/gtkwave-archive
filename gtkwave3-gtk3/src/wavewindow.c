@@ -1411,7 +1411,7 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
                GDK_SEAT_CAPABILITY_ALL_POINTING,
                FALSE,
                NULL,
-               event,
+               (GdkEvent *)event, /* GdkEvent is a union with type as 1st element */
                NULL,
                NULL);
 #else
