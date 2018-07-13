@@ -145,7 +145,14 @@ X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
 {
   GtkToolItem *button;
 
+#if GTK_CHECK_VERSION(3,0,0)
+  GtkWidget *icon_widget = gtk_image_new_from_icon_name(stock_id, GTK_ICON_SIZE_BUTTON);
+
+  gtk_widget_show(icon_widget);
+  button = gtk_tool_button_new(icon_widget, NULL);
+#else
   button = gtk_tool_button_new_from_stock (stock_id);
+#endif
   gtk_tool_item_set_tooltip_text (button, tooltip_text);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar),
                       button,
@@ -1575,8 +1582,13 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
         g_object_unref(rcstyle); /* was gtk_rc_style_unref (rcstyle) */
 #endif
 
+#if GTK_CHECK_VERSION(3,0,0)
+        image = gtk_image_new_from_icon_name (GTK_STOCK_CLOSE, 
+                                          GTK_ICON_SIZE_MENU);
+#else
         image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, 
                                           GTK_ICON_SIZE_MENU);
+#endif
         gtk_container_add (GTK_CONTAINER (close_button), image);
 	/* ...code from gedit */
 
