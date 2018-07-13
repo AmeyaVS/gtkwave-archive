@@ -156,8 +156,14 @@ X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
                           gint position)
 {
   GtkToolItem *button;
+#if GTK_CHECK_VERSION(3,0,0)
+  GtkWidget *icon_widget = gtk_image_new_from_icon_name(stock_id, GTK_ICON_SIZE_BUTTON);
 
+  gtk_widget_show(icon_widget);
+  button = gtk_tool_button_new(icon_widget, NULL);
+#else
   button = gtk_tool_button_new_from_stock (stock_id);
+#endif
   gtk_tool_item_set_tooltip_text (button, tooltip_text);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar),
                       button,
