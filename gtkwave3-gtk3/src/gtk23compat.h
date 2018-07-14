@@ -11,11 +11,10 @@
 /* workaround for wave_vslider not rendering properly on startup */
 #define WAVE_ALLOW_GTK3_VSLIDER_WORKAROUND
 
-/* workarounds for gtk warnings "How does the code know the size to allocate?" */
-#define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_TREESEARCH
-#define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
-
-/* this completely removes the GtkFrame warnings due to events ordering problems, but the API is deprecated */
+/* workarounds for gtk warnings "How does the code know the size to allocate?", etc. */
+#define WAVE_GTK3_GLIB_WARNING_SUPPRESS
+/* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_TREESEARCH */
+/* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER */
 /* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_DEPRECATED_API */
 
 /* seat vs pointer enable */

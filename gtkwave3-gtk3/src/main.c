@@ -579,6 +579,31 @@ void addPidToExecutableName(int argc, char* argv[], char* argv_mod[])
 }
 
 
+#ifdef WAVE_GTK3_GLIB_WARNING_SUPPRESS
+static GLogWriterOutput
+gtkwave_glib_log_handler (GLogLevelFlags log_level,
+                   const GLogField *fields,
+                   gsize n_fields,
+                   gpointer user_data)
+{
+if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G_LOG_LEVEL_DEBUG))
+	{
+	/* filter out low-level warnings as GTK3 is too chatty */
+	}
+	else
+	{
+	int i;
+	for(i=0;i<n_fields;i++)
+		{
+		fprintf(stderr, "GTKWAVE | %s: %s\n", fields[i].key, fields[i].value); /* provides exact location: much better than stock message */
+		}
+	}
+
+return(G_LOG_WRITER_HANDLED);
+}
+#endif
+
+
 int main(int argc, char *argv[])
 {
 return(main_2(0, argc, argv));
@@ -878,6 +903,10 @@ if(!mainwindow_already_built)
 		fprintf(stderr, "Could not initialize GTK!  Is DISPLAY env var/xhost set?\n\n");
 		print_help(argv[0]);
 		}
+
+#ifdef WAVE_GTK3_GLIB_WARNING_SUPPRESS
+g_log_set_writer_func (gtkwave_glib_log_handler, NULL, NULL);
+#endif
 
 #ifdef WAVE_CRASH_ON_GTK_WARNING
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING);

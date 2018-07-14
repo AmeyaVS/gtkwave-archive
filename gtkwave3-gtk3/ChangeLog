@@ -1665,3 +1665,5 @@
 		Ifdef out code for force_toolbars as it does not function with
 		GTK toolkit versions > 2.x series.
 		Removed and replaced all GTK3 deprecated API.
+		Installed g_log_set_writer_func handler to suppress numerous
+		GTK3 warnings.
