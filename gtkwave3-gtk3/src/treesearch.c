@@ -814,7 +814,7 @@ XXX_create_sst_nodes_if_necessary(gtk_tree_view_get_model(GTK_TREE_VIEW(GLOBALS-
 
 XXX_generic_tree_expand_collapse_callback(1, gtk_tree_view_get_model(GTK_TREE_VIEW(GLOBALS->treeview_main)), iter, path);
 
-#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_TREESEARCH
 gtk_widget_queue_resize(GTK_WIDGET(GLOBALS->treeview_main));
 #endif
 

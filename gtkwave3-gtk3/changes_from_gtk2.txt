@@ -194,3 +194,5 @@ remove gtksocket/plug mechanism and simply use separate windows to avoid gtkx/X1
 for GLOBALS->treeview_main, see what hadj/vadj work is required in globals.c to get this to scroll to the correct position.  it's not currently working right/consistently.
 
 internal in gtk3 toolkit using + option (++ works): (twinwave:9756): Gtk-CRITICAL **: gtk_widget_destroy: assertion 'GTK_IS_WIDGET (widget)'
+
+Look for size allocation issues with the tabbed viewing in gtkwave when resizing, etc.

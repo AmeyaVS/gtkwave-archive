@@ -11,12 +11,12 @@
 /* workaround for wave_vslider not rendering properly on startup */
 #define WAVE_ALLOW_GTK3_VSLIDER_WORKAROUND
 
-/* workaround for gtk warnings "How does the code know the size to allocate?" */
-#define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND
-/* this removes the GtkFrame warnings, but the API is deprecated */
-/* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_DEPRECATED_API */
-
+/* workarounds for gtk warnings "How does the code know the size to allocate?" */
+#define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_TREESEARCH
 #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+
+/* this completely removes the GtkFrame warnings due to events ordering problems, but the API is deprecated */
+/* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_DEPRECATED_API */
 
 /* seat vs pointer enable */
 #define WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
@@ -42,7 +42,7 @@
 /* doesn't work in gtk 2 or 3 */
 #undef WAVE_ALLOW_SLIDER_ZOOM
 
-/* gtk3->4 deprecated */
+/* gtk3->4 deprecated changes */
 
 #if GTK_CHECK_VERSION(3,0,0)
 
@@ -51,21 +51,15 @@
 #define YYY_gtk_tree_view_get_hadjustment gtk_scrollable_get_hadjustment
 #define YYY_gtk_tree_view_set_vadjustment gtk_scrollable_set_vadjustment
 #define YYY_gtk_tree_view_set_hadjustment gtk_scrollable_set_hadjustment
-
 #define YYY_GTK_TEXT_VIEW GTK_SCROLLABLE
 #define YYY_gtk_text_view_get_vadjustment gtk_scrollable_get_vadjustment
-
 GtkWidget *XXX_gtk_hbox_new (gboolean homogeneous, gint spacing);
 GtkWidget *XXX_gtk_vbox_new (gboolean homogeneous, gint spacing);
-
 #define YYY_gtk_hpaned_new(a) gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
 #define YYY_gtk_vpaned_new(a) gtk_paned_new(GTK_ORIENTATION_VERTICAL)
-
 GtkWidget *XXX_gtk_hseparator_new (void);
-
 #define YYY_gtk_hscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, a)
 #define YYY_gtk_vscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, a)
-
 #define XXX_GTK_STOCK_CANCEL "_Cancel"
 #define XXX_GTK_STOCK_OPEN "_Open"
 #define XXX_GTK_STOCK_SAVE "_Save"
@@ -89,21 +83,15 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 #define YYY_gtk_tree_view_get_hadjustment gtk_tree_view_get_hadjustment
 #define YYY_gtk_tree_view_set_vadjustment gtk_tree_view_set_vadjustment
 #define YYY_gtk_tree_view_set_hadjustment gtk_tree_view_set_hadjustment
-
 #define YYY_GTK_TEXT_VIEW GTK_TEXT_VIEW
 #define YYY_gtk_text_view_get_vadjustment gtk_text_view_get_vadjustment
-
 #define XXX_gtk_hbox_new(a, b) gtk_hbox_new((a), (b))
 #define XXX_gtk_vbox_new(a, b) gtk_vbox_new((a), (b))
-
 #define YYY_gtk_hpaned_new(a) gtk_hpaned_new()
 #define YYY_gtk_vpaned_new(a) gtk_vpaned_new()
-
 #define XXX_gtk_hseparator_new gtk_hseparator_new
-
 #define YYY_gtk_hscrollbar_new(a) gtk_hscrollbar_new(a)
 #define YYY_gtk_vscrollbar_new(a) gtk_vscrollbar_new(a)
-
 #define XXX_GTK_STOCK_CANCEL GTK_STOCK_CANCEL
 #define XXX_GTK_STOCK_OPEN GTK_STOCK_OPEN
 #define XXX_GTK_STOCK_SAVE GTK_STOCK_SAVE
