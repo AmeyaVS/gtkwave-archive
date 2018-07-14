@@ -26,8 +26,7 @@
 #endif
 #endif
 
-#include "fsdb_wrapper_api.h"
-
+#define WAVE_CRASH_ON_GTK_WARNING
 /*
 #define WAVE_CRASH_ON_GTK_WARNING
 */
@@ -602,7 +601,7 @@ if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G
 	}
 
 #ifdef WAVE_CRASH_ON_GTK_WARNING
-exit(255);
+abort();
 #endif
 
 return(G_LOG_WRITER_HANDLED);
