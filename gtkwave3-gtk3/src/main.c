@@ -586,11 +586,13 @@ gtkwave_glib_log_handler (GLogLevelFlags log_level,
                    gsize n_fields,
                    gpointer user_data)
 {
+#ifndef WAVE_CRASH_ON_GTK_WARNING
 if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G_LOG_LEVEL_DEBUG))
 	{
 	/* filter out low-level warnings as GTK3 is too chatty */
 	}
 	else
+#endif
 	{
 	int i;
 	for(i=0;i<n_fields;i++)
@@ -598,6 +600,10 @@ if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G
 		fprintf(stderr, "GTKWAVE | %s: %s\n", fields[i].key, fields[i].value); /* provides exact location: much better than stock message */
 		}
 	}
+
+#ifdef WAVE_CRASH_ON_GTK_WARNING
+exit(255);
+#endif
 
 return(G_LOG_WRITER_HANDLED);
 }
