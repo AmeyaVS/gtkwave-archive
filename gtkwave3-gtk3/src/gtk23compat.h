@@ -16,6 +16,8 @@
 /* this removes the GtkFrame warnings, but the API is deprecated */
 /* #define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_DEPRECATED_API */
 
+#define WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+
 /* seat vs pointer enable */
 #define WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
 

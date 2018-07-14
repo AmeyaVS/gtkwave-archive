@@ -846,6 +846,16 @@ NULL, /* signalarea_event_box */
 0, /* button2_debounce_flag */
 0, /* dragzoom_threshold */
 
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+0.0, /* wave_vslider_page_size */
+0.0, /* wave_vslider_page_increment */
+0.0, /* wave_vslider_step_increment */
+0.0, /* wave_vslider_lower */
+0.0, /* wave_vslider_upper */
+0.0, /* wave_vslider_value */
+#endif
+
+
 /*
  * simplereq.c
  */
@@ -1288,6 +1298,7 @@ NULL, /* wavefont_smaller 617 */
 NULL, /* wavearea 618 */
 NULL, /* vscroll_wavewindow_c_1 619 */
 NULL, /* hscroll_wavewindow_c_2 620 */
+NULL, /* wave_vslider2 622 */
 NULL, /* wave_vslider 622 */
 NULL, /* wave_hslider */
 {0}, /* named_markers 623 */

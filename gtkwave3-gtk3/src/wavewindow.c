@@ -754,7 +754,10 @@ if((GLOBALS->cr_wavepixmap_wavewindow_c_1)&&(GLOBALS->wavewidth>1))
 	}
 }
 
-static void
+#ifndef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+static
+#endif
+void
 service_vslider(GtkWidget *text, gpointer data)
 {
 (void)text;
@@ -1867,6 +1870,35 @@ return(rc);
 }
 #endif
 
+
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+static gboolean wave_vslider_gtc(GtkWidget *widget,
+                    GdkFrameClock *frame_clock,
+                    gpointer user_data)
+{
+if(GLOBALS && GLOBALS->wave_vslider_step_increment && GLOBALS->wave_vslider && GLOBALS->signal_hslider)
+	{
+	GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+	GtkAdjustment *hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+
+	gtk_adjustment_set_page_size(wadj, GLOBALS->wave_vslider_page_size);
+	gtk_adjustment_set_page_increment(wadj, GLOBALS->wave_vslider_page_increment);
+	gtk_adjustment_set_step_increment(wadj, GLOBALS->wave_vslider_step_increment);
+	GLOBALS->wave_vslider_step_increment = 0.0;
+	gtk_adjustment_set_lower(wadj, GLOBALS->wave_vslider_lower);
+	gtk_adjustment_set_upper(wadj, GLOBALS->wave_vslider_upper);
+	gtk_adjustment_set_value(wadj, GLOBALS->wave_vslider_upper);
+
+	g_signal_emit_by_name (XXX_GTK_OBJECT (wadj), "changed");	/* force bar update */
+	g_signal_emit_by_name (XXX_GTK_OBJECT (wadj), "value_changed"); /* force text update */
+	g_signal_emit_by_name (XXX_GTK_OBJECT (hadj), "changed");	/* force bar update */
+	}
+
+return(G_SOURCE_CONTINUE);
+}
+#endif
+
+
 GtkWidget *
 create_wavewindow(void)
 {
@@ -1913,6 +1945,15 @@ gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wave_vslider), "value_changed",G_
 GLOBALS->vscroll_wavewindow_c_1=YYY_gtk_vscrollbar_new(vadj);
 /* GTK_WIDGET_SET_FLAGS(GLOBALS->vscroll_wavewindow_c_1, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->vscroll_wavewindow_c_1);
+
+/* this moves GLOBALS->wave_vslider updates out from signalarea_configure_event where it was causing size allocation warnings */
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->vscroll_wavewindow_c_1),
+                              wave_vslider_gtc,
+                              NULL,
+                              NULL);
+#endif
+
 #ifdef WAVE_ALLOW_GTK3_GRID
 XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->vscroll_wavewindow_c_1, 9, 10, 0, 9,
                         0,

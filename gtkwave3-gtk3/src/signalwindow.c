@@ -1442,7 +1442,8 @@ if( ((int)gtk_adjustment_get_value(hadj))+width > GLOBALS->signal_fill_width)
 	gtk_adjustment_set_value(hadj, (gfloat)(GLOBALS->signal_fill_width-width));
 	}
 
-
+/* in gtk3 there is a race condition in how updating GLOBALS->wave_vslider causes resizing during configure phase */
+#ifndef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
 wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
 gtk_adjustment_set_page_size(wadj,(gfloat) num_traces_displayable);
 gtk_adjustment_set_page_increment(wadj,(gfloat) num_traces_displayable);
@@ -1531,6 +1532,96 @@ g_signal_emit_by_name (XXX_GTK_OBJECT (wadj), "changed");	/* force bar update */
 g_signal_emit_by_name (XXX_GTK_OBJECT (wadj), "value_changed"); /* force text update */
 
 g_signal_emit_by_name (XXX_GTK_OBJECT (hadj), "changed");	/* force bar update */
+
+#else
+
+wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
+GLOBALS->wave_vslider_page_size = (gfloat) num_traces_displayable;
+GLOBALS->wave_vslider_page_increment = (gfloat) num_traces_displayable;
+GLOBALS->wave_vslider_step_increment = (gfloat)1.0; /* also functions as a "valid" */
+GLOBALS->wave_vslider_lower = (gfloat)0.0;
+GLOBALS->wave_vslider_upper = (gfloat)(GLOBALS->traces.visible ? GLOBALS->traces.visible : 1);
+
+if(GLOBALS->traces.scroll_bottom)
+	{
+	Trptr t = GLOBALS->traces.first;
+	int which = 0;
+	int scroll_top = -1, scroll_bottom = -1;
+	int cur_top = gtk_adjustment_get_value(wadj);
+	int cur_bottom = cur_top + num_traces_displayable - 1;
+
+	while(t)
+		{
+		if(t == GLOBALS->traces.scroll_top)
+			{
+			scroll_top = which;
+			}
+
+		if(t == GLOBALS->traces.scroll_bottom)
+			{
+			scroll_bottom = which;
+			break;
+			}
+
+		t = GiveNextTrace(t);
+		which++;
+		}
+
+	GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = NULL;
+
+	if((scroll_top >= 0) && (scroll_bottom >= 0))
+		{
+		if((scroll_top > cur_top) && (scroll_bottom <= cur_bottom))
+			{
+			/* nothing */
+			}
+			else
+			{
+			if((scroll_bottom - scroll_top + 1) >= num_traces_displayable)
+				{
+				GLOBALS->wave_vslider_value = (gfloat)(scroll_bottom - num_traces_displayable + 1);
+				}
+				else
+				{
+				int midpoint = (cur_top + cur_bottom) / 2;
+
+				if(scroll_top <= cur_top)
+					{
+					GLOBALS->wave_vslider_value = (gfloat)scroll_top-1;
+					}
+				else if(scroll_top >= cur_bottom)
+					{
+					GLOBALS->wave_vslider_value = (gfloat)(scroll_bottom - num_traces_displayable + 1);
+					}
+				else
+				if(scroll_top < midpoint)
+					{
+					GLOBALS->wave_vslider_value = (gfloat)scroll_top-1;
+					}
+				else
+					{
+					GLOBALS->wave_vslider_value = (gfloat)(scroll_bottom - num_traces_displayable + 1);
+					}
+				}
+
+			if(GLOBALS->wave_vslider_value < 0.0) GLOBALS->wave_vslider_value = 0.0;
+			}
+		}
+	}
+
+if(num_traces_displayable>GLOBALS->traces.visible)
+	{
+	GLOBALS->wave_vslider_value = (gfloat)(GLOBALS->trtarget_signalwindow_c_1=0);
+	}
+	else
+	if (GLOBALS->wave_vslider_value + num_traces_displayable > GLOBALS->traces.visible)
+	{
+	GLOBALS->wave_vslider_value = (gfloat)(GLOBALS->trtarget_signalwindow_c_1=GLOBALS->traces.visible-num_traces_displayable);
+	}
+
+service_vslider(NULL, NULL); /* forces update of signals */
+
+#endif
 
 return(TRUE);
 }

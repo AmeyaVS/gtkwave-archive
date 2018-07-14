@@ -27,5 +27,9 @@ gint wavearea_configure_event(GtkWidget *widget, GdkEventConfigure *event);
 void XXX_gdk_draw_line(cairo_t *cr, wave_rgb_t gc, gint _x1, gint _y1, gint _x2, gint _y2);
 void XXX_gdk_draw_rectangle(cairo_t *cr, wave_rgb_t gc, gboolean filled, gint _x1, gint _y1, gint _w, gint _h);
 
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+void service_vslider(GtkWidget *text, gpointer data);
+#endif
+
 #endif
 

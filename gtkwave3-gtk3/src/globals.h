@@ -859,6 +859,15 @@ gint mouseover_counter; /* from signalwindow.c */
 unsigned button2_debounce_flag : 1;
 int dragzoom_threshold;
 
+#ifdef WAVE_GTK3_SIZE_ALLOCATE_WORKAROUND_WAVE_VSLIDER
+gfloat wave_vslider_page_size;
+gfloat wave_vslider_page_increment;
+gfloat wave_vslider_step_increment;
+gfloat wave_vslider_lower;
+gfloat wave_vslider_upper;
+gfloat wave_vslider_value;
+#endif
+
 
 /*
  * simplereq.c
@@ -1295,6 +1304,7 @@ struct font_engine_font_t *wavefont_smaller; /* from wavewindow.c 676 */
 GtkWidget *wavearea; /* from wavewindow.c 677 */
 GtkWidget *vscroll_wavewindow_c_1; /* from wavewindow.c 678 */
 GtkWidget *hscroll_wavewindow_c_2; /* from wavewindow.c 679 */
+gpointer wave_vslider2; /* from wavewindow.c 681 */
 gpointer wave_vslider; /* from wavewindow.c 681 */
 gpointer wave_hslider; /* from wavewindow.c 682 */
 TimeType named_markers[WAVE_NUM_NAMED_MARKERS]; /* from wavewindow.c 683 */

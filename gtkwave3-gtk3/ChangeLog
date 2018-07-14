@@ -1664,3 +1664,4 @@
 		GTK toolkit versions > 1.x series.
 		Ifdef out code for force_toolbars as it does not function with
 		GTK toolkit versions > 2.x series.
+		Removed and replaced all GTK3 deprecated API.
