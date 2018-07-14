@@ -26,7 +26,6 @@
 #endif
 #endif
 
-#define WAVE_CRASH_ON_GTK_WARNING
 /*
 #define WAVE_CRASH_ON_GTK_WARNING
 */
