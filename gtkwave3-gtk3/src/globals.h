@@ -866,6 +866,7 @@ gfloat wave_vslider_step_increment;
 gfloat wave_vslider_lower;
 gfloat wave_vslider_upper;
 gfloat wave_vslider_value;
+unsigned wave_vslider_valid : 1;
 #endif
 
 

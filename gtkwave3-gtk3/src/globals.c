@@ -853,6 +853,7 @@ NULL, /* signalarea_event_box */
 0.0, /* wave_vslider_lower */
 0.0, /* wave_vslider_upper */
 0.0, /* wave_vslider_value */
+0, /* wave_vslider_valid */
 #endif
 
 

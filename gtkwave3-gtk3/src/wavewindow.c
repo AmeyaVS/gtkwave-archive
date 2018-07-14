@@ -1876,7 +1876,7 @@ static gboolean wave_vslider_gtc(GtkWidget *widget,
                     GdkFrameClock *frame_clock,
                     gpointer user_data)
 {
-if(GLOBALS && GLOBALS->wave_vslider_step_increment && GLOBALS->wave_vslider && GLOBALS->signal_hslider)
+if(GLOBALS && GLOBALS->wave_vslider_valid && GLOBALS->wave_vslider && GLOBALS->signal_hslider)
 	{
 	GtkAdjustment *wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
 	GtkAdjustment *hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
@@ -1884,10 +1884,11 @@ if(GLOBALS && GLOBALS->wave_vslider_step_increment && GLOBALS->wave_vslider && G
 	gtk_adjustment_set_page_size(wadj, GLOBALS->wave_vslider_page_size);
 	gtk_adjustment_set_page_increment(wadj, GLOBALS->wave_vslider_page_increment);
 	gtk_adjustment_set_step_increment(wadj, GLOBALS->wave_vslider_step_increment);
-	GLOBALS->wave_vslider_step_increment = 0.0;
 	gtk_adjustment_set_lower(wadj, GLOBALS->wave_vslider_lower);
 	gtk_adjustment_set_upper(wadj, GLOBALS->wave_vslider_upper);
-	gtk_adjustment_set_value(wadj, GLOBALS->wave_vslider_upper);
+	gtk_adjustment_set_value(wadj, GLOBALS->wave_vslider_value);
+
+	GLOBALS->wave_vslider_valid = 0;
 
 	g_signal_emit_by_name (XXX_GTK_OBJECT (wadj), "changed");	/* force bar update */
 	g_signal_emit_by_name (XXX_GTK_OBJECT (wadj), "value_changed"); /* force text update */

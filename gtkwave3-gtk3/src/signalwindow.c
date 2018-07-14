@@ -1538,9 +1538,10 @@ g_signal_emit_by_name (XXX_GTK_OBJECT (hadj), "changed");	/* force bar update */
 wadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
 GLOBALS->wave_vslider_page_size = (gfloat) num_traces_displayable;
 GLOBALS->wave_vslider_page_increment = (gfloat) num_traces_displayable;
-GLOBALS->wave_vslider_step_increment = (gfloat)1.0; /* also functions as a "valid" */
+GLOBALS->wave_vslider_step_increment = (gfloat)1.0;
 GLOBALS->wave_vslider_lower = (gfloat)0.0;
 GLOBALS->wave_vslider_upper = (gfloat)(GLOBALS->traces.visible ? GLOBALS->traces.visible : 1);
+GLOBALS->wave_vslider_value = gtk_adjustment_get_value(wadj);
 
 if(GLOBALS->traces.scroll_bottom)
 	{
@@ -1620,6 +1621,7 @@ if(num_traces_displayable>GLOBALS->traces.visible)
 	}
 
 service_vslider(NULL, NULL); /* forces update of signals */
+GLOBALS->wave_vslider_valid = 1;
 
 #endif
 
