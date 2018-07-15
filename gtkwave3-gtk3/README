@@ -13,14 +13,14 @@ the following..]
 #!/bin/sh
 
 if [ "$1" == "--libs" ]
-	then
-	echo -L/home/bybell/libs -lgck -lgdk-1.3 -lgimp-1.2 -lgimpi -lgimpui-1.2 -lglib-1.3 -lgmodule-1.3 -lgnu-intl -lgobject-1.3 -lgthread-1.3 -lgtk-1.3 -liconv-1.3 -ljpeg -llibgplugin_a -llibgplugin_b -lpng -lpthread32 -ltiff-lzw -ltiff-nolzw -ltiff
-	fi
+        then
+        echo -L/home/bybell/libs -lgck -lgdk-1.3 -lgimp-1.2 -lgimpi -lgimpui-1.2 -lglib-1.3 -lgmodule-1.3 -lgnu-intl -lgobject-1.3 -lgthread-1.3 -lgtk-1.3 -liconv-1.3 -ljpeg -llibgplugin_a -llibgplugin_b -lpng -lpthread32 -ltiff-lzw -ltiff-nolzw -ltiff
+        fi
 
 if [ "$1" == "--cflags" ]
-	then
-	echo " -mms-bitfields -I/home/bybell/src/glib -I/home/bybell/src/gtk+/gtk -I/home/bybell/src/gtk+/gdk -I/home/bybell/src/gtk+ " 
-	fi
+        then
+        echo " -mms-bitfields -I/home/bybell/src/glib -I/home/bybell/src/gtk+/gtk -I/home/bybell/src/gtk+/gdk -I/home/bybell/src/gtk+ " 
+        fi
 <<snip>>
 
 [Note2: for mingw with gtk+-2, you don't need to do anything except have
@@ -179,5 +179,14 @@ pacman -S mingw-w64-i686-gtk3
 pacman -S mingw-w64-x86_64-gtk3 
 
 -121217ajb  bybell@rocketmail.com
+
+===============================================================================
+
+Add --enable-gtk3 to the ./configure invocation to build against GTK3.
+
+  --enable-gtk3           Causes the GTK+ frontend to be built with gtk3
+                          instead of gtk2.
+
+-150718ajb  bybell@rocketmail.com
 
 ===============================================================================
