@@ -1655,3 +1655,4 @@
 		Fix scrolling on help window by adding scroll to end mark.
 		Fix scrolling on status window when use_toolbutton_interface
 		rc var is set to FALSE by adding scroll to end mark.
+		Updated BUILT_SOURCES for vermin.
