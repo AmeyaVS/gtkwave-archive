@@ -1656,3 +1656,4 @@
 		Fix scrolling on status window when use_toolbutton_interface
 		rc var is set to FALSE by adding scroll to end mark.
 		Updated BUILT_SOURCES for vermin.
+		extern yy_size_t yyleng fix in rtlbrowse.

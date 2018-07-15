@@ -23,7 +23,9 @@ extern int my_yylineno;
 extern char *v_preproc_name;
 int yylex(void);
 extern char *yytext;
-extern int yyleng;
+
+typedef size_t yy_size_t;
+extern yy_size_t yyleng;
 
 const char *is_builtin_define (register const char *str, register unsigned int len);
 
