@@ -1668,3 +1668,4 @@
 		Installed g_log_set_writer_func handler to suppress numerous
 		GTK3 warnings.
 		Updated BUILT_SOURCES for vermin.
+		extern yy_size_t yyleng fix in rtlbrowse.
