@@ -1667,3 +1667,4 @@
 		Removed and replaced all GTK3 deprecated API.
 		Installed g_log_set_writer_func handler to suppress numerous
 		GTK3 warnings.
+		Updated BUILT_SOURCES for vermin.
