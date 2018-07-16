@@ -8,6 +8,10 @@
 #endif
 
 #if GTK_CHECK_VERSION(3,0,0)
+#include <gdk/gdkwayland.h>
+#endif
+
+#if GTK_CHECK_VERSION(3,0,0)
 /* workaround for wave_vslider not rendering properly on startup */
 #define WAVE_ALLOW_GTK3_VSLIDER_WORKAROUND
 

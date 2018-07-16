@@ -658,6 +658,10 @@ gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->wavearea), gdc);
 #else
 cairo_destroy (cr);
 #endif
+
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default())) gtk_widget_queue_draw(GLOBALS->wavearea);
+#endif
 }
 
 
@@ -2159,6 +2163,10 @@ void populateBuffer (Trptr t, char *altname, char* buf)
 	    }
 	}
     }
+
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default())) gtk_widget_queue_draw(GLOBALS->signalarea);
+#endif
 }
 
 /***************************************************************************/
@@ -3274,6 +3282,10 @@ if(GLOBALS->traces.dirty)
 	GLOBALS->traces.dirty = 0;
 	gtkwavetcl_setvar(WAVE_TCLCB_TRACES_UPDATED, dbuf, WAVE_TCLCB_TRACES_UPDATED_FLAGS);
 	}
+
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default())) gtk_widget_queue_draw(GLOBALS->wavearea);
+#endif
 }
 
 

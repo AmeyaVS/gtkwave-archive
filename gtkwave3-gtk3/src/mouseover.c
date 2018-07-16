@@ -460,6 +460,10 @@ gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->mo_area_mouseover_c_1),
 cairo_destroy (cr);
 #endif
 
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default())) gtk_widget_queue_draw(GLOBALS->mo_area_mouseover_c_1);
+#endif
+
 bot:
 if(asciivalue) { free_2(asciivalue); }
 if(alternate_name) { free_2(alternate_name); }
