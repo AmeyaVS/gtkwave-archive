@@ -1657,3 +1657,5 @@
 		rc var is set to FALSE by adding scroll to end mark.
 		Updated BUILT_SOURCES for vermin.
 		extern yy_size_t yyleng fix in rtlbrowse.
+3.3.93	16jul18	SVN version bump to 3.3.93.
+
