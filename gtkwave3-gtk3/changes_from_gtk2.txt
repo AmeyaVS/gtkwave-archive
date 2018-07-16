@@ -197,4 +197,4 @@ internal in gtk3 toolkit using + option (++ works): (twinwave:9756): Gtk-CRITICA
 
 Look for size allocation issues with the tabbed viewing in gtkwave when resizing, etc.
 
-(*) Fix screen updates in wave/signalwindow panels as they are delayed in Wayland.
+Fix mouseover window position for Wayland.  Is it possible to set this?
