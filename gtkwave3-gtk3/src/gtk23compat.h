@@ -132,7 +132,9 @@ void XXX_gtk_table_attach (GtkGrid *table,
 #endif
 
 
-#ifndef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
+#ifdef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
+void XXX_gdk_pointer_ungrab (guint32 time_);
+#else
 #define XXX_gdk_pointer_ungrab gdk_pointer_ungrab
 #endif
 
