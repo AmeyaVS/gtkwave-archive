@@ -280,17 +280,33 @@ static void create_mouseover_sigs(gint x, gint y, gint width, gint height)
 GLOBALS->mo_width_mouseover_c_1 = width;
 GLOBALS->mo_height_mouseover_c_1 = height;
 
-GLOBALS->mouseover_mouseover_c_1 = gtk_window_new(GTK_WINDOW_POPUP);
-gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), width, height);
-
-	gtk_window_set_type_hint(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))
+        {
+        GLOBALS->mo_area_mouseover_c_1=gtk_drawing_area_new();
+        gtk_widget_show(GLOBALS->mo_area_mouseover_c_1);
+        GLOBALS->mouseover_mouseover_c_1 = gtk_window_new (GTK_WINDOW_POPUP);
+        gtk_window_group_add_window (gtk_window_get_group (GTK_WINDOW(GLOBALS->mainwindow)), GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1));
+        gtk_window_set_transient_for (GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), GTK_WINDOW(GLOBALS->mainwindow));
+        gtk_container_add(GTK_CONTAINER(GLOBALS->mouseover_mouseover_c_1), GLOBALS->mo_area_mouseover_c_1);
+        gtk_widget_realize (GLOBALS->mouseover_mouseover_c_1);
+        gtk_window_set_type_hint (GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), GDK_WINDOW_TYPE_HINT_POPUP_MENU);
+        gtk_window_move (GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), x, y);
+        gtk_window_resize (GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), width, height);
+        gtk_widget_show_now (GTK_WIDGET (GLOBALS->mouseover_mouseover_c_1));
+        }
+        else
+#endif
+      	{
+	GLOBALS->mouseover_mouseover_c_1 = gtk_window_new(GTK_WINDOW_POPUP);
+        gtk_window_set_default_size(GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), width, height);
+        gtk_window_set_type_hint(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
         gtk_window_move(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), x, y);
-
-GLOBALS->mo_area_mouseover_c_1=gtk_drawing_area_new();
-gtk_container_add(GTK_CONTAINER(GLOBALS->mouseover_mouseover_c_1), GLOBALS->mo_area_mouseover_c_1);
-gtk_widget_show(GLOBALS->mo_area_mouseover_c_1);
-gtk_widget_show(GLOBALS->mouseover_mouseover_c_1);
-
+        GLOBALS->mo_area_mouseover_c_1=gtk_drawing_area_new();
+        gtk_container_add(GTK_CONTAINER(GLOBALS->mouseover_mouseover_c_1), GLOBALS->mo_area_mouseover_c_1);
+        gtk_widget_show(GLOBALS->mo_area_mouseover_c_1);
+        gtk_widget_show(GLOBALS->mouseover_mouseover_c_1);
+        }
 
 GtkAllocation allocation;
 gtk_widget_get_allocation(GLOBALS->mouseover_mouseover_c_1, &allocation);
@@ -448,6 +464,9 @@ if(!GLOBALS->mouseover_mouseover_c_1)
 	gdk_window_get_origin(gtk_widget_get_window(GLOBALS->signalarea), &xd, &yd);
         gtk_window_move(GTK_WINDOW(GLOBALS->mouseover_mouseover_c_1), xin + xd + 8, yin + yd + 20);
 	}
+
+if(!GLOBALS->cr_mo_pixmap_mouseover_c_1) goto bot; /* harden against NULL pointer */
+
 
 XXX_gdk_draw_rectangle(GLOBALS->cr_mo_pixmap_mouseover_c_1, GLOBALS->rgb_mo_dk_gray_mouseover_c_1, TRUE,
                 0,0,
