@@ -198,3 +198,4 @@ internal in gtk3 toolkit using + option (++ works): (twinwave:9756): Gtk-CRITICA
 Look for size allocation issues with the tabbed viewing in gtkwave when resizing, etc.
 
 Fix mouseover window position for Wayland.  Is it possible to set this by triggering a GtkTooltip?  See https://bugzilla.redhat.com/show_bug.cgi?id=1264355
+Splash screen does not raise or have centered window position for Wayland.
