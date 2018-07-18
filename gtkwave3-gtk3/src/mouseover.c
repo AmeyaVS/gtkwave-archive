@@ -259,7 +259,7 @@ if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))
 	gtk_window_set_type_hint (GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), GDK_WINDOW_TYPE_HINT_POPUP_MENU);
 	gtk_window_move (GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), x, y);
 	gtk_window_resize (GTK_WINDOW (GLOBALS->mouseover_mouseover_c_1), width, height);
-	gtk_widget_show_now (GTK_WIDGET (GLOBALS->mouseover_mouseover_c_1));
+	gtk_widget_show (GTK_WIDGET (GLOBALS->mouseover_mouseover_c_1));
 	}
 	else
 #endif
