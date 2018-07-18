@@ -1673,3 +1673,4 @@
 		Fix missing signal/wave window updates in Wayland.
 		Fix mouseover initial position in Wayland.  Movement is
 		not yet supported in Wayland for floating mouseover window.
+		Crash fix for twinwave with Wayland (no GtkSocket/Plug).

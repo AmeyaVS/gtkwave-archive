@@ -17,6 +17,7 @@
 #else
 #if GTK_CHECK_VERSION(3,0,0)
 #include <gtk/gtkx.h>
+#include <gdk/gdkwayland.h>
 #endif
 #endif
 
@@ -29,6 +30,7 @@
 #include "debug.h"
 
 static int use_embedded = 1;
+static int twinwayland = 0;
 
 #define XXX_GTK_OBJECT(x) x
 
@@ -130,11 +132,21 @@ gtk_widget_show(mainwindow);
 g_signal_connect(XXX_GTK_OBJECT(mainwindow), "destroy", G_CALLBACK(quit_callback), "WM destroy");
 
 #ifndef __MINGW32__
-xsocket[0] = gtk_socket_new ();
-xsocket[1] = gtk_socket_new ();
-gtk_widget_show (xsocket[0]);
-gtk_widget_show (xsocket[1]);
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))
+        {
+	twinwayland = 1;
+	use_embedded = 0;
+	}
+#endif
+	{
+	xsocket[0] = gtk_socket_new ();
+	xsocket[1] = gtk_socket_new ();
+	gtk_widget_show (xsocket[0]);
+	gtk_widget_show (xsocket[1]);
+	}
 
+if(!twinwayland)
 g_signal_connect(XXX_GTK_OBJECT(xsocket[0]), "plug-removed", G_CALLBACK(plug_removed), NULL);
 
 #if GTK_CHECK_VERSION(3,0,0)
@@ -155,9 +167,12 @@ vpan = gtk_vpaned_new ();
 gtk_widget_show (vpan);
 gtk_box_pack_start (GTK_BOX (main_vbox), vpan, TRUE, TRUE, 1);
 
-gtk_paned_pack1 (GTK_PANED (vpan), xsocket[0], TRUE, FALSE);
-g_signal_connect(XXX_GTK_OBJECT(xsocket[1]), "plug-removed", G_CALLBACK(plug_removed), NULL);
-gtk_paned_pack2 (GTK_PANED (vpan), xsocket[1], TRUE, FALSE);
+if(!twinwayland)
+	{
+	gtk_paned_pack1 (GTK_PANED (vpan), xsocket[0], TRUE, FALSE);
+	g_signal_connect(XXX_GTK_OBJECT(xsocket[1]), "plug-removed", G_CALLBACK(plug_removed), NULL);
+	gtk_paned_pack2 (GTK_PANED (vpan), xsocket[1], TRUE, FALSE);
+	}
 #endif
 
 #ifdef __MINGW32__
