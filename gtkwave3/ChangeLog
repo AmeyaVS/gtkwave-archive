@@ -1657,5 +1657,5 @@
 		rc var is set to FALSE by adding scroll to end mark.
 		Updated BUILT_SOURCES for vermin.
 		extern yy_size_t yyleng fix in rtlbrowse.
-3.3.93	16jul18	SVN version bump to 3.3.93.
-
+3.3.93	19jul18	Added sst_dbl_action_type rc variable which controls side-
+		effect of double-clicking in SST signals pane.

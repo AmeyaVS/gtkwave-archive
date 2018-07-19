@@ -1107,6 +1107,7 @@ NULL, /* dnd_sigview */
 NULL, /* sst_vpaned */
 0, /* fetchlow */
 0, /* fetchhigh */
+SST_ACTION_INSERT, /* sst_dbl_action_type */
 
 
 /*
@@ -1926,6 +1927,7 @@ void reload_into_new_context_2(void)
  new_globals->strace_repeat_count = GLOBALS->strace_repeat_count; /* for edgebuttons and also strace */
 
  new_globals->logfiles = GLOBALS->logfiles; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
+ new_globals->sst_dbl_action_type = GLOBALS->sst_dbl_action_type;
 
  strcpy2_into_new_context(new_globals, &new_globals->argvlist, &GLOBALS->argvlist);
  strcpy2_into_new_context(new_globals, &new_globals->editor_name, &GLOBALS->editor_name);
@@ -2833,6 +2835,7 @@ switch(type)
 							GLOBALS->ignore_savefile_size = g_old->ignore_savefile_size;
 
 							GLOBALS->hier_ignore_escapes = g_old->hier_ignore_escapes;
+							GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
 
 							gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
 							}

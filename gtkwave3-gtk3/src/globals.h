@@ -1063,6 +1063,7 @@ int fetchlow;
 int fetchhigh;
 GtkTreeStore *treestore_main;
 GtkWidget *treeview_main;
+enum sst_cb_action sst_dbl_action_type;
 
 
 /*

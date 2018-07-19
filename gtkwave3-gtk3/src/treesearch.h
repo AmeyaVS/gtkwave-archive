@@ -26,5 +26,7 @@ void DND_helper_quartz(char *data);
 void recurse_import(GtkWidget *widget, guint callback_action);
 #define WV_RECURSE_IMPORT_WARN (0)
 
+enum sst_cb_action { SST_ACTION_INSERT, SST_ACTION_REPLACE, SST_ACTION_APPEND, SST_ACTION_PREPEND, SST_ACTION_NONE };
+
 #endif
 

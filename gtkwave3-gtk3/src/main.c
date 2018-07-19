@@ -269,6 +269,7 @@ GLOBALS->zoom_pow10_snap = g_old->zoom_pow10_snap;
 GLOBALS->zoom_dyn = g_old->zoom_dyn;
 GLOBALS->zoom_dyne = g_old->zoom_dyne;
 GLOBALS->hier_ignore_escapes = g_old->hier_ignore_escapes;
+GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
 
 reformat_time(timestr, GLOBALS->tims.first + GLOBALS->global_time_offset, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
@@ -864,6 +865,7 @@ if(!GLOBALS)
 	GLOBALS->extload_max_tree = old_g->extload_max_tree;
 	GLOBALS->do_hier_compress = old_g->do_hier_compress;
 	GLOBALS->disable_auto_comphier = old_g->disable_auto_comphier;
+	GLOBALS->sst_dbl_action_type = old_g->sst_dbl_action_type;
 
 	GLOBALS->cr_line_width = old_g->cr_line_width;
 

@@ -884,9 +884,6 @@ return(GLOBALS->is_active_treesearch_gtk2_c_6);
 
 /* Callback for insert/replace/append buttions.
    This call-back is called for every signal selected.  */
-enum cb_action { ACTION_INSERT, ACTION_REPLACE, ACTION_APPEND, ACTION_PREPEND };
-
-
 
 static void
 sig_selection_foreach (GtkTreeModel *model,
@@ -898,7 +895,7 @@ sig_selection_foreach (GtkTreeModel *model,
 (void)data;
 
   struct tree *sel;
-  /* const enum cb_action action = (enum cb_action)data; */
+  /* const enum sst_cb_action action = (enum sst_cb_action)data; */
   int i;
   int low, high;
 
@@ -941,9 +938,9 @@ sig_selection_foreach (GtkTreeModel *model,
 static void
 sig_selection_foreach_finalize (gpointer data)
 {
- const enum cb_action action = (enum cb_action)data;
+ const enum sst_cb_action action = (enum sst_cb_action)data;
 
- if (action == ACTION_REPLACE || action == ACTION_INSERT || action == ACTION_PREPEND)
+ if (action == SST_ACTION_REPLACE || action == SST_ACTION_INSERT || action == SST_ACTION_PREPEND)
    {
      Trptr tfirst=NULL, tlast=NULL;
      Trptr t;
@@ -951,7 +948,7 @@ sig_selection_foreach_finalize (gpointer data)
      int numhigh = 0;
      int it;
 
-     if (action == ACTION_REPLACE)
+     if (action == SST_ACTION_REPLACE)
        {
 	tfirst=GLOBALS->traces.first; tlast=GLOBALS->traces.last; /* cache for highlighting */
        }
@@ -963,7 +960,7 @@ sig_selection_foreach_finalize (gpointer data)
      GLOBALS->traces.last=GLOBALS->tcache_treesearch_gtk2_c_2.last;
      GLOBALS->traces.total=GLOBALS->tcache_treesearch_gtk2_c_2.total;
 
-     if (action == ACTION_REPLACE)
+     if (action == SST_ACTION_REPLACE)
        {
 	t = GLOBALS->traces.first;
 	while(t) { if(t->flags & TR_HIGHLIGHT) { numhigh++; } t = t->t_next; }
@@ -976,7 +973,7 @@ sig_selection_foreach_finalize (gpointer data)
 	        }
        }
 
-     if(action == ACTION_PREPEND)
+     if(action == SST_ACTION_PREPEND)
 	{
 	PrependBuffer();
 	}
@@ -989,7 +986,7 @@ sig_selection_foreach_finalize (gpointer data)
      GLOBALS->traces.buffer=GLOBALS->tcache_treesearch_gtk2_c_2.buffer;
      GLOBALS->traces.bufferlast=GLOBALS->tcache_treesearch_gtk2_c_2.bufferlast;
 
-     if (action == ACTION_REPLACE)
+     if (action == SST_ACTION_REPLACE)
        {
 	for(it=0;it<numhigh;it++)
 	        {
@@ -1032,7 +1029,7 @@ sig_selection_foreach_preload_lx2
 (void)data;
 
   struct tree *sel;
-  /* const enum cb_action action = (enum cb_action)data; */
+  /* const enum sst_cb_action action = (enum sst_cb_action)data; */
   int i;
   int low, high;
 
@@ -1093,8 +1090,10 @@ sig_selection_foreach_preload_lx2
 
 
 static void
-action_callback(enum cb_action action)
+action_callback(enum sst_cb_action action)
 {
+  if(action == SST_ACTION_NONE) return; /* only used for double-click in signals pane of SST */
+
   GLOBALS->pre_import_treesearch_gtk2_c_1 = 0;
 
   /* once through to mass gather lx2 traces... */
@@ -1106,7 +1105,7 @@ action_callback(enum cb_action action)
         }
 
   /* then do */
-  if (action == ACTION_INSERT || action == ACTION_REPLACE || action == ACTION_PREPEND)
+  if (action == SST_ACTION_INSERT || action == SST_ACTION_REPLACE || action == SST_ACTION_PREPEND)
     {
       /* Save and clear current traces.  */
       memcpy(&GLOBALS->tcache_treesearch_gtk2_c_2,&GLOBALS->traces,sizeof(Traces));
@@ -1119,7 +1118,7 @@ action_callback(enum cb_action action)
 
   sig_selection_foreach_finalize((void *)action);
 
-  if(action == ACTION_APPEND)
+  if(action == SST_ACTION_APPEND)
 	{
 	GLOBALS->traces.scroll_top = GLOBALS->traces.scroll_bottom = GLOBALS->traces.last;
 	}
@@ -1133,7 +1132,7 @@ static void insert_callback(GtkWidget *widget, GtkWidget *nothing)
 (void)nothing;
 
   set_window_busy(widget);
-  action_callback (ACTION_INSERT);
+  action_callback (SST_ACTION_INSERT);
   set_window_idle(widget);
 }
 
@@ -1142,7 +1141,7 @@ static void replace_callback(GtkWidget *widget, GtkWidget *nothing)
 (void)nothing;
 
   set_window_busy(widget);
-  action_callback (ACTION_REPLACE);
+  action_callback (SST_ACTION_REPLACE);
   set_window_idle(widget);
 }
 
@@ -1151,7 +1150,7 @@ static void ok_callback(GtkWidget *widget, GtkWidget *nothing)
 (void)nothing;
 
   set_window_busy(widget);
-  action_callback (ACTION_APPEND);
+  action_callback (SST_ACTION_APPEND);
   set_window_idle(widget);
 }
 
@@ -1233,6 +1232,7 @@ if(event->type == GDK_2BUTTON_PRESS)
 		strcat(sstr, GLOBALS->selected_sig_name);
 
 		gtkwavetcl_setvar(WAVE_TCLCB_TREE_SIG_DOUBLE_CLICK, sstr, WAVE_TCLCB_TREE_SIG_DOUBLE_CLICK_FLAGS);
+		action_callback(GLOBALS->sst_dbl_action_type);
 		}
 	}
 
@@ -1869,7 +1869,7 @@ if(trtarget < 0)
 			}
 			else
 			{
-			action_callback(ACTION_PREPEND);  /* prepend in this widget only ever used by this function call */
+			action_callback(SST_ACTION_PREPEND);  /* prepend in this widget only ever used by this function call */
 			}
 		goto dnd_import_fini;
 		}
@@ -1907,7 +1907,7 @@ if(GLOBALS->tree_dnd_begin == SEARCH_TO_VIEW_DRAG_ACTIVE)
 	}
 	else
 	{
-	action_callback (ACTION_INSERT);
+	action_callback (SST_ACTION_INSERT);
 	}
 
 if(t)

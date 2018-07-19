@@ -338,6 +338,23 @@ GLOBALS->keep_xz_colors=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_sst_dbl_action_type(char *str)
+{
+DEBUG(printf("f_sst_dbl_action_type(\"%s\")\n",str));
+
+switch(str[0])
+        {
+        case 'I': case 'i': GLOBALS->sst_dbl_action_type = SST_ACTION_INSERT; break;
+        case 'R': case 'r': GLOBALS->sst_dbl_action_type = SST_ACTION_REPLACE; break;
+        case 'A': case 'a': GLOBALS->sst_dbl_action_type = SST_ACTION_APPEND; break;
+        case 'P': case 'p': GLOBALS->sst_dbl_action_type = SST_ACTION_PREPEND; break;
+
+        default: GLOBALS->sst_dbl_action_type = SST_ACTION_NONE;
+        }
+
+return(0);
+}
+
 int f_sst_dynamic_filter(char *str)
 {
 DEBUG(printf("f_sst_dynamic_filter(\"%s\")\n",str));
@@ -939,6 +956,7 @@ static struct rc_entry rcitems[]=
 { "show_base_symbols", f_show_base_symbols },
 { "show_grid", f_show_grid },
 { "splash_disable", f_splash_disable },
+{ "sst_dbl_action_type", f_sst_dbl_action_type },
 { "sst_dynamic_filter", f_sst_dynamic_filter },
 { "sst_expanded", f_sst_expanded },
 { "strace_repeat_count", f_strace_repeat_count },

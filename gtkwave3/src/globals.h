@@ -1092,6 +1092,7 @@ GtkWidget *dnd_sigview; /* from treesearch_gtk2.c */
 GtkPaned *sst_vpaned; /* from treesearch_gtk2.c */
 int fetchlow;
 int fetchhigh;
+enum sst_cb_action sst_dbl_action_type;
 
 
 /*

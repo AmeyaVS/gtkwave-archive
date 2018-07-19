@@ -16,6 +16,7 @@
 # editor "mate -l %d %s"
 
 dragzoom_threshold 0
+sst_dbl_action_type insert
 
 use_standard_trace_select no
 highlight_wavewindow no

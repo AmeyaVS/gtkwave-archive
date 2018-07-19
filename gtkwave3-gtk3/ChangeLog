@@ -1669,8 +1669,11 @@
 		GTK3 warnings.
 		Updated BUILT_SOURCES for vermin.
 		extern yy_size_t yyleng fix in rtlbrowse.
-3.3.93	16jul18	Add missing XXX_gdk_pointer_ungrab() prototype for GTK3.
+3.3.93	19jul18	Add missing XXX_gdk_pointer_ungrab() prototype for GTK3.
 		Fix missing signal/wave window updates in Wayland.
 		Fix mouseover initial position in Wayland.  Movement is
 		not yet supported in Wayland for floating mouseover window.
 		Crash fix for twinwave with Wayland (no GtkSocket/Plug).
+		Added sst_dbl_action_type rc variable which controls side-
+                effect of double-clicking in SST signals pane.
+
