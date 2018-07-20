@@ -17,6 +17,7 @@
 
 dragzoom_threshold 0
 sst_dbl_action_type insert
+use_gestures no
 
 use_standard_trace_select no
 highlight_wavewindow no

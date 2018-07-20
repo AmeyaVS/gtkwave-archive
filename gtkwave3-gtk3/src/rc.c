@@ -605,6 +605,13 @@ GLOBALS->use_full_precision=atoi_64(str)?1:0;
 return(0);
 }
 
+int f_use_gestures(char *str)
+{
+DEBUG(printf("f_use_gestures(\"%s\")\n",str));
+GLOBALS->use_gestures=atoi_64(str)?1:0;
+return(0);
+}
+
 int f_use_maxtime_display(char *str)
 {
 DEBUG(printf("f_use_maxtime_display(\"%s\")\n",str));
@@ -964,6 +971,7 @@ static struct rc_entry rcitems[]=
 { "use_fat_lines", f_use_fat_lines },
 { "use_frequency_display", f_use_frequency_display },
 { "use_full_precision", f_use_full_precision },
+{ "use_gestures", f_use_gestures },
 { "use_maxtime_display", f_use_maxtime_display },
 { "use_nonprop_fonts", f_use_nonprop_fonts },
 { "use_pango_fonts", f_use_pango_fonts },

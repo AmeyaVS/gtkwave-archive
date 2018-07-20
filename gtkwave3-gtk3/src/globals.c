@@ -1334,6 +1334,7 @@ RGB_WAVE_RAINBOW_INITIALIZER, /* rgb_gc_rainbow */
 NULL, /* wavearea_gesture_swipe */
 0.0, /* wavearea_gesture_swipe_velocity_x */
 #endif
+0, /* use_gestures */
 
 
 /*
@@ -1682,6 +1683,9 @@ void reload_into_new_context_2(void)
  new_globals->keypress_handler_id = GLOBALS->keypress_handler_id;
  new_globals->signalarea = GLOBALS->signalarea;
  new_globals->wavearea = GLOBALS->wavearea;
+#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+ new_globals->wavearea_gesture_swipe = GLOBALS->wavearea_gesture_swipe;
+#endif
  new_globals->surface_signalpixmap = GLOBALS->surface_signalpixmap;
  new_globals->cr_signalpixmap = GLOBALS->cr_signalpixmap;
  new_globals->wave_splash_pixbuf = GLOBALS->wave_splash_pixbuf;
@@ -1892,6 +1896,7 @@ void reload_into_new_context_2(void)
 
  new_globals->logfiles = GLOBALS->logfiles; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
  new_globals->sst_dbl_action_type = GLOBALS->sst_dbl_action_type;
+ new_globals->use_gestures = GLOBALS->use_gestures;
 
  strcpy2_into_new_context(new_globals, &new_globals->argvlist, &GLOBALS->argvlist);
  strcpy2_into_new_context(new_globals, &new_globals->editor_name, &GLOBALS->editor_name);
@@ -2787,6 +2792,7 @@ switch(type)
 
 							GLOBALS->hier_ignore_escapes = g_old->hier_ignore_escapes;
 							GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
+							GLOBALS->use_gestures = g_old->use_gestures;
 
 							gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
 							}

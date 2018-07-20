@@ -30,7 +30,7 @@
 #define WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 
 /* swipe gestures: so far is mutually exclusive with existing motion/button action, so it is disabled */
-/* #define WAVE_ALLOW_GTK3_SWIPE_EVENT */
+#define WAVE_ALLOW_GTK3_SWIPE_EVENT
 #define WAVE_GTK3_SWIPE_VELOCITY_DECAY 0.90
 #define WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE 60.0
 #endif

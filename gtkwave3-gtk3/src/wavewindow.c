@@ -1439,6 +1439,7 @@ num_traces_displayable--;
   return(TRUE);
 }
 
+
 static gint button_press_event(GtkWidget *widget, GdkEventButton *event)
 {
 if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindow_c_1)))
@@ -1600,6 +1601,42 @@ if(GLOBALS->prev_markertime == LLDescriptor(-1))
 
 return(TRUE);
 }
+
+
+#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+void wavearea_pressed_event(GtkGestureMultiPress *gesture,
+               gint                  n_press,
+               gdouble               x,
+               gdouble               y,
+               gpointer              user_data)
+{
+GdkEventButton ev;
+
+memset(&ev, sizeof(GdkEventButton), 0);
+ev.button = 1;
+ev.x = x;
+ev.y = y;
+
+button_press_event(GLOBALS->wavearea, &ev);
+}
+
+void
+wavearea_released_event(GtkGestureMultiPress *gesture,
+               gint                  n_press,
+               gdouble               x,
+               gdouble               y,
+               gpointer              user_data)
+{
+GdkEventButton ev;
+
+memset(&ev, sizeof(GdkEventButton), 0);
+ev.button = 1;
+ev.x = x;
+ev.y = y;
+
+button_release_event(GLOBALS->wavearea, &ev);
+}
+#endif
 
 
 void make_sigarea_gcs(GtkWidget *signalarea)
@@ -2022,19 +2059,25 @@ g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "draw",G_CALLBACK(draw_event
 g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "expose_event",G_CALLBACK(expose_event_local), NULL);
 #endif
 
-
 #ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+if(GLOBALS->use_gestures)
 {
-/* so far is mutually exclusive with existing motion/button action */
+/* so far is mutually exclusive with existing motion/button action below */
+GtkGesture *gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_pressed_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released",G_CALLBACK(wavearea_released_event), GLOBALS);
+
 GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe",G_CALLBACK(wavearea_swipe_event), GLOBALS);
 gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->wavearea), wavearea_swipe_tick, NULL, NULL);
 }
-#else
+else
+#endif
+{
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "motion_notify_event",G_CALLBACK(motion_notify_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "button_press_event",G_CALLBACK(button_press_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "button_release_event",G_CALLBACK(button_release_event), NULL);
-#endif
+}
 
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "scroll_event",G_CALLBACK(scroll_event), NULL);
 gtk_widget_set_can_focus(GTK_WIDGET(GLOBALS->wavearea), TRUE);

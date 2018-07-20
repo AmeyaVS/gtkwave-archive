@@ -1340,6 +1340,7 @@ double cr_line_width;
 GtkGesture *wavearea_gesture_swipe;
 gdouble wavearea_gesture_swipe_velocity_x;
 #endif
+char use_gestures;
 
 
 /*

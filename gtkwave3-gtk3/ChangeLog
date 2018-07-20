@@ -1677,4 +1677,4 @@
 		Added sst_dbl_action_type rc variable which controls side-
                 effect of double-clicking in SST signals pane.
 		Added preliminary support for swipe gestures in wave window
-		(currently disabled).
+		(currently disabled by default with rc variable use_gestures).
