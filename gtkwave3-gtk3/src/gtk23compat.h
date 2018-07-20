@@ -154,4 +154,26 @@ cairo_t *XXX_gdk_cairo_create (GdkWindow *window, GdkDrawingContext **gdc);
 #define XXX_gdk_cairo_create(a, b) gdk_cairo_create(a)
 #endif
 
+
+/* useful for multiple GTK versions */
+GtkWidget *
+X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
+                          const gchar *stock_id,
+                          const char *tooltip_text,
+                          const char *tooltip_private_text,
+                          GCallback callback,
+                          gpointer user_data,
+                          gint position);
+
+void
+X_gtk_toolbar_insert_space (GtkToolbar *toolbar,
+                          gint position);
+
+void
+X_gtk_toolbar_insert_widget (GtkToolbar *toolbar,
+                           GtkWidget *widget,
+                           const char *tooltip_text,
+                           const char *tooltip_private_text,
+                           gint position);
+
 #endif
