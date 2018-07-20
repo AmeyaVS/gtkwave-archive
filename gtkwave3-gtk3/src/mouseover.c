@@ -316,6 +316,14 @@ char *flagged_name = NULL;
 char *alternate_name = NULL;
 int fh;
 char flag_string[65];
+#ifdef GDK_WINDOWING_WAYLAND
+static int waycnt = 0;
+
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))
+        {
+	waycnt++;
+	}
+#endif
 
 if(GLOBALS->disable_mouseover)
 	{
@@ -421,10 +429,28 @@ if((!t)||(yin<0)||(yin>GLOBALS->waveheight))
 	goto bot;
 	}
 
+#ifdef GDK_WINDOWING_WAYLAND
+if(waycnt > 2)
+	{
+	waycnt = 0;
+
+	if(GLOBALS->mouseover_mouseover_c_1)
+		{
+		gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
+
+	        if(GLOBALS->cr_mo_pixmap_mouseover_c_1) cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL;
+	        if(GLOBALS->surface_mo_pixmap_mouseover_c_1) cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL;
+		}
+	}
+#endif
+
 if(!GLOBALS->mouseover_mouseover_c_1)
 	{
 	gdk_window_get_origin(gtk_widget_get_window(GLOBALS->wavearea), &xd, &yd);
 	create_mouseover(xin + xd + 8, yin + yd + 20, totalmax, num_info_rows * fh + 7);
+#ifdef GDK_WINDOWING_WAYLAND
+	waycnt = 0;
+#endif
 	}
 	else
 	{
