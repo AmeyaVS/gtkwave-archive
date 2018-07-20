@@ -2019,6 +2019,40 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x > 1.0)
 	}
 
 
+GdkWindow *gw = gtk_widget_get_window(GLOBALS->wavearea);
+
+if(gw)
+	{
+	gdouble x = 0, y = 0, pixstep, offset;
+	TimeType newcurr = 0;
+	GdkModifierType state = 0;
+	gint xi = 0, yi = 0;
+
+	int dummy_x, dummy_y;
+	get_window_xypos(&dummy_x, &dummy_y);
+
+	WAVE_GDK_GET_POINTER(gtk_widget_get_window(GLOBALS->wavearea), &x, &y, &xi, &yi, &state);
+	WAVE_GDK_GET_POINTER_COPY;
+
+	if((x >= 0) && (x < GLOBALS->wavewidth))
+		{
+		pixstep=((gdouble)GLOBALS->nsperframe)/((gdouble)GLOBALS->pixelsperframe);
+		newcurr=GLOBALS->tims.start+(offset=x*pixstep);
+		if((offset-((int)offset))>0.5)  /* round to nearest integer ns */
+			{
+		        newcurr++;
+		        }
+		
+		if(newcurr>GLOBALS->tims.last) newcurr=GLOBALS->tims.last;
+		
+		if(newcurr!=GLOBALS->prevtim_wavewindow_c_1)
+			{
+		        update_currenttime(time_trunc(newcurr));
+		        GLOBALS->prevtim_wavewindow_c_1=newcurr;
+		        }
+		}
+	}
+
 return(G_SOURCE_CONTINUE);
 }
 
