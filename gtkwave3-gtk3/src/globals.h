@@ -1336,6 +1336,10 @@ struct wave_rgbmaster_t rgb_gc;
 struct wave_rgbmaster_t rgb_gccache;
 
 double cr_line_width;
+#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+GtkGesture *wavearea_gesture_swipe;
+gdouble wavearea_gesture_swipe_velocity_x;
+#endif
 
 
 /*

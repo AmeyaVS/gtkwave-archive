@@ -1904,6 +1904,90 @@ return(G_SOURCE_CONTINUE);
 #endif
 
 
+#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+void
+wavearea_swipe_event (GtkGestureSwipe *gesture,
+               gdouble          velocity_x,
+               gdouble          velocity_y,
+               gpointer         user_data)
+{
+GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
+}
+
+static gboolean wavearea_swipe_tick(GtkWidget *widget,
+                    GdkFrameClock *frame_clock,
+                    gpointer user_data)
+{
+gdouble velocity_x, velocity_y;
+
+gboolean rc = gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
+                                &velocity_x,
+                                &velocity_y);
+if(velocity_x > 1.0) 
+	{
+	GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
+	}
+
+if(GLOBALS->wavearea_gesture_swipe_velocity_x < -1.0)
+	{
+	GtkAdjustment *hadj;
+	gfloat inc;
+	TimeType ntinc, pageinc;
+
+	gdouble vp = -GLOBALS->wavearea_gesture_swipe_velocity_x;
+	ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
+	if(ntinc)
+		{
+		hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+		if((gtk_adjustment_get_value(hadj)+inc)<GLOBALS->tims.last) gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj)+inc);
+			else gtk_adjustment_set_value(hadj, GLOBALS->tims.last-inc);
+
+		pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+
+		if((GLOBALS->tims.start+ntinc)<(GLOBALS->tims.last-pageinc+1)) GLOBALS->tims.timecache=GLOBALS->tims.start+ntinc;
+		        else
+			{
+		        GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
+		        if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
+		        }
+
+		time_update();
+		}
+
+	GLOBALS->wavearea_gesture_swipe_velocity_x = GLOBALS->wavearea_gesture_swipe_velocity_x * WAVE_GTK3_SWIPE_VELOCITY_DECAY;
+	}
+
+if(GLOBALS->wavearea_gesture_swipe_velocity_x > 1.0)
+	{
+	GtkAdjustment *hadj;
+	gfloat inc;
+	TimeType ntinc, pageinc;
+
+	gdouble vp = GLOBALS->wavearea_gesture_swipe_velocity_x;
+	ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
+	if(ntinc)
+		{
+		hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+		if((gtk_adjustment_get_value(hadj)-inc)>GLOBALS->tims.first) gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj)-inc);
+		        else gtk_adjustment_set_value(hadj, GLOBALS->tims.first);
+
+		ntinc=(TimeType)inc;
+		if((GLOBALS->tims.start-ntinc)>GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.start-ntinc;
+		        else GLOBALS->tims.timecache=GLOBALS->tims.first;
+
+		time_update();
+		}
+
+	GLOBALS->wavearea_gesture_swipe_velocity_x = GLOBALS->wavearea_gesture_swipe_velocity_x * WAVE_GTK3_SWIPE_VELOCITY_DECAY;
+	}
+
+
+return(G_SOURCE_CONTINUE);
+}
+
+#endif
+
+
 GtkWidget *
 create_wavewindow(void)
 {
@@ -1922,10 +2006,13 @@ GLOBALS->wavearea=gtk_drawing_area_new();
 gtk_widget_show(GLOBALS->wavearea);
 
 gtk_widget_set_events(GLOBALS->wavearea,
-		GDK_SCROLL_MASK |
-                GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK |
-                GDK_BUTTON_RELEASE_MASK |
-                GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
+		GDK_SCROLL_MASK
+                | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK
+                | GDK_BUTTON_RELEASE_MASK
+                | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
+#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+		| GDK_TOUCHPAD_SWIPE
+#endif
                 );
 
 g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "configure_event",G_CALLBACK(wavearea_configure_event_local), NULL);
@@ -1935,9 +2022,19 @@ g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "draw",G_CALLBACK(draw_event
 g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "expose_event",G_CALLBACK(expose_event_local), NULL);
 #endif
 
+
+#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+{
+/* so far is mutually exclusive with existing motion/button action */
+GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
+gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe",G_CALLBACK(wavearea_swipe_event), GLOBALS);
+gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->wavearea), wavearea_swipe_tick, NULL, NULL);
+}
+#else
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "motion_notify_event",G_CALLBACK(motion_notify_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "button_press_event",G_CALLBACK(button_press_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "button_release_event",G_CALLBACK(button_release_event), NULL);
+#endif
 
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "scroll_event",G_CALLBACK(scroll_event), NULL);
 gtk_widget_set_can_focus(GTK_WIDGET(GLOBALS->wavearea), TRUE);
