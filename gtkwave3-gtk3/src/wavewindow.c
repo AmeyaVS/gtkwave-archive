@@ -1995,6 +1995,23 @@ wavearea_swipe_event (GtkGestureSwipe *gesture,
 GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
 }
 
+
+void
+wavearea_swipe_update_event (GtkGesture *gesture,
+               GdkEventSequence *sequence,
+               gpointer          user_data)
+{
+gdouble velocity_x, velocity_y;
+
+gboolean rc = gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
+                                &velocity_x,
+                                &velocity_y);
+if(rc)
+	{
+	GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
+	}
+}
+
 static gboolean wavearea_swipe_tick(GtkWidget *widget,
                     GdkFrameClock *frame_clock,
                     gpointer user_data)
@@ -2004,7 +2021,7 @@ gdouble velocity_x, velocity_y;
 gboolean rc = gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
                                 &velocity_x,
                                 &velocity_y);
-if(velocity_x > 1.0) 
+if((velocity_x > 1.0) || (velocity_x < -1.0))
 	{
 	GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
 	}
@@ -2161,6 +2178,7 @@ gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pan",G_CALLBACK(wavearea_pan_event),
 
 GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe",G_CALLBACK(wavearea_swipe_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "update",G_CALLBACK(wavearea_swipe_update_event), GLOBALS);
 gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->wavearea), wavearea_swipe_tick, NULL, NULL);
 }
 else
