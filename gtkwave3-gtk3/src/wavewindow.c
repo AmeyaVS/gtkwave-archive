@@ -1072,7 +1072,7 @@ do
 #endif
 		{
 	  	int warp = 0;
-          	Trptr t = GLOBALS->traces.first;
+          	Trptr t = (GLOBALS->use_gestures) ? NULL : GLOBALS->traces.first;
 		TimeType gt, delta;
 
           	while ( t )
@@ -1476,7 +1476,7 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
 	if ((event->state & GDK_CONTROL_MASK) && (event->button==1))
 #endif
 		{
-		Trptr t = GLOBALS->traces.first;
+		Trptr t = (GLOBALS->use_gestures) ? NULL : GLOBALS->traces.first;
 
 		while(t)
 			{
@@ -1517,7 +1517,7 @@ if((event->button)&&(event->button==GLOBALS->in_button_press_wavewindow_c_1))
         if(event->button==1)
 		{
 	  	int warp = 0;
-          	Trptr t = GLOBALS->traces.first;
+          	Trptr t = (GLOBALS->use_gestures) ? NULL : GLOBALS->traces.first;
 #ifdef MAC_INTEGRATION
 		if(event->state & GDK_MOD2_MASK)
 #else
@@ -1668,7 +1668,7 @@ wavearea_pan_event (GtkGesturePan  *gesture,
 {
 GdkEventMotion ev;
 
-memset(&ev, sizeof(GdkEventButton), 0);
+memset(&ev, sizeof(GdkEventMotion), 0);
 ev.is_hint = 1;
 ev.state = GDK_BUTTON1_MOTION_MASK;
 ev.x = GLOBALS->wavearea_pan_start_x + offset;
