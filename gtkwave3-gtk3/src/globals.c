@@ -1330,7 +1330,7 @@ RGB_WAVE_RAINBOW_INITIALIZER, /* rgb_gc_rainbow */
 {{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0},{0.0,0.0,0.0,0.0}}, /* rgb_gccache */
 
 1.0, /* cr_line_width */
-#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
 NULL, /* wavearea_gesture_swipe */
 0.0, /* wavearea_gesture_swipe_velocity_x */
 0, /* wavearea_pan_start_x */
@@ -1686,7 +1686,7 @@ void reload_into_new_context_2(void)
  new_globals->keypress_handler_id = GLOBALS->keypress_handler_id;
  new_globals->signalarea = GLOBALS->signalarea;
  new_globals->wavearea = GLOBALS->wavearea;
-#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
  new_globals->wavearea_gesture_swipe = GLOBALS->wavearea_gesture_swipe;
 #endif
  new_globals->surface_signalpixmap = GLOBALS->surface_signalpixmap;

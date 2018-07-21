@@ -1603,7 +1603,7 @@ return(TRUE);
 }
 
 
-#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
 void wavearea_pressed_event(GtkGestureMultiPress *gesture,
                gint                  n_press,
                gdouble               x,
@@ -1985,7 +1985,7 @@ return(G_SOURCE_CONTINUE);
 #endif
 
 
-#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
 void
 wavearea_swipe_event (GtkGestureSwipe *gesture,
                gdouble          velocity_x,
@@ -2001,6 +2001,9 @@ wavearea_swipe_update_event (GtkGesture *gesture,
                GdkEventSequence *sequence,
                gpointer          user_data)
 {
+(void) gesture;
+(void) sequence;
+(void) user_data;
 gdouble velocity_x, velocity_y;
 
 gboolean rc = gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
@@ -2016,6 +2019,9 @@ static gboolean wavearea_swipe_tick(GtkWidget *widget,
                     GdkFrameClock *frame_clock,
                     gpointer user_data)
 {
+(void) widget;
+(void) frame_clock;
+(void) user_data;
 gdouble velocity_x, velocity_y;
 
 gboolean rc = gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
@@ -2148,7 +2154,7 @@ gtk_widget_set_events(GLOBALS->wavearea,
                 | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK
                 | GDK_BUTTON_RELEASE_MASK
                 | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
-#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
 		| GDK_TOUCH_BEGIN | GDK_TOUCH_UPDATE | GDK_TOUCH_END | GDK_TOUCH_CANCEL
 		| GDK_TOUCHPAD_SWIPE
 /*		| GDK_TOUCHPAD_PINCH */
@@ -2162,23 +2168,23 @@ g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "draw",G_CALLBACK(draw_event
 g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "expose_event",G_CALLBACK(expose_event_local), NULL);
 #endif
 
-#ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
 if(GLOBALS->use_gestures)
 {
 /* so far is mutually exclusive with existing motion/button action below */
 GtkGesture *gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_pressed_event), NULL);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released",G_CALLBACK(wavearea_released_event), NULL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed", G_CALLBACK(wavearea_pressed_event), NULL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released", G_CALLBACK(wavearea_released_event), NULL);
 
 gs = gtk_gesture_long_press_new (GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_long_pressed_event), NULL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed", G_CALLBACK(wavearea_long_pressed_event), NULL);
 
 gs = gtk_gesture_pan_new (GLOBALS->wavearea, GTK_ORIENTATION_HORIZONTAL);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pan",G_CALLBACK(wavearea_pan_event), NULL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pan", G_CALLBACK(wavearea_pan_event), NULL);
 
 GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe",G_CALLBACK(wavearea_swipe_event), GLOBALS);
-gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "update",G_CALLBACK(wavearea_swipe_update_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe", G_CALLBACK(wavearea_swipe_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "update", G_CALLBACK(wavearea_swipe_update_event), GLOBALS);
 gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->wavearea), wavearea_swipe_tick, NULL, NULL);
 }
 else
