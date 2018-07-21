@@ -1460,7 +1460,7 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
                GDK_SEAT_CAPABILITY_ALL_POINTING,
                FALSE,
                NULL,
-               (GdkEvent *)event, /* GdkEvent is a union with type as 1st element */
+               (GLOBALS->use_gestures) ? NULL : (GdkEvent *)event, /* GdkEvent is a union with type as 1st element */
                NULL,
                NULL);
 #else
@@ -1518,7 +1518,6 @@ if((event->button)&&(event->button==GLOBALS->in_button_press_wavewindow_c_1))
 		{
 	  	int warp = 0;
           	Trptr t = GLOBALS->traces.first;
-
 #ifdef MAC_INTEGRATION
 		if(event->state & GDK_MOD2_MASK)
 #else
@@ -1987,6 +1986,49 @@ return(G_SOURCE_CONTINUE);
 
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
 void
+wavearea_zoom_begin_event (GtkGesture *gesture,
+               GdkEventSequence *sequence,
+               gpointer          user_data)
+{
+(void) gesture;
+(void) sequence;
+(void) user_data;
+
+GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
+}
+
+void
+wavearea_zoom_scale_changed_event (GtkGestureZoom *controller,
+               gdouble         scale,
+               gpointer        user_data)
+{
+(void) controller;
+(void) scale;
+(void) user_data;
+gdouble zb, ls, lzb, r, z0;
+
+zb = GLOBALS->zoombase;
+lzb = log(zb);
+ls = log(scale);
+
+if((lzb != 0.0) && (scale > 0.0))
+	{
+	r = ls / lzb;
+	z0 = GLOBALS->wavearea_gesture_initial_zoom - r;
+	if((z0 <= 0.0) && (isnormal(z0)));
+		{
+		/* printf("XXX %e %e\n", scale, z0); */
+
+		GLOBALS->tims.zoom = z0 + 1.0; /* 1.0 compensates for what service_zoom_out does */
+		service_zoom_out(NULL, NULL);
+
+		GLOBALS->tims.prevzoom = GLOBALS->wavearea_gesture_initial_zoom;
+		}
+	}
+}
+
+
+void
 wavearea_swipe_event (GtkGestureSwipe *gesture,
                gdouble          velocity_x,
                gdouble          velocity_y,
@@ -2186,6 +2228,11 @@ GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe", G_CALLBACK(wavearea_swipe_event), GLOBALS);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "update", G_CALLBACK(wavearea_swipe_update_event), GLOBALS);
 gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->wavearea), wavearea_swipe_tick, NULL, NULL);
+
+GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
+gs =  gtk_gesture_zoom_new(GLOBALS->wavearea);
+gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "begin", G_CALLBACK(wavearea_zoom_begin_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "scale-changed", G_CALLBACK(wavearea_zoom_scale_changed_event), GLOBALS);
 }
 else
 #endif
@@ -5448,4 +5495,3 @@ GLOBALS->color_active_in_filter = 0;
 GLOBALS->tims.start+=GLOBALS->shift_timebase;
 GLOBALS->tims.end+=GLOBALS->shift_timebase;
 }
-
