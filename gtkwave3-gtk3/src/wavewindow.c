@@ -1610,6 +1610,8 @@ void wavearea_pressed_event(GtkGestureMultiPress *gesture,
                gdouble               y,
                gpointer              user_data)
 {
+(void)n_press;
+(void)user_data;
 GdkEventButton ev;
 
 memset(&ev, sizeof(GdkEventButton), 0);
@@ -1620,6 +1622,7 @@ ev.y = y;
 button_press_event(GLOBALS->wavearea, &ev);
 }
 
+
 void
 wavearea_released_event(GtkGestureMultiPress *gesture,
                gint                  n_press,
@@ -1627,6 +1630,8 @@ wavearea_released_event(GtkGestureMultiPress *gesture,
                gdouble               y,
                gpointer              user_data)
 {
+(void)n_press;
+(void)user_data;
 GdkEventButton ev;
 
 memset(&ev, sizeof(GdkEventButton), 0);
@@ -1635,6 +1640,23 @@ ev.x = x;
 ev.y = y;
 
 button_release_event(GLOBALS->wavearea, &ev);
+}
+
+
+void wavearea_long_pressed_event(GtkGestureMultiPress *gesture,
+               gdouble               x,
+               gdouble               y,
+               gpointer              user_data)
+{
+(void)user_data;
+GdkEventButton ev;
+
+memset(&ev, sizeof(GdkEventButton), 0);
+ev.button = 2;
+ev.x = x;
+ev.y = y;
+
+button_press_event(GLOBALS->wavearea, &ev);
 }
 #endif
 
@@ -2100,6 +2122,9 @@ if(GLOBALS->use_gestures)
 GtkGesture *gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_pressed_event), GLOBALS);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released",G_CALLBACK(wavearea_released_event), GLOBALS);
+
+gs = gtk_gesture_long_press_new (GLOBALS->wavearea);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_long_pressed_event), GLOBALS);
 
 GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe",G_CALLBACK(wavearea_swipe_event), GLOBALS);
