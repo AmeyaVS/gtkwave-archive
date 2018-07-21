@@ -1333,6 +1333,9 @@ RGB_WAVE_RAINBOW_INITIALIZER, /* rgb_gc_rainbow */
 #ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
 NULL, /* wavearea_gesture_swipe */
 0.0, /* wavearea_gesture_swipe_velocity_x */
+0, /* wavearea_pan_start_x */
+0, /* wavearea_pan_start_y */
+0, /* wavearea_pan_active */
 #endif
 0, /* use_gestures */
 

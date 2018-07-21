@@ -1639,6 +1639,8 @@ ev.button = 1;
 ev.x = x;
 ev.y = y;
 
+GLOBALS->wavearea_pan_active = 0;
+
 button_release_event(GLOBALS->wavearea, &ev);
 }
 
@@ -1657,6 +1659,26 @@ ev.x = x;
 ev.y = y;
 
 button_press_event(GLOBALS->wavearea, &ev);
+}
+
+void
+wavearea_pan_event (GtkGesturePan  *gesture,
+               GtkPanDirection direction,
+               gdouble         offset,
+               gpointer        user_data)
+{
+GdkEventMotion ev;
+
+memset(&ev, sizeof(GdkEventButton), 0);
+ev.is_hint = 1;
+ev.state = GDK_BUTTON1_MOTION_MASK;
+ev.x = GLOBALS->wavearea_pan_start_x + offset;
+ev.y = GLOBALS->wavearea_pan_start_y;
+ev.window = gtk_widget_get_window(GLOBALS->wavearea);
+
+GLOBALS->wavearea_pan_active = 1;
+
+motion_notify_event(GLOBALS->wavearea, &ev);
 }
 #endif
 
@@ -1993,24 +2015,27 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x < -1.0)
 	gfloat inc;
 	TimeType ntinc, pageinc;
 
-	gdouble vp = -GLOBALS->wavearea_gesture_swipe_velocity_x;
-	ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
-	if(ntinc)
+	if(!GLOBALS->wavearea_pan_active)
 		{
-		hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
-		if((gtk_adjustment_get_value(hadj)+inc)<GLOBALS->tims.last) gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj)+inc);
-			else gtk_adjustment_set_value(hadj, GLOBALS->tims.last-inc);
-
-		pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
-
-		if((GLOBALS->tims.start+ntinc)<(GLOBALS->tims.last-pageinc+1)) GLOBALS->tims.timecache=GLOBALS->tims.start+ntinc;
-		        else
+		gdouble vp = -GLOBALS->wavearea_gesture_swipe_velocity_x;
+		ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
+		if(ntinc)
 			{
-		        GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
-		        if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
-		        }
-
-		time_update();
+			hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+			if((gtk_adjustment_get_value(hadj)+inc)<GLOBALS->tims.last) gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj)+inc);
+				else gtk_adjustment_set_value(hadj, GLOBALS->tims.last-inc);
+	
+			pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
+	
+			if((GLOBALS->tims.start+ntinc)<(GLOBALS->tims.last-pageinc+1)) GLOBALS->tims.timecache=GLOBALS->tims.start+ntinc;
+			        else
+				{
+			        GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
+			        if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
+			        }
+	
+			time_update();
+			}
 		}
 
 	GLOBALS->wavearea_gesture_swipe_velocity_x = GLOBALS->wavearea_gesture_swipe_velocity_x * WAVE_GTK3_SWIPE_VELOCITY_DECAY;
@@ -2022,19 +2047,22 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x > 1.0)
 	gfloat inc;
 	TimeType ntinc, pageinc;
 
-	gdouble vp = GLOBALS->wavearea_gesture_swipe_velocity_x;
-	ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
-	if(ntinc)
+	if(!GLOBALS->wavearea_pan_active)
 		{
-		hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
-		if((gtk_adjustment_get_value(hadj)-inc)>GLOBALS->tims.first) gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj)-inc);
-		        else gtk_adjustment_set_value(hadj, GLOBALS->tims.first);
-
-		ntinc=(TimeType)inc;
-		if((GLOBALS->tims.start-ntinc)>GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.start-ntinc;
-		        else GLOBALS->tims.timecache=GLOBALS->tims.first;
-
-		time_update();
+		gdouble vp = GLOBALS->wavearea_gesture_swipe_velocity_x;
+		ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
+		if(ntinc)
+			{
+			hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
+			if((gtk_adjustment_get_value(hadj)-inc)>GLOBALS->tims.first) gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj)-inc);
+			        else gtk_adjustment_set_value(hadj, GLOBALS->tims.first);
+	
+			ntinc=(TimeType)inc;
+			if((GLOBALS->tims.start-ntinc)>GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.start-ntinc;
+			        else GLOBALS->tims.timecache=GLOBALS->tims.first;
+	
+			time_update();
+			}
 		}
 
 	GLOBALS->wavearea_gesture_swipe_velocity_x = GLOBALS->wavearea_gesture_swipe_velocity_x * WAVE_GTK3_SWIPE_VELOCITY_DECAY;
@@ -2104,7 +2132,9 @@ gtk_widget_set_events(GLOBALS->wavearea,
                 | GDK_BUTTON_RELEASE_MASK
                 | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
 #ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
+		| GDK_TOUCH_BEGIN | GDK_TOUCH_UPDATE | GDK_TOUCH_END | GDK_TOUCH_CANCEL
 		| GDK_TOUCHPAD_SWIPE
+/*		| GDK_TOUCHPAD_PINCH */
 #endif
                 );
 
@@ -2120,11 +2150,14 @@ if(GLOBALS->use_gestures)
 {
 /* so far is mutually exclusive with existing motion/button action below */
 GtkGesture *gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_pressed_event), GLOBALS);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released",G_CALLBACK(wavearea_released_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_pressed_event), NULL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released",G_CALLBACK(wavearea_released_event), NULL);
 
 gs = gtk_gesture_long_press_new (GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_long_pressed_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed",G_CALLBACK(wavearea_long_pressed_event), NULL);
+
+gs = gtk_gesture_pan_new (GLOBALS->wavearea, GTK_ORIENTATION_HORIZONTAL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pan",G_CALLBACK(wavearea_pan_event), NULL);
 
 GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe",G_CALLBACK(wavearea_swipe_event), GLOBALS);

@@ -1339,6 +1339,9 @@ double cr_line_width;
 #ifdef WAVE_ALLOW_GTK3_SWIPE_EVENT
 GtkGesture *wavearea_gesture_swipe;
 gdouble wavearea_gesture_swipe_velocity_x;
+int wavearea_pan_start_x;
+int wavearea_pan_start_y;
+char wavearea_pan_active;
 #endif
 char use_gestures;
 
