@@ -225,6 +225,12 @@ if (rc==TRUE)
 	}
 
 #else
+(void) title;
+(void) filesel_path;
+(void) ok_func;
+(void) notok_func;
+(void) pattn;
+(void) is_writemode;
 
 fprintf(stderr, "fileselbox_old no longer supported, exiting.\n");
 exit(255);

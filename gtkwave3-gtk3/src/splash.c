@@ -665,6 +665,8 @@ static const char * wave_splash_xpm[] = {
 
 void make_splash_pixmaps(GtkWidget *window)
 {
+(void) window;
+
 GLOBALS->wave_splash_pixbuf = gdk_pixbuf_new_from_xpm_data((const gchar **)wave_splash_xpm);
 }
 
@@ -672,6 +674,9 @@ GLOBALS->wave_splash_pixbuf = gdk_pixbuf_new_from_xpm_data((const gchar **)wave_
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
 {
+(void) widget;
+(void) user_data;
+
 gdk_cairo_set_source_pixbuf (cr, GLOBALS->wave_splash_pixbuf, 0.0, 0.0);
 cairo_paint (cr);
 

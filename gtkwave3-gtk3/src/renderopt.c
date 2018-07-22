@@ -36,6 +36,8 @@ static gdouble py[]={ 8.50,  8.26,  8.50, 6.57, 5.84};
  */
 static void render_clicked(GtkComboBox *widget, gpointer user_data)
 {
+(void) user_data;
+
 GtkComboBox *combo_box = widget;
 int which = gtk_combo_box_get_active (combo_box);
 int i;
@@ -50,6 +52,8 @@ DEBUG(printf("picked: %s\n", render_targets[i]));
 
 static void pagesize_clicked(GtkComboBox *widget, gpointer user_data)
 {
+(void) user_data;
+
 GtkComboBox *combo_box = widget;
 int which = gtk_combo_box_get_active (combo_box);
 int i;
@@ -64,6 +68,8 @@ DEBUG(printf("picked: %s\n", page_size[GLOBALS->page_size_type_renderopt_c_1]));
 
 static void rendertype_clicked(GtkComboBox *widget, gpointer user_data)
 {
+(void) user_data;
+
 GtkComboBox *combo_box = widget;
 int which = gtk_combo_box_get_active (combo_box);
 int i;

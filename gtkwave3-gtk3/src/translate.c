@@ -26,6 +26,10 @@ static gboolean
                        gboolean          path_currently_selected,
                        gpointer          userdata)
 {
+(void) selection;
+(void) model;
+(void) userdata;
+
 gint *idx = NULL;
 
 if(path)

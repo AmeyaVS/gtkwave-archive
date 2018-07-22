@@ -8151,7 +8151,10 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 (void)my_widget;
 
   GtkWidget *menu;
-  int button, event_time;
+#if !GTK_CHECK_VERSION(3,0,0)
+  int button;
+  int event_time;
+#endif
 
   if(!GLOBALS->signal_popup_menu)
     {
@@ -8180,13 +8183,17 @@ void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 
   if (event)
     {
+#if !GTK_CHECK_VERSION(3,0,0)
       button = event->button;
       event_time = event->time;
+#endif
     }
   else
     {
+#if !GTK_CHECK_VERSION(3,0,0)
       button = 0;
       event_time = gtk_get_current_event_time ();
+#endif
     }
 
 #if GTK_CHECK_VERSION(3,0,0)
@@ -8219,7 +8226,9 @@ void do_sst_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 (void)my_widget;
 
   GtkWidget *menu;
+#if !GTK_CHECK_VERSION(3,0,0)
   int button, event_time;
+#endif
 
   if(!GLOBALS->sst_signal_popup_menu)
     {
@@ -8247,13 +8256,17 @@ void do_sst_popup_menu (GtkWidget *my_widget, GdkEventButton *event)
 
   if (event)
     {
+#if !GTK_CHECK_VERSION(3,0,0)
       button = event->button;
       event_time = event->time;
+#endif
     }
   else
     {
+#if !GTK_CHECK_VERSION(3,0,0)
       button = 0;
       event_time = gtk_get_current_event_time ();
+#endif
     }
 
 #if GTK_CHECK_VERSION(3,0,0)

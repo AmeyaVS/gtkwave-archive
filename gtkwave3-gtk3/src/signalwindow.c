@@ -754,6 +754,8 @@ scroll_event( GtkWidget * widget, GdkEventScroll * event )
 #if defined(WAVE_ALLOW_QUARTZ_FLUSH_WORKAROUND) || defined(WAVE_ALLOW_GTK3_VSLIDER_WORKAROUND)
 static gboolean osx_timer(gpointer dummy)
 {
+(void) dummy;
+
 if(GLOBALS)
 	{
 	if(GLOBALS->force_hide_show == 2)
@@ -1646,6 +1648,9 @@ return(rc);
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
 {
+(void) widget;
+(void) user_data;
+
 gint rc = FALSE;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
 /* struct Global *g_old = GLOBALS; */

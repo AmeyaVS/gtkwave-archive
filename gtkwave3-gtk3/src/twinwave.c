@@ -428,7 +428,7 @@ if(shmid >=0)
 #ifdef MAC_INTEGRATION
 					sprintf(buf2, "%x", gtk_socket_get_id (GTK_SOCKET(xsocket[0])));
 #else
-					sprintf(buf2, "%lx", gtk_socket_get_id (GTK_SOCKET(xsocket[0])));
+					sprintf(buf2, "%lx", (long)gtk_socket_get_id (GTK_SOCKET(xsocket[0])));
 #endif
 					}
 					else
@@ -466,7 +466,7 @@ if(shmid >=0)
 #ifdef MAC_INTEGRATION
 				sprintf(buf2, "%x", gtk_socket_get_id (GTK_SOCKET(xsocket[1])));
 #else
-				sprintf(buf2, "%lx", gtk_socket_get_id (GTK_SOCKET(xsocket[1])));
+				sprintf(buf2, "%lx", (long)gtk_socket_get_id (GTK_SOCKET(xsocket[1])));
 #endif
 				}
 				else

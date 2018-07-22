@@ -254,6 +254,9 @@ if(tname)
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
 {
+(void) widget;
+(void) user_data;
+
 cairo_set_source_surface(cr, GLOBALS->surface_mo_pixmap_mouseover_c_1, 0, 0);
 cairo_paint (cr);
 

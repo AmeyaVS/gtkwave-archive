@@ -975,6 +975,9 @@ static gboolean
                        gboolean          path_currently_selected,
                        gpointer          userdata)
 {
+(void) selection;
+(void) userdata;
+
 GtkTreeIter iter;
 char *nam = NULL;
 struct tree *t = NULL;

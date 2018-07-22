@@ -96,6 +96,9 @@ static gboolean
                        gboolean          path_currently_selected,
                        gpointer          userdata)
 {
+(void) selection;
+(void) userdata;
+
 if(!path_currently_selected)
         {
         XXX_select_row_callback(model, path);

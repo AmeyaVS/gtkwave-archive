@@ -35,6 +35,9 @@ static gboolean
                        gboolean          path_currently_selected,
                        gpointer          userdata)
 {
+(void) selection;
+(void) userdata;
+
 GtkTreeIter iter;
 char *nam = NULL;
 struct symbol *s;
@@ -164,6 +167,8 @@ static void
 on_changed (GtkComboBox *widget,
             gpointer   user_data)
 {
+(void) user_data;
+
 GtkComboBox *combo_box = widget;
 int which = gtk_combo_box_get_active (combo_box);
 int i;

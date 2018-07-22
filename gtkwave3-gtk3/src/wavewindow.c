@@ -51,6 +51,7 @@ if(GLOBALS->dual_ctx && !GLOBALS->dual_race_lock)
 
 /******************************************************************/
 
+#ifdef WAVE_ALLOW_SLIDER_ZOOM
 #if GTK_CHECK_VERSION(3,0,0)
 
 static void (*draw_slider_p)    (GtkStyle               *style,
@@ -131,7 +132,6 @@ draw_slider_p(style, window, state_type, shadow_type, area, widget, detail, x, y
 }
 #endif
 
-#ifdef WAVE_ALLOW_SLIDER_ZOOM
 static gint slider_bpr(GtkWidget *widget, GdkEventButton *event)
 {
 (void)widget;
@@ -1454,7 +1454,6 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
 #ifdef WAVE_ALLOW_GTK3_SEAT_VS_POINTER_GRAB_UNGRAB
 	GdkDisplay *display = gdk_display_get_default();
 	GdkSeat *seat = gdk_display_get_default_seat (display);
-	GdkGrabStatus gs =
 	gdk_seat_grab (seat,
                gtk_widget_get_window(widget),
                GDK_SEAT_CAPABILITY_ALL_POINTING,
@@ -1609,8 +1608,9 @@ void wavearea_pressed_event(GtkGestureMultiPress *gesture,
                gdouble               y,
                gpointer              user_data)
 {
-(void)n_press;
-(void)user_data;
+(void) gesture;
+(void) n_press;
+(void) user_data;
 GdkEventButton ev;
 
 memset(&ev, 0, sizeof(GdkEventButton));
@@ -1629,8 +1629,9 @@ wavearea_released_event(GtkGestureMultiPress *gesture,
                gdouble               y,
                gpointer              user_data)
 {
-(void)n_press;
-(void)user_data;
+(void) gesture;
+(void) n_press;
+(void) user_data;
 GdkEventButton ev;
 
 memset(&ev, 0, sizeof(GdkEventButton));
@@ -1647,7 +1648,8 @@ void wavearea_long_pressed_event(GtkGestureMultiPress *gesture,
                gdouble               y,
                gpointer              user_data)
 {
-(void)user_data;
+(void) gesture;
+(void) user_data;
 GdkEventButton ev;
 
 memset(&ev, 0, sizeof(GdkEventButton));
@@ -1679,6 +1681,8 @@ wavearea_drag_update_event (GtkGestureDrag *gesture,
                gdouble         offset_y,
                gpointer        user_data)
 {
+(void) gesture;
+(void) user_data;
 GdkEventMotion ev;
 
 memset(&ev, 0, sizeof(GdkEventMotion));
@@ -1708,6 +1712,8 @@ GLOBALS->wavearea_drag_active = 0;
 
 void make_sigarea_gcs(GtkWidget *signalarea)
 {
+(void) signalarea;
+
 if(!GLOBALS->made_sgc_contexts_wavewindow_c_1)
 	{
 	GLOBALS->rgb_gc_white = XXX_alloc_color(GLOBALS->color_white);
@@ -1921,6 +1927,9 @@ return(rc);
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
 {
+(void) widget;
+(void) user_data;
+
 gint rc = FALSE;
 gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK(GLOBALS->notebook));
 /* struct Global *g_old = GLOBALS; */
@@ -2039,7 +2048,7 @@ if((lzb != 0.0) && (scale > 0.0))
 	{
 	r = ls / lzb;
 	z0 = GLOBALS->wavearea_gesture_initial_zoom - r;
-	if((z0 <= 0.0) && (isnormal(z0)));
+	if((z0 <= 0.0) && (isnormal(z0)))
 		{
 		/* printf("XXX %e %e\n", scale, z0); */
 
@@ -2058,6 +2067,10 @@ wavearea_swipe_event (GtkGestureSwipe *gesture,
                gdouble          velocity_y,
                gpointer         user_data)
 {
+(void) gesture;
+(void) user_data;
+(void) velocity_y;
+
 GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
 }
 
@@ -2090,7 +2103,7 @@ static gboolean wavearea_swipe_tick(GtkWidget *widget,
 (void) user_data;
 gdouble velocity_x, velocity_y;
 
-gboolean rc = gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
+gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
                                 &velocity_x,
                                 &velocity_y);
 if((velocity_x > 1.0) || (velocity_x < -1.0))
@@ -2134,7 +2147,7 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x > 1.0)
 	{
 	GtkAdjustment *hadj;
 	gfloat inc;
-	TimeType ntinc, pageinc;
+	TimeType ntinc;
 
 	if(!GLOBALS->wavearea_drag_active)
 		{

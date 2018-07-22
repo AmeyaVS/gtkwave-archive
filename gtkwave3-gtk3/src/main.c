@@ -443,6 +443,8 @@ gtkwave_glib_log_handler (GLogLevelFlags log_level,
                    gsize n_fields,
                    gpointer user_data)
 {
+(void) user_data;
+
 #ifndef WAVE_CRASH_ON_GTK_WARNING
 if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G_LOG_LEVEL_DEBUG))
 	{
@@ -1867,7 +1869,9 @@ if(GLOBALS->use_toolbutton_interface)
 	{
 	GtkWidget *tb;
 	GtkWidget *stock;
+#if !GTK_CHECK_VERSION(3,0,0)
 	GtkStyle *style;
+#endif
 	int tb_pos;
 
 	if(!mainwindow_already_built)

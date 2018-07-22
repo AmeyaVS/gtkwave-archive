@@ -1681,3 +1681,4 @@
 		Added GtkGestureLongPress for baseline marker set/clear.
 		Added GtkGestureDrag to restore normal left cursor drag.
 		Added GtkGestureZoom for zoom/pinch in waves window.
+		Warnings cleanups.

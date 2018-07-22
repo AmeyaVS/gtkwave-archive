@@ -194,6 +194,8 @@ if(count_active_straces() <= 1) /* only free up traces if there is only one patt
  */
 static void logical_clicked(GtkComboBox *widget, gpointer user_data)
 {
+(void) user_data;
+
 GtkComboBox *combo_box = widget;
 int which = gtk_combo_box_get_active (combo_box);
 int i;
@@ -218,6 +220,8 @@ DEBUG(printf("Trace %s Search Type: %s\n", s->trace->name, stype[(int)s->value])
 
 static void start_clicked(GtkComboBox *widget, gpointer user_data)
 {
+(void) user_data;
+
 GtkComboBox *combo_box = widget;
 int which = gtk_combo_box_get_active (combo_box);
 
@@ -228,6 +232,8 @@ GLOBALS->strace_ctx->mark_idx_start=which;
 
 static void end_clicked(GtkComboBox *widget, gpointer user_data)
 {
+(void) user_data;
+
 GtkComboBox *combo_box = widget;
 int which = gtk_combo_box_get_active (combo_box);
 
@@ -503,7 +509,9 @@ void tracesearchbox(const char *title, GCallback func, gpointer data)
     do		/* add GUI elements for displaying mark count and mark count start/end */
 	{
 	unsigned int idx;
+#if !GTK_CHECK_VERSION(3,0,0)
 	GtkWidget *ptr_mark_label;
+#endif
 	GtkWidget *mark_count_hbox_start,  *mark_count_hbox_end;
 	GtkWidget *count_vbox_left, *count_vbox_right, *count_vbox, *count_hbox;
 

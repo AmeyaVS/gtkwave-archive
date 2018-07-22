@@ -709,6 +709,9 @@ static gboolean
                        gboolean          path_currently_selected,
                        gpointer          userdata)
 {
+(void) selection;
+(void) userdata;
+
 if(!path_currently_selected)
 	{
 	XXX_select_row_callback(model, path);
@@ -810,6 +813,9 @@ static void XXX_tree_expand_callback(GtkTreeView *tree_view,
                GtkTreePath *path,
                gpointer     user_data)
 {
+(void) tree_view;
+(void) user_data;
+
 XXX_create_sst_nodes_if_necessary(gtk_tree_view_get_model(GTK_TREE_VIEW(GLOBALS->treeview_main)), iter, path);
 
 XXX_generic_tree_expand_collapse_callback(1, gtk_tree_view_get_model(GTK_TREE_VIEW(GLOBALS->treeview_main)), iter, path);
@@ -833,6 +839,9 @@ static void XXX_tree_collapse_callback(GtkTreeView *tree_view,
                GtkTreePath *path,
                gpointer     user_data)
 {
+(void) tree_view;
+(void) user_data;
+
 XXX_generic_tree_expand_collapse_callback(0, gtk_tree_view_get_model(GTK_TREE_VIEW(GLOBALS->treeview_main)), iter, path);
 
 #ifdef WAVE_ALLOW_QUARTZ_FLUSH_WORKAROUND

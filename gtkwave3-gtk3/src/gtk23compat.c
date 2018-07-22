@@ -48,6 +48,9 @@ XXX_gtk_table_new (guint rows,
                guint columns,
                gboolean homogeneous)
 {
+(void) rows;
+(void) columns;
+
 GtkWidget *grid = gtk_grid_new ();
 gtk_grid_set_row_homogeneous (GTK_GRID(grid), homogeneous);
 gtk_grid_set_column_homogeneous (GTK_GRID(grid), homogeneous);
@@ -67,6 +70,9 @@ XXX_gtk_table_attach (GtkGrid *table,
                   guint xpadding,
                   guint ypadding)
 {
+(void) xpadding;
+(void) ypadding;
+
 gtk_grid_attach (table, child, left_attach, top_attach, right_attach - left_attach, bottom_attach - top_attach);
 
 gtk_widget_set_hexpand(child, (xoptions & (GTK_EXPAND | GTK_FILL)) != 0);
@@ -109,6 +115,8 @@ X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
                           gpointer user_data,
                           gint position)
 {
+ (void) tooltip_private_text;
+
   GtkToolItem *button;
 #if GTK_CHECK_VERSION(3,0,0)
   GtkWidget *icon_widget = gtk_image_new_from_icon_name(stock_id, GTK_ICON_SIZE_BUTTON);
@@ -147,6 +155,9 @@ X_gtk_toolbar_insert_widget (GtkToolbar *toolbar,
                            const char *tooltip_private_text,
                            gint position)
 {
+(void) tooltip_text;
+(void) tooltip_private_text;
+
 GtkToolItem *ti = gtk_tool_item_new ();
 
 gtk_container_add(GTK_CONTAINER(ti), widget);

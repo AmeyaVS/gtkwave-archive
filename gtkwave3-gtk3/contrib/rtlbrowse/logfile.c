@@ -139,6 +139,9 @@ return(FALSE);
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
 {
+(void) cr;
+(void) user_data;
+
 return(expose_event_local(widget, NULL));
 }
 #endif
@@ -153,6 +156,7 @@ X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
                           gpointer user_data,
                           gint position)
 {
+  (void) tooltip_private_text;
   GtkToolItem *button;
 
 #if GTK_CHECK_VERSION(3,0,0)
