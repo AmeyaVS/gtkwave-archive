@@ -8,7 +8,9 @@
 #endif
 
 #if GTK_CHECK_VERSION(3,0,0)
+#if !defined(__MINGW32__) && !defined(MAC_INTEGRATION)
 #include <gdk/gdkwayland.h>
+#endif
 #endif
 
 #if GTK_CHECK_VERSION(3,0,0)
