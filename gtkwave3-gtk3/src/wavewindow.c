@@ -1613,7 +1613,7 @@ void wavearea_pressed_event(GtkGestureMultiPress *gesture,
 (void)user_data;
 GdkEventButton ev;
 
-memset(&ev, sizeof(GdkEventButton), 0);
+memset(&ev, 0, sizeof(GdkEventButton));
 ev.button = 1;
 ev.x = x;
 ev.y = y;
@@ -1633,12 +1633,10 @@ wavearea_released_event(GtkGestureMultiPress *gesture,
 (void)user_data;
 GdkEventButton ev;
 
-memset(&ev, sizeof(GdkEventButton), 0);
+memset(&ev, 0, sizeof(GdkEventButton));
 ev.button = 1;
 ev.x = x;
 ev.y = y;
-
-GLOBALS->wavearea_pan_active = 0;
 
 button_release_event(GLOBALS->wavearea, &ev);
 }
@@ -1652,7 +1650,7 @@ void wavearea_long_pressed_event(GtkGestureMultiPress *gesture,
 (void)user_data;
 GdkEventButton ev;
 
-memset(&ev, sizeof(GdkEventButton), 0);
+memset(&ev, 0, sizeof(GdkEventButton));
 ev.button = 2;
 ev.x = x;
 ev.y = y;
@@ -1660,24 +1658,50 @@ ev.y = y;
 button_press_event(GLOBALS->wavearea, &ev);
 }
 
+
 void
-wavearea_pan_event (GtkGesturePan  *gesture,
-               GtkPanDirection direction,
-               gdouble         offset,
+wavearea_drag_begin_event (GtkGestureDrag *gesture,
+               gdouble         start_x,
+               gdouble         start_y,
+               gpointer        user_data)
+{
+(void) gesture;
+(void) user_data;
+
+GLOBALS->wavearea_drag_start_x = start_x;
+GLOBALS->wavearea_drag_start_y = start_y;
+}
+
+
+void
+wavearea_drag_update_event (GtkGestureDrag *gesture,
+               gdouble         offset_x,
+               gdouble         offset_y,
                gpointer        user_data)
 {
 GdkEventMotion ev;
 
-memset(&ev, sizeof(GdkEventMotion), 0);
+memset(&ev, 0, sizeof(GdkEventMotion));
 ev.is_hint = 1;
 ev.state = GDK_BUTTON1_MOTION_MASK;
-ev.x = GLOBALS->wavearea_pan_start_x + offset;
-ev.y = GLOBALS->wavearea_pan_start_y;
+ev.x = GLOBALS->wavearea_drag_start_x + offset_x;
+ev.y = GLOBALS->wavearea_drag_start_y + offset_y;
 ev.window = gtk_widget_get_window(GLOBALS->wavearea);
 
-GLOBALS->wavearea_pan_active = 1;
+GLOBALS->wavearea_drag_active = 1;
 
 motion_notify_event(GLOBALS->wavearea, &ev);
+}
+
+
+void
+wavearea_drag_end_event (GtkGestureDrag *gesture,
+               gdouble         offset_x,
+               gdouble         offset_y,
+               gpointer        user_data)
+{
+wavearea_drag_update_event(gesture, offset_x, offset_y, user_data);
+GLOBALS->wavearea_drag_active = 0;
 }
 #endif
 
@@ -2080,7 +2104,7 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x < -1.0)
 	gfloat inc;
 	TimeType ntinc, pageinc;
 
-	if(!GLOBALS->wavearea_pan_active)
+	if(!GLOBALS->wavearea_drag_active)
 		{
 		gdouble vp = -GLOBALS->wavearea_gesture_swipe_velocity_x;
 		ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
@@ -2112,7 +2136,7 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x > 1.0)
 	gfloat inc;
 	TimeType ntinc, pageinc;
 
-	if(!GLOBALS->wavearea_pan_active)
+	if(!GLOBALS->wavearea_drag_active)
 		{
 		gdouble vp = GLOBALS->wavearea_gesture_swipe_velocity_x;
 		ntinc = inc = vp * GLOBALS->nspx / WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE;
@@ -2197,9 +2221,7 @@ gtk_widget_set_events(GLOBALS->wavearea,
                 | GDK_BUTTON_RELEASE_MASK
                 | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
-		| GDK_TOUCH_BEGIN | GDK_TOUCH_UPDATE | GDK_TOUCH_END | GDK_TOUCH_CANCEL
-		| GDK_TOUCHPAD_SWIPE
-/*		| GDK_TOUCHPAD_PINCH */
+		| GDK_TOUCHPAD_GESTURE_MASK
 #endif
                 );
 
@@ -2221,8 +2243,10 @@ gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released", G_CALLBACK(wavearea_relea
 gs = gtk_gesture_long_press_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed", G_CALLBACK(wavearea_long_pressed_event), NULL);
 
-gs = gtk_gesture_pan_new (GLOBALS->wavearea, GTK_ORIENTATION_HORIZONTAL);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pan", G_CALLBACK(wavearea_pan_event), NULL);
+gs = gtk_gesture_drag_new (GLOBALS->wavearea);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "drag_begin", G_CALLBACK(wavearea_drag_begin_event), NULL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "drag_update", G_CALLBACK(wavearea_drag_update_event), NULL);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "drag_end", G_CALLBACK(wavearea_drag_end_event), NULL);
 
 GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe", G_CALLBACK(wavearea_swipe_event), GLOBALS);

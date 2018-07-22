@@ -1334,9 +1334,9 @@ RGB_WAVE_RAINBOW_INITIALIZER, /* rgb_gc_rainbow */
 0.0, /* wavearea_gesture_initial_zoom */
 NULL, /* wavearea_gesture_swipe */
 0.0, /* wavearea_gesture_swipe_velocity_x */
-0, /* wavearea_pan_start_x */
-0, /* wavearea_pan_start_y */
-0, /* wavearea_pan_active */
+0, /* wavearea_drag_start_x */
+0, /* wavearea_drag_start_y */
+0, /* wavearea_drag_active */
 #endif
 0, /* use_gestures */
 

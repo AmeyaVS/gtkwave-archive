@@ -1679,5 +1679,5 @@
 		Added preliminary support for swipe gestures in wave window
 		(currently disabled by default with rc variable use_gestures).
 		Added GtkGestureLongPress for baseline marker set/clear.
-		Added GtkGesturePan to restore normal left cursor drag.
+		Added GtkGestureDrag to restore normal left cursor drag.
 		Added GtkGestureZoom for zoom/pinch in waves window.

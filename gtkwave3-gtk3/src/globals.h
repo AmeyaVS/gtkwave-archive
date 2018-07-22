@@ -1340,9 +1340,9 @@ double cr_line_width;
 gdouble wavearea_gesture_initial_zoom;
 GtkGesture *wavearea_gesture_swipe;
 gdouble wavearea_gesture_swipe_velocity_x;
-int wavearea_pan_start_x;
-int wavearea_pan_start_y;
-char wavearea_pan_active;
+int wavearea_drag_start_x;
+int wavearea_drag_start_y;
+char wavearea_drag_active;
 #endif
 char use_gestures;
 
