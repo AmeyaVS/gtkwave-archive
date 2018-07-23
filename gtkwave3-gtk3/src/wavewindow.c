@@ -1613,12 +1613,19 @@ void wavearea_pressed_event(GtkGestureMultiPress *gesture,
 (void) user_data;
 GdkEventButton ev;
 
-memset(&ev, 0, sizeof(GdkEventButton));
-ev.button = 1;
-ev.x = x;
-ev.y = y;
+if(n_press != 2)
+	{
+	memset(&ev, 0, sizeof(GdkEventButton));
+	ev.button = 1;
+	ev.x = x;
+	ev.y = y;
 
-button_press_event(GLOBALS->wavearea, &ev);
+	button_press_event(GLOBALS->wavearea, &ev);
+	}
+	else
+	{
+	delete_unnamed_marker(NULL, 0, NULL); /* double click gesture deletes primary marker */
+	}
 }
 
 

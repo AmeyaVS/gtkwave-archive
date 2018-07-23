@@ -1669,7 +1669,7 @@
 		GTK3 warnings.
 		Updated BUILT_SOURCES for vermin.
 		extern yy_size_t yyleng fix in rtlbrowse.
-3.3.93	21jul18	Add missing XXX_gdk_pointer_ungrab() prototype for GTK3.
+3.3.93	23jul18	Add missing XXX_gdk_pointer_ungrab() prototype for GTK3.
 		Fix missing signal/wave window updates in Wayland.
 		Fix mouseover initial position in Wayland.  Movement is
 		not yet supported in Wayland for floating mouseover window.
@@ -1682,3 +1682,4 @@
 		Added GtkGestureDrag to restore normal left cursor drag.
 		Added GtkGestureZoom for zoom/pinch in waves window.
 		Warnings cleanups.
+		Double-click during gestures active deletes primary marker.
