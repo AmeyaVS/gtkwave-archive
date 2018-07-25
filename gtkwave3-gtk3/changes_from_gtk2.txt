@@ -27,7 +27,7 @@ removed GtkFileSelection code paths in file.c (GtkFileChooser is already used an
 change remaining GTK_WIDGET_SET_FLAGS (widget, GTK_CAN_DEFAULT) to gtk_widget_set_can_default(widget, TRUE), change GTK_WIDGET_SET_FLAGS (widget, GTK_CAN_FOCUS) to gtk_widget_set_can_focus(widget, TRUE).
 change from using deprecated portions of GtkToolbar API.
 change remaining pixmap.c usages of pixmap usages to pixbuf
-change gtk_entry_new_with_max_length calls with wrapped X_gtk_entry_new_with_max_length ones (gtk_entry_new + gtk_entry_set_max_length)
+change gtk_entry_new_with_max_length calls with wrapped XXX_gtk_entry_new_with_max_length ones (gtk_entry_new + gtk_entry_set_max_length)
 removed stray GtkCTree references in tcl_support_commands.h, changed GtkNotebookPage* to gpointer in main.c.
 
 07 changes:
@@ -165,7 +165,7 @@ twinwave: gtk_[v|h]paned_new -> gtk_paned_new
 rtlbrowse: gtk_hpaned_new -> gtk_paned_new
 ls -1 | awk '{print "cat "$0" | sed s/gtk_hbox_new/XXX_gtk_hbox_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
 ls -1 | awk '{print "cat "$0" | sed s/gtk_vbox_new/XXX_gtk_vbox_new/g >"$0".xxx ; mv "$0".xxx "$0}' | sh
-gtkwave: gtk_[v|h]paned_new -> YYY_gtk_[v|h]paned_new
+gtkwave: gtk_[v|h]paned_new -> XXX_gtk_[v|h]paned_new
 gtk_hseparator_new() -> gtk_separator_new(GTK_ORIENTATION_HORIZONTAL)
 gtk_menu_popup -> gtk_menu_popup_at_pointer
 gtk_button_set_focus_on_click -> gtk_widget_set_focus_on_click
