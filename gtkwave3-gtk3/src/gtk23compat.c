@@ -107,7 +107,7 @@ return(vbox);
 
 
 GtkWidget *
-X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
+XXX_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
                           const gchar *stock_id,
                           const char *tooltip_text,
                           const char *tooltip_private_text,
@@ -136,7 +136,7 @@ X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
 }
 
 void
-X_gtk_toolbar_insert_space (GtkToolbar *toolbar,
+XXX_gtk_toolbar_insert_space (GtkToolbar *toolbar,
                           gint position)
 {
   GtkToolItem *button;
@@ -149,7 +149,7 @@ X_gtk_toolbar_insert_space (GtkToolbar *toolbar,
 }
 
 void
-X_gtk_toolbar_insert_widget (GtkToolbar *toolbar,
+XXX_gtk_toolbar_insert_widget (GtkToolbar *toolbar,
                            GtkWidget *widget,
                            const char *tooltip_text,
                            const char *tooltip_private_text,

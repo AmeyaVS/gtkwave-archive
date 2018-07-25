@@ -1940,7 +1940,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 			}
 #endif
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_CUT,
 						 "Cut Traces",
 						 NULL,
@@ -1954,7 +1954,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_COPY,
 						 "Copy Traces",
 						 NULL,
@@ -1968,7 +1968,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_PASTE,
 						 "Paste Traces",
 						 NULL,
@@ -1982,9 +1982,9 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
+		XXX_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_ZOOM_FIT,
 						 "Zoom Fit",
 						 NULL,
@@ -1998,7 +1998,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_ZOOM_IN,
 						 "Zoom In",
 						 NULL,
@@ -2012,7 +2012,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_ZOOM_OUT,
 						 "Zoom Out",
 						 NULL,
@@ -2026,7 +2026,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_UNDO,
 						 "Zoom Undo",
 						 NULL,
@@ -2040,7 +2040,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_GOTO_FIRST,
 						 "Zoom to Start",
 						 NULL,
@@ -2054,7 +2054,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_GOTO_LAST,
 						 "Zoom to End",
 						 NULL,
@@ -2068,9 +2068,9 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
+		XXX_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_GO_BACK,
 						 "Find Previous Edge",
 						 NULL,
@@ -2084,7 +2084,7 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_GO_FORWARD,
 						 "Find Next Edge",
 						 NULL,
@@ -2098,21 +2098,21 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 		gtk_widget_show(stock);
 
-		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
+		XXX_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
 		entry = create_entry_box();
 		gtk_widget_show(entry);
-		X_gtk_toolbar_insert_widget(GTK_TOOLBAR(tb),
+		XXX_gtk_toolbar_insert_widget(GTK_TOOLBAR(tb),
                                           entry,
                                           NULL,
 					  NULL,
 					  tb_pos++);
 
-		X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
+		XXX_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 
 		if((GLOBALS->loaded_file_type != DUMPLESS_FILE)&&(!GLOBALS->disable_menus))
 			{
-			stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+			stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
 	                                         XXX_GTK_STOCK_REFRESH,
 						 "Reload",
 						 NULL,
@@ -2126,12 +2126,12 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 #endif
 			gtk_widget_show(stock);
 
-			X_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
+			XXX_gtk_toolbar_insert_space(GTK_TOOLBAR(tb), tb_pos++);
 			}
 
 		timebox = create_time_box();
 		gtk_widget_show (timebox);
-		X_gtk_toolbar_insert_widget(GTK_TOOLBAR(tb),
+		XXX_gtk_toolbar_insert_widget(GTK_TOOLBAR(tb),
                                           timebox,
                                           NULL,
 					  NULL,
@@ -2356,7 +2356,7 @@ gtk_widget_show(GLOBALS->signalwindow);
 
 if((!GLOBALS->hide_sst)&&(GLOBALS->loaded_file_type != MISSING_FILE))
 	{
-	GLOBALS->toppanedwindow = YYY_gtk_hpaned_new(0);
+	GLOBALS->toppanedwindow = XXX_gtk_hpaned_new(0);
 	GLOBALS->sstpane = treeboxframe("SST", G_CALLBACK(mkmenu_treesearch_cleanup));
 
 	GLOBALS->expanderwindow = gtk_expander_new_with_mnemonic("_SST");
@@ -2370,7 +2370,7 @@ if((!GLOBALS->hide_sst)&&(GLOBALS->loaded_file_type != MISSING_FILE))
 	gtk_widget_show(GLOBALS->expanderwindow);
 	}
 
-GLOBALS->panedwindow = panedwindow = YYY_gtk_hpaned_new(0);
+GLOBALS->panedwindow = panedwindow = XXX_gtk_hpaned_new(0);
 if(GLOBALS->panedwindow_size_cache)
 	{
 	gtk_paned_set_position(GTK_PANED(GLOBALS->panedwindow), GLOBALS->panedwindow_size_cache);

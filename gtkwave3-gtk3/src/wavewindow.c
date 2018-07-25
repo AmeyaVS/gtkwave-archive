@@ -2294,7 +2294,7 @@ XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->wavearea, 0, 9, 0, 9,GTK_F
 GLOBALS->wave_vslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 vadj=GTK_ADJUSTMENT(GLOBALS->wave_vslider);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wave_vslider), "value_changed",G_CALLBACK(service_vslider), NULL);
-GLOBALS->vscroll_wavewindow_c_1=YYY_gtk_vscrollbar_new(vadj);
+GLOBALS->vscroll_wavewindow_c_1=XXX_gtk_vscrollbar_new(vadj);
 /* GTK_WIDGET_SET_FLAGS(GLOBALS->vscroll_wavewindow_c_1, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->vscroll_wavewindow_c_1);
 
@@ -2318,7 +2318,7 @@ XXX_gtk_table_attach (XXX_GTK_TABLE (table), GLOBALS->vscroll_wavewindow_c_1, 9,
 GLOBALS->wave_hslider=gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wave_hslider), "value_changed",G_CALLBACK(service_hslider), NULL);
-GLOBALS->hscroll_wavewindow_c_2=YYY_gtk_hscrollbar_new(hadj);
+GLOBALS->hscroll_wavewindow_c_2=XXX_gtk_hscrollbar_new(hadj);
 /* GTK_WIDGET_SET_FLAGS(GLOBALS->hscroll_wavewindow_c_2, GTK_CAN_FOCUS); */
 gtk_widget_show(GLOBALS->hscroll_wavewindow_c_2);
 

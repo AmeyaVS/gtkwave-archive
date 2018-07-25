@@ -56,20 +56,20 @@
 
 #if GTK_CHECK_VERSION(3,0,0)
 
-#define YYY_GTK_TREE_VIEW GTK_SCROLLABLE
-#define YYY_gtk_tree_view_get_vadjustment gtk_scrollable_get_vadjustment
-#define YYY_gtk_tree_view_get_hadjustment gtk_scrollable_get_hadjustment
-#define YYY_gtk_tree_view_set_vadjustment gtk_scrollable_set_vadjustment
-#define YYY_gtk_tree_view_set_hadjustment gtk_scrollable_set_hadjustment
-#define YYY_GTK_TEXT_VIEW GTK_SCROLLABLE
-#define YYY_gtk_text_view_get_vadjustment gtk_scrollable_get_vadjustment
+#define XXX_GTK_TREE_VIEW GTK_SCROLLABLE
+#define XXX_gtk_tree_view_get_vadjustment gtk_scrollable_get_vadjustment
+#define XXX_gtk_tree_view_get_hadjustment gtk_scrollable_get_hadjustment
+#define XXX_gtk_tree_view_set_vadjustment gtk_scrollable_set_vadjustment
+#define XXX_gtk_tree_view_set_hadjustment gtk_scrollable_set_hadjustment
+#define XXX_GTK_TEXT_VIEW GTK_SCROLLABLE
+#define XXX_gtk_text_view_get_vadjustment gtk_scrollable_get_vadjustment
 GtkWidget *XXX_gtk_hbox_new (gboolean homogeneous, gint spacing);
 GtkWidget *XXX_gtk_vbox_new (gboolean homogeneous, gint spacing);
-#define YYY_gtk_hpaned_new(a) gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
-#define YYY_gtk_vpaned_new(a) gtk_paned_new(GTK_ORIENTATION_VERTICAL)
+#define XXX_gtk_hpaned_new(a) gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
+#define XXX_gtk_vpaned_new(a) gtk_paned_new(GTK_ORIENTATION_VERTICAL)
 GtkWidget *XXX_gtk_hseparator_new (void);
-#define YYY_gtk_hscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, a)
-#define YYY_gtk_vscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, a)
+#define XXX_gtk_hscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, a)
+#define XXX_gtk_vscrollbar_new(a) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, a)
 #define XXX_GTK_STOCK_CANCEL "_Cancel"
 #define XXX_GTK_STOCK_OPEN "_Open"
 #define XXX_GTK_STOCK_SAVE "_Save"
@@ -88,20 +88,20 @@ GtkWidget *XXX_gtk_hseparator_new (void);
 
 #else
 
-#define YYY_GTK_TREE_VIEW GTK_TREE_VIEW
-#define YYY_gtk_tree_view_get_vadjustment gtk_tree_view_get_vadjustment
-#define YYY_gtk_tree_view_get_hadjustment gtk_tree_view_get_hadjustment
-#define YYY_gtk_tree_view_set_vadjustment gtk_tree_view_set_vadjustment
-#define YYY_gtk_tree_view_set_hadjustment gtk_tree_view_set_hadjustment
-#define YYY_GTK_TEXT_VIEW GTK_TEXT_VIEW
-#define YYY_gtk_text_view_get_vadjustment gtk_text_view_get_vadjustment
+#define XXX_GTK_TREE_VIEW GTK_TREE_VIEW
+#define XXX_gtk_tree_view_get_vadjustment gtk_tree_view_get_vadjustment
+#define XXX_gtk_tree_view_get_hadjustment gtk_tree_view_get_hadjustment
+#define XXX_gtk_tree_view_set_vadjustment gtk_tree_view_set_vadjustment
+#define XXX_gtk_tree_view_set_hadjustment gtk_tree_view_set_hadjustment
+#define XXX_GTK_TEXT_VIEW GTK_TEXT_VIEW
+#define XXX_gtk_text_view_get_vadjustment gtk_text_view_get_vadjustment
 #define XXX_gtk_hbox_new(a, b) gtk_hbox_new((a), (b))
 #define XXX_gtk_vbox_new(a, b) gtk_vbox_new((a), (b))
-#define YYY_gtk_hpaned_new(a) gtk_hpaned_new()
-#define YYY_gtk_vpaned_new(a) gtk_vpaned_new()
+#define XXX_gtk_hpaned_new(a) gtk_hpaned_new()
+#define XXX_gtk_vpaned_new(a) gtk_vpaned_new()
 #define XXX_gtk_hseparator_new gtk_hseparator_new
-#define YYY_gtk_hscrollbar_new(a) gtk_hscrollbar_new(a)
-#define YYY_gtk_vscrollbar_new(a) gtk_vscrollbar_new(a)
+#define XXX_gtk_hscrollbar_new(a) gtk_hscrollbar_new(a)
+#define XXX_gtk_vscrollbar_new(a) gtk_vscrollbar_new(a)
 #define XXX_GTK_STOCK_CANCEL GTK_STOCK_CANCEL
 #define XXX_GTK_STOCK_OPEN GTK_STOCK_OPEN
 #define XXX_GTK_STOCK_SAVE GTK_STOCK_SAVE
@@ -159,7 +159,7 @@ cairo_t *XXX_gdk_cairo_create (GdkWindow *window, GdkDrawingContext **gdc);
 
 /* useful for multiple GTK versions */
 GtkWidget *
-X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
+XXX_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
                           const gchar *stock_id,
                           const char *tooltip_text,
                           const char *tooltip_private_text,
@@ -168,11 +168,11 @@ X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
                           gint position);
 
 void
-X_gtk_toolbar_insert_space (GtkToolbar *toolbar,
+XXX_gtk_toolbar_insert_space (GtkToolbar *toolbar,
                           gint position);
 
 void
-X_gtk_toolbar_insert_widget (GtkToolbar *toolbar,
+XXX_gtk_toolbar_insert_widget (GtkToolbar *toolbar,
                            GtkWidget *widget,
                            const char *tooltip_text,
                            const char *tooltip_private_text,

@@ -1614,8 +1614,8 @@ void reload_into_new_context_2(void)
  if(GLOBALS->gtk2_tree_frame)
 	{
 	/* upper tree */
-	GtkAdjustment *vadj = YYY_gtk_tree_view_get_vadjustment(YYY_GTK_TREE_VIEW(GLOBALS->treeview_main));
-	GtkAdjustment *hadj = YYY_gtk_tree_view_get_hadjustment(YYY_GTK_TREE_VIEW(GLOBALS->treeview_main));
+	GtkAdjustment *vadj = XXX_gtk_tree_view_get_vadjustment(XXX_GTK_TREE_VIEW(GLOBALS->treeview_main));
+	GtkAdjustment *hadj = XXX_gtk_tree_view_get_hadjustment(XXX_GTK_TREE_VIEW(GLOBALS->treeview_main));
 
 	if(vadj) tree_vadj_value = gtk_adjustment_get_value(vadj);
 	if(hadj) tree_hadj_value = gtk_adjustment_get_value(hadj);
@@ -1626,8 +1626,8 @@ void reload_into_new_context_2(void)
 	tree_frame_y = allocation.height;
 
 	/* lower signal set */
-	vadj = YYY_gtk_tree_view_get_vadjustment(YYY_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
-	hadj = YYY_gtk_tree_view_get_hadjustment(YYY_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
+	vadj = XXX_gtk_tree_view_get_vadjustment(XXX_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
+	hadj = XXX_gtk_tree_view_get_hadjustment(XXX_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
 
 	if(vadj) treeview_vadj_value = gtk_adjustment_get_value(vadj);
 	if(hadj) treeview_hadj_value = gtk_adjustment_get_value(hadj);
@@ -2404,12 +2404,12 @@ void reload_into_new_context_2(void)
 
    if(tree_vadj_value != 0.0)
 	{
-	GtkAdjustment *vadj = YYY_gtk_tree_view_get_vadjustment(YYY_GTK_TREE_VIEW(GLOBALS->treeview_main));
+	GtkAdjustment *vadj = XXX_gtk_tree_view_get_vadjustment(XXX_GTK_TREE_VIEW(GLOBALS->treeview_main));
 
 	if((vadj) && (tree_vadj_value >= gtk_adjustment_get_value(vadj)) && (tree_vadj_value <= gtk_adjustment_get_upper(vadj)))
 		{
 		gtk_adjustment_set_value(vadj, tree_vadj_value);
-		YYY_gtk_tree_view_set_vadjustment(YYY_GTK_TREE_VIEW(GLOBALS->treeview_main), vadj);
+		XXX_gtk_tree_view_set_vadjustment(XXX_GTK_TREE_VIEW(GLOBALS->treeview_main), vadj);
 
 		g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "changed");
 		g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "value_changed");
@@ -2418,12 +2418,12 @@ void reload_into_new_context_2(void)
 
    if(tree_hadj_value != 0.0)
 	{
-	GtkAdjustment *hadj = YYY_gtk_tree_view_get_hadjustment(YYY_GTK_TREE_VIEW(GLOBALS->treeview_main));
+	GtkAdjustment *hadj = XXX_gtk_tree_view_get_hadjustment(XXX_GTK_TREE_VIEW(GLOBALS->treeview_main));
 
 	if((hadj) && (tree_hadj_value >= gtk_adjustment_get_lower(hadj)) && (tree_hadj_value <= gtk_adjustment_get_upper(hadj)))
 		{
 		gtk_adjustment_set_value(hadj, tree_hadj_value);
-		YYY_gtk_tree_view_set_hadjustment(YYY_GTK_TREE_VIEW(GLOBALS->treeview_main), hadj);
+		XXX_gtk_tree_view_set_hadjustment(XXX_GTK_TREE_VIEW(GLOBALS->treeview_main), hadj);
 
 		g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "changed");
 		g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "value_changed");
@@ -2536,12 +2536,12 @@ void reload_into_new_context_2(void)
 		{
 		   if(treeview_vadj_value != 0.0)
 			{
-			GtkAdjustment *vadj = YYY_gtk_tree_view_get_vadjustment(YYY_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
+			GtkAdjustment *vadj = XXX_gtk_tree_view_get_vadjustment(XXX_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
 
 			if((vadj) && (treeview_vadj_value >= gtk_adjustment_get_lower(vadj)) && (treeview_vadj_value <= gtk_adjustment_get_upper(vadj)))
 				{
 				gtk_adjustment_set_value(vadj, treeview_vadj_value);
-				YYY_gtk_tree_view_set_vadjustment(YYY_GTK_TREE_VIEW(GLOBALS->dnd_sigview), vadj);
+				XXX_gtk_tree_view_set_vadjustment(XXX_GTK_TREE_VIEW(GLOBALS->dnd_sigview), vadj);
 
 				g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "changed");
 				g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(vadj)), "value_changed");
@@ -2550,12 +2550,12 @@ void reload_into_new_context_2(void)
 
 		   if(treeview_hadj_value != 0.0)
 			{
-			GtkAdjustment *hadj = YYY_gtk_tree_view_get_hadjustment(YYY_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
+			GtkAdjustment *hadj = XXX_gtk_tree_view_get_hadjustment(XXX_GTK_TREE_VIEW(GLOBALS->dnd_sigview));
 
 			if((hadj) && (treeview_hadj_value >= gtk_adjustment_get_lower(hadj)) && (treeview_hadj_value <= gtk_adjustment_get_upper(hadj)))
 				{
 				gtk_adjustment_set_value(hadj, treeview_hadj_value);
-				YYY_gtk_tree_view_set_hadjustment(YYY_GTK_TREE_VIEW(GLOBALS->dnd_sigview), hadj);
+				XXX_gtk_tree_view_set_hadjustment(XXX_GTK_TREE_VIEW(GLOBALS->dnd_sigview), hadj);
 
 				g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "changed");
 				g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(hadj)), "value_changed");

@@ -148,7 +148,7 @@ return(expose_event_local(widget, NULL));
 
 
 GtkWidget *
-X_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
+XXX_gtk_toolbar_insert_stock (GtkToolbar *toolbar,
                           const gchar *stock_id,
                           const char *tooltip_text,
                           const char *tooltip_private_text,
@@ -587,7 +587,7 @@ void create_toolbar(GtkWidget *table)
     gtk_widget_show (tb);
 
     gtk_toolbar_set_style(GTK_TOOLBAR(tb), GTK_TOOLBAR_ICONS);
-    stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+    stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
                                                  XXX_GTK_STOCK_GO_BACK,
                                                  "Search Back",
                                                  NULL,
@@ -602,7 +602,7 @@ void create_toolbar(GtkWidget *table)
 #endif
     gtk_widget_show(stock);
 
-    stock = X_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+    stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
                                                  XXX_GTK_STOCK_GO_FORWARD,
                                                  "Search Forward",
                                                  NULL,
