@@ -7,7 +7,7 @@
 /* #undef WAVE_ALLOW_QUARTZ_FLUSH_WORKAROUND */
 #endif
 
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,22,26)
 #if !defined(__MINGW32__) && !defined(MAC_INTEGRATION)
 #include <gdk/gdkwayland.h>
 #endif
