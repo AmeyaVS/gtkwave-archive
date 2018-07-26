@@ -17,7 +17,11 @@
 #else
 #if GTK_CHECK_VERSION(3,0,0)
 #include <gtk/gtkx.h>
+#endif
+#if GTK_CHECK_VERSION(3,22,26)
+#if !defined(MAC_INTEGRATION)
 #include <gdk/gdkwayland.h>
+#endif
 #endif
 #endif
 
