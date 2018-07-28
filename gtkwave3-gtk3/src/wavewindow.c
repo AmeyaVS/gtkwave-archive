@@ -1616,7 +1616,7 @@ GdkEventButton ev;
 if(n_press != 2)
 	{
 	memset(&ev, 0, sizeof(GdkEventButton));
-	ev.button = 1;
+	ev.button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
 	ev.x = x;
 	ev.y = y;
 
@@ -1642,7 +1642,7 @@ wavearea_released_event(GtkGestureMultiPress *gesture,
 GdkEventButton ev;
 
 memset(&ev, 0, sizeof(GdkEventButton));
-ev.button = 1;
+ev.button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
 ev.x = x;
 ev.y = y;
 
@@ -1694,7 +1694,11 @@ GdkEventMotion ev;
 
 memset(&ev, 0, sizeof(GdkEventMotion));
 ev.is_hint = 1;
+#ifdef WAVE_ALLOW_GTK3_GESTURE_MIDDLE_RIGHT_BUTTON
+ev.state = (gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture)) == 3) ? GDK_BUTTON3_MOTION_MASK : GDK_BUTTON1_MOTION_MASK;
+#else
 ev.state = GDK_BUTTON1_MOTION_MASK;
+#endif
 ev.x = GLOBALS->wavearea_drag_start_x + offset_x;
 ev.y = GLOBALS->wavearea_drag_start_y + offset_y;
 ev.window = gtk_widget_get_window(GLOBALS->wavearea);
@@ -2259,6 +2263,9 @@ if(GLOBALS->use_gestures)
 GtkGesture *gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed", G_CALLBACK(wavearea_pressed_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released", G_CALLBACK(wavearea_released_event), NULL);
+#ifdef WAVE_ALLOW_GTK3_GESTURE_MIDDLE_RIGHT_BUTTON
+gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gs), 0);
+#endif
 
 gs = gtk_gesture_long_press_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed", G_CALLBACK(wavearea_long_pressed_event), NULL);
@@ -2267,6 +2274,9 @@ gs = gtk_gesture_drag_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "drag_begin", G_CALLBACK(wavearea_drag_begin_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "drag_update", G_CALLBACK(wavearea_drag_update_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "drag_end", G_CALLBACK(wavearea_drag_end_event), NULL);
+#ifdef WAVE_ALLOW_GTK3_GESTURE_MIDDLE_RIGHT_BUTTON
+gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gs), 0);
+#endif
 
 GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe", G_CALLBACK(wavearea_swipe_event), GLOBALS);
