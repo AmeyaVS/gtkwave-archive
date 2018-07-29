@@ -1613,13 +1613,13 @@ void wavearea_pressed_event(GtkGestureMultiPress *gesture,
 (void) user_data;
 GdkEventButton ev;
 
-if(n_press != 2)
-	{
-	memset(&ev, 0, sizeof(GdkEventButton));
-	ev.button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
-	ev.x = x;
-	ev.y = y;
+memset(&ev, 0, sizeof(GdkEventButton));
+ev.button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+ev.x = x;
+ev.y = y;
 
+if((n_press != 2) || (ev.button != 1))
+	{
 	button_press_event(GLOBALS->wavearea, &ev);
 	}
 	else
