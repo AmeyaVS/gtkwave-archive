@@ -20,6 +20,10 @@
 
 #include "wave_locale.h"
 
+/*
+#define WAVE_CRASH_ON_GTK_WARNING
+*/
+
 GtkTreeStore *treestore_main = NULL;
 GtkWidget *treeview_main = NULL;
 
@@ -484,6 +488,38 @@ va_end(ap);
 /**********************************************************/
 /**********************************************************/
 
+#if GTK_CHECK_VERSION(3,0,0)
+static GLogWriterOutput
+gtkwave_glib_log_handler (GLogLevelFlags log_level,
+                   const GLogField *fields,
+                   gsize n_fields,
+                   gpointer user_data)
+{
+(void) user_data;
+
+#ifndef WAVE_CRASH_ON_GTK_WARNING
+if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G_LOG_LEVEL_DEBUG))
+        {
+	/* filter out low-level warnings as GTK3 is too chatty */
+        }
+        else
+#endif
+        {
+        int i;
+	for(i=0;i<n_fields;i++)
+                {
+                fprintf(stderr, "GTKWAVE | %s: %s\n", fields[i].key, fields[i].value); /* provides exact location: much better than stock message */
+                }
+        }
+
+#ifdef WAVE_CRASH_ON_GTK_WARNING
+abort();
+#endif
+
+return(G_LOG_WRITER_HANDLED);
+}
+#endif
+
 
 int main(int argc, char **argv)
 {
@@ -496,6 +532,14 @@ if(!gtk_init_check(&argc, &argv))
         printf("Could not initialize GTK!  Is DISPLAY env var/xhost set?\n\n");
         exit(255);
         }
+
+#if GTK_CHECK_VERSION(3,0,0)
+g_log_set_writer_func (gtkwave_glib_log_handler, NULL, NULL);
+#endif
+
+#ifdef WAVE_CRASH_ON_GTK_WARNING
+        g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING);
+#endif
 
 if(anno_ctx)
 	{
