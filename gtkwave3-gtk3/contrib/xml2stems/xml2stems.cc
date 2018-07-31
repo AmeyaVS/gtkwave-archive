@@ -179,6 +179,54 @@ while(!feof(fi))
 				}
 			break;
 
+
+		case 'p':
+			if(!strncmp(pnt, "primitive", 9))
+				{
+				if(!endtag)
+					{
+					char *qts[4];
+					char *s = pnt + 9;
+					int numqt = 0;
+
+					while(*s)
+						{
+						if(*s == '"')
+							{
+							qts[numqt++] = s;
+							if(numqt == 6) break;
+							}
+						s++;
+						}
+	
+					if(numqt == 4)
+						{
+						char *fl = qts[0] + 1;
+						char *nam = qts[2] + 1;
+						qts[1][0] = qts[3][0] = 0;
+	
+						mId.push(nam);
+
+						char fl_dup[strlen(fl)+1];
+						char *s = fl; char *d = fl_dup;
+						while(isalpha(*s)) { *(d++) = *(s++); }
+						*d = 0;
+
+						unsigned int lineno = atoi(s);
+						const char *mnam = fId[fl_dup].c_str();
+						fprintf(fo, "++ udp %s file %s lines %d - %d\n", nam, mnam, lineno, lineno); /* don't need line number it truly ends at */
+						}
+					}
+					else
+					{
+					if(!mId.empty())
+						{
+						mId.pop();
+						}
+					}
+				}
+			break;
+			
 		default:
 			break;
 		}
