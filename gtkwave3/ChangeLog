@@ -1657,7 +1657,8 @@
 		rc var is set to FALSE by adding scroll to end mark.
 		Updated BUILT_SOURCES for vermin.
 		extern yy_size_t yyleng fix in rtlbrowse.
-3.3.93	30jul18	Added sst_dbl_action_type rc variable which controls side-
+3.3.93	31jul18	Added sst_dbl_action_type rc variable which controls side-
 		effect of double-clicking in SST signals pane.
 		Added xml2stems Verilator XML to rtlbrowse stems converter
 		to distribution.  Eventually vermin will be removed.
+		Added missing realpath() in udp emission in vermin.

@@ -1343,8 +1343,10 @@ v_udp:		V_PRIMITIVE
 
 						if(emit_stems)
 							{
+							char real_path[PATH_MAX];
+
 							printf("++ udp %s file %s lines %d - %d\n",
-								udp_current_name, udp_current_filename, udp_start_line, zzline);
+								udp_current_name, realpath(udp_current_filename, real_path), udp_start_line, zzline);
 							}
 
 						if(udp_current_filename)
