@@ -33,7 +33,7 @@ using namespace std;
 #define BUF_SIZ 65536
 
 
-void xml2stems(FILE *fi, FILE *fo)
+void xml2stems(FILE *fi, FILE *fo, int is_verilator_sim)
 {
 std::map <string, string> fId;
 std::stack<string> mId;
@@ -63,20 +63,30 @@ while(!feof(fi))
 				{
 				if(!endtag)
 					{
-					char *qts[4];
+					char *qts[6];
 					char *s = pnt + 6;
 					int numqt = 0;
+					int tm = 0;
 
 					while(*s)
 						{
 						if(*s == '"')
 							{
 							qts[numqt++] = s;
-							if(numqt == 4) break;
+							if(numqt == 6) break;
 							}
 						s++;
 						}
 	
+					if(numqt == 6)
+						{
+						if(strstr(qts[3]+1, "topModule=\"1\""))
+							{
+							numqt = 4;
+							tm = is_verilator_sim;
+							}
+						}
+
 					if(numqt == 4)
 						{
 						char *fl = qts[0] + 1;
@@ -91,7 +101,13 @@ while(!feof(fi))
 						*d = 0;
 
 						unsigned int lineno = atoi(s);
-						fprintf(fo, "++ module %s file %s lines %d - %d\n", nam, fId[fl_dup].c_str(), lineno, lineno); /* don't need line number it truly ends at */
+						const char *mnam = fId[fl_dup].c_str();
+						fprintf(fo, "++ module %s file %s lines %d - %d\n", nam, mnam, lineno, lineno); /* don't need line number it truly ends at */
+						if(tm)
+							{
+							fprintf(fo, "++ module TOP file %s lines %d - %d\n", "(VerilatorTop)", 1, 1);
+							fprintf(fo, "++ comp %s type %s parent TOP\n", nam, nam);
+							}
 						}
 					}
 					else
@@ -176,6 +192,41 @@ int main(int argc, char **argv)
 {
 FILE *fi, *fo;
 int rc = 0;
+int is_verilator_sim = 0;
+
+while(argc > 1)
+	{
+	if(*argv[1] != '-')
+		{
+		break;
+		}
+	else
+	if(!strcmp(argv[1], "--"))
+		{
+		argc--;
+		argv++;
+		break;
+		}
+	else
+	if(!strcmp(argv[1], "-V") || !strcmp(argv[1], "--vl_sim"))
+		{
+		is_verilator_sim = 1;
+		argc--;
+		argv++;
+		}
+	else
+	if(!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
+		{
+		argc = 1;
+		break;
+		}
+	else
+		{
+		fprintf(stderr, "%s: unrecognized option '%s'\n", argv[0], argv[1]);
+		argc = 1;
+		break;		
+		}
+	}
 
 switch(argc)
 	{
@@ -184,7 +235,7 @@ switch(argc)
 		if(fi)
 			{
 			fo = stdout;
-			xml2stems(fi, fo);
+			xml2stems(fi, fo, is_verilator_sim);
 			if(fi != stdin) fclose(fi);
 			}
 			else
@@ -202,7 +253,7 @@ switch(argc)
 			fo = fopen(argv[2], "wb");
 			if(fo)
 				{
-				xml2stems(fi, fo);
+				xml2stems(fi, fo, is_verilator_sim);
 				if(fi != stdin) fclose(fi);
 				fclose(fo);
 				}
@@ -223,14 +274,21 @@ switch(argc)
 		break;
 
 	default:
-		printf("Usage:\n------\n%s infile.xml [outfile.stems]\n\n"
-			"Converts Verilator xml file to rtlbrowse stems.\n"
-			"For example: verilator -Wno-fatal des.v -xml-only --bbox-sys\n\n"
-			"Use - as filename for stdin.\n"
-			"Omitting optional stems name emits to stdout.\n", 
+		printf("Usage: %s [OPTION] infile.xml [outfile.stems]\n\n"
+
+                        "  -V, --vl_sim               add TOP hierarchy for Verilator sim\n"
+			"  -h, --help                 display this help then exit\n\n"
+
+			"Converts Verilator XML file to rtlbrowse stems format.  For example:\n\n"
+			"verilator -Wno-fatal des.v -xml-only --bbox-sys\n"
+			"xml2stems obj_dir/Vdes.xml des.stems\n"
+			"gtkwave -t des.stems des.fst\n\n"
+			"Use - as input filename for stdin.\n"
+			"Omitting optional stems outfile name emits to stdout.\n", 
 			argv[0]);
 		break;
 	}
 
+bot:
 return(rc);
 }
