@@ -26,8 +26,10 @@ des des(pt, key, ct, clk);
 
 initial
 begin
+`ifdef GENERATE_VCD
 $dumpfile("des.vcd");
 $dumpvars(0, top);
+`endif
 
 key = 64'h0000000000000000;
 pt  = 64'h0000000000000000;

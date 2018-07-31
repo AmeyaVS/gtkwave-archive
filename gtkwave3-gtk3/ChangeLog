@@ -1686,3 +1686,5 @@
 		Use gtk_gesture_single_set_button() to allow re-enabling
 		dragzoom and middle mouse button clicking if use_gestures
 		is enabled.
+		Added xml2stems Verilator XML to rtlbrowse stems converter
+		to distribution.  Eventually vermin will be removed.
