@@ -16,7 +16,7 @@ The following is a chain of commands to compile Verilog source and then bring up
 .TP 
 verilator -Wno-fatal des.v -xml-only --bbox-sys
 .TP 
-xml2vcd obj_dir/Vdes.xml des.stems
+xml2stems obj_dir/Vdes.xml des.stems
 .TP
 gtkwave -t des.stems des.fst
 .SH "AUTHORS"
