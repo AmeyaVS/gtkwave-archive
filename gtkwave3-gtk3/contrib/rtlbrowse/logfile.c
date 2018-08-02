@@ -1535,7 +1535,10 @@ void bwlogbox(char *title, int width, ds_Tree *t, int display_mode)
     handle = fopen(default_text, "rb");
     if(!handle)
 	{
-	fprintf(stderr, "Could not open sourcefile '%s'\n", default_text);
+	if(strcmp(default_text, "(VerilatorTop)"))
+		{
+		fprintf(stderr, "Could not open sourcefile '%s'\n", default_text);
+		}
 	return;
 	}
     fclose(handle);
@@ -1764,7 +1767,10 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
     handle = fopen(default_text, "rb");
     if(!handle)
 	{
-	fprintf(stderr, "Could not open sourcefile '%s'\n", default_text);
+	if(strcmp(default_text, "(VerilatorTop)"))
+		{
+		fprintf(stderr, "Could not open sourcefile '%s'\n", default_text);
+		}
 	return;
 	}
     fclose(handle);
