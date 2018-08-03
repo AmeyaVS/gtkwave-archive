@@ -1669,15 +1669,16 @@
 		GTK3 warnings.
 		Updated BUILT_SOURCES for vermin.
 		extern yy_size_t yyleng fix in rtlbrowse.
-3.3.93	31jul18	Add missing XXX_gdk_pointer_ungrab() prototype for GTK3.
+3.3.93	03aug18	Add missing XXX_gdk_pointer_ungrab() prototype for GTK3.
 		Fix missing signal/wave window updates in Wayland.
 		Fix mouseover initial position in Wayland.  Movement is
 		not yet supported in Wayland for floating mouseover window.
 		Crash fix for twinwave with Wayland (no GtkSocket/Plug).
 		Added sst_dbl_action_type rc variable which controls side-
                 effect of double-clicking in SST signals pane.
-		Added preliminary support for swipe gestures in wave window
+		Added preliminary support for gestures in wave window
 		(currently disabled by default with rc variable use_gestures).
+		Added GtkGestureSwipe for kinetic scrolling in waves window.
 		Added GtkGestureLongPress for baseline marker set/clear.
 		Added GtkGestureDrag to restore normal left cursor drag.
 		Added GtkGestureZoom for zoom/pinch in waves window.
@@ -1689,4 +1690,3 @@
 		Added xml2stems Verilator XML to rtlbrowse stems converter
 		to distribution.  Eventually vermin will be removed.
 		Added missing realpath() in udp	emission in vermin.
-
