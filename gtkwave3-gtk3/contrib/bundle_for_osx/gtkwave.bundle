@@ -68,6 +68,7 @@
   <binary>${prefix}/bin/fstminer</binary>
   <binary>${prefix}/bin/rtlbrowse</binary>
   <binary>${prefix}/bin/vermin</binary>
+  <binary>${prefix}/bin/xml2stems</binary>
 
   <data dest="${bundle}/Contents/Resources/bin/gtkwave_bin_launcher.sh">
     ${project}/gtkwave_bin_launcher.sh
@@ -221,6 +222,9 @@
   </data>
   <data dest="${bundle}/Contents/Resources/man/fstminer.1">
     ${project}/../../man/fstminer.1
+  </data>
+  <data dest="${bundle}/Contents/Resources/man/xml2stems.1">
+    ${project}/../../man/xml2stems.1
   </data>
   <data dest="${bundle}/Contents/Resources/doc/gtkwave.odt">
     ${project}/../../doc/gtkwave.odt
