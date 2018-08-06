@@ -1662,3 +1662,4 @@
 		Added xml2stems Verilator XML to rtlbrowse stems converter
 		to distribution.  Eventually vermin will be removed.
 		Added missing realpath() in udp emission in vermin.
+3.3.94	06aug18	Applied ghwlib.c patch for dealing with null ranges.

@@ -483,29 +483,36 @@ get_nbr_elements (union ghw_type *t)
 int
 ghw_get_range_length (union ghw_range *rng)
 {
-assert(rng); /* scan-view detects possible null pointer dereference here through a convoluted sequence of steps which probably violate what GHW would do*/
+  int res;
+
+  assert (rng != NULL);
 
   switch (rng->kind)
     {
     case ghdl_rtik_type_i32:
       if (rng->i32.dir)
-	return (rng->i32.left - rng->i32.right + 1);
+	res = rng->i32.left - rng->i32.right + 1;
       else
-	return (rng->i32.right - rng->i32.left + 1);
+	res = rng->i32.right - rng->i32.left + 1;
+      break;
     case ghdl_rtik_type_b2:
       if (rng->b2.dir)
-	return (rng->b2.left - rng->b2.right + 1);
+	res = rng->b2.left - rng->b2.right + 1;
       else
-	return (rng->b2.right - rng->b2.left + 1);
+	res = rng->b2.right - rng->b2.left + 1;
+      break;
     case ghdl_rtik_type_e8:
       if (rng->e8.dir)
-	return (rng->e8.left - rng->e8.right + 1);
+	res = rng->e8.left - rng->e8.right + 1;
       else
-	return (rng->e8.right - rng->e8.left + 1);
+	res = rng->e8.right - rng->e8.left + 1;
+      break;
     default:
       fprintf (stderr, "get_range_length: unhandled kind %d\n", rng->kind);
       abort ();
     }
+  /* The length of a null range is 0.  */
+  return (res <= 0) ? 0 : res;
 }
 
 /* Create an array subtype using BASE and ranges read from H.  */
@@ -675,15 +682,15 @@ ghw_read_type (struct ghw_handler *h)
 	      ph->nbr_units = 0;
 	    else
 	      {
-		unsigned ix; /* was "i", but fails -Wshadow */
+		unsigned j;
 
 		if (ghw_read_uleb128 (h, &ph->nbr_units) != 0)
 		  goto err_p32;
 		ph->units = malloc (ph->nbr_units * sizeof (struct ghw_unit));
-		for (ix = 0; ix < ph->nbr_units; ix++)
+		for (j = 0; j < ph->nbr_units; j++)
 		  {
-		    ph->units[ix].name = ghw_read_strid (h);
-		    if (ghw_read_lsleb128 (h, &ph->units[ix].val) < 0)
+		    ph->units[j].name = ghw_read_strid (h);
+		    if (ghw_read_lsleb128 (h, &ph->units[j].val) < 0)
 		      goto err_p32;
 		  }
 	      }
@@ -1205,7 +1212,8 @@ print_name (struct ghw_hie *hie, int full_names)
   struct ghw_hie **buf;
   struct ghw_hie **end;
 
-  assert (hie->name); /* scan view complains about possibility of depth=0 below on malloc */
+  /* HIE must be valid.  */
+  assert (hie->name != NULL);
 
   if (0 == full_names)
     {
