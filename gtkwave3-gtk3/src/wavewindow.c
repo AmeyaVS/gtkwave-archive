@@ -2039,7 +2039,11 @@ wavearea_zoom_begin_event (GtkGesture *gesture,
 (void) user_data;
 
 GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
+#ifdef WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
+gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
+#endif
 }
+
 
 void
 wavearea_zoom_scale_changed_event (GtkGestureZoom *controller,
@@ -2070,6 +2074,29 @@ if((lzb != 0.0) && (scale > 0.0))
 		}
 	}
 }
+
+
+#ifdef WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
+static void
+wavearea_zoom_update_event (GtkGestureZoom   *gesture,
+                        GdkEventSequence *sequence,
+                        gpointer user_data)
+{
+(void) sequence;
+(void) user_data;
+
+wavearea_zoom_scale_changed_event(gesture, gtk_gesture_zoom_get_scale_delta (gesture), user_data);
+}
+
+
+static void
+wavearea_zoom_end_event (GtkGestureZoom   *gesture,
+                     	GdkEventSequence *sequence,
+                     	gpointer user_data)
+{
+
+}
+#endif
 
 
 void
@@ -2260,7 +2287,19 @@ g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "expose_event",G_CALLBACK(ex
 if(GLOBALS->use_gestures)
 {
 /* so far is mutually exclusive with existing motion/button action below */
-GtkGesture *gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
+GtkGesture *gs;
+
+GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
+gs =  gtk_gesture_zoom_new(GLOBALS->wavearea);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "begin", G_CALLBACK(wavearea_zoom_begin_event), GLOBALS);
+#ifdef WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "update", G_CALLBACK(wavearea_zoom_update_event), GLOBALS);
+gtk_event_controller_set_propagation_phase (GTK_EVENT_CONTROLLER(gs), GTK_PHASE_CAPTURE);
+#else
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "scale-changed", G_CALLBACK(wavearea_zoom_scale_changed_event), GLOBALS);
+#endif
+
+gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "pressed", G_CALLBACK(wavearea_pressed_event), NULL);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "released", G_CALLBACK(wavearea_released_event), NULL);
 #ifdef WAVE_ALLOW_GTK3_GESTURE_MIDDLE_RIGHT_BUTTON
@@ -2282,11 +2321,6 @@ GLOBALS->wavearea_gesture_swipe = gtk_gesture_swipe_new (GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "swipe", G_CALLBACK(wavearea_swipe_event), GLOBALS);
 gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "update", G_CALLBACK(wavearea_swipe_update_event), GLOBALS);
 gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->wavearea), wavearea_swipe_tick, NULL, NULL);
-
-GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
-gs =  gtk_gesture_zoom_new(GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "begin", G_CALLBACK(wavearea_zoom_begin_event), GLOBALS);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "scale-changed", G_CALLBACK(wavearea_zoom_scale_changed_event), GLOBALS);
 }
 else
 #endif
