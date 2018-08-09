@@ -2285,8 +2285,8 @@ gtk_widget_add_tick_callback (GTK_WIDGET(GLOBALS->wavearea), wavearea_swipe_tick
 
 GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
 gs =  gtk_gesture_zoom_new(GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "begin", G_CALLBACK(wavearea_zoom_begin_event), GLOBALS);
-gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea_gesture_swipe), "scale-changed", G_CALLBACK(wavearea_zoom_scale_changed_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "begin", G_CALLBACK(wavearea_zoom_begin_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "scale-changed", G_CALLBACK(wavearea_zoom_scale_changed_event), GLOBALS);
 }
 else
 #endif
