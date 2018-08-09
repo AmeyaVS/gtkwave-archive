@@ -1692,3 +1692,5 @@
 		Added missing realpath() in udp	emission in vermin.
 3.3.94	09aug18	Applied ghwlib.c patch for dealing with	null ranges.
 		Fixed typo on gtk_gesture_zoom_new() being disconnected.
+		Slowed down ctrl-scroll for better use on systems where
+		touchpad/screen gestures convert to scroll events.

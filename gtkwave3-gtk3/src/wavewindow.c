@@ -1239,7 +1239,11 @@ void alt_zoom_out(GtkWidget *text, gpointer data)
 
   GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
 
+#ifdef WAVE_CTRL_SCROLL_ZOOM_FACTOR
+  GLOBALS->tims.zoom-=WAVE_CTRL_SCROLL_ZOOM_FACTOR;
+#else
   GLOBALS->tims.zoom--;
+#endif
   calczoom(GLOBALS->tims.zoom);
 
   if(GLOBALS->do_zoom_center)
@@ -1297,7 +1301,11 @@ void alt_zoom_in(GtkWidget *text, gpointer data)
 
     GLOBALS->tims.prevzoom=GLOBALS->tims.zoom;
 
+#ifdef WAVE_CTRL_SCROLL_ZOOM_FACTOR
+  GLOBALS->tims.zoom+=WAVE_CTRL_SCROLL_ZOOM_FACTOR;
+#else
     GLOBALS->tims.zoom++;
+#endif
     calczoom(GLOBALS->tims.zoom);
 
     if(GLOBALS->do_zoom_center)
