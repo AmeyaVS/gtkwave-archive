@@ -2117,7 +2117,7 @@ wavearea_swipe_event (GtkGestureSwipe *gesture,
 (void) user_data;
 (void) velocity_y;
 
-GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
+GLOBALS->wavearea_gesture_swipe_velocity_x += velocity_x; /* instead of =, in order to "nudge" the scroll faster/slower */
 }
 
 
