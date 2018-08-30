@@ -1621,6 +1621,8 @@ void wavearea_pressed_event(GtkGestureMultiPress *gesture,
 (void) user_data;
 GdkEventButton ev;
 
+GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+
 memset(&ev, 0, sizeof(GdkEventButton));
 ev.button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
 ev.x = x;
@@ -1666,6 +1668,8 @@ void wavearea_long_pressed_event(GtkGestureMultiPress *gesture,
 (void) gesture;
 (void) user_data;
 GdkEventButton ev;
+
+GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
 
 memset(&ev, 0, sizeof(GdkEventButton));
 ev.button = 2;
