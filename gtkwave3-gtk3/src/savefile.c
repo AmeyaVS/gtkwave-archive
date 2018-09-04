@@ -2409,7 +2409,7 @@ if(s)
 #endif
 
 
-char *find_dumpfile(char *orig_save, char *orig_dump, char *this_save)
+char *find_dumpfile_2(char *orig_save, char *orig_dump, char *this_save)
 {
 char *synth_nam = NULL;
 
@@ -2465,6 +2465,33 @@ if(orig_save && orig_dump && this_save)
 	}
 
 return(synth_nam);
+}
+
+
+char *find_dumpfile(char *orig_save, char *orig_dump, char *this_save)
+{
+char *dfile = NULL;
+
+dfile = find_dumpfile_2(orig_save, orig_dump, this_save);
+if(!dfile && orig_save && orig_dump)
+	{
+	const char *pfx = "/././";
+	int pfxlen = strlen(pfx);
+	char *orig_save2 = malloc_2(strlen(orig_save) + pfxlen + 1);
+	char *orig_dump2 = malloc_2(strlen(orig_dump) + pfxlen + 1);
+	
+	strcpy(orig_save2, pfx); strcat(orig_save2, orig_save);
+	strcpy(orig_dump2, pfx); strcat(orig_dump2, orig_dump);
+
+	dfile = find_dumpfile_2(orig_save2, orig_dump2, this_save);
+	if(!dfile)
+		{
+		free_2(orig_dump2);
+		free_2(orig_save2);
+		}
+	}
+
+return(dfile);
 }
 
 /******************************************************************/

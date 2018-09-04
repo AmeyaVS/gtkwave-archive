@@ -1690,9 +1690,12 @@
 		Added xml2stems Verilator XML to rtlbrowse stems converter
 		to distribution.  Eventually vermin will be removed.
 		Added missing realpath() in udp	emission in vermin.
-3.3.94	29aug18	Applied ghwlib.c patch for dealing with	null ranges.
+3.3.94	03sep18	Applied ghwlib.c patch for dealing with	null ranges.
 		Fixed typo on gtk_gesture_zoom_new() being disconnected.
 		Slowed down ctrl-scroll for better use on systems where
 		touchpad/screen gestures convert to scroll events.
 		Button press while swipe is slowing down now zeroes out the
 		swipe velocity, causing the scrolling to stop.
+                Added second chance algorithm for find_dumpfile() in case
+                it fails.
+
