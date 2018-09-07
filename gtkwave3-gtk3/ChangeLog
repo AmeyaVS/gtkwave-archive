@@ -1698,4 +1698,4 @@
 		swipe velocity, causing the scrolling to stop.
                 Added second chance algorithm for find_dumpfile() in case
                 it fails.
-
+3.3.95	07sep18	Placeholder for new version.
