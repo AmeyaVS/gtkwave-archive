@@ -2041,6 +2041,32 @@ return(G_SOURCE_CONTINUE);
 
 
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
+int
+wavearea_zoom_get_gesture_xy_points(GtkGesture *gesture, gdouble *x1p, gdouble *y1p, gdouble *x2p, gdouble *y2p)
+{
+GList *sequences;
+int rc = 0;
+
+if(gesture)
+	{
+	sequences = gtk_gesture_get_sequences (gesture);
+	if(sequences)
+		{
+		if(sequences->next)
+			{
+			rc = 1;
+		      	gtk_gesture_get_point (gesture, sequences->data, x1p, y1p);
+		      	gtk_gesture_get_point (gesture, sequences->next->data, x2p, y2p);
+			}
+		
+		g_list_free (sequences);
+		}
+	}
+
+return(rc);
+}
+
+
 void
 wavearea_zoom_begin_event (GtkGesture *gesture,
                GdkEventSequence *sequence,
