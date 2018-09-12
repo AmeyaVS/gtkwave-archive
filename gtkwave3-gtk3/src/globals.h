@@ -1338,6 +1338,9 @@ struct wave_rgbmaster_t rgb_gccache;
 double cr_line_width;
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
 gdouble wavearea_gesture_initial_zoom;
+#ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
+gdouble wavearea_gesture_initial_zoom_x_distance;
+#endif
 GtkGesture *wavearea_gesture_swipe;
 gdouble wavearea_gesture_swipe_velocity_x;
 int wavearea_drag_start_x;

@@ -2041,7 +2041,9 @@ return(G_SOURCE_CONTINUE);
 
 
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
-int
+
+#ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
+static int
 wavearea_zoom_get_gesture_xy_points(GtkGesture *gesture, gdouble *x1p, gdouble *y1p, gdouble *x2p, gdouble *y2p)
 {
 GList *sequences;
@@ -2055,8 +2057,19 @@ if(gesture)
 		if(sequences->next)
 			{
 			rc = 1;
-		      	gtk_gesture_get_point (gesture, sequences->data, x1p, y1p);
-		      	gtk_gesture_get_point (gesture, sequences->next->data, x2p, y2p);
+			gdouble x1, y1, x2, y2;
+
+		      	gtk_gesture_get_point (gesture, sequences->data, &x1, &y1);
+		      	gtk_gesture_get_point (gesture, sequences->next->data, &x2, &y2);
+
+			if(x1 < x2) /* order coordinates so x1 is leftmost point */
+				{
+				*x1p = x1; *y1p = y1; *x2p = x2; *y2p = y2;
+				}
+				else
+				{
+				*x1p = x2; *y1p = y2; *x2p = x1; *y2p = y1;
+				}
 			}
 		
 		g_list_free (sequences);
@@ -2065,18 +2078,31 @@ if(gesture)
 
 return(rc);
 }
-
+#endif
 
 void
 wavearea_zoom_begin_event (GtkGesture *gesture,
                GdkEventSequence *sequence,
                gpointer          user_data)
 {
-(void) gesture;
 (void) sequence;
 (void) user_data;
+gdouble x1, y1, x2, y2;
 
 GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
+
+#ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
+if(wavearea_zoom_get_gesture_xy_points(gesture, &x1, &y1, &x2, &y2))
+	{
+	GLOBALS->wavearea_gesture_initial_zoom_x_distance = x2 - x1;
+	if(GLOBALS->wavearea_gesture_initial_zoom_x_distance < 1.0) GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
+	}
+	else
+	{
+	GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
+	}
+#endif
+
 #ifdef WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
 gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 #endif
@@ -2092,9 +2118,32 @@ wavearea_zoom_scale_changed_event (GtkGestureZoom *controller,
 (void) scale;
 (void) user_data;
 gdouble zb, ls, lzb, r, z0;
+#ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
+gdouble x1, y1, x2, y2;
+#endif
 
 zb = GLOBALS->zoombase;
 lzb = log(zb);
+
+#ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
+{
+GtkGesture *gesture = (GtkGesture *)user_data;
+gdouble dist;
+if(wavearea_zoom_get_gesture_xy_points(gesture, &x1, &y1, &x2, &y2))
+        {
+	dist = x2 - x1;
+        if(dist < 1.0) dist = 1.0; /* min resolution is one pixel */
+        }
+	else
+	{
+	dist = 1.0; /* min resolution is one pixel */
+        }
+
+if(GLOBALS->wavearea_gesture_initial_zoom_x_distance < 1.0) GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
+scale = dist / GLOBALS->wavearea_gesture_initial_zoom_x_distance;
+}
+#endif
+
 ls = log(scale);
 
 if((lzb != 0.0) && (scale > 0.0))
@@ -2105,8 +2154,27 @@ if((lzb != 0.0) && (scale > 0.0))
 		{
 		/* printf("XXX %e %e\n", scale, z0); */
 
-		GLOBALS->tims.zoom = z0 + 1.0; /* 1.0 compensates for what service_zoom_out does */
-		service_zoom_out(NULL, NULL);
+#ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
+			{
+			TimeType old_x1tim = GLOBALS->tims.start + (x1 * GLOBALS->nspx);
+			calczoom(GLOBALS->tims.zoom = z0);
+			TimeType width = (TimeType)(((gdouble)GLOBALS->wavewidth) * GLOBALS->nspx);
+			GLOBALS->tims.start = old_x1tim - (x1 * GLOBALS->nspx);
+			if(GLOBALS->tims.start + width > GLOBALS->tims.last) GLOBALS->tims.start = time_trunc(GLOBALS->tims.last - width);
+			if(GLOBALS->tims.start < GLOBALS->tims.first) GLOBALS->tims.start = GLOBALS->tims.first;
+			gtk_adjustment_set_value(GTK_ADJUSTMENT(GLOBALS->wave_hslider), GLOBALS->tims.timecache = GLOBALS->tims.start);
+	
+			fix_wavehadj();
+	
+			g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+			g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
+			}
+#else
+			{
+			GLOBALS->tims.zoom = z0 + 1.0; /* 1.0 compensates for what service_zoom_out does */
+			service_zoom_out(NULL, NULL);
+			}
+#endif
 
 		GLOBALS->tims.prevzoom = GLOBALS->wavearea_gesture_initial_zoom;
 		}
@@ -2329,12 +2397,12 @@ GtkGesture *gs;
 
 GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
 gs =  gtk_gesture_zoom_new(GLOBALS->wavearea);
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "begin", G_CALLBACK(wavearea_zoom_begin_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "begin", G_CALLBACK(wavearea_zoom_begin_event), gs);
 #ifdef WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "update", G_CALLBACK(wavearea_zoom_update_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "update", G_CALLBACK(wavearea_zoom_update_event), gs);
 gtk_event_controller_set_propagation_phase (GTK_EVENT_CONTROLLER(gs), GTK_PHASE_CAPTURE);
 #else
-gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "scale-changed", G_CALLBACK(wavearea_zoom_scale_changed_event), GLOBALS);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "scale-changed", G_CALLBACK(wavearea_zoom_scale_changed_event), gs);
 #endif
 
 gs = gtk_gesture_multi_press_new (GLOBALS->wavearea);
