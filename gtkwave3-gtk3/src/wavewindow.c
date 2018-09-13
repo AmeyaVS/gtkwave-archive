@@ -2095,6 +2095,7 @@ GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
 if(wavearea_zoom_get_gesture_xy_points(gesture, &x1, &y1, &x2, &y2))
 	{
 	GLOBALS->wavearea_gesture_initial_x1tim = GLOBALS->tims.start + (x1 * GLOBALS->nspx);
+
 	GLOBALS->wavearea_gesture_initial_zoom_x_distance = x2 - x1;
 	if(GLOBALS->wavearea_gesture_initial_zoom_x_distance < 1.0) GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
 	}
@@ -2105,6 +2106,10 @@ if(wavearea_zoom_get_gesture_xy_points(gesture, &x1, &y1, &x2, &y2))
 
 	GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
 	}
+
+if(GLOBALS->wavearea_gesture_initial_x1tim < GLOBALS->tims.first) GLOBALS->wavearea_gesture_initial_x1tim = GLOBALS->tims.first;
+if(GLOBALS->wavearea_gesture_initial_x1tim > GLOBALS->tims.last) GLOBALS->wavearea_gesture_initial_x1tim = GLOBALS->tims.last;
+
 #endif
 
 #ifdef WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
