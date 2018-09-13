@@ -2080,7 +2080,7 @@ return(rc);
 }
 #endif
 
-void
+static void
 wavearea_zoom_begin_event (GtkGesture *gesture,
                GdkEventSequence *sequence,
                gpointer          user_data)
@@ -2109,14 +2109,12 @@ gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 }
 
 
-void
+static void
 wavearea_zoom_scale_changed_event (GtkGestureZoom *controller,
                gdouble         scale,
                gpointer        user_data)
 {
 (void) controller;
-(void) scale;
-(void) user_data;
 gdouble zb, ls, lzb, r, z0;
 #ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
 gdouble x1, y1, x2, y2;
@@ -2189,7 +2187,6 @@ wavearea_zoom_update_event (GtkGestureZoom   *gesture,
                         gpointer user_data)
 {
 (void) sequence;
-(void) user_data;
 
 wavearea_zoom_scale_changed_event(gesture, gtk_gesture_zoom_get_scale_delta (gesture), user_data);
 }
