@@ -2094,11 +2094,15 @@ GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
 #ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
 if(wavearea_zoom_get_gesture_xy_points(gesture, &x1, &y1, &x2, &y2))
 	{
+	GLOBALS->wavearea_gesture_initial_x1tim = GLOBALS->tims.start + (x1 * GLOBALS->nspx);
 	GLOBALS->wavearea_gesture_initial_zoom_x_distance = x2 - x1;
 	if(GLOBALS->wavearea_gesture_initial_zoom_x_distance < 1.0) GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
 	}
 	else
 	{
+        TimeType middle=(GLOBALS->tims.start/2)+(GLOBALS->tims.end/2);
+	GLOBALS->wavearea_gesture_initial_x1tim = middle;
+
 	GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
 	}
 #endif
@@ -2138,7 +2142,7 @@ if(wavearea_zoom_get_gesture_xy_points(gesture, &x1, &y1, &x2, &y2))
         }
 
 if(GLOBALS->wavearea_gesture_initial_zoom_x_distance < 1.0) GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
-scale = dist / GLOBALS->wavearea_gesture_initial_zoom_x_distance;
+scale = GLOBALS->wavearea_gesture_initial_zoom_x_distance / dist;
 }
 #endif
 
@@ -2154,10 +2158,15 @@ if((lzb != 0.0) && (scale > 0.0))
 
 #ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
 			{
-			TimeType old_x1tim = GLOBALS->tims.start + (x1 * GLOBALS->nspx);
-			calczoom(GLOBALS->tims.zoom = z0);
-			TimeType width = (TimeType)(((gdouble)GLOBALS->wavewidth) * GLOBALS->nspx);
-			GLOBALS->tims.start = old_x1tim - (x1 * GLOBALS->nspx);
+			TimeType width, new_x1tim;
+
+                        calczoom(GLOBALS->tims.zoom = z0);
+                        width = (TimeType)(((gdouble)GLOBALS->wavewidth) * GLOBALS->nspx);
+                        GLOBALS->tims.start = GLOBALS->wavearea_gesture_initial_x1tim - (x1 * GLOBALS->nspx);
+
+                        new_x1tim  = GLOBALS->tims.start + (x1 * GLOBALS->nspx);
+                        GLOBALS->tims.start += (GLOBALS->wavearea_gesture_initial_x1tim - new_x1tim);
+
 			if(GLOBALS->tims.start + width > GLOBALS->tims.last) GLOBALS->tims.start = time_trunc(GLOBALS->tims.last - width);
 			if(GLOBALS->tims.start < GLOBALS->tims.first) GLOBALS->tims.start = GLOBALS->tims.first;
 			gtk_adjustment_set_value(GTK_ADJUSTMENT(GLOBALS->wave_hslider), GLOBALS->tims.timecache = GLOBALS->tims.start);

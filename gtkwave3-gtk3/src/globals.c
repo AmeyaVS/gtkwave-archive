@@ -1334,6 +1334,7 @@ RGB_WAVE_RAINBOW_INITIALIZER, /* rgb_gc_rainbow */
 0.0, /* wavearea_gesture_initial_zoom */
 #ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
 1.0, /* wavearea_gesture_initial_zoom_x_distance */
+0, /* wavearea_gesture_initial_x1tim */
 #endif
 NULL, /* wavearea_gesture_swipe */
 0.0, /* wavearea_gesture_swipe_velocity_x */
