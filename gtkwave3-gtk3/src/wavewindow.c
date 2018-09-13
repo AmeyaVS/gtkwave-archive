@@ -2144,6 +2144,11 @@ if(wavearea_zoom_get_gesture_xy_points(gesture, &x1, &y1, &x2, &y2))
 if(GLOBALS->wavearea_gesture_initial_zoom_x_distance < 1.0) GLOBALS->wavearea_gesture_initial_zoom_x_distance = 1.0; /* min resolution is one pixel */
 scale = GLOBALS->wavearea_gesture_initial_zoom_x_distance / dist;
 }
+#else
+{
+if(scale < 0.00001) scale = 0.00001;
+scale = (1.0 / scale); /* matches version for WAVE_GTK3_GESTURE_ZOOM_IS_1D which is initial_distance/distance instead of distance/priv->initial_distance from gtk */
+}
 #endif
 
 ls = log(scale);
