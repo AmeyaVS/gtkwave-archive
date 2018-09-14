@@ -1948,6 +1948,8 @@ return(rc);
 
 
 #if GTK_CHECK_VERSION(3,0,0)
+static int gesture_zoom_set = 0; /* to prevent floods of zoom events */
+
 static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
 {
 (void) widget;
@@ -1966,6 +1968,8 @@ draw_marker();
 
 /* seems to cause a conflict flipping back so don't! */
 /* set_GLOBALS(g_old); */
+
+if(gesture_zoom_set) gesture_zoom_set = 0;
 
 return(rc);
 }
@@ -2127,6 +2131,9 @@ wavearea_zoom_scale_changed_event (GtkGestureZoom *controller,
 gdouble zb, ls, lzb, r, z0;
 #ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
 gdouble x1, y1, x2, y2;
+
+if(gesture_zoom_set) return; /* to prevent floods of zoom events */
+gesture_zoom_set = 1;
 #endif
 
 zb = GLOBALS->zoombase;
