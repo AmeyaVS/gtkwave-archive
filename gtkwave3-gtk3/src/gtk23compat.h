@@ -36,13 +36,12 @@
 #define WAVE_GTK3_SWIPE_VELOCITY_DECAY 0.90
 #define WAVE_GTK3_SWIPE_VELOCITY_FRAME_RATE 60.0
 #define WAVE_ALLOW_GTK3_GESTURE_MIDDLE_RIGHT_BUTTON
-/* need to find a touchscreen driver that doesn't convert zoom to ctrl+scroll event: not sure what to do to get a correct zoom working */
-/* #define WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE */
-
-/* experimental, needs to be tested on a real touch screen */
-/* #define WAVE_GTK3_GESTURE_ZOOM_IS_1D */
 
 #define WAVE_CTRL_SCROLL_ZOOM_FACTOR 0.3
+
+/* tested as working on thinkpad25 */
+#define WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
+#define WAVE_GTK3_GESTURE_ZOOM_IS_1D
 #endif
 
 #define WAVE_GTKIFE(a,b,c,d,e) {a,b,c,d,e,NULL}
