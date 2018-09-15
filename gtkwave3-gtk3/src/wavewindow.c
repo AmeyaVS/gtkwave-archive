@@ -2319,6 +2319,12 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x < -1.0)
 		}
 
 	GLOBALS->wavearea_gesture_swipe_velocity_x = GLOBALS->wavearea_gesture_swipe_velocity_x * WAVE_GTK3_SWIPE_VELOCITY_DECAY;
+	if(GLOBALS->wavearea_gesture_swipe_velocity_x >= -1.0)
+		{
+		GLOBALS->tims.baseline = -1;
+		GLOBALS->tims.lmbcache = -1;
+		GLOBALS->in_button_press_wavewindow_c_1 = 0;
+		}
 	}
 
 if(GLOBALS->wavearea_gesture_swipe_velocity_x > 1.0)
@@ -2346,6 +2352,12 @@ if(GLOBALS->wavearea_gesture_swipe_velocity_x > 1.0)
 		}
 
 	GLOBALS->wavearea_gesture_swipe_velocity_x = GLOBALS->wavearea_gesture_swipe_velocity_x * WAVE_GTK3_SWIPE_VELOCITY_DECAY;
+	if(GLOBALS->wavearea_gesture_swipe_velocity_x <= 1.0)
+		{
+		GLOBALS->tims.baseline = -1;
+		GLOBALS->tims.lmbcache = -1;
+		GLOBALS->in_button_press_wavewindow_c_1 = 0;
+		}
 	}
 
 
