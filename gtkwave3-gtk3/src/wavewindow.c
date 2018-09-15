@@ -2184,6 +2184,11 @@ if((lzb != 0.0) && (scale > 0.0))
                         new_x1tim  = GLOBALS->tims.start + (x1 * GLOBALS->nspx);
                         GLOBALS->tims.start += (GLOBALS->wavearea_gesture_initial_x1tim - new_x1tim);
 
+			GLOBALS->tims.marker = new_x1tim;
+			GLOBALS->tims.baseline = GLOBALS->tims.start + (x2 * GLOBALS->nspx);
+			GLOBALS->tims.lmbcache = -1;
+			GLOBALS->in_button_press_wavewindow_c_1 = 0;
+
 			if(GLOBALS->tims.start + width > GLOBALS->tims.last) GLOBALS->tims.start = time_trunc(GLOBALS->tims.last - width);
 			if(GLOBALS->tims.start < GLOBALS->tims.first) GLOBALS->tims.start = GLOBALS->tims.first;
 			gtk_adjustment_set_value(GTK_ADJUSTMENT(GLOBALS->wave_hslider), GLOBALS->tims.timecache = GLOBALS->tims.start);
@@ -2223,7 +2228,13 @@ wavearea_zoom_end_event (GtkGestureZoom   *gesture,
                      	GdkEventSequence *sequence,
                      	gpointer user_data)
 {
+GLOBALS->tims.marker = -1;
+GLOBALS->tims.baseline = -1;
+GLOBALS->tims.lmbcache = -1;
+GLOBALS->in_button_press_wavewindow_c_1 = 0;
 
+g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
+g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
 }
 #endif
 
@@ -2421,6 +2432,7 @@ GtkGesture *gs;
 GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
 gs =  gtk_gesture_zoom_new(GLOBALS->wavearea);
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "begin", G_CALLBACK(wavearea_zoom_begin_event), gs);
+gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "end", G_CALLBACK(wavearea_zoom_end_event), gs);
 #ifdef WAVE_GTK3_GESTURE_ZOOM_USES_GTK_PHASE_CAPTURE
 gtkwave_signal_connect(XXX_GTK_OBJECT(gs), "update", G_CALLBACK(wavearea_zoom_update_event), gs);
 gtk_event_controller_set_propagation_phase (GTK_EVENT_CONTROLLER(gs), GTK_PHASE_CAPTURE);
