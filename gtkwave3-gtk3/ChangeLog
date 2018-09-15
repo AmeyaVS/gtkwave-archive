@@ -1699,3 +1699,5 @@
                 Added second chance algorithm for find_dumpfile() in case
                 it fails.
 3.3.95	14sep18	Fixed GtkGestureZoom to work better on touchscreens.
+		More touchscreen tweaks: provide visual feedback on pinch
+		and zoom.
