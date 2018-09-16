@@ -50,6 +50,9 @@ if(GLOBALS->dual_ctx && !GLOBALS->dual_race_lock)
 }
 
 /******************************************************************/
+#if GTK_CHECK_VERSION(3,0,0)
+static int gesture_filter_set = 0; /* to prevent floods of gesture events before next draw */
+#endif
 
 #ifdef WAVE_ALLOW_SLIDER_ZOOM
 #if GTK_CHECK_VERSION(3,0,0)
@@ -184,8 +187,8 @@ if(event->is_hint)
         }
         else
         {
-        /* x = event->x; */ /* scan-build */
-        /* y = event->y; */ /* scan-build */
+        x = event->x; /* scan-build */
+        y = event->y; /* scan-build */
         state = event->state;
         }
 
@@ -1704,12 +1707,15 @@ wavearea_drag_update_event (GtkGestureDrag *gesture,
 (void) user_data;
 GdkEventMotion ev;
 
+if(gesture_filter_set) return; /* to prevent floods of drag update events */
+gesture_filter_set = 1;
+
 memset(&ev, 0, sizeof(GdkEventMotion));
-ev.is_hint = 1;
+ev.is_hint = 0;
 #ifdef WAVE_ALLOW_GTK3_GESTURE_MIDDLE_RIGHT_BUTTON
-ev.state = (gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture)) == 3) ? GDK_BUTTON3_MOTION_MASK : GDK_BUTTON1_MOTION_MASK;
+ev.state = (gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture)) == 3) ? GDK_BUTTON3_MASK : GDK_BUTTON1_MASK;
 #else
-ev.state = GDK_BUTTON1_MOTION_MASK;
+ev.state = GDK_BUTTON1_MASK;
 #endif
 ev.x = GLOBALS->wavearea_drag_start_x + offset_x;
 ev.y = GLOBALS->wavearea_drag_start_y + offset_y;
@@ -1948,8 +1954,6 @@ return(rc);
 
 
 #if GTK_CHECK_VERSION(3,0,0)
-static int gesture_zoom_set = 0; /* to prevent floods of zoom events */
-
 static gint draw_event(GtkWidget *widget, cairo_t *cr, gpointer      user_data)
 {
 (void) widget;
@@ -1969,7 +1973,7 @@ draw_marker();
 /* seems to cause a conflict flipping back so don't! */
 /* set_GLOBALS(g_old); */
 
-if(gesture_zoom_set) gesture_zoom_set = 0;
+if(gesture_filter_set) gesture_filter_set = 0;
 
 return(rc);
 }
@@ -2132,8 +2136,8 @@ gdouble zb, ls, lzb, r, z0;
 #ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
 gdouble x1, y1, x2, y2;
 
-if(gesture_zoom_set) return; /* to prevent floods of zoom events */
-gesture_zoom_set = 1;
+if(gesture_filter_set) return; /* to prevent floods of zoom events */
+gesture_filter_set = 1;
 #endif
 
 zb = GLOBALS->zoombase;
@@ -2424,6 +2428,8 @@ gtk_widget_set_events(GLOBALS->wavearea,
                 | GDK_BUTTON_RELEASE_MASK
                 | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
+		| GDK_TOUCH_MASK
+		| GDK_TABLET_PAD_MASK
 		| GDK_TOUCHPAD_GESTURE_MASK
 #endif
                 );

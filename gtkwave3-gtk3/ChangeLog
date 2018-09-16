@@ -1702,3 +1702,5 @@
 		More touchscreen tweaks: provide visual feedback on pinch
 		and zoom.
 		Fix for progress bar on splash screen in Wayland.
+		Add filtering to zoom and drag to prevent floods of events
+		before the next draw.
