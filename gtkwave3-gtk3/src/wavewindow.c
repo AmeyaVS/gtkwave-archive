@@ -1707,8 +1707,13 @@ wavearea_drag_update_event (GtkGestureDrag *gesture,
 (void) user_data;
 GdkEventMotion ev;
 
-if(gesture_filter_set) return; /* to prevent floods of drag update events */
-gesture_filter_set = 1;
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))
+	{
+	if(gesture_filter_set) return; /* to prevent floods of drag update events in wayland */
+	gesture_filter_set = 1;
+	}
+#endif
 
 memset(&ev, 0, sizeof(GdkEventMotion));
 ev.is_hint = 0;
