@@ -879,6 +879,7 @@ if(GLOBALS->splash_splash_c_1)
 			cairo_fill(cr);
 #ifdef WAVE_ALLOW_GTK3_CAIRO_CREATE_FIX
 			gdk_window_end_draw_frame(gtk_widget_get_window(GLOBALS->darea_splash_c_1), gdc);
+			gtk_widget_queue_draw_area(GLOBALS->darea_splash_c_1, 0, WAVE_SPLASH_Y-4, cur_bar_x, 4); /* needed for wayland */
 #else
 			cairo_destroy (cr);
 #endif
