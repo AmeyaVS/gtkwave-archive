@@ -1698,9 +1698,12 @@
 		swipe velocity, causing the scrolling to stop.
                 Added second chance algorithm for find_dumpfile() in case
                 it fails.
-3.3.95	15sep18	Fixed GtkGestureZoom to work better on touchscreens.
+3.3.95	16sep18	Fixed GtkGestureZoom to work better on touchscreens.
 		More touchscreen tweaks: provide visual feedback on pinch
 		and zoom.
 		Fix for progress bar on splash screen in Wayland.
 		Add filtering to zoom and drag to prevent floods of events
 		before the next draw.
+		Added fflush on stdout for help text as fix for possible
+                stdout problem with mingw/msys shells.
+

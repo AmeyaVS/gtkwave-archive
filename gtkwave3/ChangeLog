@@ -1665,4 +1665,5 @@
 3.3.94	03sep18	Applied ghwlib.c patch for dealing with null ranges.
 		Added second chance algorithm for find_dumpfile() in case
 		it fails.
-3.3.95	07sep18	Placeholder for new version.
+3.3.95	16sep18 Added fflush on stdout for help text as fix for possible
+		stdout problem with mingw/msys shells.

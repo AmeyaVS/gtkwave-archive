@@ -375,6 +375,10 @@ SLIDEZOOM_OPT
 #endif
 );
 
+#ifdef __MINGW32__
+fflush(stdout);	/* fix for possible problem with mingw/msys shells */
+#endif
+
 exit(0);
 }
 
