@@ -211,4 +211,18 @@ if(device)
         ev.state = mask;
         }
 
+
+Determine x/y position in DnD:
+
+GdkDevice *device = gdk_drag_context_get_device(dc);
+GdkInputSource is = gdk_device_get_source(device);
+
+gint x, y;
+gdk_device_get_position (device, NULL, &x, &y);
+printf("x: %d, y: %d\n", x, y);
+
+if(is == GDK_SOURCE_TOUCHSCREEN) // gtk 3.0 only
+        {
+        }
+
 ===
