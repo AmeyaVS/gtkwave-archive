@@ -110,7 +110,7 @@ char disable_ae2_alias;
 /*
  * analyzer.c
  */
-unsigned int default_flags; /* from analyzer.c 5 */
+TraceFlagsType default_flags; /* from analyzer.c 5 */
 unsigned int default_fpshift;
 Times tims; /* from analyzer.c 6 */
 Traces traces; /* from analyzer.c 7 */
@@ -814,7 +814,7 @@ GtkWidget *toggle4_showchange_c_1; /* from showchange.c 391 */
 GtkWidget *window_showchange_c_8; /* from showchange.c 392 */
 void (*cleanup_showchange_c_6)(void); /* from showchange.c 393 */
 struct TraceEnt *tcache_showchange_c_1; /* from showchange.c 394 */
-unsigned int flags_showchange_c_1; /* from showchange.c 395 */
+TraceFlagsType flags_showchange_c_1; /* from showchange.c 395 */
 
 
 /*

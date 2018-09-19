@@ -518,7 +518,7 @@ Trptr sig_name_to_Trptr(char *name) {
 }
 
 /* Return the base prefix for the signal value */
-char *signal_value_prefix(int flags) {
+char *signal_value_prefix(TraceFlagsType flags) {
   if(flags & TR_BIN) return "0b" ;
   if(flags & TR_HEX) return "0x" ;
   if(flags & TR_OCT) return "0" ;

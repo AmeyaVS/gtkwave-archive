@@ -257,7 +257,7 @@ if(GLOBALS->default_flags & TR_TTRANSLATED)
 		if(!t->vector)
 			{
 			bvptr v;
-			int cache_hi = t->flags & TR_HIGHLIGHT;
+			TraceFlagsType cache_hi = t->flags & TR_HIGHLIGHT;
 
 			t->flags |= TR_HIGHLIGHT;
                         v = combine_traces(1, t); /* down: make single signal a vector */
@@ -362,7 +362,7 @@ int AddBlankTrace(char *commentname)
 {
   Trptr  t;
   char *comment;
-  unsigned int flags_filtered;
+  TraceFlagsType flags_filtered;
 
   if( (t = (Trptr) calloc_2( 1, sizeof( TraceEnt ))) == NULL )
     {
@@ -395,7 +395,7 @@ int AddBlankTrace(char *commentname)
 /*
  * Insert a blank [or comment] trace into the display...
  */
-int InsertBlankTrace(char *comment, int different_flags)
+int InsertBlankTrace(char *comment, TraceFlagsType different_flags)
 {
 TempBuffer tb;
 char *comm;

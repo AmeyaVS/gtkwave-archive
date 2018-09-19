@@ -54,7 +54,7 @@ return(s);
 
 static int determine_trace_flags(Trptr t, char *ch)
 {
-unsigned int flags = t->flags;
+TraceFlagsType flags = t->flags;
 int pos = 0;
 
 /* [0] */

@@ -860,7 +860,7 @@ void process_tcl_list_2(struct symbol *s, int which_msb, int which_lsb)
 Trptr t;
 nptr nexp;
 int i;
-unsigned int default_flags = GLOBALS->default_flags;
+TraceFlagsType default_flags = GLOBALS->default_flags;
 bvptr v;
 
 Trptr    buffer;            /* cut/copy buffer of traces */
@@ -1593,7 +1593,7 @@ return(rpnt);
 static char *give_value_string(Trptr t)
 {
 char *rc = NULL;
-unsigned int flags;
+TraceFlagsType flags;
 int f_filter, p_filter;
 
 if(t)
@@ -2142,9 +2142,9 @@ static char *make_message (const char *fmt, ...)
 char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_tcl_mode) {
 	char *one_entry, *mult_entry = NULL;
 	unsigned int mult_len = 0;
-	unsigned int prev_flags = 0;
+	TraceFlagsType prev_flags = 0;
 
-	unsigned int def=0;
+	TraceFlagsType def=0;
 	TimeType prevshift=LLDescriptor(0);
 	char is_first = 1;
 	char flag_skip;
@@ -2180,7 +2180,7 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 			is_first = 0;
 			if((t->flags & TR_PTRANSLATED) && (!t->p_filter)) t->flags &= (~TR_PTRANSLATED);
 			if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
-			one_entry = make_message("@%x\n",(def=t->flags) & ~TR_HIGHLIGHT);
+			one_entry = make_message("@%"TRACEFLAGSPRIFMT"\n",(def=t->flags) & ~TR_HIGHLIGHT);
 			WAVE_OE_ME
 			if(!flag_skip) prev_flags = def;
 			}
@@ -2291,7 +2291,7 @@ char *emit_gtkwave_savefile_formatted_entries_in_tcl_list(Trptr t, gboolean use_
 						}
 					if(ba)
 						{
-						one_entry = make_message(" "TTFormat" %x", ba[i].shift, ba[i].flags);
+						one_entry = make_message(" "TTFormat" %"TRACEFLAGSPRIFMT, ba[i].shift, ba[i].flags);
 						WAVE_OE_ME
 						}
 					}

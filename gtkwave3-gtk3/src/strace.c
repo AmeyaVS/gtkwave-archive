@@ -1650,7 +1650,7 @@ if(GLOBALS->strace_ctx->mprintf_buff_head)
 void cache_actual_pattern_mark_traces(void)
 {
 Trptr t;
-unsigned int def=0;
+TraceFlagsType def=0;
 TimeType prevshift=LLDescriptor(0);
 struct strace *st;
 
@@ -1676,7 +1676,7 @@ if(GLOBALS->strace_ctx->timearray)
 
 		if((t->flags!=def)||(st==GLOBALS->strace_ctx->straces))
 			{
-			mprintf("@%x\n",def=t->flags);
+			mprintf("@%"TRACEFLAGSPRIFMT"\n",def=t->flags);
 			}
 
 		if((t->shift)||((prevshift)&&(!t->shift)))

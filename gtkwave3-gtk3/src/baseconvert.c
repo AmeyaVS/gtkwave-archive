@@ -255,7 +255,7 @@ if(dot && (dbuf[0] == '0'))
  */
 static char *convert_ascii_2(Trptr t, vptr v)
 {
-Ulong flags;
+TraceFlagsType flags;
 int nbits;
 unsigned char *bits;
 char *os, *pnt, *newbuff;
@@ -693,7 +693,16 @@ else if(flags&TR_SIGNED)
 			}
 			else
 			{
-			sprintf(os, TTFormat, val);
+                        if(!(flags&TR_TIME))
+                                {
+                                sprintf(os, TTFormat, val);
+                                }
+                                else
+                                {
+                                free_2(os);
+                                os = calloc_2(1, 128);
+                                reformat_time(os, val, GLOBALS->time_dimension);
+                                }
 			}
 		}
 		else
@@ -790,7 +799,16 @@ else	/* decimal when all else fails */
 			}
 			else
 			{
-			sprintf(os, UTTFormat, val);
+                        if(!(flags&TR_TIME))
+                                {
+                                sprintf(os, UTTFormat, val);
+                                }
+                                else
+                                {
+                                free_2(os);
+                                os = calloc_2(1, 128);
+                                reformat_time(os, val, GLOBALS->time_dimension);
+                                }
 			}
 		}
 		else
@@ -954,7 +972,7 @@ return(!an_u_encountered ? res : AN_U);
  */
 char *convert_ascii_vec_2(Trptr t, char *vec)
 {
-Ulong flags;
+TraceFlagsType flags;
 int nbits;
 char *bits;
 char *os, *pnt, *newbuff;
@@ -1406,7 +1424,16 @@ else if(flags&TR_SIGNED)
 			}
 			else
 			{
-			sprintf(os, TTFormat, val);
+                        if(!(flags&TR_TIME))
+                                {
+                                sprintf(os, TTFormat, val);
+                                }
+                                else
+                                {
+                                free_2(os);
+                                os = calloc_2(1, 128);
+                                reformat_time(os, val, GLOBALS->time_dimension);
+                                }
 			}
 		}
 		else
@@ -1504,7 +1531,16 @@ else	/* decimal when all else fails */
 			}
 			else
 			{
-			sprintf(os, UTTFormat, val);
+                        if(!(flags&TR_TIME))
+                                {
+                                sprintf(os, UTTFormat, val);
+                                }
+                                else
+                                {
+                                free_2(os);
+                                os = calloc_2(1, 128);
+                                reformat_time(os, val, GLOBALS->time_dimension);
+                                }
 			}
 		}
 		else

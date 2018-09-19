@@ -107,6 +107,23 @@ Tcl_SetObjResult(interp, aobj);
 return(TCL_OK);
 }
 
+static int gtkwavetcl_printTraceFlagsType(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], TraceFlagsType ttVal)
+{
+(void)clientData;
+(void)objc;
+(void)objv;
+
+Tcl_Obj *aobj;
+char reportString[65];
+
+sprintf(reportString, "%"TRACEFLAGSPRIuFMT, ttVal);
+
+aobj = Tcl_NewStringObj(reportString, -1);
+Tcl_SetObjResult(interp, aobj);
+
+return(TCL_OK);
+}
+
 static int gtkwavetcl_printDouble(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], double dVal)
 {
 (void)clientData;
@@ -490,7 +507,7 @@ if(objc == 2)
 			{
 			if(i == which)
 				{
-				return(gtkwavetcl_printInteger(clientData, interp, objc, objv, t->flags));
+				return(gtkwavetcl_printTraceFlagsType(clientData, interp, objc, objv, t->flags));
 				}
 
 			i++;
@@ -1781,7 +1798,7 @@ if(objc == 2)
 
 	if(t)
 		{
-		return(gtkwavetcl_printInteger(clientData, interp, objc, objv, t->flags));
+		return(gtkwavetcl_printTraceFlagsType(clientData, interp, objc, objv, t->flags));
 		}
 	}
         else

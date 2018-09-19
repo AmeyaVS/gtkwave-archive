@@ -19,7 +19,7 @@
 #include "debug.h"
 
 
-static void toggle_generic(GtkWidget *widget, Ulong msk)
+static void toggle_generic(GtkWidget *widget, TraceFlagsType msk)
 {
 if(GTK_TOGGLE_BUTTON(widget)->active)
 	{

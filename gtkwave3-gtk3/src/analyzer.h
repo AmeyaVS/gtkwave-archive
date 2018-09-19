@@ -377,10 +377,16 @@ enum nodeVarDir {
    /* if ND_DIR_MAX exceeds 7, need to update struct Node's "unsigned vardir : 3" declaration */
 };
 
+
+typedef uint64_t TraceFlagsType;
+#define TRACEFLAGSSCNFMT SCNx64
+#define TRACEFLAGSPRIFMT PRIx64
+#define TRACEFLAGSPRIuFMT PRIu64 
+
 typedef struct BitAttributes
   {
   TimeType  shift;
-  unsigned int flags;
+  TraceFlagsType flags;
   } BitAttributes;
 
 
@@ -470,6 +476,7 @@ typedef struct
     int      buffercount;       /* number of traces in buffer */
   } TempBuffer;
 
+
 typedef struct TraceEnt
   {
     Trptr    t_next;		/* doubly linked list of traces */
@@ -494,8 +501,8 @@ typedef struct TraceEnt
 	bvptr   vec;
       } n;
 
-    unsigned int flags;		/* see def below in TraceEntFlagBits */
-    unsigned int cached_flags;	/* used for tcl for saving flags during cut and paste */
+    TraceFlagsType flags;		/* see def below in TraceEntFlagBits */
+    TraceFlagsType cached_flags;	/* used for tcl for saving flags during cut and paste */
 
     int	     f_filter;		/* file filter */
     int	     p_filter;		/* process filter */
@@ -527,56 +534,59 @@ enum TraceEntFlagBits
   TR_REAL2BITS_B, TR_TTRANSLATED_B,
   TR_POPCNT_B,
   TR_FPDECSHIFT_B,
+  TR_TIME_B,
 
   TR_RSVD_B /* for use internally such as temporary caching of highlighting, not for use in traces */
 };
 
-#define TR_HIGHLIGHT 		(1<<TR_HIGHLIGHT_B)
-#define TR_HEX			(1<<TR_HEX_B)
-#define TR_ASCII		(1<<TR_ASCII_B)
-#define TR_DEC			(1<<TR_DEC_B)
-#define TR_BIN			(1<<TR_BIN_B)
-#define TR_OCT			(1<<TR_OCT_B)
-#define TR_RJUSTIFY		(1<<TR_RJUSTIFY_B)
-#define TR_INVERT		(1<<TR_INVERT_B)
-#define TR_REVERSE		(1<<TR_REVERSE_B)
-#define TR_EXCLUDE		(1<<TR_EXCLUDE_B)
-#define TR_BLANK		(1<<TR_BLANK_B)
-#define TR_SIGNED		(1<<TR_SIGNED_B)
-#define TR_ANALOG_STEP 		(1<<TR_ANALOG_STEP_B)
-#define TR_ANALOG_INTERPOLATED	(1<<TR_ANALOG_INTERPOLATED_B)
-#define TR_ANALOG_BLANK_STRETCH	(1<<TR_ANALOG_BLANK_STRETCH_B)
-#define TR_REAL			(1<<TR_REAL_B)
-#define TR_ANALOG_FULLSCALE	(1<<TR_ANALOG_FULLSCALE_B)
-#define TR_ZEROFILL		(1<<TR_ZEROFILL_B)
-#define TR_ONEFILL		(1<<TR_ONEFILL_B)
-#define TR_CLOSED		(1<<TR_CLOSED_B)
+#define TR_HIGHLIGHT 		(UINT64_C(1)<<TR_HIGHLIGHT_B)
+#define TR_HEX			(UINT64_C(1)<<TR_HEX_B)
+#define TR_ASCII		(UINT64_C(1)<<TR_ASCII_B)
+#define TR_DEC			(UINT64_C(1)<<TR_DEC_B)
+#define TR_BIN			(UINT64_C(1)<<TR_BIN_B)
+#define TR_OCT			(UINT64_C(1)<<TR_OCT_B)
+#define TR_RJUSTIFY		(UINT64_C(1)<<TR_RJUSTIFY_B)
+#define TR_INVERT		(UINT64_C(1)<<TR_INVERT_B)
+#define TR_REVERSE		(UINT64_C(1)<<TR_REVERSE_B)
+#define TR_EXCLUDE		(UINT64_C(1)<<TR_EXCLUDE_B)
+#define TR_BLANK		(UINT64_C(1)<<TR_BLANK_B)
+#define TR_SIGNED		(UINT64_C(1)<<TR_SIGNED_B)
+#define TR_ANALOG_STEP 		(UINT64_C(1)<<TR_ANALOG_STEP_B)
+#define TR_ANALOG_INTERPOLATED	(UINT64_C(1)<<TR_ANALOG_INTERPOLATED_B)
+#define TR_ANALOG_BLANK_STRETCH	(UINT64_C(1)<<TR_ANALOG_BLANK_STRETCH_B)
+#define TR_REAL			(UINT64_C(1)<<TR_REAL_B)
+#define TR_ANALOG_FULLSCALE	(UINT64_C(1)<<TR_ANALOG_FULLSCALE_B)
+#define TR_ZEROFILL		(UINT64_C(1)<<TR_ZEROFILL_B)
+#define TR_ONEFILL		(UINT64_C(1)<<TR_ONEFILL_B)
+#define TR_CLOSED		(UINT64_C(1)<<TR_CLOSED_B)
 
-#define TR_GRP_BEGIN		(1<<TR_GRP_BEGIN_B)
-#define TR_GRP_END		(1<<TR_GRP_END_B)
+#define TR_GRP_BEGIN		(UINT64_C(1)<<TR_GRP_BEGIN_B)
+#define TR_GRP_END		(UINT64_C(1)<<TR_GRP_END_B)
 #define TR_GRP_MASK		(TR_GRP_BEGIN|TR_GRP_END)
 
-#define TR_BINGRAY		(1<<TR_BINGRAY_B)
-#define TR_GRAYBIN		(1<<TR_GRAYBIN_B)
+#define TR_BINGRAY		(UINT64_C(1)<<TR_BINGRAY_B)
+#define TR_GRAYBIN		(UINT64_C(1)<<TR_GRAYBIN_B)
 #define TR_GRAYMASK		(TR_BINGRAY|TR_GRAYBIN)
 
-#define TR_REAL2BITS            (1<<TR_REAL2BITS_B)
+#define TR_REAL2BITS            (UINT64_C(1)<<TR_REAL2BITS_B)
 
 #define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL)
 
-#define TR_COLLAPSED	(1<<TR_COLLAPSED_B)
+#define TR_COLLAPSED	(UINT64_C(1)<<TR_COLLAPSED_B)
 #define TR_ISCOLLAPSED	(TR_BLANK|TR_COLLAPSED)
 
-#define TR_FTRANSLATED	(1<<TR_FTRANSLATED_B)
-#define TR_PTRANSLATED	(1<<TR_PTRANSLATED_B)
-#define TR_TTRANSLATED  (1<<TR_TTRANSLATED_B)
+#define TR_FTRANSLATED	(UINT64_C(1)<<TR_FTRANSLATED_B)
+#define TR_PTRANSLATED	(UINT64_C(1)<<TR_PTRANSLATED_B)
+#define TR_TTRANSLATED  (UINT64_C(1)<<TR_TTRANSLATED_B)
 
-#define TR_POPCNT	(1<<TR_POPCNT_B)
-#define TR_FPDECSHIFT   (1<<TR_FPDECSHIFT_B)
+#define TR_POPCNT	(UINT64_C(1)<<TR_POPCNT_B)
+#define TR_FPDECSHIFT   (UINT64_C(1)<<TR_FPDECSHIFT_B)
+
+#define TR_TIME         (UINT64_C(1)<<TR_TIME_B)
 
 #define TR_ANALOGMASK	(TR_ANALOG_STEP|TR_ANALOG_INTERPOLATED)
 
-#define TR_RSVD 		(1<<TR_RSVD_B)
+#define TR_RSVD		(UINT64_C(1)<<TR_RSVD_B)
 
 Trptr GiveNextTrace(Trptr t);
 Trptr GivePrevTrace(Trptr t);
@@ -588,7 +598,7 @@ int AddNode(nptr nd, char *aliasname);
 int AddNodeUnroll(nptr nd, char *aliasname);
 int AddVector(bvptr vec, char *aliasname);
 int AddBlankTrace(char *commentname);
-int InsertBlankTrace(char *comment, int different_flags);
+int InsertBlankTrace(char *comment, TraceFlagsType different_flags);
 void RemoveNode(nptr n);
 void RemoveTrace(Trptr t, int dofree);
 void FreeTrace(Trptr t);

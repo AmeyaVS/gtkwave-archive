@@ -4476,7 +4476,7 @@ menu_showchangeall_cleanup(GtkWidget *widget, gpointer data)
 (void)data;
 
 Trptr t;
-Ulong flags;
+TraceFlagsType flags;
 
 t=GLOBALS->showchangeall_menu_c_1;
 if(t)
@@ -6398,7 +6398,7 @@ recurse_import(widget, callback_action);
 /**/
 
 
-static void dataformat(int mask, int patch)
+static void dataformat(TraceFlagsType mask, TraceFlagsType patch)
 {
   Trptr t;
   int fix=0;
@@ -6768,6 +6768,48 @@ if(GLOBALS->helpbox_is_active)
 dataformat( ~(TR_POPCNT), 0 );
 }
 
+
+void
+menu_dataformat_time_on(gpointer null_data, guint callback_action, GtkWidget *widget)
+{
+(void)null_data;
+(void)callback_action;
+(void)widget;
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-Time-On");
+        help_text(
+                " will step through all highlighted traces and ensure that"
+                " bits and vectors with this qualifier will display as time values." 
+        );
+        return;
+        }
+
+dataformat( ~(TR_TIME | TR_NUMMASK), (TR_TIME | TR_DEC) );
+}
+
+void
+menu_dataformat_time_off(gpointer null_data, guint callback_action, GtkWidget *widget)
+{
+(void)null_data;
+(void)callback_action;
+(void)widget;
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-Time-Off");
+        help_text(
+                " will step through all highlighted traces and ensure that"
+                " bits and vectors with this qualifier will no longer display as time values, but as decimal numbers."
+        );
+        return;
+        }
+
+dataformat( ~(TR_TIME | TR_NUMMASK), TR_DEC );
+}
+
+
 void
 menu_dataformat_fpshift_on(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
@@ -6820,8 +6862,8 @@ menu_dataformat_fpshift_specify_cleanup(GtkWidget *widget, gpointer data)
   Trptr t;
   int fix=0;
   int shamt = GLOBALS->entrybox_text ? atoi(GLOBALS->entrybox_text) : 0;
-  int mask = ~(TR_FPDECSHIFT);
-  int patch = TR_FPDECSHIFT;
+  TraceFlagsType mask = ~(TR_FPDECSHIFT);
+  TraceFlagsType patch = TR_FPDECSHIFT;
 
   if((shamt < 0)||(shamt > 255)) { shamt = 0; patch = 0; }
 
@@ -7946,6 +7988,8 @@ static gtkwave_mlist_t menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Fixed Point Shift/On", NULL, menu_dataformat_fpshift_on, WV_MENU_FPSHIFTON, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Fixed Point Shift/Off", NULL, menu_dataformat_fpshift_off,    WV_MENU_FPSHIFTOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Fixed Point Shift/Specify", NULL, menu_dataformat_fpshift_specify,    WV_MENU_FPSHIFTVAL, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Time/On", NULL, menu_dataformat_time_on, WV_MENU_TIMEON, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Time/Off", NULL, menu_dataformat_time_off,    WV_MENU_TIMEOFF, "<Item>"),
 
     WAVE_GTKIFE("/Edit/Color Format/Normal", NULL, menu_colorformat_0,    WV_MENU_CLRFMT0, "<Item>"),
     WAVE_GTKIFE("/Edit/Color Format/Red", NULL, menu_colorformat_1,    WV_MENU_CLRFMT1, "<Item>"),
@@ -8647,6 +8691,8 @@ static gtkwave_mlist_t popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Fixed Point Shift/On", NULL, menu_dataformat_fpshift_on, WV_MENU_FPSHIFTON, "<Item>"),
     WAVE_GTKIFE("/Data Format/Fixed Point Shift/Off", NULL, menu_dataformat_fpshift_off,    WV_MENU_FPSHIFTOFF, "<Item>"),
     WAVE_GTKIFE("/Data Format/Fixed Point Shift/Specify", NULL, menu_dataformat_fpshift_specify,    WV_MENU_FPSHIFTVAL, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Time/On", NULL, menu_dataformat_time_on, WV_MENU_TIMEON, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Time/Off", NULL, menu_dataformat_time_off,    WV_MENU_TIMEOFF, "<Item>"),
 
     WAVE_GTKIFE("/Color Format/Normal", NULL, menu_colorformat_0,    WV_MENU_CLRFMT0, "<Item>"),
     WAVE_GTKIFE("/Color Format/Red", NULL, menu_colorformat_1,    WV_MENU_CLRFMT1, "<Item>"),

@@ -111,7 +111,7 @@ return(GLOBALS->buf_menu_c_1);
 void write_save_helper(const char *savnam, FILE *wave) {
 	Trptr t;
 	int i;
-	unsigned int def=0;
+	TraceFlagsType def=0;
 	int sz_x, sz_y;
 	TimeType prevshift=LLDescriptor(0);
 	int root_x, root_y;
@@ -251,7 +251,7 @@ void write_save_helper(const char *savnam, FILE *wave) {
 			if((t->flags & TR_PTRANSLATED) && (!t->p_filter)) t->flags &= (~TR_PTRANSLATED);
 			if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
 			if((t->flags & TR_TTRANSLATED) && (!t->t_filter)) t->flags &= (~TR_TTRANSLATED);
-			fprintf(wave,"@%x\n",def=t->flags);
+			fprintf(wave,"@%"TRACEFLAGSPRIFMT"\n",def=t->flags);
 			}
 
 		if((t->shift)||((prevshift)&&(!t->shift)))
@@ -362,7 +362,7 @@ void write_save_helper(const char *savnam, FILE *wave) {
 						}
 					if(ba)
 						{
-						fprintf(wave, " "TTFormat" %x", ba[ix].shift, ba[ix].flags);
+						fprintf(wave, " "TTFormat" %"TRACEFLAGSPRIFMT, ba[ix].shift, ba[ix].flags);
 						}
 					}
 				fprintf(wave,"\n");
@@ -439,7 +439,7 @@ void write_save_helper(const char *savnam, FILE *wave) {
 					if((t->flags & TR_FTRANSLATED) && (!t->f_filter)) t->flags &= (~TR_FTRANSLATED);
 					if((t->flags & TR_PTRANSLATED) && (!t->p_filter)) t->flags &= (~TR_PTRANSLATED);
 					if((t->flags & TR_TTRANSLATED) && (!t->t_filter)) t->flags &= (~TR_TTRANSLATED);
-					fprintf(wave,"@%x\n",def=t->flags);
+					fprintf(wave,"@%"TRACEFLAGSPRIFMT"\n",def=t->flags);
 					}
 
 				if((t->shift)||((prevshift)&&(!t->shift)))
@@ -531,7 +531,7 @@ void write_save_helper(const char *savnam, FILE *wave) {
 								}
 							if(ba)
 								{
-								fprintf(wave, " "TTFormat" %x", ba[ix].shift, ba[ix].flags);
+								fprintf(wave, " "TTFormat" %"TRACEFLAGSPRIFMT, ba[ix].shift, ba[ix].flags);
 								}
 							}
 						fprintf(wave,"\n");
@@ -1120,7 +1120,7 @@ else
 if(*w2=='@')
 	{
 	/* handle trace flags */
-	sscanf(w2+1, "%x", &GLOBALS->default_flags);
+	sscanf(w2+1, "%"TRACEFLAGSSCNFMT, &GLOBALS->default_flags);
 	if( (GLOBALS->default_flags & (TR_FTRANSLATED|TR_PTRANSLATED)) == (TR_FTRANSLATED|TR_PTRANSLATED) )
 		{
 		GLOBALS->default_flags &= ~TR_PTRANSLATED; /* safest bet though this is a cfg file error */
