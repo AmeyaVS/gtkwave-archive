@@ -134,6 +134,19 @@ static void DNDBeginCB(
 (void)dc;
 (void)data;
 
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default())) 
+	{
+	GdkDevice *device = gdk_drag_context_get_device(dc);
+	const gchar *gn = gdk_device_get_name(device); //
+	if(!strcmp(gn, "Wayland Touch Master Pointer"))
+		{
+		fprintf(stderr, "GTKWAVE | Touch DnD not yet supported on Wayland.\n");
+		return;
+		}
+	}
+#endif
+
 GLOBALS->dnd_state = 1;
 }
 
