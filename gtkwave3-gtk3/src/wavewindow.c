@@ -52,6 +52,7 @@ if(GLOBALS->dual_ctx && !GLOBALS->dual_race_lock)
 /******************************************************************/
 #if GTK_CHECK_VERSION(3,0,0)
 static int gesture_filter_set = 0; /* to prevent floods of gesture events before next draw */
+static int gesture_filter_cnt = 0; /* to prevent floods of gesture events before next draw */
 #endif
 
 #ifdef WAVE_ALLOW_SLIDER_ZOOM
@@ -1624,6 +1625,11 @@ void wavearea_pressed_event(GtkGestureMultiPress *gesture,
 (void) user_data;
 GdkEventButton ev;
 
+if(gesture_filter_cnt)
+	{
+	return;
+	}
+
 GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
 
 memset(&ev, 0, sizeof(GdkEventButton));
@@ -1694,6 +1700,12 @@ wavearea_drag_begin_event (GtkGestureDrag *gesture,
 
 GLOBALS->wavearea_drag_start_x = start_x;
 GLOBALS->wavearea_drag_start_y = start_y;
+
+if(gesture_filter_cnt)
+	{
+	GLOBALS->wavearea_drag_start_x = GLOBALS->wavearea_drag_start_y = -1.0;
+	return;
+	}
 }
 
 
@@ -1706,6 +1718,8 @@ wavearea_drag_update_event (GtkGestureDrag *gesture,
 (void) gesture;
 (void) user_data;
 GdkEventMotion ev;
+
+if(GLOBALS->wavearea_drag_start_x < 0.0) return;
 
 #ifdef GDK_WINDOWING_WAYLAND
 if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))
@@ -2244,6 +2258,17 @@ GLOBALS->in_button_press_wavewindow_c_1 = 0;
 
 g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
 g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
+
+#ifdef GDK_WINDOWING_WAYLAND
+if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))
+	{
+	/* nothing for wayland */
+	}
+	else
+#endif
+	{
+	gesture_filter_cnt = 10; /* to prevent mouse pointer from flying all over at zoom release */
+	}
 }
 #endif
 
@@ -2257,6 +2282,12 @@ wavearea_swipe_event (GtkGestureSwipe *gesture,
 (void) gesture;
 (void) user_data;
 (void) velocity_y;
+
+if(gesture_filter_cnt)
+	{
+	GLOBALS->wavearea_gesture_swipe_velocity_x = 0;
+	return;
+	}
 
 GLOBALS->wavearea_gesture_swipe_velocity_x += velocity_x; /* instead of =, in order to "nudge" the scroll faster/slower */
 }
@@ -2275,7 +2306,7 @@ gdouble velocity_x, velocity_y;
 gboolean rc = gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
                                 &velocity_x,
                                 &velocity_y);
-if(rc)
+if(rc && !gesture_filter_cnt)
 	{
 	GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
 	}
@@ -2289,6 +2320,13 @@ static gboolean wavearea_swipe_tick(GtkWidget *widget,
 (void) frame_clock;
 (void) user_data;
 gdouble velocity_x, velocity_y;
+
+if(gesture_filter_cnt > 0) /* for X11 */
+	{
+	GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+	gesture_filter_cnt--;
+	return(G_SOURCE_CONTINUE);
+	}
 
 gtk_gesture_swipe_get_velocity (GTK_GESTURE_SWIPE(GLOBALS->wavearea_gesture_swipe),
                                 &velocity_x,

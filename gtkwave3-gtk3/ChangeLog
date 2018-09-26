@@ -1710,3 +1710,5 @@
 		when it is attempted on Wayland touchscreens.  (X11 is ok.)
                 Added preliminary support for Time datatype.
 		MinGW compile fix on X11 Window usage.
+		Added gesture_filter_cnt to fix spurious mouse events on X11
+		touch.
