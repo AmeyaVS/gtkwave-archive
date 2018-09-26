@@ -1698,7 +1698,7 @@
 		swipe velocity, causing the scrolling to stop.
                 Added second chance algorithm for find_dumpfile() in case
                 it fails.
-3.3.95	19sep18	Fixed GtkGestureZoom to work better on touchscreens.
+3.3.95	26sep18	Fixed GtkGestureZoom to work better on touchscreens.
 		More touchscreen tweaks: provide visual feedback on pinch
 		and zoom.
 		Fix for progress bar on splash screen in Wayland.
@@ -1709,4 +1709,4 @@
 		Added warning that "Touch DnD not yet supported on Wayland"
 		when it is attempted on Wayland touchscreens.  (X11 is ok.)
                 Added preliminary support for Time datatype.
-
+		MinGW compile fix on X11 Window usage.
