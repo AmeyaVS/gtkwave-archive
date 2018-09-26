@@ -6462,7 +6462,7 @@ dataformat( ~(TR_POPCNT), 0 );
 
 
 void
-menu_dataformat_time_on(gpointer null_data, guint callback_action, GtkWidget *widget)
+menu_dataformat_time(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)null_data;
 (void)callback_action;
@@ -6470,7 +6470,7 @@ menu_dataformat_time_on(gpointer null_data, guint callback_action, GtkWidget *wi
 
 if(GLOBALS->helpbox_is_active)
         {
-        help_text_bold("\n\nData Format-Time-On");
+        help_text_bold("\n\nData Format-Time");
         help_text(
                 " will step through all highlighted traces and ensure that"
                 " bits and vectors with this qualifier will display as time values." 
@@ -6478,27 +6478,7 @@ if(GLOBALS->helpbox_is_active)
         return;
         }
 
-dataformat( ~(TR_TIME | TR_NUMMASK), (TR_TIME | TR_DEC) );
-}
-
-void
-menu_dataformat_time_off(gpointer null_data, guint callback_action, GtkWidget *widget)
-{
-(void)null_data;
-(void)callback_action;
-(void)widget;
-
-if(GLOBALS->helpbox_is_active)
-        {
-        help_text_bold("\n\nData Format-Time-Off");
-        help_text(
-                " will step through all highlighted traces and ensure that"
-                " bits and vectors with this qualifier will no longer display as time values, but as decimal numbers."
-        );
-        return;
-        }
-
-dataformat( ~(TR_TIME | TR_NUMMASK), TR_DEC );
+dataformat( ~(TR_NUMMASK), (TR_TIME | TR_DEC) );
 }
 
 
@@ -7597,6 +7577,7 @@ static gtkwave_mlist_t menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Binary", "<Alt>B", menu_dataformat_bin, WV_MENU_EDFB, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Octal", "<Alt>O", menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/ASCII", NULL, menu_dataformat_ascii, WV_MENU_EDFA, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Time", NULL, menu_dataformat_time, WV_MENU_TIME, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/BitsToReal", NULL, menu_dataformat_real, WV_MENU_EDRL, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/RealToBits/On", NULL, menu_dataformat_real2bon, WV_MENU_EDR2BON, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/RealToBits/Off", NULL, menu_dataformat_real2boff, WV_MENU_EDR2BOFF, "<Item>"),
@@ -7631,8 +7612,6 @@ static gtkwave_mlist_t menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Fixed Point Shift/On", NULL, menu_dataformat_fpshift_on, WV_MENU_FPSHIFTON, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Fixed Point Shift/Off", NULL, menu_dataformat_fpshift_off,    WV_MENU_FPSHIFTOFF, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Fixed Point Shift/Specify", NULL, menu_dataformat_fpshift_specify,    WV_MENU_FPSHIFTVAL, "<Item>"),
-    WAVE_GTKIFE("/Edit/Data Format/Time/On", NULL, menu_dataformat_time_on, WV_MENU_TIMEON, "<Item>"),
-    WAVE_GTKIFE("/Edit/Data Format/Time/Off", NULL, menu_dataformat_time_off,    WV_MENU_TIMEOFF, "<Item>"),
 
     WAVE_GTKIFE("/Edit/Color Format/Normal", NULL, menu_colorformat_0,    WV_MENU_CLRFMT0, "<Item>"),
     WAVE_GTKIFE("/Edit/Color Format/Red", NULL, menu_colorformat_1,    WV_MENU_CLRFMT1, "<Item>"),
@@ -8122,6 +8101,7 @@ static gtkwave_mlist_t popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Binary", NULL, menu_dataformat_bin, WV_MENU_EDFB, "<Item>"),
     WAVE_GTKIFE("/Data Format/Octal", NULL, menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
     WAVE_GTKIFE("/Data Format/ASCII", NULL, menu_dataformat_ascii, WV_MENU_EDFA, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Time", NULL, menu_dataformat_time, WV_MENU_TIME, "<Item>"),
     WAVE_GTKIFE("/Data Format/BitsToReal", NULL, menu_dataformat_real, WV_MENU_EDRL, "<Item>"),
     WAVE_GTKIFE("/Data Format/RealToBits/On", NULL, menu_dataformat_real2bon, WV_MENU_EDR2BON, "<Item>"),
     WAVE_GTKIFE("/Data Format/RealToBits/Off", NULL, menu_dataformat_real2boff, WV_MENU_EDR2BOFF, "<Item>"),
@@ -8156,8 +8136,6 @@ static gtkwave_mlist_t popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Fixed Point Shift/On", NULL, menu_dataformat_fpshift_on, WV_MENU_FPSHIFTON, "<Item>"),
     WAVE_GTKIFE("/Data Format/Fixed Point Shift/Off", NULL, menu_dataformat_fpshift_off,    WV_MENU_FPSHIFTOFF, "<Item>"),
     WAVE_GTKIFE("/Data Format/Fixed Point Shift/Specify", NULL, menu_dataformat_fpshift_specify,    WV_MENU_FPSHIFTVAL, "<Item>"),
-    WAVE_GTKIFE("/Data Format/Time/On", NULL, menu_dataformat_time_on, WV_MENU_TIMEON, "<Item>"),
-    WAVE_GTKIFE("/Data Format/Time/Off", NULL, menu_dataformat_time_off,    WV_MENU_TIMEOFF, "<Item>"),
 
     WAVE_GTKIFE("/Color Format/Normal", NULL, menu_colorformat_0,    WV_MENU_CLRFMT0, "<Item>"),
     WAVE_GTKIFE("/Color Format/Red", NULL, menu_colorformat_1,    WV_MENU_CLRFMT1, "<Item>"),
