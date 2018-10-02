@@ -2039,7 +2039,7 @@ if(objc == 2)
         {
         char *s = get_Tcl_string(objv[1]);
         unsigned int which = atoi(s);
-	gint rc = install_file_filter(which);
+	gint rc = install_proc_filter(which);
 
         gtkwave_main_iteration();
 	return(gtkwavetcl_printInteger(clientData, interp, objc, objv, rc));
