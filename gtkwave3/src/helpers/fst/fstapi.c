@@ -5921,10 +5921,10 @@ pval = 0;
 if(sectype == FST_BL_VCDATA_DYN_ALIAS2)
         {
         uint32_t prev_alias = 0;
-                                 
+
         do      {
                 int skiplen;
- 
+
                 if(*pnt & 0x01)
                         {
                         int64_t shval = fstGetSVarint64(pnt, &skiplen) >> 1;
@@ -5939,7 +5939,7 @@ if(sectype == FST_BL_VCDATA_DYN_ALIAS2)
                                 xc->rvat_chain_table[idx] = 0;                                   /* need to explicitly zero as calloc above might not run */
                                 xc->rvat_chain_table_lengths[idx] = prev_alias = shval;          /* because during this loop iter would give stale data! */
                                 idx++;
-                                } 
+                                }
                         else
                                 {
                                 xc->rvat_chain_table[idx] = 0;                                   /* need to explicitly zero as calloc above might not run */
@@ -5950,14 +5950,14 @@ if(sectype == FST_BL_VCDATA_DYN_ALIAS2)
                         else
                         {
                         uint64_t val = fstGetVarint32(pnt, &skiplen);
-        
+
                         fstHandle loopcnt = val >> 1;
                         for(i=0;i<loopcnt;i++)
                                 {
                                 xc->rvat_chain_table[idx++] = 0;
                                 }
                         }
-                        
+
                 pnt += skiplen;
                 } while (pnt != (chain_cmem + chain_clen));
         }
@@ -5967,7 +5967,7 @@ if(sectype == FST_BL_VCDATA_DYN_ALIAS2)
 	        {
 	        int skiplen;
 	        uint64_t val = fstGetVarint32(pnt, &skiplen);
-	
+
 	        if(!val)
 	                {
 	                pnt += skiplen;
@@ -5991,7 +5991,7 @@ if(sectype == FST_BL_VCDATA_DYN_ALIAS2)
 	                        xc->rvat_chain_table[idx++] = 0;
 	                        }
 	                }
-	
+
 	        pnt += skiplen;
 	        } while (pnt != (chain_cmem + chain_clen));
 	}

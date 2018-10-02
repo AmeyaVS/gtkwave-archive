@@ -95,14 +95,14 @@ varint		maxhandle associated with this checkpoint data
 // value changes
 
 varint		maxhandle associated with the value change data
-uint8_t		pack type ('F' is fastlz, '4' is lz4, 
+uint8_t		pack type ('F' is fastlz, '4' is lz4,
 			others ['Z'/'!'] are zlib)
 
 varint		chain 0 compressed data length (0 = uncompressed)
-[compressed data]	
+[compressed data]
 ...
 varint		chain n compressed data length (0 = uncompressed)
-[compressed data]	
+[compressed data]
 
 ---
 
