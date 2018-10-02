@@ -460,7 +460,7 @@ if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G
 	int i;
 	for(i=0;i<n_fields;i++)
 		{
-		fprintf(stderr, "GTKWAVE | %s: %s\n", fields[i].key, fields[i].value); /* provides exact location: much better than stock message */
+		fprintf(stderr, "GTKWAVE | %s: %s\n", fields[i].key, (const char *)fields[i].value); /* provides exact location: much better than stock message */
 		}
 	}
 
@@ -960,7 +960,11 @@ while (1)
 
 #ifdef WAVE_USE_XID
                 case 'X':
+#if GTK_CHECK_VERSION(3,0,0)
                         sscanf(optarg, "%lx", &GLOBALS->socket_xid);
+#else
+			sscanf(optarg, "%x", &GLOBALS->socket_xid);
+#endif
 			splash_disable_rc_override = 1;
                         break;
 #endif

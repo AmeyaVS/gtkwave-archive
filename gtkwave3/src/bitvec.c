@@ -786,7 +786,7 @@ if(len)
 	else
 	if(state==2)
 		{
-		sscanf(wild, "%x", &ba[nodepnt-1].flags);
+		sscanf(wild, "%"TRACEFLAGSSCNFMT, &ba[nodepnt-1].flags);
 		state = 0;
 		goto fw;
 		}

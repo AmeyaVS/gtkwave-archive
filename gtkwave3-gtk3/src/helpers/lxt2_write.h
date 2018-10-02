@@ -43,7 +43,7 @@ extern "C" {
 #define ftello ftell
 #endif
 
-#include <wavealloca.h>
+#include "wavealloca.h"
 
 #define LXT2_WR_HDRID (0x1380)
 #define LXT2_WR_VERSION (0x0001)
