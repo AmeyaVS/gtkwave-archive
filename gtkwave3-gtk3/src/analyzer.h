@@ -215,7 +215,7 @@ struct Node
 static const char *vartype_strings[] = { \
     "", \
     "event", \
-    "int", \
+    "integer", \
     "parm", \
     "real", \
     "real_parm", \

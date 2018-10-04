@@ -1698,7 +1698,7 @@
 		swipe velocity, causing the scrolling to stop.
                 Added second chance algorithm for find_dumpfile() in case
                 it fails.
-3.3.95	02oct18	Fixed GtkGestureZoom to work better on touchscreens.
+3.3.95	04oct18	Fixed GtkGestureZoom to work better on touchscreens.
 		More touchscreen tweaks: provide visual feedback on pinch
 		and zoom.
 		Fix for progress bar on splash screen in Wayland.
@@ -1714,3 +1714,6 @@
 		touch.
 		Warnings fixes for Verilator integration.
 		Fixed install_proc_filter usage for Tcl invocation.
+                Change integer type to "integer" in SST	to differentiate it
+                from sv	ints.
+
