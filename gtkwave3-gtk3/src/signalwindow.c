@@ -138,7 +138,7 @@ static void DNDBeginCB(
 if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default())) 
 	{
 	GdkDevice *device = gdk_drag_context_get_device(dc);
-	const gchar *gn = gdk_device_get_name(device); //
+	const gchar *gn = gdk_device_get_name(device);
 	if(!strcmp(gn, "Wayland Touch Master Pointer"))
 		{
 		fprintf(stderr, "GTKWAVE | Touch DnD not yet supported on Wayland.\n");
