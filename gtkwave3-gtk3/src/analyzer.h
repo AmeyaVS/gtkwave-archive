@@ -507,6 +507,7 @@ typedef struct TraceEnt
     int	     f_filter;		/* file filter */
     int	     p_filter;		/* process filter */
     int	     t_filter;		/* transaction process filter */
+    int      e_filter;          /* enum filter (from FST) */
 
     unsigned int t_color;	/* trace color index */
     unsigned char t_fpdecshift; /* for fixed point decimal */
@@ -535,6 +536,7 @@ enum TraceEntFlagBits
   TR_POPCNT_B,
   TR_FPDECSHIFT_B,
   TR_TIME_B,
+  TR_ENUM_B,
 
   TR_RSVD_B /* for use internally such as temporary caching of highlighting, not for use in traces */
 };
@@ -570,7 +572,7 @@ enum TraceEntFlagBits
 
 #define TR_REAL2BITS            (UINT64_C(1)<<TR_REAL2BITS_B)
 
-#define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL|TR_TIME)
+#define TR_NUMMASK	(TR_ASCII|TR_HEX|TR_DEC|TR_BIN|TR_OCT|TR_SIGNED|TR_REAL|TR_TIME|TR_ENUM)
 
 #define TR_COLLAPSED	(UINT64_C(1)<<TR_COLLAPSED_B)
 #define TR_ISCOLLAPSED	(TR_BLANK|TR_COLLAPSED)
@@ -583,6 +585,7 @@ enum TraceEntFlagBits
 #define TR_FPDECSHIFT   (UINT64_C(1)<<TR_FPDECSHIFT_B)
 
 #define TR_TIME         (UINT64_C(1)<<TR_TIME_B)
+#define TR_ENUM         (UINT64_C(1)<<TR_ENUM_B)
 
 #define TR_ANALOGMASK	(TR_ANALOG_STEP|TR_ANALOG_INTERPOLATED)
 

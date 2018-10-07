@@ -241,6 +241,20 @@ if((GLOBALS->which_t_color > 0) && (GLOBALS->which_t_color <= WAVE_NUM_RAINBOW))
 if(GLOBALS->default_flags&TR_NUMMASK) t->flags=GLOBALS->default_flags;
 	else t->flags=(t->flags&TR_NUMMASK)|GLOBALS->default_flags;
 
+if(!t->vector && GLOBALS->enum_nptrs_jrb)
+	{
+	JRB enum_nptr = jrb_find_vptr(GLOBALS->enum_nptrs_jrb, t->n.nd);
+	if(enum_nptr)
+		{
+		int e_filter = enum_nptr->val.ui;
+		if((e_filter > 0) && (e_filter <= GLOBALS->num_xl_enum_filter))
+			{
+			t->e_filter = e_filter;
+			if(!(GLOBALS->default_flags&TR_NUMMASK)) t->flags = (t->flags & (~TR_NUMMASK)) | TR_ENUM | TR_BIN; /* need to downgrade to bin to make visible */
+			}
+		}
+	}
+
 if(GLOBALS->default_flags & TR_FTRANSLATED)
 	{
 	t->f_filter = GLOBALS->current_translate_file;

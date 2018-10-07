@@ -348,6 +348,10 @@ NULL, /* istem_struct_base */
 0, /* istem_valid */
 NULL, /* fst_synclock_str */
 NULL, /* synclock_jrb */
+NULL, /* xl_enum_filter */
+0, /* num_xl_enum_filter */
+0, /* queued_xl_enum_filter */
+NULL, /* enum_nptrs_jrb */
 
 
 /*
@@ -2077,6 +2081,24 @@ void reload_into_new_context_2(void)
 	GLOBALS->synclock_jrb = NULL;
 	}
 
+ if(GLOBALS->enum_nptrs_jrb)
+	{
+	jrb_free_tree(GLOBALS->enum_nptrs_jrb);
+	GLOBALS->enum_nptrs_jrb = NULL;
+	}
+
+#ifdef _WAVE_HAVE_JUDY
+ if(GLOBALS->num_xl_enum_filter)
+	{
+	int ie;
+	for(ie=0;ie<GLOBALS->num_xl_enum_filter;ie++)
+		{
+		JudyHSFreeArray(&GLOBALS->xl_enum_filter[ie], NULL);
+		}
+
+	GLOBALS->num_xl_enum_filter = 0;
+	}
+#endif
 
  /* deallocate any loader-related stuff */
  switch(GLOBALS->loaded_file_type) {

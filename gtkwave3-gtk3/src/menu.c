@@ -6481,6 +6481,26 @@ if(GLOBALS->helpbox_is_active)
 dataformat( ~(TR_NUMMASK), (TR_TIME | TR_DEC) );
 }
 
+void
+menu_dataformat_enum(gpointer null_data, guint callback_action, GtkWidget *widget)
+{
+(void)null_data;
+(void)callback_action;
+(void)widget;
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nData Format-Enum");
+        help_text(
+                " will step through all highlighted traces and ensure that"
+                " bits and vectors with this qualifier will display as enum values, provided such values were dumped into file." 
+        );
+        return;
+        }
+
+dataformat( ~(TR_NUMMASK), (TR_ENUM | TR_BIN) );
+}
+
 
 void
 menu_dataformat_fpshift_on(gpointer null_data, guint callback_action, GtkWidget *widget)
@@ -7578,6 +7598,7 @@ static gtkwave_mlist_t menu_items[] =
     WAVE_GTKIFE("/Edit/Data Format/Octal", "<Alt>O", menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/ASCII", NULL, menu_dataformat_ascii, WV_MENU_EDFA, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/Time", NULL, menu_dataformat_time, WV_MENU_TIME, "<Item>"),
+    WAVE_GTKIFE("/Edit/Data Format/Enum", NULL, menu_dataformat_enum, WV_MENU_ENUM, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/BitsToReal", NULL, menu_dataformat_real, WV_MENU_EDRL, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/RealToBits/On", NULL, menu_dataformat_real2bon, WV_MENU_EDR2BON, "<Item>"),
     WAVE_GTKIFE("/Edit/Data Format/RealToBits/Off", NULL, menu_dataformat_real2boff, WV_MENU_EDR2BOFF, "<Item>"),
@@ -8102,6 +8123,7 @@ static gtkwave_mlist_t popmenu_items[] =
     WAVE_GTKIFE("/Data Format/Octal", NULL, menu_dataformat_oct, WV_MENU_EDFO, "<Item>"),
     WAVE_GTKIFE("/Data Format/ASCII", NULL, menu_dataformat_ascii, WV_MENU_EDFA, "<Item>"),
     WAVE_GTKIFE("/Data Format/Time", NULL, menu_dataformat_time, WV_MENU_TIME, "<Item>"),
+    WAVE_GTKIFE("/Data Format/Enum", NULL, menu_dataformat_enum, WV_MENU_ENUM, "<Item>"),
     WAVE_GTKIFE("/Data Format/BitsToReal", NULL, menu_dataformat_real, WV_MENU_EDRL, "<Item>"),
     WAVE_GTKIFE("/Data Format/RealToBits/On", NULL, menu_dataformat_real2bon, WV_MENU_EDR2BON, "<Item>"),
     WAVE_GTKIFE("/Data Format/RealToBits/Off", NULL, menu_dataformat_real2boff, WV_MENU_EDR2BOFF, "<Item>"),

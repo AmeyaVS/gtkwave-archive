@@ -349,6 +349,14 @@ unsigned stem_valid : 1;
 unsigned istem_valid : 1;
 char *fst_synclock_str;
 JRB synclock_jrb;
+#ifdef _WAVE_HAVE_JUDY
+Pvoid_t *xl_enum_filter;
+#else
+struct xl_tree_node **xl_enum_filter;
+#endif
+int num_xl_enum_filter;
+fstEnumHandle queued_xl_enum_filter;
+JRB enum_nptrs_jrb;
 
 
 /*

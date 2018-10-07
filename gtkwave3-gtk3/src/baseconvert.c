@@ -1582,6 +1582,35 @@ if((*s == '?') && (!GLOBALS->color_active_in_filter))
 return(s);
 }
 
+static char *edofilter(Trptr t, char *s)
+{
+if(t->flags & TR_ENUM)
+	{
+	int filt = t->e_filter - 1;
+
+#ifdef _WAVE_HAVE_JUDY
+	PPvoid_t pv = JudyHSGet(GLOBALS->xl_enum_filter[filt], s, strlen(s));
+	if(pv)
+		{
+		free_2(s);
+		s = malloc_2(strlen(*pv) + 1);
+		strcpy(s, *pv);
+		}
+#else
+	GLOBALS->xl_enum_filter[filt] = xl_splay(s, GLOBALS->xl_enum_filter[filt]);
+
+	if(!strcasecmp(s, GLOBALS->xl_enum_filter[filt]->item))
+		{
+		free_2(s);
+		s = malloc_2(strlen(GLOBALS->xl_enum_filter[filt]->trans) + 1);
+		strcpy(s, GLOBALS->xl_enum_filter[filt]->trans);
+		}
+#endif
+	}
+
+return(s);
+}
+
 static char *pdofilter(Trptr t, char *s)
 {
 struct pipe_ctx *p = GLOBALS->proc_filter[t->p_filter];
@@ -1657,11 +1686,16 @@ char *convert_ascii_vec(Trptr t, char *vec)
 {
 char *s = convert_ascii_vec_2(t, vec);
 
-if(!(t->f_filter|t->p_filter))
+if(!(t->f_filter|t->p_filter|t->e_filter))
 	{
 	}
 	else
 	{
+	if(t->e_filter)
+		{
+		s = edofilter(t, s);
+		}
+	else
 	if(t->f_filter)
 		{
 		s = dofilter(t, s);
@@ -1702,11 +1736,16 @@ if((!t->t_filter_converted) && (!(v->flags & HIST_STRING)))
 	        }
 	}
 
-if(!(t->f_filter|t->p_filter))
+if(!(t->f_filter|t->p_filter|t->e_filter))
 	{
 	}
 	else
 	{
+	if(t->e_filter)
+		{
+		s = edofilter(t, s);
+		}
+	else
 	if(t->f_filter)
 		{
 		s = dofilter(t, s);

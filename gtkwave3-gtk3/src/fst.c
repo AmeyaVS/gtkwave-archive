@@ -451,6 +451,64 @@ while((h = fstReaderIterateHier(xc)))
 						GLOBALS->fst_synclock_str = strdup_2(h->u.attr.name);
 						}
 					}
+				else
+				if(h->u.attr.subtype == FST_MT_ENUMTABLE)
+					{
+					if(h->u.attr.name)
+						{
+						GLOBALS->queued_xl_enum_filter = h->u.attr.arg; /* consumed by next enum variable definition */
+
+						if(h->u.attr.name_length)
+							{
+							struct fstETab *fe = fstUtilityExtractEnumTableFromString(h->u.attr.name);
+							/* currently fe->name is unused */
+							if(fe)
+								{
+								int ie;
+#ifdef _WAVE_HAVE_JUDY
+								Pvoid_t e = (Pvoid_t) NULL;
+								for(ie=0; ie<fe->elem_count; ie++)
+									{
+									PPvoid_t pv = JudyHSIns(&e, fe->val_arr[ie], strlen(fe->val_arr[ie]), NULL);
+									if(*pv)
+										{
+										free_2(*pv);
+										}
+									*pv = (void *)strdup_2(fe->literal_arr[ie]);
+									}
+#else
+								struct xl_tree_node *e = NULL;
+
+								for(ie=0; ie<fe->elem_count; ie++)
+									{
+									e = xl_insert(fe->val_arr[ie], e, fe->literal_arr[ie]);
+									}
+#endif
+
+								if(GLOBALS->xl_enum_filter)
+									{
+									GLOBALS->num_xl_enum_filter++;
+									GLOBALS->xl_enum_filter = realloc_2(GLOBALS->xl_enum_filter, GLOBALS->num_xl_enum_filter * sizeof(struct xl_tree_node *));
+									}
+									else
+									{
+									GLOBALS->num_xl_enum_filter++;
+									GLOBALS->xl_enum_filter = malloc_2(sizeof(struct xl_tree_node *));
+									}
+
+								GLOBALS->xl_enum_filter[GLOBALS->num_xl_enum_filter-1] = e;
+
+								if(GLOBALS->num_xl_enum_filter != h->u.attr.arg)
+									{
+									fprintf(stderr, FST_RDLOAD"Internal error, nonsequential enum tables definition encountered, exiting.\n");
+									exit(255);
+									}
+
+								fstUtilityFreeEnumTable(fe);
+								}
+							}
+						}
+					}
 				}
 			break;
 
@@ -977,6 +1035,16 @@ for(i=0;i<GLOBALS->numfacs;i++)
 
         GLOBALS->facs[i]=&sym_block[i];
         n=&node_block[i];
+
+	if(GLOBALS->queued_xl_enum_filter)
+		{
+		Jval jv;
+		jv.ui = GLOBALS->queued_xl_enum_filter;
+		GLOBALS->queued_xl_enum_filter = 0;
+
+		if(!GLOBALS->enum_nptrs_jrb) GLOBALS->enum_nptrs_jrb = make_jrb();
+		jrb_insert_vptr(GLOBALS->enum_nptrs_jrb, n, jv);
+		}
 
 	if(GLOBALS->do_hier_compress)
 		{

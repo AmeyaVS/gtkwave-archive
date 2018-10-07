@@ -793,6 +793,8 @@ char *geom_handle_nam;
 char *valpos_handle_nam;
 char *curval_handle_nam;
 char *tchn_handle_nam;
+
+fstEnumHandle max_enumhandle;
 };
 
 
@@ -2720,6 +2722,94 @@ if(xc)
         {
         fputc(FST_ST_GEN_ATTREND, xc->hier_handle);
         xc->hier_file_len++;
+        }
+}
+
+
+fstEnumHandle fstWriterCreateEnumTable(void *ctx, const char *name, uint32_t elem_count, const char **literal_arr, const char **val_arr)
+{
+fstEnumHandle handle = 0;
+int *literal_lens = NULL;
+int *val_lens = NULL;
+int lit_len_tot = 0;
+int val_len_tot = 0;
+int name_len;
+char elem_count_buf[16];
+int elem_count_len;
+int total_len;
+int pos = 0;
+char *attr_str = NULL;
+
+if(ctx && name && literal_arr && val_arr && (elem_count != 0))
+	{
+	struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
+
+	int i;
+
+	name_len = strlen(name);
+	elem_count_len = sprintf(elem_count_buf, "%"PRIu32, elem_count);
+
+	literal_lens = calloc(elem_count, sizeof(int));
+	val_lens = calloc(elem_count, sizeof(int));
+	
+	for(i=0;i<elem_count;i++)
+		{
+		literal_lens[i] = strlen(literal_arr[i]);
+		lit_len_tot += fstUtilityBinToEscConvertedLen(literal_arr[i], literal_lens[i]);
+
+		val_lens[i] =  strlen(val_arr[i]);
+		val_len_tot += fstUtilityBinToEscConvertedLen(val_arr[i], val_lens[i]);
+		}
+
+	total_len = name_len + 1 + elem_count_len + 1 + lit_len_tot + elem_count + val_len_tot + elem_count;
+
+	attr_str = malloc(total_len);
+	pos = 0;
+
+	memcpy(attr_str+pos, name, name_len);
+	pos += name_len;
+	attr_str[pos++] = ' ';
+
+	memcpy(attr_str+pos, elem_count_buf, elem_count_len);
+	pos += elem_count_len;
+	attr_str[pos++] = ' ';
+
+	for(i=0;i<elem_count;i++)
+		{
+		pos += fstUtilityBinToEsc(attr_str+pos, literal_arr[i], literal_lens[i]);
+		attr_str[pos++] = ' ';
+		}
+
+	for(i=0;i<elem_count;i++)
+		{
+		pos += fstUtilityBinToEsc(attr_str+pos, val_arr[i], val_lens[i]);
+		attr_str[pos++] = ' ';
+		}
+
+	attr_str[pos-1] = 0;
+
+#ifdef FST_DEBUG
+	fprintf(stderr, FST_APIMESS"fstWriterCreateEnumTable() total_len: %d, pos: %d\n", total_len, pos);
+	fprintf(stderr, FST_APIMESS"*%s*\n", attr_str);
+#endif
+
+	fstWriterSetAttrBegin(xc, FST_AT_MISC, FST_MT_ENUMTABLE, attr_str, handle = ++xc->max_enumhandle);
+
+	free(attr_str);
+	free(val_lens);
+	free(literal_lens);
+	}
+
+return(handle);
+}
+
+
+void fstWriterEmitEnumTableRef(void *ctx, fstEnumHandle handle)
+{
+struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
+if(xc && handle)
+	{
+	fstWriterSetAttrBegin(xc, FST_AT_MISC, FST_MT_ENUMTABLE, NULL, handle);
         }
 }
 
@@ -6501,9 +6591,46 @@ if(base && *base)
 /***                  ***/
 /************************/
 
-int fstUtilityBinToEsc(unsigned char *d, unsigned char *s, int len)
+int fstUtilityBinToEscConvertedLen(const unsigned char *s, int len)
 {
-unsigned char *src = s;
+const unsigned char *src = s;
+int dlen = 0;
+int i;
+
+for(i=0;i<len;i++)
+        {
+        switch(src[i])
+                {
+                case '\a':      /* fallthrough */
+                case '\b':	/* fallthrough */
+                case '\f':	/* fallthrough */
+                case '\n':	/* fallthrough */
+                case '\r':	/* fallthrough */
+                case '\t':	/* fallthrough */
+                case '\v':	/* fallthrough */
+                case '\'':	/* fallthrough */
+                case '\"':	/* fallthrough */
+                case '\\':	/* fallthrough */
+                case '\?':      dlen += 2; break;
+                default:        if((src[i] > ' ') && (src[i] <= '~')) /* no white spaces in output */
+                                        {
+					dlen++;
+                                        }
+                                        else
+                                        {
+					dlen += 4;
+                                        }
+                                break;
+                }
+        }
+
+return(dlen);
+}
+
+
+int fstUtilityBinToEsc(unsigned char *d, const unsigned char *s, int len)
+{
+const unsigned char *src = s;
 unsigned char *dst = d;
 unsigned char val;
 int i;
@@ -6601,4 +6728,76 @@ for(i=0;i<len;i++)
         }
 
 return(dst - s);
+}
+
+
+struct fstETab *fstUtilityExtractEnumTableFromString(const char *s)
+{
+struct fstETab *et = NULL;
+int num_spaces = 0;
+int i;
+int newlen;
+
+if(s)
+	{
+	char *sp = strchr(s, ' ');
+	char *sp2;
+	int cnt = atoi(sp+1);
+
+	sp2 = sp;
+	for(;;)
+		{
+		sp = strchr(sp+1, ' ');
+		if(sp) { num_spaces++; } else { break; }
+		}
+
+	if(num_spaces == (2*cnt))
+		{
+		et = calloc(1, sizeof(struct fstETab));
+		et->elem_count = cnt;
+		et->name = strdup(s);
+		et->literal_arr = calloc(cnt, sizeof(char *));
+		et->val_arr = calloc(cnt, sizeof(char *));
+
+		sp = strchr(et->name, ' ');
+		*sp = 0;
+		sp = strchr(sp+1, ' ');
+
+		for(i=0;i<cnt;i++)
+			{
+			sp2 = strchr(sp+1, ' ');
+			*sp2 = 0;
+			et->literal_arr[i] = sp+1;
+			sp = sp2;
+
+			newlen = fstUtilityEscToBin(NULL, et->literal_arr[i], strlen(et->literal_arr[i]));
+			et->literal_arr[i][newlen] = 0;
+			}
+
+		for(i=0;i<cnt;i++)
+			{
+			sp2 = strchr(sp+1, ' ');
+			if(sp2) { *sp2 = 0; }
+			et->val_arr[i] = sp+1;
+			sp = sp2;
+
+			newlen = fstUtilityEscToBin(NULL, et->val_arr[i], strlen(et->val_arr[i]));
+			et->val_arr[i][newlen] = 0;
+			}
+		}
+	}
+
+return(et);
+}
+
+
+void fstUtilityFreeEnumTable(struct fstETab *etab)
+{
+if(etab)
+	{
+	free(etab->literal_arr);
+	free(etab->val_arr);
+	free(etab->name);
+	free(etab);
+	}
 }
