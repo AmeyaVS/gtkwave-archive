@@ -2305,7 +2305,7 @@ if(xc && path && path[0])
         const unsigned char *path2 = (const unsigned char *)path;
 	PPvoid_t pv;
 #else
-        char *path2 = alloca(slen + 1); /* judy lacks const qualifier in its JudyHSIns definition */
+        char *path2 = (char *)alloca(slen + 1); /* judy lacks const qualifier in its JudyHSIns definition */
 	PPvoid_t pv;
         strcpy(path2, path);
 #endif
@@ -2744,26 +2744,26 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 	{
 	struct fstWriterContext *xc = (struct fstWriterContext *)ctx;
 
-	int i;
+	uint32_t i;
 
 	name_len = strlen(name);
-	elem_count_len = sprintf(elem_count_buf, "%"PRIu32, elem_count);
+	elem_count_len = sprintf(elem_count_buf, "%" PRIu32, elem_count);
 
-	literal_lens = calloc(elem_count, sizeof(int));
-	val_lens = calloc(elem_count, sizeof(int));
+	literal_lens = (int*)calloc(elem_count, sizeof(int));
+	val_lens = (int*)calloc(elem_count, sizeof(int));
 	
 	for(i=0;i<elem_count;i++)
 		{
 		literal_lens[i] = strlen(literal_arr[i]);
-		lit_len_tot += fstUtilityBinToEscConvertedLen(literal_arr[i], literal_lens[i]);
+		lit_len_tot += fstUtilityBinToEscConvertedLen((unsigned char*)literal_arr[i], literal_lens[i]);
 
 		val_lens[i] =  strlen(val_arr[i]);
-		val_len_tot += fstUtilityBinToEscConvertedLen(val_arr[i], val_lens[i]);
+		val_len_tot += fstUtilityBinToEscConvertedLen((unsigned char*)val_arr[i], val_lens[i]);
 		}
 
 	total_len = name_len + 1 + elem_count_len + 1 + lit_len_tot + elem_count + val_len_tot + elem_count;
 
-	attr_str = malloc(total_len);
+	attr_str = (char*)malloc(total_len);
 	pos = 0;
 
 	memcpy(attr_str+pos, name, name_len);
@@ -2776,13 +2776,13 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 
 	for(i=0;i<elem_count;i++)
 		{
-		pos += fstUtilityBinToEsc(attr_str+pos, literal_arr[i], literal_lens[i]);
+		pos += fstUtilityBinToEsc((unsigned char*)attr_str+pos, (unsigned char*)literal_arr[i], literal_lens[i]);
 		attr_str[pos++] = ' ';
 		}
 
 	for(i=0;i<elem_count;i++)
 		{
-		pos += fstUtilityBinToEsc(attr_str+pos, val_arr[i], val_lens[i]);
+		pos += fstUtilityBinToEsc((unsigned char*)attr_str+pos, (unsigned char*)val_arr[i], val_lens[i]);
 		attr_str[pos++] = ' ';
 		}
 
@@ -6740,37 +6740,38 @@ int newlen;
 
 if(s)
 	{
-	char *sp = strchr(s, ' ');
-	char *sp2;
-	int cnt = atoi(sp+1);
+	const char *csp = strchr(s, ' ');
+	int cnt = atoi(csp+1);
 
-	sp2 = sp;
 	for(;;)
 		{
-		sp = strchr(sp+1, ' ');
-		if(sp) { num_spaces++; } else { break; }
+		csp = strchr(csp+1, ' ');
+		if(csp) { num_spaces++; } else { break; }
 		}
 
 	if(num_spaces == (2*cnt))
 		{
-		et = calloc(1, sizeof(struct fstETab));
+		char *sp, *sp2;
+
+		et = (struct fstETab*)calloc(1, sizeof(struct fstETab));
 		et->elem_count = cnt;
 		et->name = strdup(s);
-		et->literal_arr = calloc(cnt, sizeof(char *));
-		et->val_arr = calloc(cnt, sizeof(char *));
+		et->literal_arr = (char**)calloc(cnt, sizeof(char *));
+		et->val_arr = (char**)calloc(cnt, sizeof(char *));
 
 		sp = strchr(et->name, ' ');
 		*sp = 0;
+
 		sp = strchr(sp+1, ' ');
 
 		for(i=0;i<cnt;i++)
 			{
 			sp2 = strchr(sp+1, ' ');
-			*sp2 = 0;
+			*(char*)sp2 = 0;
 			et->literal_arr[i] = sp+1;
 			sp = sp2;
 
-			newlen = fstUtilityEscToBin(NULL, et->literal_arr[i], strlen(et->literal_arr[i]));
+			newlen = fstUtilityEscToBin(NULL, (unsigned char*)et->literal_arr[i], strlen(et->literal_arr[i]));
 			et->literal_arr[i][newlen] = 0;
 			}
 
@@ -6781,7 +6782,7 @@ if(s)
 			et->val_arr[i] = sp+1;
 			sp = sp2;
 
-			newlen = fstUtilityEscToBin(NULL, et->val_arr[i], strlen(et->val_arr[i]));
+			newlen = fstUtilityEscToBin(NULL, (unsigned char*)et->val_arr[i], strlen(et->val_arr[i]));
 			et->val_arr[i][newlen] = 0;
 			}
 		}
