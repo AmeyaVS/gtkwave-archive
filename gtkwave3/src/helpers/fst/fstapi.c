@@ -2726,11 +2726,11 @@ if(xc)
 }
 
 
-fstEnumHandle fstWriterCreateEnumTable(void *ctx, const char *name, uint32_t elem_count, const char **literal_arr, const char **val_arr)
+fstEnumHandle fstWriterCreateEnumTable(void *ctx, const char *name, uint32_t elem_count, unsigned int min_valbits, const char **literal_arr, const char **val_arr)
 {
 fstEnumHandle handle = 0;
-int *literal_lens = NULL;
-int *val_lens = NULL;
+unsigned int *literal_lens = NULL;
+unsigned int *val_lens = NULL;
 int lit_len_tot = 0;
 int val_len_tot = 0;
 int name_len;
@@ -2749,8 +2749,8 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 	name_len = strlen(name);
 	elem_count_len = sprintf(elem_count_buf, "%" PRIu32, elem_count);
 
-	literal_lens = (int*)calloc(elem_count, sizeof(int));
-	val_lens = (int*)calloc(elem_count, sizeof(int));
+	literal_lens = (unsigned int *)calloc(elem_count, sizeof(unsigned int));
+	val_lens = (unsigned int *)calloc(elem_count, sizeof(unsigned int));
 	
 	for(i=0;i<elem_count;i++)
 		{
@@ -2759,6 +2759,14 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 
 		val_lens[i] =  strlen(val_arr[i]);
 		val_len_tot += fstUtilityBinToEscConvertedLen((unsigned char*)val_arr[i], val_lens[i]);
+
+		if(min_valbits > 0)
+			{
+			if(val_lens[i] < min_valbits) 
+				{
+				val_len_tot += (min_valbits - val_lens[i]); /* additional converted len is same for '0' character */		
+				}
+			}
 		}
 
 	total_len = name_len + 1 + elem_count_len + 1 + lit_len_tot + elem_count + val_len_tot + elem_count;
@@ -2782,6 +2790,15 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 
 	for(i=0;i<elem_count;i++)
 		{
+		if(min_valbits > 0)
+			{
+			if(val_lens[i] < min_valbits) 
+				{
+				memset(attr_str+pos, '0', min_valbits - val_lens[i]);				
+				pos += (min_valbits - val_lens[i]);
+				}
+			}
+
 		pos += fstUtilityBinToEsc((unsigned char*)attr_str+pos, (unsigned char*)val_arr[i], val_lens[i]);
 		attr_str[pos++] = ' ';
 		}

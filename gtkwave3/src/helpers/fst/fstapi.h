@@ -343,7 +343,7 @@ char **val_arr;
  */
 void            fstWriterClose(void *ctx);
 void *          fstWriterCreate(const char *nam, int use_compressed_hier);
-fstEnumHandle   fstWriterCreateEnumTable(void *ctx, const char *name, uint32_t elem_count, const char **literal_arr, const char **val_arr);
+fstEnumHandle   fstWriterCreateEnumTable(void *ctx, const char *name, uint32_t elem_count, unsigned int min_valbits, const char **literal_arr, const char **val_arr);
                 /* used for Verilog/SV */
 fstHandle       fstWriterCreateVar(void *ctx, enum fstVarType vt, enum fstVarDir vd,
                         uint32_t len, const char *nam, fstHandle aliasHandle);
