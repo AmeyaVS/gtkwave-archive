@@ -2751,7 +2751,7 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 
 	literal_lens = (unsigned int *)calloc(elem_count, sizeof(unsigned int));
 	val_lens = (unsigned int *)calloc(elem_count, sizeof(unsigned int));
-	
+
 	for(i=0;i<elem_count;i++)
 		{
 		literal_lens[i] = strlen(literal_arr[i]);
@@ -2762,9 +2762,9 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 
 		if(min_valbits > 0)
 			{
-			if(val_lens[i] < min_valbits) 
+			if(val_lens[i] < min_valbits)
 				{
-				val_len_tot += (min_valbits - val_lens[i]); /* additional converted len is same for '0' character */		
+				val_len_tot += (min_valbits - val_lens[i]); /* additional converted len is same for '0' character */
 				}
 			}
 		}
@@ -2792,9 +2792,9 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 		{
 		if(min_valbits > 0)
 			{
-			if(val_lens[i] < min_valbits) 
+			if(val_lens[i] < min_valbits)
 				{
-				memset(attr_str+pos, '0', min_valbits - val_lens[i]);				
+				memset(attr_str+pos, '0', min_valbits - val_lens[i]);
 				pos += (min_valbits - val_lens[i]);
 				}
 			}
