@@ -1609,6 +1609,21 @@ if(t->flags & TR_ENUM)
 		strcpy(s, GLOBALS->xl_enum_filter[filt]->trans);
 		}
 #endif
+	else
+		{
+		char *zerofind = s;
+		char *dst = s, *src;
+		while(*zerofind == '0') zerofind++;
+		if(zerofind != s)
+			{
+			src = (!*zerofind) ? (zerofind-1) : zerofind;
+			while(*src)
+				{
+				*(dst++) = *(src++);
+				}
+			*dst = 0;
+			}
+		}
 	}
 
 return(s);
