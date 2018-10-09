@@ -2251,6 +2251,10 @@ wavearea_zoom_end_event (GtkGestureZoom   *gesture,
                      	GdkEventSequence *sequence,
                      	gpointer user_data)
 {
+(void) gesture;
+(void) sequence;
+(void) user_data;
+
 GLOBALS->tims.marker = -1;
 GLOBALS->tims.baseline = -1;
 GLOBALS->tims.lmbcache = -1;
