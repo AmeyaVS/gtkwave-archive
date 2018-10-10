@@ -1673,3 +1673,4 @@
 		Change integer type to "integer" in SST to differentiate it
 		from sv ints.
 		Premiminary support for enum tables embedded in FST files.
+3.3.96	10oct18	Prepare for next version.
