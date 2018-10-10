@@ -175,6 +175,8 @@ accel "/Edit/Data Format/Signed Decimal" (null)
 accel "/Edit/Data Format/Binary" <Alt>B
 accel "/Edit/Data Format/Octal" <Alt>O
 accel "/Edit/Data Format/ASCII" (null)
+accel "/Edit/Data Format/Time", (null)
+accel "/Edit/Data Format/Enum", (null)
 accel "/Edit/Data Format/BitsToReal" (null)
 accel "/Edit/Data Format/RealToBits/On" (null)
 accel "/Edit/Data Format/RealToBits/Off" (null)
