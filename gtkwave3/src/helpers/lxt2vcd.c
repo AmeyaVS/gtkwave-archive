@@ -109,7 +109,8 @@ for(;;s++)
 
 
 static lxtint64_t vcd_prevtime;
-char vcd_blackout;
+char vcd_blackout = 0;
+static int backtrack_warning = 0;
 
 void vcd_callback(struct lxt2_rd_trace **lt, lxtint64_t *pnt_time, lxtint32_t *pnt_facidx, char **pnt_value)
 {
@@ -119,10 +120,16 @@ struct lxt2_rd_geometry *g = lxt2_rd_get_fac_geometry(*lt, *pnt_facidx);
 
 if(vcd_prevtime != *pnt_time)
 	{
+	if((vcd_prevtime > *pnt_time) && (!backtrack_warning) && (vcd_prevtime != -1))
+		{
+		backtrack_warning = 1;
+		fprintf(stderr, "LXTLOAD | Time backtracking encountered: this VCD will load incorrectly in gtkwave.\n");
+		}
+
 	vcd_prevtime = *pnt_time;
 	fprintf(fv, "#"LXT2_RD_LLD"\n", *pnt_time);
 	}
-
+ 
 if(!(*pnt_value)[0])
 	{
 	if(!vcd_blackout)
