@@ -446,6 +446,18 @@ printf("focus: %d %08x %08x %08x\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_ev
 	GLOBALS->signalarea_event_box, widget, data);
 #endif
 
+if	(         (event->keyval == GDK_KEY_equal) &&
+#ifdef MAC_INTEGRATION
+                  (event->state & GDK_META_MASK)
+#else
+                  (event->state & GDK_CONTROL_MASK)
+#endif
+        )
+	{
+                      service_zoom_in(NULL, NULL);
+                      rc = TRUE;
+        }
+else
 if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 	{
 	switch(event->keyval)
