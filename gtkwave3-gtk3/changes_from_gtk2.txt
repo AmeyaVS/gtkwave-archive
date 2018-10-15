@@ -226,3 +226,9 @@ if(is == GDK_SOURCE_TOUCHSCREEN) // gtk 3.0 only
         }
 
 ===
+
+Momentum scrolling fundamentals:
+
+https://ariya.io/2011/10/flick-list-with-its-momentum-scrolling-and-deceleration
+
+===
