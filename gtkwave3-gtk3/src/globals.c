@@ -1341,6 +1341,8 @@ RGB_WAVE_RAINBOW_INITIALIZER, /* rgb_gc_rainbow */
 0, /* wavearea_gesture_initial_x1tim */
 #endif
 NULL, /* wavearea_gesture_swipe */
+NULL, /* swipe_init_time */
+0, /* swipe_init_start */
 0.0, /* wavearea_gesture_swipe_velocity_x */
 0, /* wavearea_drag_start_x */
 0, /* wavearea_drag_start_y */
@@ -2220,6 +2222,13 @@ void reload_into_new_context_2(void)
 		}
         }
 
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
+  if(GLOBALS->swipe_init_time)
+	{
+        g_date_time_unref(GLOBALS->swipe_init_time);
+        GLOBALS->swipe_init_time = NULL;
+	}
+#endif
 
  /* erase any old tabbed contexts if they exist... */
  dead_context_sweep();

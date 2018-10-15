@@ -1355,6 +1355,8 @@ gdouble wavearea_gesture_initial_zoom_x_distance;
 TimeType wavearea_gesture_initial_x1tim;
 #endif
 GtkGesture *wavearea_gesture_swipe;
+GDateTime *swipe_init_time;
+TimeType swipe_init_start;
 gdouble wavearea_gesture_swipe_velocity_x;
 int wavearea_drag_start_x;
 int wavearea_drag_start_y;
