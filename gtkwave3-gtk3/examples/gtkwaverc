@@ -257,10 +257,10 @@ accel "/Search/Set Pattern Search Repeat Count" (null)
 accel "/Time/Move To Time" F1
 accel "/Time/Zoom/Zoom Amount" F2
 accel "/Time/Zoom/Zoom Base" <Shift>F2
-accel "/Time/Zoom/Zoom In" <Alt>Z
-accel "/Time/Zoom/Zoom Out" <Shift><Alt>Z
-accel "/Time/Zoom/Zoom Full" <Alt>F
-accel "/Time/Zoom/Zoom Best Fit" <Shift><Alt>F
+accel "/Time/Zoom/Zoom In" <Control>equal
+accel "/Time/Zoom/Zoom Out" <Control>minus
+accel "/Time/Zoom/Zoom Full" (null)
+accel "/Time/Zoom/Zoom Best Fit" <Control>0
 accel "/Time/Zoom/Zoom To Start" Home
 accel "/Time/Zoom/Zoom To End" End
 accel "/Time/Zoom/Undo Zoom" <Alt>U
