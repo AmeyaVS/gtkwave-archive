@@ -123,7 +123,7 @@ if(vcd_prevtime != *pnt_time)
 	if((vcd_prevtime > *pnt_time) && (!backtrack_warning) && (vcd_prevtime != -1))
 		{
 		backtrack_warning = 1;
-		fprintf(stderr, "LXTLOAD | Time backtracking encountered: this VCD will load incorrectly in gtkwave.\n");
+		fprintf(stderr, "LXTLOAD | Time backtracking encountered: this VCD might load incorrectly in gtkwave.\n");
 		}
 
 	vcd_prevtime = *pnt_time;

@@ -31,6 +31,7 @@
  * MTI SV implicit-var fix      05apr07ajb
  * MTI SV len=0 is real var     05apr07ajb
  * VCD fastloading		05mar09ajb
+ * Backtracking fix             16oct18ajb
  */
 #include <config.h>
 #include "globals.h"
@@ -2047,10 +2048,13 @@ for(;;)
 						}
 						else
 						{
+/* backtracking fix */
+#if 0
 						if(tim < GLOBALS->current_time_vcd_recoder_c_3) /* avoid backtracking time counts which can happen on malformed files */
 							{
 							tim = GLOBALS->current_time_vcd_recoder_c_3;
 							}
+#endif
 
 						if(GLOBALS->time_vlist_vcd_recoder_write)
 							{

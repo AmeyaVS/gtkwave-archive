@@ -28,6 +28,7 @@
  * use gperf for port vartypes  19feb07ajb
  * MTI SV implicit-var fix      05apr07ajb
  * MTI SV len=0 is real var     05apr07ajb
+ * Backtracking fix             16oct18ajb
  */
 
 /* AIX may need this for alloca to work */
@@ -1747,6 +1748,8 @@ for(;;)
 						{
 						GLOBALS->start_time_vcd_c_1=tim;
 						}
+/* backtracking fix */
+#if 0
 						else
 						{
 						if(tim < GLOBALS->current_time_vcd_c_1)	/* avoid backtracking time counts which can happen on malformed files */
@@ -1754,6 +1757,7 @@ for(;;)
 							tim = GLOBALS->current_time_vcd_c_1;
 							}
 						}
+#endif
 
 					GLOBALS->current_time_vcd_c_1=tim;
 					if(GLOBALS->end_time_vcd_c_1<tim) GLOBALS->end_time_vcd_c_1=tim;	/* in case of malformed vcd files */
@@ -1851,7 +1855,7 @@ if(!n->curr)
 
 	if((n->curr->v.h_val!=heval)||(tim==GLOBALS->start_time_vcd_c_1)||(n->vartype==ND_VCD_EVENT)||(GLOBALS->vcd_preserve_glitches)) /* same region == go skip */
         	{
-		if(n->curr->time==tim)
+		if(n->curr->time>=tim) /* backtracking fix */
 			{
 			DEBUG(printf("Warning: Glitch at time ["TTFormat"] Signal [%p], Value [%c->%c].\n",
 				tim, n, AN_STR[n->curr->v.h_val], ch));
@@ -1899,7 +1903,7 @@ switch(ch)
 		{
 		if(regadd) { tim*=(GLOBALS->time_scale); }
 
-			if(n->curr->time==tim)
+			if(n->curr->time>=tim) /* backtracking fix */
 				{
 				DEBUG(printf("Warning: String Glitch at time ["TTFormat"] Signal [%p].\n",
 					tim, n));
@@ -1962,7 +1966,7 @@ switch(ch)
 			||(GLOBALS->vcd_preserve_glitches)||(GLOBALS->vcd_preserve_glitches_real)
 			) /* same region == go skip */
 	        	{
-			if(n->curr->time==tim)
+			if(n->curr->time>=tim) /* backtracking fix */
 				{
 				DEBUG(printf("Warning: Real number Glitch at time ["TTFormat"] Signal [%p].\n",
 					tim, n));
@@ -2030,7 +2034,7 @@ switch(ch)
 			||(GLOBALS->vcd_preserve_glitches)
 			) /* same region == go skip */
 	        	{
-			if(n->curr->time==tim)
+			if(n->curr->time>=tim) /* backtracking fix */
 				{
 				DEBUG(printf("Warning: Glitch at time ["TTFormat"] Signal [%p], Value [%c->%c].\n",
 					tim, n, AN_STR[n->curr->v.h_val], ch));
