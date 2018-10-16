@@ -1749,15 +1749,20 @@ for(;;)
 						GLOBALS->start_time_vcd_c_1=tim;
 						}
 /* backtracking fix */
-#if 0
 						else
 						{
 						if(tim < GLOBALS->current_time_vcd_c_1)	/* avoid backtracking time counts which can happen on malformed files */
 							{
+                                                        if(!GLOBALS->vcd_already_backtracked)
+                                                                {
+                                                                GLOBALS->vcd_already_backtracked = 1;
+                                                                fprintf(stderr, "VCDLOAD | Time backtracking detected in VCD file!\n");
+                                                                }
+#if 0
 							tim = GLOBALS->current_time_vcd_c_1;
+#endif
 							}
 						}
-#endif
 
 					GLOBALS->current_time_vcd_c_1=tim;
 					if(GLOBALS->end_time_vcd_c_1<tim) GLOBALS->end_time_vcd_c_1=tim;	/* in case of malformed vcd files */

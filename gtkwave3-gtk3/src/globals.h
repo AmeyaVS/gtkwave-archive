@@ -1150,6 +1150,7 @@ off_t vcd_fsiz_vcd_c_1; /* from vcd.c 549 */
 char *varsplit_vcd_c_1; /* from vcd.c 550 */
 char *vsplitcurr_vcd_c_1; /* from vcd.c 551 */
 int var_prevch_vcd_c_1; /* from vcd.c 552 */
+char vcd_already_backtracked;
 
 
 /*

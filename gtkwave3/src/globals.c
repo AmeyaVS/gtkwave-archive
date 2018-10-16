@@ -1185,6 +1185,7 @@ NULL, /* he_fini */
 NULL, /* varsplit_vcd_c_1 512 */
 NULL, /* varsplitcurr */
 0, /* var_prevch_vcd_c_1 513 */
+0, /* vcd_already_backtracked */
 
 
 /*

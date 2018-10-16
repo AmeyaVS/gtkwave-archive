@@ -2049,6 +2049,14 @@ for(;;)
 						else
 						{
 /* backtracking fix */
+						if(tim < GLOBALS->current_time_vcd_recoder_c_3)
+							{
+							if(!GLOBALS->vcd_already_backtracked)
+								{
+								GLOBALS->vcd_already_backtracked = 1;
+								fprintf(stderr, "VCDLOAD | Time backtracking detected in VCD file!\n");
+								}
+							}
 #if 0
 						if(tim < GLOBALS->current_time_vcd_recoder_c_3) /* avoid backtracking time counts which can happen on malformed files */
 							{
