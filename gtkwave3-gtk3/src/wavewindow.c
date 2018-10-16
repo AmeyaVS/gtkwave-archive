@@ -1614,6 +1614,18 @@ return(TRUE);
 
 
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
+
+static void wavearea_zero_out_swipe_velocity(void)
+{
+GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+if(GLOBALS->swipe_init_time)
+	{
+	g_date_time_unref(GLOBALS->swipe_init_time);
+	GLOBALS->swipe_init_time = NULL;
+	}
+}
+
+
 void wavearea_pressed_event(GtkGestureMultiPress *gesture,
                gint                  n_press,
                gdouble               x,
@@ -1630,7 +1642,7 @@ if(gesture_filter_cnt)
 	return;
 	}
 
-GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+wavearea_zero_out_swipe_velocity(); 
 
 memset(&ev, 0, sizeof(GdkEventButton));
 ev.button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
@@ -1678,7 +1690,7 @@ void wavearea_long_pressed_event(GtkGestureMultiPress *gesture,
 (void) user_data;
 GdkEventButton ev;
 
-GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+wavearea_zero_out_swipe_velocity();
 
 memset(&ev, 0, sizeof(GdkEventButton));
 ev.button = 2;
@@ -2289,11 +2301,11 @@ wavearea_swipe_event (GtkGestureSwipe *gesture,
 
 if(gesture_filter_cnt)
 	{
-	GLOBALS->wavearea_gesture_swipe_velocity_x = 0;
+	wavearea_zero_out_swipe_velocity();
 	return;
 	}
 
-GLOBALS->wavearea_gesture_swipe_velocity_x += velocity_x; /* instead of =, in order to "nudge" the scroll faster/slower */
+GLOBALS->wavearea_gesture_swipe_velocity_x = velocity_x;
 
 if(GLOBALS->swipe_init_time) { g_date_time_unref(GLOBALS->swipe_init_time); }
 GLOBALS->swipe_init_time = g_date_time_new_now_utc();
@@ -2331,7 +2343,7 @@ static gboolean wavearea_swipe_tick(GtkWidget *widget,
 
 if(gesture_filter_cnt > 0) /* for X11 */
 	{
-	GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+	wavearea_zero_out_swipe_velocity();
 	gesture_filter_cnt--;
 	return(G_SOURCE_CONTINUE);
 	}
@@ -2344,7 +2356,7 @@ if(GLOBALS->swipe_init_time)
 	g_date_time_unref(gd2);
 	if(elapsed < WAVE_GTK3_SWIPE_MICROSECONDS)
 		{
-		decaying = exp(-elapsed / ((gdouble)WAVE_GTK3_SWIPE_HALF_LIFE));
+		decaying = exp(-elapsed / ((gdouble)WAVE_GTK3_SWIPE_TIME_CONSTANT));
 		}
 
 	if(GLOBALS->wavearea_gesture_swipe_velocity_x < -1.0)
@@ -2355,24 +2367,18 @@ if(GLOBALS->swipe_init_time)
 
 		if(!GLOBALS->wavearea_drag_active)
 			{
-			TimeType dest = GLOBALS->swipe_init_start - (GLOBALS->wavearea_gesture_swipe_velocity_x * GLOBALS->nspx * 0.158) * (1.0 - decaying);
+			TimeType dest = GLOBALS->swipe_init_start - (GLOBALS->wavearea_gesture_swipe_velocity_x * GLOBALS->nspx) * (1.0 - decaying);
 			gdouble vp = -GLOBALS->wavearea_gesture_swipe_velocity_x;
 			hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 			ntinc = inc = dest - gtk_adjustment_get_value(hadj);
 			if(ntinc)
 				{
-				if((gtk_adjustment_get_value(hadj)+inc)<GLOBALS->tims.last) gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj)+inc);
-					else { gtk_adjustment_set_value(hadj, GLOBALS->tims.last-inc); elapsed = WAVE_GTK3_SWIPE_MICROSECONDS; }
-
 				pageinc=(TimeType)(((gdouble)GLOBALS->wavewidth)*GLOBALS->nspx);
 
-				if((GLOBALS->tims.start+ntinc)<(GLOBALS->tims.last-pageinc+1)) GLOBALS->tims.timecache=GLOBALS->tims.start+ntinc;
-				        else
-					{
-				        GLOBALS->tims.timecache=GLOBALS->tims.last-pageinc+1;
-				        if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
-					elapsed = WAVE_GTK3_SWIPE_MICROSECONDS;
-				        }
+				if(dest <= (GLOBALS->tims.last-pageinc)) gtk_adjustment_set_value(hadj, GLOBALS->tims.timecache = dest);
+					else { gtk_adjustment_set_value(hadj, GLOBALS->tims.timecache = GLOBALS->tims.last-pageinc); elapsed = WAVE_GTK3_SWIPE_MICROSECONDS; }
+
+			        if(GLOBALS->tims.timecache<GLOBALS->tims.first) GLOBALS->tims.timecache=GLOBALS->tims.first;
 
 				time_update();
 				}
@@ -2380,12 +2386,10 @@ if(GLOBALS->swipe_init_time)
 
 		if(elapsed >= WAVE_GTK3_SWIPE_MICROSECONDS)
 			{
-			GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+			wavearea_zero_out_swipe_velocity();
 			GLOBALS->tims.baseline = -1;
 			GLOBALS->tims.lmbcache = -1;
 			GLOBALS->in_button_press_wavewindow_c_1 = 0;
-			g_date_time_unref(GLOBALS->swipe_init_time);
-			GLOBALS->swipe_init_time = NULL;
 			}
 		}
 
@@ -2395,7 +2399,7 @@ if(GLOBALS->swipe_init_time)
 
 		if(!GLOBALS->wavearea_drag_active)
 			{
-			TimeType dest = GLOBALS->swipe_init_start - (GLOBALS->wavearea_gesture_swipe_velocity_x * GLOBALS->nspx * 0.158) * (1.0 - decaying);
+			TimeType dest = GLOBALS->swipe_init_start - (GLOBALS->wavearea_gesture_swipe_velocity_x * GLOBALS->nspx) * (1.0 - decaying);
 			gdouble vp = GLOBALS->wavearea_gesture_swipe_velocity_x;
 			hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 
@@ -2410,12 +2414,10 @@ if(GLOBALS->swipe_init_time)
 
 		if(elapsed >= WAVE_GTK3_SWIPE_MICROSECONDS)
 			{
-			GLOBALS->wavearea_gesture_swipe_velocity_x = 0.0;
+			wavearea_zero_out_swipe_velocity();
 			GLOBALS->tims.baseline = -1;
 			GLOBALS->tims.lmbcache = -1;
 			GLOBALS->in_button_press_wavewindow_c_1 = 0;
-			g_date_time_unref(GLOBALS->swipe_init_time);
-			GLOBALS->swipe_init_time = NULL;
 			}
 		}
 	}
