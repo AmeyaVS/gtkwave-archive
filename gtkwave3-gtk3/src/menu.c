@@ -8400,7 +8400,7 @@ s = p_copy;
 slashcount = 0;
 while(*s)
 	{
-	if(*s == '/') slashes[slashcount++] = s;;
+	if(*s == '/') slashes[slashcount++] = s;
 	s++;
 	}
 

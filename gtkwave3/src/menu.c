@@ -8940,7 +8940,7 @@ s = p_copy;
 slashcount = 0;
 while(*s)
 	{
-	if(*s == '/') slashes[slashcount++] = s;;
+	if(*s == '/') slashes[slashcount++] = s;
 	s++;
 	}
 
@@ -9157,7 +9157,7 @@ GtkWidget *alt_menu_top(GtkWidget *window)
 gtkwave_mlist_t *mi = menu_items;
 int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
 GtkWidget *menubar;
-GtkAccelGroup *global_accel = gtk_accel_group_new();;
+GtkAccelGroup *global_accel = gtk_accel_group_new();
 int i;
 GtkWidget *mw;
 
