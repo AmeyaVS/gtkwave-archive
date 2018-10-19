@@ -626,6 +626,10 @@ NULL, /* filesel_tim_writesave */
 0, /* lock_menu_c_2 252 */
 NULL, /* buf_menu_c_1 253 128 */
 NULL, /* signal_popup_menu */
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+NULL, /* header_bar */
+NULL, /* main_popup_menu */
+#endif
 NULL, /* sst_signal_popup_menu */
 
 /*
@@ -1953,6 +1957,10 @@ void reload_into_new_context_2(void)
  strcpy2_into_new_context(new_globals, &new_globals->filesel_writesave, &GLOBALS->filesel_writesave);
  new_globals->save_success_menu_c_1 = GLOBALS->save_success_menu_c_1;
  new_globals->signal_popup_menu = GLOBALS->signal_popup_menu;
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+ new_globals->main_popup_menu = GLOBALS->main_popup_menu;
+ new_globals->header_bar = GLOBALS->header_bar;
+#endif
  new_globals->sst_signal_popup_menu = GLOBALS->sst_signal_popup_menu;
 
  strcpy2_into_new_context(new_globals, &new_globals->filesel_vcd_writesave, &GLOBALS->filesel_vcd_writesave);

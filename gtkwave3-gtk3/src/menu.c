@@ -8617,13 +8617,19 @@ GtkWidget *alt_menu_top(GtkWidget *window)
 gtkwave_mlist_t *mi = menu_items;
 int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
 GtkWidget *menubar;
-GtkAccelGroup *global_accel = gtk_accel_group_new();;
+GtkAccelGroup *global_accel = gtk_accel_group_new();
 int i;
 GtkWidget *mw;
 
 menu_wlist = calloc(nmenu_items, sizeof(GtkWidget *)); /* calloc, not calloc_2() */
 
-menubar = alt_menu(mi, nmenu_items, menu_wlist, global_accel, TRUE);
+menubar = alt_menu(mi, nmenu_items, menu_wlist, global_accel, 
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+	FALSE
+#else
+	TRUE
+#endif
+	);
 
 GLOBALS->regexp_string_menu_c_1 = calloc_2(1, 129);
 
@@ -8792,3 +8798,50 @@ if(GLOBALS->loaded_file_type != MISSING_FILE)
 	}
 #endif
 }
+
+
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+void do_popup_main_menu (GtkWidget *my_widget, GdkEventButton *event)
+{
+(void)my_widget;
+
+  GtkWidget *menu;
+#if !GTK_CHECK_VERSION(3,0,0)
+  int button;
+  int event_time;
+#endif
+
+  if(!GLOBALS->main_popup_menu)
+    {
+    int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
+
+    GLOBALS->main_popup_menu = menu = alt_menu_top(GLOBALS->mainwindow);
+    }
+    else
+    {
+    menu = GLOBALS->main_popup_menu;
+    }
+
+  if (event)
+    {
+#if !GTK_CHECK_VERSION(3,0,0)
+      button = event->button;
+      event_time = event->time;
+#endif
+    }
+  else
+    {
+#if !GTK_CHECK_VERSION(3,0,0)
+      button = 0;
+      event_time = gtk_get_current_event_time ();
+#endif
+    }
+
+#if GTK_CHECK_VERSION(3,0,0)
+  gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
+#else
+  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
+                  button, event_time);
+#endif
+}
+#endif

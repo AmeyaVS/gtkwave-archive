@@ -129,6 +129,11 @@ GLOBALS->hier_ignore_escapes = g_old->hier_ignore_escapes;
 GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
 GLOBALS->use_gestures = g_old->use_gestures;
 
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+GLOBALS->header_bar = g_old->header_bar;
+GLOBALS->main_popup_menu = g_old->main_popup_menu;
+#endif
+
 reformat_time(timestr, GLOBALS->tims.first + GLOBALS->global_time_offset, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
 reformat_time(timestr, GLOBALS->tims.last +  GLOBALS->global_time_offset, GLOBALS->time_dimension);
@@ -733,6 +738,11 @@ if(!GLOBALS)
 	GLOBALS->use_gestures = old_g->use_gestures;
 
 	GLOBALS->cr_line_width = old_g->cr_line_width;
+
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+	GLOBALS->header_bar = old_g->header_bar;
+	GLOBALS->main_popup_menu = old_g->main_popup_menu;
+#endif
 
         strcpy2_into_new_context(GLOBALS, &GLOBALS->sst_exclude_filename, &old_g->sst_exclude_filename);
 
@@ -1896,7 +1906,9 @@ if(GLOBALS->use_toolbutton_interface)
 #endif
 
 			menubar = alt_menu_top(GLOBALS->mainwindow);
+#ifndef WAVE_ALLOW_GTK3_HEADER_BAR
 			gtk_widget_show(menubar);
+#endif
 
 #ifdef MAC_INTEGRATION
 {
@@ -1927,7 +1939,9 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 				else
 #endif
 				{
+#ifndef WAVE_ALLOW_GTK3_HEADER_BAR
 				gtk_box_pack_start(GTK_BOX(main_vbox), menubar, FALSE, TRUE, 0);
+#endif
 				}
 			}
 

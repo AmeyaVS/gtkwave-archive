@@ -27,6 +27,10 @@
 #include "symbol.h"
 #include "main.h"
 
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+void do_popup_main_menu (GtkWidget *my_widget, GdkEventButton *event);
+#endif
+
 void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 void do_sst_popup_menu (GtkWidget *my_widget, GdkEventButton *event);
 void get_main_menu (GtkWidget *, GtkWidget **menubar);
