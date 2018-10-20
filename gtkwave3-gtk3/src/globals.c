@@ -1591,8 +1591,8 @@ void reload_into_new_context_2(void)
  splash_button_press_event(NULL, NULL);
 
  /* fix problem where ungrab doesn't occur if button pressed + simultaneous reload accelerator key occurs */
- if(GLOBALS->in_button_press_wavewindow_c_1) 
-	{ 
+ if(GLOBALS->in_button_press_wavewindow_c_1)
+	{
      	XXX_gdk_pointer_ungrab(GDK_CURRENT_TIME);
 	}
 
@@ -2989,4 +2989,3 @@ void clone_icon_pointers_across_contexts(struct Global *a, struct Global *b)
  a->hiericon_buffer_pixbuf = b->hiericon_buffer_pixbuf;
  a->hiericon_linkage_pixbuf = b->hiericon_linkage_pixbuf;
 }
-

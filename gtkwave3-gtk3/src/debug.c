@@ -611,13 +611,13 @@ if(!GLOBALS->disable_menus)
 		gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR(GLOBALS->header_bar), FALSE);
 		/* gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO); */
 		gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
-		
+
 		GtkWidget *menu = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
 		gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
 		gtk_widget_show(menu);
 		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":menu,minimize,maximize,close");
 		gtk_widget_show(GLOBALS->header_bar);
-	
+
 		g_signal_connect_swapped (XXX_GTK_OBJECT (menu), "clicked", G_CALLBACK(service_headerbar_menu), XXX_GTK_OBJECT (GLOBALS->header_bar));
 		}
 		else
@@ -628,22 +628,22 @@ if(!GLOBALS->disable_menus)
 				{
 				const char *pfx = "[Modified] ";
 				char *t = wave_alloca(strlen(pfx) + strlen(title) + 1);
-		
+
 				strcpy(t, pfx);
 				strcat(t, title);
 				gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), t);
 				}
 				break;
-		
+
 			case WAVE_SET_TITLE_LOADING:
 				{
 				char *t = wave_alloca(64 + strlen(title) + 1); /* make extra long */
-		
+
 				sprintf(t, "[Loading %d%%] %s", pct, title);
 				gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), t);
 				}
 				break;
-		
+
 			case WAVE_SET_TITLE_NONE:
 			default:
 				gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), title);
@@ -838,4 +838,3 @@ gtk_entry_set_max_length(GTK_ENTRY(w), max);
 
 return(w);
 }
-

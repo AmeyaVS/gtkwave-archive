@@ -52,119 +52,119 @@ static void service_left_edge_marshal(gpointer null_data, guint callback_action,
 {
 (void)callback_action;
 
-service_left_edge(widget, null_data); 
+service_left_edge(widget, null_data);
 }
 
 static void service_right_edge_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_right_edge(widget, null_data); 
+service_right_edge(widget, null_data);
 }
 
 static void service_zoom_in_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_zoom_in(widget, null_data); 
+service_zoom_in(widget, null_data);
 }
 
 static void service_zoom_out_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_zoom_out(widget, null_data); 
+service_zoom_out(widget, null_data);
 }
 
 static void service_zoom_full_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_zoom_full(widget, null_data); 
+service_zoom_full(widget, null_data);
 }
 
 static void service_zoom_fit_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
-{ 
+{
 (void)callback_action;
 
-service_zoom_fit(widget, null_data); 
+service_zoom_fit(widget, null_data);
 }
 
 static void service_zoom_left_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_zoom_left(widget, null_data); 
+service_zoom_left(widget, null_data);
 }
 
 static void service_zoom_right_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_zoom_right(widget, null_data); 
+service_zoom_right(widget, null_data);
 }
 
 static void service_zoom_undo_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_zoom_undo(widget, null_data); 
+service_zoom_undo(widget, null_data);
 }
 
 static void fetch_right_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-fetch_right(widget, null_data); 
+fetch_right(widget, null_data);
 }
 
 static void fetch_left_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-fetch_left(widget, null_data); 
+fetch_left(widget, null_data);
 }
 
 static void discard_right_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-discard_right(widget, null_data); 
+discard_right(widget, null_data);
 }
 
 static void discard_left_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-discard_left(widget, null_data); 
+discard_left(widget, null_data);
 }
 
 static void service_right_shift_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_right_shift(widget, null_data); 
+service_right_shift(widget, null_data);
 }
 
 static void service_left_shift_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)callback_action;
 
-service_left_shift(widget, null_data); 
+service_left_shift(widget, null_data);
 }
 
 static void service_right_page_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
-{ 
+{
 (void)callback_action;
 
-service_right_page(widget, null_data); 
+service_right_page(widget, null_data);
 }
 
 static void service_left_page_marshal(gpointer null_data, guint callback_action, GtkWidget *widget)
-{ 
+{
 (void)callback_action;
 
-service_left_page(widget, null_data); 
+service_left_page(widget, null_data);
 }
 
 /* ruler */
@@ -3113,7 +3113,7 @@ bvptr combine_traces(int direction, Trptr single_trace_only)
 							{
 							t_botname = t->n.nd->nname;
 							}
-	
+
 						if(t_topname && t_botname)
 							{
 							char *mat = attempt_vecmatch(t_topname, t_botname);
@@ -3228,7 +3228,7 @@ bvptr combine_traces(int direction, Trptr single_trace_only)
                 	                {
                 	                if(namey[j]=='[') break;
                 	                }
-	
+
 	                        if(j>-1)
 	                                {
 	                                int items = sscanf(namey+j, "[%d][%d]", &row2, &bit2);
@@ -3236,7 +3236,7 @@ bvptr combine_traces(int direction, Trptr single_trace_only)
 	                                        {
 						int rowabs, bitabs, width2d;
 	                                        /* printf(">> %d %d (items = %d)\n", row2, bit2, items); */
-	
+
 	                                        offsety = j;
 						is_2d = (offset == offsety) && !memcmp(nam, namey, offsety);
 
