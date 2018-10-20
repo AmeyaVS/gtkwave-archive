@@ -1723,4 +1723,4 @@
 		speed along the trace.
 		Added time backtracking	warning	(for partial mode) to lxt2vcd.
 		VCD time backtracking fix (not for interactive mode).
-		Experimental header bar support (currently disabled).
+		Added experimental header bar support.

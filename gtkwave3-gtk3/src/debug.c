@@ -608,8 +608,8 @@ if(!GLOBALS->disable_menus)
 		GLOBALS->header_bar = gtk_header_bar_new();
 		gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (GLOBALS->header_bar), TRUE);
 		gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), title);
-		gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR(GLOBALS->header_bar), FALSE);
-		/* gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO); */
+		gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR(GLOBALS->header_bar), TRUE);
+		gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO);
 		gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
 
 		GtkWidget *menu = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
