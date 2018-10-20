@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "gtk23compat.h"
 
 #ifndef __MINGW32__
 #include <stdint.h>
