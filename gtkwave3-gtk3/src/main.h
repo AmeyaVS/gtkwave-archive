@@ -36,6 +36,8 @@ GtkWidget *create_time_box(void);
 GtkWidget *create_wavewindow(void);
 GtkWidget *create_signalwindow(void);
 
+void wave_gtk_window_set_title(GtkWindow *window, const gchar *title, int typ, int pct);
+
 /* Get/set the current size of the window.  */
 extern void get_window_size (int *x, int *y);
 extern void set_window_size (int x, int y);

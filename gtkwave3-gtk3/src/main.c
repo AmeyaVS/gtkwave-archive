@@ -240,6 +240,156 @@ for(i=0;i<GLOBALS->num_notebook_pages;i++)
 #endif
 
 
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+static void service_headerbar_menu(GtkWidget *text, gpointer data)
+{
+(void)text;
+(void)data;
+
+do_popup_main_menu (text, NULL);
+}
+
+static void service_pan_up(GtkWidget *text, gpointer data)
+{
+(void)text;
+(void)data;
+
+if(GLOBALS->helpbox_is_active)
+        {
+	help_text_bold("\n\nHide Toolbar");
+        help_text(
+                " hides the toolbar (or optionally enabled traditional button layout) in order to provide more screen space for viewing traces."
+        );
+
+        return;
+        }
+
+gtk_widget_hide(GLOBALS->top_table);
+}
+
+static void service_pan_dn(GtkWidget *text, gpointer data)
+{
+(void)text;
+(void)data;
+
+if(GLOBALS->helpbox_is_active)
+        {
+	help_text_bold("\n\nShow Toolbar");
+        help_text(
+                " restores the toolbar (or optionally enabled traditional button layout) that was hidden by Hide Toolbar."
+        );
+
+        return;
+        }
+
+gtk_widget_show(GLOBALS->top_table);
+}
+#endif
+
+
+void wave_gtk_window_set_title(GtkWindow *window, const gchar *title, int typ, int pct)
+{
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+if(!window || !title) return;
+
+if(!GLOBALS->disable_menus)
+	{
+	if(!GLOBALS->header_bar)
+		{
+		GLOBALS->header_bar = gtk_header_bar_new();
+		gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (GLOBALS->header_bar), TRUE);
+		gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), title);
+		gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR(GLOBALS->header_bar), TRUE);
+		gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO);
+		gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
+
+		GtkWidget *menu = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
+		gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
+		gtk_widget_show(menu);
+
+		GtkWidget *pan_up = gtk_button_new_from_icon_name("pan-up-symbolic", GTK_ICON_SIZE_BUTTON);
+		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_up);
+		gtk_widget_show(pan_up);
+		gtk_tooltips_set_tip_2(pan_up, "Hide toolbar");
+
+		GtkWidget *pan_dn = gtk_button_new_from_icon_name("pan-down-symbolic", GTK_ICON_SIZE_BUTTON);
+		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_dn);
+		gtk_widget_show(pan_dn);
+		gtk_tooltips_set_tip_2(pan_dn, "Show toolbar");
+		
+		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":menu,minimize,maximize,close");
+		gtk_widget_show(GLOBALS->header_bar);
+
+		g_signal_connect (XXX_GTK_OBJECT (menu),   "pressed",  G_CALLBACK(service_headerbar_menu), NULL);
+		g_signal_connect (XXX_GTK_OBJECT (pan_up), "released", G_CALLBACK(service_pan_up), NULL);
+		g_signal_connect (XXX_GTK_OBJECT (pan_dn), "released", G_CALLBACK(service_pan_dn), NULL);
+		}
+		else
+		{
+		switch(typ)
+			{
+			case WAVE_SET_TITLE_MODIFIED:
+				{
+				const char *pfx = "[Modified] ";
+				char *t = wave_alloca(strlen(pfx) + strlen(title) + 1);
+
+				strcpy(t, pfx);
+				strcat(t, title);
+				gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), t);
+				}
+				break;
+
+			case WAVE_SET_TITLE_LOADING:
+				{
+				char *t = wave_alloca(64 + strlen(title) + 1); /* make extra long */
+
+				sprintf(t, "[Loading %d%%] %s", pct, title);
+				gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), t);
+				}
+				break;
+
+			case WAVE_SET_TITLE_NONE:
+			default:
+				gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), title);
+				break;
+			}
+		}
+	}
+else
+#endif
+if(window && title)
+	{
+	switch(typ)
+		{
+		case WAVE_SET_TITLE_MODIFIED:
+			{
+			const char *pfx = "[Modified] ";
+			char *t = wave_alloca(strlen(pfx) + strlen(title) + 1);
+
+			strcpy(t, pfx);
+			strcat(t, title);
+			gtk_window_set_title(window, t);
+			}
+			break;
+
+		case WAVE_SET_TITLE_LOADING:
+			{
+			char *t = wave_alloca(64 + strlen(title) + 1); /* make extra long */
+
+			sprintf(t, "[Loading %d%%] %s", pct, title);
+			gtk_window_set_title(window, t);
+			}
+			break;
+
+		case WAVE_SET_TITLE_NONE:
+		default:
+			gtk_window_set_title(window, title);
+			break;
+		}
+	}
+}
+
+
 static void print_help(char *nam)
 {
 #if defined(EXTLOAD_SUFFIX) && defined(EXTCONV_PATH)

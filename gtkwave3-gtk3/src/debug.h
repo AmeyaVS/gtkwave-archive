@@ -108,8 +108,6 @@ char *realpath_2(const char *path, char *resolved_path);
 
 enum WaveLoadingTitleType { WAVE_SET_TITLE_NONE, WAVE_SET_TITLE_MODIFIED, WAVE_SET_TITLE_LOADING };
 
-void wave_gtk_window_set_title(GtkWindow *window, const gchar *title, int typ, int pct);
-
 
 #undef WAVE_USE_SIGCMP_INFINITE_PRECISION  /* define this for slow sigcmp with infinite digit accuracy */
 #define WAVE_OPT_SKIP 1			   /* make larger for more accel on traces */
