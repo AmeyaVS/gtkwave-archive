@@ -649,6 +649,7 @@ GtkWidget *signal_popup_menu; /* from menu.c */
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 GtkWidget *header_bar;
 GtkWidget *main_popup_menu; /* from menu.c */
+GtkWidget *top_table;
 #endif
 GtkWidget *sst_signal_popup_menu; /* from menu.c */
 

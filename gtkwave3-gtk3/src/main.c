@@ -132,6 +132,7 @@ GLOBALS->use_gestures = g_old->use_gestures;
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 GLOBALS->header_bar = g_old->header_bar;
 GLOBALS->main_popup_menu = g_old->main_popup_menu;
+GLOBALS->top_table = g_old->top_table;
 #endif
 
 reformat_time(timestr, GLOBALS->tims.first + GLOBALS->global_time_offset, GLOBALS->time_dimension);
@@ -742,6 +743,7 @@ if(!GLOBALS)
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 	GLOBALS->header_bar = old_g->header_bar;
 	GLOBALS->main_popup_menu = old_g->main_popup_menu;
+	GLOBALS->top_table = old_g->top_table;
 #endif
 
         strcpy2_into_new_context(GLOBALS, &GLOBALS->sst_exclude_filename, &old_g->sst_exclude_filename);
@@ -2454,7 +2456,11 @@ if(GLOBALS->treeopen_chain_head)
 
 if(!mainwindow_already_built)
 	{
-	gtk_widget_show(top_table);
+	gtk_widget_show(top_table); 
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+	GLOBALS->top_table = top_table;
+#endif
+
 #if GTK_CHECK_VERSION(3,0,0)
 	XXX_gtk_table_attach (XXX_GTK_TABLE (whole_table), top_table, 0, 16, 0, 1,
 	                      	GTK_FILL | GTK_EXPAND,

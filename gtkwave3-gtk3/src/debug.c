@@ -593,6 +593,22 @@ static void service_headerbar_menu(GtkWidget *text, gpointer data)
 
 do_popup_main_menu (text, NULL);
 }
+
+static void service_pan_up(GtkWidget *text, gpointer data)
+{
+(void)text;
+(void)data;
+
+gtk_widget_hide(GLOBALS->top_table);
+}
+
+static void service_pan_dn(GtkWidget *text, gpointer data)
+{
+(void)text;
+(void)data;
+
+gtk_widget_show(GLOBALS->top_table);
+}
 #endif
 
 
@@ -615,10 +631,23 @@ if(!GLOBALS->disable_menus)
 		GtkWidget *menu = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
 		gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
 		gtk_widget_show(menu);
+
+		GtkWidget *pan_up = gtk_button_new_from_icon_name("pan-up-symbolic", GTK_ICON_SIZE_BUTTON);
+		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_up);
+		gtk_widget_show(pan_up);
+		gtk_tooltips_set_tip_2(pan_up, "Hide toolbar");
+
+		GtkWidget *pan_dn = gtk_button_new_from_icon_name("pan-down-symbolic", GTK_ICON_SIZE_BUTTON);
+		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_dn);
+		gtk_widget_show(pan_dn);
+		gtk_tooltips_set_tip_2(pan_dn, "Show toolbar");
+		
 		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":menu,minimize,maximize,close");
 		gtk_widget_show(GLOBALS->header_bar);
 
-		g_signal_connect_swapped (XXX_GTK_OBJECT (menu), "clicked", G_CALLBACK(service_headerbar_menu), XXX_GTK_OBJECT (GLOBALS->header_bar));
+		g_signal_connect (XXX_GTK_OBJECT (menu),   "clicked",  G_CALLBACK(service_headerbar_menu), NULL);
+		g_signal_connect (XXX_GTK_OBJECT (pan_up), "released", G_CALLBACK(service_pan_up), NULL);
+		g_signal_connect (XXX_GTK_OBJECT (pan_dn), "released", G_CALLBACK(service_pan_dn), NULL);
 		}
 		else
 		{

@@ -629,6 +629,7 @@ NULL, /* signal_popup_menu */
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 NULL, /* header_bar */
 NULL, /* main_popup_menu */
+NULL, /* top_table */
 #endif
 NULL, /* sst_signal_popup_menu */
 
@@ -1960,6 +1961,7 @@ void reload_into_new_context_2(void)
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
  new_globals->main_popup_menu = GLOBALS->main_popup_menu;
  new_globals->header_bar = GLOBALS->header_bar;
+ new_globals->top_table = GLOBALS->top_table;
 #endif
  new_globals->sst_signal_popup_menu = GLOBALS->sst_signal_popup_menu;
 
