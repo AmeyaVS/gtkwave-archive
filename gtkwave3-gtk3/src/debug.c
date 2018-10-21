@@ -645,7 +645,7 @@ if(!GLOBALS->disable_menus)
 		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":menu,minimize,maximize,close");
 		gtk_widget_show(GLOBALS->header_bar);
 
-		g_signal_connect (XXX_GTK_OBJECT (menu),   "clicked",  G_CALLBACK(service_headerbar_menu), NULL);
+		g_signal_connect (XXX_GTK_OBJECT (menu),   "pressed",  G_CALLBACK(service_headerbar_menu), NULL);
 		g_signal_connect (XXX_GTK_OBJECT (pan_up), "released", G_CALLBACK(service_pan_up), NULL);
 		g_signal_connect (XXX_GTK_OBJECT (pan_dn), "released", G_CALLBACK(service_pan_dn), NULL);
 		}
