@@ -246,7 +246,7 @@ static void service_headerbar_menu(GtkWidget *text, gpointer data)
 (void)text;
 (void)data;
 
-do_popup_main_menu (text, NULL);
+do_popup_main_menu (NULL, NULL);
 }
 
 static void service_pan_up(GtkWidget *text, gpointer data)
@@ -306,6 +306,7 @@ if(!GLOBALS->disable_menus)
 		GtkWidget *menu = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
 		gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
 		gtk_widget_show(menu);
+		gtk_tooltips_set_tip_2(menu, "Menu");
 
 		GtkWidget *pan_up = gtk_button_new_from_icon_name("pan-up-symbolic", GTK_ICON_SIZE_BUTTON);
 		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_up);
