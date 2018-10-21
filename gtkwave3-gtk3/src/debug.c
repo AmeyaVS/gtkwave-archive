@@ -599,6 +599,16 @@ static void service_pan_up(GtkWidget *text, gpointer data)
 (void)text;
 (void)data;
 
+if(GLOBALS->helpbox_is_active)
+        {
+	help_text_bold("\n\nHide Toolbar");
+        help_text(
+                " hides the toolbar (or optionally enabled traditional button layout) in order to provide more screen space for viewing traces."
+        );
+
+        return;
+        }
+
 gtk_widget_hide(GLOBALS->top_table);
 }
 
@@ -606,6 +616,16 @@ static void service_pan_dn(GtkWidget *text, gpointer data)
 {
 (void)text;
 (void)data;
+
+if(GLOBALS->helpbox_is_active)
+        {
+	help_text_bold("\n\nShow Toolbar");
+        help_text(
+                " restores the toolbar (or optionally enabled traditional button layout) that was hidden by Hide Toolbar."
+        );
+
+        return;
+        }
 
 gtk_widget_show(GLOBALS->top_table);
 }
