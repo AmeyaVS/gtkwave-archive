@@ -1673,6 +1673,7 @@
 		Change integer type to "integer" in SST to differentiate it
 		from sv ints.
 		Premiminary support for enum tables embedded in FST files.
-3.3.96	16oct18	Changed to standardized zoom in/out/full hotkeys.
+3.3.96	23oct18	Changed to standardized zoom in/out/full hotkeys.
 		Added time backtracking warning (for partial mode) to lxt2vcd.
                 VCD time backtracking fix (not for interactive mode).
+		Added drag_failed handling (can press ESC) to DnD operations.

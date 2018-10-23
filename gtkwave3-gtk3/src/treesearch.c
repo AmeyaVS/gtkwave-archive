@@ -1798,6 +1798,24 @@ static void DNDBeginCB(
 }
 
 /*
+ *	DND "drag_failed" handler, this is called when a drag and drop has
+ *      failed (e.g., by pressing ESC).
+ */
+static gboolean DNDFailedCB(
+        GtkWidget *widget, GdkDragContext *context, GtkDragResult result)
+{
+GLOBALS->dnd_state = 0;
+GLOBALS->tree_dnd_begin = VIEW_DRAG_INACTIVE;
+GLOBALS->tree_dnd_requested = 0;
+
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+
+return(FALSE);
+}
+
+/*
  *      DND "drag_end" handler, this is called when a drag and drop has
  *	completed. So this function is the last one to be called in
  *	any given DND operation.
@@ -2301,7 +2319,10 @@ void dnd_setup(GtkWidget *src, GtkWidget *w, int enable_receive)
 	                gtkwave_signal_connect(XXX_GTK_OBJECT(src), "drag_end", G_CALLBACK(DNDEndCB), win);
 	                gtkwave_signal_connect(XXX_GTK_OBJECT(src), "drag_data_get", G_CALLBACK(DNDDataRequestCB), win);
 	                gtkwave_signal_connect(XXX_GTK_OBJECT(src), "drag_data_delete", G_CALLBACK(DNDDataDeleteCB), win);
+
+			gtkwave_signal_connect(XXX_GTK_OBJECT(src), "drag_failed", G_CALLBACK(DNDFailedCB), win);
 			}
+
 
                 if(enable_receive) gtkwave_signal_connect(XXX_GTK_OBJECT(w),   "drag_data_received", G_CALLBACK(DNDDataReceivedCB), win);
 	}

@@ -151,6 +151,24 @@ GLOBALS->dnd_state = 1;
 }
 
 /*
+ *      DND "drag_failed" handler, this is called when a drag and drop has
+ *      failed (e.g., by pressing ESC).
+ */
+static gboolean DNDFailedCB(
+	GtkWidget *widget, GdkDragContext *context, GtkDragResult result)
+{
+GLOBALS->dnd_cursor_timer = 0;
+GLOBALS->dnd_state = 0;
+GLOBALS->standard_trace_dnd_degate = 1;
+
+MaxSignalLength();
+signalarea_configure_event(GLOBALS->signalarea, NULL);
+wavearea_configure_event(GLOBALS->wavearea, NULL);
+
+return(FALSE);
+}
+
+/*
  *      DND "drag_end" handler, this is called when a drag and drop has
  *      completed. So this function is the last one to be called in
  *      any given DND operation.
@@ -172,6 +190,8 @@ int trwhich, trtarget;
 int must_update_screen = 0;
 
 gint xi, yi;
+
+if(!GLOBALS->dnd_state) goto bot;
 
 if(GLOBALS->std_dnd_tgt_on_signalarea || GLOBALS->std_dnd_tgt_on_wavearea)
 	{
@@ -1836,6 +1856,8 @@ if(GLOBALS->use_standard_clicking)
         gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->signalarea), "drag_motion", G_CALLBACK(DNDDragMotionCB), GTK_WIDGET(GLOBALS->signalarea));
         gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->signalarea), "drag_begin", G_CALLBACK(DNDBeginCB), GTK_WIDGET(GLOBALS->signalarea));
         gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->signalarea), "drag_end", G_CALLBACK(DNDEndCB), GTK_WIDGET(GLOBALS->signalarea));
+        gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->signalarea), "drag_failed", G_CALLBACK(DNDFailedCB), GTK_WIDGET(GLOBALS->signalarea));
+
 
         gtk_drag_dest_set(
         	GTK_WIDGET(GLOBALS->wavearea),
@@ -1849,6 +1871,7 @@ if(GLOBALS->use_standard_clicking)
         gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "drag_motion", G_CALLBACK(DNDDragMotionCB), GTK_WIDGET(GLOBALS->wavearea));
         gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "drag_begin", G_CALLBACK(DNDBeginCB), GTK_WIDGET(GLOBALS->wavearea));
         gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "drag_end", G_CALLBACK(DNDEndCB), GTK_WIDGET(GLOBALS->wavearea));
+        gtkwave_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "drag_failed", G_CALLBACK(DNDFailedCB), GTK_WIDGET(GLOBALS->wavearea));
 
 	gtk_drag_source_set(GTK_WIDGET(GLOBALS->signalarea),
         	GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
