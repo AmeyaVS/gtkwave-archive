@@ -2336,8 +2336,23 @@ void reload_into_new_context_2(void)
 		else
 		{
 		/* recovery sequence */
-		printf("GTKWAVE | Reload failure, reattempt in %d second%s...\n", reload_fail_delay, (reload_fail_delay==1) ? "" : "s");
-		fflush(stdout);
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+        	if(GLOBALS->header_bar)
+                	{
+			char recbuf[128];
+			sprintf(recbuf, "Reload failure, reattempt in %d second%s...", reload_fail_delay, (reload_fail_delay==1) ? "" : "s");
+	                gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), recbuf);
+			g_usleep(30000);
+			}
+#endif
+		set_window_busy(NULL);
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+		if(!GLOBALS->header_bar)
+#endif
+			{
+			printf("GTKWAVE | Reload failure, reattempt in %d second%s...\n", reload_fail_delay, (reload_fail_delay==1) ? "" : "s");
+			fflush(stdout);
+			}
 		sleep(reload_fail_delay);
 		switch(reload_fail_delay)
 			{
@@ -2348,6 +2363,7 @@ void reload_into_new_context_2(void)
 			case 30: reload_fail_delay = 60; break;
 			default: break;
 			}
+		set_window_idle(NULL);
 		}
 	}
 
