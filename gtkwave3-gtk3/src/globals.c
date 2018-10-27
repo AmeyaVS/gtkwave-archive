@@ -2360,7 +2360,7 @@ void reload_into_new_context_2(void)
 			case 2: reload_fail_delay = 5; break;
 			case 5: reload_fail_delay = 10; break;
 			case 10: reload_fail_delay = 30; break;
-			case 30: reload_fail_delay = 60; break;
+			case 30: reload_fail_delay = 10; break; /* recycle back so message changes if header bar */
 			default: break;
 			}
 		set_window_idle(NULL);
