@@ -1727,3 +1727,5 @@
 		Added show/hide toolbar buttons to header bar.
 		Added drag_failed handling (can press ESC) to DnD operations.
 		Move reload failure message to header bar for GTK3.
+		Prevent missing file in savefile from causing savefile to be
+		read as VCD by mistake.

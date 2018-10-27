@@ -1469,12 +1469,40 @@ if((GLOBALS->loaded_file_name) && (!wname) &&
 			GLOBALS->loaded_file_name = extracted_name;
 			}
 		}
+		else
+		{
+		char *dfn = NULL;
+		char *sfn = NULL;
+		off_t dumpsiz = -1;
+		time_t dumptim = -1;
+
+		read_save_helper(GLOBALS->loaded_file_name, &dfn, &sfn, &dumpsiz, &dumptim, &opt_vcd);
+
+		fprintf(stderr, "GTKWAVE | Could not initialize '%s' found in '%s', exiting.\n", dfn ? dfn : "(null)", GLOBALS->loaded_file_name);
+		if(dfn) free_2(dfn);
+		if(sfn) free_2(sfn);
+		exit(255);
+		}
 	}
 else /* same as above but with --save specified */
 if((!GLOBALS->loaded_file_name) && wname)
 	{
 	GLOBALS->loaded_file_name = extract_dumpname_from_save_file(wname, &GLOBALS->dumpfile_is_modified, &opt_vcd);
 	/* still can be NULL if file not found... */
+	if(!GLOBALS->loaded_file_name)
+		{
+		char *dfn = NULL;
+		char *sfn = NULL;
+		off_t dumpsiz = -1;
+		time_t dumptim = -1;
+
+		read_save_helper(wname, &dfn, &sfn, &dumpsiz, &dumptim, &opt_vcd);
+
+		fprintf(stderr, "GTKWAVE | Could not initialize '%s' found in '%s', exiting.\n", dfn ? dfn : "(null)", wname);
+		if(dfn) free_2(dfn);
+		if(sfn) free_2(sfn);
+		exit(255);
+		}
 	}
 
 
