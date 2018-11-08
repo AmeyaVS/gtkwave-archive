@@ -893,8 +893,8 @@ return(rv);
 
 int vtype(Trptr t, char *vec)
 {
-int i, nbits, res;
-int an_u_encountered = 0;
+int i, nbits;
+char pch, ch;
 
 if (vec == NULL)
 	return(AN_X);
@@ -902,34 +902,32 @@ if (vec == NULL)
 nbits=t->n.nd->msi-t->n.nd->lsi;
 if(nbits<0)nbits=-nbits;
 nbits++;
-res = AN_1;
-for (i = 0; i < nbits; i++)
+pch = ch = vec[0];
+for (i = 1; i < nbits; i++)
 	{
-	switch (*vec)
-		{
-		case AN_X:
-		case 'x':
-		case 'X':
-				return(AN_X);
-		case AN_U:
-		case 'u':
-		case 'U':
-				an_u_encountered = 1; break;
-		case AN_Z:
-		case 'z':
-		case 'Z':
-				if (res == AN_0) return(AN_X); vec++; res = AN_Z; break;
-		default:	if (res == AN_Z) return(AN_X); vec++; res = AN_0; break;
+	ch = vec[i];
+        if(ch != pch) goto miscompare;
 		}
+
+return(ch);
+
+miscompare:
+if((pch == AN_X) || (pch == AN_U)) return(pch);
+if(pch == AN_Z) return(AN_X);
+for (; i < nbits; i++)
+        {
+	ch = vec[i];
+        if((ch == AN_X) || (ch == AN_U)) return(ch);
+        if(ch == AN_Z) return(AN_X);
 	}
 
-return(!an_u_encountered ? res : AN_U);
+return(AN_COUNT);
 }
 
 int vtype2(Trptr t, vptr v)
 {
-int i, nbits, res;
-int an_u_encountered = 0;
+int i, nbits;
+char pch, ch;
 char *vec=(char *)v->v;
 
 if(!t->t_filter_converted)
@@ -939,33 +937,33 @@ if(!t->t_filter_converted)
 	}
 	else
 	{
-	return ( ((vec == NULL) || (vec[0] == 0)) ? AN_Z : AN_0 );
+	return ( ((vec == NULL) || (vec[0] == 0)) ? AN_Z : AN_COUNT );
 	}
 
 nbits=t->n.vec->nbits;
-res = AN_1;
-for (i = 0; i < nbits; i++)
-	{
-	switch (*vec)
+
+pch = ch = vec[0];
+for (i = 1; i < nbits; i++)
 		{
-		case AN_X:
-		case 'x':
-		case 'X':
-				return(AN_X);
-		case AN_U:
-		case 'u':
-		case 'U':
-				an_u_encountered = 1; break;
-		case AN_Z:
-		case 'z':
-		case 'Z':
-				if (res == AN_0) return(AN_X); vec++; res = AN_Z; break;
-		default:	if (res == AN_Z) return(AN_X); vec++; res = AN_0; break;
+	ch = vec[i];
+        if(ch != pch) goto miscompare;
 		}
+
+return(ch);
+
+miscompare:
+if((pch == AN_X) || (pch == AN_U)) return(pch);
+if(pch == AN_Z) return(AN_X);
+for (; i < nbits; i++)
+        {
+	ch = vec[i];
+        if((ch == AN_X) || (ch == AN_U)) return(ch);
+        if(ch == AN_Z) return(AN_X);
 	}
 
-return(!an_u_encountered ? res : AN_U);
+return(AN_COUNT);
 }
+
 
 /*
  * convert trptr+hptr vectorstring into an ascii string
