@@ -8838,7 +8838,14 @@ void do_popup_main_menu (GtkWidget *my_widget, GdkEventButton *event)
     }
 
 #if GTK_CHECK_VERSION(3,0,0)
-  gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
+if(GLOBALS->main_popup_menu_button)
+	{
+	gtk_menu_popup_at_widget (GTK_MENU (menu), GLOBALS->main_popup_menu_button, GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL);
+	}
+	else
+	{
+	gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
+	}
 #else
   gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
                   button, event_time);

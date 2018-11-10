@@ -132,6 +132,7 @@ GLOBALS->use_gestures = g_old->use_gestures;
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 GLOBALS->header_bar = g_old->header_bar;
 GLOBALS->main_popup_menu = g_old->main_popup_menu;
+GLOBALS->main_popup_menu_button = g_old->main_popup_menu_button;
 GLOBALS->top_table = g_old->top_table;
 #endif
 
@@ -303,7 +304,7 @@ if(!GLOBALS->disable_menus)
 		gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO);
 		gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
 
-		GtkWidget *menu = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
+		GtkWidget *menu = GLOBALS->main_popup_menu_button = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
 		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
 		gtk_widget_show(menu);
 		gtk_tooltips_set_tip_2(menu, "Menu");
@@ -894,6 +895,7 @@ if(!GLOBALS)
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 	GLOBALS->header_bar = old_g->header_bar;
 	GLOBALS->main_popup_menu = old_g->main_popup_menu;
+	GLOBALS->main_popup_menu_button = old_g->main_popup_menu_button;
 	GLOBALS->top_table = old_g->top_table;
 #endif
 
