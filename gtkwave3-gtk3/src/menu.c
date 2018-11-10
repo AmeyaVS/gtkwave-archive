@@ -8837,7 +8837,6 @@ void do_popup_main_menu (GtkWidget *my_widget, GdkEventButton *event)
 #endif
     }
 
-gtk_widget_set_can_focus(GLOBALS->main_popup_menu, TRUE);
 #if GTK_CHECK_VERSION(3,0,0)
 if(GLOBALS->main_popup_menu_button)
 	{
