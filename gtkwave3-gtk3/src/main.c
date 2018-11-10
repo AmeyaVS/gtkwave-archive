@@ -304,7 +304,7 @@ if(!GLOBALS->disable_menus)
 		gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
 
 		GtkWidget *menu = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
-		gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
+		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
 		gtk_widget_show(menu);
 		gtk_tooltips_set_tip_2(menu, "Menu");
 
@@ -318,7 +318,7 @@ if(!GLOBALS->disable_menus)
 		gtk_widget_show(pan_dn);
 		gtk_tooltips_set_tip_2(pan_dn, "Show toolbar");
 		
-		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":menu,minimize,maximize,close");
+		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":minimize,maximize,close"); //
 		gtk_widget_show(GLOBALS->header_bar);
 
 		g_signal_connect (XXX_GTK_OBJECT (menu),   "pressed",  G_CALLBACK(service_headerbar_menu), NULL);
