@@ -170,11 +170,11 @@ if(!font->is_pango)
 #if defined(WAVE_USE_GTK2) && !defined(GTK_ENABLE_BROKEN) && GTK_CHECK_VERSION(2,8,0)
 	else
 	{
-	PangoRectangle ink,logical;
+	/* PangoRectangle ink,logical; */
 
 	pango_layout_set_text(GLOBALS->fonts_layout, string, -1);
 	pango_layout_set_font_description(GLOBALS->fonts_layout, font->desc);
-	pango_layout_get_extents(GLOBALS->fonts_layout,&ink,&logical);
+	/* pango_layout_get_extents(GLOBALS->fonts_layout,&ink,&logical); */
 	gdk_draw_layout(drawable, gc, x, y-font->ascent, GLOBALS->fonts_layout);
 	}
 #endif

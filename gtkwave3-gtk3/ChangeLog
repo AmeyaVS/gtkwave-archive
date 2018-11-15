@@ -1717,7 +1717,7 @@
                 Change integer type to "integer" in SST	to differentiate it
                 from sv	ints.
 		Premiminary support for	enum tables embedded in	FST files.
-3.3.96  10nov18 Changed to standardized zoom in/out/full hotkeys.
+3.3.96  15nov18 Changed to standardized zoom in/out/full hotkeys.
 		Changed swipe to use realtime clock for better positioning
 		when frame rate is variable due to differing rendering
 		speed along the trace.
@@ -1731,3 +1731,5 @@
 		read as VCD by mistake.
 		Changed to Dinotrace-like 0s/1s rendering for bit vectors so
 		values can be discerned without seeing the full value text.
+		Removed unneeded pango_layout_get_extents() inside call for
+		font_engine_draw_string().

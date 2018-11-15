@@ -171,11 +171,11 @@ void XXX_font_engine_draw_string
                          gint                           y,
                          const gchar                    *string)
 {
-	PangoRectangle ink,logical;
+	/* PangoRectangle ink,logical; */
 
 	pango_layout_set_text(GLOBALS->fonts_layout, string, -1);
 	pango_layout_set_font_description(GLOBALS->fonts_layout, font->desc);
-	pango_layout_get_extents(GLOBALS->fonts_layout,&ink,&logical);
+	/* pango_layout_get_extents(GLOBALS->fonts_layout,&ink,&logical); */
 
 	cairo_set_source_rgba (cr, gc->r, gc->g, gc->b, gc->a);
 	cairo_move_to (cr, x, y-font->ascent);
