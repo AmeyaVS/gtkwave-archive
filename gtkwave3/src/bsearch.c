@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2013.
+ * Copyright (c) Tony Bybell 1999-2018.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -221,12 +221,26 @@ int len;
 
 if((maxlen<=0)||(!ascii)||(!(len=strlen(ascii)))) return(NULL);
 
-GLOBALS->maxlen_trunc=0; GLOBALS->maxlen_trunc_pos_bsearch_c_1=NULL;
+GLOBALS->maxlen_trunc_pos_bsearch_c_1=NULL;
 
-if(bsearch(&maxlen, GLOBALS->trunc_asciibase_bsearch_c_1=ascii, len, sizeof(char), compar_trunc))
-        {
-        /* nothing, all side effects are in bsearch */
-        }
+if(GLOBALS->wavefont->is_mono)
+	{
+	int adjusted_len = maxlen / GLOBALS->wavefont->mono_width;
+	if(adjusted_len) adjusted_len--;
+	if(GLOBALS->wavefont->mono_width <= maxlen)
+		{
+		GLOBALS->maxlen_trunc_pos_bsearch_c_1 = ascii + adjusted_len;
+		}
+	}
+	else
+	{
+	GLOBALS->maxlen_trunc=0;
+
+	if(bsearch(&maxlen, GLOBALS->trunc_asciibase_bsearch_c_1=ascii, len, sizeof(char), compar_trunc))
+	        {
+	        /* nothing, all side effects are in bsearch */
+	        }
+	}
 
 return(GLOBALS->maxlen_trunc_pos_bsearch_c_1);
 }
@@ -294,4 +308,3 @@ if(ascii[len-1]=='}')
 rc=(struct symbol **)bsearch(ascii, GLOBALS->facs, GLOBALS->numfacs, sizeof(struct symbol *), compar_facs);
 if(rc) return(*rc); else return(NULL);
 }
-

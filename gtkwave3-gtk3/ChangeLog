@@ -1733,3 +1733,5 @@
 		values can be discerned without seeing the full value text.
 		Removed unneeded pango_layout_get_extents() inside call for
 		font_engine_draw_string().
+		Changed bsearch_trunc() to run in constant time when monospace
+		fonts are in use.
