@@ -318,8 +318,8 @@ if(!GLOBALS->disable_menus)
 		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_dn);
 		gtk_widget_show(pan_dn);
 		gtk_tooltips_set_tip_2(pan_dn, "Show toolbar");
-		
-		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":minimize,maximize,close"); //
+
+		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":minimize,maximize,close");
 		gtk_widget_show(GLOBALS->header_bar);
 
 		g_signal_connect (XXX_GTK_OBJECT (menu),   "pressed",  G_CALLBACK(service_headerbar_menu), NULL);
