@@ -2509,6 +2509,10 @@ if(GLOBALS->use_gestures < 0) /* <0 means "maybe (if available, enable)" */
 		printf("GTKWAVE | Touch screen detected, enabling gestures.\n");
 		GLOBALS->use_gestures = 1;
 		}
+		else
+		{
+		GLOBALS->use_gestures = 0;
+		}
 	}
 
 if(GLOBALS->use_gestures)
