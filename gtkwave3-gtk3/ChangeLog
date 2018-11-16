@@ -1735,3 +1735,4 @@
 		font_engine_draw_string().
 		Changed bsearch_trunc() to run in constant time when monospace
 		fonts are in use.
+		Added missing GDK_SCROLL_MASK to signal area (need for gtk3).
