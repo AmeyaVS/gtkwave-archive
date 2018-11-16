@@ -608,7 +608,14 @@ return(0);
 int f_use_gestures(char *str)
 {
 DEBUG(printf("f_use_gestures(\"%s\")\n",str));
-GLOBALS->use_gestures=atoi_64(str)?1:0;
+if(toupper(str[0]) == 'M')
+	{
+	GLOBALS->use_gestures= -1; /* maybe */
+	}
+	else
+	{
+	GLOBALS->use_gestures=atoi_64(str)?1:0;
+	}
 return(0);
 }
 

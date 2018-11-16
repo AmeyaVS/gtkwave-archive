@@ -1355,7 +1355,7 @@ NULL, /* swipe_init_time */
 0, /* wavearea_drag_start_y */
 0, /* wavearea_drag_active */
 #endif
-0, /* use_gestures */
+-1, /* use_gestures */
 
 
 /*

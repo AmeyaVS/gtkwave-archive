@@ -1076,7 +1076,7 @@ do
 #endif
 		{
 	  	int warp = 0;
-          	Trptr t = (GLOBALS->use_gestures) ? NULL : GLOBALS->traces.first;
+          	Trptr t = (GLOBALS->use_gestures > 0) ? NULL : GLOBALS->traces.first;
 		TimeType gt, delta;
 
           	while ( t )
@@ -1471,7 +1471,7 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
                GDK_SEAT_CAPABILITY_ALL_POINTING,
                FALSE,
                NULL,
-               (GLOBALS->use_gestures) ? NULL : (GdkEvent *)event, /* GdkEvent is a union with type as 1st element */
+               (GLOBALS->use_gestures > 0) ? NULL : (GdkEvent *)event, /* GdkEvent is a union with type as 1st element */
                NULL,
                NULL);
 #else
@@ -1487,7 +1487,7 @@ if((event->button==1)||((event->button==3)&&(!GLOBALS->in_button_press_wavewindo
 	if ((event->state & GDK_CONTROL_MASK) && (event->button==1))
 #endif
 		{
-		Trptr t = (GLOBALS->use_gestures) ? NULL : GLOBALS->traces.first;
+		Trptr t = (GLOBALS->use_gestures > 0) ? NULL : GLOBALS->traces.first;
 
 		while(t)
 			{
@@ -1528,7 +1528,7 @@ if((event->button)&&(event->button==GLOBALS->in_button_press_wavewindow_c_1))
         if(event->button==1)
 		{
 	  	int warp = 0;
-          	Trptr t = (GLOBALS->use_gestures) ? NULL : GLOBALS->traces.first;
+          	Trptr t = (GLOBALS->use_gestures > 0) ? NULL : GLOBALS->traces.first;
 #ifdef MAC_INTEGRATION
 		if(event->state & GDK_MOD2_MASK)
 #else
@@ -2499,6 +2499,18 @@ g_signal_connect(XXX_GTK_OBJECT(GLOBALS->wavearea), "expose_event",G_CALLBACK(ex
 #endif
 
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
+if(GLOBALS->use_gestures < 0) /* <0 means "maybe (if available, enable)" */
+	{
+	GdkDisplay *display = gdk_display_get_default();
+	GdkSeat *seat = gdk_display_get_default_seat (display);
+	GdkSeatCapabilities gsc = gdk_seat_get_capabilities(seat);
+	if(gsc & GDK_SEAT_CAPABILITY_TOUCH)
+		{
+		printf("GTKWAVE | Touch screen detected, enabling gestures.\n");
+		GLOBALS->use_gestures = 1;
+		}
+	}
+
 if(GLOBALS->use_gestures)
 {
 /* so far is mutually exclusive with existing motion/button action below */
