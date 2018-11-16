@@ -96,6 +96,7 @@ GLOBALS->dnd_state = 1;
  *	DND "drag_failed" handler, this is called when a drag and drop has
  *	failed (e.g., by pressing ESC).
  */
+#ifdef WAVE_USE_GTK2
 static gboolean DNDFailedCB(
         GtkWidget *widget, GdkDragContext *context, GtkDragResult result)
 {
@@ -109,6 +110,7 @@ wavearea_configure_event(GLOBALS->wavearea, NULL);
 
 return(FALSE);
 }
+#endif
 
 /*
  *      DND "drag_end" handler, this is called when a drag and drop has
@@ -466,6 +468,7 @@ printf("focus: %d %08x %08x %08x\n", GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_ev
 	GLOBALS->signalarea_event_box, widget, data);
 #endif
 
+#ifdef WAVE_USE_GTK2
 if	(         (event->keyval == GDK_KEY_equal) &&
 #ifdef MAC_INTEGRATION
                   (event->state & GDK_META_MASK)
@@ -478,6 +481,7 @@ if	(         (event->keyval == GDK_KEY_equal) &&
                       rc = TRUE;
         }
 else
+#endif
 if(GTK_WIDGET_HAS_FOCUS(GLOBALS->signalarea_event_box))
 	{
 	switch(event->keyval)
@@ -1612,6 +1616,9 @@ gtk_widget_show(GLOBALS->signalarea);
 MaxSignalLength();
 
 gtk_widget_set_events(GLOBALS->signalarea,
+#ifdef WAVE_USE_GTK2
+		GDK_SCROLL_MASK |
+#endif
 		GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK |
 		GDK_BUTTON_RELEASE_MASK |
 		GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK
@@ -1647,7 +1654,9 @@ if(GLOBALS->use_standard_clicking)
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_motion", GTK_SIGNAL_FUNC(DNDDragMotionCB), GTK_WIDGET(GLOBALS->signalarea));
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), GTK_WIDGET(GLOBALS->signalarea));
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), GTK_WIDGET(GLOBALS->signalarea));
+#ifdef WAVE_USE_GTK2
 	gtkwave_signal_connect(GTK_OBJECT(GLOBALS->signalarea), "drag_failed", GTK_SIGNAL_FUNC(DNDFailedCB), GTK_WIDGET(GLOBALS->signalarea));
+#endif
 
         gtk_drag_dest_set(
         	GTK_WIDGET(GLOBALS->wavearea),
@@ -1661,7 +1670,9 @@ if(GLOBALS->use_standard_clicking)
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "drag_motion", GTK_SIGNAL_FUNC(DNDDragMotionCB), GTK_WIDGET(GLOBALS->wavearea));
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "drag_begin", GTK_SIGNAL_FUNC(DNDBeginCB), GTK_WIDGET(GLOBALS->wavearea));
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "drag_end", GTK_SIGNAL_FUNC(DNDEndCB), GTK_WIDGET(GLOBALS->wavearea));
+#ifdef WAVE_USE_GTK2
         gtkwave_signal_connect(GTK_OBJECT(GLOBALS->wavearea), "drag_failed", GTK_SIGNAL_FUNC(DNDFailedCB), GTK_WIDGET(GLOBALS->wavearea));
+#endif
 
 	gtk_drag_source_set(GTK_WIDGET(GLOBALS->signalarea),
         	GDK_BUTTON1_MASK | GDK_BUTTON2_MASK,
