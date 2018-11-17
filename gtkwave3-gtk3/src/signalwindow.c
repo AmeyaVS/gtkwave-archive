@@ -543,6 +543,13 @@ if	(         (event->keyval == GDK_KEY_equal) &&
                       rc = TRUE;
         }
 else
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+if (event->keyval == GDK_KEY_F10)
+	{
+	do_popup_main_menu(NULL, NULL);
+	}
+else
+#endif
 if(gtk_widget_has_focus(GLOBALS->signalarea_event_box))
 	{
 	switch(event->keyval)

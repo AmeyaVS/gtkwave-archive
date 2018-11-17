@@ -245,14 +245,6 @@ for(i=0;i<GLOBALS->num_notebook_pages;i++)
 
 
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
-static void service_headerbar_menu(GtkWidget *text, gpointer data)
-{
-(void)text;
-(void)data;
-
-do_popup_main_menu (NULL, NULL);
-}
-
 static void service_pan_up(GtkWidget *text, gpointer data)
 {
 (void)text;
