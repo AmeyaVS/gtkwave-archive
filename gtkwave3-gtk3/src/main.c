@@ -116,6 +116,8 @@ GLOBALS->scale_to_time_dimension = g_old->scale_to_time_dimension;
 GLOBALS->use_full_precision = g_old->use_full_precision;
 GLOBALS->show_base = g_old->show_base;
 GLOBALS->display_grid = g_old->display_grid;
+GLOBALS->fullscreen = g_old->fullscreen;
+GLOBALS->time_mainbox = g_old->time_mainbox;
 GLOBALS->highlight_wavewindow = g_old->highlight_wavewindow;
 GLOBALS->fill_waveform = g_old->fill_waveform;
 GLOBALS->use_standard_trace_select = g_old->use_standard_trace_select;
@@ -304,11 +306,6 @@ if(!GLOBALS->disable_menus)
 		gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO);
 		gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
 
-		GtkWidget *menu = GLOBALS->main_popup_menu_button = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_BUTTON);
-		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),menu);
-		gtk_widget_show(menu);
-		gtk_tooltips_set_tip_2(menu, "Menu");
-
 		GtkWidget *pan_up = gtk_button_new_from_icon_name("pan-up-symbolic", GTK_ICON_SIZE_BUTTON);
 		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_up);
 		gtk_widget_show(pan_up);
@@ -322,7 +319,6 @@ if(!GLOBALS->disable_menus)
 		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":minimize,maximize,close");
 		gtk_widget_show(GLOBALS->header_bar);
 
-		g_signal_connect (XXX_GTK_OBJECT (menu),   "pressed",  G_CALLBACK(service_headerbar_menu), NULL);
 		g_signal_connect (XXX_GTK_OBJECT (pan_up), "released", G_CALLBACK(service_pan_up), NULL);
 		g_signal_connect (XXX_GTK_OBJECT (pan_dn), "released", G_CALLBACK(service_pan_dn), NULL);
 		}
@@ -826,6 +822,8 @@ if(!GLOBALS)
 	GLOBALS->ps_maxveclen = old_g->ps_maxveclen;
 	GLOBALS->show_base = old_g->show_base;
 	GLOBALS->display_grid = old_g->display_grid;
+	GLOBALS->fullscreen = old_g->fullscreen;
+	GLOBALS->time_mainbox = old_g->time_mainbox;
 	GLOBALS->highlight_wavewindow = old_g->highlight_wavewindow;
 	GLOBALS->fill_waveform = old_g->fill_waveform;
 	GLOBALS->use_standard_trace_select = old_g->use_standard_trace_select;
@@ -2143,6 +2141,17 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 			gtk_widget_show(toolhandle);
 			gtk_container_add(GTK_CONTAINER(toolhandle), top_table);
 			}
+#endif
+
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+		GLOBALS->main_popup_menu_button = stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),
+	                                         "open-menu-symbolic",
+						 "Menu",
+						 NULL,
+						 G_CALLBACK(do_popup_main_menu),
+						 NULL,
+						 tb_pos++);
+		gtk_widget_show(stock);
 #endif
 
 		stock = XXX_gtk_toolbar_insert_stock(GTK_TOOLBAR(tb),

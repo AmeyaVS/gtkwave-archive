@@ -203,6 +203,8 @@ NULL, /* base_or_curtime_label_currenttime_c_1 60 */
 0, /* max_time 63 */
 -1, /* min_time 64 */
 ~0, /* display_grid 65 */
+0, /* fullscreen */
+NULL, /* time_mainbox */
 1, /* time_scale 66 */
 'n', /* time_dimension 67 */
 0,   /* scale_to_time_dimension */
@@ -1879,6 +1881,8 @@ void reload_into_new_context_2(void)
  new_globals->ps_maxveclen = GLOBALS->ps_maxveclen;
  new_globals->show_base = GLOBALS->show_base;
  new_globals->display_grid = GLOBALS->display_grid;
+ new_globals->fullscreen = GLOBALS->fullscreen;
+ new_globals->time_mainbox = GLOBALS->time_mainbox;
  new_globals->highlight_wavewindow = GLOBALS->highlight_wavewindow;
  new_globals->fill_waveform = GLOBALS->fill_waveform;
  new_globals->use_standard_trace_select = GLOBALS->use_standard_trace_select;
@@ -2842,6 +2846,8 @@ switch(type)
 							GLOBALS->use_full_precision = g_old->use_full_precision;
 							GLOBALS->show_base = g_old->show_base;
 							GLOBALS->display_grid = g_old->display_grid;
+							GLOBALS->fullscreen = g_old->fullscreen;
+							GLOBALS->time_mainbox = g_old->time_mainbox;
 							GLOBALS->highlight_wavewindow = g_old->highlight_wavewindow;
 							GLOBALS->fill_waveform = g_old->fill_waveform;
 							GLOBALS->use_standard_trace_select = g_old->use_standard_trace_select;

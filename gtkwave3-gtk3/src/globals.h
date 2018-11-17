@@ -211,6 +211,8 @@ TimeType currenttime; /* from currenttime.c 63 */
 TimeType max_time; /* from currenttime.c 64 */
 TimeType min_time; /* from currenttime.c 65 */
 char display_grid; /* from currenttime.c 66 */
+char fullscreen;
+GtkWidget *time_mainbox;
 TimeType time_scale; /* from currenttime.c 67 */
 char time_dimension; /* from currenttime.c 68 */
 char scale_to_time_dimension; /* from currenttime.c */

@@ -1738,3 +1738,4 @@
 		Added missing GDK_SCROLL_MASK to signal area (need for gtk3).
 		Added default "maybe" option for use_gestures rc variable such
 		that it converts to yes if a touchscreen is detected.
+		Added F11 fullscreen mode toggle.

@@ -683,7 +683,11 @@ if(!GLOBALS->use_toolbutton_interface)
 	mainbox=XXX_gtk_hbox_new(FALSE, 0);
 	}
 
+#ifndef WAVE_ALLOW_GTK3_HEADER_BAR
 gtk_widget_show(mainbox);
+#endif
+GLOBALS->time_mainbox = mainbox;
+
 eventbox=gtk_event_box_new();
 gtk_container_add(GTK_CONTAINER(eventbox), mainbox);
 
@@ -699,7 +703,6 @@ if(!GLOBALS->use_toolbutton_interface)
 	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->curtimewid_currenttime_c_1, TRUE, FALSE, 0);
 	gtk_widget_show(GLOBALS->curtimewid_currenttime_c_1);
 	}
-#ifndef WAVE_ALLOW_GTK3_HEADER_BAR
 	else
 	{
 	GtkWidget *dummy;
@@ -728,7 +731,6 @@ if(!GLOBALS->use_toolbutton_interface)
 	gtk_box_pack_start(GTK_BOX(mainbox), GLOBALS->curtimewid_currenttime_c_1, TRUE, FALSE, 0);
 	gtk_widget_show(GLOBALS->curtimewid_currenttime_c_1);
 	}
-#endif
 
 return(eventbox);
 }
