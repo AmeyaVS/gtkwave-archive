@@ -232,3 +232,147 @@ Momentum scrolling fundamentals:
 https://ariya.io/2011/10/flick-list-with-its-momentum-scrolling-and-deceleration
 
 ===
+
+Notes on GMenu usage so they don't get lost if there is a forced migration to them:
+
+##############################
+
+#ifdef WAVE_USE_GTK_APPLICATION
+GtkApplication *app = NULL;
+int my_argc;
+char **my_argv;
+
+static void
+activate_main (GApplication *app,
+          gpointer      user_data)
+{
+printf("XXX activate\n");
+main_2(0, my_argc, my_argv);
+}
+
+
+int main(int argc, char *argv[])
+{
+int status;
+
+app = gtk_application_new ("org.gnome.example", G_APPLICATION_FLAGS_NONE);
+g_signal_connect (app, "activate", G_CALLBACK (activate_main), NULL);
+my_argc = argc;
+my_argv = argv;
+status = g_application_run (G_APPLICATION (app), 1, argv);
+g_object_unref (app);
+
+printf("status = %d\n", status);
+return status;
+}
+#else
+int main(int argc, char *argv[])
+{
+return(main_2(0, argc, argv));
+}
+#endif
+
+##############################
+
+#define WAVE_GTKIFE(a,b,c,d,e) {a,b,c,d,e,NULL,"app." #d}
+
+struct gtkwave_mlist_t
+{
+  gchar *path;
+  gchar *accelerator;
+
+  gtkwave_mlist_callback callback;
+  guint                  callback_action;
+
+  /* possible values:
+   * "<Item>"           -> create a simple item
+   * "<ToggleItem>"     -> create a toggle item
+   * "<Separator>"	-> create a separator
+   */
+  gchar          *item_type;
+
+  /* Extra data for some item types:
+   *  ImageItem  -> pointer to inlined pixbuf stream
+   *  StockItem  -> name of stock item
+   */
+  gconstpointer extra_data;
+
+  const char *detailed_action_name;
+};
+
+##############################
+
+static void activate_cb (GSimpleAction *action,
+                     GVariant      *parameter,
+                     gpointer       user_data)
+{
+printf("XXX %p '%s'\n", user_data, menu_items[(intptr_t)user_data].path); //
+}
+
+static void *alt_menu_walk_2(gtkwave_mlist_t *mi, struct menu_item_t *lst, int depth)
+{
+struct menu_item_t *ptr = lst;
+struct menu_item_t *optr;
+GMenu *menu = g_menu_new();
+GMenu *tmenu = g_menu_new();
+
+while(ptr)
+	{
+	/*  mi[ptr->idx] is menu item */
+	int skip = 0;
+	int tog = ((!strcmp(mi[ptr->idx].item_type, "<ToggleItem>")) && !ptr->child);
+
+	if(!strcmp(mi[ptr->idx].item_type, "<Separator>"))
+		{
+		skip = 1;
+		if(ptr->next)
+			{
+			g_menu_append_section (menu, NULL, G_MENU_MODEL (tmenu));
+			g_object_unref (tmenu);
+			tmenu = g_menu_new();
+			}
+		}
+
+	if(ptr->child)
+		{
+		GMenu *cmenu = alt_menu_walk_2(mi, ptr->child, depth+1);
+		g_menu_append_submenu (tmenu, ptr->name, G_MENU_MODEL (cmenu));
+		}
+		else
+		{
+		if(!skip) 
+			{
+			const char *dit = mi[ptr->idx].detailed_action_name;
+			const GActionEntry app_entries = { dit+4, activate_cb, NULL, tog ? "true" : NULL, NULL }; /* dit string is "app.whatever" */
+			g_action_map_add_action_entries (G_ACTION_MAP (app), &app_entries, 1, (gpointer)(intptr_t)mi[ptr->idx].callback_action);
+			g_menu_append (tmenu, ptr->name, dit);
+
+			const gchar *accels[2];
+			accels[0] = mi[ptr->idx].accelerator;
+			accels[1] = NULL;
+			gtk_application_set_accels_for_action (GTK_APPLICATION (app), dit, accels);
+			}
+		}
+
+	optr = ptr;
+	ptr = ptr->next;
+
+	free_2(optr->name);
+	free_2(optr);
+	}
+
+g_menu_append_section (menu, NULL, G_MENU_MODEL (tmenu));
+g_object_unref (tmenu);
+
+if(!depth)
+	{
+	menu = (void *)gtk_menu_bar_new_from_model (G_MENU_MODEL (menu));
+	gtk_application_add_window (app, GTK_WINDOW(GLOBALS->mainwindow));
+	}
+
+return(menu);
+}
+
+##############################
+
+===
