@@ -204,6 +204,7 @@ NULL, /* base_or_curtime_label_currenttime_c_1 60 */
 -1, /* min_time 64 */
 ~0, /* display_grid 65 */
 0, /* fullscreen */
+1, /* show_toolbar */
 NULL, /* time_mainbox */
 1, /* time_scale 66 */
 'n', /* time_dimension 67 */
@@ -1882,6 +1883,7 @@ void reload_into_new_context_2(void)
  new_globals->show_base = GLOBALS->show_base;
  new_globals->display_grid = GLOBALS->display_grid;
  new_globals->fullscreen = GLOBALS->fullscreen;
+ new_globals->show_toolbar = GLOBALS->show_toolbar;
  new_globals->time_mainbox = GLOBALS->time_mainbox;
  new_globals->highlight_wavewindow = GLOBALS->highlight_wavewindow;
  new_globals->fill_waveform = GLOBALS->fill_waveform;
@@ -2847,6 +2849,7 @@ switch(type)
 							GLOBALS->show_base = g_old->show_base;
 							GLOBALS->display_grid = g_old->display_grid;
 							GLOBALS->fullscreen = g_old->fullscreen;
+							GLOBALS->show_toolbar = g_old->show_toolbar;
 							GLOBALS->time_mainbox = g_old->time_mainbox;
 							GLOBALS->highlight_wavewindow = g_old->highlight_wavewindow;
 							GLOBALS->fill_waveform = g_old->fill_waveform;

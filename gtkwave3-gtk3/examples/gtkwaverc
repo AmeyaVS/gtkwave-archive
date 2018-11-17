@@ -286,10 +286,13 @@ accel "/Markers/Find Next Edge" (null)
 accel "/Markers/<separator>" (null)
 accel "/Markers/Alternate Wheel Mode" (null)
 accel "/Markers/<separator>" (null)
-accel "/Markers/Wave Scrolling" F9
+accel "/Markers/Wave Scrolling" (null)
 accel "/Markers/Locking/Lock to Lesser Named Marker" Q
 accel "/Markers/Locking/Lock to Greater Named Marker" W
 accel "/Markers/Locking/Unlock from Named Marker" O
+accel "/View/Fullscreen" F11
+accel "/View/Show Toolbar" F9
+accel "/View/<separator>" (null)
 accel "/View/Show Grid" <Alt>G
 accel "/View/<separator>" (null)
 accel "/View/Show Wave Highlight" (null)
@@ -307,7 +310,7 @@ accel "/View/<separator>" (null)
 accel "/View/Center Zooms" F8
 accel "/View/<separator>" (null)
 accel "/View/Toggle Delta-Frequency" (null)
-accel "/View/Toggle Max-Marker" F10
+accel "/View/Toggle Max-Marker" (null)
 accel "/View/<separator>" (null)
 accel "/View/Constant Marker Update" F11
 accel "/View/<separator>" (null)

@@ -7403,6 +7403,42 @@ if(GLOBALS->helpbox_is_active)
 }
 
 /**/
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+void menu_toolbar(gpointer null_data, guint callback_action, GtkWidget *widget)
+{
+(void)null_data;
+(void)callback_action;
+(void)widget;
+
+if(GLOBALS->helpbox_is_active)
+        {
+        help_text_bold("\n\nShow Toolbar");
+        help_text(
+		" toggles the visibility status of the toolbar."
+        );
+        }
+	else
+	{
+	GLOBALS->show_toolbar = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_TOOLBAR]));
+	if(GLOBALS->show_toolbar)
+		{
+		if(GLOBALS->top_table) gtk_widget_show(GLOBALS->top_table);
+		}
+		else
+		{
+		if(GLOBALS->top_table) gtk_widget_hide(GLOBALS->top_table);
+		}
+
+	if(GLOBALS->wave_hslider)
+		{
+		g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)),"changed");
+		g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)),"value_changed");
+		}
+	DEBUG(printf("Show Toolbar\n"));
+	}
+}
+#endif
+/**/
 void menu_show_grid(gpointer null_data, guint callback_action, GtkWidget *widget)
 {
 (void)null_data;
@@ -7778,13 +7814,16 @@ static gtkwave_mlist_t menu_items[] =
     WAVE_GTKIFE("/Markers/Find Next Edge", NULL, service_right_edge_marshal, WV_MENU_SRE, "<Item>"),
     WAVE_GTKIFE("/Markers/<separator>", NULL, NULL, WV_MENU_SEP8B, "<Separator>"),
     WAVE_GTKIFE("/Markers/Alternate Wheel Mode", NULL, menu_altwheel, WV_MENU_HSWM, "<ToggleItem>"),
-    WAVE_GTKIFE("/Markers/Wave Scrolling", "F9", wave_scrolling_on, WV_MENU_MWSON, "<ToggleItem>"),
+    WAVE_GTKIFE("/Markers/Wave Scrolling", NULL, wave_scrolling_on, WV_MENU_MWSON, "<ToggleItem>"),
 
     WAVE_GTKIFE("/Markers/Locking/Lock to Lesser Named Marker", "Q", lock_marker_left, WV_MENU_MLKLT, "<Item>"),
     WAVE_GTKIFE("/Markers/Locking/Lock to Greater Named Marker", "W", lock_marker_right, WV_MENU_MLKRT, "<Item>"),
     WAVE_GTKIFE("/Markers/Locking/Unlock from Named Marker", "O", unlock_marker, WV_MENU_MLKOFF, "<Item>"),
 
     WAVE_GTKIFE("/View/Fullscreen", "F11", menu_fullscreen, WV_MENU_FULLSCR, "<ToggleItem>"),
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+    WAVE_GTKIFE("/View/Show Toolbar", "F9", menu_toolbar, WV_MENU_TOOLBAR, "<ToggleItem>"),
+#endif
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP8C, "<Separator>"),
     WAVE_GTKIFE("/View/Show Grid", "<Alt>G", menu_show_grid, WV_MENU_VSG, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP9, "<Separator>"),
@@ -7804,7 +7843,7 @@ static gtkwave_mlist_t menu_items[] =
     WAVE_GTKIFE("/View/Center Zooms", "F8", menu_center_zooms, WV_MENU_VCZ, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP12, "<Separator>"),
     WAVE_GTKIFE("/View/Toggle Delta-Frequency", NULL, menu_toggle_delta_or_frequency, WV_MENU_VTDF, "<Item>"),
-    WAVE_GTKIFE("/View/Toggle Max-Marker", "F10", menu_toggle_max_or_marker, WV_MENU_VTMM, "<Item>"),
+    WAVE_GTKIFE("/View/Toggle Max-Marker", NULL, menu_toggle_max_or_marker, WV_MENU_VTMM, "<Item>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP13, "<Separator>"),
     WAVE_GTKIFE("/View/Constant Marker Update", NULL, menu_enable_constant_marker_update, WV_MENU_VCMU, "<ToggleItem>"),
     WAVE_GTKIFE("/View/<separator>", NULL, NULL, WV_MENU_SEP14, "<Separator>"),
@@ -7889,6 +7928,9 @@ GLOBALS->quiet_checkmenu = 1;
 
 gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_VZPS]), GLOBALS->zoom_pow10_snap);
 gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_FULLSCR]), GLOBALS->fullscreen);
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_TOOLBAR]), GLOBALS->show_toolbar);
+#endif
 gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_VSG]), GLOBALS->display_grid);
 gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_SHW]), GLOBALS->highlight_wavewindow);
 gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_FILL1]), GLOBALS->fill_waveform);
