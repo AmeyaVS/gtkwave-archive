@@ -1687,3 +1687,4 @@
 		fonts are in use.
 		Added missing GDK_SCROLL_MASK to signal area (need for gtk3,
 		but not for other versions for some reason).
+3.3.97	18nov18	Version bump in SVN.
