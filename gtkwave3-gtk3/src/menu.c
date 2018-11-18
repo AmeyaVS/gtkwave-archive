@@ -8900,8 +8900,6 @@ void do_popup_main_menu (GtkWidget *my_widget, GdkEventButton *event)
 
   if(!GLOBALS->main_popup_menu)
     {
-    int nmenu_items = sizeof(menu_items) / sizeof(menu_items[0]);
-
     GLOBALS->main_popup_menu = menu = alt_menu_top(GLOBALS->mainwindow);
     }
     else

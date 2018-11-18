@@ -1820,6 +1820,10 @@ static void DNDBeginCB(
 static gboolean DNDFailedCB(
         GtkWidget *widget, GdkDragContext *context, GtkDragResult result)
 {
+(void)widget;
+(void)context;
+(void)result;
+
 GLOBALS->dnd_state = 0;
 GLOBALS->tree_dnd_begin = VIEW_DRAG_INACTIVE;
 GLOBALS->tree_dnd_requested = 0;

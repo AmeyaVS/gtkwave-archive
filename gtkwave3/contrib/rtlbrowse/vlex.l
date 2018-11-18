@@ -32,6 +32,8 @@ char *v_preproc_name = NULL;
 
 static int v_preproc(char *buf, int max_size)
 {
+(void)max_size;
+
 int ch;
 
 if(!v_preproc_initialized)

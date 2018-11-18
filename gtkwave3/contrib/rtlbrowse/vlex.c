@@ -998,6 +998,8 @@ char *v_preproc_name = NULL;
 
 static int v_preproc(char *buf, int max_size)
 {
+(void)max_size;
+
 int ch;
 
 if(!v_preproc_initialized)
@@ -1025,7 +1027,7 @@ if(ch!=EOF)
 
 
 
-#line 1029 "vlex.c"
+#line 1031 "vlex.c"
 
 #define INITIAL 0
 #define CMNT 1
@@ -1209,9 +1211,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 65 "vlex.l"
+#line 67 "vlex.l"
 
-#line 1215 "vlex.c"
+#line 1217 "vlex.c"
 
 	if ( !(yy_init) )
 		{
@@ -1296,704 +1298,704 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 66 "vlex.l"
+#line 68 "vlex.l"
 { BEGIN CMNT; return V_CMT; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 67 "vlex.l"
+#line 69 "vlex.l"
 { return V_CMT; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 68 "vlex.l"
+#line 70 "vlex.l"
 { BEGIN INITIAL; return V_CMT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 69 "vlex.l"
+#line 71 "vlex.l"
 { return V_CMT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 70 "vlex.l"
+#line 72 "vlex.l"
 { return V_CMT; }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 71 "vlex.l"
+#line 73 "vlex.l"
 { my_yylineno++; return V_CMT; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 73 "vlex.l"
+#line 75 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 74 "vlex.l"
+#line 76 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 75 "vlex.l"
+#line 77 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 76 "vlex.l"
+#line 78 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 77 "vlex.l"
+#line 79 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 78 "vlex.l"
+#line 80 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 79 "vlex.l"
+#line 81 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 80 "vlex.l"
+#line 82 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 81 "vlex.l"
+#line 83 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 82 "vlex.l"
+#line 84 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 83 "vlex.l"
+#line 85 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 84 "vlex.l"
+#line 86 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 85 "vlex.l"
+#line 87 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 86 "vlex.l"
+#line 88 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 87 "vlex.l"
+#line 89 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 88 "vlex.l"
+#line 90 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 89 "vlex.l"
+#line 91 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 90 "vlex.l"
+#line 92 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 91 "vlex.l"
+#line 93 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 92 "vlex.l"
+#line 94 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 93 "vlex.l"
+#line 95 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 94 "vlex.l"
+#line 96 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 95 "vlex.l"
+#line 97 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 96 "vlex.l"
+#line 98 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 97 "vlex.l"
+#line 99 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 98 "vlex.l"
+#line 100 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 99 "vlex.l"
+#line 101 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 100 "vlex.l"
+#line 102 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 101 "vlex.l"
+#line 103 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 102 "vlex.l"
+#line 104 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 103 "vlex.l"
+#line 105 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 104 "vlex.l"
+#line 106 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 105 "vlex.l"
+#line 107 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 106 "vlex.l"
+#line 108 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 107 "vlex.l"
+#line 109 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 108 "vlex.l"
+#line 110 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 109 "vlex.l"
+#line 111 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 110 "vlex.l"
+#line 112 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 111 "vlex.l"
+#line 113 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 112 "vlex.l"
+#line 114 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 113 "vlex.l"
+#line 115 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 114 "vlex.l"
+#line 116 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 115 "vlex.l"
+#line 117 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 116 "vlex.l"
+#line 118 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 117 "vlex.l"
+#line 119 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 118 "vlex.l"
+#line 120 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 119 "vlex.l"
+#line 121 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 120 "vlex.l"
+#line 122 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 121 "vlex.l"
+#line 123 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 122 "vlex.l"
+#line 124 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 123 "vlex.l"
+#line 125 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 124 "vlex.l"
+#line 126 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 125 "vlex.l"
+#line 127 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 126 "vlex.l"
+#line 128 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 127 "vlex.l"
+#line 129 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 128 "vlex.l"
+#line 130 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 129 "vlex.l"
+#line 131 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 130 "vlex.l"
+#line 132 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 131 "vlex.l"
+#line 133 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 132 "vlex.l"
+#line 134 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 133 "vlex.l"
+#line 135 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 134 "vlex.l"
+#line 136 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 135 "vlex.l"
+#line 137 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 136 "vlex.l"
+#line 138 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 137 "vlex.l"
+#line 139 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 138 "vlex.l"
+#line 140 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 139 "vlex.l"
+#line 141 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 140 "vlex.l"
+#line 142 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 141 "vlex.l"
+#line 143 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 142 "vlex.l"
+#line 144 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 143 "vlex.l"
+#line 145 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 144 "vlex.l"
+#line 146 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 145 "vlex.l"
+#line 147 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 146 "vlex.l"
+#line 148 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 147 "vlex.l"
+#line 149 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 148 "vlex.l"
+#line 150 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 149 "vlex.l"
+#line 151 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 150 "vlex.l"
+#line 152 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 151 "vlex.l"
+#line 153 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 152 "vlex.l"
+#line 154 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 153 "vlex.l"
+#line 155 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 154 "vlex.l"
+#line 156 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 155 "vlex.l"
+#line 157 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 156 "vlex.l"
+#line 158 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 157 "vlex.l"
+#line 159 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 158 "vlex.l"
+#line 160 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 159 "vlex.l"
+#line 161 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 160 "vlex.l"
+#line 162 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 162 "vlex.l"
+#line 164 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 163 "vlex.l"
+#line 165 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 164 "vlex.l"
+#line 166 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 165 "vlex.l"
+#line 167 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 166 "vlex.l"
+#line 168 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 167 "vlex.l"
+#line 169 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 168 "vlex.l"
+#line 170 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 169 "vlex.l"
+#line 171 "vlex.l"
 { return V_KW; }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 171 "vlex.l"
+#line 173 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 172 "vlex.l"
+#line 174 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 173 "vlex.l"
+#line 175 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 174 "vlex.l"
+#line 176 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 175 "vlex.l"
+#line 177 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 176 "vlex.l"
+#line 178 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 177 "vlex.l"
+#line 179 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 178 "vlex.l"
+#line 180 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 179 "vlex.l"
+#line 181 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 180 "vlex.l"
+#line 182 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 181 "vlex.l"
+#line 183 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 182 "vlex.l"
+#line 184 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 183 "vlex.l"
+#line 185 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 184 "vlex.l"
+#line 186 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 185 "vlex.l"
+#line 187 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 186 "vlex.l"
+#line 188 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 187 "vlex.l"
+#line 189 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 188 "vlex.l"
+#line 190 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 189 "vlex.l"
+#line 191 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 190 "vlex.l"
+#line 192 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 191 "vlex.l"
+#line 193 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 192 "vlex.l"
+#line 194 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 193 "vlex.l"
+#line 195 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 195 "vlex.l"
+#line 197 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 196 "vlex.l"
+#line 198 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 197 "vlex.l"
+#line 199 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 198 "vlex.l"
+#line 200 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 199 "vlex.l"
+#line 201 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 200 "vlex.l"
+#line 202 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 201 "vlex.l"
+#line 203 "vlex.l"
 { return V_KW_2005; }
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 203 "vlex.l"
+#line 205 "vlex.l"
 { return V_MODULE; }
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 204 "vlex.l"
+#line 206 "vlex.l"
 { return V_MODULE; }
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 205 "vlex.l"
+#line 207 "vlex.l"
 { return V_MODULE; }
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 207 "vlex.l"
+#line 209 "vlex.l"
 { return V_ENDMODULE; }
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 208 "vlex.l"
+#line 210 "vlex.l"
 { return V_ENDMODULE; }
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 210 "vlex.l"
+#line 212 "vlex.l"
 { return V_PREPROC_WS; }
 	YY_BREAK
 case 139:
 /* rule 139 can match eol */
 YY_RULE_SETUP
-#line 211 "vlex.l"
+#line 213 "vlex.l"
 { my_yylineno++; BEGIN INITIAL; return V_WS; }
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 213 "vlex.l"
+#line 215 "vlex.l"
 { 
 							if(is_builtin_define (yytext+1, yyleng-1))
 								{
@@ -2006,91 +2008,91 @@ YY_RULE_SETUP
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 224 "vlex.l"
+#line 226 "vlex.l"
 { return V_ID; }
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 225 "vlex.l"
+#line 227 "vlex.l"
 { return V_FUNC; }
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 226 "vlex.l"
+#line 228 "vlex.l"
 { return V_ID; }
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 227 "vlex.l"
+#line 229 "vlex.l"
 { return V_ID; }
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 228 "vlex.l"
+#line 230 "vlex.l"
 { return V_PORT; }
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 229 "vlex.l"
+#line 231 "vlex.l"
 { return V_NUMBER; }
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 230 "vlex.l"
+#line 232 "vlex.l"
 { return V_NUMBER; }
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 231 "vlex.l"
+#line 233 "vlex.l"
 { return V_NUMBER; }
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 232 "vlex.l"
+#line 234 "vlex.l"
 { return V_NUMBER; }
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 233 "vlex.l"
+#line 235 "vlex.l"
 { return V_NUMBER; }
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 234 "vlex.l"
+#line 236 "vlex.l"
 { return V_IGNORE; }
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 235 "vlex.l"
+#line 237 "vlex.l"
 { return V_WS; }
 	YY_BREAK
 case 153:
 /* rule 153 can match eol */
 YY_RULE_SETUP
-#line 236 "vlex.l"
+#line 238 "vlex.l"
 { my_yylineno++; return V_WS; }
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 237 "vlex.l"
+#line 239 "vlex.l"
 { return V_CMT; }
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 238 "vlex.l"
+#line 240 "vlex.l"
 { return V_STRING; }
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-#line 239 "vlex.l"
+#line 241 "vlex.l"
 { return V_IGNORE; } 
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 241 "vlex.l"
+#line 243 "vlex.l"
 ECHO;
 	YY_BREAK
-#line 2094 "vlex.c"
+#line 2096 "vlex.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(CMNT):
 case YY_STATE_EOF(PREPROC):
@@ -3086,7 +3088,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 241 "vlex.l"
+#line 243 "vlex.l"
 
 
 

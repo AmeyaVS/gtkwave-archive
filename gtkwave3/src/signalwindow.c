@@ -100,6 +100,10 @@ GLOBALS->dnd_state = 1;
 static gboolean DNDFailedCB(
         GtkWidget *widget, GdkDragContext *context, GtkDragResult result)
 {
+(void)widget;
+(void)context;
+(void)result;
+
 GLOBALS->dnd_cursor_timer = 0;
 GLOBALS->dnd_state = 0;
 GLOBALS->standard_trace_dnd_degate = 1;

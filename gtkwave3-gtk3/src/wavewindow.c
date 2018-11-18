@@ -2368,7 +2368,7 @@ if(GLOBALS->swipe_init_time)
 		if(!GLOBALS->wavearea_drag_active)
 			{
 			TimeType dest = GLOBALS->swipe_init_start - (GLOBALS->wavearea_gesture_swipe_velocity_x * GLOBALS->nspx * WAVE_GTK3_SWIPE_VEL_VS_DIST_FACTOR) * (1.0 - decaying);
-			gdouble vp = -GLOBALS->wavearea_gesture_swipe_velocity_x;
+			/* gdouble vp = -GLOBALS->wavearea_gesture_swipe_velocity_x; */
 			hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 			ntinc = inc = dest - gtk_adjustment_get_value(hadj);
 			if(ntinc)
@@ -2400,7 +2400,7 @@ if(GLOBALS->swipe_init_time)
 		if(!GLOBALS->wavearea_drag_active)
 			{
 			TimeType dest = GLOBALS->swipe_init_start - (GLOBALS->wavearea_gesture_swipe_velocity_x * GLOBALS->nspx * WAVE_GTK3_SWIPE_VEL_VS_DIST_FACTOR) * (1.0 - decaying);
-			gdouble vp = GLOBALS->wavearea_gesture_swipe_velocity_x;
+			/* gdouble vp = GLOBALS->wavearea_gesture_swipe_velocity_x; */
 			hadj=GTK_ADJUSTMENT(GLOBALS->wave_hslider);
 
 				if(dest>=GLOBALS->tims.first) gtk_adjustment_set_value(hadj, dest);
