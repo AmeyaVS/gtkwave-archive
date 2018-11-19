@@ -16,6 +16,11 @@
 #include "symbol.h"
 #include "debug.h"
 
+/* GDK_KEY_equal defined from gtk2 2.22 onwards. */
+#ifndef GDK_KEY_equal
+#define GDK_KEY_equal GDK_equal
+#endif
+
 #undef FOCUS_DEBUG_MSGS
 
 /*
