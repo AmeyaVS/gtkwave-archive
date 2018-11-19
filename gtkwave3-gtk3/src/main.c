@@ -288,6 +288,8 @@ void wave_gtk_window_set_title(GtkWindow *window, const gchar *title, int typ, i
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 if(!window || !title) return;
 
+
+
 if(!GLOBALS->disable_menus)
 	{
 	if(!GLOBALS->header_bar)
@@ -309,11 +311,17 @@ if(!GLOBALS->disable_menus)
 		gtk_widget_show(pan_dn);
 		gtk_tooltips_set_tip_2(pan_dn, "Show toolbar");
 
+		GtkWidget *fs = gtk_button_new_from_icon_name("view-fullscreen", GTK_ICON_SIZE_BUTTON);
+		gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),fs);
+		gtk_widget_show(fs);
+		gtk_tooltips_set_tip_2(fs, "Fullscreen");
+
 		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":minimize,maximize,close");
 		gtk_widget_show(GLOBALS->header_bar);
 
 		g_signal_connect (XXX_GTK_OBJECT (pan_up), "released", G_CALLBACK(service_pan_up), NULL);
 		g_signal_connect (XXX_GTK_OBJECT (pan_dn), "released", G_CALLBACK(service_pan_dn), NULL);
+		g_signal_connect (XXX_GTK_OBJECT (fs),     "released", G_CALLBACK(service_fullscreen), NULL);
 		}
 		else
 		{

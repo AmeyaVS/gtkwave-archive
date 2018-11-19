@@ -29,6 +29,7 @@
 
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 void do_popup_main_menu (GtkWidget *my_widget, GdkEventButton *event);
+void service_fullscreen(GtkWidget *text, gpointer data);
 #endif
 
 void do_popup_menu (GtkWidget *my_widget, GdkEventButton *event);

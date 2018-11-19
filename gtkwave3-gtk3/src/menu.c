@@ -7402,6 +7402,16 @@ if(GLOBALS->helpbox_is_active)
 
 }
 
+void service_fullscreen(GtkWidget *text, gpointer data)
+{
+(void)text;
+(void)data;
+
+gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_wlist[WV_MENU_FULLSCR]), TRUE);
+
+menu_fullscreen(NULL, 0, NULL);
+}
+
 /**/
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 void menu_toolbar(gpointer null_data, guint callback_action, GtkWidget *widget)
