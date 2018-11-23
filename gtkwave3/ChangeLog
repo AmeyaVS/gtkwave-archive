@@ -1687,4 +1687,4 @@
 		fonts are in use.
 		Added missing GDK_SCROLL_MASK to signal area (need for gtk3,
 		but not for other versions for some reason).
-3.3.97	18nov18	Version bump in SVN.
+3.3.97	23nov18	Need to	set menu_wlist entry NULL on gtk_widget_destroy().

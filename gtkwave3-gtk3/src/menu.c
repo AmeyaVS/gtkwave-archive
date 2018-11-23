@@ -3699,7 +3699,22 @@ menu_new_viewer_tab_cleanup_2(char *fname, int optimize_vcd)
 
 		if(g_old->loaded_file_type == MISSING_FILE) /* remove original "blank" page */
 			{
-                        if(g_old->missing_file_toolbar) gtk_widget_set_sensitive(g_old->missing_file_toolbar, TRUE);
+                        if(g_old->missing_file_toolbar) 
+				{
+#ifndef WAVE_ALLOW_GTK3_HEADER_BAR
+				gtk_widget_set_sensitive(g_old->missing_file_toolbar, TRUE);
+#else
+	                        GList *chld = gtk_container_get_children (GTK_CONTAINER(GLOBALS->missing_file_toolbar));
+	                        GList *p = chld;
+	                        while(p)
+	                                {
+					GtkWidget *wp = p->data;
+	                                gtk_widget_set_sensitive(GTK_WIDGET(wp), TRUE);
+	                                p = p->next;
+	                                }
+	                        g_list_free(chld);
+#endif
+				}
 			menu_set_sensitive();
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(g_old->notebook), g_old->this_context_page);
 			set_GLOBALS(g_old);
@@ -8780,24 +8795,24 @@ if(
   (GLOBALS->socket_xid)||
   (GLOBALS->partial_vcd))
 	{
-	gtk_widget_destroy(menu_wlist[WV_MENU_FONVT]);
+	gtk_widget_destroy(menu_wlist[WV_MENU_FONVT]); menu_wlist[WV_MENU_FONVT] = NULL;
 	}
 
 if(!GLOBALS->partial_vcd)
 	{
-	gtk_widget_destroy(menu_wlist[WV_MENU_VZDYN]);
-	gtk_widget_destroy(menu_wlist[WV_MENU_VZDYNE]);
+	gtk_widget_destroy(menu_wlist[WV_MENU_VZDYN]); menu_wlist[WV_MENU_VZDYN] = NULL;
+	gtk_widget_destroy(menu_wlist[WV_MENU_VZDYNE]); menu_wlist[WV_MENU_VZDYNE] = NULL;
 	}
 
 if(GLOBALS->loaded_file_type == DUMPLESS_FILE)
 	{
-	gtk_widget_destroy(menu_wlist[WV_MENU_FRW]);
+	gtk_widget_destroy(menu_wlist[WV_MENU_FRW]); menu_wlist[WV_MENU_FRW] = NULL;
 	}
 
 if(GLOBALS->loaded_file_type != LXT_FILE)
 	{
-	gtk_widget_destroy(menu_wlist[WV_MENU_SEP18]);
-	gtk_widget_destroy(menu_wlist[WV_MENU_LXTCC2Z]);
+	gtk_widget_destroy(menu_wlist[WV_MENU_SEP18]); menu_wlist[WV_MENU_SEP18] = NULL;
+	gtk_widget_destroy(menu_wlist[WV_MENU_LXTCC2Z]); menu_wlist[WV_MENU_LXTCC2Z] = NULL;
 	}
 
 gtk_window_add_accel_group(GTK_WINDOW(window), global_accel);

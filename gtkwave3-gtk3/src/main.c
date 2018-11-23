@@ -2371,7 +2371,19 @@ g_signal_connect(theApp, "NSApplicationBlockTermination", G_CALLBACK(deal_with_t
 		GLOBALS->missing_file_toolbar = tb;
 		if(GLOBALS->loaded_file_type == MISSING_FILE)
 			{
+#ifndef WAVE_ALLOW_GTK3_HEADER_BAR
 			gtk_widget_set_sensitive(GLOBALS->missing_file_toolbar, FALSE);
+#else
+			GList *chld = gtk_container_get_children (GTK_CONTAINER(GLOBALS->missing_file_toolbar));
+			GList *p = chld;
+                        while(p)
+                                {
+                                GtkWidget *wp = p->data;
+                                if(p != chld) gtk_widget_set_sensitive(GTK_WIDGET(wp), FALSE);
+                                p = p->next;
+                                }
+			g_list_free(chld);
+#endif
 			}
 		} /* of ...if(mainwindow_already_built) */
 	}
