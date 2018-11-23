@@ -1741,4 +1741,5 @@
 		Added F11 fullscreen mode toggle.
 		Added F10 to enable main menu.
 		Added F9 toolbar visibility toggle.
-3.3.97	19nov18	Added fullscreen button to header bar.
+3.3.97	22nov18	Added fullscreen button to header bar.
+		Added gtk-application-prefer-dark-theme support.

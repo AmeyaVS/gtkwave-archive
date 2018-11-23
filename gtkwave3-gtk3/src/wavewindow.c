@@ -1776,12 +1776,22 @@ void make_sigarea_gcs(GtkWidget *signalarea)
 
 if(!GLOBALS->made_sgc_contexts_wavewindow_c_1)
 	{
-	GLOBALS->rgb_gc_white = XXX_alloc_color(GLOBALS->color_white);
-	GLOBALS->rgb_gc_black = XXX_alloc_color(GLOBALS->color_black);
-	GLOBALS->rgb_gc.gc_ltgray= XXX_alloc_color(GLOBALS->color_ltgray);
+	gboolean dark = GLOBALS->use_dark;
+
+#if GTK_CHECK_VERSION(3,0,0)
+	if(!dark)
+		{
+		g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &dark);
+		GLOBALS->use_dark = dark;
+		}
+#endif
+
+	GLOBALS->rgb_gc_white = dark ? XXX_alloc_color(GLOBALS->color_black) : XXX_alloc_color(GLOBALS->color_white);
+	GLOBALS->rgb_gc_black = dark ? XXX_alloc_color(GLOBALS->color_white) : XXX_alloc_color(GLOBALS->color_black);
+	GLOBALS->rgb_gc.gc_ltgray= dark ? XXX_alloc_color(GLOBALS->color_black) : XXX_alloc_color(GLOBALS->color_ltgray);
 	GLOBALS->rgb_gc.gc_normal= XXX_alloc_color(GLOBALS->color_normal);
-	GLOBALS->rgb_gc.gc_mdgray= XXX_alloc_color(GLOBALS->color_mdgray);
-	GLOBALS->rgb_gc.gc_dkgray= XXX_alloc_color(GLOBALS->color_dkgray);
+	GLOBALS->rgb_gc.gc_mdgray= dark ? XXX_alloc_color(GLOBALS->color_dkgray) : XXX_alloc_color(GLOBALS->color_mdgray);
+	GLOBALS->rgb_gc.gc_dkgray= dark ? XXX_alloc_color(GLOBALS->color_white) : XXX_alloc_color(GLOBALS->color_dkgray);
 	GLOBALS->rgb_gc.gc_dkblue= XXX_alloc_color(GLOBALS->color_dkblue);
 	GLOBALS->rgb_gc.gc_brkred= XXX_alloc_color(GLOBALS->color_brkred);
 	GLOBALS->rgb_gc.gc_ltblue= XXX_alloc_color(GLOBALS->color_ltblue);
@@ -2658,17 +2668,23 @@ gtk_widget_get_allocation(GLOBALS->signalarea, &allocation);
 num_traces_displayable=allocation.height/(GLOBALS->fontheight);
 num_traces_displayable--;   /* for the time trace that is always there */
 
-cairo_set_source_rgba (GLOBALS->cr_signalpixmap, GLOBALS->rgb_gc.gc_mdgray.r, GLOBALS->rgb_gc.gc_mdgray.g, GLOBALS->rgb_gc.gc_mdgray.b, GLOBALS->rgb_gc.gc_mdgray.a);
-cairo_rectangle (GLOBALS->cr_signalpixmap, 0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight);
-cairo_fill (GLOBALS->cr_signalpixmap);
+if(!GLOBALS->use_dark)
+	{
+	cairo_set_source_rgba (GLOBALS->cr_signalpixmap, GLOBALS->rgb_gc.gc_mdgray.r, GLOBALS->rgb_gc.gc_mdgray.g, GLOBALS->rgb_gc.gc_mdgray.b, GLOBALS->rgb_gc.gc_mdgray.a);
+	cairo_rectangle (GLOBALS->cr_signalpixmap, 0, -1, GLOBALS->signal_fill_width, GLOBALS->fontheight);
+	cairo_fill (GLOBALS->cr_signalpixmap);
+	}
 
 cairo_set_source_rgba (GLOBALS->cr_signalpixmap, GLOBALS->rgb_gc_white.r, GLOBALS->rgb_gc_white.g, GLOBALS->rgb_gc_white.b, GLOBALS->rgb_gc_white.a);
 cairo_move_to (GLOBALS->cr_signalpixmap, 0.5, GLOBALS->fontheight-1+0.5);
 cairo_line_to (GLOBALS->cr_signalpixmap, GLOBALS->signal_fill_width-1+0.5, GLOBALS->fontheight-1+0.5);
 cairo_stroke (GLOBALS->cr_signalpixmap);
 
-XXX_font_engine_draw_string(GLOBALS->cr_signalpixmap, GLOBALS->signalfont, &(GLOBALS->rgb_gc_black),
-	3+xsrc+0.5, GLOBALS->fontheight-4+0.5, "Time");
+if(!GLOBALS->use_dark)
+	{
+	XXX_font_engine_draw_string(GLOBALS->cr_signalpixmap, GLOBALS->signalfont, &(GLOBALS->rgb_gc_black),
+		3+xsrc+0.5, GLOBALS->fontheight-4+0.5, "Time");
+	}
 
 t=GLOBALS->traces.first;
 trwhich=0;

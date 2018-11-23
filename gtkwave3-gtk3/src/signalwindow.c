@@ -48,17 +48,23 @@ if(GLOBALS->cr_signalpixmap)
 	DEBUG(printf("Signal HSlider Moved to %d\n",xsrc));
 	GLOBALS->right_align_active = 0;
 
-        cairo_set_source_rgba (GLOBALS->cr_signalpixmap, GLOBALS->rgb_gc.gc_mdgray.r, GLOBALS->rgb_gc.gc_mdgray.g, GLOBALS->rgb_gc.gc_mdgray.b, GLOBALS->rgb_gc.gc_mdgray.a);
-        cairo_rectangle (GLOBALS->cr_signalpixmap, 0.5, -1+0.5, GLOBALS->signal_fill_width, GLOBALS->fontheight);
-        cairo_fill (GLOBALS->cr_signalpixmap);
+	if(!GLOBALS->use_dark)
+		{
+	        cairo_set_source_rgba (GLOBALS->cr_signalpixmap, GLOBALS->rgb_gc.gc_mdgray.r, GLOBALS->rgb_gc.gc_mdgray.g, GLOBALS->rgb_gc.gc_mdgray.b, GLOBALS->rgb_gc.gc_mdgray.a);
+	        cairo_rectangle (GLOBALS->cr_signalpixmap, 0.5, -1+0.5, GLOBALS->signal_fill_width, GLOBALS->fontheight);
+	        cairo_fill (GLOBALS->cr_signalpixmap);
+		}
 
 	cairo_set_source_rgba (GLOBALS->cr_signalpixmap, GLOBALS->rgb_gc_white.r, GLOBALS->rgb_gc_white.g, GLOBALS->rgb_gc_white.b, GLOBALS->rgb_gc_white.a);
 	cairo_move_to (GLOBALS->cr_signalpixmap, 0.5, GLOBALS->fontheight-1+0.5);
 	cairo_line_to (GLOBALS->cr_signalpixmap, GLOBALS->signal_fill_width-1+0.5, GLOBALS->fontheight-1+0.5);
 	cairo_stroke (GLOBALS->cr_signalpixmap);
 
-	XXX_font_engine_draw_string(GLOBALS->cr_signalpixmap, GLOBALS->signalfont, &(GLOBALS->rgb_gc_black),
-        	3+xsrc+0.5, GLOBALS->fontheight-4+0.5, "Time");
+	if(!GLOBALS->use_dark)
+		{
+		XXX_font_engine_draw_string(GLOBALS->cr_signalpixmap, GLOBALS->signalfont, &(GLOBALS->rgb_gc_black),
+	        	3+xsrc+0.5, GLOBALS->fontheight-4+0.5, "Time");
+		}
 
 	if(GLOBALS->signalarea_has_focus)
 		{

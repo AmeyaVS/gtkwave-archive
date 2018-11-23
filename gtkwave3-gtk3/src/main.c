@@ -131,6 +131,7 @@ GLOBALS->zoom_dyne = g_old->zoom_dyne;
 GLOBALS->hier_ignore_escapes = g_old->hier_ignore_escapes;
 GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
 GLOBALS->use_gestures = g_old->use_gestures;
+GLOBALS->use_dark = g_old->use_dark;
 
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 GLOBALS->header_bar = g_old->header_bar;
@@ -497,6 +498,7 @@ CHDIR_GETOPT
 RPC_GETOPT3
 "  -4, --rcvar                specify single rc variable values individually\n"
 "  -5, --sstexclude           specify sst exclusion filter filename\n"
+"  -6, --dark                 set gtk-application-prefer-dark-theme = TRUE\n"
 INTR_GETOPT
 "  -C, --comphier             use compressed hierarchy names (slower)\n"
 "  -g, --giga                 use gigabyte mempacking when recoding (slower)\n"
@@ -889,6 +891,7 @@ if(!GLOBALS)
 	GLOBALS->disable_auto_comphier = old_g->disable_auto_comphier;
 	GLOBALS->sst_dbl_action_type = old_g->sst_dbl_action_type;
 	GLOBALS->use_gestures = old_g->use_gestures;
+	GLOBALS->use_dark = old_g->use_dark;
 
 	GLOBALS->cr_line_width = old_g->cr_line_width;
 
@@ -1026,10 +1029,11 @@ while (1)
 		{"restore", 0, 0, '3'},
                 {"rcvar", 1, 0, '4'},
 		{"sstexclude", 1, 0, '5'},
+		{"dark", 0, 0, '6'},
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "zf:Fon:a:Ar:dl:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:1:2:34:5:", long_options, &option_index);
+        c = getopt_long (argc, argv, "zf:Fon:a:Ar:dl:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:1:2:34:5:6", long_options, &option_index);
 
         if (c == -1) break;     /* no more args */
 
@@ -1244,6 +1248,10 @@ while (1)
 				}
 			GLOBALS->sst_exclude_filename = strdup_2(optarg);
 			}
+			break;
+
+		case '6':
+			GLOBALS->use_dark = TRUE;
 			break;
 
                 case 's':
@@ -2034,6 +2042,13 @@ if(!mainwindow_already_built)
 if(!GLOBALS->socket_xid)
 #endif
         {
+#if GTK_CHECK_VERSION(3,0,0)
+	if(GLOBALS->use_dark)
+		{
+		g_object_set(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", TRUE, NULL);
+		}
+#endif
+
 	GLOBALS->mainwindow = gtk_window_new(GLOBALS->disable_window_manager ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL);
 	wave_gtk_window_set_title(GTK_WINDOW(GLOBALS->mainwindow), GLOBALS->winname, GLOBALS->dumpfile_is_modified ? WAVE_SET_TITLE_MODIFIED: WAVE_SET_TITLE_NONE, 0);
 

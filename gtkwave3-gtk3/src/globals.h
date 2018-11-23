@@ -1373,6 +1373,7 @@ int wavearea_drag_start_y;
 char wavearea_drag_active;
 #endif
 char use_gestures;
+gboolean use_dark;
 
 
 /*
