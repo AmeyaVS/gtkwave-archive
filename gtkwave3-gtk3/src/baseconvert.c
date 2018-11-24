@@ -891,7 +891,7 @@ if(s)
 return(rv);
 }
 
-static const cvt_table[] = {
+static const unsigned char cvt_table[] = {
 AN_0    /* . */, AN_X    /* . */, AN_Z    /* . */, AN_1    /* . */, AN_H    /* . */, AN_U    /* . */, AN_W    /* . */, AN_L    /* . */,
 AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
 AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
