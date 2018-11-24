@@ -1026,24 +1026,7 @@ if(vec)
         if(*vec>AN_MSK)              /* convert as needed */
         for(i=0;i<nbits;i++)
                 {
-                switch(*(vec))
-                        {
-                        case '0': *vec++=AN_0; break;
-                        case '1': *vec++=AN_1; break;
-                        case 'X':
-                        case 'x': *vec++=AN_X; break;
-                        case 'Z':
-                        case 'z': *vec++=AN_Z; break;
-                        case 'H':
-                        case 'h': *vec++=AN_H; break;
-                        case 'U':
-                        case 'u': *vec++=AN_U; break;
-                        case 'W':
-                        case 'w': *vec++=AN_W; break;
-                        case 'L':
-                        case 'l': *vec++=AN_L; break;
-                        default:  *vec++=AN_DASH; break;
-                        }
+		vec[i] = cvt_table[(unsigned char)vec[i]];
                 }
         }
         else
@@ -1836,24 +1819,7 @@ if(vec)
         if(*vec>AN_MSK)              /* convert as needed */
         for(i=0;i<nbits;i++)
                 {
-                switch(*(vec))
-                        {
-                        case '0': *vec++=AN_0; break;
-                        case '1': *vec++=AN_1; break;
-                        case 'X':
-                        case 'x': *vec++=AN_X; break;
-                        case 'Z':
-                        case 'z': *vec++=AN_Z; break;
-                        case 'H':
-                        case 'h': *vec++=AN_H; break;
-                        case 'U':
-                        case 'u': *vec++=AN_U; break;
-                        case 'W':
-                        case 'w': *vec++=AN_W; break;
-                        case 'L':
-                        case 'l': *vec++=AN_L; break;
-                        default:  *vec++=AN_DASH; break;
-                        }
+		vec[i] = cvt_table[(unsigned char)vec[i]];
                 }
         }
         else
