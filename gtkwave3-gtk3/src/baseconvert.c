@@ -891,6 +891,41 @@ if(s)
 return(rv);
 }
 
+static const cvt_table[] = {
+AN_0    /* . */, AN_X    /* . */, AN_Z    /* . */, AN_1    /* . */, AN_H    /* . */, AN_U    /* . */, AN_W    /* . */, AN_L    /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /*   */, AN_DASH /* ! */, AN_DASH /* " */, AN_DASH /* # */, AN_DASH /* $ */, AN_DASH /* % */, AN_DASH /* & */, AN_DASH /* ' */,
+AN_DASH /* ( */, AN_DASH /* ) */, AN_DASH /* * */, AN_DASH /* + */, AN_DASH /* , */, AN_DASH /* - */, AN_DASH /* . */, AN_DASH /* / */,
+AN_0    /* 0 */, AN_1    /* 1 */, AN_DASH /* 2 */, AN_DASH /* 3 */, AN_DASH /* 4 */, AN_DASH /* 5 */, AN_DASH /* 6 */, AN_DASH /* 7 */,
+AN_DASH /* 8 */, AN_DASH /* 9 */, AN_DASH /* : */, AN_DASH /* ; */, AN_DASH /* < */, AN_DASH /* = */, AN_DASH /* > */, AN_DASH /* ? */,
+AN_DASH /* @ */, AN_DASH /* A */, AN_DASH /* B */, AN_DASH /* C */, AN_DASH /* D */, AN_DASH /* E */, AN_DASH /* F */, AN_DASH /* G */,
+AN_H    /* H */, AN_DASH /* I */, AN_DASH /* J */, AN_DASH /* K */, AN_L    /* L */, AN_DASH /* M */, AN_DASH /* N */, AN_DASH /* O */,
+AN_DASH /* P */, AN_DASH /* Q */, AN_DASH /* R */, AN_DASH /* S */, AN_DASH /* T */, AN_U    /* U */, AN_DASH /* V */, AN_W    /* W */,
+AN_X    /* X */, AN_DASH /* Y */, AN_Z    /* Z */, AN_DASH /* [ */, AN_DASH /* \ */, AN_DASH /* ] */, AN_DASH /* ^ */, AN_DASH /* _ */,
+AN_DASH /* ` */, AN_DASH /* a */, AN_DASH /* b */, AN_DASH /* c */, AN_DASH /* d */, AN_DASH /* e */, AN_DASH /* f */, AN_DASH /* g */,
+AN_H    /* h */, AN_DASH /* i */, AN_DASH /* j */, AN_DASH /* k */, AN_L    /* l */, AN_DASH /* m */, AN_DASH /* n */, AN_DASH /* o */,
+AN_DASH /* p */, AN_DASH /* q */, AN_DASH /* r */, AN_DASH /* s */, AN_DASH /* t */, AN_U    /* u */, AN_DASH /* v */, AN_W    /* w */,
+AN_X    /* x */, AN_DASH /* y */, AN_Z    /* z */, AN_DASH /* { */, AN_DASH /* | */, AN_DASH /* } */, AN_DASH /* ~ */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */,
+AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */, AN_DASH /* . */
+};
+
 int vtype(Trptr t, char *vec)
 {
 int i, nbits;
@@ -902,12 +937,12 @@ if (vec == NULL)
 nbits=t->n.nd->msi-t->n.nd->lsi;
 if(nbits<0)nbits=-nbits;
 nbits++;
-pch = ch = vec[0];
+pch = ch = cvt_table[(unsigned char)vec[0]];
 for (i = 1; i < nbits; i++)
 	{
 	ch = vec[i];
         if(ch != pch) goto miscompare;
-		}
+	}
 
 return(ch);
 
@@ -916,7 +951,7 @@ if((pch == AN_X) || (pch == AN_U)) return(pch);
 if(pch == AN_Z) return(AN_X);
 for (; i < nbits; i++)
         {
-	ch = vec[i];
+	ch = cvt_table[(unsigned char)vec[i]];
         if((ch == AN_X) || (ch == AN_U)) return(ch);
         if(ch == AN_Z) return(AN_X);
 	}
@@ -942,11 +977,11 @@ if(!t->t_filter_converted)
 
 nbits=t->n.vec->nbits;
 
-pch = ch = vec[0];
+pch = ch = cvt_table[(unsigned char)vec[0]];
 for (i = 1; i < nbits; i++)
 		{
-	ch = vec[i];
-        if(ch != pch) goto miscompare;
+		ch = cvt_table[(unsigned char)vec[i]];
+	        if(ch != pch) goto miscompare;
 		}
 
 return(ch);
@@ -956,14 +991,13 @@ if((pch == AN_X) || (pch == AN_U)) return(pch);
 if(pch == AN_Z) return(AN_X);
 for (; i < nbits; i++)
         {
-	ch = vec[i];
+	ch = cvt_table[(unsigned char)vec[i]];
         if((ch == AN_X) || (ch == AN_U)) return(ch);
         if(ch == AN_Z) return(AN_X);
 	}
 
 return(AN_COUNT);
 }
-
 
 /*
  * convert trptr+hptr vectorstring into an ascii string

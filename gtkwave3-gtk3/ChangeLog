@@ -1744,3 +1744,6 @@
 3.3.97	23nov18	Added fullscreen button to header bar.
 		Added gtk-application-prefer-dark-theme support.
 		Need to set menu_wlist entry NULL on gtk_widget_destroy().
+		Fix on vtype()/vtype2() to detect 'x' and make the coloration
+		red on newly-displayed traces.  (Bug new from Dinotrace-like
+		rendering in 3.3.96.)

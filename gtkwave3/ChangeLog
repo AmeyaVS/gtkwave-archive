@@ -1688,3 +1688,6 @@
 		Added missing GDK_SCROLL_MASK to signal area (need for gtk3,
 		but not for other versions for some reason).
 3.3.97	23nov18	Need to	set menu_wlist entry NULL on gtk_widget_destroy().
+                Fix on vtype()/vtype2()	to detect 'x' and make the coloration
+                red on newly-displayed traces. 	(Bug new from Dinotrace-like
+                rendering in 3.3.96.)
