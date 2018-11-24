@@ -940,7 +940,7 @@ nbits++;
 pch = ch = cvt_table[(unsigned char)vec[0]];
 for (i = 1; i < nbits; i++)
 	{
-	ch = vec[i];
+	ch = cvt_table[vec[i]];
         if(ch != pch) goto miscompare;
 	}
 
