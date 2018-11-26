@@ -13,6 +13,7 @@ dlg_SOURCES= \
 
 
 # hopefully this won't produce some sort of chicken and egg problem
+BUILT_SOURCES=dlg_p.c parser.dlg err.c tokens.h
 
 ANTLR= ../antlr/antlr
 # Don't worry about the ambiguity messages coming from antlr
