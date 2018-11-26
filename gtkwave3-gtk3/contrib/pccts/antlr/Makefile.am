@@ -23,7 +23,6 @@ antlr_SOURCES= \
 
 
 # what files does PCCTS generate (both ANTLR and DLG)
-BUILT_SOURCES=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h
 PCCTS_GEN=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
 
 

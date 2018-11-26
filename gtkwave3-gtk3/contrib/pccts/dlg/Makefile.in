@@ -318,7 +318,6 @@ dlg_SOURCES = \
 
 
 # hopefully this won't produce some sort of chicken and egg problem
-BUILT_SOURCES = dlg_p.c parser.dlg err.c tokens.h
 ANTLR = ../antlr/antlr
 DLG = ./dlg
 EXTRA_DIST = \
@@ -327,8 +326,7 @@ EXTRA_DIST = \
 	dlgPPC.make dlg_p.g makefile.VMS makefile1 parser.dlg \
 	watdlg.mak
 
-all: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .o .obj
@@ -497,12 +495,10 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) check-am
+check: check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
-install: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) install-am
+install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -532,7 +528,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
@@ -602,7 +597,7 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: all check install install-am install-strip
+.MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
 	clean-noinstPROGRAMS cscopelist-am ctags ctags-am distclean \

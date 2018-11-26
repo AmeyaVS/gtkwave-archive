@@ -23,7 +23,6 @@ antlr_SOURCES= \
 
 
 # what files does PCCTS generate (both ANTLR and DLG)
-BUILT_SOURCES=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
 PCCTS_GEN=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
 
 
@@ -32,7 +31,7 @@ PCCTS_GEN=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
 ANTLR= ./antlr
 # Don't worry about the ambiguity messages coming from antlr
 # for making antlr.c etc...  [should be 10 of them, I think]
-antlr.c stdpccts.h parser.dlg tokens.h err.c remap.h : $(srcdir)/antlr.g
+antlr.c stdpccts.h parser.dlg tokens.h err.c : $(srcdir)/antlr.g
 	@if test -x ${ANTLR} ; then \
 		echo "${ANTLR} -gh $(srcdir)/antlr.g" ; \
 		${ANTLR} -gh $(srcdir)/antlr.g ; \
