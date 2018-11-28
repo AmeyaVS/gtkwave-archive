@@ -1,3 +1,5 @@
+#ifndef tokens_h
+/* needed for out of tree vermin builds */
 #ifndef _VERTEX_KEYWORD_TOKENS_H
 #define _VERTEX_KEYWORD_TOKENS_H
 
@@ -187,4 +189,4 @@ V_SSHR,
 V_POW
 };
 #endif
-
+#endif
