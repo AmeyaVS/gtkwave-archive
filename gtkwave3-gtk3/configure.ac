@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(gtkwave-gtk3, 3.3.97, bybell@rocketmail.com)
+AC_INIT(gtkwave-gtk3, 3.3.98, bybell@rocketmail.com)
 AC_CONFIG_SRCDIR([src/vcd.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
@@ -836,26 +836,7 @@ AC_SUBST(TK_LDADD)
 AC_CONFIG_FILES([Makefile
 		doc/Makefile
 		contrib/Makefile
-		contrib/pccts/IBM_VISUAL_AGE_PROJECTS/Makefile
-		contrib/pccts/Makefile
-		contrib/pccts/antlr/Makefile
-		contrib/pccts/dlg/Makefile
-		contrib/pccts/h/Makefile
-		contrib/pccts/sorcerer/Makefile
-		contrib/pccts/sorcerer/h/Makefile
-		contrib/pccts/sorcerer/lib/Makefile
-		contrib/pccts/sorcerer/test/Makefile
-		contrib/pccts/sorcerer/test/test7/Makefile
-		contrib/pccts/sorcerer/testcpp/Makefile
-		contrib/pccts/support/DECmms/Makefile
-		contrib/pccts/support/Makefile
-		contrib/pccts/support/genmk/Makefile
-		contrib/pccts/support/rexpr/Makefile
-		contrib/pccts/support/set/Makefile
-		contrib/pccts/support/sym/Makefile
-		contrib/pccts/testcpp/Makefile
 		contrib/rtlbrowse/Makefile
-		contrib/vermin/Makefile
 		contrib/xml2stems/Makefile
 		contrib/bundle_for_osx/Makefile
 		contrib/fst_jni/Makefile
