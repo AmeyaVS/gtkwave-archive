@@ -614,7 +614,7 @@ if(log_level & (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | G
 	else
 #endif
 	{
-	int i;
+	gsize i;
 	for(i=0;i<n_fields;i++)
 		{
 		fprintf(stderr, "GTKWAVE | %s: %s\n", fields[i].key, (const char *)fields[i].value); /* provides exact location: much better than stock message */

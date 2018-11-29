@@ -155,7 +155,7 @@ main (int argc, char **argv)
 	    }
 	  if (0)
 	    {
-	      int ix;
+	      unsigned ix;
 	      printf ("String table:\n");
 
 	      for (ix = 1; ix < hp->nbr_str; ix++)
