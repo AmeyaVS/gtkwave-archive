@@ -777,35 +777,35 @@ void exponent_to_time_scale(signed char scale)
 switch(scale)
         {
         case 2:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 's'; break;
-        case 1:        GLOBALS->time_scale = LLDescriptor(10);
+        case 1:        GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case 0:                                        GLOBALS->time_dimension = 's'; break;
 
         case -1:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'm'; break;
-        case -2:        GLOBALS->time_scale = LLDescriptor(10);
+        case -2:        GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case -3:                                        GLOBALS->time_dimension = 'm'; break;
 
         case -4:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'u'; break;
-        case -5:        GLOBALS->time_scale = LLDescriptor(10);
+        case -5:        GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case -6:                                        GLOBALS->time_dimension = 'u'; break;
 
         case -10:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'p'; break;
-        case -11:       GLOBALS->time_scale = LLDescriptor(10);
+        case -11:       GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case -12:                                       GLOBALS->time_dimension = 'p'; break;
 
         case -13:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'f'; break;
-        case -14:       GLOBALS->time_scale = LLDescriptor(10);
+        case -14:       GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case -15:                                       GLOBALS->time_dimension = 'f'; break;
 
         case -16:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'a'; break;
-        case -17:       GLOBALS->time_scale = LLDescriptor(10);
+        case -17:       GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case -18:                                       GLOBALS->time_dimension = 'a'; break;
 
         case -19:       GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'z'; break;
-        case -20:       GLOBALS->time_scale = LLDescriptor(10);
+        case -20:       GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case -21:                                       GLOBALS->time_dimension = 'z'; break;
 
         case -7:        GLOBALS->time_scale = LLDescriptor(100); GLOBALS->time_dimension = 'n'; break;
-        case -8:        GLOBALS->time_scale = LLDescriptor(10);
+        case -8:        GLOBALS->time_scale = LLDescriptor(10); /* fallthrough */
         case -9:
         default:                                        GLOBALS->time_dimension = 'n'; break;
         }

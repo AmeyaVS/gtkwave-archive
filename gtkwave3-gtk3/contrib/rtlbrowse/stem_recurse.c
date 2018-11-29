@@ -176,7 +176,7 @@ if(comp)
 
 		comp = comp_array[i];
 
-if(0)
+		if(0)
                 gtk_tree_store_set (treestore_main, &iter,
                     XXX_NAME_COLUMN, comp->compname,
                     XXX_TREE_COLUMN, comp->module,

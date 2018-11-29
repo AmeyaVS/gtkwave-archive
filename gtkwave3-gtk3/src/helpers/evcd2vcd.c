@@ -187,7 +187,7 @@ while(!feof(f))
 					{
 					break;
 					}
-				/* deliberate fallthrough */
+				/* fallthrough */
 			default:
 				fprintf(stderr, "'%s' is an unsupported data type, exiting.\n", st);
 				exit(255);

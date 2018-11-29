@@ -1388,7 +1388,7 @@ do_tooltips:
 								   NULL);
 						gtk_tree_view_append_column (GTK_TREE_VIEW (sig_view), column);
 						}
-
+					/* fallthrough */
 		case AE2_FILE:
 		case VCD_FILE:
 		case VCD_RECODER_FILE:
@@ -1634,7 +1634,7 @@ GtkWidget* treeboxframe(char *title, GCallback func)
 								   NULL);
 						gtk_tree_view_append_column (GTK_TREE_VIEW (sig_view), column);
 						}
-
+					/* fallthrough */
 		case AE2_FILE:
 		case VCD_FILE:
 		case VCD_RECODER_FILE:

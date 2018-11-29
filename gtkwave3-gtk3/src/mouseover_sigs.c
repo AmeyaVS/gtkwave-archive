@@ -360,8 +360,8 @@ if(GLOBALS->disable_mouseover)
 		{
 		gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
 
-                if(GLOBALS->cr_mo_pixmap_mouseover_c_1) cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL;
-                if(GLOBALS->surface_mo_pixmap_mouseover_c_1) cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL;
+                if(GLOBALS->cr_mo_pixmap_mouseover_c_1) { cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL; }
+                if(GLOBALS->surface_mo_pixmap_mouseover_c_1) { cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL; }
 		}
 	goto bot;
 	}
@@ -440,8 +440,8 @@ if(t && (tname = get_fullname(t)))
 		{
 		gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
 
-                if(GLOBALS->cr_mo_pixmap_mouseover_c_1) cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL;
-                if(GLOBALS->surface_mo_pixmap_mouseover_c_1) cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL;
+                if(GLOBALS->cr_mo_pixmap_mouseover_c_1) { cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL; }
+                if(GLOBALS->surface_mo_pixmap_mouseover_c_1) { cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL; }
 		}
 	}
 
@@ -451,8 +451,8 @@ if((!t)||(!tname)||(yin<0)||(yin>GLOBALS->waveheight))
 		{
 		gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
 
-                if(GLOBALS->cr_mo_pixmap_mouseover_c_1) cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL;
-                if(GLOBALS->surface_mo_pixmap_mouseover_c_1) cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL;
+                if(GLOBALS->cr_mo_pixmap_mouseover_c_1) { cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL; }
+                if(GLOBALS->surface_mo_pixmap_mouseover_c_1) { cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL; }
 		}
 	goto bot;
 	}

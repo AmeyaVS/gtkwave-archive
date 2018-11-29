@@ -193,23 +193,23 @@ if(lt)
                 case 0:         time_dimension = 's'; break;
 
                 case -1:        time_scale = 100; 		time_dimension = 'm'; break;
-                case -2:        time_scale = 10;
+                case -2:        time_scale = 10; /* fallthrough */
                 case -3:                                        time_dimension = 'm'; break;
 
                 case -4:        time_scale = 100; 		time_dimension = 'u'; break;
-                case -5:        time_scale = 10;
+                case -5:        time_scale = 10; /* fallthrough */
                 case -6:                                        time_dimension = 'u'; break;
 
                 case -10:       time_scale = 100; 		time_dimension = 'p'; break;
-                case -11:       time_scale = 10;
+                case -11:       time_scale = 10; /* fallthrough */
                 case -12:                                       time_dimension = 'p'; break;
 
                 case -13:       time_scale = 100; 		time_dimension = 'f'; break;
-                case -14:       time_scale = 10;
+                case -14:       time_scale = 10; /* fallthrough */
                 case -15:                                       time_dimension = 'f'; break;
 
                 case -7:        time_scale = 100; 		time_dimension = 'n'; break;
-                case -8:        time_scale = 10;
+                case -8:        time_scale = 10; /* fallthrough */
                 case -9:
                 default:                                        time_dimension = 'n'; break;
                 }

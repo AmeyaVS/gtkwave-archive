@@ -1829,7 +1829,7 @@ void bwlogbox_2(struct logfile_context_t *ctx, GtkWidget *window, GtkWidget *but
     log_text(text, NULL, "Design unit ");
     log_text_bold(text, NULL, design_unit);
 	{
-	char buf[128];
+	char buf[8192];
 
 	s_line = s_line_find > 0 ? s_line_find : s_line;
 	e_line = e_line_find > 0 ? e_line_find : e_line;

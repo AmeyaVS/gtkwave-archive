@@ -294,7 +294,7 @@ char *NpMyDirectoryPath(char *path, int path_max_len) {
 
  EXTERN int NpLoadLibrary(HMODULE *tclHandle, char *dllName, int dllNameSize,
 			  char *me) {
-  char *envdll, libname[MAX_PATH];
+  char *envdll, libname[MAX_PATH + 128];
   HMODULE handle = (HMODULE) NULL;
   char path[MAX_PATH], *p ;
 

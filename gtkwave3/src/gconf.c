@@ -41,6 +41,8 @@ user_function (GSettings *settings,
                gchar     *key,
                gpointer   user_data)
 {
+(void)user_data;
+
 char *str = NULL;
 char *str2 = NULL;
 int this_wave_rpc_id = -1;
@@ -197,6 +199,9 @@ if(str) g_free(str);
 
 void wave_gconf_init(int argc, char **argv)
 {
+(void)argc;
+(void)argv;
+
 if(!gs)
 	{
 	gs = g_settings_new (WAVE_GSETTINGS_SCHEMA_ID);

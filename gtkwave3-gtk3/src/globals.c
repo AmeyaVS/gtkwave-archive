@@ -2199,8 +2199,8 @@ void reload_into_new_context_2(void)
         {
         gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
 
-	if(GLOBALS->cr_mo_pixmap_mouseover_c_1) cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL;
-	if(GLOBALS->surface_mo_pixmap_mouseover_c_1) cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL;
+	if(GLOBALS->cr_mo_pixmap_mouseover_c_1) { cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL; }
+	if(GLOBALS->surface_mo_pixmap_mouseover_c_1) { cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL; }
         }
 
  if(GLOBALS->window_renderopt_c_6)
@@ -2740,8 +2740,8 @@ void free_and_destroy_page_context(void)
         {
         gtk_widget_destroy(GLOBALS->mouseover_mouseover_c_1); GLOBALS->mouseover_mouseover_c_1 = NULL;
 
-        if(GLOBALS->cr_mo_pixmap_mouseover_c_1) cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1	= NULL;
-        if(GLOBALS->surface_mo_pixmap_mouseover_c_1) cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL;
+        if(GLOBALS->cr_mo_pixmap_mouseover_c_1) { cairo_destroy(GLOBALS->cr_mo_pixmap_mouseover_c_1); GLOBALS->cr_mo_pixmap_mouseover_c_1 = NULL; }
+        if(GLOBALS->surface_mo_pixmap_mouseover_c_1) { cairo_surface_destroy(GLOBALS->surface_mo_pixmap_mouseover_c_1); GLOBALS->surface_mo_pixmap_mouseover_c_1 = NULL; }
         }
 
  widget_only_destroy(&GLOBALS->window_renderopt_c_6);
