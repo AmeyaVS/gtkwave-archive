@@ -1653,7 +1653,7 @@ if(*((char *)&endian_matchword) == 0x78)
 
 lt->bumptime = 1;
 
-msk     = (~0 <<  lt->timepos);
+msk     = (~0U <<  lt->timepos);
 msk_n   = ~msk;
 
 for(i=0;i<s->len;i++)
@@ -1725,7 +1725,7 @@ if(!vzt2_wr_dsvzt_success)
 
 lt->bumptime = 1;
 
-msk     = (~0 <<  lt->timepos);
+msk     = (~0U <<  lt->timepos);
 msk_n   = ~msk;
 
 for(i=0;i<s->len;i++)
@@ -1795,7 +1795,7 @@ if(valuelen == s->len)
 	value = vfix;
 	}
 
-msk     = (~0 <<  lt->timepos);
+msk     = (~0U <<  lt->timepos);
 msk_n   = ~msk;
 
 if(!lt->multi_state)
@@ -1856,7 +1856,7 @@ vztint32_t msk, msk_n;
 
 if(lt)
 	{
-	msk     = (~0 <<  lt->timepos);
+	msk     = (~0U <<  lt->timepos);
 	msk_n   = ~msk;
 
 	for(j=0;j<lt->numfacs;j++)

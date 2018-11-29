@@ -2066,10 +2066,10 @@ void populateBuffer (Trptr t, char *altname, char* buf)
 	  ptr = buf;
 	  if (IsClosed(t)) {
 	    pch = strstr (ptr,"[-]");
-	    if(pch) {strncpy (pch,"[+]", 3); }
+	    if(pch) {memcpy (pch,"[+]", 3); }
 	  } else {
 	    pch = strstr (ptr,"[+]");
-	    if(pch) {strncpy (pch,"[-]", 3); }
+	    if(pch) {memcpy (pch,"[-]", 3); }
 	  }
 	}
     }
