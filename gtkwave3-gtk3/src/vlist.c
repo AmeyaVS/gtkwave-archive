@@ -401,7 +401,7 @@ if(vl->offs == vl->siz)
 	if(compressable && GLOBALS->vlist_handle)
 		{
 		size_t rc;
-		uintptr_t write_cnt;
+		intptr_t write_cnt;
 
 		fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
 
@@ -422,7 +422,7 @@ if(vl->offs == vl->siz)
 			}
 
 		write_cnt = GLOBALS->vlist_bytes_written;
-		if(sizeof(long) != sizeof(off_t))	/* optimizes in or out at compile time */
+		if(sizeof(uintptr_t) != sizeof(off_t))	/* optimizes in or out at compile time */
 			{
 			if(write_cnt != GLOBALS->vlist_bytes_written)
 				{
@@ -541,7 +541,7 @@ if((siz != vl->siz)&&(!GLOBALS->vlist_handle))
 if(GLOBALS->vlist_handle)
 	{
 	size_t rc;
-	uintptr_t write_cnt;
+	intptr_t write_cnt;
 
 	vl = *v;
 	fseeko(GLOBALS->vlist_handle, GLOBALS->vlist_bytes_written, SEEK_SET);
@@ -563,7 +563,7 @@ if(GLOBALS->vlist_handle)
 		}
 
 	write_cnt = GLOBALS->vlist_bytes_written;
-	if(sizeof(long) != sizeof(off_t))	/* optimizes in or out at compile time */
+	if(sizeof(uintptr_t) != sizeof(off_t))	/* optimizes in or out at compile time */
 		{
 		if(write_cnt != GLOBALS->vlist_bytes_written)
 			{
