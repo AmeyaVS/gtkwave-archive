@@ -1781,7 +1781,7 @@ if(!GLOBALS->made_sgc_contexts_wavewindow_c_1)
 #if GTK_CHECK_VERSION(3,0,0)
 	if(!dark)
 		{
-		g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &dark);
+		g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &dark, NULL);
 		GLOBALS->use_dark = dark;
 		}
 #endif
