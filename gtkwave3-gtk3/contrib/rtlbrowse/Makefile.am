@@ -32,7 +32,7 @@ LDADD= $(GTK_LIBS) $(LIBZ_LDADD) $(LIBBZ2_LDADD) $(LIBLZMA_LDADD) $(AET2_LDADD) 
 AM_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src  -I$(top_srcdir)/src/helpers \
 	$(GTK_CFLAGS) $(LIBZ_CFLAGS) $(LIBBZ2_CFLAGS) $(LIBLZMA_CFLAGS) \
 	$(LIBFST_CFLAGS) $(AET2_CFLAGS) $(LIBJUDY_CFLAGS) \
-	$(GTK_MAC_CFLAGS) $(GCONF_CFLAGS)
+	$(GTK_MAC_CFLAGS) $(GCONF_CFLAGS) -DYY_NO_INPUT
 
 definehash.c: vpp_keyword.gperf
 	$(GPERF) -C -I -N is_builtin_define $(srcdir)/vpp_keyword.gperf >definehash.c
