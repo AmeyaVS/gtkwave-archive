@@ -1,5 +1,5 @@
 /* C code produced by gperf version 3.0.4 */
-/* Command-line: /usr/bin/gperf -o -i 1 -C -k '1,$' -L C -H keyword_hash -N check_identifier -tT ./vcd_keywords.gperf  */
+/* Command-line: /usr/bin/gperf -o -i 1 -C -k '1,$' -L C -H keyword_hash -N check_identifier -tT --initializer-suffix=,0 ./vcd_keywords.gperf  */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
@@ -107,12 +107,12 @@ check_identifier (str, len)
 {
   static const struct vcd_keyword wordlist[] =
     {
-      {""}, {""}, {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0}, {"",0}, {"",0},
 #line 23 "./vcd_keywords.gperf"
       {"reg", V_REG},
 #line 26 "./vcd_keywords.gperf"
       {"time", V_TIME},
-      {""},
+      {"",0},
 #line 30 "./vcd_keywords.gperf"
       {"trireg", V_TRIREG},
 #line 37 "./vcd_keywords.gperf"
@@ -133,19 +133,19 @@ check_identifier (str, len)
       {"parameter", V_PARAMETER},
 #line 39 "./vcd_keywords.gperf"
       {"inout", V_INOUT},
-      {""},
+      {"",0},
 #line 19 "./vcd_keywords.gperf"
       {"integer", V_INTEGER},
 #line 44 "./vcd_keywords.gperf"
       {"shortint", V_SHORTINT},
 #line 21 "./vcd_keywords.gperf"
       {"real_parameter", V_REAL_PARAMETER},
-      {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0},
 #line 38 "./vcd_keywords.gperf"
       {"out", V_OUT},
 #line 34 "./vcd_keywords.gperf"
       {"wire", V_WIRE},
-      {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0},
 #line 35 "./vcd_keywords.gperf"
       {"wor", V_WOR},
 #line 46 "./vcd_keywords.gperf"
@@ -154,37 +154,37 @@ check_identifier (str, len)
       {"logic", V_LOGIC},
 #line 28 "./vcd_keywords.gperf"
       {"triand", V_TRIAND},
-      {""},
+      {"",0},
 #line 41 "./vcd_keywords.gperf"
       {"bit", V_BIT},
 #line 20 "./vcd_keywords.gperf"
       {"real", V_REAL},
-      {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0},
 #line 27 "./vcd_keywords.gperf"
       {"tri", V_TRI},
 #line 47 "./vcd_keywords.gperf"
       {"enum", V_ENUM},
-      {""}, {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0}, {"",0},
 #line 48 "./vcd_keywords.gperf"
       {"shortreal", V_SHORTREAL},
 #line 17 "./vcd_keywords.gperf"
       {"event", V_EVENT},
-      {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0},
 #line 33 "./vcd_keywords.gperf"
       {"wand", V_WAND},
-      {""}, {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0}, {"",0},
 #line 32 "./vcd_keywords.gperf"
       {"tri1", V_TRI1},
-      {""}, {""}, {""}, {""},
+      {"",0}, {"",0}, {"",0}, {"",0},
 #line 31 "./vcd_keywords.gperf"
       {"tri0", V_TRI0},
-      {""}, {""},
+      {"",0}, {"",0},
 #line 25 "./vcd_keywords.gperf"
       {"supply1", V_SUPPLY1},
-      {""},
+      {"",0},
 #line 49 "./vcd_keywords.gperf"
       {"$end", V_END},
-      {""}, {""},
+      {"",0}, {"",0},
 #line 24 "./vcd_keywords.gperf"
       {"supply0", V_SUPPLY0}
     };

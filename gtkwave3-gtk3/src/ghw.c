@@ -443,7 +443,7 @@ build_hierarchy_array (struct ghw_handler *h, union ghw_type *arr, int dim,
   struct ghw_type_array *base = arr->sa.base;
   char *name = NULL;
 
-  if (dim == base->nbr_dim)
+  if ((unsigned int)dim == base->nbr_dim)
     {
       struct tree *t;
       sprintf (GLOBALS->asbuf, "%s]", pfx);
@@ -775,7 +775,7 @@ facs_debug (void)
 static void
 create_facs (struct ghw_handler *h)
 {
-  int i;
+  unsigned int i;
   struct symchain *sc = GLOBALS->firstnode;
 
   GLOBALS->numfacs = GLOBALS->nbr_sig_ref_ghw_c_1;
@@ -1119,7 +1119,7 @@ add_history (struct ghw_handler *h, struct Node *n, int sig_num)
 static void
 add_tail (struct ghw_handler *h)
 {
-  int i;
+  unsigned int i;
   TimeType j;
 
   for (j = 1; j>=0 ; j--) /* add two endcaps */
@@ -1148,7 +1148,7 @@ static void
 read_traces (struct ghw_handler *h)
 {
   int *list;
-  int i;
+  unsigned int i;
   enum ghw_res res;
 
   list = malloc_2((GLOBALS->numfacs + 1) * sizeof (int));
@@ -1211,6 +1211,7 @@ ghw_main(char *fname)
 {
   struct ghw_handler handle;
   int i;
+  unsigned int ui;
   int rc;
 
   if(!GLOBALS->hier_was_explicitly_set) /* set default hierarchy split char */
@@ -1243,9 +1244,9 @@ ghw_main(char *fname)
  GLOBALS->nbr_sig_ref_ghw_c_1 = 0;
 
  GLOBALS->nxp_ghw_c_1 =(struct Node **)calloc_2(handle.nbr_sigs, sizeof(struct Node *));
- for(i=0;i<handle.nbr_sigs;i++)
+ for(ui=0;ui<handle.nbr_sigs;ui++)
 	{
-        GLOBALS->nxp_ghw_c_1[i] = (struct Node *)calloc_2(1,sizeof(struct Node));
+        GLOBALS->nxp_ghw_c_1[ui] = (struct Node *)calloc_2(1,sizeof(struct Node));
 	}
 
  GLOBALS->treeroot = build_hierarchy (&handle, handle.hie);

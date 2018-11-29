@@ -59,7 +59,7 @@ twinwave_SOURCES= twinwave.c
 twinwave_LDADD= $(GTK_LIBS) $(GTK_MAC_LIBS) $(GCONF_LIBS)
 
 vcd_keywords.c: vcd_keywords.gperf
-	printf "$(GPERF) -o -i 1 -C -k 1,\044 -L C -H keyword_hash -N check_identifier -tT $(srcdir)/vcd_keywords.gperf >vcd_keywords.c" | sh
+	printf "$(GPERF) -o -i 1 -C -k 1,\044 -L C -H keyword_hash -N check_identifier -tT --initializer-suffix=,0 $(srcdir)/vcd_keywords.gperf >vcd_keywords.c" | sh
 
 gsettings_SCHEMAS = com.geda.gtkwave.gschema.xml
 @GSETTINGS_RULES@
