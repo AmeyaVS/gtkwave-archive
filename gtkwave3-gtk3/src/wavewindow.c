@@ -2436,7 +2436,7 @@ GdkWindow *gw = gtk_widget_get_window(GLOBALS->wavearea);
 
 if(gw)
 	{
-	gdouble x = 0, y = 0, pixstep, offset;
+	gdouble x = 0, pixstep, offset;
 	TimeType newcurr = 0;
 	GdkModifierType state = 0;
 	gint xi = 0, yi = 0;
@@ -2445,7 +2445,7 @@ if(gw)
 	get_window_xypos(&dummy_x, &dummy_y);
 
 	WAVE_GDK_GET_POINTER(gtk_widget_get_window(GLOBALS->wavearea), &x, &y, &xi, &yi, &state);
-	WAVE_GDK_GET_POINTER_COPY;
+	WAVE_GDK_GET_POINTER_COPY_XONLY;
 
 	if((x >= 0) && (x < GLOBALS->wavewidth))
 		{

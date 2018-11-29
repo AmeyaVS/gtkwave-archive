@@ -61,6 +61,7 @@
 #endif
 
 #define WAVE_GDK_GET_POINTER_COPY x=xi; y=yi;
+#define WAVE_GDK_GET_POINTER_COPY_XONLY x=xi;
 
 #define WAVE_GTK_SFUNCAST(x) ((void (*)(GtkWidget *, gpointer))(x))
 
