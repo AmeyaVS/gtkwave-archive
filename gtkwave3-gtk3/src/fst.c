@@ -464,7 +464,7 @@ while((h = fstReaderIterateHier(xc)))
 							/* currently fe->name is unused */
 							if(fe)
 								{
-								int ie;
+								uint32_t ie;
 #ifdef _WAVE_HAVE_JUDY
 								Pvoid_t e = (Pvoid_t) NULL;
 								for(ie=0; ie<fe->elem_count; ie++)
@@ -498,7 +498,7 @@ while((h = fstReaderIterateHier(xc)))
 
 								GLOBALS->xl_enum_filter[GLOBALS->num_xl_enum_filter-1] = e;
 
-								if(GLOBALS->num_xl_enum_filter != h->u.attr.arg)
+								if((unsigned int)GLOBALS->num_xl_enum_filter != h->u.attr.arg)
 									{
 									fprintf(stderr, FST_RDLOAD"Internal error, nonsequential enum tables definition encountered, exiting.\n");
 									exit(255);
@@ -752,7 +752,7 @@ for(i=0;i<GLOBALS->numfacs;i++)
 		}
 		else
 		{
-		int abslen = (msb >= lsb) ? (msb - lsb + 1) : (lsb - msb + 1);
+		unsigned int abslen = (msb >= lsb) ? (msb - lsb + 1) : (lsb - msb + 1);
 
 		if((h->u.var.length > abslen) && !(h->u.var.length % abslen)) /* check if 2d array */
 			{
