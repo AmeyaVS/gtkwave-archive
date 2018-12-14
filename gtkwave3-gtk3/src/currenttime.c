@@ -25,16 +25,19 @@ static char *marker_label_text_hpos ="Marker";
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
 static void update_labels_to_header_bar(void)
 {
-char buf[1024];
+if(GLOBALS->header_bar)
+	{
+	char buf[1024];
 
-sprintf(buf, "%s" ": " "%s" "  |  " "%s" ": " "%s",     
-        gtk_label_get_text(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1)),
-        gtk_label_get_text(GTK_LABEL(GLOBALS->maxtimewid_currenttime_c_1)),
-        gtk_label_get_text(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1)),
-        gtk_label_get_text(GTK_LABEL(GLOBALS->curtimewid_currenttime_c_1))
-        );
+	sprintf(buf, "%s" ": " "%s" "  |  " "%s" ": " "%s",     
+	        gtk_label_get_text(GTK_LABEL(GLOBALS->max_or_marker_label_currenttime_c_1)),
+	        gtk_label_get_text(GTK_LABEL(GLOBALS->maxtimewid_currenttime_c_1)),
+	        gtk_label_get_text(GTK_LABEL(GLOBALS->base_or_curtime_label_currenttime_c_1)),
+	        gtk_label_get_text(GTK_LABEL(GLOBALS->curtimewid_currenttime_c_1))
+	        );
 
-gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), buf);
+	gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), buf);
+	}
 }
 #else
 static void update_labels_to_header_bar(void)

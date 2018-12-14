@@ -1747,4 +1747,5 @@
 		Fix on vtype()/vtype2() to detect 'x' and make the coloration
 		red on newly-displayed traces.  (Bug new from Dinotrace-like
 		rendering in 3.3.96.)
-3.3.98	27nov18	Removed pccts and vermin.  Use xml2stems instead.
+3.3.98	14dec18	Removed pccts and vermin.  Use xml2stems instead.
+		Fix gtk_header_bar_set_subtitle() assertion in twinwave.

@@ -296,33 +296,36 @@ if(!GLOBALS->disable_menus)
 	if(!GLOBALS->header_bar)
 		{
 		GLOBALS->header_bar = gtk_header_bar_new();
-		gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (GLOBALS->header_bar), TRUE);
-		gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), title);
-		gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR(GLOBALS->header_bar), TRUE);
-		gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO);
-		gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
-
-		GtkWidget *pan_up = gtk_button_new_from_icon_name("pan-up-symbolic", GTK_ICON_SIZE_BUTTON);
-		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_up);
-		gtk_widget_show(pan_up);
-		gtk_tooltips_set_tip_2(pan_up, "Hide toolbar");
-
-		GtkWidget *pan_dn = gtk_button_new_from_icon_name("pan-down-symbolic", GTK_ICON_SIZE_BUTTON);
-		gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_dn);
-		gtk_widget_show(pan_dn);
-		gtk_tooltips_set_tip_2(pan_dn, "Show toolbar");
-
-		GtkWidget *fs = gtk_button_new_from_icon_name("view-fullscreen", GTK_ICON_SIZE_BUTTON);
-		gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),fs);
-		gtk_widget_show(fs);
-		gtk_tooltips_set_tip_2(fs, "Fullscreen");
-
-		gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":minimize,maximize,close");
-		gtk_widget_show(GLOBALS->header_bar);
-
-		g_signal_connect (XXX_GTK_OBJECT (pan_up), "released", G_CALLBACK(service_pan_up), NULL);
-		g_signal_connect (XXX_GTK_OBJECT (pan_dn), "released", G_CALLBACK(service_pan_dn), NULL);
-		g_signal_connect (XXX_GTK_OBJECT (fs),     "released", G_CALLBACK(service_fullscreen), NULL);
+		if(GLOBALS->header_bar)
+			{
+			gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (GLOBALS->header_bar), TRUE);
+			gtk_header_bar_set_title(GTK_HEADER_BAR(GLOBALS->header_bar), title);
+			gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR(GLOBALS->header_bar), TRUE);
+			gtk_header_bar_set_subtitle(GTK_HEADER_BAR(GLOBALS->header_bar), WAVE_VERSION_INFO);
+			gtk_window_set_titlebar (GTK_WINDOW (window), GLOBALS->header_bar);
+	
+			GtkWidget *pan_up = gtk_button_new_from_icon_name("pan-up-symbolic", GTK_ICON_SIZE_BUTTON);
+			gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_up);
+			gtk_widget_show(pan_up);
+			gtk_tooltips_set_tip_2(pan_up, "Hide toolbar");
+	
+			GtkWidget *pan_dn = gtk_button_new_from_icon_name("pan-down-symbolic", GTK_ICON_SIZE_BUTTON);
+			gtk_header_bar_pack_start(GTK_HEADER_BAR(GLOBALS->header_bar),pan_dn);
+			gtk_widget_show(pan_dn);
+			gtk_tooltips_set_tip_2(pan_dn, "Show toolbar");
+	
+			GtkWidget *fs = gtk_button_new_from_icon_name("view-fullscreen", GTK_ICON_SIZE_BUTTON);
+			gtk_header_bar_pack_end(GTK_HEADER_BAR(GLOBALS->header_bar),fs);
+			gtk_widget_show(fs);
+			gtk_tooltips_set_tip_2(fs, "Fullscreen");
+	
+			gtk_header_bar_set_decoration_layout(GTK_HEADER_BAR(GLOBALS->header_bar), ":minimize,maximize,close");
+			gtk_widget_show(GLOBALS->header_bar);
+	
+			g_signal_connect (XXX_GTK_OBJECT (pan_up), "released", G_CALLBACK(service_pan_up), NULL);
+			g_signal_connect (XXX_GTK_OBJECT (pan_dn), "released", G_CALLBACK(service_pan_dn), NULL);
+			g_signal_connect (XXX_GTK_OBJECT (fs),     "released", G_CALLBACK(service_fullscreen), NULL);
+			}
 		}
 		else
 		{
