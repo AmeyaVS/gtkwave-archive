@@ -686,9 +686,12 @@ if(!GLOBALS->use_toolbutton_interface)
 	mainbox=XXX_gtk_hbox_new(FALSE, 0);
 	}
 
-#ifndef WAVE_ALLOW_GTK3_HEADER_BAR
-gtk_widget_show(mainbox);
+#ifdef WAVE_ALLOW_GTK3_HEADER_BAR
+if(GLOBALS->socket_xid)
 #endif
+	{
+	gtk_widget_show(mainbox);
+	}
 GLOBALS->time_mainbox = mainbox;
 
 eventbox=gtk_event_box_new();

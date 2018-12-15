@@ -7396,13 +7396,19 @@ if(GLOBALS->helpbox_is_active)
 		{
 		gtk_window_fullscreen (GTK_WINDOW(GLOBALS->mainwindow));
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
-		gtk_widget_show(GLOBALS->time_mainbox);
+		if(!GLOBALS->socket_xid)
+			{
+			gtk_widget_show(GLOBALS->time_mainbox);
+			}
 #endif
 		}
 		else
 		{
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
-		gtk_widget_hide(GLOBALS->time_mainbox);
+		if(!GLOBALS->socket_xid)
+			{
+			gtk_widget_hide(GLOBALS->time_mainbox);
+			}
 #endif
 		gtk_window_unfullscreen (GTK_WINDOW(GLOBALS->mainwindow));
 		}
