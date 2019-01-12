@@ -4189,6 +4189,13 @@ if(_x0!=_x1)
 		}
 	}
 
+if(h->flags & HIST_GLITCH)
+        {
+        XXX_gdk_draw_rectangle(GLOBALS->cr_wavepixmap_wavewindow_c_1, GLOBALS->rgb_gc.gc_mid_wavewindow_c_1,
+                        TRUE,_x1-1, yu-1,
+                        3, 3);
+        }
+
 h=h->next;
 }
 

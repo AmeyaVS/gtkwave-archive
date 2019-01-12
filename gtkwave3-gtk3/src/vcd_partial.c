@@ -1748,6 +1748,11 @@ if(!(rc=n->curr))
                 	he->v.h_val=heval;
 
                 	n->curr->next=he;
+                        if(n->curr->v.h_val==heval)
+                                {
+                                n->curr->flags|=HIST_GLITCH;    /* set the glitch flag */
+                                GLOBALS->num_glitch_regions_vcd_recoder_c_4++;
+                                }
 			n->curr=he;
                 	GLOBALS->regions+=regadd;
 			}
