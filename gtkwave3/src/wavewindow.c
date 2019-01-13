@@ -3461,7 +3461,7 @@ if(_x0!=_x1)
 		}
 	}
 
-if(h->flags & HIST_GLITCH)
+if((h->flags & HIST_GLITCH) && (GLOBALS->vcd_preserve_glitches))
 	{
 	gdk_draw_rectangle(GLOBALS->wavepixmap_wavewindow_c_1, GLOBALS->gc.gc_mid_wavewindow_c_1,
 			TRUE,_x1-1, yu-1,
