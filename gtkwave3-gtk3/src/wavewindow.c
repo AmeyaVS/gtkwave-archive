@@ -761,7 +761,7 @@ if((GLOBALS->cr_wavepixmap_wavewindow_c_1)&&(GLOBALS->wavewidth>1))
 	GLOBALS->tims.laststart=GLOBALS->tims.start;
 
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
-        if((!GLOBALS->swipe_init_time)||(old_start != GLOBALS->tims.start)) /* cut down on redundant draws when swiping */
+        if((!GLOBALS->swipe_init_time)||(GLOBALS->wavearea_gesture_swipe_velocity_x == 0.0)||(old_start != GLOBALS->tims.start)) /* cut down on redundant draws when swiping */
 #endif
                 {
                 XXX_gdk_draw_rectangle(GLOBALS->cr_wavepixmap_wavewindow_c_1, GLOBALS->rgb_gc.gc_back_wavewindow_c_1, TRUE, 0, 0,GLOBALS->wavewidth, GLOBALS->waveheight);
