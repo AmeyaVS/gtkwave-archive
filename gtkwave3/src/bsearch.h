@@ -17,6 +17,7 @@ int bsearch_aetinfo_timechain(TimeType key);
 hptr bsearch_node(nptr n, TimeType key);
 vptr bsearch_vector(bvptr b, TimeType key);
 char *bsearch_trunc(char *ascii, int maxlen);
+char *bsearch_trunc_print(char *ascii, int maxlen);
 struct symbol *bsearch_facs(char *ascii, unsigned int *rows_return);
 
 #endif

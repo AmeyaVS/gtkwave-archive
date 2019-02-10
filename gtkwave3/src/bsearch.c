@@ -245,6 +245,24 @@ if(GLOBALS->wavefont->is_mono)
 return(GLOBALS->maxlen_trunc_pos_bsearch_c_1);
 }
 
+
+char *bsearch_trunc_print(char *ascii, int maxlen)
+{
+int len;
+
+if((maxlen<=0)||(!ascii)||(!(len=strlen(ascii)))) return(NULL);
+
+GLOBALS->maxlen_trunc=0; GLOBALS->maxlen_trunc_pos_bsearch_c_1=NULL;
+
+if(bsearch(&maxlen, GLOBALS->trunc_asciibase_bsearch_c_1=ascii, len, sizeof(char), compar_trunc))
+        {
+	/* nothing, all side effects are in bsearch */
+        }
+
+return(GLOBALS->maxlen_trunc_pos_bsearch_c_1);
+}
+
+
 /*****************************************************************************************/
 
 static int compar_facs(const void *key, const void *v2)

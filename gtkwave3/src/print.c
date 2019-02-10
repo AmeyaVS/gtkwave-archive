@@ -2299,7 +2299,7 @@ pr_draw_hptr_trace_vector (pr_context * prc, Trptr t, hptr h, int which)
 		      char *mod;
 
 		      mod =
-			bsearch_trunc (t_ascii,
+			bsearch_trunc_print (t_ascii,
 				       width - GLOBALS->vector_padding);
 		      if (mod)
 			{
@@ -2983,7 +2983,7 @@ pr_draw_vptr_trace (pr_context * prc, Trptr t, vptr v, int which)
 		      char *mod;
 
 		      mod =
-			bsearch_trunc (t_ascii,
+			bsearch_trunc_print (t_ascii,
 				       width - GLOBALS->vector_padding);
 		      if (mod)
 			{

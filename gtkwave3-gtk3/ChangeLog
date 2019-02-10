@@ -1755,3 +1755,5 @@
                 with --rcvar 'vcd_preserve_glitches on').
 		Added filter to prevent redundant redraws during swipes.
 		Disabled rendundant redraw filter during zooms.
+		Fixed print routine broken by bsearch_trunc() optimization in
+		version 3.3.96.
