@@ -55,6 +55,7 @@ if(GLOBALS->dual_ctx && !GLOBALS->dual_race_lock)
 #if GTK_CHECK_VERSION(3,0,0)
 static int gesture_filter_set = 0; /* to prevent floods of gesture events before next draw */
 static int gesture_filter_cnt = 0; /* to prevent floods of gesture events before next draw */
+static int gesture_in_zoom = 0; /* for suppression of filtering of redraws: indicates zoom state change, service_hslider() decrements this */
 #endif
 
 #ifdef WAVE_ALLOW_SLIDER_ZOOM
@@ -761,12 +762,15 @@ if((GLOBALS->cr_wavepixmap_wavewindow_c_1)&&(GLOBALS->wavewidth>1))
 	GLOBALS->tims.laststart=GLOBALS->tims.start;
 
 #ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
-        if((!GLOBALS->swipe_init_time)||(GLOBALS->wavearea_gesture_swipe_velocity_x == 0.0)||(old_start != GLOBALS->tims.start)) /* cut down on redundant draws when swiping */
+        if((gesture_in_zoom)||(!GLOBALS->swipe_init_time)||(GLOBALS->wavearea_gesture_swipe_velocity_x == 0.0)||(old_start != GLOBALS->tims.start)) /* cut down on redundant draws when swiping */
 #endif
                 {
                 XXX_gdk_draw_rectangle(GLOBALS->cr_wavepixmap_wavewindow_c_1, GLOBALS->rgb_gc.gc_back_wavewindow_c_1, TRUE, 0, 0,GLOBALS->wavewidth, GLOBALS->waveheight);
                 rendertimebar();
                 }
+#ifdef WAVE_ALLOW_GTK3_GESTURE_EVENT
+	if(gesture_in_zoom) gesture_in_zoom--;
+#endif
 	}
 }
 
@@ -2146,6 +2150,7 @@ wavearea_zoom_begin_event (GtkGesture *gesture,
 (void) user_data;
 gdouble x1, y1, x2, y2;
 
+gesture_in_zoom = 1;
 GLOBALS->wavearea_gesture_initial_zoom = GLOBALS->tims.zoom;
 
 #ifdef WAVE_GTK3_GESTURE_ZOOM_IS_1D
@@ -2188,6 +2193,8 @@ gdouble x1, y1, x2, y2;
 if(gesture_filter_set) return; /* to prevent floods of zoom events */
 gesture_filter_set = 1;
 #endif
+
+gesture_in_zoom = 1;
 
 zb = GLOBALS->zoombase;
 lzb = log(zb);
@@ -2292,6 +2299,8 @@ GLOBALS->in_button_press_wavewindow_c_1 = 0;
 
 g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "changed"); /* force zoom update */
 g_signal_emit_by_name (XXX_GTK_OBJECT (GTK_ADJUSTMENT(GLOBALS->wave_hslider)), "value_changed"); /* force zoom update */
+
+gesture_in_zoom = 1;
 
 #ifdef GDK_WINDOWING_WAYLAND
 if(GDK_IS_WAYLAND_DISPLAY(gdk_display_get_default()))

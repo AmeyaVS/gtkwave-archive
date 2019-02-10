@@ -1751,6 +1751,7 @@
 		Fix gtk_header_bar_set_subtitle() assertion in twinwave.
 		Fix visibility of time_mainbox in twinwave (related to header
 		bar implementation).
-3.3.99  19jan19 Added visible single bit glitches as a yellow dot (if enabled
+3.3.99  09feb19 Added visible single bit glitches as a yellow dot (if enabled
                 with --rcvar 'vcd_preserve_glitches on').
 		Added filter to prevent redundant redraws during swipes.
+		Disabled rendundant redraw filter during zooms.
