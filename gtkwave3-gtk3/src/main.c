@@ -287,9 +287,7 @@ gtk_widget_show(GLOBALS->top_table);
 void wave_gtk_window_set_title(GtkWindow *window, const gchar *title, int typ, int pct)
 {
 #ifdef WAVE_ALLOW_GTK3_HEADER_BAR
-if(!window || !title) return;
-
-
+if(!window || !title || GLOBALS->socket_xid) return;
 
 if(!GLOBALS->disable_menus)
 	{
