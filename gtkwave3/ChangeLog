@@ -1696,3 +1696,4 @@
 		with --rcvar 'vcd_preserve_glitches on').
                 Fixed print routine broken by bsearch_trunc() optimization in
                 version	3.3.96.
+3.3.100	13feb19	Prepare for next version in SVN.
