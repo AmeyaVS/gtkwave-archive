@@ -520,8 +520,8 @@ for(;;)
 				while(*pnt)
 					{
 					/* if((*pnt == '[')||(isspace(*pnt))) break; */
- 					if(isspace(*pnt)) break;
 
+ 					if(isspace(*pnt)) break;
 					if((*pnt == '[') && (pnt == strrchr(pnt, '[')) && (GLOBALS->mvlfacs_vzt_c_3[i].flags != VZT_RD_SYM_F_DOUBLE)) /* fix for arrays */
 						{
 						/* now to fix possible generate... */
