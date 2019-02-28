@@ -1145,10 +1145,19 @@ static char zbuf[65537]; /* OK as this does not need to be re-entrant */
 				{
 				while(*pnt)
 					{
-					/* if((*pnt == '[')||(isspace(*pnt))) break; */
-
-					if(isspace(*pnt)) break;
-					if((*pnt == '[') && (pnt == strrchr(pnt, '['))) /* fix for arrays */
+					if(isspace(*pnt))
+						{
+						if(fh->u.var.typ == FST_VT_VCD_REAL)
+							{
+							pnt++;
+							continue;
+							}
+							else
+							{
+							break;
+							}
+						}
+					if((*pnt == '[') && (pnt == strrchr(pnt, '[')) && (fh->u.var.typ != FST_VT_VCD_REAL)) /* fix for arrays */
 						{
 						/* now to fix possible generate... */
 						const char *pnt2 = pnt;
