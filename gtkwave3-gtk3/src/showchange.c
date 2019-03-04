@@ -92,6 +92,22 @@ static void enter_callback(GtkWidget *widget, GtkWidget *nothing)
 	{
 	GLOBALS->flags_showchange_c_1|=TR_ASCII;
 	}
+  else
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(GLOBALS->button7_showchange_c_1)))
+	{
+	GLOBALS->flags_showchange_c_1|=TR_REAL;
+	}
+  else
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(GLOBALS->button8_showchange_c_1)))
+	{
+	GLOBALS->flags_showchange_c_1|=(TR_TIME|TR_DEC);
+	}
+  else
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(GLOBALS->button9_showchange_c_1)))
+	{
+	GLOBALS->flags_showchange_c_1|=(TR_ENUM|TR_BIN);
+	}
+
 
   GLOBALS->tcache_showchange_c_1->flags=GLOBALS->flags_showchange_c_1;
 
@@ -176,7 +192,7 @@ void showchange(char *title, Trptr t, GCallback func)
 
   GLOBALS->button2_showchange_c_1 = gtk_radio_button_new_with_label(group, "Decimal");
   gtk_box_pack_start (GTK_BOX (box2), GLOBALS->button2_showchange_c_1, TRUE, TRUE, 0);
-  if(GLOBALS->flags_showchange_c_1&TR_DEC) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button2_showchange_c_1), TRUE);
+  if((GLOBALS->flags_showchange_c_1&TR_DEC) && (!(GLOBALS->flags_showchange_c_1&TR_TIME))) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button2_showchange_c_1), TRUE);
   gtk_widget_show (GLOBALS->button2_showchange_c_1);
   group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (GLOBALS->button2_showchange_c_1));
 
@@ -188,7 +204,7 @@ void showchange(char *title, Trptr t, GCallback func)
 
   GLOBALS->button3_showchange_c_1 = gtk_radio_button_new_with_label(group, "Binary");
   gtk_box_pack_start (GTK_BOX (box2), GLOBALS->button3_showchange_c_1, TRUE, TRUE, 0);
-  if(GLOBALS->flags_showchange_c_1&TR_BIN) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button3_showchange_c_1), TRUE);
+  if((GLOBALS->flags_showchange_c_1&TR_BIN) && (!(GLOBALS->flags_showchange_c_1&TR_ENUM))) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button3_showchange_c_1), TRUE);
   gtk_widget_show (GLOBALS->button3_showchange_c_1);
   group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (GLOBALS->button3_showchange_c_1));
 
@@ -202,6 +218,24 @@ void showchange(char *title, Trptr t, GCallback func)
   gtk_box_pack_start (GTK_BOX (box2), GLOBALS->button6_showchange_c_1, TRUE, TRUE, 0);
   if(GLOBALS->flags_showchange_c_1&TR_ASCII) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button6_showchange_c_1), TRUE);
   gtk_widget_show (GLOBALS->button6_showchange_c_1);
+  group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (GLOBALS->button6_showchange_c_1));
+
+  GLOBALS->button7_showchange_c_1 = gtk_radio_button_new_with_label(group, "Real");
+  gtk_box_pack_start (GTK_BOX (box2), GLOBALS->button7_showchange_c_1, TRUE, TRUE, 0);
+  if(GLOBALS->flags_showchange_c_1&TR_ASCII) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button7_showchange_c_1), TRUE);
+  gtk_widget_show (GLOBALS->button7_showchange_c_1);
+  group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (GLOBALS->button7_showchange_c_1));
+
+  GLOBALS->button8_showchange_c_1 = gtk_radio_button_new_with_label(group, "Time");
+  gtk_box_pack_start (GTK_BOX (box2), GLOBALS->button8_showchange_c_1, TRUE, TRUE, 0);
+  if(GLOBALS->flags_showchange_c_1&TR_ASCII) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button8_showchange_c_1), TRUE);
+  gtk_widget_show (GLOBALS->button8_showchange_c_1);
+  group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (GLOBALS->button8_showchange_c_1));
+
+  GLOBALS->button9_showchange_c_1 = gtk_radio_button_new_with_label(group, "Enum");
+  gtk_box_pack_start (GTK_BOX (box2), GLOBALS->button9_showchange_c_1, TRUE, TRUE, 0);
+  if(GLOBALS->flags_showchange_c_1&TR_ASCII) gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (GLOBALS->button9_showchange_c_1), TRUE);
+  gtk_widget_show (GLOBALS->button9_showchange_c_1);
 
   frame2 = gtk_frame_new ("Base");
   gtk_container_set_border_width (GTK_CONTAINER (frame2), 3);

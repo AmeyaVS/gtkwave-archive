@@ -849,6 +849,9 @@ GtkWidget *button3_showchange_c_1; /* from showchange.c 384 */
 GtkWidget *button4_showchange_c_1; /* from showchange.c 385 */
 GtkWidget *button5_showchange_c_1; /* from showchange.c 386 */
 GtkWidget *button6_showchange_c_1; /* from showchange.c 387 */
+GtkWidget *button7_showchange_c_1; /* from showchange.c 387 */
+GtkWidget *button8_showchange_c_1; /* from showchange.c 387 */
+GtkWidget *button9_showchange_c_1; /* from showchange.c 387 */
 GtkWidget *toggle1_showchange_c_1; /* from showchange.c 388 */
 GtkWidget *toggle2_showchange_c_1; /* from showchange.c 389 */
 GtkWidget *toggle3_showchange_c_1; /* from showchange.c 390 */

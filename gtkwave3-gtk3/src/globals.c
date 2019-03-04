@@ -807,6 +807,9 @@ NULL, /* button1_showchange_c_3 363 */
 NULL, /* button1_showchange_c_4 363 */
 NULL, /* button1_showchange_c_5 363 */
 NULL, /* button1_showchange_c_6 363 */
+NULL, /* button1_showchange_c_7 363 */
+NULL, /* button1_showchange_c_8 363 */
+NULL, /* button1_showchange_c_9 363 */
 NULL, /* toggle1_showchange_c_1 364 */
 NULL, /* toggle2_showchange_c_1 364 */
 NULL, /* toggle3_showchange_c_1 364 */
