@@ -1697,4 +1697,4 @@
                 Fixed print routine broken by bsearch_trunc() optimization in
                 version	3.3.96.
 3.3.100	04mar19	FSDB fix for variable declarations of array of reals.
-                Added Real, Time, and Enum flags to Edit/Show-Change.
+                Added Real, Time, Enum, and Popcnt flags to Edit/Show-Change.
