@@ -4481,12 +4481,12 @@ TraceFlagsType flags;
 t=GLOBALS->showchangeall_menu_c_1;
 if(t)
 	{
-	flags=t->flags;
+	flags = t->flags & (TR_NUMMASK | TR_HIGHLIGHT);
 	while(t)
 		{
 		if((t->flags&TR_HIGHLIGHT)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))&&(t->name))
 			{
-			t->flags=flags;
+			t->flags = (t->flags & ~(TR_NUMMASK | TR_HIGHLIGHT)) | flags;
 			}
 		t=t->t_next;
 		}
