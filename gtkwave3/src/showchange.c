@@ -115,6 +115,7 @@ static void enter_callback(GtkWidget *widget, GtkWidget *nothing)
 	}
 
   GLOBALS->tcache_showchange_c_1->flags=GLOBALS->flags_showchange_c_1;
+  GLOBALS->tcache_showchange_c_1->minmax_valid = 0; /* force analog traces to regenerate if necessary */
 
   wave_gtk_grab_remove(GLOBALS->window_showchange_c_8);
   gtk_widget_destroy(GLOBALS->window_showchange_c_8);

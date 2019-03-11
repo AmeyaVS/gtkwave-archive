@@ -4160,6 +4160,7 @@ if(t)
 		if((t->flags&TR_HIGHLIGHT)&&(!(t->flags&(TR_BLANK|TR_ANALOG_BLANK_STRETCH)))&&(t->name))
 			{
 			t->flags = (t->flags & ~(TR_NUMMASK | TR_HIGHLIGHT)) | flags;
+			t->minmax_valid = 0; /* force analog traces to regenerate if necessary */
 			}
 		t=t->t_next;
 		}

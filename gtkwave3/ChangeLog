@@ -1696,5 +1696,6 @@
 		with --rcvar 'vcd_preserve_glitches on').
                 Fixed print routine broken by bsearch_trunc() optimization in
                 version	3.3.96.
-3.3.100	04mar19	FSDB fix for variable declarations of array of reals.
+3.3.100	11mar19	FSDB fix for variable declarations of array of reals.
                 Added Real, Time, Enum, and Popcnt flags to Edit/Show-Change.
+		Ensure Show-Change regenerates analog traces.
