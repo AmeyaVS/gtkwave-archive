@@ -8535,9 +8535,10 @@ if(1) /* all scripts are Tcl now */
 	{
 #if defined(HAVE_LIBTCL)
 	int tclrc;
-	char *tcl_cmd = wave_alloca(7 + nlen + 1); /* originally a malloc, but the script can change the context! */
-	strcpy(tcl_cmd, "source ");
-	strcpy(tcl_cmd+7, name);
+        char *tcl_cmd = wave_alloca(8 + nlen + 1 + 1); /* originally a malloc, but the script can change the context! */
+        strcpy(tcl_cmd, "source {");
+        strcpy(tcl_cmd+8, name);
+        strcpy(tcl_cmd+8+nlen, "}");
 
 	fprintf(stderr, "GTKWAVE | Executing Tcl script '%s'\n", name);
 

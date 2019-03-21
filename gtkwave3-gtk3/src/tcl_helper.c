@@ -2869,9 +2869,10 @@ if((nam) && (strlen(nam)) && (!GLOBALS->tcl_running))
 	{
 	int tclrc;
 	int nlen = strlen(nam);
-	char *tcl_cmd = wave_alloca(7 + nlen + 1);
-	strcpy(tcl_cmd, "source ");
-	strcpy(tcl_cmd+7, nam);
+        char *tcl_cmd = wave_alloca(8 + nlen + 1 + 1);
+        strcpy(tcl_cmd, "source {");
+        strcpy(tcl_cmd+8, nam);
+        strcpy(tcl_cmd+8+nlen, "}");
 
 	GLOBALS->tcl_running = 1;
 	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);
@@ -2993,9 +2994,10 @@ if((GLOBALS->repscript_name) && (!GLOBALS->tcl_running))
 	{
 	int tclrc;
 	int nlen = strlen(GLOBALS->repscript_name);
-	char *tcl_cmd = wave_alloca(7 + nlen + 1);
-	strcpy(tcl_cmd, "source ");
-	strcpy(tcl_cmd+7, GLOBALS->repscript_name);
+	char *tcl_cmd = wave_alloca(8 + nlen + 1 + 1);
+        strcpy(tcl_cmd, "source {");
+        strcpy(tcl_cmd+8, GLOBALS->repscript_name);
+        strcpy(tcl_cmd+8+nlen, "}");
 
 	GLOBALS->tcl_running = 1;
 	tclrc = Tcl_Eval (GLOBALS->interp, tcl_cmd);

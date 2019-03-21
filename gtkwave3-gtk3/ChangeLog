@@ -1757,7 +1757,9 @@
 		Disabled rendundant redraw filter during zooms.
 		Fixed print routine broken by bsearch_trunc() optimization in
 		version 3.3.96.
-3.3.100	11mar19	GTK3 crash fix for twinwave when change window title is called.
+3.3.100	20mar19	GTK3 crash fix for twinwave when change window title is called.
 		FSDB fix for variable declarations of array of reals.
 		Added Real, Time, Enum, and Popcnt flags to Edit/Show-Change.
 		Ensure Show-Change regenerates analog traces.
+		Added braces inside Tcl source command to allow spaces in 
+		filenames for Tcl scripts.
