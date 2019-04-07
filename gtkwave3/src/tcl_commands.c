@@ -282,6 +282,16 @@ if(objc == 2)
 return(TCL_OK);
 }
 
+
+#ifndef WAVE_USE_GTK2
+/* truncate VHDL types to string directly after final '.' */
+char *varxt_fix(char *s)
+{
+char *pnt = strrchr(s, '.');
+return(pnt ? (pnt+1) : s);
+}
+#endif
+
 static int gtkwavetcl_getFacVtype(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 Tcl_Obj *aobj;
