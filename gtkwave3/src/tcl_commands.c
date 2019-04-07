@@ -250,8 +250,6 @@ if(objc == 2)
 return(TCL_OK);
 }
 
-//////////////////////////////////////////////////////////////////////////
-
 static int gtkwavetcl_getFacDir(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 Tcl_Obj *aobj;
@@ -375,9 +373,6 @@ if(objc == 2)
 
 return(TCL_OK);
 }
-
-//////////////////////////////////////////////////////////////////////////
-
 
 static int gtkwavetcl_getMinTime(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
