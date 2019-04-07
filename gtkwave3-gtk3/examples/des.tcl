@@ -19,6 +19,12 @@ set clk48 [list]
 
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [ gtkwave::getFacName $i ]
+
+#    set facdir  [ gtkwave::getFacDir $i ]
+#    set facvtype  [ gtkwave::getFacVtype $i ]
+#    set facdtype  [ gtkwave::getFacDtype $i ]
+#    puts "facname: $facname, facdir: $facdir, facvtype: $facvtype, facdtype: $facdtype"
+
     set indx [ string first "\[1:48\]" $facname  ]
     if {$indx == -1} {
     set indx [ string first clk $facname  ]

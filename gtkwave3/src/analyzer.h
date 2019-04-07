@@ -648,5 +648,6 @@ void CloseTrace(Trptr t);
 void ClearTraces(void);
 void ClearGroupTraces(Trptr t);
 
-#endif
+char *varxt_fix(char *s);
 
+#endif

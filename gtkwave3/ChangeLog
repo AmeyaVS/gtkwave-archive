@@ -1701,3 +1701,6 @@
 		Ensure Show-Change regenerates analog traces.
                 Added braces inside Tcl source command to allow spaces in
                 filenames for Tcl scripts.
+3.3.101	06apr19	Added gtkwave::getFacDir, gtkwave::getFacVtype, and
+		gtkwave::getFacDtype Tcl accessor functions that function
+		similar to gtkwave::getFacName.
