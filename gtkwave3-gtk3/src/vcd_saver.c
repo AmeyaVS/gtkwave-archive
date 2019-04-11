@@ -364,6 +364,7 @@ char *row_data = NULL;
 struct lt_trace *lt = NULL;
 int lxt = (export_typ == WAVE_EXPORT_LXT);
 int is_trans = (export_typ == WAVE_EXPORT_TRANS);
+int dumpvars_state = 0;
 
 if(export_typ == WAVE_EXPORT_TIM)
 	{
@@ -637,7 +638,6 @@ if(!lxt)
 	free_hier();
 
 	w32redirect_fprintf(is_trans, GLOBALS->f_vcd_saver_c_1, "$enddefinitions $end\n");
-	w32redirect_fprintf(is_trans, GLOBALS->f_vcd_saver_c_1, "$dumpvars\n");
 	}
 
 /* value changes */
@@ -668,7 +668,9 @@ for(;;)
 			}
 			else
 			{
+			if(dumpvars_state == 1) { w32redirect_fprintf(is_trans, GLOBALS->f_vcd_saver_c_1, "$end\n"); dumpvars_state = 2; }
 			w32redirect_fprintf(is_trans, GLOBALS->f_vcd_saver_c_1, "#"TTFormat"\n", tnorm);
+			if(!dumpvars_state) { w32redirect_fprintf(is_trans, GLOBALS->f_vcd_saver_c_1, "$dumpvars\n"); dumpvars_state = 1; }
 			}
 		prevtime = GLOBALS->hp_vcd_saver_c_1[0]->hist->time;
 		}
@@ -786,6 +788,7 @@ if(prevtime < GLOBALS->max_time)
 		}
 		else
 		{
+		if(dumpvars_state == 1) { w32redirect_fprintf(is_trans, GLOBALS->f_vcd_saver_c_1, "$end\n"); dumpvars_state = 2; }
 		w32redirect_fprintf(is_trans, GLOBALS->f_vcd_saver_c_1, "#"TTFormat"\n", GLOBALS->max_time / GLOBALS->time_scale);
 		}
 	}

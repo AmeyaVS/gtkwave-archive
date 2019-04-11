@@ -36,6 +36,7 @@
 int flat_earth = 0;
 int notruncate = 0;
 static FILE *fv = NULL;
+int dumpvars_state = 0;
 
 extern void free_hier(void);
 extern char *fv_output_hier(FILE *fv, char *name);
@@ -127,7 +128,9 @@ if(vcd_prevtime != *pnt_time)
 		}
 
 	vcd_prevtime = *pnt_time;
+	if(dumpvars_state == 1) { fprintf(fv, "$end\n"); dumpvars_state = 2; }
 	fprintf(fv, "#"LXT2_RD_LLD"\n", *pnt_time);
+	if(!dumpvars_state) { fprintf(fv, "$dumpvars\n"); dumpvars_state = 1; }
 	}
  
 if(!(*pnt_value)[0])
@@ -290,7 +293,6 @@ if(lt)
 		}
 
 	fprintf(fv, "$enddefinitions $end\n");
-	fprintf(fv, "$dumpvars\n");
 
 	vcd_prevtime = lxt2_rd_get_start_time(lt)-1;
 
@@ -298,6 +300,7 @@ if(lt)
 
 	if(vcd_prevtime!=lxt2_rd_get_end_time(lt))
 		{
+		if(dumpvars_state == 1) { fprintf(fv, "$end\n"); dumpvars_state = 2; }
 		fprintf(fv, "#"LXT2_RD_LLD"\n", lxt2_rd_get_end_time(lt));
 		}
 
