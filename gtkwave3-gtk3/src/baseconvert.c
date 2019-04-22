@@ -165,6 +165,28 @@ for(i=nbits-1;i>=0;i--) /* always requires less number of bits */
 }
 
 
+static void dpr_e16(char *str, double d)
+{
+char *buf16;
+char buf15[24];
+int l16;
+int l15;
+
+buf16 = str;
+buf16[23] = 0;
+l16 = snprintf(buf16, 24, "%.16g", d);
+if(l16 >= 18)
+        {
+        buf15[23] = 0;
+        l15 = snprintf(buf15, 24, "%.15g", d);
+        if((l16-l15) > 3)
+                {
+                strcpy(str, buf15);
+                }
+        }
+}
+
+
 static void cvt_fpsdec(Trptr t, TimeType val, char *os, int len, int nbits)
 {
 (void)nbits; /* number of bits shouldn't be relevant here as we're going through a fraction */
@@ -201,7 +223,7 @@ if(rmsk)
         rfrac = 0.0;
         }
 
-sprintf(dbuf, "%.16g", rfrac);
+dpr_e16(dbuf, rfrac); /* sprintf(dbuf, "%.16g", rfrac); */
 char *dot = strchr(dbuf, '.');
 
 if(dot && (dbuf[0] == '0'))
@@ -235,7 +257,7 @@ if(rmsk)
 	rfrac = 0.0;
 	}			
 
-sprintf(dbuf, "%.16g", rfrac);			
+dpr_e16(dbuf, rfrac); /* sprintf(dbuf, "%.16g", rfrac);	*/
 char *dot = strchr(dbuf, '.');
 if(dot && (dbuf[0] == '0'))
 	{
@@ -745,7 +767,7 @@ else if(flags&TR_REAL)
 		if(nbits==64)
 			{
 			memcpy(&d, &utt, sizeof(double));
-		sprintf(os, "%.16g", d);
+		dpr_e16(os, d); /* sprintf(os, "%.16g", d); */
 		}
 		else
 		{
@@ -863,7 +885,7 @@ if(t && (t->flags & TR_REAL2BITS) && d) /* "real2bits" also allows other filters
 
 	if(d)
 		{
-		sprintf(rv,"%.16g",*d);
+		dpr_e16(rv, *d); /* sprintf(rv,"%.16g",*d); */
 		}
 	else
 		{
@@ -1492,7 +1514,7 @@ else if(flags&TR_REAL)
 		if(nbits==64)
 			{
 			memcpy(&d, &utt, sizeof(double));
-		sprintf(os, "%.16g", d);
+		dpr_e16(os, d); /* sprintf(os, "%.16g", d); */
 		}
 		else
 		{
