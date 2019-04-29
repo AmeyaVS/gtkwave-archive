@@ -148,7 +148,7 @@ static char tclBackslash(const char* src, int* readPtr) {
  */
 static int tclFindElement(const char* list, const char** elementPtr,
 			  const char** nextPtr, int* sizePtr, int *bracePtr) {
-    register const char *p;
+    const char *p;
     int openBraces = 0;
     int inQuotes = 0;
     int size;
@@ -282,7 +282,7 @@ static int tclFindElement(const char* list, const char** elementPtr,
  */
 static void tclCopyAndCollapse(int count, const char *src, char *dst)
 {
-    register char c;
+    char c;
     int numRead;
 
     for (c = *src; count > 0; src++, c = *src, count--) {
@@ -322,7 +322,7 @@ static void tclCopyAndCollapse(int count, const char *src, char *dst)
 char** zSplitTclList(const char* list, int* argcPtr) {
     char** argv;
     const char* l;
-    register char* p;
+    char* p;
     int size, i, ok, elSize, brace;
     const char *element;
 
@@ -422,7 +422,7 @@ char** zSplitTclList(const char* list, int* argcPtr) {
 #define BRACES_UNMATCHED 4
 
 static int tclScanElement(const char* string, int* flagPtr) {
-    register const char *p;
+    const char *p;
     int nestingLevel = 0;
     int flags = 0;
 
@@ -502,7 +502,7 @@ static int tclScanElement(const char* string, int* flagPtr) {
  */
 static int tclConvertElement(const char* src, char* dst, int flags)
 {
-    register char *p = dst;
+    char *p = dst;
 
     if ((src == NULL) || (*src == 0)) {
 	p[0] = '{';
