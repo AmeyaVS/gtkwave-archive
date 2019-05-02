@@ -661,6 +661,7 @@ return(rc);
 }
 
 
+#ifndef FST_DYNAMIC_ALIAS2_DISABLE
 static int fstWriterSVarint(FILE *handle, int64_t v)
 {
 unsigned char buf[15]; /* ceil(64/7) = 10 + sign byte padded way up */
@@ -686,6 +687,7 @@ len = pnt-buf;
 fstFwrite(buf, len, 1, handle);
 return(len);
 }
+#endif
 
 
 /***********************/
