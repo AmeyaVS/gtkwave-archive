@@ -1381,6 +1381,7 @@ WAVE_RAINBOW_INITIALIZER, /* gc_rainbow */
 0, /* ruler_origin */
 0, /* ruler_step */
 0, /* fill_waveform */
+FALSE, /*save_on_exit */
 
 
 /*
@@ -1937,6 +1938,7 @@ void reload_into_new_context_2(void)
 
  new_globals->logfiles = GLOBALS->logfiles; /* this value is a ** chameleon!  malloc'd region is outside debug.c control! */
  new_globals->sst_dbl_action_type = GLOBALS->sst_dbl_action_type;
+ new_globals->save_on_exit = GLOBALS->save_on_exit;
 
  strcpy2_into_new_context(new_globals, &new_globals->argvlist, &GLOBALS->argvlist);
  strcpy2_into_new_context(new_globals, &new_globals->editor_name, &GLOBALS->editor_name);
@@ -2863,6 +2865,7 @@ switch(type)
 
 							GLOBALS->hier_ignore_escapes = g_old->hier_ignore_escapes;
 							GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
+							GLOBALS->save_on_exit = g_old->save_on_exit;
 
 							gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
 							}

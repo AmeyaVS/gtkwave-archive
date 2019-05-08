@@ -1370,6 +1370,7 @@ int str_wid_height;
 TimeType ruler_origin;
 TimeType ruler_step;
 char fill_waveform;
+gboolean save_on_exit;
 
 
 /*

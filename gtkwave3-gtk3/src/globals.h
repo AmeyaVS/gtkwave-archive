@@ -1378,6 +1378,7 @@ char wavearea_drag_active;
 #endif
 char use_gestures;
 gboolean use_dark;
+gboolean save_on_exit;
 
 
 /*

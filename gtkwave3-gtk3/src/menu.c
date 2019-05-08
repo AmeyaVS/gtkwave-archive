@@ -2021,6 +2021,8 @@ if(GLOBALS->helpbox_is_active)
 	return;
 	}
 
+if(GLOBALS->save_on_exit) { menu_write_save_file(NULL, 0, NULL); }
+
 if(!GLOBALS->enable_fast_exit)
 	{
 	simplereqbox("Quit Program",300,"Do you really want to quit?","Yes", "No", G_CALLBACK(menu_quit_callback), 1);

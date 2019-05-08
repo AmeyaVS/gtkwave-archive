@@ -1364,6 +1364,7 @@ NULL, /* swipe_init_time */
 #endif
 -1, /* use_gestures */
 FALSE, /*use_dark */
+FALSE, /*save_on_exit */
 
 
 /*
@@ -1930,6 +1931,7 @@ void reload_into_new_context_2(void)
  new_globals->sst_dbl_action_type = GLOBALS->sst_dbl_action_type;
  new_globals->use_gestures = GLOBALS->use_gestures;
  new_globals->use_dark = GLOBALS->use_dark;
+ new_globals->save_on_exit = GLOBALS->save_on_exit;
 
  strcpy2_into_new_context(new_globals, &new_globals->argvlist, &GLOBALS->argvlist);
  strcpy2_into_new_context(new_globals, &new_globals->editor_name, &GLOBALS->editor_name);
@@ -2877,6 +2879,7 @@ switch(type)
 							GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
 							GLOBALS->use_gestures = g_old->use_gestures;
 							GLOBALS->use_dark = g_old->use_dark;
+							GLOBALS->save_on_exit = g_old->save_on_exit;
 
 							gtk_notebook_set_current_page(GTK_NOTEBOOK(GLOBALS->notebook), GLOBALS->this_context_page);
 							}

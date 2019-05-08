@@ -126,6 +126,7 @@ GLOBALS->zoom_dyn = g_old->zoom_dyn;
 GLOBALS->zoom_dyne = g_old->zoom_dyne;
 GLOBALS->hier_ignore_escapes = g_old->hier_ignore_escapes;
 GLOBALS->sst_dbl_action_type = g_old->sst_dbl_action_type;
+GLOBALS->save_on_exit = g_old->save_on_exit;
 
 reformat_time(timestr, GLOBALS->tims.first + GLOBALS->global_time_offset, GLOBALS->time_dimension);
 gtk_entry_set_text(GTK_ENTRY(GLOBALS->from_entry),timestr);
@@ -707,6 +708,7 @@ if(!GLOBALS)
 	GLOBALS->do_hier_compress = old_g->do_hier_compress;
 	GLOBALS->disable_auto_comphier = old_g->disable_auto_comphier;
 	GLOBALS->sst_dbl_action_type = old_g->sst_dbl_action_type;
+	GLOBALS->save_on_exit = old_g->save_on_exit;
 
 	strcpy2_into_new_context(GLOBALS, &GLOBALS->sst_exclude_filename, &old_g->sst_exclude_filename);
 
@@ -831,10 +833,11 @@ while (1)
 		{"restore", 0, 0, '3'},
                 {"rcvar", 1, 0, '4'},
 		{"sstexclude", 1, 0, '5'},
+		{"saveonexit", 0, 0, '7'},
                 {0, 0, 0, 0}
                 };
 
-        c = getopt_long (argc, argv, "zf:Fon:a:Ar:dl:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:1:2:34:5:", long_options,
+        c = getopt_long (argc, argv, "zf:Fon:a:Ar:dl:s:e:c:t:NS:vVhxX:MD:IgCLR:P:O:WT:1:2:34:5:7", long_options,
 &option_index);
 
         if (c == -1) break;     /* no more args */
@@ -1056,6 +1059,10 @@ while (1)
                                 }
                         GLOBALS->sst_exclude_filename = strdup_2(optarg);
                         }
+                        break;
+
+                case '7':
+                        GLOBALS->save_on_exit = TRUE;
                         break;
 
                 case 's':
