@@ -1058,7 +1058,6 @@ if(GLOBALS->sst_exclude_filename)
 							else if(!strcmp(p, "VHDL_ST_GENFOR")) { exclhier |= exclone << TREE_VHDL_ST_GENFOR; }
 							else if(!strcmp(p, "VHDL_ST_INSTANCE")) { exclhier |= exclone << TREE_VHDL_ST_INSTANCE; }
 							else if(!strcmp(p, "VHDL_ST_PACKAGE")) { exclhier |= exclone << TREE_VHDL_ST_PACKAGE; }
-							else if(!strcmp(p, "VHDL_ST_PACKAGE")) { exclhier |= exclone << TREE_VHDL_ST_PACKAGE; }
 
 							else if(!strcmp(p, "VHDL_ST_SIGNAL")) { exclhier |= exclone << TREE_VHDL_ST_SIGNAL; }
 							else if(!strcmp(p, "VHDL_ST_PORTIN")) { exclhier |= exclone << TREE_VHDL_ST_PORTIN; }
