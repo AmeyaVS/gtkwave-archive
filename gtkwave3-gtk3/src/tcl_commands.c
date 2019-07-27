@@ -1153,16 +1153,36 @@ if(objc == 2)
 return(TCL_OK);
 }
 
-static int gtkwavetcl_addCommentTrace(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int gtkwavetcl_addCommentTracesFromList(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+char reportString[33];
+Tcl_Obj *aobj;
+
 if(objc==2)
 	{
 	char *s = Tcl_GetString(objv[1]);
-	InsertBlankTrace(s, 0);
+        char** elem = NULL;
+        int i, l = 0;
+
+        elem = zSplitTclList(s, &l);
+	if(elem)
+		{
+		for(i=0;i<l;i++)
+			{
+			InsertBlankTrace(elem[i], 0);
+			}
+		free(elem);
+		}
+
 	GLOBALS->signalwindow_width_dirty=1;
 	MaxSignalLength();
 	signalarea_configure_event(GLOBALS->signalarea, NULL);
 	wavearea_configure_event(GLOBALS->wavearea, NULL);
+
+	sprintf(reportString, "%d", l);
+
+	aobj = Tcl_NewStringObj(reportString, -1);
+	Tcl_SetObjResult(interp, aobj);
 	}
 	else
 	{
@@ -2240,7 +2260,7 @@ if(objc == 2)
 
 tcl_cmdstruct gtkwave_commands[] =
 	{
-	{"addCommentTrace",			gtkwavetcl_addCommentTrace},
+	{"addCommentTracesFromList",		gtkwavetcl_addCommentTracesFromList},
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
 	{"deleteSignalsFromList",		gtkwavetcl_deleteSignalsFromList},
 	{"deleteSignalsFromListIncludingDuplicates", gtkwavetcl_deleteSignalsFromListIncludingDuplicates},
