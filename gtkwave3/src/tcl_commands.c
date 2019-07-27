@@ -1168,6 +1168,25 @@ if(objc == 2)
 return(TCL_OK);
 }
 
+static int gtkwavetcl_addCommentTrace(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+if(objc==2)
+	{
+	char *s = Tcl_GetString(objv[1]);
+	InsertBlankTrace(s, 0);
+	GLOBALS->signalwindow_width_dirty=1;
+	MaxSignalLength();
+	signalarea_configure_event(GLOBALS->signalarea, NULL);
+	wavearea_configure_event(GLOBALS->wavearea, NULL);
+	}
+	else
+	{
+	return(gtkwavetcl_badNumArgs(clientData, interp, objc, objv, 1));
+	}
+
+return(TCL_OK);
+}
+
 
 static int gtkwavetcl_addSignalsFromList(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
@@ -2244,6 +2263,7 @@ if(objc == 2)
 
 tcl_cmdstruct gtkwave_commands[] =
 	{
+	{"addCommentTrace",			gtkwavetcl_addCommentTrace},
 	{"addSignalsFromList",			gtkwavetcl_addSignalsFromList},
 	{"deleteSignalsFromList",		gtkwavetcl_deleteSignalsFromList},
 	{"deleteSignalsFromListIncludingDuplicates", gtkwavetcl_deleteSignalsFromListIncludingDuplicates},
@@ -2295,7 +2315,11 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"installFileFilter",			gtkwavetcl_installFileFilter},
 	{"installProcFilter",			gtkwavetcl_installProcFilter},
 	{"installTransFilter",			gtkwavetcl_installTransFilter},
+	{"loadFile",			        gtkwavetcl_loadFile},
    	{"nop", 				gtkwavetcl_nop},
+	{"presentWindow",			gtkwavetcl_presentWindow},
+	{"processTclList",			gtkwavetcl_processTclList}, /* not for general-purpose use */
+	{"reLoadFile",			        gtkwavetcl_reLoadFile},
 	{"setBaselineMarker",			gtkwavetcl_setBaselineMarker},
 	{"setCurrentTranslateEnums",		gtkwavetcl_setCurrentTranslateEnums},
 	{"setCurrentTranslateFile",		gtkwavetcl_setCurrentTranslateFile},
@@ -2313,13 +2337,9 @@ tcl_cmdstruct gtkwave_commands[] =
 	{"setWindowStartTime",			gtkwavetcl_setWindowStartTime},
 	{"setZoomFactor",			gtkwavetcl_setZoomFactor},
 	{"setZoomRangeTimes",			gtkwavetcl_setZoomRangeTimes},
-	{"loadFile",			        gtkwavetcl_loadFile},
-	{"reLoadFile",			        gtkwavetcl_reLoadFile},
-	{"presentWindow",			gtkwavetcl_presentWindow},
 	{"showSignal",         			gtkwavetcl_showSignal},
-	{"unhighlightSignalsFromList",		gtkwavetcl_unhighlightSignalsFromList},
 	{"signalChangeList",                    gtkwavetcl_signalChangeList},	/* changed from signal_change_list for consistency! */
-	{"processTclList",			gtkwavetcl_processTclList}, /* not for general-purpose use */
+	{"unhighlightSignalsFromList",		gtkwavetcl_unhighlightSignalsFromList},
    	{"", 					NULL} /* sentinel */
 	};
 
