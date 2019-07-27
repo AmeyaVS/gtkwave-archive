@@ -1171,7 +1171,7 @@ if(objc==2)
 			{
 			InsertBlankTrace(elem[i], 0);
 			}
-		free(elem);
+		free_2(elem);
 		}
 
 	GLOBALS->signalwindow_width_dirty=1;
