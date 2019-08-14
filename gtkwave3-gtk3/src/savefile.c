@@ -991,6 +991,7 @@ int parsewavline(char *w, char *alias, int depth)
   char *prefix, *suffix, *new;
   char *prefix_init, *w2_init;
   unsigned int mode;
+  int current_grp_depth = -1;
 
   if(!(len=strlen(w))) return(0);
   if(*(w+len-1)=='\n')
@@ -1245,6 +1246,8 @@ if((*w2=='#')||(*w2==':'))
 
 	b = maketyp ? makevec(prefix+1,w2) : makevec_annotated(prefix+1,w2);	/* '#' vs ':' cases... */
 
+	if(GLOBALS->default_flags&TR_GRP_BEGIN_B) { current_grp_depth = GLOBALS->group_depth; }
+
 	if(b)
 		{
 		if((v=bits2vector(b)))
@@ -1253,7 +1256,7 @@ if((*w2=='#')||(*w2==':'))
 			AddVector(v, alias);
 			free_2(b->name);
 			b->name=NULL;
-			return(v!=NULL);
+			goto grp_bot;
 			}
 			else
 			{
@@ -1308,6 +1311,8 @@ if((*w2=='#')||(*w2==':'))
 			}
 		}
 
+grp_bot:
+	if((GLOBALS->default_flags&TR_GRP_BEGIN_B) && (current_grp_depth >= 0) && (current_grp_depth == GLOBALS->group_depth)) { AddBlankTrace(prefix+1); }
 	return(v!=NULL);
 	}
 else
