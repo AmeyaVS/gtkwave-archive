@@ -17,6 +17,8 @@
 
 /* definition of WlfVreg from wlf_api.h */
 #define WLF2VCD_MVL4		"01zx"
+#define WLF2VCD_MVL9		"ux01zwlh-"
+static const char *wlf_mvl9[9] = {"'U'", "'X'", "'0'", "'1'", "'Z'", "'W'", "'L'", "'H'", "'-'"};
 
 typedef struct WlfGlobalContext 
 {
@@ -31,6 +33,8 @@ unsigned int num_symbols;
 unsigned int max_bits;
 unsigned int num_aliases;
 
+unsigned is_vhdl : 1;
+
 unsigned char *value_string;
 int *archive_number;
 WlfSymbolId *archive_sym;
@@ -41,9 +45,10 @@ WlfGlobalContext wgc;
 static void AddSymbolToCB(
         WlfSymbolId sym,
         unsigned int vcdid,
-        unsigned int num_bits,
+                 int num_bits,
         unsigned int is_real,
         unsigned int is_vbit,
+        unsigned int is_vhbit,
         unsigned int is_vreg
         );
 
@@ -58,6 +63,7 @@ unsigned int vcdid;
 unsigned int num_bits;
 unsigned is_real : 1;
 unsigned is_vbit : 1;
+unsigned is_vhbit : 1;
 unsigned is_vreg : 1;
 } cbData;
 
@@ -108,6 +114,7 @@ static void countSubElements(WlfSymbolId top)
 WlfIterId iter;  
 WlfSymbolId sym;  
 int cnt;  
+WlfDataType vtyp;
 
 /* create an iterator to retrieve children of top */  
 iter = wlfSymChildren64(top, wlfSelAll);  
@@ -119,6 +126,11 @@ while ((sym = wlfIterate(iter)) != NULL)
      	cnt = wlfSymPropInt(sym, WLF_PROP_SUBELEMENT_COUNT);  
     	WlfSymbolSel64 typ = wlfSymPropSymbolSel64(sym, WLF_PROP_SYMBOL_TYPE);
 
+	if(typ & wlfSelVhdlScopes) 
+		{
+		wgc.is_vhdl = 1;
+		}
+
 	if(typ & (wlfSelVhdlScopes | wlfSelVlogScopes))
 		{
 		wgc.num_scopes++;
@@ -126,21 +138,32 @@ while ((sym = wlfIterate(iter)) != NULL)
 		else
             	{  
 		WlfTypeId wid = wlfSymPropTypeId(sym, WLF_PROP_TYPE_ID);
-		WlfDataType vtyp = wlfTypePropDataType(wid, WLF_TYPE_TYPE);
+		vtyp = wlfTypePropDataType(wid, WLF_TYPE_TYPE);
 
+		if(vtyp == wlfTypeRecord)
+			{
+			// fprintf(stderr, "wlfTypeRecord %d\n", cnt);
+			wgc.num_scopes++;
+			}
+		else
 		if(vtyp != wlfTypeArray) /* still possibly have to recurse */
 			{
 			int rgh = wlfTypePropInt(wid, WLF_TYPE_ARRAY_RIGHT);
 			int lft = wlfTypePropInt(wid, WLF_TYPE_ARRAY_LEFT);
 			int len = wlfTypePropInt(wid, WLF_TYPE_ARRAY_LENGTH);
 
+			if(vtyp == wlfTypeScalar)
+				{
+				lft = 31; rgh = 0; len = 32;
+				}
+
 			wgc.num_symbols++;
 			if(len > wgc.max_bits) wgc.max_bits = len;
 			}
     		} 
       
-	/* recurse through the children, but block out bitblasted children */
-	if(cnt<=0)
+	/* recurse through the children, but block out bitblasted children (except vhdl) */
+	if((cnt<=0) || (wgc.is_vhdl))
 		{
             	countSubElements(sym);  
 		}
@@ -267,6 +290,7 @@ while ((sym = wlfIterate(iter)) != NULL)
 
 	unsigned int is_real = 0;
 	unsigned int is_vbit = 0;
+	unsigned int is_vhbit = 0;
 	unsigned int num_bits = 0;
 	unsigned int is_vreg = 0;
 	char *vartype = NULL;
@@ -312,7 +336,7 @@ while ((sym = wlfIterate(iter)) != NULL)
 		case wlfSelNamedEvent:	vartype = "event"; break;
 
 		/* wlfSelHdlSignals */
-		case wlfSelSignal:
+		case wlfSelSignal:	vartype = "wire"; break;
 					break;
 
 		case wlfSelNet:		vartype = "wire"; break;
@@ -323,7 +347,8 @@ while ((sym = wlfIterate(iter)) != NULL)
 		case wlfSelGeneric:
 		case wlfSelAlias:
 
-		default:		break;
+		default:	fprintf(stderr, "Type: %d\n", typ); exit(255);
+				break;
 		}
 
 	WlfModeSel ptyp = wlfSymPropModeSel(sym, WLF_PROP_PORT_TYPE);
@@ -333,15 +358,23 @@ while ((sym = wlfIterate(iter)) != NULL)
 		{
 		wgc.prev_hier[wgc.prev_hier_len - 1] = 0;
 		char *pmod = strrchr(wgc.prev_hier, '/');
+		char *dmod = strrchr(wgc.prev_hier, '.');
+		if(dmod && (dmod - pmod > 0)) pmod = dmod;
 		*(pmod + 1) = 0;
 		wgc.prev_hier_len = pmod - wgc.prev_hier + 1;
 		
 		printf("$upscope $end\n");
 		}
 
-	if(typ & (wlfSelVhdlScopes | wlfSelVlogScopes))
+	WlfTypeId wid = wlfSymPropTypeId(sym, WLF_PROP_TYPE_ID);
+	WlfDataType vtyp = wlfTypePropDataType(wid, WLF_TYPE_TYPE);
+
+	if((typ & (wlfSelVhdlScopes | wlfSelVlogScopes)) || (vtyp == wlfTypeRecord))
 		{
 		char *ls = strrchr(name, '/');
+		char *ds = strrchr(name, '.');
+		if(ds && (ds - ls > 0)) ls = ds;
+
 		char *sname = ls ? (ls+1) : name;
 		printf("$scope %s %s $end\n", scopetype, sname);
 
@@ -353,19 +386,46 @@ while ((sym = wlfIterate(iter)) != NULL)
 		int hlen = strlen(name);
 		wgc.prev_hier = malloc(hlen + 1 + 1);
 		memcpy(wgc.prev_hier, name, hlen);
-		wgc.prev_hier[hlen] = '/';
+		wgc.prev_hier[hlen] = (vtyp == wlfTypeRecord) ? '.' : '/';
 		wgc.prev_hier[(wgc.prev_hier_len = hlen + 1)] = 0;
 		}
 		else
             	{  
-		WlfTypeId wid = wlfSymPropTypeId(sym, WLF_PROP_TYPE_ID);
-		WlfDataType vtyp = wlfTypePropDataType(wid, WLF_TYPE_TYPE);
-
 		if(vtyp != wlfTypeArray) /* still possibly have to recurse, depends on value of cnt below */
 			{
 			int rgh = wlfTypePropInt(wid, WLF_TYPE_ARRAY_RIGHT);
 			int lft = wlfTypePropInt(wid, WLF_TYPE_ARRAY_LEFT);
 			int len = wlfTypePropInt(wid, WLF_TYPE_ARRAY_LENGTH);
+
+                        if(vtyp == wlfTypeScalar)
+                                {
+                                lft = 31; rgh = 0; len = 32;
+				is_vbit = 1; is_vhbit = 0; is_real = 0; is_vreg = 0;
+                                }
+
+			if(vtyp == wlfTypeEnum)
+				{
+				char **enumLiterals;
+				int i, count;
+				wlfEnumLiterals(wid, &enumLiterals, &count);
+				if(count == 9)
+					{
+					for(i=0;i<9;i++)
+						{
+						if(strcmp(enumLiterals[i], wlf_mvl9[i]))
+							{
+							break;
+							}
+						}
+					if(i == 9)
+						{
+						is_vhbit = 1;
+						is_vbit = 0;
+						lft = rgh = 0;
+						len = 1;
+						}
+					}
+				}
 
 			if((is_real) || (vtyp == wlfTypeReal) || (vtyp == wlfTypeVlogReal))
 				{
@@ -387,7 +447,7 @@ while ((sym = wlfIterate(iter)) != NULL)
 
 			if(!vcdid)
 				{
-		            	AddSymbolToCB(sym, ++wgc.vcdid_added, num_bits = len, is_real, is_vbit, is_vreg);  
+		            	AddSymbolToCB(sym, ++wgc.vcdid_added, num_bits = len, is_real, is_vbit, is_vhbit, is_vreg);  
 				vcdid = wgc.vcdid_added;
 				if(arch >= 0)
 					{
@@ -406,26 +466,57 @@ while ((sym = wlfIterate(iter)) != NULL)
 				wgc.num_aliases++;
 				}
 
+			char *rsl = strrchr(name, '.');
+			if(!rsl) rsl = strrchr(name, '/');
+
+			char *lp = strrchr(rsl, '(');
+			char *rp = strrchr(rsl, ')');
+			char *lp2 = NULL, *rp2 = NULL;
+			if(lp && rp)
+				{
+				*lp = '['; *rp = ']';
+
+				lp2 = strrchr(rsl, '(');
+				rp2 = strrchr(rsl, ')');
+				if(lp2 && rp2)
+					{
+					*lp2 = '['; *rp2 = ']';
+					}
+					else
+					{
+					lp2 = rp2 = NULL;
+					}
+				}
+
 			if((lft != rgh) && (!is_vbit) && (!is_real))
 				{
-				printf("$var %s %d %s %s [%d:%d] $end\n", vartype, len, genVcdID(vcdid_str, vcdid), strrchr(name, '/')+1, lft, rgh);
+				printf("$var %s %d %s %s [%d:%d] $end\n", vartype, len, genVcdID(vcdid_str, vcdid), rsl+1, lft, rgh);
 				}
 				else
 				{
 				if(cnt && (!is_vbit) && (!is_real))
 					{
-					printf("$var %s %d %s %s [%d] $end\n", vartype, len, genVcdID(vcdid_str, vcdid), strrchr(name, '/')+1, lft);
+					printf("$var %s %d %s %s [%d] $end\n", vartype, len, genVcdID(vcdid_str, vcdid), rsl+1, lft);
 					}
 					else
 					{
-					printf("$var %s %d %s %s $end\n", vartype, len, genVcdID(vcdid_str, vcdid), strrchr(name, '/')+1);
+					printf("$var %s %d %s %s $end\n", vartype, len, genVcdID(vcdid_str, vcdid), rsl+1);
 					}
+				}
+
+			if(lp && rp)
+				{
+				*lp = '('; *rp = ')';
+				}
+			if(lp2 && rp2)
+				{
+				*lp2 = '('; *rp2 = ')';
 				}
 			}
     		} 
       
-        /* recurse through the children, but block out bitblasted children */  
-	if(cnt<=0)
+        /* recurse through the children, but block out bitblasted children (except vhdl) */  
+	if((cnt<=0) || (wgc.is_vhdl))
 		{
             	printSubElements(sym);  
 		}
@@ -490,7 +581,15 @@ if(!((cbData*) data)->is_real)
 	unsigned char *pv = ((cbData*) data)->pv;
 	char *value = wgc.value_string;
 
-	if(((cbData*) data)->is_vbit)
+	if(((cbData*) data)->is_vhbit)
+		{
+		for(i=0;i<nbits;i++)
+			{
+			value[i] = WLF2VCD_MVL9[*(pv++)];
+			}
+		value[i] = 0;
+		}
+	else if(((cbData*) data)->is_vbit)
 		{
 		WlfVbit *ip = (WlfVbit *)pv;
 		int bitrvs = (nbits - 1);
@@ -646,9 +745,10 @@ return(WLF_CONTINUE_SCAN);
 static void AddSymbolToCB(   
         WlfSymbolId sym,   
 	unsigned int vcdid,
-	unsigned int num_bits,
+	int num_bits,
 	unsigned int is_real,
 	unsigned int is_vbit,
+	unsigned int is_vhbit,
 	unsigned int is_vreg
         )  
 {  
@@ -664,9 +764,10 @@ if(wlfSymIsSymbolSelect64(sym, wlfSelAllSignals))
         pdata->pv = wlfValueGetValue(val);
 #endif
 	pdata->vcdid = vcdid;
-	pdata->num_bits = num_bits;
+	pdata->num_bits = (num_bits < 0) ? 0 : num_bits; // ?? how to fix properly
 	pdata->is_real = is_real;
 	pdata->is_vbit = is_vbit;
+	pdata->is_vhbit = is_vhbit;
 	pdata->is_vreg = is_vreg;
         status = wlfAddSignalEventCB(wgc.pack, sym, val, WLF_REQUEST_POSTPONED, sigCb, pdata);  
         if(status != WLF_OK)
@@ -693,6 +794,7 @@ wgc.old_time = -1ULL;
 wgc.prev_hier = NULL;
 wgc.prev_hier_len = 0;
 wgc.vcdid_added = 0;
+wgc.is_vhdl = 0;
 
 if(argc < 2) 
 	{  
