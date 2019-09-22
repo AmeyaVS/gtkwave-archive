@@ -42,6 +42,7 @@
 #include "fstapi.h"
 #include "fastlz.h"
 #include "lz4.h"
+#include <errno.h>
 
 #ifndef HAVE_LIBPTHREAD
 #undef FST_WRITER_PARALLEL
@@ -956,7 +957,7 @@ static void fstWriterMmapSanity(void *pnt, const char *file, int line)
 {
 if(pnt == MAP_FAILED)
 	{
-	fprintf(stderr, "fstMmap() failed: %s line %d.\n", file, line);
+	fprintf(stderr, "fstMmap() failed: errno: %d, file %s, line %d.\n", errno, file, line);
 	perror("Why");
 	exit(255);
 	}
@@ -985,11 +986,13 @@ fflush(xc->handle);
 if(!xc->valpos_mem)
         {
         fflush(xc->valpos_handle);
+	errno = 0;
         fstWriterMmapSanity(xc->valpos_mem = (uint32_t *)fstMmap(NULL, xc->maxhandle * 4 * sizeof(uint32_t), PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->valpos_handle), 0), __FILE__, __LINE__);
         }
 if(!xc->curval_mem)
         {
         fflush(xc->curval_handle);
+	errno = 0;
         fstWriterMmapSanity(xc->curval_mem = (unsigned char *)fstMmap(NULL, xc->maxvalpos, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->curval_handle), 0), __FILE__, __LINE__);
         }
 }
@@ -1693,6 +1696,7 @@ fflush(xc->tchn_handle);
 tlen = ftello(xc->tchn_handle);
 fstWriterFseeko(xc, xc->tchn_handle, 0, SEEK_SET);
 
+errno = 0;
 fstWriterMmapSanity(tmem = (unsigned char *)fstMmap(NULL, tlen, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->tchn_handle), 0), __FILE__, __LINE__);
 if(tmem)
         {
@@ -1923,6 +1927,7 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
         /* write out geom section */
         fflush(xc->geom_handle);
         tlen = ftello(xc->geom_handle);
+	errno = 0;
         fstWriterMmapSanity(tmem = (unsigned char *)fstMmap(NULL, tlen, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->geom_handle), 0), __FILE__, __LINE__);
         if(tmem)
                 {
@@ -2038,6 +2043,7 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
 
                         lz4_maxlen = LZ4_compressBound(xc->hier_file_len);
                         mem = (unsigned char *)malloc(lz4_maxlen);
+			errno = 0;
                         fstWriterMmapSanity(hmem = (unsigned char *)fstMmap(NULL, xc->hier_file_len, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->hier_handle), 0), __FILE__, __LINE__);
                         packed_len = LZ4_compress((char *)hmem, (char *)mem, xc->hier_file_len);
                         fstMunmap(hmem, xc->hier_file_len);
