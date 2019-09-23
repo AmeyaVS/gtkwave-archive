@@ -953,13 +953,13 @@ fflush(xc->handle);
 /*
  * mmap functions
  */
-static void fstWriterMmapSanity(void *pnt, const char *file, int line)
+static void fstWriterMmapSanity(void *pnt, const char *file, int line, const char *usage)
 {
 if(pnt == MAP_FAILED)
 	{
-	fprintf(stderr, "fstMmap() failed: errno: %d, file %s, line %d.\n", errno, file, line);
+	fprintf(stderr, "fstMmap() assigned to %s failed: errno: %d, file %s, line %d.\n", usage, errno, file, line);
 	perror("Why");
-	exit(255);
+	pnt = NULL;
 	}
 }
 
@@ -987,13 +987,19 @@ if(!xc->valpos_mem)
         {
         fflush(xc->valpos_handle);
 	errno = 0;
-        fstWriterMmapSanity(xc->valpos_mem = (uint32_t *)fstMmap(NULL, xc->maxhandle * 4 * sizeof(uint32_t), PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->valpos_handle), 0), __FILE__, __LINE__);
+	if(xc->maxhandle)
+		{
+	        fstWriterMmapSanity(xc->valpos_mem = (uint32_t *)fstMmap(NULL, xc->maxhandle * 4 * sizeof(uint32_t), PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->valpos_handle), 0), __FILE__, __LINE__, "xc->valpos_mem");
+		}
         }
 if(!xc->curval_mem)
         {
         fflush(xc->curval_handle);
 	errno = 0;
-        fstWriterMmapSanity(xc->curval_mem = (unsigned char *)fstMmap(NULL, xc->maxvalpos, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->curval_handle), 0), __FILE__, __LINE__);
+	if(xc->maxvalpos)
+		{
+	        fstWriterMmapSanity(xc->curval_mem = (unsigned char *)fstMmap(NULL, xc->maxvalpos, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->curval_handle), 0), __FILE__, __LINE__, "xc->curval_handle");
+		}
         }
 }
 
@@ -1697,7 +1703,7 @@ tlen = ftello(xc->tchn_handle);
 fstWriterFseeko(xc, xc->tchn_handle, 0, SEEK_SET);
 
 errno = 0;
-fstWriterMmapSanity(tmem = (unsigned char *)fstMmap(NULL, tlen, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->tchn_handle), 0), __FILE__, __LINE__);
+fstWriterMmapSanity(tmem = (unsigned char *)fstMmap(NULL, tlen, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->tchn_handle), 0), __FILE__, __LINE__, "tmem");
 if(tmem)
         {
         unsigned long destlen = tlen;
@@ -1889,7 +1895,7 @@ if(xc)
 
 if(xc && !xc->already_in_close && !xc->already_in_flush)
         {
-        unsigned char *tmem;
+        unsigned char *tmem = NULL;
         off_t fixup_offs, tlen, hlen;
 
         xc->already_in_close = 1; /* never need to zero this out as it is freed at bottom */
@@ -1928,7 +1934,11 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
         fflush(xc->geom_handle);
         tlen = ftello(xc->geom_handle);
 	errno = 0;
-        fstWriterMmapSanity(tmem = (unsigned char *)fstMmap(NULL, tlen, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->geom_handle), 0), __FILE__, __LINE__);
+	if(tlen)
+		{
+	        fstWriterMmapSanity(tmem = (unsigned char *)fstMmap(NULL, tlen, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->geom_handle), 0), __FILE__, __LINE__, "tmem");
+		}
+
         if(tmem)
                 {
                 unsigned long destlen = tlen;
@@ -2036,7 +2046,7 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
                         {
                         int lz4_maxlen;
                         unsigned char *mem;
-                        unsigned char *hmem;
+                        unsigned char *hmem = NULL;
                         int packed_len;
 
                         fflush(xc->handle);
@@ -2044,7 +2054,10 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
                         lz4_maxlen = LZ4_compressBound(xc->hier_file_len);
                         mem = (unsigned char *)malloc(lz4_maxlen);
 			errno = 0;
-                        fstWriterMmapSanity(hmem = (unsigned char *)fstMmap(NULL, xc->hier_file_len, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->hier_handle), 0), __FILE__, __LINE__);
+			if(xc->hier_file_len)
+				{
+	                        fstWriterMmapSanity(hmem = (unsigned char *)fstMmap(NULL, xc->hier_file_len, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(xc->hier_handle), 0), __FILE__, __LINE__, "hmem");
+				}
                         packed_len = LZ4_compress((char *)hmem, (char *)mem, xc->hier_file_len);
                         fstMunmap(hmem, xc->hier_file_len);
 
