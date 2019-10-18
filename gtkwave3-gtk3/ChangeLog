@@ -1776,3 +1776,4 @@
 		Harden savefile loader for missing group start on vectors.
 		Preliminary VHDL support for wlf2vcd.
 		Add missing return value checks on mmap() in FST writer.
+3.3.103	17oct19 Fix MAP_FAILED missing for MinGW.
