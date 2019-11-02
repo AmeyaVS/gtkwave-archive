@@ -1246,7 +1246,7 @@ if((*w2=='#')||(*w2==':'))
 
 	b = maketyp ? makevec(prefix+1,w2) : makevec_annotated(prefix+1,w2);	/* '#' vs ':' cases... */
 
-	if(GLOBALS->default_flags&TR_GRP_BEGIN_B) { current_grp_depth = GLOBALS->group_depth; }
+	if(GLOBALS->default_flags&TR_GRP_BEGIN) { current_grp_depth = GLOBALS->group_depth; }
 
 	if(b)
 		{
@@ -1312,7 +1312,7 @@ if((*w2=='#')||(*w2==':'))
 		}
 
 grp_bot:
-	if((GLOBALS->default_flags&TR_GRP_BEGIN_B) && (current_grp_depth >= 0) && (current_grp_depth == GLOBALS->group_depth)) { AddBlankTrace(prefix+1); }
+	if((GLOBALS->default_flags&TR_GRP_BEGIN) && (current_grp_depth >= 0) && (current_grp_depth == GLOBALS->group_depth)) { AddBlankTrace(prefix+1); }
 	return(v!=NULL);
 	}
 else
