@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Tony Bybell 1999-2018.
+ * Copyright (c) Tony Bybell 1999-2019.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -4924,7 +4924,7 @@ if(_x0!=_x1)
 		}
 		else
 		{
-		if(type != AN_X)
+		if((type != AN_X) && (type != AN_U))
 			{
 			c = GLOBALS->rgb_gc.gc_vbox_wavewindow_c_1;
 			}
@@ -5733,7 +5733,7 @@ if(_x0!=_x1)
 		}
 		else
 		{
-		if(type != AN_X)
+		if((type != AN_X) && (type != AN_U))
 			{
 			c = GLOBALS->rgb_gc.gc_vbox_wavewindow_c_1;
 			}
