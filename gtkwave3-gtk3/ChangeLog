@@ -1776,6 +1776,7 @@
 		Harden savefile loader for missing group start on vectors.
 		Preliminary VHDL support for wlf2vcd.
 		Add missing return value checks on mmap() in FST writer.
-3.3.103	02nov19 Fix MAP_FAILED missing for MinGW.
+3.3.103	03nov19 Fix MAP_FAILED missing for MinGW.
                 Fix to make the coloration red on 'u' traces.  (Bug from 
 		Dinotrace-like rendering in 3.3.96.)
+		Typo fix on missing group start on vectors.
