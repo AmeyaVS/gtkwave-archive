@@ -1770,3 +1770,4 @@
 3.3.116 27may23 Fix manpage/odt for vcd2fst command switch documentation for
                 zlibpack.
 		Changed sprintf to snprintf in fstapi.c.
+3.3.117	08aug23	Fix stems reader processing code broken in 3.3.114.
